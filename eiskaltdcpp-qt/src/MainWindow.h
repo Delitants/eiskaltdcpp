@@ -161,10 +161,10 @@ friend class QtContext;
         void parseInstanceLine(const QString &);
 
     protected:
-        virtual void closeEvent(QCloseEvent*);
-        virtual void showEvent(QShowEvent *);
-        virtual void hideEvent(QHideEvent *);
-        virtual bool eventFilter(QObject *, QEvent *);
+        void closeEvent(QCloseEvent*) override;
+        void showEvent(QShowEvent *) override;
+        void hideEvent(QHideEvent *) override;
+        bool eventFilter(QObject *, QEvent *) override;
 
     private Q_SLOTS:
         /** Show widget on arena */
@@ -262,11 +262,11 @@ friend class QtContext;
     private:
 
         /** LogManagerListener */
-        virtual void on(dcpp::LogManagerListener::Message, time_t t, const std::string&) noexcept;
+        void on(dcpp::LogManagerListener::Message, time_t t, const std::string&) noexcept override;
         /** TimerManagerListener */
-        virtual void on(dcpp::TimerManagerListener::Second, uint64_t) noexcept;
+        void on(dcpp::TimerManagerListener::Second, uint64_t) noexcept override;
         /** QueueManagerListener */
-        virtual void on(dcpp::QueueManagerListener::Finished, dcpp::QueueItem*, const std::string&, int64_t) noexcept;
+        void on(dcpp::QueueManagerListener::Finished, dcpp::QueueItem*, const std::string&, int64_t) noexcept override;
 
         // Interface setup functions
         void init();

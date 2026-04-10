@@ -53,7 +53,7 @@ bool ToolBar::eventFilter(QObject *obj, QEvent *e){
         QDragEnterEvent *m_e = reinterpret_cast<QDragEnterEvent*>(e);
         m_e->acceptProposedAction();
 
-        int tab = tabbar->tabAt(m_e->pos());
+        int tab = tabbar->tabAt(m_e->position().toPoint());
         if (tab >=0 && tab != tabbar->currentIndex())
             slotIndexChanged(tab);
 
@@ -62,7 +62,7 @@ bool ToolBar::eventFilter(QObject *obj, QEvent *e){
     else if (e->type() == QEvent::DragMove && reinterpret_cast<QTabBar*>(obj) == tabbar) {
         QDragMoveEvent *m_e = reinterpret_cast<QDragMoveEvent*>(e);
 
-        int tab = tabbar->tabAt(m_e->pos());
+        int tab = tabbar->tabAt(m_e->position().toPoint());
         if (tab >=0) {
             m_e->acceptProposedAction();
             if (tab != tabbar->currentIndex())

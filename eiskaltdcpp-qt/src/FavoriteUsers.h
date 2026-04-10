@@ -44,12 +44,12 @@ typedef QVariantMap VarMap;
 
 public:
 
-    virtual QWidget *getWidget() { return this; }
-    virtual QString getArenaTitle() { return tr("Favourite users"); }
-    virtual QString getArenaShortTitle() { return getArenaTitle(); }
-    virtual QMenu *getMenu() { return nullptr; }
-    const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFAVUSERS); }
-    ArenaWidget::Role role() const { return ArenaWidget::FavoriteUsers; }
+    QWidget *getWidget() override { return this; }
+    QString getArenaTitle() override { return tr("Favourite users"); }
+    QString getArenaShortTitle() override { return getArenaTitle(); }
+    QMenu *getMenu() override { return nullptr; }
+    const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFAVUSERS); }
+    ArenaWidget::Role role() const override { return ArenaWidget::FavoriteUsers; }
 
 Q_SIGNALS:
     void coreUserAdded(VarMap);
@@ -57,12 +57,12 @@ Q_SIGNALS:
     void coreStatusChanged(QString,QString);
 
 protected:
-    virtual void closeEvent(QCloseEvent *);
-    virtual bool eventFilter(QObject *, QEvent *);
+    void closeEvent(QCloseEvent *) override;
+    bool eventFilter(QObject *, QEvent *) override;
 
-    virtual void on(UserAdded, const dcpp::FavoriteUser& aUser) noexcept;
-    virtual void on(UserRemoved, const dcpp::FavoriteUser& aUser) noexcept;
-    virtual void on(StatusChanged, const dcpp::FavoriteUser& aUser) noexcept;
+    void on(UserAdded, const dcpp::FavoriteUser& aUser) noexcept override;
+    void on(UserRemoved, const dcpp::FavoriteUser& aUser) noexcept override;
+    void on(StatusChanged, const dcpp::FavoriteUser& aUser) noexcept override;
 
 public Q_SLOTS:
     bool addUserToFav(const QString &id);

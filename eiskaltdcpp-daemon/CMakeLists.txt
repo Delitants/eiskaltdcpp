@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(eiskaltdcpp-daemon)
+
+add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 # ######### General setup ##########
 include_directories(${PROJECT_SOURCE_DIR}
                     ${PROJECT_SOURCE_DIR}/..

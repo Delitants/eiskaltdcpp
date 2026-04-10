@@ -100,12 +100,12 @@ class QueuedUsers:
     friend class QtContext;
 
 public:
-    QWidget *getWidget() { return this; }
-    QString getArenaTitle() { return tr("Queued Users"); }
-    QString getArenaShortTitle() { return getArenaTitle(); }
-    QMenu *getMenu() { return nullptr; }
-    const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiUSERS); }
-    ArenaWidget::Role role() const { return ArenaWidget::QueuedUsers; }
+    QWidget *getWidget() override { return this; }
+    QString getArenaTitle() override { return tr("Queued Users"); }
+    QString getArenaShortTitle() override { return getArenaTitle(); }
+    QMenu *getMenu() override { return nullptr; }
+    const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiUSERS); }
+    ArenaWidget::Role role() const override { return ArenaWidget::QueuedUsers; }
 
 Q_SIGNALS:
     void coreWaitingAddFile(const VarMap&);
@@ -117,7 +117,7 @@ private Q_SLOTS:
     void slotContextMenu();
 
 protected:
-    void closeEvent(QCloseEvent *e);
+    void closeEvent(QCloseEvent *e) override;
 
 public:
     explicit QueuedUsers(dcpp::DCContext& ctx);
@@ -126,8 +126,8 @@ public:
 
 private:
 
-    virtual void on(WaitingAddFile, const dcpp::HintedUser&, const std::string&) noexcept;
-    virtual void on(WaitingRemoveUser, const dcpp::HintedUser&) noexcept;
+    void on(WaitingAddFile, const dcpp::HintedUser&, const std::string&) noexcept override;
+    void on(WaitingRemoveUser, const dcpp::HintedUser&) noexcept override;
 
     QueuedUsersModel *model;
 };

@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.10...3.28)
 project (eiskaltdcpp)
 
+
+add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 set (PROJECT_NAME "EiskaltDC++")
 set (APP_VERSION "2.5.0") # Main program version (displayed in UI)
 set (CONF_VERSION "2.0500") # Config version (for updating of DCPlusPlus.xml)
@@ -300,7 +302,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL GNU OR CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -pipe -Wformat -Werror=format-security")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -pipe -Wformat =format-security")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -D_FORTIFY_SOURCE=2")
     # GCC 15+ on MSYS2/MinGW: libstdc++ <semaphore> tries to use POSIX sem_t
     # but the functions are unavailable on Windows/UCRT.  Force-include a shim

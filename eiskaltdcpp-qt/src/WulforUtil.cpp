@@ -993,9 +993,9 @@ QStringList WulforUtil::getLocalIPs(){
 
                 // Convert the binary address to a string and add it to the output list
                 if (src){
-                    char address[len];
-                    inet_ntop(sa->sa_family, src, address, len);
-                    addresses.push_back(address);
+                    std::vector<char> address(len);
+                    inet_ntop(sa->sa_family, src, address.data(), len);
+                    addresses.push_back(address.data());
                 }
             }
         }

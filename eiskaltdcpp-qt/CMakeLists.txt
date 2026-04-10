@@ -443,3 +443,57 @@ if (APPLE)
                     WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX})")
     set (CPACK_BINARY_DRAGNDROP ON)
 endif (APPLE)
+
+
+### OAI_MAC_BUNDLE_FIX ###
+if(APPLE AND TARGET eiskaltdcpp-qt)
+    set(EISKALT_APP_BUNDLE "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>")
+    set(EISKALT_RES_DIR "${EISKALT_APP_BUNDLE}/Contents/Resources")
+
+    add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/icons"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/translations"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/locale"
+        VERBATIM
+    )
+
+    foreach(_src
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/translations"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/locale"
+        "${CMAKE_SOURCE_DIR}/icons"
+        "${CMAKE_SOURCE_DIR}/translations"
+        "${CMAKE_SOURCE_DIR}/locale"
+        "${CMAKE_BINARY_DIR}/eiskaltdcpp-qt/translations"
+        "${CMAKE_BINARY_DIR}/eiskaltdcpp-qt/locale"
+        "${CMAKE_BINARY_DIR}/translations"
+        "${CMAKE_BINARY_DIR}/locale"
+    )
+        if(EXISTS "${_src}")
+            get_filename_component(_name "${_src}" NAME)
+            add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_directory "${_src}" "${EISKALT_RES_DIR}/${_name}"
+                VERBATIM
+            )
+        endif()
+    endforeach()
+
+    foreach(_file
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/eiskaltdcpp.icns"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/EiskaltDC++.icns"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons/eiskaltdcpp.icns"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons/EiskaltDC++.icns"
+    )
+        if(EXISTS "${_file}")
+            get_filename_component(_base "${_file}" NAME)
+            add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_file}" "${EISKALT_RES_DIR}/${_base}"
+                VERBATIM
+            )
+        endif()
+    endforeach()
+
+    
+endif()
+
