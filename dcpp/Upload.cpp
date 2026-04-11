@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2001-2012 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2025 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -16,7 +16,6 @@
  */
 
 #include "stdinc.h"
-
 #include "Upload.h"
 
 #include "UserConnection.h"
@@ -25,17 +24,17 @@
 namespace dcpp {
 
 Upload::Upload(UserConnection& conn, const string& path, const TTHValue& tth) : Transfer(conn, path, tth), stream(0) {
-    conn.setUpload(this);
+	conn.setUpload(this);
 }
 
 Upload::~Upload() {
-    getUserConnection().setUpload(0);
-    delete stream;
+	getUserConnection().setUpload(0);
+	delete stream;
 }
 
 void Upload::getParams(const UserConnection& aSource, ParamMap& params) {
-    Transfer::getParams(aSource, params);
-    params["source"] = getPath();
+	Transfer::getParams(aSource, params);
+	params["source"] = getPath();
 }
 
 } // namespace dcpp
