@@ -1,0 +1,24 @@
+Safe DC++ 0.883 checkpoint completed.
+
+Landed batches:
+- helper/core subset
+- bloom/allocator helpers
+- Pointer.h compatibility
+- FinishedItem.*
+- finished/log listeners
+- listener headers + noexcept alignment
+- ConnectionManagerListener.h with compatibility shim
+- Upload.h/.cpp
+
+Intentionally skipped as too invasive for conservative port:
+- ConnectionManager.*
+- Download.*
+- DownloadManager.*
+- OnlineUser.h
+- ChatMessage.*
+- FavoriteManagerListener.h
+- ClientManagerListener.h
+- GetSet.h
+
+Checkpoint tag:
+core-0.883-safe-checkpoint
