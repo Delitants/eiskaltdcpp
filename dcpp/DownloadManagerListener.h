@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2001-2019 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2025 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef DCPLUSPLUS_DCPP_DOWNLOADMANAGERLISTENER_H_
+#define DCPLUSPLUS_DCPP_DOWNLOADMANAGERLISTENER_H_
 
 #include "typedefs.h"
 
@@ -36,45 +37,47 @@ namespace dcpp {
  */
 class DownloadManagerListener {
 public:
-    virtual ~DownloadManagerListener() { }
-    template<int I> struct X { enum { TYPE = I }; };
+	virtual ~DownloadManagerListener() { }
+	template<int I>	struct X { enum { TYPE = I }; };
 
-    typedef X<0> Complete;
-    typedef X<1> Failed;
-    typedef X<2> Starting;
-    typedef X<3> Tick;
-    typedef X<4> Requesting;
+	typedef X<0> Complete;
+	typedef X<1> Failed;
+	typedef X<2> Starting;
+	typedef X<3> Tick;
+	typedef X<4> Requesting;
 
-    /**
-     * This is the first message sent before a download starts.
-     * No other messages will be sent before this.
-     */
-    virtual void on(Requesting, Download*) { }
+	/**
+	 * This is the first message sent before a download starts.
+	 * No other messages will be sent before this.
+	 */
+	virtual void on(Requesting, Download*) noexcept { }
 
-    /**
-     * This is the first message sent before a download starts.
-     */
-    virtual void on(Starting, Download*) { }
+	/**
+	 * This is the first message sent before a download starts.
+	 */
+	virtual void on(Starting, Download*) noexcept { }
 
-    /**
-     * Sent once a second if something has actually been downloaded.
-     */
-    virtual void on(Tick, const DownloadList&) { }
+	/**
+	 * Sent once a second if something has actually been downloaded.
+	 */
+	virtual void on(Tick, const DownloadList&) noexcept { }
 
-    /**
-     * This is the last message sent before a download is deleted.
-     * No more messages will be sent after it.
-     */
-    virtual void on(Complete, Download*) { }
+	/**
+	 * This is the last message sent before a download is deleted.
+	 * No more messages will be sent after it.
+	 */
+	virtual void on(Complete, Download*) noexcept { }
 
-    /**
-     * This indicates some sort of failure with a particular download.
-     * No more messages will be sent after it.
-     *
-     * @remarks Should send an error code instead of a string and let the GUI
-     * display an error string.
-     */
-    virtual void on(Failed, Download*, const string&) { }
+	/**
+	 * This indicates some sort of failure with a particular download.
+	 * No more messages will be sent after it.
+	 *
+	 * @remarks Should send an error code instead of a string and let the GUI
+	 * display an error string.
+	 */
+	virtual void on(Failed, Download*, const string&) noexcept { }
 };
 
 } // namespace dcpp
+
+#endif /*DOWNLOADMANAGERLISTENER_H_*/

@@ -251,24 +251,24 @@ void FinishedManager::onComplete(Transfer* t, bool upload, bool crc32Checked) {
     }
 }
 
-void FinishedManager::on(QueueManagerListener::CRCChecked, Download* d) {
+void FinishedManager::on(QueueManagerListener::CRCChecked, Download* d) noexcept {
     onComplete(d, false, /*crc32Checked*/true);
 }
 
-void FinishedManager::on(DownloadManagerListener::Complete, Download* d) {
+void FinishedManager::on(DownloadManagerListener::Complete, Download* d) noexcept {
     onComplete(d, false);
 }
 
-void FinishedManager::on(DownloadManagerListener::Failed, Download* d, const string&) {
+void FinishedManager::on(DownloadManagerListener::Failed, Download* d, const string&) noexcept {
     if(d->getPos() > 0)
         onComplete(d, false);
 }
 
-void FinishedManager::on(UploadManagerListener::Complete, Upload* u) {
+void FinishedManager::on(UploadManagerListener::Complete, Upload* u) noexcept {
     onComplete(u, true);
 }
 
-void FinishedManager::on(UploadManagerListener::Failed, Upload* u, const string&) {
+void FinishedManager::on(UploadManagerListener::Failed, Upload* u, const string&) noexcept {
     if(u->getPos() > 0)
         onComplete(u, true);
 }

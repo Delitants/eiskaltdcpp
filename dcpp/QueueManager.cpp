@@ -1844,7 +1844,7 @@ void QueueManager::noDeleteFileList(const string& path) {
 }
 
 // SearchManagerListener
-void QueueManager::on(SearchManagerListener::SR, const SearchResultPtr& sr) {
+void QueueManager::on(SearchManagerListener::SR, const SearchResultPtr& sr) noexcept {
     bool added = false;
     bool wantConnection = false;
 

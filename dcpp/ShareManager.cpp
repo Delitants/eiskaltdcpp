@@ -1484,7 +1484,7 @@ ShareManager::Directory::Ptr ShareManager::getDirectory(const string& fname) {
     return Directory::Ptr();
 }
 
-void ShareManager::on(QueueManagerListener::FileMoved, const string& realPath) {
+void ShareManager::on(QueueManagerListener::FileMoved, const string& realPath) noexcept {
     if(CTX_BOOLSETTING(ADD_FINISHED_INSTANTLY)) {
         // Check if finished download is supposed to be shared
         Lock l(cs);
@@ -1502,7 +1502,7 @@ void ShareManager::on(QueueManagerListener::FileMoved, const string& realPath) {
     }
 }
 
-void ShareManager::on(HashManagerListener::TTHDone, const string& realPath, const TTHValue& root) {
+void ShareManager::on(HashManagerListener::TTHDone, const string& realPath, const TTHValue& root) noexcept {
     Lock l(cs);
     Directory::Ptr d = getDirectory(realPath);
     if(d) {

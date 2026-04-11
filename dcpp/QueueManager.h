@@ -307,7 +307,7 @@ private:
     virtual void on(TimerManagerListener::Minute, uint64_t aTick);
 
     // SearchManagerListener
-    virtual void on(SearchManagerListener::SR, const SearchResultPtr&);
+    virtual void on(SearchManagerListener::SR, const SearchResultPtr&) noexcept;
 
     // ClientManagerListener
     virtual void on(ClientManagerListener::UserConnected, const UserPtr& aUser);
