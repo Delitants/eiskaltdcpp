@@ -59,8 +59,8 @@ Currently supported features (not full list):
 * Support of URL encoded strings for hub addresses.
 * Support of traffic encryption.
 
-<a href="https://tehnick.github.io/eiskaltdcpp/eiskaltdcpp-qt-2.2.10-588_search_widget.png" title="Example of search results">
-    <img src="https://tehnick.github.io/eiskaltdcpp/eiskaltdcpp-qt-2.2.10-588_search_widget.png" width="99%">
+<a href="assets/screenshots/eiskaltdcpp-macos-2.5.2-release.png" title="EiskaltDC++ 2.5.2-release on macOS">
+    <img src="assets/screenshots/eiskaltdcpp-macos-2.5.2-release.png" width="99%">
 </a>
 
 ## Versions history
@@ -236,4 +236,3 @@ But you may send donations to project contributors (developers, maintainers, tra
 
 
 Have fun!
-
