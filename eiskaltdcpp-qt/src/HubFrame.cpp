@@ -1871,6 +1871,9 @@ void HubFrame::reloadSomeSettings(){
             textEdit_CHAT->setPalette(p);
         }
     }
+
+    // Re-evaluate chat foreground color after palette/background updates.
+    updateStyles();
 }
 
 QWidget *HubFrame::getWidget(){
@@ -4196,6 +4199,9 @@ void HubFrame::slotSettingsChanged(const QString &key, const QString &value){
 
             textEdit_CHAT->setPalette(p);
         }
+
+        // Keep text color synchronized with updated chat base color.
+        updateStyles();
     }
     else if (key == WS_TRANSLATION_FILE){
         retranslateUi(this);

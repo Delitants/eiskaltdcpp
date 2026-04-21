@@ -240,6 +240,9 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
         }
     }
 
+    // Re-apply text style after potential chat background override.
+    updateStyles();
+
     connect(close_wnd, &QAction::triggered, this, &PMWindow::slotClose);
     connect(pushButton_HUB, &QPushButton::clicked, this, &PMWindow::slotHub);
     connect(pushButton_SHARE, &QPushButton::clicked, this, &PMWindow::slotShare);
@@ -794,6 +797,9 @@ void PMWindow::slotSettingChanged(const QString &key, const QString &value){
 
             textEdit_CHAT->setPalette(p);
         }
+
+        // Keep foreground color synchronized with chat base color.
+        updateStyles();
     }
     else if (key == WS_TRANSLATION_FILE)
         retranslateUi(this);
