@@ -3,14 +3,14 @@
 Comparison against original upstream EiskaltDC++.
 
 - Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
-- Head: codex-2.5.2-release @ 951a9f7c (951a9f7cf3e068b6d86cfd9c428e4b9f2c1b57e6)
+- Head: codex-2.5.2-release @ 1bd11379 (1bd11379a69e56129eb7a8672099191232a03781)
 - Generated on: 2026-04-21
-- Commits ahead of upstream: 234
-- Files changed vs upstream: 552
+- Commits ahead of upstream: 238
+- Files changed vs upstream: 554
 
 ## Contributors In This Delta
--    211	Joe Rivera
--     23	Neolo
+ -  211 Joe Rivera
+ -   27 Neolo
 
 ## Top-Level Areas Changed (file counts)
 - 156 eiskaltdcpp-qt
@@ -26,6 +26,7 @@ Comparison against original upstream EiskaltDC++.
 - 3 json
 - 2 haiku
 - 1 update-translations.sh
+- 1 screenshot.png
 - 1 linux
 - 1 data
 - 1 build-local.ps1
@@ -36,13 +37,18 @@ Comparison against original upstream EiskaltDC++.
 - 1 INSTALL
 - 1 ChangeLog.txt
 - 1 CMakeLists.txt
+- 1 CHANGELOG_FORK_DELTA.md
 - 1 AUTHORS
 - 1 .gitignore
 - 1 .github
 
 ## Complete Commit List (newest first)
 
-- 2026-04-21 951a9f7c ui: fix PM input/bbcode layout and disable favorite hub CID override
+- 2026-04-21 1bd11379 docs: add full fork delta changelog and fix changelog links
+- 2026-04-21 90417f83 ui: fix PM input/bbcode layout and disable favorite hub CID override
+- 2026-04-21 a3a7f547 Update README.md
+- 2026-04-21 ad4cc289 Update README.md
+- 2026-04-21 4bccac17 Add files via upload
 - 2026-04-20 61e3d138 ui: force contrast-safe chat text colors in hub and PM
 - 2026-04-20 efeeeb11 ui: refresh chat text style after background palette updates
 - 2026-04-20 80534734 ui: derive chat text color strictly from chat base background
