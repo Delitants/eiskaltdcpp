@@ -44,6 +44,8 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QUrlQuery>
+#include <algorithm>
+#include <cmath>
 
 using namespace dcpp;
 
@@ -62,8 +64,56 @@ static inline void clearLayout(QLayout *l){
 
 static QString themedChatTextColor(const QPalette &palette)
 {
-    const int baseLightness = palette.color(QPalette::Base).lightness();
+    const QColor base = palette.color(QPalette::Base);
+    const QColor window = palette.color(QPalette::Window);
+    const int baseLightness = qMin(base.lightness(), window.lightness());
     return baseLightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+}
+
+static double channelToLinear(const int channel)
+{
+    const double normalized = channel / 255.0;
+    if (normalized <= 0.04045)
+        return normalized / 12.92;
+    return std::pow((normalized + 0.055) / 1.055, 2.4);
+}
+
+static double relativeLuminance(const QColor &color)
+{
+    return 0.2126 * channelToLinear(color.red()) +
+           0.7152 * channelToLinear(color.green()) +
+           0.0722 * channelToLinear(color.blue());
+}
+
+static double contrastRatio(const QColor &a, const QColor &b)
+{
+    const double luminanceA = relativeLuminance(a);
+    const double luminanceB = relativeLuminance(b);
+    const double lighter = std::max(luminanceA, luminanceB);
+    const double darker = std::min(luminanceA, luminanceB);
+    return (lighter + 0.05) / (darker + 0.05);
+}
+
+static QString ensureReadableChatColor(const QString &candidate, const QPalette &palette)
+{
+    const QColor resolved = QColor::fromString(candidate.trimmed());
+    if (!resolved.isValid())
+        return themedChatTextColor(palette);
+
+    const QColor base = palette.color(QPalette::Base);
+    if (contrastRatio(resolved, base) < 3.0)
+        return themedChatTextColor(palette);
+
+    return resolved.name(QColor::HexRgb);
+}
+
+static QString resolveChatColorValue(const QString &settingKeyOrColor, const QPalette &palette)
+{
+    const QString keyOrColor = settingKeyOrColor.trimmed();
+    if (QColor::fromString(keyOrColor).isValid())
+        return ensureReadableChatColor(keyOrColor, palette);
+
+    return ensureReadableChatColor(qtCtx()->settings()->getStr(keyOrColor), palette);
 }
 
 static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)
@@ -235,6 +285,9 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
+            const QColor foreground(themedChatTextColor(p));
+            p.setColor(QPalette::Text, foreground);
+            p.setColor(QPalette::WindowText, foreground);
 
             textEdit_CHAT->setPalette(p);
         }
@@ -530,7 +583,9 @@ void PMWindow::addStatusMessage(const QString &msg){
         time = "[" + QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP)) + "]";
 
     status = time + status;
-    status += "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\"><b>" + nick + "</b> </font>: ";
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString statusColor = resolveChatColorValue(WS_CHAT_STAT_COLOR, chatPalette);
+    status += "<font color=\"" + statusColor + "\"><b>" + nick + "</b> </font>: ";
     status += msg;
 
     addOutput(status);
@@ -539,17 +594,20 @@ void PMWindow::addStatusMessage(const QString &msg){
 void PMWindow::addStatus(QString msg){
     QString status = "";
     QString nick    = " * ";
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString statusColor = resolveChatColorValue(WS_CHAT_STAT_COLOR, chatPalette);
+    const QString timeColor = resolveChatColorValue(WS_CHAT_TIME_COLOR, chatPalette);
 
     qtCtx()->wulforUtil()->textToHtml(msg, true);
     qtCtx()->wulforUtil()->textToHtml(nick, true);
 
-    msg             = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + msg + "</font>";
+    msg             = "<font color=\"" + themedChatTextColor(chatPalette) + "\">" + msg + "</font>";
     QString time    = "";
 
     if (!qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP).isEmpty())
-        time = "<font color=\""+qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+">["+QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP))+"]</font>";
+        time = "<font color=\"" + timeColor + "\">[" + QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP)) + "]</font>";
 
-    status = time + "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\"><b>" + nick + "</b> </font>";
+    status = time + "<font color=\"" + statusColor + "\"><b>" + nick + "</b> </font>";
     status += msg;
 
     qtCtx()->wulforUtil()->textToHtml(status, false);
@@ -794,6 +852,9 @@ void PMWindow::slotSettingChanged(const QString &key, const QString &value){
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
+            const QColor foreground(themedChatTextColor(p));
+            p.setColor(QPalette::Text, foreground);
+            p.setColor(QPalette::WindowText, foreground);
 
             textEdit_CHAT->setPalette(p);
         }

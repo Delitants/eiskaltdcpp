@@ -83,6 +83,8 @@
 #include <QtDebug>
 
 #include <exception>
+#include <algorithm>
+#include <cmath>
 
 namespace {
 QString translatedPictureLabel()
@@ -90,10 +92,62 @@ QString translatedPictureLabel()
     return _q(_("Picture"));
 }
 
+QColor effectiveChatBaseColor(const QPalette &palette)
+{
+    const QColor base = palette.color(QPalette::Base);
+    const QColor window = palette.color(QPalette::Window);
+    return base.lightness() <= window.lightness() ? base : window;
+}
+
 QString themedChatTextColor(const QPalette &palette)
 {
-    const int baseLightness = palette.color(QPalette::Base).lightness();
+    const int baseLightness = effectiveChatBaseColor(palette).lightness();
     return baseLightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+}
+
+double channelToLinear(const int channel)
+{
+    const double normalized = channel / 255.0;
+    if (normalized <= 0.04045)
+        return normalized / 12.92;
+    return std::pow((normalized + 0.055) / 1.055, 2.4);
+}
+
+double relativeLuminance(const QColor &color)
+{
+    return 0.2126 * channelToLinear(color.red()) +
+           0.7152 * channelToLinear(color.green()) +
+           0.0722 * channelToLinear(color.blue());
+}
+
+double contrastRatio(const QColor &a, const QColor &b)
+{
+    const double luminanceA = relativeLuminance(a);
+    const double luminanceB = relativeLuminance(b);
+    const double lighter = std::max(luminanceA, luminanceB);
+    const double darker = std::min(luminanceA, luminanceB);
+    return (lighter + 0.05) / (darker + 0.05);
+}
+
+QString ensureReadableChatColor(const QString &candidate, const QPalette &palette)
+{
+    const QColor resolved = QColor::fromString(candidate.trimmed());
+    if (!resolved.isValid())
+        return themedChatTextColor(palette);
+
+    if (contrastRatio(resolved, effectiveChatBaseColor(palette)) < 3.0)
+        return themedChatTextColor(palette);
+
+    return resolved.name(QColor::HexRgb);
+}
+
+QString resolveChatColorValue(const QString &settingKeyOrColor, const QPalette &palette)
+{
+    const QString keyOrColor = settingKeyOrColor.trimmed();
+    if (QColor::fromString(keyOrColor).isValid())
+        return ensureReadableChatColor(keyOrColor, palette);
+
+    return ensureReadableChatColor(qtCtx()->settings()->getStr(keyOrColor), palette);
 }
 
 class ChatInputResizeGrip final : public QWidget
@@ -1867,6 +1921,9 @@ void HubFrame::reloadSomeSettings(){
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
+            const QColor foreground(themedChatTextColor(p));
+            p.setColor(QPalette::Text, foreground);
+            p.setColor(QPalette::WindowText, foreground);
 
             textEdit_CHAT->setPalette(p);
         }
@@ -2516,15 +2573,19 @@ void HubFrame::addStatus(QString msg){
     short_msg = LinkParser::parseForLinks(short_msg, false);
     msg       = LinkParser::parseForLinks(msg, true);
 
-    pure_msg        = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\">" + pure_msg + "</font>";
-    short_msg       = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\">" + short_msg + "</font>";
-    msg             = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\">" + msg + "</font>";
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString statusColor = resolveChatColorValue(WS_CHAT_STAT_COLOR, chatPalette);
+    const QString timeColor = resolveChatColorValue(WS_CHAT_TIME_COLOR, chatPalette);
+
+    pure_msg        = "<font color=\"" + statusColor + "\">" + pure_msg + "</font>";
+    short_msg       = "<font color=\"" + statusColor + "\">" + short_msg + "</font>";
+    msg             = "<font color=\"" + statusColor + "\">" + msg + "</font>";
     QString time    = "";
 
     if (!qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP).isEmpty())
-        time = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">[" + QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP)) + "]</font>";
+        time = "<font color=\"" + timeColor + "\">[" + QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP)) + "]</font>";
 
-    status   = time + "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\"><b>" + nick + "</b> </font>";
+    status   = time + "<font color=\"" + statusColor + "\"><b>" + nick + "</b> </font>";
 
     static const QRegularExpression rot_msg("is(\\s+)kicking(\\s+)(\\S+)*(\\s+)because:");
 
@@ -2900,10 +2961,12 @@ void HubFrame::newMsg(const VarMap &map){
 
     QString nick = map["NICK"].toString();
     QString message = map["MSG"].toString();
-    QString time = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">[" + map["TIME"].toString() + "]</font>";;
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString timeColor = resolveChatColorValue(WS_CHAT_TIME_COLOR, chatPalette);
+    QString time = "<font color=\"" + timeColor + "\">[" + map["TIME"].toString() + "]</font>";
     QString color = map["CLR"].toString();
     QString msg_color = WS_CHAT_MSG_COLOR;
-    QString msgColorValue = themedChatTextColor(textEdit_CHAT->palette());
+    QString msgColorValue = themedChatTextColor(chatPalette);
     QString trigger;
 
     const QStringList &kwords = qtCtx()->settings()->getVar("hubframe/chat-keywords", QStringList()).toStringList();
@@ -2911,7 +2974,7 @@ void HubFrame::newMsg(const VarMap &map){
     for (const auto &word : kwords){
         if (message.contains(word, Qt::CaseInsensitive)){
             msg_color = WS_CHAT_SAY_NICK;
-            msgColorValue = qtCtx()->settings()->getStr(WS_CHAT_SAY_NICK);
+            msgColorValue = resolveChatColorValue(WS_CHAT_SAY_NICK, chatPalette);
             trigger = word;
 
             break;
@@ -2920,7 +2983,7 @@ void HubFrame::newMsg(const VarMap &map){
 
     if (message.indexOf(_q(d->client->getMyNick())) >= 0){
         msg_color = WS_CHAT_SAY_NICK;
-        msgColorValue = qtCtx()->settings()->getStr(WS_CHAT_SAY_NICK);
+        msgColorValue = resolveChatColorValue(WS_CHAT_SAY_NICK, chatPalette);
         trigger = _q(d->client->getMyNick());
 
         qtCtx()->notification()->showMessage(Notification::NICKSAY, getArenaTitle().left(20), nick + ": " + message);
@@ -2950,10 +3013,11 @@ void HubFrame::newMsg(const VarMap &map){
     string info= Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
 
     if (!info.empty())
-        output  += " <font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">" + _q(info) + "</font>";
+        output  += " <font color=\"" + timeColor + "\">" + _q(info) + "</font>";
 
+    const QString nickColor = resolveChatColorValue(color, chatPalette);
     output  += QString(" <a style=\"text-decoration:none\" href=\"user://%1\"><font color=\"%2\"><b>%3</b></font></a>")
-               .arg(nicktoout).arg(qtCtx()->settings()->getStr(color)).arg(nicktoout.replace("\"", "&quot;"));
+               .arg(nicktoout).arg(nickColor).arg(nicktoout.replace("\"", "&quot;"));
     output  += message;
 
     if (!isVisible()){
@@ -3033,7 +3097,9 @@ void HubFrame::newPm(const VarMap &map){
     Q_D(HubFrame);
     QString nick = map["NICK"].toString();
     QString message = map["MSG"].toString();
-    QString time    = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">[" + map["TIME"].toString() + "]</font>";
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString timeColor = resolveChatColorValue(WS_CHAT_TIME_COLOR, chatPalette);
+    QString time    = "<font color=\"" + timeColor + "\">[" + map["TIME"].toString() + "]</font>";
     QString color = map["CLR"].toString();
     QString full_message;
 
@@ -3063,15 +3129,16 @@ void HubFrame::newPm(const VarMap &map){
 
     qtCtx()->wulforUtil()->textToHtml(nick, true);
 
-    message       = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + message + "</font>";
+    message       = "<font color=\"" + themedChatTextColor(chatPalette) + "\">" + message + "</font>";
     full_message  += time;
     string info= Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
 
     if (!info.empty())
-        full_message += " <font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">" + _q(info) + "</font>";
+        full_message += " <font color=\"" + timeColor + "\">" + _q(info) + "</font>";
 
+    const QString nickColor = resolveChatColorValue(color, chatPalette);
     full_message  += QString(" <a style=\"text-decoration:none\" href=\"user://%1\"><font color=\"%2\"><b>%3</b></font></a>")
-                     .arg(nick).arg(qtCtx()->settings()->getStr(color)).arg(nick.replace("\"", "&quot;"));
+                     .arg(nick).arg(nickColor).arg(nick.replace("\"", "&quot;"));
     full_message  += message;
 
     qtCtx()->wulforUtil()->textToHtml(full_message, false);
@@ -3127,14 +3194,17 @@ void HubFrame::pmUserEvent(const QString &cid, const QString &e){
 
     QString output = "";
     QString nick    = " * ";
+    const QPalette chatPalette = textEdit_CHAT->palette();
+    const QString timeColor = resolveChatColorValue(WS_CHAT_TIME_COLOR, chatPalette);
+    const QString statusColor = resolveChatColorValue(WS_CHAT_STAT_COLOR, chatPalette);
 
-    QString msg     = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + e + "</font>";
+    QString msg     = "<font color=\"" + themedChatTextColor(chatPalette) + "\">" + e + "</font>";
     QString time    = "";
 
     if (!qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP).isEmpty())
-        time = "<font color=\""+qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+">["+QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP))+"]</font>";
+        time = "<font color=\"" + timeColor + "\">[" + QDateTime::currentDateTime().toString(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP)) + "]</font>";
 
-    output = time + "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_STAT_COLOR) + "\"><b>" + nick + "</b> </font>";
+    output = time + "<font color=\"" + statusColor + "\"><b>" + nick + "</b> </font>";
     output += msg;
 
     qtCtx()->wulforUtil()->textToHtml(output, false);
@@ -4196,6 +4266,9 @@ void HubFrame::slotSettingsChanged(const QString &key, const QString &value){
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
+            const QColor foreground(themedChatTextColor(p));
+            p.setColor(QPalette::Text, foreground);
+            p.setColor(QPalette::WindowText, foreground);
 
             textEdit_CHAT->setPalette(p);
         }
