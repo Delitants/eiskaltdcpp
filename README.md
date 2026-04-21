@@ -3,7 +3,6 @@
 Website: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp) <br>
 Sources: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp)
 
-Public chat room: https://gitter.im/eiskaltdcpp/eiskaltdcpp <br>
 Wiki: https://github.com/eiskaltdcpp/eiskaltdcpp/wiki
 
 ## License
