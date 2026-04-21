@@ -1,8 +1,16 @@
+--- Fork delta vs original EiskaltDC++ master (origin/master) ---
+* Full fork changelog with complete commit-by-commit list is maintained in
+  CHANGELOG_FORK_DELTA.md.
+* This delta includes all known changes in this fork compared to upstream
+  origin/master, generated from git history.
+
 --- 2.5.2-release 2026-04-20 ---
 *** common changes ***
 * Prepared release and packaging flow for macOS 14+ on ARM64 (Apple Silicon).
 * Updated release documentation and repository screenshot assets for the
   current UI.
+* Added generated fork delta changelog file with complete git range details
+  against original upstream.
 *** libeiskaltdcpp ***
 * Improved inline image resolution in chat history:
   - prefer local/shared file resolution for own previously posted files

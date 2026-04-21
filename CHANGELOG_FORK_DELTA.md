@@ -1,0 +1,278 @@
+# Fork Delta Changelog
+
+Comparison against original upstream EiskaltDC++.
+
+- Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
+- Head: codex-2.5.2-release @ 951a9f7c (951a9f7cf3e068b6d86cfd9c428e4b9f2c1b57e6)
+- Generated on: 2026-04-21
+- Commits ahead of upstream: 234
+- Files changed vs upstream: 552
+
+## Contributors In This Delta
+-    211	Joe Rivera
+-     23	Neolo
+
+## Top-Level Areas Changed (file counts)
+- 156 eiskaltdcpp-qt
+- 145 dcpp
+- 98 eiskaltdcpp-gtk
+- 82 tests
+- 20 dht
+- 10 eiskaltdcpp-daemon
+- 8 extra
+- 6 cmake
+- 5 windows
+- 3 macos
+- 3 json
+- 2 haiku
+- 1 update-translations.sh
+- 1 linux
+- 1 data
+- 1 build-local.ps1
+- 1 Version.h.in
+- 1 SAFE_PORT_STATUS.txt
+- 1 README.md
+- 1 README.html
+- 1 INSTALL
+- 1 ChangeLog.txt
+- 1 CMakeLists.txt
+- 1 AUTHORS
+- 1 .gitignore
+- 1 .github
+
+## Complete Commit List (newest first)
+
+- 2026-04-21 951a9f7c ui: fix PM input/bbcode layout and disable favorite hub CID override
+- 2026-04-20 61e3d138 ui: force contrast-safe chat text colors in hub and PM
+- 2026-04-20 efeeeb11 ui: refresh chat text style after background palette updates
+- 2026-04-20 80534734 ui: derive chat text color strictly from chat base background
+- 2026-04-20 afab5a0d Delete assets/screenshots/eiskaltdcpp-macos-2.5.2-release.png
+- 2026-04-20 b4bc1e62 Update README.md
+- 2026-04-20 b4c3351a ui: force chat text white in dark mode and black in light mode
+- 2026-04-20 7b0a1e52 ui: improve dark-mode contrast across chat and settings
+- 2026-04-20 fb02582b docs: replace README screenshot with current Eiskalt window capture
+- 2026-04-20 2e80cb04 docs: add 2.5.2-release changelog and update authors
+- 2026-04-20 1244b338 docs: replace README screenshot with current macOS release UI
+- 2026-04-20 f8e28612 Release 2.5.2-release
+- 2026-04-10 bdedf929 Add safe 0.883 port status checkpoint note
+- 2026-04-10 823b7d05 Port DC++ 0.883 upload translation unit cleanup
+- 2026-04-10 01b8908d Port DC++ 0.883 connection manager listener with compatibility shim
+- 2026-04-10 f90d990b Port DC++ 0.883 listener headers and align local noexcept overrides
+- 2026-04-10 3339fe69 Port DC++ 0.883 finished and log manager listener headers
+- 2026-04-10 f9a45439 Port DC++ 0.883 finished item helpers with HintedUser include shim
+- 2026-04-10 3b3a0ed7 Port DC++ 0.883 pointer helpers with local compatibility shims
+- 2026-04-10 e2444524 Port DC++ 0.883 bloom and allocator helpers
+- 2026-04-10 8cc65134 Ignore upstream import workspace
+- 2026-04-10 90d0852c Fix macOS ARM Qt6 app bundling and daemon/json build issues
+- 2026-04-10 1f2eaba2 Port stable DC++ 0.883 core helper batch
+- 2026-04-07 c9940e1e fix: reduce thread stack to 1MiB on POSIX; catch bad_alloc in connect()
+- 2026-04-07 36aec609 diag: granular bad_alloc tracing inside nmdcConnect and getConnection
+- 2026-04-07 24779e25 diag: add mode value and RevConnectToMe traces to NmdcHub
+- 2026-04-07 bb375f65 revert: remove all getUser() caps, restore clean nmdcConnect
+- 2026-04-07 d48f2118 fix: cap ALL user creation paths with NMDC_GETINFO_LIMIT
+- 2026-04-07 b3cdbd62 fix: cap / user creation with NMDC_GETINFO_LIMIT; granular exception tracing in nmdcConnect
+- 2026-04-06 245b3035 diag: granular bad_alloc tracing inside nmdcConnect — wrap checkHubCCBlock, setter, and connect in individual try/catch
+- 2026-04-06 72a39287 diag: trace file transfer flow — QM::addList, CM::onSecond, ClientManager::connect, NmdcHub::connectToMe
+- 2026-04-06 1344f703 diag: add ENTER trace at top of ConnectionManager::nmdcConnect
+- 2026-04-06 6b91e395 diag: add step-by-step tracing to $ConnectToMe handler
+- 2026-04-06 5b7f817f diag: enhanced bad_alloc diagnostics in ConnectionManager and NmdcHub
+- 2026-04-06 7c155b84 Add NMDC_GETINFO_LIMIT setting to cap $GetINFO requests
+- 2026-04-06 22e35583 fix: add try/catch to NmdcHub::on(Line) for bad_alloc resilience
+- 2026-04-06 f5ba9c07 diag: add listener type info to Speaker::fire exception logging
+- 2026-04-06 82dcfc38 fix: remove all noexcept from dcpp library functions
+- 2026-04-06 3d1e9334 fix: remove noexcept from all listener on() methods and related functions
+- 2026-04-05 be7c32cd fix: add try/catch inside noexcept on() methods and prepareFile() ok: section
+- 2026-04-05 33b4258c fix: catch exceptions in Speaker::fire() to prevent std::terminate
+- 2026-04-05 7b114397 fix: catch std::exception in BufferedSocket::run() and Thread::start()
+- 2026-04-03 040e72be fix(ci): version extraction regex captured trailing CMake comment
+- 2026-04-02 00a7d73b fix: replace FILE*-based OpenSSL calls with BIO in CryptoManager
+- 2026-04-02 f5a2caa1 ci: add retry logic for NSIS chocolatey install
+- 2026-04-02 accef416 diag: finer-grained startup fprintf for DHT construction
+- 2026-04-02 3c494392 fix(win32): only call WSACleanup when WSAStartup was called
+- 2026-04-02 d6ca5500 diag: add fprintf diagnostics to DCContext::startup() for Windows CI crash
+- 2026-03-30 669c02b7 fix: guard qtCtx() null dereference in SpyModel::addResult()
+- 2026-03-27 ff9a1143 Remove global mutable state macros; refactor daemon ServerManager to class
+- 2026-03-26 f88cdbef Phase 3-5,7: Eliminate getContext() from all frontends and daemon
+- 2026-03-26 731be25b refactor: Phase 2 — DCContext& constructor injection, remove all global DCContext pointers
+- 2026-03-25 16ab6fe5 refactor: Phase 1c — convert LOG/COMMAND_DEBUG to CTX_ variants in dcpp/
+- 2026-03-25 8aa997d9 refactor: Phase 1b — convert SETTING/BOOLSETTING to CTX_ variants in dcpp/
+- 2026-03-25 a150e127 refactor: Phase 1a — convert ContextAware dcpp/ classes from getContext() to ctx()
+- 2026-03-25 3f622b51 refactor: Phase 0 — add CTX_ macros, dcCtx(), and GtkContextAware
+- 2026-03-25 7d0cdf66 chore: remove completed plan documents from repo
+- 2026-03-25 884658b9 fix(windows): use dcpp::getContext() in ScriptInstance::EvaluateFile
+- 2026-03-25 be17e44e fix(gtk): update wulfor.cc for new dcpp::startup() ownership API
+- 2026-03-25 d26ba742 chore: remove PR_DESCRIPTION.md from repo
+- 2026-03-25 5ad6ff64 docs: update PR description with g_context removal details
+- 2026-03-25 0b02b4f2 refactor: remove DCContext singleton (g_context)
+- 2026-03-25 37fb077e Remove dead singleton code and fix outdated comments
+- 2026-03-25 65ab1dba refactor: remove all singleton patterns from GTK, daemon, and DHT subsystems
+- 2026-03-24 267b09d1 fix(msvc): add missing <clocale> include in Util.h; rename CI artifacts
+- 2026-03-24 ae32f025 ci: remove redundant vcpkg cache step on Windows
+- 2026-03-24 4bca0d9a fix(windows): resolve gettext tools not found on Windows CI
+- 2026-03-24 dba73bc5 ci: add Debug/Release build matrix to Linux and macOS jobs
+- 2026-03-24 cb216759 Remove macos-13 runners (sunset by GitHub Actions)
+- 2026-03-24 b4e7b739 Fix macOS install path collision; restore Intel builds
+- 2026-03-24 75f9557e Drop macos-13 runners (sunset by GitHub Actions)
+- 2026-03-24 c96d0989 Replace qt_mac_set_dock_menu() with QMenu::setAsDockMenu() (Qt6)
+- 2026-03-24 da6a930e Fix QVector::iterator used as bool in ShareBrowser (macOS)
+- 2026-03-24 c9cdb24a fix(adc): add __aarch64__ to little-endian architecture check
+- 2026-03-24 c11b1957 ci(macos): build and package DMGs for both Intel and Apple Silicon
+- 2026-03-24 657692bc fix(gtk): add GTK3 library directories when using pkg-config
+- 2026-03-24 e9e244f2 fix(gtk): add OPENSSL_INCLUDE_DIR to GTK target includes
+- 2026-03-24 5f9b4998 fix(tests): add GETTEXT_INCLUDE_DIR to Qt test target
+- 2026-03-24 82f84ef7 fix(macos): use pkg-config for GTK3 discovery on macOS
+- 2026-03-24 a9422027 Fix macOS build: include HintedUser.h in FinishedItem.h, qualify std::move
+- 2026-03-24 3f8df54e Fix macOS build: fall back to std::thread when std::jthread unavailable
+- 2026-03-24 f4398010 CI: add macOS builds (Qt6 + GTK3) with DMG packaging
+- 2026-03-20 30f408b4 Fix installer: add SetRegView 64 so uninstall entry appears in Add/Remove Programs
+- 2026-03-20 eb645f35 Fix installer: move shortcuts into main section so they always get created
+- 2026-03-19 60c15d1e Document all build dependencies and setup requirements in build-local.ps1
+- 2026-03-19 b9f1b998 Fix NSIS installer: proper staging, desktop shortcut, Qt6 plugins
+- 2026-03-19 97910f91 Fix GTK3 pixbuf loader crash: bundle transitive DLL deps
+- 2026-03-19 9ff5bb48 Add Windows build script and ignore dist/build output dirs
+- 2026-03-19 a989d02e Fix MSVC C2229: zero-sized float arrays in SettingsManager
+- 2026-03-19 ff3eb89e Fix FloatSetting SENTRY assertion on startup (pre-existing bug)
+- 2026-03-19 93e514bc Fix ArenaWidgetManager shutdown crash (use-after-free)
+- 2026-03-19 fc269abe Fix QT_CONTEXT_MINIMAL test build after singleton removal
+- 2026-03-19 33ed5089 Eliminate all singleton patterns from eiskaltdcpp-qt
+- 2026-03-18 29c28be2 fix: ScriptEngine shutdown crash — owner destroys owned objects
+- 2026-03-18 748995a6 fix: ScriptEngine shutdown crash — reorder QtContext member declarations
+- 2026-03-07 b47af245 fix: HashProgress shutdown crash — destroy Qt widgets before dcpp managers
+- 2026-03-07 fb1828c1 fix: migrate IPFilter from Singleton to DCContext ownership
+- 2026-03-05 5e7a8b03 chore: remove PR_DESCRIPTION.md from source control
+- 2026-03-05 dbb6b67c fix: ThrottleManager::shutdown() crash on Windows (UB mutex unlock)
+- 2026-03-05 08f5d8e9 ci: include PDB debug symbols in Windows Qt6 Debug artifact
+- 2026-03-05 5aa09f71 fix(gtk/win32): use forward slashes in loaders.cache to avoid escape mangling
+- 2026-03-05 8b6cd135 Fix Qt6 exit crash and NMDC encoding conversion
+- 2026-03-05 a00963c5 fix(ci): add fallback URL for Catch2 download
+- 2026-03-05 0b7df164 fix: iconv charset conversion on Windows + strengthen GTK pixbuf loader fix
+- 2026-03-05 bbeb1b4f fix: duplicate manifest link error on MSVC (LNK1123)
+- 2026-03-05 d2b3db16 fix: Windows binary startup failures (Qt6 + GTK3)
+- 2026-03-04 df244a4b Phase 5: WulforSettingsManager singleton removal + Windows test fixes
+- 2026-03-03 589b543f GTK modernization: Phases 1-4 complete — 282 tests, 903 assertions
+- 2026-03-03 876da10e fix: replace deprecated gdk_threads with g_idle_add for GUI dispatch
+- 2026-03-03 56d045c5 fix: fetch Catch2 via URL tarball instead of git clone
+- 2026-03-03 ce64a18e fix: GTK pixbuf loader crash on Windows + remove redundant VC redist
+- 2026-03-03 9023eef9 fix(test): don't assert uninitialized HubEntry numeric fields
+- 2026-03-03 5931e645 fix(gtk/win32): set GTK3 runtime env vars from exe path before gtk_init
+- 2026-03-03 fbc384a5 fix: use std::nullptr_t in intrusive_ptr.h for GCC 15 modules-ts compatibility
+- 2026-03-03 5d471cea tests: add 12 new test files covering Streams, StringSearch, ScopedFunctor, intrusive_ptr, Exception, version, HubEntry, DebugManager, BloomFilter, Flags, format, FilteredFile
+- 2026-03-02 b9fdc2ae Migrate ScriptEngine + helpers from dcpp::Singleton to QtContext
+- 2026-03-02 788992b5 Migrate all Qt-side dcpp::Singleton<> classes to QtContext
+- 2026-03-02 ceacdb19 refactor(qt): introduce QtContext — own WulforSettings & SearchBlacklist
+- 2026-03-02 eefe561d refactor(qt): remove Singleton<> from SearchBlacklist
+- 2026-03-02 29f8fee6 refactor(qt): remove Singleton<> from WulforSettings
+- 2026-03-02 b029b68d fix(tests): resolve MSVC static destruction order fiasco (#heap-corruption)
+- 2026-03-02 56e84da0 fix(tests): Windows cross-platform compatibility for MSVC and MSYS2
+- 2026-03-02 8fcf279b fix(build): proper workaround for GCC 15 <semaphore> on MSYS2/MinGW
+- 2026-03-02 766b3552 fix(build): work around GCC 15 broken <semaphore> on MSYS2/MinGW
+- 2026-03-02 7ed38947 fix(tests): use offscreen Qt platform for headless CI
+- 2026-03-02 48e4fce5 test: Phase 4 — Qt UI Logic tests (111 cases, 212 assertions)
+- 2026-03-02 10dc7231 docs: update TEST_COVERAGE_PLAN.md — Phase 3 complete (428 cases)
+- 2026-03-02 af4fd399 test: Phase 3 — protocol, file I/O, hash tree tests (428 cases, 1890 assertions)
+- 2026-03-02 14aac2ea docs: update TEST_COVERAGE_PLAN.md — Phase 1+2 complete (354 cases)
+- 2026-03-02 358ed378 tests: Phase 2 round 3 — SearchResult, FavoriteManager
+- 2026-03-02 4ae7109c tests: Phase 2 round 2 — FinishedItem, LogManager
+- 2026-03-02 deaaac1f tests: Phase 2 round 1 — TestContext, SettingsManager, User, SearchQueue
+- 2026-03-02 c5b6c27e tests: Phase 1 round 2 — ADLSearch, QueueItem/Segment, UserCommand, Util extra
+- 2026-03-01 84864413 tests: Phase 1 coverage — TigerHash, HashBloom, Wildcards, compression, SimpleXMLReader, Util formatting
+- 2026-03-01 2e00cdde refactor: migrate ScriptManager and DynDNS from Singleton to DCContext
+- 2026-03-01 6a8794ab fix: Singleton test hangs on MSVC Debug (dcassert pops dialog on nullptr)
+- 2026-03-01 77a62a3a CI: add CPACK_PACKAGE_DESCRIPTION for NSIS
+- 2026-03-01 ec835423 CI: add CPACK_PACKAGE_FILE_NAME for NSIS
+- 2026-03-01 58686e58 CI: install NSIS via choco (not pre-installed on windows-latest)
+- 2026-03-01 b4540411 Fix install packaging: merge Windows packaging into build jobs
+- 2026-03-01 a2ff5496 CI: rename install dir to dist (avoids INSTALL file conflict on Windows)
+- 2026-03-01 885ca572 CI: add cmake/ninja/pkg-config to GTK3 package job MSYS2 setup
+- 2026-03-01 1fd2342e CI: NSIS is pre-installed on windows-latest, remove continue-on-error
+- 2026-03-01 537863ad CI: use cmake --install for Windows packaging + CPack NSIS installer
+- 2026-03-01 2b71574a Fix buffer overrun in sanitizeUrl and trimCopy
+- 2026-03-01 7f79839a CI: fix YAML syntax error from heredoc in GTK3 packaging
+- 2026-03-01 cdfb26f8 CI: Debug+Release matrix for Windows builds + dumpbin DLL resolution
+- 2026-03-01 4f8110ab fix: MSVC runtime bundling + GTK3 Windows launch failures
+- 2026-03-01 26ed6bd7 fix: find VC runtime DLLs without msvc-dev-cmd environment
+- 2026-03-01 b684a99d fix: bundle MSVC runtime DLLs in Windows Qt6 package
+- 2026-03-01 d7fe22d5 fix: correct Qt6 exe name in Windows packaging step
+- 2026-03-01 698e5b50 fix: daemon is a console app, remove WIN32 from add_executable
+- 2026-03-01 e07b113f fix: only define HAVE_NL_MSG_CAT_CNTR when check actually passes
+- 2026-02-28 512f67b5 fix: resolve unistring.lib linker error and fix vcpkg caching
+- 2026-02-28 59567e5c fix: eliminate tstring/string type mismatches in Qt UI for MSVC UNICODE
+- 2026-02-28 c866812c fix: remove redundant Text::fromT wrapping _tq() on MSVC/UNICODE builds
+- 2026-02-28 b5365852 fix: move FakeMgr into dcpp namespace for MSVC template specialization
+- 2026-02-28 8b8f6366 fix: MSVC cannot specialize template in anonymous namespace
+- 2026-02-28 361925a9 fix: MSVC dllimport error in ScriptManager Lua helper functions
+- 2026-02-27 f4a885be fix: MSVC min/max macro collision and add vcpkg binary caching
+- 2026-02-27 58c627ed fix: copy all vcpkg DLLs for Windows Qt6 packaging
+- 2026-02-27 7c49d832 fix: use ldd to bundle all GTK3 transitive DLL dependencies on Windows
+- 2026-02-27 49ca34de release: bump version to 2.5.0 and add release job on version tags
+- 2026-02-27 0486f8cb chore: remove AppImage builds, defer to self-hosted runners later
+- 2026-02-27 99322e66 fix: add APPIMAGE_EXTRACT_AND_RUN=1 for linuxdeploy on CI
+- 2026-02-27 21edf900 fix: AppImage OUTPUT to current dir, not dist/ subdirectory
+- 2026-02-27 e5e12c3e fix: install gettext[tools] via vcpkg and add FindGettext diagnostics
+- 2026-02-27 eb1eb726 fix: AppImage artifacts contained linuxdeploy tools instead of output
+- 2026-02-27 e1b384de fix: update FindGettext.cmake for vcpkg compatibility
+- 2026-02-27 ff5a2f6e fix: pass explicit GETTEXT_INCLUDE_DIR and GETTEXT_INTL_LIBRARY for vcpkg
+- 2026-02-27 558dcdfa fix: add GETTEXT_SEARCH_PATH for vcpkg on Windows Qt6 build
+- 2026-02-27 773c766f fix: use vcpkg gettext instead of choco for Windows Qt6 build
+- 2026-02-27 34d49edc fix: progress bar text rendering in download queue and transfer view
+- 2026-02-27 225c604d fix: pass explicit '/' separator in path tests for Windows compat
+- 2026-02-27 b367731f fix: disable BUILD_TESTS in packaging jobs to avoid Catch2 git error
+- 2026-02-27 61f77136 fix: remove invalid 'shell' property from download-artifact step
+- 2026-02-27 0248afd2 ci: separate Windows packaging into dedicated jobs
+- 2026-02-27 924eb33b ci: separate packaging jobs from build+test, fix AppImage LD_LIBRARY_PATH
+- 2026-02-27 291f1d4a fix: replace non-standard 'uint' with 'unsigned int' in search.cc
+- 2026-02-26 5ce45900 fix: coverage genhtml source error and Catch2 path leaking into report
+- 2026-02-26 cb02fdf9 fix: add source to lcov --ignore-errors for coverage job
+- 2026-02-26 81713f69 fix: Windows build - gettext discovery and POSIX guards for GTK sources
+- 2026-02-26 9b0b8b7d fix: move arpa/inet.h include inside HAVE_IFADDRS_H guard (Windows)
+- 2026-02-26 e80e89c1 ci: drop vcpkg gettext entirely, use choco for both tools and runtime
+- 2026-02-26 dde3a25b ci: add --ignore-errors to lcov for gcov/mismatch warnings
+- 2026-02-26 46235883 ci: add test coverage job with lcov HTML report artifact
+- 2026-02-26 5e2030d0 ci: replace vcpkg gettext[tools] with choco prebuilt (fixes hang)
+- 2026-02-26 2b707835 ci: fix MSYS2 GTK3, add AppImage builds, remove FreeBSD (temporary)
+- 2026-02-26 775c35d7 cmake: fix FindGTK3 library names for MSYS2/MinGW
+- 2026-02-26 d557ebc5 ci: fix FreeBSD Qt6 discovery and disable tests in VM
+- 2026-02-26 5e5ed19a ci: fix version extraction for deb packaging (take first match only)
+- 2026-02-26 173d8c42 ci: remove qtdeclarative from Qt modules (included in base)
+- 2026-02-26 60769c3b ci: fix GTK3 canberra dep, MSYS2 step order, FreeBSD stability
+- 2026-02-26 9c795e77 ci: fix deb packaging permissions and Windows Qt6 Python setup
+- 2026-02-26 da66436a ci: add GTK3, FreeBSD jobs and .deb packaging
+- 2026-02-26 bef51349 ci: add Windows CI job with MSVC + vcpkg + Qt6
+- 2026-02-26 a1ad2d71 ci: switch to ubuntu-24.04 hosted runner with full deps
+- 2026-02-26 013bbbb5 ci: install libgl-dev for OpenGL headers on self-hosted runner
+- 2026-02-26 83645d9d fix: add missing break in DecorationRole switch cases
+- 2026-02-26 3cced670 fix: emoticon dialog sizing, share browser title, progress bar rendering
+- 2026-02-25 44441671 docs: update README for Qt6, add GitHub Actions CI workflow
+- 2026-02-25 2bbf5094 refactor: drop Qt5 support, Qt6-only build
+- 2026-02-25 c0a0e1c1 chore: remove plan file from version control
+- 2026-02-25 141d422e Add Joe Rivera copyright to all modified source files
+- 2026-02-25 c25ff542 Fix hang on exit: explicitly call qApp->quit() in closeEvent
+- 2026-02-25 abe1c31e Symlink icons from source tree into build tree for dev builds
+- 2026-02-25 41d116f9 Qt6 build fixes, runtime crash fixes, and icon loading improvements
+- 2026-02-22 d9e393aa Phase 6: Modernize SIGNAL/SLOT to new-style connect (~560 connections)
+- 2026-02-22 fc7f74b2 Phase 5: QDeclarativeView → QQuickWidget — 100/100 tests on both Qt5 and Qt6
+- 2026-02-22 de9945a3 Phase 4: QScriptEngine → QJSEngine port — 100/100 tests on both Qt5 and Qt6
+- 2026-02-22 5afba046 Phase 3: Qt6 compiles successfully — all 100 tests pass
+- 2026-02-22 ffa9931e Phase 2f: Fix remaining Qt5 deprecation warnings
+- 2026-02-21 2d79a114 Phase 2e: Remove Qt4 compat code and deprecated Qt5 patterns
+- 2026-02-21 0d49e021 Phase 2d: QSound → QSoundEffect (Qt6-compatible)
+- 2026-02-21 0bd53343 Phase 2c: Remove QTextCodec (all dead/unused code)
+- 2026-02-21 f07fe3b7 Phase 2b: QRegExp → QRegularExpression (all 25 usages, 12 files)
+- 2026-02-21 ed470857 Phase 2a: Simple Qt6 API renames (Qt5-compatible)
+- 2026-02-21 ded71fa9 Phase 0.4+1: Add USE_QT6 option + dual Qt5/Qt6 CMake support
+- 2026-02-21 55cf5637 Phase 0.3: Remove Qt4 and GTK2 dead code from CMake
+- 2026-02-21 cd2596d9 B1: Add regression test suite (100 tests) for Qt6 migration
+- 2026-02-21 876c0c7a fix(gtk): replace ConnectivityManager::getInstance() in mainwindow.cc
+- 2026-02-21 dd9328ca A4: Remove Singleton<T> from DCContext-owned managers
+- 2026-02-21 a1dcfe26 A2.5: Complete dcpp/ getInstance() mop-up
+- 2026-02-21 91d12e6a A3.2+A3.4: Thread DCContext through daemon and GTK GUI
+- 2026-02-21 9fd55e94 A3: Thread DCContext through Qt GUI layer
+- 2026-02-21 e5cb6567 refactor(A2): replace 290 getInstance() calls with ctx()-> in dcpp core
+- 2026-02-21 8b828bc2 refactor(A1): DCContext owns all 20 core managers via unique_ptr
+- 2026-02-21 939598bf refactor: upgrade to C++20 and modernize core infrastructure
+- 2026-02-21 c2fc7efe test(B0): add Catch2 v3 test infrastructure with initial tests
+- 2026-02-21 70d08e81 refactor(A0.4): add ContextAware base class to all managers
+- 2026-02-21 a974ad30 refactor(A0.3): add empty DCContext skeleton class
+- 2026-02-21 1e486cbc refactor(A0.2): fix manager destructor issues
+- 2026-02-20 04fef4d5 refactor(A0.1): make all manager constructors/destructors public
+- 2026-02-20 fe75b29d fix: enable clean shutdown and re-initialization of dcpp singletons

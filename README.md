@@ -4,8 +4,8 @@
     <img src="screenshot.png" width="99%">
 </a>
 
-Website: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp) <br>
-Sources: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp)
+Website: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp) <br>
+Sources: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp)
 
 Wiki: https://github.com/eiskaltdcpp/eiskaltdcpp/wiki
 
@@ -64,7 +64,7 @@ Currently supported features (not full list):
 
 ## Versions history
 
-See [ChangeLog.txt](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/ChangeLog.txt) file.
+See [ChangeLog.txt](./ChangeLog.txt) and [CHANGELOG_FORK_DELTA.md](./CHANGELOG_FORK_DELTA.md) for full fork delta vs original upstream.
 
 ## Installation
 
