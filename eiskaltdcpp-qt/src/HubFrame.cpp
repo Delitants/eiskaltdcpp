@@ -90,6 +90,12 @@ QString translatedPictureLabel()
     return _q(_("Picture"));
 }
 
+QString themedChatTextColor(const QPalette &palette)
+{
+    const int lightness = (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2;
+    return lightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+}
+
 class ChatInputResizeGrip final : public QWidget
 {
 public:
@@ -2894,6 +2900,7 @@ void HubFrame::newMsg(const VarMap &map){
     QString time = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_TIME_COLOR)+ "\">[" + map["TIME"].toString() + "]</font>";;
     QString color = map["CLR"].toString();
     QString msg_color = WS_CHAT_MSG_COLOR;
+    QString msgColorValue = themedChatTextColor(textEdit_CHAT->palette());
     QString trigger;
 
     const QStringList &kwords = qtCtx()->settings()->getVar("hubframe/chat-keywords", QStringList()).toStringList();
@@ -2901,6 +2908,7 @@ void HubFrame::newMsg(const VarMap &map){
     for (const auto &word : kwords){
         if (message.contains(word, Qt::CaseInsensitive)){
             msg_color = WS_CHAT_SAY_NICK;
+            msgColorValue = qtCtx()->settings()->getStr(WS_CHAT_SAY_NICK);
             trigger = word;
 
             break;
@@ -2909,6 +2917,7 @@ void HubFrame::newMsg(const VarMap &map){
 
     if (message.indexOf(_q(d->client->getMyNick())) >= 0){
         msg_color = WS_CHAT_SAY_NICK;
+        msgColorValue = qtCtx()->settings()->getStr(WS_CHAT_SAY_NICK);
         trigger = _q(d->client->getMyNick());
 
         qtCtx()->notification()->showMessage(Notification::NICKSAY, getArenaTitle().left(20), nick + ": " + message);
@@ -2932,7 +2941,7 @@ void HubFrame::newMsg(const VarMap &map){
 
     qtCtx()->wulforUtil()->textToHtml(nicktoout, true);
 
-    message = "<font color=\"" + qtCtx()->settings()->getStr(msg_color) + "\">" + message + "</font>";
+    message = "<font color=\"" + msgColorValue + "\">" + message + "</font>";
 
     output  += time;
     string info= Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
@@ -3051,7 +3060,7 @@ void HubFrame::newPm(const VarMap &map){
 
     qtCtx()->wulforUtil()->textToHtml(nick, true);
 
-    message       = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_MSG_COLOR) + "\">" + message + "</font>";
+    message       = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + message + "</font>";
     full_message  += time;
     string info= Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
 
@@ -3116,7 +3125,7 @@ void HubFrame::pmUserEvent(const QString &cid, const QString &e){
     QString output = "";
     QString nick    = " * ";
 
-    QString msg     = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_MSG_COLOR) + "\">" + e + "</font>";
+    QString msg     = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + e + "</font>";
     QString time    = "";
 
     if (!qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP).isEmpty())
@@ -3206,17 +3215,18 @@ void HubFrame::findText(QTextDocument::FindFlags flag){
 void HubFrame::updateStyles(){
     QString custom_font_desc = qtCtx()->settings()->getStr(WS_CHAT_FONT);
     QFont custom_font;
+    const QString chatTextColor = themedChatTextColor(textEdit_CHAT->palette());
 
     if (!custom_font_desc.isEmpty() && custom_font.fromString(custom_font_desc)){
         textEdit_CHAT->document()->setDefaultStyleSheet(
-                QString("pre { margin:0px; white-space:pre-wrap; font-family:'%1'; font-size: %2pt; }")
-                                                        .arg(custom_font.family()).arg(custom_font.pointSize())
+                QString("pre { margin:0px; white-space:pre-wrap; color:%3; font-family:'%1'; font-size: %2pt; }")
+                                                        .arg(custom_font.family()).arg(custom_font.pointSize()).arg(chatTextColor)
                                                        );
     }
     else {
         textEdit_CHAT->document()->setDefaultStyleSheet(
-                                                        QString("pre { margin:0px; white-space:pre-wrap; font-family:'%1' }")
-                                                        .arg(QApplication::font().family())
+                                                        QString("pre { margin:0px; white-space:pre-wrap; color:%2; font-family:'%1' }")
+                                                        .arg(QApplication::font().family()).arg(chatTextColor)
                                                        );
     }
 

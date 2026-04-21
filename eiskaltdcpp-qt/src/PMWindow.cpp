@@ -60,6 +60,12 @@ static inline void clearLayout(QLayout *l){
     l->invalidate();
 }
 
+static QString themedChatTextColor(const QPalette &palette)
+{
+    const int lightness = (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2;
+    return lightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+}
+
 static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)
 {
     const QUrl url(urlText);
@@ -495,17 +501,18 @@ void PMWindow::clearChat(){
 void PMWindow::updateStyles(){
     QString custom_font_desc = qtCtx()->settings()->getStr(WS_CHAT_PM_FONT);
     QFont custom_font;
+    const QString chatTextColor = themedChatTextColor(textEdit_CHAT->palette());
 
     if (!custom_font_desc.isEmpty() && custom_font.fromString(custom_font_desc)){
         textEdit_CHAT->document()->setDefaultStyleSheet(
-                                                        QString("pre { margin:0px; white-space:pre-wrap; font-family:'%1'; font-size: %2pt; }")
-                                                        .arg(custom_font.family()).arg(custom_font.pointSize())
+                                                        QString("pre { margin:0px; white-space:pre-wrap; color:%3; font-family:'%1'; font-size: %2pt; }")
+                                                        .arg(custom_font.family()).arg(custom_font.pointSize()).arg(chatTextColor)
                                                        );
     }
     else {
         textEdit_CHAT->document()->setDefaultStyleSheet(
-                                                        QString("pre { margin:0px; white-space:pre-wrap; font-family:'%1' }")
-                                                        .arg(QApplication::font().family())
+                                                        QString("pre { margin:0px; white-space:pre-wrap; color:%2; font-family:'%1' }")
+                                                        .arg(QApplication::font().family()).arg(chatTextColor)
                                                        );
     }
 }
@@ -533,7 +540,7 @@ void PMWindow::addStatus(QString msg){
     qtCtx()->wulforUtil()->textToHtml(msg, true);
     qtCtx()->wulforUtil()->textToHtml(nick, true);
 
-    msg             = "<font color=\"" + qtCtx()->settings()->getStr(WS_CHAT_MSG_COLOR) + "\">" + msg + "</font>";
+    msg             = "<font color=\"" + themedChatTextColor(textEdit_CHAT->palette()) + "\">" + msg + "</font>";
     QString time    = "";
 
     if (!qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP).isEmpty())
