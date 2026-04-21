@@ -1,5 +1,9 @@
 # EiskaltDC++ &ndash; file sharing program using Direct Connect protocols
 
+<a href="screenshot.png" title="EiskaltDC++ on macOS">
+    <img src="screenshot.png" width="99%">
+</a>
+
 Website: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp) <br>
 Sources: [https://github.com/eiskaltdcpp/eiskaltdcpp](https://github.com/eiskaltdcpp/eiskaltdcpp)
 
@@ -57,10 +61,6 @@ Currently supported features (not full list):
 * Support of IDN2 (recognition of national domain names).
 * Support of URL encoded strings for hub addresses.
 * Support of traffic encryption.
-
-<a href="screenshot.png" title="EiskaltDC++ on macOS">
-    <img src="screenshot.png" width="99%">
-</a>
 
 ## Versions history
 
