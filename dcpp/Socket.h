@@ -79,8 +79,8 @@ public:
         PROTO_ADC = 2
     };
 
-    Socket() : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), ctx_(nullptr) { }
-    Socket(const string& aIp, const string& aPort) : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), ctx_(nullptr) { connect(aIp, aPort); }
+    Socket() : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { }
+    Socket(const string& aIp, const string& aPort) : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { connect(aIp, aPort); }
     virtual ~Socket() { disconnect(); }
 
     void setContext(DCContext* ctx) { ctx_ = ctx; }
@@ -133,7 +133,7 @@ public:
      * @return Number of bytes read, 0 if disconnected and -1 if the call would block.
      * @throw SocketException On any failure.
      */
-    virtual int read(void* aBuffer, int aBufLen, sockaddr_in& remote);
+    virtual int read(void* aBuffer, int aBufLen, sockaddr_storage& remote);
     /**
      * Reads data until aBufLen bytes have been read or an error occurs.
      * If the socket is closed, or the timeout is reached, the number of bytes read
@@ -157,7 +157,7 @@ public:
     Protocol getNextProtocol();
 
     // Low level interface
-    virtual void create(int aType = TYPE_TCP);
+    virtual void create(int aType = TYPE_TCP, int aFamily = AF_INET);
 
     /** Binds a socket to a certain local port and possibly IP. */
     virtual const string bind(const string &aPort = Util::emptyString, const string& aIp = "0.0.0.0");
@@ -175,6 +175,8 @@ public:
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
     string getIfaceI4 (const string &iface);
+    string getIfaceI6 (const string &iface);
+    int getFamily() const { return family; }
 
     GETSET(string, ip, Ip);
 
@@ -184,6 +186,7 @@ protected:
     int type;
     bool connected;
     Protocol proto;
+    int family;
 
     class Stats {
     public:

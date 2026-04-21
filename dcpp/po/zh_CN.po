@@ -523,7 +523,7 @@ msgstr ""
 
 #: ../SearchManager.cpp:42
 msgid "Picture"
-msgstr ""
+msgstr "图片"
 
 #: ../SearchManager.cpp:43
 msgid "Video"

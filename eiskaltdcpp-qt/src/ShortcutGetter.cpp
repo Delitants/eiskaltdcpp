@@ -296,10 +296,10 @@ bool ShortcutGetter::event(QEvent *e)
 
 		//qDebug("event: key.count: %d, mods.count: %d", key.count(), mods.count());
 
-		if ( key.count() || mods.count() )
+		if ( !key.isEmpty() || !mods.isEmpty() )
 		{
 
-			if ( key.count() && !lKeys.contains(key) )
+			if ( !key.isEmpty() && !lKeys.contains(key) )
 				lKeys << key;
 
 			for ( const auto &key : mods ) {

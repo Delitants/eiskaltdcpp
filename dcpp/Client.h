@@ -109,7 +109,12 @@ public:
     const string& getAddress() const { return address; }
 
     const string& getIp() const { return ip; }
-    string getIpPort() const { return getIp() + ':' + port; }
+    string getIpPort() const {
+        if(getIp().find(':') != string::npos) {
+            return "[" + getIp() + "]:" + port;
+        }
+        return getIp() + ':' + port;
+    }
     string getLocalIp() const;
 
     static string getCounts() {

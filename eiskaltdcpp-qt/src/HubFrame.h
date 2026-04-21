@@ -21,10 +21,12 @@
 #include <QMenu>
 #include <QAction>
 #include <QHash>
+#include <QSet>
 #include <QSortFilterProxyModel>
 #include <QCompleter>
 #include <QMetaType>
 #include <QTextBlockUserData>
+#include <QTextDocumentFragment>
 #include <memory>
 
 #include "ui_HubFrame.h"
@@ -44,6 +46,7 @@
 class ShellCommandRunner;
 class PMWindow;
 class HubFramePrivate;
+class EmoticonDialog;
 
 using namespace dcpp;
 
@@ -96,6 +99,7 @@ class HubFrame :
             /** Additional actions for userlist */
             CopyComment,
             CopyIP,
+            CopyIPv6,
             CopyShare,
             CopyTag,
             CopyEmail,
@@ -130,6 +134,7 @@ class HubFrame :
 public:
     class LinkParser{
     public:
+       static void setInlineImageMaxWidth(int);
        static QString parseForLinks(QString, bool);
        static void parseForMagnetAlias(QString &output);//find and replace <magnet ...></magnet> sections
     };
@@ -281,6 +286,7 @@ private:
     void findText(QTextDocument::FindFlags );
 
     void updateStyles();
+    void setupChatInputSplitter();
 
     /** Extracts data from user identity */
     void getParams(VarMap &, const Identity &);
@@ -306,6 +312,9 @@ private:
 
     Q_DECLARE_PRIVATE(HubFrame)
     HubFramePrivate *d_ptr;
+    EmoticonDialog *emojiDialog_;
+    QSet<QString> expandedInlineImageKeys_;
+    QHash<QString, QTextDocumentFragment> collapsedInlineImageBlocks_;
 
     std::unique_ptr<Menu> menu_;
 };

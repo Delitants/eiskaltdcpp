@@ -27,6 +27,7 @@ using namespace dcpp;
 PublicHubsList::PublicHubsList(QWidget *parent): QDialog(parent)
 {
     setupUi(this);
+    setWindowTitle(tr("Public hub list URLs"));
 
     listWidget->addItems(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS))
                          .split(";", Qt::SkipEmptyParts));
@@ -50,7 +51,7 @@ void PublicHubsList::slotAccepted(){
 void PublicHubsList::slotDown(){
     int currentRow = listWidget->currentRow();
 
-    if (currentRow > listWidget->count()-1)
+    if (currentRow < 0 || currentRow >= listWidget->count()-1)
         return;
 
     QListWidgetItem *currentItem = listWidget->takeItem(currentRow);
@@ -82,7 +83,7 @@ void PublicHubsList::slotAdd(){
 void PublicHubsList::slotRem(){
     int currentRow = listWidget->currentRow();
 
-    if (!currentRow)
+    if (currentRow < 0)
         return;
 
     QListWidgetItem *currentItem = listWidget->takeItem(currentRow);

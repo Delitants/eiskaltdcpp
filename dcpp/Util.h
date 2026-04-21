@@ -429,6 +429,7 @@ public:
     static int strncmp(const wstring& a, const wstring& b, size_t n) { return strncmp(a.c_str(), b.c_str(), n); }
 
     static string getIpCountry (string IP);
+    static string getCountryFlag(const string& countryCode);
 
     static void setLang(DCContext& ctx, const string& lang);
 

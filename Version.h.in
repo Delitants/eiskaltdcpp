@@ -14,7 +14,7 @@
 #define VERSIONSTRING "@VERSION_BASE@"
 #define VERSIONFLOAT "@CONF_VERSION@"
 #define APPNAME "@PROJECT_NAME@"
-#define DCPP_VERSION "0.785"
+#define DCPP_VERSION "0.883"
 
 const std::string eiskaltdcppVersionString("@APP_VERSION@");
 const std::string eiskaltdcppAppNameString("@PROJECT_NAME@");

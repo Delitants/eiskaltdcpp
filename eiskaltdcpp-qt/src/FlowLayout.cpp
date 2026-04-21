@@ -43,13 +43,13 @@
 #include "FlowLayout.h"
 
 FlowLayout::FlowLayout(QWidget *parent, int margin, int hSpacing, int vSpacing)
-    : QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing)
+    : QLayout(parent), m_hSpace(hSpacing), m_vSpace(vSpacing), m_rowAlignment(Qt::AlignLeft | Qt::AlignTop)
 {
     setContentsMargins(margin, margin, margin, margin);
 }
 
 FlowLayout::FlowLayout(int margin, int hSpacing, int vSpacing)
-    : m_hSpace(hSpacing), m_vSpace(vSpacing)
+    : m_hSpace(hSpacing), m_vSpace(vSpacing), m_rowAlignment(Qt::AlignLeft | Qt::AlignTop)
 {
     setContentsMargins(margin, margin, margin, margin);
 }
@@ -93,6 +93,15 @@ QLayoutItem *FlowLayout::takeAt(int index) {
         return itemList.takeAt(index);
     else
         return nullptr;
+}
+
+void FlowLayout::setRowAlignment(Qt::Alignment alignment) {
+    m_rowAlignment = alignment;
+    invalidate();
+}
+
+Qt::Alignment FlowLayout::rowAlignment() const {
+    return m_rowAlignment;
 }
 
 Qt::Orientations FlowLayout::expandingDirections() const {
@@ -187,36 +196,81 @@ void FlowLayout::place(QWidget *on, QWidget *what){
 int FlowLayout::doLayout(const QRect &rect, bool testOnly) const {
     const QMargins cm = contentsMargins();
     QRect effectiveRect = rect.adjusted(cm.left(), cm.top(), -cm.right(), -cm.bottom());
-    int x = effectiveRect.x();
-    int y = effectiveRect.y();
-    int lineHeight = 0;
+    struct Row {
+        QList<QLayoutItem *> items;
+        int width = 0;
+        int height = 0;
+    };
+
+    QList<Row> rows;
+    Row currentRow;
+
+    const int availableWidth = qMax(0, effectiveRect.width());
 
     for (const auto &item : itemList) {
         QWidget *wid = item->widget();
         int spaceX = horizontalSpacing();
         if (spaceX == -1)
-            spaceX = wid->style()->layoutSpacing(
-                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
-        int spaceY = verticalSpacing();
-        if (spaceY == -1)
-            spaceY = wid->style()->layoutSpacing(
-                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
+            spaceX = wid->style()->layoutSpacing(QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
 
-        int nextX = x + item->sizeHint().width() + spaceX;
-        if (nextX - spaceX > effectiveRect.right() && lineHeight > 0) {
-            x = effectiveRect.x();
-            y = y + lineHeight + spaceY;
-            nextX = x + item->sizeHint().width() + spaceX;
-            lineHeight = 0;
+        const int itemWidth = item->sizeHint().width();
+        const int projectedWidth = currentRow.items.isEmpty() ? itemWidth : currentRow.width + spaceX + itemWidth;
+
+        if (!currentRow.items.isEmpty() && projectedWidth > availableWidth) {
+            rows.append(currentRow);
+            currentRow = Row();
         }
 
-        if (!testOnly)
-            item->setGeometry(QRect(QPoint(x, y), item->sizeHint()));
+        if (currentRow.items.isEmpty()) {
+            currentRow.width = itemWidth;
+        } else {
+            currentRow.width += spaceX + itemWidth;
+        }
 
-        x = nextX;
-        lineHeight = qMax(lineHeight, item->sizeHint().height());
+        currentRow.height = qMax(currentRow.height, item->sizeHint().height());
+        currentRow.items.append(item);
     }
-    return y + lineHeight - rect.y() + cm.bottom();
+
+    if (!currentRow.items.isEmpty())
+        rows.append(currentRow);
+
+    int y = effectiveRect.y();
+    for (int rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
+        const Row &row = rows.at(rowIndex);
+
+        int x = effectiveRect.x();
+        if (m_rowAlignment.testFlag(Qt::AlignHCenter))
+            x += qMax(0, (availableWidth - row.width) / 2);
+        else if (m_rowAlignment.testFlag(Qt::AlignRight))
+            x += qMax(0, availableWidth - row.width);
+
+        for (int itemIndex = 0; itemIndex < row.items.size(); ++itemIndex) {
+            QLayoutItem *item = row.items.at(itemIndex);
+            QWidget *wid = item->widget();
+
+            if (!testOnly)
+                item->setGeometry(QRect(QPoint(x, y), item->sizeHint()));
+
+            if (itemIndex + 1 < row.items.size()) {
+                int spaceX = horizontalSpacing();
+                if (spaceX == -1)
+                    spaceX = wid->style()->layoutSpacing(QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
+                x += item->sizeHint().width() + spaceX;
+            }
+        }
+
+        if (rowIndex + 1 < rows.size()) {
+            QWidget *wid = row.items.first()->widget();
+            int spaceY = verticalSpacing();
+            if (spaceY == -1)
+                spaceY = wid->style()->layoutSpacing(QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
+            y += row.height + spaceY;
+        } else {
+            y += row.height;
+        }
+    }
+
+    return y - rect.y() + cm.bottom();
 }
 
 int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const {
@@ -230,4 +284,3 @@ int FlowLayout::smartSpacing(QStyle::PixelMetric pm) const {
         return static_cast<QLayout *>(parent)->spacing();
     }
 }
-

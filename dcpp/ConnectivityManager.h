@@ -70,6 +70,8 @@ private:
     bool running;
 
     string lastBind;
+    string lastBind6;
+    bool lastUseIPv6;
 };
 
 } // namespace dcpp

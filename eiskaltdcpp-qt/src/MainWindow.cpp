@@ -11,6 +11,9 @@
  */
 
 #include "MainWindow.h"
+#ifdef WITH_DHT
+#include "dht/DHT.h"
+#endif
 #include "Notification.h"
 
 #include <stdlib.h>
@@ -27,6 +30,7 @@
 #include <QClipboard>
 #include <QKeyEvent>
 #include <QProgressBar>
+#include <QPointer>
 #include <QFileDialog>
 #include <QDir>
 #include <QInputDialog>
@@ -38,6 +42,11 @@
 #include <QTreeView>
 #include <QMetaType>
 #include <QTimer>
+#if defined(Q_OS_MAC)
+#include <objc/objc.h>
+#include <objc/message.h>
+#include <objc/runtime.h>
+#endif
 #include <QAction>
 #include <QActionGroup>
 #include <QStatusBar>
@@ -50,6 +59,7 @@
 #include "HashProgress.h"
 #include "PMWindow.h"
 #include "TransferView.h"
+#include "GlobalTimer.h"
 #include "ShareBrowser.h"
 #include "QuickConnect.h"
 #include "SearchFrame.h"
@@ -80,6 +90,27 @@
 #include "ScriptManagerDialog.h"
 #include "scriptengine/ScriptConsole.h"
 #include "scriptengine/ScriptEngine.h"
+#endif
+
+#if defined(Q_OS_MAC)
+static void cancelMacTermination()
+{
+    Class nsAppClass = (Class)objc_getClass("NSApplication");
+    if (!nsAppClass)
+        return;
+
+    id app = ((id (*)(Class, SEL))objc_msgSend)(nsAppClass, sel_registerName("sharedApplication"));
+    if (!app)
+        return;
+
+    // NSTerminateCancel = 0
+    ((void (*)(id, SEL, long))objc_msgSend)(app, sel_registerName("replyToApplicationShouldTerminate:"), 0L);
+}
+
+static void tuneMacMainWindowDragBehavior(QWidget *w)
+{
+    Q_UNUSED(w);
+}
 #endif
 
 #include "dcpp/ShareManager.h"
@@ -276,8 +307,10 @@ MainWindow::MainWindow (dcpp::DCContext& ctx, QWidget *parent):
     d->transfer_dock->setWidget(qtCtx()->transferView());
     d->toolsTransfers->setChecked(d->transfer_dock->isVisible());
 
+ #if !defined(Q_OS_MAC)
     if (!qtCtx()->settings()->getStr(WS_APP_THEME).isEmpty())
         qApp->setStyle(qtCtx()->settings()->getStr(WS_APP_THEME));
+ #endif
 
     if (qtCtx()->settings()->getBool(WB_APP_REMOVE_NOT_EX_DIRS)){
         StringPairList directories = dcCtx().getShareManager()->getDirectories();
@@ -326,13 +359,12 @@ MainWindow::~MainWindow(){
     delete d_ptr;
 }
 
-void MainWindow::setUnload ( bool b ) {
+void MainWindow::setUnload(bool b){
     Q_D(MainWindow);
-
     d->isUnload = b;
 }
 
-void MainWindow::closeEvent(QCloseEvent *c_e){
+void MainWindow::closeEvent(QCloseEvent *e){
     Q_D(MainWindow);
 
 #if defined(Q_OS_MAC)
@@ -341,7 +373,7 @@ void MainWindow::closeEvent(QCloseEvent *c_e){
     if (!d->isUnload && qtCtx()->settings()->getBool(WB_TRAY_ENABLED)){
 #endif // defined(Q_OS_MAC)
         hide();
-        c_e->ignore();
+        e->ignore();
 
         return;
     }
@@ -362,12 +394,33 @@ void MainWindow::closeEvent(QCloseEvent *c_e){
             d->exitBegin = true;
         }
         else{
+            d->exitBegin = false;
             setUnload(false);
+            e->setAccepted(false);
+            e->ignore();
 
-            c_e->ignore();
+#if defined(Q_OS_MAC)
+            cancelMacTermination();
+
+            this->show();
+            this->showNormal();
+            this->raise();
+            this->activateWindow();
+
+            QTimer::singleShot(0, this, [this]() {
+                this->show();
+                this->showNormal();
+                this->raise();
+                this->activateWindow();
+            });
+#endif
 
             return;
         }
+    }
+
+    if (qtCtx()->globalTimer()) {
+        qtCtx()->globalTimer()->stop();
     }
 
     saveSettings();
@@ -399,26 +452,16 @@ void MainWindow::closeEvent(QCloseEvent *c_e){
         qtCtx()->destroyNotification();
     }
 
-    // Close all hub connections before quitting.  This triggers each
-    // HubFrame::closeEvent() which properly disconnects and releases
-    // the dcpp Client, preventing use-after-free crashes during
-    // dcpp::shutdown().
-    if (qtCtx()->hubManager()) {
-        QList<QObject*> hubList = qtCtx()->hubManager()->getHubs();
-        for (QObject *obj : hubList) {
-            HubFrame *hub = qobject_cast<HubFrame*>(obj);
-            if (hub)
-                hub->close();
-        }
-    }
+    // Do not force-close HubFrames here on macOS.
+    // Let normal application teardown destroy them in a safer order.
 
     d->arena->hide();
     d->arena->setWidget(nullptr);
 
-    c_e->accept();
+    e->accept();
 
     // In Qt6 the quit-on-last-window-closed mechanism may not fire when
-    // blockSignals(true) has been called on this widget.  Explicitly ask
+    // blockSignals(true) has been called on this widget. Explicitly ask
     // the application to quit so that QCoreApplication::exec() returns.
     qApp->quit();
 }
@@ -601,7 +644,9 @@ void MainWindow::init(){
 
     loadSettings();
 
+#if !defined(Q_OS_MAC)
     connect(qApp, &QApplication::aboutToQuit, this, &MainWindow::slotExit);
+#endif
 
     connect(qtCtx()->arenaWidgetManager(), &ArenaWidgetManager::activated, this, &MainWindow::mapWidgetOnArena);
     connect(qtCtx()->arenaWidgetManager(), &ArenaWidgetManager::added,     this, &MainWindow::insertWidget);
@@ -1507,6 +1552,7 @@ void MainWindow::initToolbar(){
     d->fBar->setFloatable(true);
     d->fBar->setAllowedAreas(Qt::AllToolBarAreas);
     d->fBar->setWindowTitle(tr("Actions"));
+    d->fBar->setIconSize(QSize(28, 28));
     d->fBar->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(qtCtx()->settings()->getInt(TOOLBUTTON_STYLE, Qt::ToolButtonIconOnly)));
 
     connect(d->fBar, &QWidget::customContextMenuRequested, this, &MainWindow::slotToolbarCustomization);
@@ -1533,6 +1579,7 @@ void MainWindow::initToolbar(){
         tBar->setFloatable(true);
         tBar->setAllowedAreas(Qt::AllToolBarAreas);
         tBar->setContextMenuPolicy(Qt::CustomContextMenu);
+        tBar->setIconSize(QSize(28, 28));
 
         addToolBar(tBar);
 
@@ -1547,6 +1594,7 @@ void MainWindow::initToolbar(){
     d->sBar->setMovable(true);
     d->sBar->setFloatable(true);
     d->sBar->setAllowedAreas(Qt::AllToolBarAreas);
+    d->sBar->setIconSize(QSize(26, 26));
 
     addToolBar(d->sBar);
 }
@@ -1759,6 +1807,13 @@ void MainWindow::updateStatus(const QMap<QString, QString> &map){
         return;
 
     QString statsText = map["STATS"];
+
+#ifdef WITH_DHT
+    if (auto *dht = qtCtx()->dcCtx().getDHT()) {
+        statsText += tr(" | DHT nodes: %1").arg((qulonglong)dht->getNodesCount());
+    }
+#endif
+
     QFontMetrics metrics(d->statusLabel->font());
 
     d->statusLabel->setText(statsText);
@@ -2817,7 +2872,8 @@ void MainWindow::slotAboutClient() {
         "https://github.com/eiskaltdcpp/eiskaltdcpp/issues</a> to report bugs.<br/>")+
         QString("<br/>")+
         tr("<b>Developers</b><br/>")+
-        QString("<br/>")+
+        tr("2026 <a href=\"mailto:admin@nlight.org.ua\">Neolo</a><br/>")+
+                QString("<br/>")+
         QString("&nbsp; 2009-2012 <a href=\"mailto:dein.negativ@gmail.com\">Andrey Karlov</a><br/>")+
         QString("&nbsp;&nbsp;&nbsp; * ")+
         tr("lead developer")+QString(", 2009-2012")+
@@ -3220,3 +3276,40 @@ void MainWindow::initDockMenuBar(){
 }
 #endif // defined(Q_OS_MAC)
 
+
+
+
+
+bool MainWindow::confirmExit() {
+    Q_D(MainWindow);
+
+#if defined(Q_OS_MAC)
+    const bool needConfirm =
+        qtCtx()->settings()->getBool(WB_EXIT_CONFIRM) &&
+        !d->exitBegin;
+#else
+    const bool needConfirm =
+        d->isUnload &&
+        qtCtx()->settings()->getBool(WB_EXIT_CONFIRM) &&
+        !d->exitBegin;
+#endif
+
+    if (!needConfirm)
+        return true;
+
+    const auto ret = QMessageBox::question(
+        this,
+        tr("Exit"),
+        tr("Exit program?"),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::No
+    );
+
+    if (ret == QMessageBox::Yes) {
+        d->exitBegin = true;
+        return true;
+    }
+
+    d->exitBegin = false;
+    return false;
+}

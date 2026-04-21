@@ -17,25 +17,126 @@
 #include <QLabel>
 #include <QLayout>
 #include <QMouseEvent>
+#include <QScrollArea>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <QSet>
 
 #include "EmoticonFactory.h"
 #include "FlowLayout.h"
 
 /** */
 EmoticonDialog::EmoticonDialog(QWidget * parent, Qt::WindowFlags f)
-: QDialog(parent, f) {
-    m_pLayout = new FlowLayout(this);
-
-    m_pLayout->setContentsMargins(0, 0, 0, 0);
-    m_pLayout->setSpacing(0);
-
+: QDialog(parent, f), m_scrollArea(nullptr), m_scrollContent(nullptr) {
     setWindowTitle(tr("Select emoticon"));
+    setWindowModality(Qt::NonModal);
+
+    // Create scroll area
+    m_scrollArea = new QScrollArea(this);
+    m_scrollArea->setWidgetResizable(true);
+    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_scrollArea->setFrameShape(QFrame::NoFrame);
+
+    // Create content widget
+    m_scrollContent = new QWidget();
+    m_pLayout = new FlowLayout(m_scrollContent);
+    m_pLayout->setRowAlignment(Qt::AlignHCenter);
+    m_pLayout->setContentsMargins(2, 2, 2, 2);
+    m_pLayout->setSpacing(2);
 
     QSize s;
-    qtCtx()->emoticonFactory()->fillLayout(m_pLayout, s);
+    int initialCount = 0;
+    if (qtCtx()->emoticonFactory()) {
+        qtCtx()->emoticonFactory()->fillLayout(m_pLayout, s);
+        initialCount = m_pLayout->count();
+    }
 
-    setMinimumSize(s);
-    resize(s);
+    // Supplement with Unicode emojis when the selected theme is sparse or unavailable.
+    if (initialCount < 140) {
+        QSet<QString> existingEntries;
+        const QList<EmoticonLabel*> existingLabels = m_scrollContent->findChildren<EmoticonLabel*>(QString(), Qt::FindDirectChildrenOnly);
+        for (const auto *label : existingLabels)
+            existingEntries.insert(label->toolTip());
+
+        static const QStringList unicodeEmojis = {
+            QString::fromUtf8("😀"), QString::fromUtf8("😃"), QString::fromUtf8("😄"), QString::fromUtf8("😁"),
+            QString::fromUtf8("😆"), QString::fromUtf8("😅"), QString::fromUtf8("🤣"), QString::fromUtf8("😂"),
+            QString::fromUtf8("🙂"), QString::fromUtf8("🙃"), QString::fromUtf8("😉"), QString::fromUtf8("😊"),
+            QString::fromUtf8("😇"), QString::fromUtf8("🥰"), QString::fromUtf8("😍"), QString::fromUtf8("🤩"),
+            QString::fromUtf8("😘"), QString::fromUtf8("😗"), QString::fromUtf8("😚"), QString::fromUtf8("😙"),
+            QString::fromUtf8("😋"), QString::fromUtf8("😛"), QString::fromUtf8("😜"), QString::fromUtf8("🤪"),
+            QString::fromUtf8("😝"), QString::fromUtf8("🤑"), QString::fromUtf8("🤗"), QString::fromUtf8("🤭"),
+            QString::fromUtf8("🤫"), QString::fromUtf8("🤔"), QString::fromUtf8("🤐"), QString::fromUtf8("🤨"),
+            QString::fromUtf8("😐"), QString::fromUtf8("😑"), QString::fromUtf8("😶"), QString::fromUtf8("😏"),
+            QString::fromUtf8("😒"), QString::fromUtf8("🙄"), QString::fromUtf8("😬"), QString::fromUtf8("🤥"),
+            QString::fromUtf8("😌"), QString::fromUtf8("😔"), QString::fromUtf8("😪"), QString::fromUtf8("🤤"),
+            QString::fromUtf8("😴"), QString::fromUtf8("😷"), QString::fromUtf8("🤒"), QString::fromUtf8("🤕"),
+            QString::fromUtf8("🤢"), QString::fromUtf8("🤮"), QString::fromUtf8("🤧"), QString::fromUtf8("🥵"),
+            QString::fromUtf8("🥶"), QString::fromUtf8("🥴"), QString::fromUtf8("😵"), QString::fromUtf8("🤯"),
+            QString::fromUtf8("🤠"), QString::fromUtf8("🥳"), QString::fromUtf8("😎"), QString::fromUtf8("🤓"),
+            QString::fromUtf8("🧐"), QString::fromUtf8("😕"), QString::fromUtf8("😟"), QString::fromUtf8("🙁"),
+            QString::fromUtf8("☹️"), QString::fromUtf8("😮"), QString::fromUtf8("😯"), QString::fromUtf8("😲"),
+            QString::fromUtf8("😳"), QString::fromUtf8("🥺"), QString::fromUtf8("😦"), QString::fromUtf8("😧"),
+            QString::fromUtf8("😨"), QString::fromUtf8("😰"), QString::fromUtf8("😥"), QString::fromUtf8("😢"),
+            QString::fromUtf8("😭"), QString::fromUtf8("😱"), QString::fromUtf8("😖"), QString::fromUtf8("😣"),
+            QString::fromUtf8("😞"), QString::fromUtf8("😓"), QString::fromUtf8("😩"), QString::fromUtf8("😫"),
+            QString::fromUtf8("🥱"), QString::fromUtf8("😤"), QString::fromUtf8("😡"), QString::fromUtf8("😠"),
+            QString::fromUtf8("🤬"), QString::fromUtf8("😈"), QString::fromUtf8("👿"), QString::fromUtf8("💀"),
+            QString::fromUtf8("☠️"), QString::fromUtf8("💩"), QString::fromUtf8("🤡"), QString::fromUtf8("👹"),
+            QString::fromUtf8("👺"), QString::fromUtf8("👻"), QString::fromUtf8("👽"), QString::fromUtf8("👾"),
+            QString::fromUtf8("🤖"), QString::fromUtf8("😺"), QString::fromUtf8("😸"), QString::fromUtf8("😹"),
+            QString::fromUtf8("😻"), QString::fromUtf8("😼"), QString::fromUtf8("😽"), QString::fromUtf8("🙀"),
+            QString::fromUtf8("😿"), QString::fromUtf8("😾"), QString::fromUtf8("🙈"), QString::fromUtf8("🙉"),
+            QString::fromUtf8("🙊"), QString::fromUtf8("💋"), QString::fromUtf8("💌"), QString::fromUtf8("💘"),
+            QString::fromUtf8("💝"), QString::fromUtf8("💖"), QString::fromUtf8("💗"), QString::fromUtf8("💓"),
+            QString::fromUtf8("💞"), QString::fromUtf8("💕"), QString::fromUtf8("💟"), QString::fromUtf8("❣️"),
+            QString::fromUtf8("💔"), QString::fromUtf8("❤️"), QString::fromUtf8("🧡"), QString::fromUtf8("💛"),
+            QString::fromUtf8("💚"), QString::fromUtf8("💙"), QString::fromUtf8("💜"), QString::fromUtf8("🤎"),
+            QString::fromUtf8("🖤"), QString::fromUtf8("🤍"), QString::fromUtf8("👍"), QString::fromUtf8("👎"),
+            QString::fromUtf8("👊"), QString::fromUtf8("🤛"), QString::fromUtf8("🤜"), QString::fromUtf8("🤞"),
+            QString::fromUtf8("✌️"), QString::fromUtf8("🤟"), QString::fromUtf8("🤘"), QString::fromUtf8("👌"),
+            QString::fromUtf8("🤏"), QString::fromUtf8("👈"), QString::fromUtf8("👉"), QString::fromUtf8("👆"),
+            QString::fromUtf8("👇"), QString::fromUtf8("☝️"), QString::fromUtf8("✋"), QString::fromUtf8("🤚"),
+            QString::fromUtf8("🖐️"), QString::fromUtf8("🖖"), QString::fromUtf8("👋"), QString::fromUtf8("🤙"),
+            QString::fromUtf8("💪"), QString::fromUtf8("🖕"), QString::fromUtf8("✍️"), QString::fromUtf8("🙏"),
+            QString::fromUtf8("🔥"), QString::fromUtf8("✨"), QString::fromUtf8("🎉"), QString::fromUtf8("❤️"),
+            QString::fromUtf8("✅"), QString::fromUtf8("❌"), QString::fromUtf8("💯"), QString::fromUtf8("🚀"),
+            QString::fromUtf8("💬"), QString::fromUtf8("👀"), QString::fromUtf8("🎵"), QString::fromUtf8("🎶"),
+            QString::fromUtf8("🍺"), QString::fromUtf8("🍻"), QString::fromUtf8("🏆"), QString::fromUtf8("🎮"),
+            QString::fromUtf8("💻"), QString::fromUtf8("🖥️"), QString::fromUtf8("📱"), QString::fromUtf8("💡"),
+            QString::fromUtf8("🔒"), QString::fromUtf8("🔓"), QString::fromUtf8("⭐"), QString::fromUtf8("🌟")
+        };
+
+        for (const QString &emoji : unicodeEmojis) {
+            if (existingEntries.contains(emoji))
+                continue;
+
+            EmoticonLabel *lbl = new EmoticonLabel();
+            lbl->setText(emoji);
+            QFont font = lbl->font();
+            font.setPointSize(22);
+            lbl->setFont(font);
+            lbl->setAlignment(Qt::AlignCenter);
+            lbl->setToolTip(emoji);
+            lbl->setFixedSize(QSize(34, 34));
+            lbl->setContentsMargins(0, 0, 0, 0);
+            m_pLayout->addWidget(lbl);
+            existingEntries.insert(emoji);
+        }
+    }
+
+    m_scrollArea->setWidget(m_scrollContent);
+
+    // Start with a wide default so emoji selector opens in multi-row mode.
+    setMinimumSize(QSize(360, 240));
+    preparePopupGeometry(860, 1400, 620);
+
+    // Create layout for the dialog
+    QVBoxLayout *dialogLayout = new QVBoxLayout(this);
+    dialogLayout->setContentsMargins(0, 0, 0, 0);
+    dialogLayout->addWidget(m_scrollArea);
 
     for (const auto &l : findChildren<EmoticonLabel*>())
         connect(l, &EmoticonLabel::clicked, this, &EmoticonDialog::smileClicked);
@@ -43,7 +144,10 @@ EmoticonDialog::EmoticonDialog(QWidget * parent, Qt::WindowFlags f)
 
 /** */
 EmoticonDialog::~EmoticonDialog() {
-    m_pLayout->deleteLater();
+    if (m_scrollContent)
+        m_scrollContent->deleteLater();
+    if (m_scrollArea)
+        m_scrollArea->deleteLater();
 }
 
 void EmoticonDialog::smileClicked(){
@@ -55,4 +159,20 @@ void EmoticonDialog::smileClicked(){
     selectedSmile = lbl->toolTip();
 
     accept();
+}
+
+void EmoticonDialog::preparePopupGeometry(int preferredWidth, int maxWidth, int maxHeight)
+{
+    const int minWidth = 360;
+    const int targetWidth = qBound(minWidth, preferredWidth, qMax(minWidth, maxWidth));
+    const int targetMaxHeight = qMax(240, maxHeight);
+
+    int contentHeight = sizeHint().height();
+    if (m_pLayout && m_pLayout->hasHeightForWidth()) {
+        const QMargins margins = m_pLayout->contentsMargins();
+        const int effectiveWidth = qMax(120, targetWidth - margins.left() - margins.right());
+        contentHeight = m_pLayout->heightForWidth(effectiveWidth) + margins.top() + margins.bottom() + 12;
+    }
+
+    resize(targetWidth, qBound(240, contentHeight, targetMaxHeight));
 }

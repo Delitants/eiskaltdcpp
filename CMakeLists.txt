@@ -1,10 +1,17 @@
 cmake_minimum_required (VERSION 3.10...3.28)
 project (eiskaltdcpp)
 
+if (APPLE AND (NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET OR CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL ""))
+    if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64" OR CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set (CMAKE_OSX_DEPLOYMENT_TARGET "14.0" CACHE STRING "Minimum macOS deployment version" FORCE)
+    else ()
+        set (CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING "Minimum macOS deployment version" FORCE)
+    endif ()
+endif ()
 
 add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 set (PROJECT_NAME "EiskaltDC++")
-set (APP_VERSION "2.5.0") # Main program version (displayed in UI)
+set (APP_VERSION "2.5.2-release") # Main program version (displayed in UI)
 set (CONF_VERSION "2.0500") # Config version (for updating of DCPlusPlus.xml)
 set (SO_VERSION "2.5") # Library version (incremented after changes in API or ABI)
 
@@ -43,6 +50,21 @@ find_package (Gettext REQUIRED)
 find_package (Iconv REQUIRED)
 find_package (Git QUIET)
 
+find_path (MAXMINDDB_INCLUDE_DIR maxminddb.h
+           HINTS /opt/homebrew/include /usr/local/include)
+find_library (MAXMINDDB_STATIC_LIBRARY
+              NAMES libmaxminddb.a maxminddb
+              HINTS /opt/homebrew/lib /usr/local/lib)
+
+if (MAXMINDDB_INCLUDE_DIR AND MAXMINDDB_STATIC_LIBRARY)
+    set (MAXMINDDB_FOUND TRUE)
+    set (MAXMINDDB_LIBRARIES ${MAXMINDDB_STATIC_LIBRARY})
+    message (STATUS "Building with MaxMind MMDB support")
+else ()
+    set (MAXMINDDB_FOUND FALSE)
+    message (STATUS "Building without MaxMind MMDB support")
+endif ()
+
 option (USE_QT6 "Qt 6.x interface (requires Qt >= 6.2)." ON)
 option (USE_QT_QML "Build with Qt Declarative Ui support" OFF)
 option (USE_QT_SQLITE "Build with SQLite support" ON)
@@ -57,7 +79,7 @@ option (USE_LIBGNOME2 "Use LibGnome2 in GTK+ interface (sound notification)" OFF
 option (USE_LIBNOTIFY "Use libnotify in GTK+ interface" ON)
 option (USE_PROGRESS_BARS "Use progress bars or plain text labels in Qt UI" ON)
 option (FREE_SPACE_BAR_C "Free space progressbar in Qt and GTK+ interface" ON)
-option (WITH_EMOTICONS "Install emoticon packs" ON)
+option (WITH_EMOTICONS "Install emoticon packs" OFF)
 option (WITH_EXAMPLES "Install examples sh and others scripts" ON)
 option (WITH_LUASCRIPTS "Install examples of lua scripts" ON)
 option (WITH_SOUNDS "Install sound files" ON)
@@ -231,6 +253,8 @@ message (STATUS "Data directory: ${CLIENT_DATA_DIR}")
 
 if (REPLACE_VERSION)
     set (APP_VERSION "${REPLACE_VERSION}")
+elseif (APPLE)
+    set (APP_VERSION "2.5.2-release")
 elseif (GIT_FOUND)
     if (EXISTS "${PROJECT_SOURCE_DIR}/.git/config")
         execute_process (COMMAND ${GIT_EXECUTABLE} describe --tags
@@ -492,3 +516,15 @@ else ()
 endif ()
 
 include (CPack)
+
+# Apple ld may receive duplicate libraries through transitive/interface dependencies.
+# Silence that warning permanently for the final executables.
+if(APPLE)
+    if(TARGET eiskaltdcpp-qt)
+        target_link_options(eiskaltdcpp-qt PRIVATE -Wl,-no_warn_duplicate_libraries)
+    endif()
+
+    if(TARGET eiskaltdcpp-daemon)
+        target_link_options(eiskaltdcpp-daemon PRIVATE -Wl,-no_warn_duplicate_libraries)
+    endif()
+endif()

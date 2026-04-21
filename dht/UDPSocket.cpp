@@ -32,10 +32,34 @@
 #ifdef _WIN32
 #include <mswsock.h>
 #endif
+#ifndef _WIN32
+#include <netdb.h>
+#endif
 #include <openssl/rc4.h>
 
 namespace dht
 {
+    namespace {
+        string toIpString(const sockaddr_storage& remoteAddr) {
+            char host[NI_MAXHOST] = { 0 };
+            if(getnameinfo(reinterpret_cast<const sockaddr*>(&remoteAddr),
+                           remoteAddr.ss_family == AF_INET6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in),
+                           host, sizeof(host), nullptr, 0, NI_NUMERICHOST) == 0) {
+                return host;
+            }
+            return Util::emptyString;
+        }
+
+        string toPortString(const sockaddr_storage& remoteAddr) {
+            uint16_t port = 0;
+            if(remoteAddr.ss_family == AF_INET) {
+                port = ntohs(reinterpret_cast<const sockaddr_in*>(&remoteAddr)->sin_port);
+            } else if(remoteAddr.ss_family == AF_INET6) {
+                port = ntohs(reinterpret_cast<const sockaddr_in6*>(&remoteAddr)->sin6_port);
+            }
+            return Util::toString(port);
+        }
+    }
 
     #define BUFSIZE                 16384
     #define MAGICVALUE_UDP          0x5b
@@ -87,11 +111,17 @@ namespace dht
         try
         {
             socket.reset(new Socket);
-            socket->create(Socket::TYPE_UDP);
+            auto* sm = dht_->ctx().getSettingsManager();
+            const bool useIPv6 = sm->getBool(SettingsManager::USE_IPV6, true);
+            socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
             socket->setSocketOpt(SO_REUSEADDR, 1);
             socket->setSocketOpt(SO_RCVBUF, dht_->ctx().getSettingsManager()->get(SettingsManager::SOCKET_IN_BUFFER, true));
-            auto* sm = dht_->ctx().getSettingsManager();
-            port = socket->bind(Util::toString(sm->get(SettingsManager::DHT_PORT, true)), sm->getBool(SettingsManager::BIND_IFACE, true) ? socket->getIfaceI4(sm->get(SettingsManager::BIND_IFACE_NAME, true)).c_str() : sm->get(SettingsManager::BIND_ADDRESS, true));
+            const string bindIp = sm->getBool(SettingsManager::BIND_IFACE, true)
+                ? (useIPv6 ? socket->getIfaceI6(sm->get(SettingsManager::BIND_IFACE_NAME, true))
+                           : socket->getIfaceI4(sm->get(SettingsManager::BIND_IFACE_NAME, true)))
+                : (useIPv6 ? sm->get(SettingsManager::BIND_ADDRESS6, true)
+                           : sm->get(SettingsManager::BIND_ADDRESS, true));
+            port = socket->bind(Util::toString(sm->get(SettingsManager::DHT_PORT, true)), bindIp);
 
             start();
         }
@@ -106,7 +136,8 @@ namespace dht
     {
         if(socket->wait(delay, Socket::WAIT_READ) == Socket::WAIT_READ)
         {
-            sockaddr_in remoteAddr = { 0 };
+            sockaddr_storage remoteAddr;
+            memset(&remoteAddr, 0, sizeof(remoteAddr));
             std::unique_ptr<uint8_t[]> buf(new uint8_t[BUFSIZE]);
             int len = socket->read(&buf[0], BUFSIZE, remoteAddr);
             dcdrun(receivedBytes += len);
@@ -114,11 +145,14 @@ namespace dht
 
             if(len > 1)
             {
+                string ip = toIpString(remoteAddr);
+                string port = toPortString(remoteAddr);
+
                 bool isUdpKeyValid = false;
                 if(buf[0] != ADC_PACKED_PACKET_HEADER && buf[0] != ADC_PACKET_HEADER)
                 {
                     // it seems to be encrypted packet
-                    if(!decryptPacket(&buf[0], len, inet_ntoa(remoteAddr.sin_addr), isUdpKeyValid))
+                    if(!decryptPacket(&buf[0], len, ip, isUdpKeyValid))
                         return;
                 }
                 //else
@@ -141,9 +175,8 @@ namespace dht
                 string s((char*)destBuf.get(), destLen);
                 if(s[0] == ADC_PACKET_HEADER && s[s.length() - 1] == ADC_PACKET_FOOTER) // is it valid ADC command?
                 {
-                    string ip = inet_ntoa(remoteAddr.sin_addr);
-                    string port = Util::toString(ntohs(remoteAddr.sin_port));
-                    if (dht_->ctx().getDebugManager()) dht_->ctx().getDebugManager()->SendCommandMessage(s.substr(0, s.length() - 1), DebugManager::DHT_IN,  ip + ":" + port);
+                    const string ipPort = ip.find(':') != string::npos ? ("[" + ip + "]:" + port) : (ip + ":" + port);
+                    if (dht_->ctx().getDebugManager()) dht_->ctx().getDebugManager()->SendCommandMessage(s.substr(0, s.length() - 1), DebugManager::DHT_IN,  ipPort);
                     dht_->dispatch(s.substr(0, s.length() - 1), ip, port, isUdpKeyValid);
                 }
 

@@ -22,6 +22,7 @@
 
 #include "Socket.h"
 #include "SSL.h"
+#include <string>
 
 #ifndef SSL_SUCCESS
 #define SSL_SUCCESS 1
@@ -50,6 +51,8 @@ class CryptoManager;
 class SSLSocket : public Socket
 {
 public:
+    static void setSNIHint(const std::string& host);
+    static void clearSNIHint();
     virtual ~SSLSocket() { }
 
     virtual void accept(const Socket& listeningSocket);
@@ -69,6 +72,7 @@ public:
     virtual bool waitAccepted(uint32_t millis);
 
 private:
+    static std::string sniHostHint;
     friend class CryptoManager;
 
     SSLSocket(SSL_CTX* context, Socket::Protocol proto);
@@ -76,6 +80,7 @@ private:
     SSLSocket& operator=(const SSLSocket&);
 
     SSL_CTX* ctx;
+    std::string sniServerName;
     ssl::SSL ssl;
     Socket::Protocol nextProto;
 

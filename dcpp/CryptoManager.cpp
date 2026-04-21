@@ -19,6 +19,14 @@
 #include "stdinc.h"
 #include "CryptoManager.h"
 
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #include "File.h"
 #include "LogManager.h"
 #include "ClientManager.h"
@@ -132,10 +140,34 @@ CryptoManager::CryptoManager(DCContext& ctx)
 {
     SSL_library_init();
 
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+    clientContext.reset(SSL_CTX_new(TLS_client_method()));
+    clientVerContext.reset(SSL_CTX_new(TLS_client_method()));
+    serverContext.reset(SSL_CTX_new(TLS_server_method()));
+    serverVerContext.reset(SSL_CTX_new(TLS_server_method()));
+#else
     clientContext.reset(SSL_CTX_new(SSLv23_client_method()));
     clientVerContext.reset(SSL_CTX_new(SSLv23_client_method()));
     serverContext.reset(SSL_CTX_new(SSLv23_server_method()));
     serverVerContext.reset(SSL_CTX_new(SSLv23_server_method()));
+#endif
+
+    SSL_CTX_set_options(clientContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+    SSL_CTX_set_options(clientVerContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+    SSL_CTX_set_options(serverContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+    SSL_CTX_set_options(serverVerContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+#ifdef TLS1_2_VERSION
+    SSL_CTX_set_min_proto_version(clientContext, TLS1_2_VERSION);
+    SSL_CTX_set_min_proto_version(clientVerContext, TLS1_2_VERSION);
+    SSL_CTX_set_min_proto_version(serverContext, TLS1_2_VERSION);
+    SSL_CTX_set_min_proto_version(serverVerContext, TLS1_2_VERSION);
+#endif
+#endif
+
+    SSL_CTX_set_default_verify_paths(clientContext);
+    SSL_CTX_set_default_verify_paths(clientVerContext);
 
     if(clientContext && clientVerContext && serverContext && serverVerContext) {
         dh.reset(DH_new());
@@ -589,5 +621,11 @@ string CryptoManager::makeKey(const string& aLock) {
 
     return keySubst(&temp[0], aLock.length(), extra);
 }
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 
 } // namespace dcpp

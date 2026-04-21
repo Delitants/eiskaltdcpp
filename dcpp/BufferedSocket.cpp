@@ -112,9 +112,15 @@ void BufferedSocket::connect(const string& aAddress, const string& aPort, const 
     dcdebug("BufferedSocket::connect() %p\n", (void*)this);
     std::unique_ptr<Socket> s(secure ? (natRole == NAT_SERVER ? ctx().getCryptoManager()->getServerSocket(allowUntrusted) : ctx().getCryptoManager()->getClientSocket(allowUntrusted, proto)) : new Socket);
 
-    s->create();
+    const bool useIPv6 = ctx().getSettingsManager()->getBool(SettingsManager::USE_IPV6);
+    s->create(Socket::TYPE_TCP, useIPv6 ? AF_INET6 : AF_INET);
     setSocket(std::move(s));
-    sock->bind(localPort, ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE)? sock->getIfaceI4(ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE_NAME)).c_str() : ctx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS));
+    const string bindIp = ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE)
+        ? (useIPv6 ? sock->getIfaceI6(ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE_NAME))
+                   : sock->getIfaceI4(ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE_NAME)))
+        : (useIPv6 ? ctx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS6)
+                   : ctx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS));
+    sock->bind(localPort, bindIp);
 
     Lock l(cs);
     addTask(CONNECT, new ConnectInfo(aAddress, aPort, localPort, natRole, proxy && (ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5)));
@@ -134,8 +140,14 @@ void BufferedSocket::threadConnect(const string& aAddr, const string &aPort, con
     while (GET_TICK() < endTime) {
         dcdebug("threadConnect attempt to addr \"%s\"\n", aAddr.c_str());
         try {
+            if(dynamic_cast<SSLSocket*>(sock.get()) && !proxy) {
+                SSLSocket::setSNIHint(aAddr);
+            }
+
             if(proxy) {
                 sock->socksConnect(aAddr, aPort, LONG_TIMEOUT);
+            } else if(auto* sslSock = dynamic_cast<SSLSocket*>(sock.get())) {
+                sslSock->connect(aAddr, aPort);
             } else {
                 sock->connect(aAddr, aPort);
             }

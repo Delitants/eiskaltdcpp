@@ -107,6 +107,7 @@ public:
     void createWulforUtil();
     void createArenaWidgetManager();
     void createMainWindow();
+    void destroyMainWindow();
     void createHubManager();
     void createEmoticonFactory();
     void destroyEmoticonFactory();   // runtime toggle support

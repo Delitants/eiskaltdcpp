@@ -16,3 +16,8 @@
 */
 
 #include "stdafx.h"
+
+#if defined(__APPLE__)
+extern "C" int eiskalt_keep_object_file_symbol = 0;
+#endif
+

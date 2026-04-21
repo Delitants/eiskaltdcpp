@@ -68,6 +68,7 @@ static const QString & WS_APP_USERTHEME           = "app-theme-users";
 static const QString & WS_APP_ASPELL_LANG         = "app-aspell-lang";
 static const QString & WS_APP_EMOTICON_THEME      = "app-emoticon-theme";
 static const QString & WS_APP_SHARED_FILES_COLOR  = "app-already-shared-files-color";
+static const QString & WS_CHAT_PICTURE_DIR        = "chat-picture-dir";
 static const QString & WS_PUBLICHUBS_STATE        = "publichubs-state";
 static const QString & WS_SETTINGS_GUI_FONTS_STATE= "settings-gui-fonts-state";
 static const QString & WB_APP_AUTOAWAY_BY_TIMER   = "app-autoaway";
@@ -108,6 +109,7 @@ static const QString & WB_FAVUSERS_AUTOGRANT      = "favusers-auto-grant";
 static const QString & WB_APP_ENABLE_EMOTICON     = "app-enable-emoticon";
 static const QString & WB_APP_FORCE_EMOTICONS     = "app-force-find-emoticons";
 static const QString & WB_APP_ENABLE_ASPELL       = "app-enable-aspell";
+static const QString & WB_CHAT_PICTURE_AUTOCLEAN  = "chat-picture-autoclean";
 static const QString & WB_APP_AUTO_AWAY           = "app-auto-away";
 static const QString & WB_APP_TBAR_SHOW_CL_BTNS   = "app-toolbar-show-close-buttons";
 static const QString & WB_APP_REMOVE_NOT_EX_DIRS  = "app-auto-rem-not-exsisting-dirs";
@@ -120,6 +122,7 @@ static const QString & WB_SIMPLE_SHARE_MODE       = "use-simple-share-mode";
 static const QString & WI_APP_UNIT_BASE           = "app-unit-base";
 static const QString & WI_APP_AUTOAWAY_INTERVAL   = "app-autoaway-interval";
 static const QString & WI_APP_SHARED_FILES_ALPHA  = "app-already-shared-files-alpha";
+static const QString & WI_CHAT_PICTURE_CLEAN_DAYS = "chat-picture-clean-days";
 //
 static const QString & WI_DEF_MAGNET_ACTION       = "def-magnet-action";
 // 0 - ask, 1 - search, 2 - download

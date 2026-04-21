@@ -11,6 +11,7 @@
  */
 
 #include "SettingsGUI.h"
+#include "ChatEdit.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "dcpp/DCPlusPlus.h"
@@ -18,7 +19,6 @@
 #include "WulforUtil.h"
 #include "MainWindow.h"
 #include "Notification.h"
-#include "EmoticonFactory.h"
 #include "CustomFontModel.h"
 
 #include <QListWidgetItem>
@@ -33,14 +33,20 @@
 #include <QSystemTrayIcon>
 #include <QHeaderView>
 #include <QMap>
+#include <QComboBox>
+#include <QAbstractItemView>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QToolButton>
 
 #ifndef CLIENT_ICONS_DIR
 #define CLIENT_ICONS_DIR ""
 #endif
 
 SettingsGUI::SettingsGUI(QWidget *parent) :
-    QWidget(parent),
-    custom_style(false)
+    QWidget(parent)
 {
     setupUi(this);
 
@@ -54,14 +60,18 @@ SettingsGUI::~SettingsGUI(){
 void SettingsGUI::init(){
     {//Basic tab
         WulforUtil *WU = qtCtx()->wulforUtil();
-        QStringList styles = QStyleFactory::keys();
+        auto polishCombo = [](QComboBox *combo, int minChars = 0) {
+            if (!combo)
+                return;
 
-        comboBox_THEMES->addItem(tr("Default (need to restart)"));
-
-        for (const QString &s : styles)
-            comboBox_THEMES->addItem(s);
-
-        comboBox_THEMES->setCurrentIndex(styles.indexOf(qtCtx()->settings()->getStr(WS_APP_THEME)) >= 0? (styles.indexOf(qtCtx()->settings()->getStr(WS_APP_THEME))+1) : 0);
+            combo->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+            if (minChars > 0)
+                combo->setMinimumContentsLength(minChars);
+            combo->setStyleSheet(combo->styleSheet() + QStringLiteral("QComboBox { combobox-popup: 0; }"));
+            combo->setMaxVisibleItems(qMax(2, qMin(combo->count(), 10)));
+            if (combo->view())
+                combo->view()->setTextElideMode(Qt::ElideNone);
+        };
 
         int i = 0;
         int k = -1;
@@ -112,50 +122,7 @@ void SettingsGUI::init(){
             }
         }
         comboBox_LANGS->setCurrentIndex(k);
-
-        const QString users = WU->getClientIconsPath() + "/user/";
-        i = 0;
-        k = -1;
-        for (const QString &f : QDir(users).entryList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot)){
-            if (!f.isEmpty()){
-                comboBox_USERS->addItem(f);
-
-                if (f == qtCtx()->settings()->getStr(WS_APP_USERTHEME))
-                    k = i;
-
-                ++i;
-            }
-        }
-        comboBox_USERS->setCurrentIndex(k);
-
-        const QString icons = WU->getClientIconsPath() + "/appl/";
-        i = 0;
-        k = -1;
-        for (const QString &f : QDir(icons).entryList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot)){
-            if (!f.isEmpty()){
-                comboBox_ICONS->addItem(f);
-
-                if (f == qtCtx()->settings()->getStr(WS_APP_ICONTHEME))
-                    k = i;
-
-                ++i;
-            }
-        }
-        comboBox_ICONS->setCurrentIndex(k);
-
-        comboBox_EMOT->setCurrentIndex(0);
-        i = 0;
-        for (const QString &f : QDir(WU->getEmoticonsPath())
-             .entryList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot)){
-            if (!f.isEmpty()){
-                comboBox_EMOT->addItem(f);
-
-                if (f == qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME))
-                    comboBox_EMOT->setCurrentIndex(i);
-
-                ++i;
-            }
-        }
+        polishCombo(comboBox_LANGS, 14);
 
         lineEdit_LANGFILE->setText(qtCtx()->settings()->getStr(WS_TRANSLATION_FILE));
 
@@ -177,16 +144,11 @@ void SettingsGUI::init(){
             comboBox_TABBAR->setCurrentIndex(1);
         else
             comboBox_TABBAR->setCurrentIndex(0);
+        polishCombo(comboBox_TABBAR, 28);
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-        checkBox_ICONTHEME->setChecked(qtCtx()->settings()->getBool("app/use-icon-theme", false));
-#endif
         checkBox_HIDE_ICONS_IN_MENU->setChecked(qtCtx()->settings()->getBool("mainwindow/dont-show-icons-in-menus", false));
 
         // Hide options which do not work in Mac OS X, MS Windows or Haiku:
-#if defined (Q_OS_WIN) || defined(Q_OS_MAC) || defined (Q_OS_HAIKU)
-        checkBox_ICONTHEME->hide();
-#endif
 #if defined(Q_OS_MAC)
         groupBox_TRAY->hide();
 #endif
@@ -203,10 +165,10 @@ void SettingsGUI::init(){
         checkBox_UNREADEN_DRAW_LINE->setChecked(qtCtx()->settings()->getBool("hubframe/unreaden-draw-line", true));
         checkBox_USE_CTRL_ENTER->setChecked(qtCtx()->settings()->getBool(WB_USE_CTRL_ENTER));
         checkBox_ROTATING->setChecked(qtCtx()->settings()->getBool(WB_CHAT_ROTATING_MSGS));
-        checkBox_EMOT->setChecked(qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON));
-        checkBox_EMOTFORCE->setChecked(qtCtx()->settings()->getBool(WB_APP_FORCE_EMOTICONS));
-        checkBox_SMILEPANEL->setChecked(qtCtx()->settings()->getBool(WB_CHAT_USE_SMILE_PANEL));
-        checkBox_HIDESMILEPANEL->setChecked(qtCtx()->settings()->getBool(WB_CHAT_HIDE_SMILE_PANEL));
+        checkBox_EMOT->hide();
+        checkBox_EMOTFORCE->hide();
+        checkBox_SMILEPANEL->hide();
+        checkBox_HIDESMILEPANEL->hide();
     }
     {//Chat (extended) tab
         comboBox_DBL_CLICK->setCurrentIndex(qtCtx()->settings()->getInt(WI_CHAT_DBLCLICK_ACT));
@@ -218,6 +180,38 @@ void SettingsGUI::init(){
         checkBox_CHAT_SHOW_CC->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
         checkBox_BB_CODE->setChecked(qtCtx()->settings()->getBool("hubframe/use-bb-code", true));
         lineEdit_TIMESTAMP->setText(qtCtx()->settings()->getStr(WS_CHAT_TIMESTAMP));
+
+        if (!lineEdit_CHAT_PICTURE_DIR) {
+            auto *group = new QGroupBox(tr("Chat pictures"), tab_5);
+            auto *layout = new QGridLayout(group);
+            auto *labelDir = new QLabel(tr("Folder"), group);
+            lineEdit_CHAT_PICTURE_DIR = new QLineEdit(group);
+            toolButton_CHAT_PICTURE_DIR = new QToolButton(group);
+            toolButton_CHAT_PICTURE_DIR->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+            checkBox_CHAT_PICTURE_AUTOCLEAN = new QCheckBox(tr("Auto-clean files older than"), group);
+            spinBox_CHAT_PICTURE_DAYS = new QSpinBox(group);
+            spinBox_CHAT_PICTURE_DAYS->setRange(1, 365);
+            spinBox_CHAT_PICTURE_DAYS->setSuffix(tr(" days"));
+            spinBox_CHAT_PICTURE_DAYS->setMaximumWidth(100);
+
+            layout->addWidget(labelDir, 0, 0);
+            layout->addWidget(lineEdit_CHAT_PICTURE_DIR, 0, 1);
+            layout->addWidget(toolButton_CHAT_PICTURE_DIR, 0, 2);
+            layout->addWidget(checkBox_CHAT_PICTURE_AUTOCLEAN, 1, 0, 1, 2);
+            layout->addWidget(spinBox_CHAT_PICTURE_DAYS, 1, 2);
+            layout->setColumnStretch(1, 1);
+
+            verticalLayout_5->insertWidget(verticalLayout_5->count() - 1, group);
+
+            connect(toolButton_CHAT_PICTURE_DIR, &QToolButton::clicked, this, &SettingsGUI::slotBrowseChatPictureDir);
+            connect(checkBox_CHAT_PICTURE_AUTOCLEAN, &QCheckBox::toggled, spinBox_CHAT_PICTURE_DAYS, &QWidget::setEnabled);
+        }
+
+        const QString chatPictureDir = qtCtx()->settings()->getStr(WS_CHAT_PICTURE_DIR, ChatEdit::defaultChatPictureDir());
+        lineEdit_CHAT_PICTURE_DIR->setText(chatPictureDir);
+        checkBox_CHAT_PICTURE_AUTOCLEAN->setChecked(qtCtx()->settings()->getBool(WB_CHAT_PICTURE_AUTOCLEAN, true));
+        spinBox_CHAT_PICTURE_DAYS->setValue(qtCtx()->settings()->getInt(WI_CHAT_PICTURE_CLEAN_DAYS, 7));
+        spinBox_CHAT_PICTURE_DAYS->setEnabled(checkBox_CHAT_PICTURE_AUTOCLEAN->isChecked());
 
         spinBox_OUT_IN_HIST->setValue(qtCtx()->settings()->getInt(WI_OUT_IN_HIST));
         spinBox_PARAGRAPHS->setValue(qtCtx()->settings()->getInt(WI_CHAT_MAXPARAGRAPHS));
@@ -324,13 +318,9 @@ void SettingsGUI::init(){
         connect(this, &SettingsGUI::saveFonts, model, &CustomFontModel::ok);
     }
 
-    connect(pushButton_TEST, &QPushButton::clicked, this, &SettingsGUI::slotTestAppTheme);
-    connect(comboBox_THEMES, qOverload<int>(&QComboBox::activated), this, &SettingsGUI::slotThemeChanged);
     connect(listWidget_CHATCOLOR, &QListWidget::itemDoubleClicked, this, &SettingsGUI::slotChatColorItemClicked);
     connect(toolButton_LANGBROWSE, &QToolButton::clicked, this, &SettingsGUI::slotBrowseLng);
     connect(comboBox_LANGS, qOverload<int>(&QComboBox::activated), this, &SettingsGUI::slotLngIndexChanged);
-    connect(comboBox_USERS, qOverload<int>(&QComboBox::activated), this, &SettingsGUI::slotUsersChanged);
-    connect(comboBox_ICONS, qOverload<int>(&QComboBox::activated), this, &SettingsGUI::slotIconsChanged);
     connect(toolButton_H_COLOR, &QToolButton::clicked, this, &SettingsGUI::slotGetColor);
     connect(toolButton_SHAREDFILES, &QToolButton::clicked, this, &SettingsGUI::slotGetColor);
     connect(toolButton_CHAT_BACKGROUND_COLOR, &QToolButton::clicked, this, &SettingsGUI::slotGetColor);
@@ -344,11 +334,6 @@ void SettingsGUI::init(){
 void SettingsGUI::ok(){
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
     {//Basic tab
-        if (custom_style && comboBox_THEMES->currentIndex() > 0)
-            qtCtx()->settings()->setStr(WS_APP_THEME, comboBox_THEMES->currentText());
-        else if (!comboBox_THEMES->currentIndex())
-            qtCtx()->settings()->setStr(WS_APP_THEME, "");
-
         qtCtx()->settings()->setStr(WS_TRANSLATION_FILE, lineEdit_LANGFILE->text());
 
         qtCtx()->settings()->setBool(WB_MAINWINDOW_REMEMBER, radioButton_REMEMBER->isChecked());
@@ -358,13 +343,6 @@ void SettingsGUI::ok(){
             qtCtx()->settings()->setBool(WB_TRAY_ENABLED, groupBox_TRAY->isChecked());
 
             qtCtx()->notification()->enableTray(qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
-        }
-
-        if (qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME) != comboBox_EMOT->currentText()){
-            qtCtx()->settings()->setStr(WS_APP_EMOTICON_THEME, comboBox_EMOT->currentText());
-
-            if (qtCtx()->emoticonFactory())
-                qtCtx()->emoticonFactory()->load();
         }
 
         if (comboBox_TABBAR->currentIndex() == 2){
@@ -380,7 +358,6 @@ void SettingsGUI::ok(){
             qtCtx()->settings()->setBool(WB_MAINWINDOW_USE_M_TABBAR, false);
         }
 
-        qtCtx()->settings()->setBool("app/use-icon-theme", checkBox_ICONTHEME->isChecked());
         qtCtx()->settings()->setBool("mainwindow/dont-show-icons-in-menus", checkBox_HIDE_ICONS_IN_MENU->isChecked());
     }
     {//Chat tab
@@ -393,10 +370,10 @@ void SettingsGUI::ok(){
         qtCtx()->settings()->setBool("hubframe/unreaden-draw-line", checkBox_UNREADEN_DRAW_LINE->isChecked());
         qtCtx()->settings()->setBool(WB_CHAT_ROTATING_MSGS, checkBox_ROTATING->isChecked());
         qtCtx()->settings()->setBool(WB_USE_CTRL_ENTER, checkBox_USE_CTRL_ENTER->isChecked());
-        qtCtx()->settings()->setBool(WB_APP_ENABLE_EMOTICON, checkBox_EMOT->isChecked());
-        qtCtx()->settings()->setBool(WB_APP_FORCE_EMOTICONS, checkBox_EMOTFORCE->isChecked());
-        qtCtx()->settings()->setBool(WB_CHAT_USE_SMILE_PANEL, checkBox_SMILEPANEL->isChecked());
-        qtCtx()->settings()->setBool(WB_CHAT_HIDE_SMILE_PANEL, checkBox_HIDESMILEPANEL->isChecked());
+        qtCtx()->settings()->setBool(WB_APP_ENABLE_EMOTICON, false);
+        qtCtx()->settings()->setBool(WB_APP_FORCE_EMOTICONS, false);
+        qtCtx()->settings()->setBool(WB_CHAT_USE_SMILE_PANEL, false);
+        qtCtx()->settings()->setBool(WB_CHAT_HIDE_SMILE_PANEL, false);
     }
     {//Chat (extended) tab
         qtCtx()->settings()->setInt(WI_CHAT_DBLCLICK_ACT, comboBox_DBL_CLICK->currentIndex());
@@ -416,6 +393,12 @@ void SettingsGUI::ok(){
         SM->set(SettingsManager::IGNORE_HUB_PMS, checkBox_IGNOREPMHUB->isChecked());
         SM->set(SettingsManager::GET_USER_COUNTRY, checkBox_CHAT_SHOW_CC->isChecked());
         qtCtx()->settings()->setStr(WS_CHAT_SEPARATOR, comboBox_CHAT_SEPARATOR->currentText());
+        if (lineEdit_CHAT_PICTURE_DIR)
+            qtCtx()->settings()->setStr(WS_CHAT_PICTURE_DIR, lineEdit_CHAT_PICTURE_DIR->text().trimmed());
+        if (checkBox_CHAT_PICTURE_AUTOCLEAN)
+            qtCtx()->settings()->setBool(WB_CHAT_PICTURE_AUTOCLEAN, checkBox_CHAT_PICTURE_AUTOCLEAN->isChecked());
+        if (spinBox_CHAT_PICTURE_DAYS)
+            qtCtx()->settings()->setInt(WI_CHAT_PICTURE_CLEAN_DAYS, spinBox_CHAT_PICTURE_DAYS->value());
     }
     {//Color tab
         int i = 0;
@@ -452,6 +435,10 @@ void SettingsGUI::ok(){
     qtCtx()->settings()->setStr(WS_SETTINGS_GUI_FONTS_STATE, tableView->horizontalHeader()->saveState().toBase64());
 
     emit saveFonts();
+
+    qtCtx()->settings()->setStr(WS_APP_EMOTICON_THEME, QString());
+    qtCtx()->settings()->setStr(WS_APP_USERTHEME, QString());
+    qtCtx()->settings()->setStr(WS_APP_ICONTHEME, QString());
 }
 
 void SettingsGUI::slotChatColorItemClicked(QListWidgetItem *item){
@@ -545,29 +532,6 @@ void SettingsGUI::slotSetTransparency(int value){
         toolButton_SHAREDFILES->setIcon(p);
 }
 
-void SettingsGUI::slotTestAppTheme(){
-    if (!comboBox_THEMES->currentIndex()){ //Default
-        qtCtx()->settings()->setStr(WS_APP_THEME, "");
-
-        return;
-    }
-
-    custom_style = true;
-
-    QString s = comboBox_THEMES->currentText();
-
-    if (s.isEmpty())
-        return;
-
-    qApp->setStyle(s);
-
-    qtCtx()->settings()->setStr(WS_APP_THEME, s);
-}
-
-void SettingsGUI::slotThemeChanged(){
-    custom_style = true;
-}
-
 void SettingsGUI::slotBrowseLng(){
     QString file = QFileDialog::getOpenFileName(this,
                                                 tr("Select translation"),
@@ -590,6 +554,20 @@ void SettingsGUI::slotBrowseLng(){
     }
 }
 
+void SettingsGUI::slotBrowseChatPictureDir()
+{
+    if (!lineEdit_CHAT_PICTURE_DIR)
+        return;
+
+    const QString dir = QFileDialog::getExistingDirectory(this, tr("Select chat pictures folder"),
+                                                          lineEdit_CHAT_PICTURE_DIR->text().trimmed().isEmpty()
+                                                              ? ChatEdit::defaultChatPictureDir()
+                                                              : lineEdit_CHAT_PICTURE_DIR->text().trimmed(),
+                                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (!dir.isEmpty())
+        lineEdit_CHAT_PICTURE_DIR->setText(QDir::toNativeSeparators(dir));
+}
+
 void SettingsGUI::slotLngIndexChanged(int index){
     QString file = comboBox_LANGS->itemData(index).toString();
 
@@ -605,16 +583,6 @@ void SettingsGUI::slotLngIndexChanged(int index){
     qtCtx()->settings()->setStr(WS_TRANSLATION_FILE, file);
 
     lineEdit_LANGFILE->setText(qtCtx()->settings()->getStr(WS_TRANSLATION_FILE));
-}
-
-void SettingsGUI::slotIconsChanged(){
-    qtCtx()->settings()->setStr(WS_APP_ICONTHEME, comboBox_ICONS->currentText());
-
-    qtCtx()->wulforUtil()->loadIcons();
-}
-
-void SettingsGUI::slotUsersChanged(){
-    qtCtx()->settings()->setStr(WS_APP_USERTHEME, comboBox_USERS->currentText());
 }
 
 void SettingsGUI::slotResetTransferColors(){

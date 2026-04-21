@@ -42,6 +42,12 @@ bool MappingManager::open() {
     if(opened)
         return false;
 
+#ifdef USE_MINIUPNP
+    if(impls.empty()) {
+        runMiniUPnP();
+    }
+#endif
+
     if(impls.empty()) {
         log(_("No UPnP implementation available"));
         return false;
@@ -155,7 +161,9 @@ void MappingManager::log(const string& message) {
 
 #ifdef USE_MINIUPNP
 void MappingManager::runMiniUPnP() {
+#ifdef USE_MINIUPNP
     addImplementation(new UPnPc(ctx()));
+#endif
 }
 #endif
 } // namespace dcpp

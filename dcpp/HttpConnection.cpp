@@ -19,6 +19,7 @@
 
 #include "stdinc.h"
 #include "HttpConnection.h"
+#include "SSLSocket.h"
 
 #include "BufferedSocket.h"
 #include "format.h"
@@ -135,7 +136,12 @@ void HttpConnection::prepareRequest(RequestType type) {
 
     socket->addListener(this);
     try {
+        if(proto == "https") {
+            SSLSocket::setSNIHint(server);
+        }
         socket->connect(server, port, (proto == "https"), true, false, Socket::PROTO_DEFAULT);
+        // keep SNI hint alive until the async TLS connect actually uses it
+
     } catch(const Exception& e) {
         connState = CONN_FAILED;
         fire(HttpConnectionListener::Failed(), this, str(dcpp::dcpp_fmt("%1% (%2%)") % e.getError() % url));

@@ -86,6 +86,9 @@ TransferView::Menu::Menu(bool showTransferredFilesOnly):
     QAction *sep1        = new QAction(menu);
     sep1->setSeparator(true);
 
+    QAction *cancel_download = new QAction(tr("Cancel download"), menu);
+    cancel_download->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
+
     QAction *rem_queue  = new QAction(tr("Remove Source"), menu);
     rem_queue->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
 
@@ -107,6 +110,7 @@ TransferView::Menu::Menu(bool showTransferredFilesOnly):
     actions.insert(send_pm, SendPM);
     actions.insert(add_to_fav, AddToFav);
     actions.insert(grant, GrantExtraSlot);
+    actions.insert(cancel_download, CancelDownload);
     actions.insert(rem_queue, RemoveFromQueue);
     actions.insert(force, Force);
     actions.insert(close, Close);
@@ -121,6 +125,7 @@ TransferView::Menu::Menu(bool showTransferredFilesOnly):
                                        << grant);
     menu->addMenu(copy_column);
     menu->addActions(QList<QAction*>() << sep1
+                                       << cancel_download
                                        << rem_queue
                                        << sep3
                                        << force
@@ -317,6 +322,16 @@ void TransferView::removeFromQueue(const QString &cid){
     catch (const Exception&){}
 }
 
+void TransferView::cancelDownload(const QString &target){
+    if (target.isEmpty())
+        return;
+
+    try{
+        dcCtx().getQueueManager()->remove(_tq(target));
+    }
+    catch (const Exception&){}
+}
+
 void TransferView::forceAttempt(const QString &cid){
     if (cid.isEmpty())
         return;
@@ -509,6 +524,27 @@ void TransferView::slotContextMenu(const QPoint &){
 
         break;
     }
+    case Menu::RemoveFromQueue:
+    {
+        for (const auto &i : items) {
+            removeFromQueue(i->cid);
+            closeConection(i->cid, i->download);
+        }
+
+        break;
+    }
+    case Menu::CancelDownload:
+    {
+        for (const auto &i : items) {
+            if (!i->download || i->target.isEmpty())
+                continue;
+
+            cancelDownload(i->target);
+            closeConection(i->cid, true);
+        }
+
+        break;
+    }
     case Menu::Copy:
     {
         int col = m.copyColumn();
@@ -539,13 +575,6 @@ void TransferView::slotContextMenu(const QPoint &){
 
         if (!data.isEmpty())
             qApp->clipboard()->setText(data, QClipboard::Clipboard);
-
-        break;
-    }
-    case Menu::RemoveFromQueue:
-    {
-        for (const auto &i : items)
-            removeFromQueue(i->cid);
 
         break;
     }
@@ -686,9 +715,9 @@ void TransferView::onFailed(dcpp::Download* dl, const std::string& reason) {
 
     getParams(params, dl);
 
-    params["STAT"]  = _q(reason);
+    params["STAT"]  = normalizeConnectionFailure(_q(reason));
     params["SPEED"] = 0;
-    params["FAIL"]  = true;
+    params["FAIL"]  = (vstr(params["STAT"]) != tr("Waiting to retry"));
     params["TLEFT"] = -1;
 
     qint64 pos = dcCtx().getQueueManager()->getPos(dl->getPath()) + dl->getPos();
@@ -745,8 +774,8 @@ void TransferView::on(dcpp::ConnectionManagerListener::Failed, dcpp::ConnectionQ
 
     getParams(params, cqi);
 
-    params["STAT"] = _q(reason);
-    params["FAIL"] = true;
+    params["STAT"] = normalizeConnectionFailure(_q(reason));
+    params["FAIL"] = (vstr(params["STAT"]) != tr("Waiting to retry"));
     params["SPEED"] = (qlonglong)0;
     params["TLEFT"] = -1;
 
@@ -765,6 +794,16 @@ void TransferView::on(dcpp::ConnectionManagerListener::StatusChanged, dcpp::Conn
         params["STAT"] = tr("Waiting to retry");
 
     emit coreCMStatusChanged(params);
+}
+
+QString TransferView::normalizeConnectionFailure(const QString &reason) const{
+    static const QString retryStatus = tr("Waiting to retry");
+
+    if (reason.compare(QStringLiteral("Connection closed"), Qt::CaseInsensitive) == 0 ||
+        reason.compare(retryStatus, Qt::CaseInsensitive) == 0)
+        return retryStatus;
+
+    return reason;
 }
 
 void TransferView::on(dcpp::QueueManagerListener::Finished, dcpp::QueueItem* qi, const std::string&, int64_t) noexcept{

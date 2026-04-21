@@ -25,18 +25,308 @@
 #include "SettingsShortcuts.h"
 #include "SettingsHistory.h"
 #include "SettingsAdvanced.h"
+#include <QGroupBox>
+#include <QLayout>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QCheckBox>
+#include <QRadioButton>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QPushButton>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QAbstractButton>
+#include <QSplitter>
+#include <QSize>
 
 #include "WulforUtil.h"
 
 #include <QTableWidget>
 #include <QTabWidget>
+#include <QTabBar>
+#include <QFrame>
+#include <QPalette>
 
 #include <QScroller>
+
+namespace {
+#ifdef Q_OS_MAC
+QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
+{
+    if (page)
+        page->show();
+
+    QFrame *panel = new QFrame(owner);
+    panel->setObjectName(QStringLiteral("settingsPagePanel"));
+    panel->setFrameShape(QFrame::StyledPanel);
+    panel->setFrameShadow(QFrame::Plain);
+    panel->setStyleSheet(QStringLiteral(
+        "QFrame#settingsPagePanel {"
+        " background-color: palette(window);"
+        " border: 1px solid palette(mid);"
+        " border-radius: 12px;"
+        "}"
+        "QFrame#settingsPagePanel QLabel {"
+        " font-size: 13px;"
+        " color: palette(text);"
+        "}"
+        "QFrame#settingsPagePanel QCheckBox,"
+        "QFrame#settingsPagePanel QRadioButton {"
+        " font-size: 13px;"
+        " color: palette(text);"
+        " spacing: 8px;"
+        " padding: 2px 0px;"
+        " min-height: 22px;"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox {"
+        " border: 1px solid palette(mid);"
+        " border-radius: 10px;"
+        " margin-top: 10px;"
+        " padding: 7px 7px 7px 7px;"
+        " background-color: palette(alternate-base);"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox::title {"
+        " subcontrol-origin: margin;"
+        " left: 10px;"
+        " padding: 1px 8px;"
+        " color: palette(text);"
+        " font-size: 13px;"
+        " font-weight: 600;"
+        " background-color: palette(window);"
+        " border: 1px solid palette(mid);"
+        " border-radius: 7px;"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox[settingsSectionHeader=\"true\"]::title {"
+        " padding: 2px 10px;"
+        " font-weight: 700;"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox[flat=\"true\"][settingsFlatSection=\"true\"] {"
+        " border: none;"
+        " border-radius: 0px;"
+        " margin-top: 4px;"
+        " padding: 2px 0px 0px 0px;"
+        " background: transparent;"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox[flat=\"true\"][settingsFlatSection=\"true\"]::title {"
+        " left: 0px;"
+        " padding: 0px 6px 0px 0px;"
+        " margin: 0px;"
+        " background: transparent;"
+        " border: none;"
+        " font-size: 13px;"
+        " font-weight: 700;"
+        " color: palette(text);"
+        "}"
+        "QFrame#settingsPagePanel QLineEdit,"
+        "QFrame#settingsPagePanel QTextEdit,"
+        "QFrame#settingsPagePanel QPlainTextEdit,"
+        "QFrame#settingsPagePanel QAbstractSpinBox {"
+        " background-color: palette(base);"
+        " border: 1px solid palette(mid);"
+        " border-radius: 7px;"
+        " padding: 1px 7px;"
+        " min-height: 24px;"
+        " font-size: 13px;"
+        "}"
+        "QFrame#settingsPagePanel QLineEdit:focus,"
+        "QFrame#settingsPagePanel QTextEdit:focus,"
+        "QFrame#settingsPagePanel QPlainTextEdit:focus,"
+        "QFrame#settingsPagePanel QAbstractSpinBox:focus {"
+        " border: 1px solid palette(highlight);"
+        "}"
+        "QFrame#settingsPagePanel QComboBox {"
+        " background-color: palette(base);"
+        " border: 1px solid palette(mid);"
+        " border-radius: 7px;"
+        " padding: 1px 24px 1px 7px;"
+        " min-height: 24px;"
+        " font-size: 13px;"
+        " combobox-popup: 0;"
+        "}"
+        "QFrame#settingsPagePanel QComboBox::drop-down {"
+        " subcontrol-origin: padding;"
+        " subcontrol-position: top right;"
+        " width: 18px;"
+        " border-left: 1px solid palette(mid);"
+        "}"
+        "QFrame#settingsPagePanel QComboBox QAbstractItemView {"
+        " border: 1px solid palette(mid);"
+        " selection-background-color: palette(highlight);"
+        " selection-color: palette(highlighted-text);"
+        " outline: 0;"
+        "}"
+        "QFrame#settingsPagePanel QCheckBox::indicator,"
+        "QFrame#settingsPagePanel QRadioButton::indicator {"
+        " width: 16px;"
+        " height: 16px;"
+        "}"
+        "QFrame#settingsPagePanel QTabWidget { background: transparent; }"
+        "QFrame#settingsPagePanel QTabWidget::pane {"
+        " border: 1px solid palette(mid);"
+        " border-radius: 11px;"
+        " top: 0px;"
+        " background-color: palette(base);"
+        " padding-top: 8px;"
+        " margin-top: -1px;"
+        "}"
+        "QFrame#settingsPagePanel QTabWidget::tab-bar {"
+        " alignment: left;"
+        " left: 12px;"
+        "}"
+        "QFrame#settingsPagePanel QTabBar {"
+        " background: transparent;"
+        "}"
+        "QFrame#settingsPagePanel QTabBar::tab {"
+        " background-color: palette(alternate-base);"
+        " border: 1px solid palette(mid);"
+        " border-top-left-radius: 8px;"
+        " border-top-right-radius: 8px;"
+        " min-width: 0px;"
+        " padding: 5px 16px 6px 16px;"
+        " margin-right: 4px;"
+        " margin-bottom: -1px;"
+        " font-size: 12px;"
+        "}"
+        "QFrame#settingsPagePanel QTabBar::tab:selected {"
+        " background-color: palette(window);"
+        " border-bottom-color: palette(window);"
+        " font-weight: 600;"
+        "}"
+        "QFrame#settingsPagePanel QTabBar::tab:!selected {"
+        " color: palette(button-text);"
+        "}"
+        "QFrame#settingsPagePanel QTabBar::tab:hover:!selected {"
+        " background-color: palette(alternate-base);"
+        "}"));
+
+    auto *layout = new QVBoxLayout(panel);
+    layout->setContentsMargins(8, 4, 8, 8);
+    layout->setSpacing(0);
+    layout->addWidget(page);
+
+    return panel;
+}
+
+void polishMacScrollArea(QScrollArea *scrollArea)
+{
+    if (!scrollArea)
+        return;
+
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->viewport()->setAutoFillBackground(true);
+
+    QPalette palette = scrollArea->viewport()->palette();
+    palette.setColor(QPalette::Window, palette.color(QPalette::AlternateBase));
+    palette.setColor(QPalette::Base, palette.color(QPalette::AlternateBase));
+    scrollArea->viewport()->setPalette(palette);
+}
+
+void polishMacSettingsPage(QWidget *page)
+{
+    if (!page)
+        return;
+
+    if (auto *rootLayout = page->layout()) {
+        auto margins = rootLayout->contentsMargins();
+        if (margins.left() < 10 && margins.top() < 10 && margins.right() < 10 && margins.bottom() < 10)
+            rootLayout->setContentsMargins(6, 6, 6, 6);
+        if (rootLayout->spacing() >= 0 && rootLayout->spacing() < 4)
+            rootLayout->setSpacing(4);
+    }
+
+    for (auto *layout : page->findChildren<QLayout*>()) {
+        auto margins = layout->contentsMargins();
+        if (margins.left() == 0 && margins.top() == 0 && margins.right() == 0 && margins.bottom() == 0)
+            layout->setContentsMargins(2, 2, 2, 2);
+        if (layout->spacing() >= 0 && layout->spacing() < 3)
+            layout->setSpacing(3);
+    }
+
+    for (auto *groupBox : page->findChildren<QGroupBox*>()) {
+        if (!groupBox->layout())
+            continue;
+
+        auto margins = groupBox->layout()->contentsMargins();
+        groupBox->layout()->setContentsMargins(
+            qMax(margins.left(), 6),
+            qMax(margins.top(), 12),
+            qMax(margins.right(), 6),
+            qMax(margins.bottom(), 6)
+        );
+    }
+
+    for (auto *form : page->findChildren<QFormLayout*>()) {
+        if (form->horizontalSpacing() < 6)
+            form->setHorizontalSpacing(6);
+        if (form->verticalSpacing() < 4)
+            form->setVerticalSpacing(4);
+    }
+
+    for (auto *tabs : page->findChildren<QTabWidget*>()) {
+        tabs->setDocumentMode(true);
+        tabs->setUsesScrollButtons(false);
+        if (auto *tabBar = tabs->tabBar()) {
+            tabBar->setExpanding(false);
+            tabBar->setElideMode(Qt::ElideNone);
+            tabBar->setUsesScrollButtons(false);
+            tabBar->setDrawBase(false);
+        }
+    }
+}
+#endif
+}
 
 Settings::Settings(): is_dirty(false)
 {
     setupUi(this);
 
+    
+#ifdef Q_OS_MAC
+    // Keep the native macOS group box painting. Overriding QGroupBox title
+    // rendering with stylesheets causes black title bars with Qt 6 / qmacstyle.
+    for (auto *groupBox : findChildren<QGroupBox*>()) {
+        if (!groupBox->isFlat() && groupBox->layout()) {
+            auto margins = groupBox->layout()->contentsMargins();
+            groupBox->layout()->setContentsMargins(
+                qMax(margins.left(), 8),
+                qMax(margins.top(), 18),
+                qMax(margins.right(), 8),
+                qMax(margins.bottom(), 8)
+            );
+        }
+    }
+
+    for (auto *layout : findChildren<QLayout*>()) {
+        if (layout->spacing() >= 0 && layout->spacing() < 3)
+            layout->setSpacing(3);
+    }
+
+    for (auto *form : findChildren<QFormLayout*>()) {
+        if (form->horizontalSpacing() < 6)
+            form->setHorizontalSpacing(6);
+        if (form->verticalSpacing() < 4)
+            form->setVerticalSpacing(4);
+    }
+
+    for (auto *grid : findChildren<QGridLayout*>()) {
+        if (grid->horizontalSpacing() >= 0 && grid->horizontalSpacing() < 6)
+            grid->setHorizontalSpacing(6);
+        if (grid->verticalSpacing() >= 0 && grid->verticalSpacing() < 4)
+            grid->setVerticalSpacing(4);
+    }
+
+    for (auto *cb : findChildren<QCheckBox*>()) {
+        cb->setMinimumHeight(22);
+    }
+
+    for (auto *rb : findChildren<QRadioButton*>()) {
+        rb->setMinimumHeight(22);
+    }
+#endif
     init();
 
     setWindowTitle(tr("Preferences"));
@@ -107,7 +397,50 @@ void Settings::init(){
     connect(this, &Settings::timeToDie, sadv, &SettingsAdvanced::ok);
     widgets.insert(item, (int)Page::Advanced);
 
-    listWidget->setMinimumWidth(listWidget->sizeHintForColumn(0) + 6);
+#ifdef Q_OS_MAC
+    for (QWidget *page : {static_cast<QWidget*>(personal), static_cast<QWidget*>(connection), static_cast<QWidget*>(downloads),
+                          static_cast<QWidget*>(sharing), static_cast<QWidget*>(gui), static_cast<QWidget*>(notify),
+                          static_cast<QWidget*>(logs), static_cast<QWidget*>(ucs), static_cast<QWidget*>(sshs),
+                          static_cast<QWidget*>(shist), static_cast<QWidget*>(sadv)}) {
+        polishMacSettingsPage(page);
+    }
+#endif
+
+    listWidget->setIconSize(QSize(18, 18));
+    listWidget->setSpacing(2);
+    listWidget->setMinimumWidth(150);
+    listWidget->setMaximumWidth(180);
+#ifdef Q_OS_MAC
+    listWidget->setStyleSheet(QStringLiteral(
+        "QListWidget {"
+        " background-color: palette(window);"
+        " border: 1px solid palette(mid);"
+        " border-radius: 10px;"
+        " outline: none;"
+        " padding: 4px;"
+        " font-size: 13px;"
+        "}"
+        "QListWidget::item {"
+        " border-radius: 8px;"
+        " padding: 3px 10px;"
+        " margin: 1px 0px;"
+        "}"
+        "QListWidget::item:selected {"
+        " background-color: palette(highlight);"
+        " color: palette(highlighted-text);"
+        "}"
+        "QListWidget::item:hover:!selected {"
+        " background-color: palette(alternate-base);"
+        "}"));
+#endif
+
+    splitter->setChildrenCollapsible(false);
+    splitter->setHandleWidth(0);
+    splitter->setStretchFactor(0, 0);
+    splitter->setStretchFactor(1, 1);
+#ifdef Q_OS_MAC
+    splitter->setStyleSheet(QStringLiteral("QSplitter::handle { background: transparent; width: 0px; }"));
+#endif
 
     stackedWidget->insertWidget((int)Page::Personal, prepareWidget(personal));
     stackedWidget->insertWidget((int)Page::Connection, prepareWidget(connection));
@@ -123,8 +456,11 @@ void Settings::init(){
 
     stackedWidget->setCurrentIndex(0);
 
+    setMinimumSize(900, 640);
     if (qtCtx()->settings()->getVar("settings/dialog-size").isValid())
-        resize(qtCtx()->settings()->getVar("settings/dialog-size").toSize());
+        resize(qtCtx()->settings()->getVar("settings/dialog-size").toSize().expandedTo(minimumSize()));
+    else
+        resize(minimumSize());
 
     // Convenient scrolling of widgets with the mouse, as well as from the touchpad and from the touchscreen:
     for (auto &asa : stackedWidget->findChildren<QAbstractScrollArea*>()) {
@@ -141,6 +477,18 @@ void Settings::init(){
     connect(buttonBox, &QDialogButtonBox::rejected, this, &Settings::reject);
     connect(this, &QDialog::accepted, this, &Settings::timeToDie);
     connect(this, &QDialog::accepted, this, &Settings::dirty);
+
+#ifdef Q_OS_MAC
+    if (auto *okButton = buttonBox->button(QDialogButtonBox::Ok)) {
+        okButton->setMinimumSize(74, 28);
+        okButton->setAutoDefault(false);
+    }
+    if (auto *cancelButton = buttonBox->button(QDialogButtonBox::Cancel)) {
+        cancelButton->setMinimumSize(74, 28);
+        cancelButton->setAutoDefault(false);
+    }
+    buttonBox->setCenterButtons(false);
+#endif
 }
 
 void Settings::setMouseScroller(QWidget *w){
@@ -158,29 +506,54 @@ QWidget *Settings::prepareWidget(QWidget *w)
     const bool containsTabs = !w->findChildren<QTabWidget*>().isEmpty();
     if (containsTabs) {
         for (auto *tw : w->findChildren<QTabWidget*>()) {
-            // Content of each page should placed to independent QScrollArea
+            tw->setDocumentMode(true);
+            QList<QWidget*> pages;
+            QStringList titles;
+
             for (int k = 0; k < tw->count(); ++k) {
-                const QString &&title = tw->tabText(k);
-                QWidget *page = tw->widget(k);
+                pages << tw->widget(k);
+                titles << tw->tabText(k);
+            }
+
+            while (tw->count() > 0)
+                tw->removeTab(0);
+
+            // Content of each page should be placed into an independent QScrollArea
+            for (int k = 0; k < pages.size(); ++k) {
                 QScrollArea *scrollArea = new QScrollArea(this);
-                scrollArea->setWidget(page);
+                pages.at(k)->show();
+#ifdef Q_OS_MAC
+                scrollArea->setWidget(wrapSettingsPage(this, pages.at(k)));
+                polishMacScrollArea(scrollArea);
+#else
+                scrollArea->setWidget(pages.at(k));
                 scrollArea->setWidgetResizable(true);
                 scrollArea->setFrameShape(QFrame::NoFrame);
-                tw->insertTab(k, scrollArea, title);
+#endif
+                tw->addTab(scrollArea, titles.at(k));
             }
             tw->setCurrentIndex(0);
         }
     }
     else { // Single widget may be placed directly to QScrollArea
         QScrollArea *scrollArea = new QScrollArea(this);
+#ifdef Q_OS_MAC
+        scrollArea->setWidget(wrapSettingsPage(this, w));
+        polishMacScrollArea(scrollArea);
+#else
         scrollArea->setWidget(w);
         scrollArea->setWidgetResizable(true);
         scrollArea->setFrameShape(QFrame::NoFrame);
+#endif
+#ifndef Q_OS_MAC
         w->layout()->setContentsMargins(0, 0, 0, 0);
+#endif
         return scrollArea;
     }
 
+#ifndef Q_OS_MAC
     w->layout()->setContentsMargins(0, 0, 0, 0);
+#endif
     return w;
 }
 

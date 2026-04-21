@@ -109,10 +109,11 @@ void SettingsDownloads::init(){
 
         toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
         toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+        groupBox_3->setTitle(tr("Public Hub list proxy"));
+        pushButton_CFGLISTS->hide();
 
         connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);
         connect(toolButton_BROWSE1, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);
-        connect(pushButton_CFGLISTS, &QPushButton::clicked, this, &SettingsDownloads::slotCfgPublic);
     }
     {//Download to
         QString aliases, paths;

@@ -14,6 +14,7 @@
 #include "QtContextAware.h"
 #include "QtContext.h"
 
+#include <QFrame>
 #include <QPushButton>
 
 #include "WulforSettings.h"
@@ -22,6 +23,15 @@
 
 SettingsHistory::SettingsHistory(QWidget *parent): QWidget(parent) {
     setupUi(this);
+
+#ifdef Q_OS_MAC
+    pushButton_ClearSearchHistory->setAutoDefault(false);
+    pushButton_ClearDirectoriesHistory->setAutoDefault(false);
+    pushButton_ClearSearchHistory->setMinimumSize(86, 28);
+    pushButton_ClearDirectoriesHistory->setMinimumSize(86, 28);
+    frame->setFrameShape(QFrame::StyledPanel);
+    frame->setFrameShadow(QFrame::Plain);
+#endif
     
     connect(pushButton_ClearSearchHistory, &QPushButton::clicked,
             this, &SettingsHistory::slotClearSearchHistory);

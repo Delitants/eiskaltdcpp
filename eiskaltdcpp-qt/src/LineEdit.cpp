@@ -107,12 +107,15 @@ QSizePolicy LineEdit::sizePolicy() const{
 }
 
 void LineEdit::updateGeometry(){
-    label->setGeometry(width()-pxm.width()-margin*2, 0, pxm.width()+margin, height());
+    const QSize iconSize = pxm.size();
+    const int x = width() - iconSize.width() - margin;
+    const int y = qMax(0, (height() - iconSize.height()) / 2);
+    label->setGeometry(x, y, iconSize.width(), iconSize.height());
 }
 
 void LineEdit::updateStyles(){
-    label->setStyleSheet(QString("QLabel { margin-left: %1; }").arg(margin));
-    setStyleSheet(QString("QLineEdit{ padding-right: %1; }").arg(label->width()+margin));
+    label->setStyleSheet("QLabel { background: transparent; }");
+    setTextMargins(0, 0, label->width() + margin * 2, 0);
 }
 
 void LineEdit::setPixmap(const QPixmap &px){

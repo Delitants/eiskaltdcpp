@@ -171,6 +171,9 @@ public:
     Qt::SortOrder intToSortOrder(int);
 
     static QString formatBytes(int64_t bytes);
+    static QString countryFlagEmoji(const QString& countryCode);
+    static QString flaggedCountryLabel(const QString& countryText, const QString& countryCode = QString());
+    static QString flaggedIpLabel(const QString& ip);
 
     static void headerMenu(QTreeView*);
 

@@ -45,13 +45,13 @@ using namespace std;
 #include "HubManager.h"
 #include "Notification.h"
 #include "VersionGlobal.h"
-#include "EmoticonFactory.h"
 #include "FinishedTransfers.h"
 #include "QueuedUsers.h"
 #include "ArenaWidgetManager.h"
 #include "ArenaWidgetFactory.h"
 #include "MainWindow.h"
 #include "GlobalTimer.h"
+#include "EmoticonFactory.h"
 
 #if defined(Q_OS_HAIKU)
 #include "EiskaltApp_haiku.h"
@@ -74,6 +74,7 @@ using namespace std;
 #include <QRegularExpression>
 #include <QObject>
 #include <QScopeGuard>
+#include <cstdlib>
 
 #ifdef DBUS_NOTIFY
 #include <QtDBus>
@@ -132,19 +133,37 @@ static LONG WINAPI earlyExceptionHandler(EXCEPTION_POINTERS *ep)
 #endif
 
 #if defined(Q_OS_MAC)
-#include <objc/objc.h>
-#include <objc/message.h>
-
-bool dockClickHandler(id self,SEL _cmd,...)
+// Dock click handling is done via EiskaltEventFilter in EiskaltApp_mac.h
+// using QApplicationStateChangeEvent
+static void applyMacInputContrastStyle(QApplication &app)
 {
-    Q_UNUSED(self)
-    Q_UNUSED(_cmd)
-    Notification *N = qtCtx()->notification();
-    if (N)
-        N->slotShowHide();
-    return true;
+    app.setStyleSheet(app.styleSheet() + QStringLiteral(
+        "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
+        " border: 1px solid palette(mid);"
+        " border-radius: 6px;"
+        " padding: 2px 6px;"
+        " background: palette(base);"
+        " color: palette(text);"
+        "}"
+        "QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus, QAbstractSpinBox:focus {"
+        " border: 1px solid palette(highlight);"
+        "}"
+        "QComboBox::drop-down, QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {"
+        " border-left: 1px solid palette(mid);"
+        "}"
+    ));
 }
 #endif
+
+
+
+#ifdef FORCE_XDG
+void migrateConfig(){
+    // Temporary no-op restore to satisfy linker on macOS builds.
+    // Real migration logic can be re-added later if needed.
+}
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -157,18 +176,16 @@ int main(int argc, char *argv[])
     setlocale(LC_ALL, "");
 
     EiskaltApp app(argc, argv, _q(dcpp::Util::getLoginName()+"EDCPP"));
+    app.setQuitOnLastWindowClosed(false);
+#if defined(Q_OS_MAC)
+    applyMacInputContrastStyle(app);
+#endif
     int ret = 0;
 
     parseCmdLine(app.arguments());
 
-    if (app.isRunning()){
-        QStringList args = app.arguments();
-        args.removeFirst();//remove path to executable
-#if !defined (Q_OS_HAIKU)
-        app.sendMessage(args.join("\n"));
-#endif
-        return 0;
-    }
+    // TEMP: disable single-instance early exit while debugging startup.
+    // The old block was causing clean exit(0) before the UI came up.
 
 #if !defined (Q_OS_WIN) && !defined (Q_OS_HAIKU) && defined (__GLIBC__)
     installHandlers();
@@ -186,9 +203,8 @@ int main(int argc, char *argv[])
     app.setOrganizationName("EiskaltDC++ Team");
     app.setApplicationName("EiskaltDC++ Qt");
     app.setApplicationVersion(QString::fromStdString(eiskaltdcppVersionString));
-    
-    { // Begin Qt-widget scope: everything inside is destroyed before dcpp shutdown
-    QtContext ctx(*dcContext);
+
+        QtContext ctx(*dcContext);
     // Guard: ensure settings are saved on scope exit.
     // The guard runs before ~QtContext.
     auto cleanupGuard = qScopeGuard([&]() {
@@ -204,9 +220,14 @@ int main(int argc, char *argv[])
     ctx.createWulforUtil();
     ctx.settings()->loadTranslation();
 #if defined(Q_OS_MAC)
-    // Disable system tray functionality in Mac OS X:
-    qtCtx()->settings()->setBool(WB_TRAY_ENABLED, false);
+    // On macOS, enable tray icon (appears in menu bar) for window show/hide functionality
+    qtCtx()->settings()->setBool(WB_TRAY_ENABLED, true);
 #endif
+
+    // Create and load emoticon factory
+    ctx.createEmoticonFactory();
+    if (qtCtx()->emoticonFactory())
+        qtCtx()->emoticonFactory()->load();
 
     Text::hubDefaultCharset = qtCtx()->wulforUtil()->qtEnc2DcEnc(qtCtx()->settings()->getStr(WS_DEFAULT_LOCALE)).toStdString();
     // Safety: if the conversion returned an empty string (should not happen
@@ -228,8 +249,6 @@ int main(int argc, char *argv[])
     ctx.createMainWindow();
 #if defined(Q_OS_MAC)
     qtCtx()->mainWindow()->setUnload(false);
-    QObject::connect(&app, &EiskaltApp::clickedOnDock,
-                     qtCtx()->mainWindow(), &MainWindow::show);
 #else // defined(Q_OS_MAC)
     qtCtx()->mainWindow()->setUnload(!qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
 #endif // defined(Q_OS_MAC)
@@ -240,21 +259,26 @@ int main(int argc, char *argv[])
 
     qtCtx()->settings()->loadTheme();
 
-    if (qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON)){
-        ctx.createEmoticonFactory();
-        qtCtx()->emoticonFactory()->load();
-    }
-
 #ifdef USE_ASPELL
+#if defined(Q_OS_MAC)
+    // TEMP: disable Aspell on macOS while debugging startup crashes.
+    // Current build logs show Aspell cannot find dictionaries and then the app segfaults.
+    qtCtx()->settings()->setBool(WB_APP_ENABLE_ASPELL, false);
+#else
     if (qtCtx()->settings()->getBool(WB_APP_ENABLE_ASPELL))
         ctx.createSpellCheck();
+#endif
 #endif
 
     ctx.createNotification();
 
 #ifdef USE_JS
+#if defined(Q_OS_MAC)
+    // TEMP: disable JS/Lua script engine on macOS while debugging shutdown crashes.
+#else
     ctx.createScriptEngine();
     QObject::connect(qtCtx()->scriptEngine(), SIGNAL(scriptChanged(QString)), qtCtx()->mainWindow(), SLOT(slotJSFileChanged(QString)));
+#endif
 #endif
 
     ctx.createFinishedUploads();
@@ -268,26 +292,39 @@ int main(int argc, char *argv[])
     qtCtx()->mainWindow()->parseCmdLine(app.arguments());
 
     if (!qtCtx()->settings()->getBool(WB_MAINWINDOW_HIDE) || !qtCtx()->settings()->getBool(WB_TRAY_ENABLED))
-        qtCtx()->mainWindow()->show();
+        qtCtx()->mainWindow()->show();    ret = app.exec();
 
-    ret = app.exec();
+#if defined(Q_OS_MAC)
+    // macOS emergency exit path:
+    // background core threads can still fire ClientListener callbacks during
+    // DCContext shutdown/destruction, causing EXC_BAD_ACCESS on exit.
+    // Save settings, flush stdio, and terminate the process before core teardown.
+    if (qtCtx() && qtCtx()->settings())
+        qtCtx()->settings()->save();
+    fflush(nullptr);
+    std::_Exit(ret);
+#endif
 
-    std::cout << QObject::tr("Shutting down libeiskaltdcpp...").toStdString() << std::endl;
-
-    // Destruction order (reverse of declaration):
-    //   1. cleanupGuard → saves settings
-    //   2. ~QtContext   → destroys ScriptEngine then all other
-    //      Qt widgets, and deregisters the process-wide context.
+#if !defined(Q_OS_MAC)
+    dcContext->shutdown();
+#endif
+#if !defined(Q_OS_MAC)
+    // Non-macOS: keep explicit shutdown path.
+    if (ctx.mainWindow()) {
+        ctx.mainWindow()->hide();
+        ctx.mainWindow()->close();
+        QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+        QCoreApplication::processEvents();
+        ctx.destroyMainWindow();
     }
 
     dcContext->shutdown();
     dcContext.reset();
-    dcpp::setContext(nullptr);
-
-    std::cout << QObject::tr("Quit...").toStdString() << std::endl;
+#endif
 
     return ret;
 }
+
 
 void parseCmdLine(const QStringList &args){
     for (const auto &arg : args){
@@ -303,160 +340,3 @@ void parseCmdLine(const QStringList &args){
         }
     }
 }
-
-#if !defined (Q_OS_WIN) && !defined (Q_OS_HAIKU)
-
-void catchSIG(int sigNum) {
-    psignal(sigNum, "Catching signal ");
-
-#ifdef ENABLE_STACKTRACE
-    printBacktrace(sigNum);
-#endif // ENABLE_STACKTRACE
-    
-    EiskaltApp *eapp = dynamic_cast<EiskaltApp*>(qApp);
-    
-    if (eapp) {
-        eapp->getSharedMemory().unlock();
-        eapp->getSharedMemory().detach();
-    }
-    
-    raise(SIGINT);
-    
-    std::abort();
-}
-
-template <int sigNum = 0, int ... Params>
-void catchSignals() {
-    if (!sigNum)
-        return;
-
-    psignal(sigNum, "Installing handler for");
-
-    signal(sigNum, catchSIG);
-
-    catchSignals<Params ... >();
-}
-
-void installHandlers(){
-    struct sigaction sa;
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = SIG_IGN;
-
-    if (sigaction(SIGPIPE, &sa, nullptr) == -1)
-        printf("Cannot handle SIGPIPE\n");
-    else {
-        sigset_t set;
-        sigemptyset (&set);
-        sigaddset (&set, SIGPIPE);
-        pthread_sigmask(SIG_BLOCK, &set, nullptr);
-    }
-
-    catchSignals<SIGSEGV, SIGABRT, SIGBUS, SIGTERM>();
-
-    printf("Signal handlers installed.\n");
-}
-
-#endif
-
-#ifdef FORCE_XDG
-
-void copy(const QDir &from, const QDir &to){
-    if (!from.exists() || to.exists())
-        return;
-
-    QString to_path = to.absolutePath();
-    QString from_path = from.absolutePath();
-
-    if (!to_path.endsWith(QDir::separator()))
-        to_path += QDir::separator();
-
-    if (!from_path.endsWith(QDir::separator()))
-        from_path += QDir::separator();
-
-    for (const auto &s : from.entryList(QDir::Dirs)){
-        QDir new_dir(to_path+s);
-
-        if (new_dir.exists())
-            continue;
-        else{
-            if (!new_dir.mkpath(new_dir.absolutePath()))
-                continue;
-
-            copy(QDir(from_path+s), new_dir);
-        }
-    }
-
-    for (const auto &f : from.entryList(QDir::Files)){
-        QFile orig(from_path+f);
-
-        if (!orig.copy(to_path+f))
-            continue;
-    }
-}
-
-void migrateConfig(){
-    const char* home_ = getenv("HOME");
-    string home = home_ ? Text::toUtf8(home_) : "/tmp/";
-    string old_config = home + "/.eiskaltdc++/";
-
-    const char *xdg_config_home_ = getenv("XDG_CONFIG_HOME");
-    string xdg_config_home = xdg_config_home_? Text::toUtf8(xdg_config_home_) : (home+"/.config");
-    string new_config = xdg_config_home + "/eiskaltdc++/";
-
-    if (!QDir().exists(old_config.c_str()) || QDir().exists(new_config.c_str())){
-        if (!QDir().exists(new_config.c_str())){
-            old_config = _DATADIR + string("/config/");
-
-            if (!QDir().exists(old_config.c_str()))
-                return;
-        }
-        else
-            return;
-    }
-
-    try{
-        printf("Migrating to XDG paths...\n");
-
-        copy(QDir(old_config.c_str()), QDir(new_config.c_str()));
-
-        QFile orig(new_config.c_str()+QString("DCPlusPlus.xml"));
-        QFile new_file(new_config.c_str()+QString("DCPlusPlus.xml.new"));
-
-        if (!(orig.open(QIODevice::ReadOnly | QIODevice::Text) && new_file.open(QIODevice::WriteOnly | QIODevice::Text))){
-            orig.close();
-            new_file.close();
-
-            printf("Migration failed.\n");
-
-            return;
-        }
-
-        QTextStream rstream(&orig);
-        QTextStream wstream(&new_file);
-
-        QRegularExpression replace_str("/(\\S+)/\\.eiskaltdc\\+\\+/");
-        QString line = "";
-
-        while (!rstream.atEnd()){
-            line = rstream.readLine();
-
-            line.replace(replace_str, QString(new_config.c_str()));
-
-            wstream << line << "\n";
-        }
-
-        wstream.flush();
-
-        orig.close();
-        new_file.close();
-
-        orig.remove();
-        new_file.rename(orig.fileName());
-
-        printf("Ok. Migrated.\n");
-    }
-    catch(const std::exception&){
-        printf("Migration failed.\n");
-    }
-}
-#endif

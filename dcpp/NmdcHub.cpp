@@ -36,12 +36,105 @@
 #include "UserCommand.h"
 #include "version.h"
 
+#include <cwctype>
+#include <limits>
+#include <vector>
+
 namespace dcpp {
+
+namespace {
+
+bool hasNonAsciiBytes(const string& line) {
+    for (unsigned char ch : line) {
+        if (ch >= 0x80)
+            return true;
+    }
+
+    return false;
+}
+
+bool containsEncoding(const std::vector<string>& encodings, const string& candidate) {
+    for (const auto& encoding : encodings) {
+        if (Util::stricmp(encoding, candidate) == 0)
+            return true;
+    }
+
+    return false;
+}
+
+std::vector<string> encodingCandidates(const string& currentEncoding) {
+    std::vector<string> candidates;
+
+    auto addCandidate = [&candidates](const string& candidate) {
+        if (!candidate.empty() && !containsEncoding(candidates, candidate))
+            candidates.push_back(candidate);
+    };
+
+    addCandidate(currentEncoding);
+    addCandidate(Text::systemCharset);
+    addCandidate("CP1251");
+    addCandidate("CP1252");
+    addCandidate("CP1250");
+    addCandidate("CP1257");
+    addCandidate("ISO-8859-2");
+    addCandidate("ISO-8859-7");
+    addCandidate("KOI8-R");
+
+    return candidates;
+}
+
+int scoreDecodedText(const string& text) {
+    if (text.empty())
+        return std::numeric_limits<int>::min() / 4;
+
+    int score = 0;
+    const char* p = text.c_str();
+    const char* end = p + text.size();
+
+    while (p < end) {
+        wchar_t c = 0;
+        const int n = Text::utf8ToWc(p, c);
+
+        if (n < 0) {
+            score -= 24;
+            p += std::abs(n);
+            continue;
+        }
+
+        p += n;
+
+        if (c == L'_') {
+            score -= 10;
+        } else if (c == L'\n' || c == L'\r' || c == L'\t') {
+            score += 2;
+        } else if (std::iswspace(c)) {
+            score += 1;
+        } else if (std::iswalnum(c)) {
+            score += 5;
+        } else if (std::iswpunct(c)) {
+            score += 2;
+        } else if (c < 32) {
+            score -= 12;
+        } else {
+            score += 1;
+        }
+
+        if ((c >= 0x0400 && c <= 0x052F) || (c >= 0x2DE0 && c <= 0x2DFF))
+            score += 6;
+        else if ((c >= 0x00C0 && c <= 0x024F) || (c >= 0x0370 && c <= 0x03FF))
+            score += 4;
+    }
+
+    return score;
+}
+
+} // namespace
 
 NmdcHub::NmdcHub(DCContext& ctx, const string& aHubURL, bool secure) :
     Client(ctx, aHubURL, '|', secure, Socket::PROTO_NMDC),
     supportFlags(0),
-    lastUpdate(0)
+    lastUpdate(0),
+    autoDetectedEncoding(Text::hubDefaultCharset)
 {
 }
 
@@ -51,6 +144,44 @@ NmdcHub::~NmdcHub() {
 
 
 #define checkstate() if(state != STATE_NORMAL) return
+
+void NmdcHub::maybeAutoDetectEncoding(const string& aLine) {
+    if (aLine.empty() || !hasNonAsciiBytes(aLine))
+        return;
+
+    const string currentEncoding = getEncoding();
+
+    if (Text::validateUtf8(aLine)) {
+        if (Util::stricmp(currentEncoding, Text::utf8) != 0) {
+            setEncoding(Text::utf8);
+            autoDetectedEncoding = Text::utf8;
+        }
+
+        return;
+    }
+
+    const int currentScore = scoreDecodedText(Text::toUtf8(aLine, currentEncoding));
+    int bestScore = currentScore;
+    string bestEncoding = currentEncoding;
+
+    for (const auto& candidate : encodingCandidates(currentEncoding)) {
+        const int candidateScore = scoreDecodedText(Text::toUtf8(aLine, candidate));
+
+        if (candidateScore > bestScore) {
+            bestScore = candidateScore;
+            bestEncoding = candidate;
+        }
+    }
+
+    if (bestEncoding.empty() ||
+        Util::stricmp(bestEncoding, currentEncoding) == 0 ||
+        bestScore < currentScore + 12) {
+        return;
+    }
+
+    setEncoding(bestEncoding);
+    autoDetectedEncoding = bestEncoding;
+}
 
 void NmdcHub::connect(const OnlineUser& aUser, const string&) {
     checkstate();
@@ -186,6 +317,8 @@ void NmdcHub::updateFromTag(Identity& id, const string& tag) {
 void NmdcHub::onLine(const string& aLine) {
     if(aLine.length() == 0)
         return;
+
+    maybeAutoDetectEncoding(aLine);
 
     if(aLine[0] != '$') {
         // Check if we're being banned...
@@ -928,9 +1061,14 @@ void NmdcHub::myInfo(bool alwaysSend) {
     bool gslotf = CTX_BOOLSETTING(SHOW_FREE_SLOTS_DESC);
     string gslot = "["+Util::toString(ctx().getUploadManager()->getFreeSlots())+"]";
     string uMin = (CTX_SETTING(MIN_UPLOAD_SPEED) == 0) ? Util::emptyString : ",O:" + Util::toString(CTX_SETTING(MIN_UPLOAD_SPEED));
+    string clientIdTag = getClientId();
+    if(clientIdTag.find("-arm64") == string::npos) {
+        clientIdTag += "-arm64";
+    }
+
     string myInfoA =
             "$MyINFO $ALL " + fromUtf8(getMyNick()) + " " +
-            fromUtf8(escape((gslotf ? gslot :"")+getCurrentDescription())) + " <"+ getClientId().c_str() + ",M:" + modeChar + ",H:" + getCounts();
+            fromUtf8(escape((gslotf ? gslot :"")+getCurrentDescription())) + " <"+ clientIdTag + ",M:" + modeChar + ",H:" + getCounts();
     string myInfoB = ",S:" + Util::toString(CTX_SETTING(SLOTS));
     string myInfoC = uMin +
             ">$ $" + uploadSpeed + StatusMode + "$" + fromUtf8(escape(CTX_SETTING(EMAIL))) + '$';
@@ -1074,7 +1212,7 @@ void NmdcHub::on(Connected) {
 void NmdcHub::on(Line, const string& aLine) {
     try {
 #ifdef LUA_SCRIPT
-    if (onClientMessage(this, validateMessage(aLine, true)))
+    if (ScriptInstance::L && onClientMessage(this, validateMessage(aLine, true)))
         return;
 #endif
     if (CTX_BOOLSETTING(NMDC_DEBUG))

@@ -491,7 +491,7 @@ void Secretary::slotFindAll(){
         QTextEdit::ExtraSelection selection;
 
         QColor color;
-        color.setNamedColor(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
+        color = QColor::fromString(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
         color.setAlpha(qtCtx()->settings()->getInt(WI_CHAT_FIND_COLOR_ALPHA));
 
         selection.format.setBackground(color);

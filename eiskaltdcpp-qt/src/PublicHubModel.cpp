@@ -17,6 +17,7 @@
 
 #include <QList>
 #include <QStringList>
+#include <QUrl>
 
 void PublicHubProxyModel::sort(int column, Qt::SortOrder order){
     if (sourceModel())
@@ -61,6 +62,11 @@ QVariant PublicHubModel::data(const QModelIndex &index, int role) const
         case Qt::DecorationRole: // icon
             break;
         case Qt::DisplayRole:
+            if (index.column() == COLUMN_PHUB_COUNTRY) {
+                QString countryText = item->data(index.column()).toString().trimmed();
+                return WulforUtil::flaggedCountryLabel(countryText);
+            }
+
             if (index.column() == COLUMN_PHUB_SHARED || index.column() == COLUMN_PHUB_MINSHARE)
                 return WulforUtil::formatBytes(item->data(index.column()).toULongLong());
 
@@ -308,4 +314,3 @@ void PublicHubItem::updateColumn(const int column, const QVariant &var){
 
     itemData[column] = var;
 }
-

@@ -37,7 +37,8 @@ TabFrame::TabFrame(QWidget *parent) :
     fr_layout = new FlowLayout(this);
     fr_layout->setContentsMargins(0, 0, 0, 0);
 
-    setMinimumHeight(20);
+    setMinimumHeight(28);
+    setMaximumHeight(32);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     shortcuts << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_1)), this))
@@ -135,7 +136,7 @@ void TabFrame::insertWidget(ArenaWidget *awgt){
         return;
 
     TabButton *btn = new TabButton();
-    btn->setText(awgt->getArenaShortTitle().left(32));
+    btn->setText(awgt->getArenaShortTitle());
     btn->setToolTip(qtCtx()->wulforUtil()->compactToolTipText(awgt->getArenaTitle(), 60, "\n"));
     btn->setWidgetIcon(awgt->getPixmap());
     btn->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -193,7 +194,7 @@ void TabFrame::redraw() {
         TabButton *btn = const_cast<TabButton*>(it.key());
         ArenaWidget *awgt = const_cast<ArenaWidget*>(it.value());
 
-        btn->setText(awgt->getArenaShortTitle().left(32));
+        btn->setText(awgt->getArenaShortTitle());
         btn->setToolTip(qtCtx()->wulforUtil()->compactToolTipText(awgt->getArenaTitle(), 60, "\n"));
         btn->setWidgetIcon(awgt->getPixmap());
 
@@ -367,15 +368,47 @@ void TabFrame::slotContextMenu() {
     }
 }
 
-void TabFrame::slotDropped(TabButton *dropped){
+void TabFrame::slotDropped(TabButton *source, TabButton *target){
     DEBUG_BLOCK
-    
-    TabButton *on = qobject_cast<TabButton*>(sender());
 
-    if (!(on && dropped && on != dropped))
+    if (!source || !target || source == target)
         return;
 
-    fr_layout->place(on, dropped);
+    if (!tbtn_map.contains(source) || !tbtn_map.contains(target))
+        return;
+
+    QList<TabButton*> order;
+
+    for (int i = 0; i < fr_layout->count(); ++i) {
+        QLayoutItem *item = fr_layout->itemAt(i);
+        if (!item)
+            continue;
+
+        TabButton *btn = qobject_cast<TabButton*>(item->widget());
+        if (btn)
+            order.push_back(btn);
+    }
+
+    const int from = order.indexOf(source);
+    const int to   = order.indexOf(target);
+
+    if (from < 0 || to < 0 || from == to)
+        return;
+
+    order.move(from, to);
+
+    while (QLayoutItem *item = fr_layout->takeAt(0)) {
+        delete item;
+    }
+
+    for (TabButton *btn : order)
+        fr_layout->addWidget(btn);
+
+    fr_layout->invalidate();
+    updateGeometry();
+    update();
+
+    qtCtx()->arenaWidgetManager()->activate(tbtn_map[source]);
 }
 
 void TabFrame::moveLeft(){
@@ -422,4 +455,3 @@ void TabFrame::toggled ( ArenaWidget* awgt ) {
     else
         qtCtx()->arenaWidgetManager()->rem(awgt);
 }
-

@@ -73,8 +73,9 @@ public:
                       LOG_FORMAT_STATUS, LOG_FILE_SPY, LOG_FORMAT_SPY, TLS_PRIVATE_KEY_FILE,
                       TLS_CERTIFICATE_FILE, TLS_TRUSTED_CERTIFICATES_PATH,
                       LANGUAGE, SKIPLIST_SHARE, INTERNETIP, BIND_IFACE_NAME,
-                      DHT_KEY, DYNDNS_SERVER, MIME_HANDLER,
+                      DHT_KEY, DHT_BOOTSTRAP_URLS, COUNTRY_DB_PATH, DYNDNS_SERVER, MIME_HANDLER,
                       LOG_FILE_CMD_DEBUG, LOG_FORMAT_CMD_DEBUG,
+                      EXTERNAL_IP6, BIND_ADDRESS6,
                       STR_LAST };
 
     enum IntSetting { INT_FIRST = STR_LAST + 1,
@@ -127,6 +128,7 @@ public:
                       APP_UNIT_BASE,
                       LOG_CMD_DEBUG,
                       NMDC_GETINFO_LIMIT,
+                      USE_IPV6,
                       INT_LAST };
 
     enum Int64Setting { INT64_FIRST = INT_LAST + 1,

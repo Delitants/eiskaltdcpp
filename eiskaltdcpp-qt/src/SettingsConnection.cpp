@@ -13,6 +13,8 @@
 #include "SettingsConnection.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
+#include "DHTBootstrapList.h"
+#include "PublicHubsList.h"
 #include "MainWindow.h"
 #include "WulforSettings.h"
 #include "WulforUtil.h"
@@ -26,6 +28,13 @@
 #include <QRadioButton>
 #include <QList>
 #include <QMessageBox>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QLabel>
+#include <QToolButton>
+#include <QHostAddress>
+#include <QAbstractSocket>
 
 #ifndef IPTOS_TOS_MASK
 #define	IPTOS_TOS_MASK		0x1E
@@ -51,12 +60,115 @@
 
 using namespace dcpp;
 
-
 SettingsConnection::SettingsConnection( QWidget *parent):
         QWidget(parent),
         dirty(false)
 {
     setupUi(this);
+
+    tabWidget->setDocumentMode(true);
+    tabWidget->setUsesScrollButtons(false);
+
+    formLayout->setLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    formLayout->setHorizontalSpacing(8);
+    formLayout->setVerticalSpacing(6);
+    verticalLayout->setContentsMargins(2, 2, 2, 2);
+    verticalLayout->setSpacing(6);
+    verticalLayout_5->setContentsMargins(2, 2, 2, 2);
+    verticalLayout_5->setSpacing(6);
+    gridLayout_4->setHorizontalSpacing(10);
+    gridLayout_4->setVerticalSpacing(6);
+    gridLayout_5->setHorizontalSpacing(14);
+    gridLayout_5->setVerticalSpacing(8);
+    gridLayout_6->setHorizontalSpacing(8);
+    gridLayout_6->setVerticalSpacing(8);
+    gridLayout_7->setHorizontalSpacing(14);
+    gridLayout_7->setVerticalSpacing(8);
+    gridLayout_8->setHorizontalSpacing(8);
+    gridLayout_8->setVerticalSpacing(6);
+    gridLayout_11->setHorizontalSpacing(10);
+    gridLayout_11->setVerticalSpacing(8);
+    gridLayout_11->setColumnStretch(0, 0);
+    gridLayout_11->setColumnStretch(1, 0);
+    gridLayout_11->setColumnStretch(2, 0);
+    gridLayout_11->setColumnStretch(3, 1);
+    gridLayout_12->setHorizontalSpacing(10);
+    gridLayout_12->setVerticalSpacing(6);
+    gridLayout_13->setHorizontalSpacing(10);
+    gridLayout_13->setVerticalSpacing(6);
+
+    if (auto *item = gridLayout_11->itemAtPosition(0, 0)) {
+        if (auto *spacer = item->spacerItem())
+            spacer->changeSize(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    }
+
+    gridLayout_11->addWidget(label_20, 0, 0);
+    gridLayout_11->addWidget(spinBox_RECONNECT_DELAY, 0, 1);
+    gridLayout_11->addWidget(label_22, 1, 0);
+    gridLayout_11->addWidget(comboBox_TOS, 1, 1);
+
+    label_20->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label_22->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label_20->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    label_22->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    groupBox->setProperty("settingsSectionHeader", true);
+    groupBox_2->setProperty("settingsSectionHeader", true);
+    groupBox_DHT->setProperty("settingsSectionHeader", true);
+    groupBox_4->setFlat(true);
+    groupBox_5->setFlat(true);
+    groupBox_4->setProperty("settingsFlatSection", true);
+    groupBox_5->setProperty("settingsFlatSection", true);
+    groupBox_5->layout()->setContentsMargins(0, 0, 0, 0);
+    groupBox_4->layout()->setContentsMargins(0, 0, 0, 0);
+    groupBox_4->layout()->setSpacing(6);
+    groupBox_5->layout()->setSpacing(6);
+
+    checkBox_USE_IPV6 = new QCheckBox(tr("Enable IPv6"), tab);
+    formLayout->addRow(checkBox_USE_IPV6);
+
+    auto* labelWanIp6 = new QLabel(tr("External/WAN IPv6:"), tab);
+    labelWanIp6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    lineEdit_WANIP6 = new QLineEdit(tab);
+    lineEdit_WANIP6->setPlaceholderText(tr("e.g. 2001:db8::1234"));
+    formLayout->addRow(labelWanIp6, lineEdit_WANIP6);
+
+    auto* labelBind6 = new QLabel(tr("Bind IPv6 address"), groupBox_5);
+    labelBind6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    lineEdit_BIND_ADDRESS6 = new QLineEdit(groupBox_5);
+    lineEdit_BIND_ADDRESS6->setPlaceholderText("::");
+    gridLayout_12->addWidget(labelBind6, 1, 0);
+    gridLayout_12->addWidget(lineEdit_BIND_ADDRESS6, 1, 1, 1, 3);
+
+    auto *labelCountryDb = new QLabel(tr("Country MMDB file"), tab_3);
+    labelCountryDb->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    lineEdit_COUNTRY_DB = new QLineEdit(tab_3);
+    lineEdit_COUNTRY_DB->setPlaceholderText(tr("Path to GeoLite2/MaxMind country .mmdb"));
+    lineEdit_COUNTRY_DB->setMinimumWidth(320);
+    toolButton_COUNTRY_DB = new QToolButton(tab_3);
+    toolButton_COUNTRY_DB->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_COUNTRY_DB->setAutoRaise(false);
+    gridLayout_11->addWidget(labelCountryDb, 2, 0);
+    gridLayout_11->addWidget(lineEdit_COUNTRY_DB, 2, 1);
+    gridLayout_11->addWidget(toolButton_COUNTRY_DB, 2, 2);
+    connect(toolButton_COUNTRY_DB, &QToolButton::clicked, this, &SettingsConnection::slotBrowseCountryDb);
+
+    gridLayout_13->removeWidget(lineEdit_DHT_BOOTSTRAP_URLS);
+    lineEdit_DHT_BOOTSTRAP_URLS->hide();
+    auto *buttonEditDHT = new QPushButton(tr("Configure DHT bootstrap URLs"), groupBox_DHT);
+    buttonEditDHT->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    gridLayout_13->addWidget(buttonEditDHT, 1, 1);
+    connect(buttonEditDHT, &QPushButton::clicked, this, &SettingsConnection::slotCfgDHTBootstrap);
+
+    auto *labelHubLists = new QLabel(tr("Public hub list URLs"), tab_3);
+    labelHubLists->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    auto *buttonEditHubLists = new QPushButton(tr("Configure public hub list URLs"), tab_3);
+    buttonEditHubLists->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    gridLayout_11->addWidget(labelHubLists, 3, 0);
+    gridLayout_11->addWidget(buttonEditHubLists, 3, 1);
+    connect(buttonEditHubLists, &QPushButton::clicked, this, &SettingsConnection::slotCfgPublicHubs);
+    comboBox_TOS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    comboBox_TLS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+
 
     init();
 }
@@ -94,12 +206,55 @@ void SettingsConnection::ok(){
 
         SM->set(SettingsManager::EXTERNAL_IP, lineEdit_WANIP->text().toStdString());
         QString bind_ip=lineEdit_BIND_ADDRESS->text();
-        if (validateIp(bind_ip))
+        if (validateIp4(bind_ip))
             SM->set(SettingsManager::BIND_ADDRESS, lineEdit_BIND_ADDRESS->text().toStdString());
         SM->set(SettingsManager::NO_IP_OVERRIDE, checkBox_DONTOVERRIDE->checkState() == Qt::Checked);
+
+        const bool useIPv6 = checkBox_USE_IPV6 && checkBox_USE_IPV6->isChecked();
+        QString wanIp6 = lineEdit_WANIP6 ? lineEdit_WANIP6->text().trimmed() : QString();
+        QString bindIp6 = lineEdit_BIND_ADDRESS6 ? lineEdit_BIND_ADDRESS6->text().trimmed() : QString();
+        if(bindIp6.isEmpty()) {
+            bindIp6 = "::";
+        }
+
+        if(useIPv6) {
+            if(!wanIp6.isEmpty() && !validateIp6(wanIp6)) {
+                showMsg(tr("No valid external IPv6 address found!"), lineEdit_WANIP6);
+                return;
+            }
+            if(!validateIp6(bindIp6)) {
+                showMsg(tr("No valid bind IPv6 address found!"), lineEdit_BIND_ADDRESS6);
+                return;
+            }
+        }
+
+        SM->set(SettingsManager::EXTERNAL_IP6, wanIp6.toStdString());
+        SM->set(SettingsManager::BIND_ADDRESS6, bindIp6.toStdString());
+        SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
     else {
         SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
+        const bool useIPv6 = checkBox_USE_IPV6 && checkBox_USE_IPV6->isChecked();
+        QString wanIp6 = lineEdit_WANIP6 ? lineEdit_WANIP6->text().trimmed() : QString();
+        QString bindIp6 = lineEdit_BIND_ADDRESS6 ? lineEdit_BIND_ADDRESS6->text().trimmed() : QString();
+        if(bindIp6.isEmpty()) {
+            bindIp6 = "::";
+        }
+
+        if(useIPv6) {
+            if(!wanIp6.isEmpty() && !validateIp6(wanIp6)) {
+                showMsg(tr("No valid external IPv6 address found!"), lineEdit_WANIP6);
+                return;
+            }
+            if(!validateIp6(bindIp6)) {
+                showMsg(tr("No valid bind IPv6 address found!"), lineEdit_BIND_ADDRESS6);
+                return;
+            }
+        }
+
+        SM->set(SettingsManager::EXTERNAL_IP6, wanIp6.toStdString());
+        SM->set(SettingsManager::BIND_ADDRESS6, bindIp6.toStdString());
+        SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
 
     bool use_socks = !radioButton_DC->isChecked();
@@ -111,7 +266,7 @@ void SettingsConnection::ok(){
     if (use_socks){
         QString ip = lineEdit_SIP->text();
 
-        if (!validateIp(ip)){
+        if (!validateIp4(ip)){
             showMsg(tr("No valid SOCKS5 server IP found!"), nullptr);
 
             return;
@@ -146,9 +301,10 @@ void SettingsConnection::ok(){
     SM->set(SettingsManager::SLOTS_ALTERNATE_LIMITING, spinBox_ALTERNATE_SLOTS->value());
     SM->set(SettingsManager::RECONNECT_DELAY, spinBox_RECONNECT_DELAY->value());
     SM->set(SettingsManager::IP_TOS_VALUE, comboBox_TOS->itemData(comboBox_TOS->currentIndex()).toInt());
+    if (lineEdit_COUNTRY_DB)
+        SM->set(SettingsManager::COUNTRY_DB_PATH, lineEdit_COUNTRY_DB->text().trimmed().toStdString());
     SM->set(SettingsManager::DYNDNS_SERVER, lineEdit_DYNDNS_SERVER->text().toStdString());
     SM->set(SettingsManager::DYNDNS_ENABLE, checkBox_DYNDNS->isChecked());
-
 #ifdef WITH_DHT
     SM->set(SettingsManager::USE_DHT, groupBox_DHT->isChecked());
     if (spinBox_DHT->value() != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true))
@@ -179,6 +335,12 @@ void SettingsConnection::ok(){
 void SettingsConnection::init(){
     lineEdit_WANIP->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::EXTERNAL_IP, true)));
     lineEdit_BIND_ADDRESS->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS, true)));
+    if (lineEdit_WANIP6)
+        lineEdit_WANIP6->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::EXTERNAL_IP6, true)));
+    if (lineEdit_BIND_ADDRESS6)
+        lineEdit_BIND_ADDRESS6->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS6, true)));
+    if (checkBox_USE_IPV6)
+        checkBox_USE_IPV6->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IPV6, true));
 
     spinBox_TCP->setValue(old_tcp = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TCP_PORT, true));
     spinBox_UDP->setValue(old_udp = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true));
@@ -194,10 +356,11 @@ void SettingsConnection::init(){
     spinBox_BANDWIDTH_LIMIT_END->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::BANDWIDTH_LIMIT_END, true));
     spinBox_ALTERNATE_SLOTS->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SLOTS_ALTERNATE_LIMITING, true));
     spinBox_RECONNECT_DELAY->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::RECONNECT_DELAY, true));
+    if (lineEdit_COUNTRY_DB)
+        lineEdit_COUNTRY_DB->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::COUNTRY_DB_PATH, true)));
     checkBox_DONTOVERRIDE->setCheckState( qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NO_IP_OVERRIDE, true)? Qt::Checked : Qt::Unchecked );
     checkBox_DYNDNS->setCheckState( qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::DYNDNS_ENABLE, true) ? Qt::Checked : Qt::Unchecked );
     lineEdit_DYNDNS_SERVER->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DYNDNS_SERVER, true)));
-
 #ifdef WITH_DHT
     groupBox_DHT->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_DHT, true));
     spinBox_DHT->setValue(old_dht = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DHT_PORT, true));
@@ -313,12 +476,29 @@ void SettingsConnection::init(){
 #endif
     connect(radioButton_DC, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
     connect(radioButton_SOCKS, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    if(checkBox_USE_IPV6 && lineEdit_WANIP6 && lineEdit_BIND_ADDRESS6) {
+        auto syncIpv6Fields = [this]() {
+            const bool enabled = checkBox_USE_IPV6->isChecked();
+            lineEdit_WANIP6->setEnabled(enabled);
+            lineEdit_BIND_ADDRESS6->setEnabled(enabled);
+        };
+        connect(checkBox_USE_IPV6, &QCheckBox::toggled, this, [syncIpv6Fields](bool) { syncIpv6Fields(); });
+        syncIpv6Fields();
+    }
 
     lineEdit_SIP->installEventFilter(this);
     lineEdit_SPORT->installEventFilter(this);
     lineEdit_SPSWD->installEventFilter(this);
     lineEdit_SUSR->installEventFilter(this);
     lineEdit_WANIP->installEventFilter(this);
+    if (lineEdit_WANIP6)
+        lineEdit_WANIP6->installEventFilter(this);
+    if (lineEdit_BIND_ADDRESS6)
+        lineEdit_BIND_ADDRESS6->installEventFilter(this);
+    if (checkBox_USE_IPV6)
+        checkBox_USE_IPV6->installEventFilter(this);
+    if (lineEdit_COUNTRY_DB)
+        lineEdit_COUNTRY_DB->installEventFilter(this);
 
     spinBox_TCP->installEventFilter(this);
     spinBox_UDP->installEventFilter(this);
@@ -347,7 +527,32 @@ void SettingsConnection::slotToggleOutgoing(){
 
     frame_2->setEnabled(b);
 }
-bool SettingsConnection::validateIp(QString &ip){
+
+void SettingsConnection::slotCfgDHTBootstrap(){
+    DHTBootstrapList dhtList(this);
+    dhtList.exec();
+}
+
+void SettingsConnection::slotCfgPublicHubs(){
+    PublicHubsList hubsList(this);
+    hubsList.exec();
+}
+
+void SettingsConnection::slotBrowseCountryDb()
+{
+    const QString startPath = lineEdit_COUNTRY_DB && !lineEdit_COUNTRY_DB->text().trimmed().isEmpty()
+        ? lineEdit_COUNTRY_DB->text().trimmed()
+        : QDir::homePath();
+    const QString file = QFileDialog::getOpenFileName(this,
+                                                      tr("Select MaxMind country database"),
+                                                      startPath,
+                                                      tr("MaxMind DB (*.mmdb);;All files (*.*)"));
+
+    if (!file.isEmpty() && lineEdit_COUNTRY_DB)
+        lineEdit_COUNTRY_DB->setText(QDir::toNativeSeparators(file));
+}
+
+bool SettingsConnection::validateIp4(QString &ip){
     if (ip.isEmpty() || ip.isNull())
         return false;
 
@@ -365,6 +570,19 @@ bool SettingsConnection::validateIp(QString &ip){
         valid = valid && (v.validate(s, pos) == QValidator::Acceptable);
 
     return valid;
+}
+
+bool SettingsConnection::validateIp6(QString& ip) const {
+    if(ip.isEmpty() || ip.isNull()) {
+        return false;
+    }
+
+    QHostAddress addr;
+    if(!addr.setAddress(ip)) {
+        return false;
+    }
+
+    return addr.protocol() == QAbstractSocket::IPv6Protocol;
 }
 
 void SettingsConnection::showMsg(QString msg, QWidget *focusTo){

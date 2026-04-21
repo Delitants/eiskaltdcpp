@@ -29,16 +29,20 @@
 #include <QPointF>
 #include <QMimeData>
 #include <QDrag>
+#include <QPalette>
 
 #include "WulforUtil.h"
 #include "WulforSettings.h"
 
 #include <QDataStream>
 
-static const int margin         = 2;
-static const int LABELWIDTH     = 20;
+static const int margin         = 5;
+static const int LABELWIDTH     = 18;
 static const int CLOSEPXWIDTH   = 14;
 static const int PXWIDTH        = 16;
+static const int CLOSE_RIGHT_MARGIN = 58;
+
+TabButton *TabButton::dragSourceButton = nullptr;
 
 TabButton::TabButton(QWidget *parent) :
     QPushButton(parent), isLeftBtnHold(false)
@@ -48,16 +52,20 @@ TabButton::TabButton(QWidget *parent) :
     setAutoExclusive(true);
     setAutoDefault(false);
     setAcceptDrops(true);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setContentsMargins(0, 0, 0, 0);
+    setFixedHeight(26);
+    setContentsMargins(0, 0, 0, 0);
 
     parentHeight = QPushButton::sizeHint().height();
 
     label = new QLabel(this);
-    label->setPixmap(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE).scaled(CLOSEPXWIDTH, CLOSEPXWIDTH, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
-    label->setFixedSize(QSize(LABELWIDTH, LABELWIDTH));
+    label->setPixmap(style()->standardIcon(QStyle::SP_TitleBarCloseButton).pixmap(CLOSEPXWIDTH, CLOSEPXWIDTH));
+    label->setFixedSize(QSize(CLOSEPXWIDTH, CLOSEPXWIDTH));
     label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
 
     px_label = new QLabel(this);
-    px_label->setFixedSize(QSize(LABELWIDTH, LABELWIDTH));
+    px_label->setFixedSize(QSize(PXWIDTH, PXWIDTH));
     px_label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
 
     installEventFilter(this);
@@ -86,34 +94,35 @@ bool TabButton::eventFilter(QObject *obj, QEvent *e){
 }
 
 void TabButton::dragEnterEvent(QDragEnterEvent *event){
-    if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
-        if (event->source() == this) {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        } else {
-            event->acceptProposedAction();
-        }
-    } else {
-        event->ignore();
+    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") &&
+        dragSourceButton &&
+        dragSourceButton != this) {
+        event->acceptProposedAction();
+        return;
     }
+
+    event->ignore();
 }
 
 void TabButton::dragMoveEvent(QDragMoveEvent *event){
-    if (event->mimeData()->hasFormat("application/x-dnditemdata")) {
-        if (event->source() == this) {
-            event->setDropAction(Qt::MoveAction);
-            event->accept();
-        } else {
-            event->acceptProposedAction();
-        }
-    } else {
-        event->ignore();
+    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") &&
+        dragSourceButton &&
+        dragSourceButton != this) {
+        event->acceptProposedAction();
+        return;
     }
+
+    event->ignore();
 }
 
 void TabButton::dropEvent(QDropEvent *e){
-    if (qobject_cast<TabButton*>(e->source()) && this != qobject_cast<TabButton*>(e->source()))
-        emit dropped(qobject_cast<TabButton*>(e->source()));
+    if (e->mimeData()->hasFormat("application/x-eiskalt-tab") &&
+        dragSourceButton &&
+        dragSourceButton != this) {
+        emit dropped(dragSourceButton, this);
+        e->acceptProposedAction();
+        return;
+    }
 
     e->ignore();
 }
@@ -122,36 +131,33 @@ void TabButton::mousePressEvent(QMouseEvent *e){
     QPushButton::mousePressEvent(e);
 
     if (e->button() == Qt::LeftButton){
+        dragStartPos = e->pos();
         emit clicked();
-
         isLeftBtnHold = true;
     }
 }
 
 void TabButton::mouseMoveEvent(QMouseEvent *e){
-    if (!isLeftBtnHold){
-        QPushButton::mouseMoveEvent(e);
+    QPushButton::mouseMoveEvent(e);
 
+    if (!isLeftBtnHold)
         return;
-    }
 
-    QPixmap pxm = grab(rect());
+    if (!(e->buttons() & Qt::LeftButton))
+        return;
 
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-    stream << pxm << QPoint(mapFromGlobal(QCursor::pos()));
+    if ((e->pos() - dragStartPos).manhattanLength() < QApplication::startDragDistance())
+        return;
 
-    QMimeData *mimeData = new QMimeData();
-    mimeData->setData("application/x-dnditemdata", data);
+    auto *mime = new QMimeData();
+    mime->setData("application/x-eiskalt-tab", QByteArray("tab"));
 
-    QDrag *drag = new QDrag(this);
-    drag->setMimeData(mimeData);
-    drag->setPixmap(pxm);
-    drag->setHotSpot(mapFromGlobal(QCursor::pos()));
+    auto *drag = new QDrag(this);
+    drag->setMimeData(mime);
 
-    drag->exec(Qt::CopyAction | Qt::MoveAction, Qt::CopyAction);
-
-    e->accept();
+    dragSourceButton = this;
+    drag->exec(Qt::MoveAction);
+    dragSourceButton = nullptr;
 }
 
 void TabButton::mouseReleaseEvent(QMouseEvent *e){
@@ -161,102 +167,129 @@ void TabButton::mouseReleaseEvent(QMouseEvent *e){
 }
 
 void TabButton::paintEvent(QPaintEvent *e){
-    Q_UNUSED(e)
-    QStyleOptionButton option;
-    QPainter p(this);
-    initStyleOption(&option);
-
-    bool checked = (option.state & QStyle::State_On);
-    bool mouseOver = (option.state & QStyle::State_MouseOver);
-
-    option.state &= ~(QStyle::State_On|QStyle::State_MouseOver|QStyle::State_Enabled|
-                      QStyle::State_HasFocus|QStyle::State_Active|QStyle::State_Sunken);//shutdown all states
-
-    qApp->style()->drawControl(QStyle::CE_PushButton, &option, &p);
-
-    auto getGradient = [&,this](const int centralFactor, const int sideFactor) -> QLinearGradient {
-        QLinearGradient gr(0, 0, this->width(), 0);
-
-        gr.setSpread(QGradient::PadSpread);
-        gr.setColorAt(0.00, this->palette().window().color());
-        gr.setColorAt(0.25, this->palette().highlight().color().lighter(sideFactor));
-        gr.setColorAt(0.50, this->palette().highlight().color().lighter(centralFactor));
-        gr.setColorAt(0.75, this->palette().highlight().color().lighter(sideFactor));
-        gr.setColorAt(1.00, this->palette().window().color());
-
-        return gr;
-    };
-
-    auto drawButtonLines = [&,this](const QLinearGradient &gr) -> void {
-        p.fillRect(0, 0, this->width(), 1, gr);
-        p.fillRect(0, this->height()-1, this->width(), 1, gr);
-    };
-
-    if (checked)
-        drawButtonLines( getGradient(100, 105) );
-    else if (mouseOver)
-        drawButtonLines( getGradient(105, 110) );
-
-    p.end();
+    QPushButton::paintEvent(e);
 }
 
 QSize TabButton::sizeHint() const {
     ensurePolished();
+    return QSize(normalWidth(), 26);
+}
 
-    int h = normalHeight();
-    int w = normalWidth();
-
-    return QSize(w, h);
+QSize TabButton::minimumSizeHint() const {
+    return sizeHint();
 }
 
 int TabButton::normalWidth() const {
-    QFontMetrics metrics = qApp->fontMetrics();
-
-    return LABELWIDTH*2+metrics.horizontalAdvance(text())+margin*3;
+    QFontMetricsF metrics(qApp->font());
+    const bool showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
+    const int closeWidth = showClose ? (CLOSEPXWIDTH + CLOSE_RIGHT_MARGIN + 4) : 10;
+    return PXWIDTH + closeWidth + qRound(metrics.horizontalAdvance(text())) + margin * 5 + 18;
 }
 
 int TabButton::normalHeight() const {
-    return (LABELWIDTH+contentsMargins().top()+contentsMargins().bottom());
+    return 26;
 }
 
 void TabButton::setWidgetIcon(const QPixmap &px){
-    px_label->setPixmap(px.scaled(PXWIDTH, PXWIDTH, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    px_label->setPixmap(px.scaled(PXWIDTH, PXWIDTH, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void TabButton::updateStyles() {
-    label->setStyleSheet(QString("QLabel { margin-left: %1; }").arg(margin));
-    px_label->setStyleSheet(QString("QLabel { margin-right: %1; }").arg(margin*2));
+    label->setStyleSheet(QStringLiteral("QLabel { margin: 0px; padding: 0px; background: transparent; }"));
+    px_label->setStyleSheet(QString("QLabel { margin-right: %1; background: transparent; }").arg(margin * 2));
 
-    QString styleText_pressed = "QPushButton:checked {\n";
-    QString styleText_button = "QPushButton {\n";
+    const bool showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
+    const QPalette pal = palette();
+    const QColor textColor = pal.color(QPalette::ButtonText);
+    const QColor borderColor = pal.color(QPalette::Mid);
+    const QColor baseButton = pal.color(QPalette::Button);
+    const QColor checkedBg = pal.color(QPalette::Window);
+    const bool darkAppearance = checkedBg.lightness() < 128;
+    const QColor hoverBg = darkAppearance ? baseButton.lighter(114) : baseButton.darker(102);
+    const QColor pressedBg = darkAppearance ? baseButton.darker(118) : baseButton.darker(108);
 
-    if (qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS)){
-        styleText_pressed += QString("padding-right: %1;\n padding-left: %1;\n").arg(LABELWIDTH);
-        styleText_button += QString("padding-right: %1;\n padding-left: %1;\n").arg(LABELWIDTH);
+    QString style = QString(R"(
+QPushButton {
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border: 1px solid %1;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    background: %2;
+    color: %3;
+    text-align: center;
+    min-height: 26px;
+    max-height: 26px;
+}
+
+QPushButton:hover {
+    background: %4;
+    border-color: %1;
+}
+
+QPushButton:checked {
+    background: %5;
+    border-color: %1;
+    border-bottom-color: %5;
+}
+
+QPushButton:pressed {
+    background: %6;
+}
+)").arg(borderColor.name(), baseButton.name(), textColor.name(), hoverBg.name(), checkedBg.name(), pressedBg.name());
+
+    if (showClose) {
+        style += QString(R"(
+QPushButton {
+    padding-left: %1px;
+    padding-right: %2px;
+}
+QPushButton:checked {
+    padding-left: %1px;
+    padding-right: %2px;
+}
+)").arg(PXWIDTH + 10).arg(CLOSEPXWIDTH + CLOSE_RIGHT_MARGIN + 2);
+    } else {
+        style += QString(R"(
+QPushButton {
+    padding-left: %1px;
+    padding-right: %2px;
+}
+QPushButton:checked {
+    padding-left: %1px;
+    padding-right: %2px;
+}
+)").arg(PXWIDTH + 10).arg(10);
     }
-    else{
-        styleText_pressed += QString("margin-right: %1;\n margin-left: %1;\n").arg(LABELWIDTH*6);
-        styleText_button += QString("margin-right: %1;\n margin-left: %1;\n").arg(LABELWIDTH*6);
-    }
 
-    styleText_button    += "}\n";
-    styleText_pressed   += "}\n";
-
-    setStyleSheet(styleText_button + styleText_pressed);
+    setStyleSheet(style);
 }
 
 void TabButton::updateGeometry() {
-    if (qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS)){
+    setMinimumWidth(normalWidth());
+    setMaximumWidth(normalWidth());
+    setMinimumHeight(normalHeight());
+    setMaximumHeight(normalHeight());
+
+    if (qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS)) {
         if (!label->isVisible())
             label->show();
 
-        label->setGeometry(width()-LABELWIDTH-margin*2, (height()-LABELWIDTH)/2, LABELWIDTH, LABELWIDTH);
-    }
-    else
+        // Position close button at the right edge with proper vertical centering
+        const int x = width() - CLOSEPXWIDTH - CLOSE_RIGHT_MARGIN;
+        const int y = qMax(0, (height() - CLOSEPXWIDTH) / 2);
+        label->setGeometry(x, y, CLOSEPXWIDTH, CLOSEPXWIDTH);
+    } else {
         label->hide();
+    }
 
-    px_label->setGeometry(margin*2, (height()-LABELWIDTH)/2, LABELWIDTH, LABELWIDTH);
+    px_label->setGeometry(8,
+                          (height() - PXWIDTH) / 2,
+                          PXWIDTH,
+                          PXWIDTH);
 
     updateStyles();
 }
-

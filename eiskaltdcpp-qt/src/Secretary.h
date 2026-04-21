@@ -48,15 +48,15 @@ class Secretary :
     friend class HubFrame;
 
 public:
-    QWidget *getWidget();
-    QString getArenaTitle();
-    QString getArenaShortTitle();
-    QMenu *getMenu();
-    const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMAGNET); }
-    void requestClear() { clearNotes(); }
-    void requestFilter() { slotShowSearchBar(); }
-    void requestFocus() { pushButton_ClearLog->setFocus(); }
-    ArenaWidget::Role role() const { return ArenaWidget::Secretary; }
+    QWidget *getWidget() override;
+    QString getArenaTitle() override;
+    QString getArenaShortTitle() override;
+    QMenu *getMenu() override;
+    const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMAGNET); }
+    void requestClear() override { clearNotes(); }
+    void requestFilter() override { slotShowSearchBar(); }
+    void requestFocus() override { pushButton_ClearLog->setFocus(); }
+    ArenaWidget::Role role() const override { return ArenaWidget::Secretary; }
 
 Q_SIGNALS:
     void coreStatusMsg(const QString, const QString, const QString, const QString);
@@ -80,7 +80,7 @@ private Q_SLOTS:
     void newPrivMsg(const QString &nick, const QString &htmlMsg, const QString &origMsg, const QString &url);
 
 protected:
-    virtual bool eventFilter(QObject *obj, QEvent *e);
+    bool eventFilter(QObject *obj, QEvent *e) override;
 
 public:
     explicit Secretary(dcpp::DCContext& ctx, QWidget *parent = nullptr);

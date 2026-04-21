@@ -15,6 +15,9 @@
 #include "ui_PrivateMessage.h"
 #include "ArenaWidget.h"
 #include "HubFrame.h"
+#include <QSet>
+#include <QHash>
+#include <QTextDocumentFragment>
 
 class QKeyEvent;
 class QEvent;
@@ -22,6 +25,7 @@ class QObject;
 class QCloseEvent;
 class QMenu;
 class QShowEvent;
+class EmoticonDialog;
 
 class PMWindow: public  QWidget,
                 private Ui::UIPrivateMessage,
@@ -108,4 +112,7 @@ private:
     QStringList out_messages;
     int out_messages_index;
     bool out_messages_unsent;
+    EmoticonDialog *emojiDialog_;
+    QSet<QString> expandedInlineImageKeys_;
+    QHash<QString, QTextDocumentFragment> collapsedInlineImageBlocks_;
 };

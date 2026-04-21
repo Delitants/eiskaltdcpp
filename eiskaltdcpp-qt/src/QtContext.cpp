@@ -64,22 +64,43 @@ QtContext::~QtContext() {
 #if !defined(QT_CONTEXT_MINIMAL) && defined(USE_JS)
     // ScriptEngine must be destroyed before the script manager objects
     // it references (ClientManagerScript, HashManagerScript, LogManagerScript).
-    // Explicit reset here instead of relying on member declaration order.
     scriptEngine_.reset();
     clientManagerScript_.reset();
     hashManagerScript_.reset();
     logManagerScript_.reset();
 #endif
+
 #ifndef QT_CONTEXT_MINIMAL
-    // ArenaWidgetManager holds raw pointers to arena widgets (HubFrame,
-    // FavoriteHubs, etc.) that are owned either as unique_ptr members below
-    // or as MainWindow children.  Destroy it first so its destructor runs
-    // while the tracked widgets are still alive.
+    // Destroy managers that keep raw pointers first.
     arenaWidgetManager_.reset();
+
+    // Notification destructor may call MainWindow::setUnload(), so it must die
+    // before MainWindow.
+    notification_.reset();
+
+    // Many Qt UI objects are reparented into MainWindow/docks/tabs and will be
+    // deleted by Qt child ownership during MainWindow teardown.
+    // Releasing them from unique_ptr avoids double-delete on process exit.
+    (void)transferView_.release();
+    (void)favoriteHubs_.release();
+    (void)publicHubs_.release();
+    (void)favoriteUsers_.release();
+    (void)downloadQueue_.release();
+    (void)spyFrame_.release();
+    (void)adls_.release();
+    (void)cmdDebug_.release();
+    (void)secretary_.release();
+    (void)queuedUsers_.release();
+    (void)finishedUploads_.release();
+    (void)finishedDownloads_.release();
+
+    // Keep qtCtx() valid while MainWindow and its children are being destroyed.
+    mainWindow_.reset();
 #endif
-    // Remaining members destroyed in reverse declaration order by the
-    // compiler-generated sequence.  Deregister after all services are gone.
-    QtContextAware::setCurrent(nullptr);
+
+    // Do not clear QtContextAware::current here.
+    // Some UI teardown paths still touch qtCtx() during application exit.
+    // Leaving it set during process shutdown is safer than nulling it early.
 }
 
 void QtContext::createSettings()           { settings_           = std::make_unique<WulforSettings>(dcCtx_); settings_->setQtContext(this); }
@@ -92,6 +113,7 @@ void QtContext::createGlobalTimer()        { globalTimer_        = std::make_uni
 void QtContext::createWulforUtil()         { wulforUtil_         = std::make_unique<WulforUtil>(dcCtx_); wulforUtil_->setQtContext(this); }
 void QtContext::createArenaWidgetManager() { arenaWidgetManager_ = std::make_unique<ArenaWidgetManager>(dcCtx_); arenaWidgetManager_->setQtContext(this); }
 void QtContext::createMainWindow()         { mainWindow_         = std::make_unique<MainWindow>(dcCtx_); mainWindow_->setQtContext(this); }
+void QtContext::destroyMainWindow()        { mainWindow_.reset(); }
 void QtContext::createHubManager()         { hubManager_         = std::make_unique<HubManager>(dcCtx_); hubManager_->setQtContext(this); }
 void QtContext::createEmoticonFactory()    { emoticonFactory_    = std::make_unique<EmoticonFactory>(dcCtx_); emoticonFactory_->setQtContext(this); }
 void QtContext::destroyEmoticonFactory()   { emoticonFactory_.reset(); }

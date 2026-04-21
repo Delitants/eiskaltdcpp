@@ -120,9 +120,18 @@ public:
         Lock l(cs);
         OnlineMap::const_iterator i = onlineUsers.find(user->getCID());
         if ( i != onlineUsers.end() ) {
-            i->second->getIdentity().setIp(IP);
-            if(Util::toInt(udpPort) > 0)
-                i->second->getIdentity().setUdpPort(udpPort);
+            const bool isV6 = IP.find(':') != string::npos;
+            if(isV6) {
+                i->second->getIdentity().setIp6(IP);
+                if(Util::toInt(udpPort) > 0) {
+                    i->second->getIdentity().setUdpPort6(udpPort);
+                }
+            } else {
+                i->second->getIdentity().setIp(IP);
+                if(Util::toInt(udpPort) > 0) {
+                    i->second->getIdentity().setUdpPort(udpPort);
+                }
+            }
         }
     }
 

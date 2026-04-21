@@ -19,6 +19,8 @@
 class QLabel;
 class QGridLayout;
 class FlowLayout;
+class QScrollArea;
+class QWidget;
 
 class EmoticonDialog : public QDialog {
     Q_OBJECT
@@ -30,6 +32,7 @@ public:
     virtual ~EmoticonDialog();
 
     QString getEmoticonText() const { return selectedSmile; }
+    void preparePopupGeometry(int preferredWidth, int maxWidth, int maxHeight);
 
 private Q_SLOTS:
     void smileClicked();
@@ -37,5 +40,7 @@ private Q_SLOTS:
 private:
     /** */
     FlowLayout * m_pLayout;
+    QScrollArea * m_scrollArea;
+    QWidget * m_scrollContent;
     QString selectedSmile;
 };

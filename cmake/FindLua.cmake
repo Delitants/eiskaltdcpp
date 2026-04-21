@@ -27,8 +27,12 @@
 
 find_path(LUA_INCLUDE_DIR lua.h
   HINTS
+    ENV DEPS_PREFIX
     ENV LUA_DIR
+    /opt/homebrew/opt/lua
   PATH_SUFFIXES  include include/lua include/lua54 include/lua5.4 include/lua53 include/lua5.3 include/lua52 include/lua5.2 include/lua51 include/lua5.1
+                 include/lua55 include/lua5.5
+                 opt/lua/include opt/lua/include/lua opt/lua/include/lua55 opt/lua/include/lua5.5
   PATHS
   ~/Library/Frameworks
   /Library/Frameworks
@@ -39,10 +43,12 @@ find_path(LUA_INCLUDE_DIR lua.h
 )
 
 find_library(LUA_LIBRARY
-  NAMES lua lua54 lua5.4 lua-5.4 lua53 lua5.3 lua-5.3 lua52 lua5.2 lua-5.2 lua51 lua5.1 lua-5.1
+  NAMES lua lua55 lua5.5 lua-5.5 lua54 lua5.4 lua-5.4 lua53 lua5.3 lua-5.3 lua52 lua5.2 lua-5.2 lua51 lua5.1 lua-5.1
   HINTS
+    ENV DEPS_PREFIX
     ENV LUA_DIR
-  PATH_SUFFIXES lib
+    /opt/homebrew/opt/lua
+  PATH_SUFFIXES lib opt/lua/lib
   PATHS
   ~/Library/Frameworks
   /Library/Frameworks
@@ -85,4 +91,3 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Lua
                                   VERSION_VAR LUA_VERSION_STRING)
 
 mark_as_advanced(LUA_INCLUDE_DIR LUA_LIBRARIES LUA_LIBRARY LUA_MATH_LIBRARY)
-

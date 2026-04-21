@@ -477,7 +477,12 @@ void ClientManager::send(AdcCommand& cmd, const CID& cid) {
             u.getClient().send(cmd);
         } else {
             try {
-                udp.writeTo(u.getIdentity().getIp(), u.getIdentity().getUdpPort(), cmd.toString(getMe()->getCID()));
+                const bool preferIPv6 = CTX_BOOLSETTING(USE_IPV6);
+                const string ip = u.getIdentity().getConnectIp(preferIPv6);
+                const string port = u.getIdentity().getConnectUdpPort(preferIPv6);
+                if(!ip.empty() && !port.empty()) {
+                    udp.writeTo(ip, port, cmd.toString(getMe()->getCID()));
+                }
             } catch(const SocketException&) {
                 dcdebug("Socket exception sending ADC UDP command\n");
             }

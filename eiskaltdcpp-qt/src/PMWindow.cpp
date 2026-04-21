@@ -38,6 +38,12 @@
 #include <QMenu>
 #include <QAction>
 #include <QScrollBar>
+#include <QFont>
+#include <QApplication>
+#include <QScreen>
+#include <QFileInfo>
+#include <QUrl>
+#include <QUrlQuery>
 
 using namespace dcpp;
 
@@ -54,27 +60,87 @@ static inline void clearLayout(QLayout *l){
     l->invalidate();
 }
 
+static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)
+{
+    const QUrl url(urlText);
+    if (!url.isValid() || url.scheme() != QLatin1String("eiskalt-chatimg") || url.host() != QLatin1String("open"))
+        return false;
+
+    const QUrlQuery query(url);
+    localPath = query.queryItemValue(QStringLiteral("path"), QUrl::FullyDecoded).trimmed();
+    displayName = query.queryItemValue(QStringLiteral("name"), QUrl::FullyDecoded).trimmed();
+    size = query.queryItemValue(QStringLiteral("size")).toLongLong();
+
+    return !localPath.isEmpty();
+}
+
+static bool toggleInlineImageSpoiler(QTextEdit *editor,
+                                     const QString &urlText,
+                                     const QPoint &globalPos,
+                                     QSet<QString> &expandedKeys,
+                                     QHash<QString, QTextDocumentFragment> &collapsedBlocks)
+{
+    if (!editor)
+        return false;
+
+    QString localPath;
+    QString displayName;
+    int64_t size = 0;
+
+    if (!parseInlineImageSpoilerUrl(urlText, localPath, displayName, size))
+        return false;
+
+    const QFileInfo localInfo(localPath);
+    if (!localInfo.exists() || !localInfo.isFile())
+        return true;
+
+    QTextCursor cursor = editor->cursorForPosition(editor->mapFromGlobal(globalPos));
+    cursor.select(QTextCursor::BlockUnderCursor);
+    const QString expansionKey = QStringLiteral("%1#%2").arg(localInfo.absoluteFilePath()).arg(cursor.block().position());
+
+    if (expandedKeys.contains(expansionKey)) {
+        const auto it = collapsedBlocks.constFind(expansionKey);
+        if (it != collapsedBlocks.constEnd())
+            cursor.insertFragment(it.value());
+
+        expandedKeys.remove(expansionKey);
+        collapsedBlocks.remove(expansionKey);
+        return true;
+    }
+
+    collapsedBlocks.insert(expansionKey, QTextDocumentFragment(cursor));
+
+    cursor.clearSelection();
+    cursor.movePosition(QTextCursor::EndOfBlock);
+
+    const QString imageName = displayName.isEmpty() ? localInfo.fileName() : displayName;
+    const int64_t imageSize = size > 0 ? size : localInfo.size();
+    const QString localUrl = QUrl::fromLocalFile(localInfo.absoluteFilePath()).toString();
+    const QString title = QObject::tr("%1 (%2)").arg(imageName, WulforUtil::formatBytes(imageSize));
+    const QString imageHtml = QStringLiteral("<br/><a href=\"%1\" title=\"%2\" style=\"text-decoration:none\">"
+                                             "<img src=\"%1\" alt=\"%3\" style=\"display:block; width:100%%; height:auto; margin-top:4px;\" />"
+                                             "</a>")
+        .arg(localUrl, title.toHtmlEscaped(), imageName.toHtmlEscaped());
+
+    cursor.insertHtml(imageHtml);
+    expandedKeys.insert(expansionKey);
+
+    return true;
+}
+
 PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
         hasMessages(false),
         hasHighlightMessages(false),
         cid(cid_),
         hubUrl(hubUrl_),
-        arena_menu(nullptr)
+        arena_menu(nullptr),
+        emojiDialog_(nullptr)
 {
     setupUi(this);
 
 
     frame_SMILES->setLayout(new FlowLayout(frame_SMILES));
     frame_SMILES->setVisible(false);
-
-    QSize sz;
-    Q_UNUSED(sz);
-
-    if (qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->fillLayout(frame_SMILES->layout(), sz);
-
-    for (const auto &l : frame_SMILES->findChildren<EmoticonLabel*>())
-        connect(l, &EmoticonLabel::clicked, this, &PMWindow::slotSmileClicked);
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -85,6 +151,8 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     plainTextEdit_INPUT->setContextMenuPolicy(Qt::CustomContextMenu);
     plainTextEdit_INPUT->installEventFilter(this);
     plainTextEdit_INPUT->setAcceptRichText(false);
+    plainTextEdit_INPUT->setMinimumHeight(54);
+    plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
 
     textEdit_CHAT->viewport()->installEventFilter(this);
     textEdit_CHAT->viewport()->setMouseTracking(true);
@@ -96,12 +164,54 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
 
     updateStyles();
 
-    if (qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->addEmoticons(textEdit_CHAT->document());
-
-    toolButton_SMILE->setVisible(qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory());
-    toolButton_SMILE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEMOTICON));
+    toolButton_SMILE->setVisible(true);
+    toolButton_SMILE->setIcon(QIcon());
+    toolButton_SMILE->setText(QString::fromUtf8("😊"));
+    toolButton_SMILE->setToolTip(tr("Emoji"));
     toolButton_SMILE->setContextMenuPolicy(Qt::CustomContextMenu);
+    toolButton_SMILE->setAutoRaise(true);
+    toolButton_SMILE->setIconSize(QSize(18, 18));
+    toolButton_SMILE->setFixedSize(QSize(28, 28));
+    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { font-size: 18px; }"));
+    auto *toolButton_IMAGE = new QToolButton(this);
+    toolButton_IMAGE->setAutoRaise(true);
+    toolButton_IMAGE->setMinimumHeight(24);
+    toolButton_IMAGE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILETYPE_PICTURE));
+    toolButton_IMAGE->setToolTip(tr("Image"));
+    horizontalLayout_BBCODE->setSpacing(horizontalLayout_BBCODE->spacing() + 3);
+    const int smileButtonIndex = horizontalLayout_BBCODE->indexOf(toolButton_SMILE);
+    if (smileButtonIndex >= 0)
+        horizontalLayout_BBCODE->insertWidget(smileButtonIndex, toolButton_IMAGE);
+    else
+        horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->count() - 1, toolButton_IMAGE);
+    const QList<QToolButton*> formatButtons = {
+        toolButton_BOLD, toolButton_ITALIC, toolButton_UNDERLINE, toolButton_STRIKE,
+        toolButton_COLOR, toolButton_LINK, toolButton_CODE, toolButton_IMAGE
+    };
+    for (auto *button : formatButtons) {
+        button->setAutoRaise(true);
+        button->setMinimumHeight(24);
+    }
+    QFont boldFont = toolButton_BOLD->font();
+    boldFont.setBold(true);
+    toolButton_BOLD->setFont(boldFont);
+    QFont italicFont = toolButton_ITALIC->font();
+    italicFont.setItalic(true);
+    toolButton_ITALIC->setFont(italicFont);
+    QFont underlineFont = toolButton_UNDERLINE->font();
+    underlineFont.setUnderline(true);
+    toolButton_UNDERLINE->setFont(underlineFont);
+    QFont strikeFont = toolButton_STRIKE->font();
+    strikeFont.setStrikeOut(true);
+    toolButton_STRIKE->setFont(strikeFont);
+    connect(toolButton_BOLD, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
+    connect(toolButton_ITALIC, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
+    connect(toolButton_UNDERLINE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
+    connect(toolButton_STRIKE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
+    connect(toolButton_COLOR, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertColorTag(); });
+    connect(toolButton_LINK, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
+    connect(toolButton_CODE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
+    connect(toolButton_IMAGE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
 
     toolButton_ALL->setCheckable(true);
 
@@ -115,7 +225,7 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
         QPalette p = textEdit_CHAT->palette();
         QColor clr = p.color(QPalette::Active, QPalette::Base);
 
-        clr.setNamedColor(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
+        clr = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
@@ -221,7 +331,17 @@ bool PMWindow::eventFilter(QObject *obj, QEvent *e){
         QMouseEvent *m_e = reinterpret_cast<QMouseEvent*>(e);
 
         if ((static_cast<QWidget*>(obj) == textEdit_CHAT->viewport()) && (m_e->button() == Qt::LeftButton)){
-            QString pressedParagraph = textEdit_CHAT->anchorAt(textEdit_CHAT->mapFromGlobal(QCursor::pos()));
+            const QString pressedParagraph = textEdit_CHAT->anchorAt(textEdit_CHAT->mapFromGlobal(QCursor::pos()));
+
+            if (!pressedParagraph.isEmpty() &&
+                toggleInlineImageSpoiler(textEdit_CHAT,
+                                         pressedParagraph,
+                                         QCursor::pos(),
+                                         expandedInlineImageKeys_,
+                                         collapsedInlineImageBlocks_))
+            {
+                return true;
+            }
 
             qtCtx()->wulforUtil()->openUrl(pressedParagraph);
         }
@@ -289,6 +409,9 @@ bool PMWindow::eventFilter(QObject *obj, QEvent *e){
 }
 
 void PMWindow::closeEvent(QCloseEvent *c_e){
+    if (emojiDialog_ && emojiDialog_->isVisible())
+        emojiDialog_->close();
+
     emit privateMessageClosed(cid);
 
     hasMessages = false;
@@ -362,12 +485,11 @@ void PMWindow::requestFocus() {
 
 void PMWindow::clearChat(){
     textEdit_CHAT->setHtml("");
+    expandedInlineImageKeys_.clear();
+    collapsedInlineImageBlocks_.clear();
     addStatus(tr("Chat cleared."));
 
     updateStyles();
-
-    if (qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->addEmoticons(textEdit_CHAT->document());
 }
 
 void PMWindow::updateStyles(){
@@ -562,84 +684,91 @@ void PMWindow::slotShare(){
 }
 
 void PMWindow::slotSmile(){
-    if (!(qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory()))
+    if (emojiDialog_ && emojiDialog_->isVisible()) {
+        emojiDialog_->close();
         return;
-
-    if (qtCtx()->settings()->getBool(WB_CHAT_USE_SMILE_PANEL)){
-        frame_SMILES->setVisible(!frame_SMILES->isVisible());
     }
-    else {
-        EmoticonDialog *dialog = new EmoticonDialog(this);
 
-        if (dialog->exec() == QDialog::Accepted) {
+    if (!emojiDialog_) {
+        emojiDialog_ = new EmoticonDialog(this, Qt::Tool);
+        emojiDialog_->setWindowModality(Qt::NonModal);
+        emojiDialog_->setAttribute(Qt::WA_DeleteOnClose, false);
 
-            QString smiley = dialog->getEmoticonText();
+        connect(emojiDialog_, &QDialog::accepted, this, [this]() {
+            if (emojiDialog_ && !emojiDialog_->getEmoticonText().isEmpty())
+                plainTextEdit_INPUT->insertEmoji(emojiDialog_->getEmoticonText());
+        });
+        connect(emojiDialog_, &QObject::destroyed, this, [this]() {
+            emojiDialog_ = nullptr;
+        });
+    }
 
-            if (!smiley.isEmpty()) {
+    const QPoint smileButtonPos = toolButton_SMILE->mapToGlobal(QPoint(0, 0));
+    QScreen *screen = QApplication::screenAt(smileButtonPos);
+    if (!screen)
+        screen = QApplication::primaryScreen();
 
-                smiley.replace("&lt;", "<");
-                smiley.replace("&gt;", ">");
-                smiley.replace("&amp;", "&");
-                smiley.replace("&apos;", "\'");
-                smiley.replace("&quot;", "\"");
+    const QRect screenGeo = screen ? screen->availableGeometry() : QRect();
 
-                smiley += " ";
+    const int verticalGap = 6;
+    const int chatWidth = textEdit_CHAT && textEdit_CHAT->viewport() ? textEdit_CHAT->viewport()->width() : width();
+    const int preferredWidth = qMax(420, chatWidth - 2);
+    const int maxDialogWidth = screenGeo.isValid() ? qMax(520, screenGeo.width() - 24) : 1400;
+    const int maxDialogHeight = screenGeo.isValid() ? qMax(260, screenGeo.height() - 24) : 620;
+    emojiDialog_->preparePopupGeometry(preferredWidth, maxDialogWidth, maxDialogHeight);
 
-                plainTextEdit_INPUT->textCursor().insertText(smiley);
-                plainTextEdit_INPUT->setFocus();
-            }
+    int dialogWidth = emojiDialog_->width();
+    int dialogHeight = emojiDialog_->height();
+    if (dialogWidth > preferredWidth) {
+        emojiDialog_->resize(preferredWidth, dialogHeight);
+        dialogWidth = emojiDialog_->width();
+        dialogHeight = emojiDialog_->height();
+    }
+
+    if (screenGeo.isValid()) {
+        const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+        const int availableAbove = bbcodeTopY - verticalGap - screenGeo.top();
+        if (availableAbove > 120 && dialogHeight > availableAbove) {
+            emojiDialog_->resize(dialogWidth, availableAbove);
+            dialogHeight = emojiDialog_->height();
         }
-
-        delete dialog;
     }
+
+    const QPoint chatTopLeft = (textEdit_CHAT && textEdit_CHAT->viewport())
+        ? textEdit_CHAT->viewport()->mapToGlobal(QPoint(0, 0))
+        : mapToGlobal(QPoint(0, 0));
+    int dialogX = chatTopLeft.x();
+    const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+    int dialogY = bbcodeTopY - dialogHeight - verticalGap;
+
+    if (screenGeo.isValid()) {
+        if (dialogX < screenGeo.left())
+            dialogX = screenGeo.left();
+        if (dialogX + dialogWidth > screenGeo.right())
+            dialogX = screenGeo.right() - dialogWidth;
+
+        if (dialogY < screenGeo.top())
+            dialogY = screenGeo.top();
+
+        // Keep popup strictly above the BBCode panel.
+        const int maxBottom = bbcodeTopY - verticalGap;
+        if (dialogY + dialogHeight > maxBottom)
+            dialogY = qMax(screenGeo.top(), maxBottom - dialogHeight);
+    }
+
+    emojiDialog_->move(dialogX, dialogY);
+    emojiDialog_->show();
+    emojiDialog_->raise();
+    emojiDialog_->activateWindow();
 }
 
 void PMWindow::slotSmileClicked(){
-    EmoticonLabel *lbl = qobject_cast<EmoticonLabel* >(sender());
-
-    if (!lbl)
-        return;
-
-    QString smiley = lbl->toolTip();
-
-    if (!smiley.isEmpty()) {
-
-        smiley.replace("&lt;", "<");
-        smiley.replace("&gt;", ">");
-        smiley.replace("&amp;", "&");
-        smiley.replace("&apos;", "\'");
-        smiley.replace("&quot;", "\"");
-
-        smiley += " ";
-
-        plainTextEdit_INPUT->textCursor().insertText(smiley);
-        plainTextEdit_INPUT->setFocus();
-    }
-
-    if (qtCtx()->settings()->getBool(WB_CHAT_HIDE_SMILE_PANEL))
-        frame_SMILES->setVisible(false);
+    slotSmile();
 }
 
 
 void PMWindow::slotSmileContextMenu(){
-    QMenu *m = new QMenu(this);
-    QAction * a = nullptr;
-
-    for (const auto &f : QDir(qtCtx()->wulforUtil()->getEmoticonsPath())
-                              .entryList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot)){
-        if (!f.isEmpty()){
-            QAction * act = m->addAction(f);
-            act->setCheckable(true);
-
-            if (f == qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME))
-                act->setChecked(true);
-        }
-    }
-
-    a = m->exec(QCursor::pos());
-
-    if (a && a->isChecked())
-        qtCtx()->settings()->setStr(WS_APP_EMOTICON_THEME, a->text());
+    slotSmile();
 }
 
 void PMWindow::slotSettingChanged(const QString &key, const QString &value){
@@ -647,30 +776,11 @@ void PMWindow::slotSettingChanged(const QString &key, const QString &value){
 
     if (key == WS_CHAT_PM_FONT)
         updateStyles();
-    else if (key == WS_APP_EMOTICON_THEME){
-        if (qtCtx()->emoticonFactory()){
-            qtCtx()->emoticonFactory()->load();
-
-            frame_SMILES->setVisible(false);
-
-            clearLayout(frame_SMILES->layout());
-
-            QSize sz;
-            Q_UNUSED(sz);
-
-            qtCtx()->emoticonFactory()->fillLayout(frame_SMILES->layout(), sz);
-
-            for (const auto &l : frame_SMILES->findChildren<EmoticonLabel*>())
-                connect(l, &EmoticonLabel::clicked, this, &PMWindow::slotSmileClicked);
-        }
-
-        toolButton_SMILE->setVisible(!value.isEmpty() && qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory());
-    }
     else if (key == "hubframe/chat-background-color"){
         QPalette p = textEdit_CHAT->palette();
         QColor clr = p.color(QPalette::Active, QPalette::Base);
 
-        clr.setNamedColor(value);
+        clr = QColor::fromString(value);
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
@@ -731,7 +841,7 @@ void PMWindow::slotFindAll(){
         QTextEdit::ExtraSelection selection;
 
         QColor color;
-        color.setNamedColor(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
+        color = QColor::fromString(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
         color.setAlpha(qtCtx()->settings()->getInt(WI_CHAT_FIND_COLOR_ALPHA));
 
         selection.format.setBackground(color);

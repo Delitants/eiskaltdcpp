@@ -28,6 +28,10 @@
 #ifdef WITH_DHT
 #include "dht/DHT.h"
 #endif
+
+namespace {
+constexpr auto DEFAULT_DHT_BOOTSTRAP_URL = "https://dht.hublist.eu/dcDHT.php";
+}
 #include "SearchManager.h"
 #include "StringTokenizer.h"
 
@@ -50,8 +54,9 @@ const string SettingsManager::settingTags[] =
     "LogFormatSystem", "LogFormatStatus", "LogFileSpy", "LogFormatSpy", "TLSPrivateKeyFile",
     "TLSCertificateFile", "TLSTrustedCertificatesPath",
     "Language", "SkipListShare", "InternetIp", "BindIfaceName",
-    "DHTKey", "DynDNSServer", "MimeHandler",
+    "DHTKey", "DHTBootstrapURLs", "CountryDbPath", "DynDNSServer", "MimeHandler",
     "LogFileCmdDebug", "LogFormatCmdDebug",
+    "ExternalIp6", "BindAddress6",
     "SENTRY",
     // Ints
     "IncomingConnections", "InPort", "Slots", "AutoFollow",
@@ -99,6 +104,7 @@ const string SettingsManager::settingTags[] =
     "ShareSkipZeroByte", "RequireTLS", "LogSpy", "AppUnitBase",
     "LogCmdDebug",
     "NmdcGetinfoLimit",
+    "UseIPv6",
     "SENTRY",
     // Int64
     "TotalUpload", "TotalDownload",
@@ -145,6 +151,9 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(DOWNLOAD_DIRECTORY, Util::getPath(Util::PATH_DOWNLOADS));
     setDefault(TEMP_DOWNLOAD_DIRECTORY, Util::getPath(Util::PATH_DOWNLOADS) + "Incomplete" PATH_SEPARATOR_STR);
     setDefault(BIND_ADDRESS, "0.0.0.0");
+    setDefault(BIND_ADDRESS6, "::");
+    setDefault(EXTERNAL_IP6, "");
+    setDefault(COUNTRY_DB_PATH, "");
     setDefault(SLOTS, 5);
     setDefault(TCP_PORT, 3000);
     setDefault(UDP_PORT, 3000);
@@ -279,6 +288,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(RECONNECT_DELAY, 15);
     setDefault(DHT_PORT, 6250);
     setDefault(USE_DHT, true);
+    setDefault(DHT_BOOTSTRAP_URLS, DEFAULT_DHT_BOOTSTRAP_URL);
     setDefault(SEARCH_PASSIVE, false);
     setDefault(MAX_UPLOAD_SPEED_MAIN, 0);
     setDefault(MAX_DOWNLOAD_SPEED_MAIN, 0);
@@ -313,6 +323,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(APP_UNIT_BASE, 0);
     setDefault(REQUIRE_TLS, true); // True by default: We assume TLS is commonplace enough among ADC clients.
     setDefault(NMDC_GETINFO_LIMIT, 0); // 0 = unlimited; positive = max $GetINFO requests per $NickList
+    setDefault(USE_IPV6, false);
 
     setSearchTypeDefaults();
 }
@@ -431,6 +442,10 @@ void SettingsManager::load(string const& aFileName)
                     lists += ";" + i;
             }
             set(HUBLIST_SERVERS, lists);
+        }
+
+        if(get(DHT_BOOTSTRAP_URLS).empty()) {
+            set(DHT_BOOTSTRAP_URLS, getDefault(DHT_BOOTSTRAP_URLS));
         }
 
         if(CTX_SETTING(SET_MINISLOT_SIZE) < 64)

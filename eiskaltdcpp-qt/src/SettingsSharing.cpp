@@ -104,6 +104,8 @@ void SettingsSharing::init(){
     toolButton_BROWSE->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
 
     toolButton_RECREATE->setIcon(WU->getPixmap(WulforUtil::eiRELOAD));
+    pushButton_SHARE_ADD->setIcon(WU->getPixmap(WulforUtil::eiEDITADD));
+    pushButton_SHARE_REMOVE->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
 
     checkBox_SHAREHIDDEN->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::SHARE_HIDDEN, true));
     checkBox_SHARE_TEMP_FILES->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::SHARE_TEMP_FILES, true));
@@ -149,8 +151,12 @@ void SettingsSharing::init(){
 
     connect(treeWidget_SIMPLE_MODE, &QTreeWidget::customContextMenuRequested, this, &SettingsSharing::slotContextMenu);
     connect(checkBox_SIMPLE_SHARE_MODE, &QCheckBox::clicked, this, &SettingsSharing::slotSimpleShareModeChanged);
+    connect(pushButton_SHARE_ADD, &QPushButton::clicked, this, &SettingsSharing::slotAddSharedDirectory);
+    connect(pushButton_SHARE_REMOVE, &QPushButton::clicked, this, &SettingsSharing::slotRemoveSelectedSharedDirectories);
+    connect(treeWidget_SIMPLE_MODE, &QTreeWidget::itemSelectionChanged, this, &SettingsSharing::slotUpdateShareButtons);
 
     slotSimpleShareModeChanged();
+    slotUpdateShareButtons();
 }
 
 void SettingsSharing::updateShareView(){
@@ -285,6 +291,116 @@ void SettingsSharing::slotSimpleShareModeChanged(){
 
         updateShareView();
     }
+
+    slotUpdateShareButtons();
+}
+
+bool SettingsSharing::addSharedDirectoryInteractive()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory"), QDir::homePath());
+
+    if (dir.isEmpty())
+        return false;
+
+    dir = QDir::toNativeSeparators(dir);
+
+    if (!dir.endsWith(PATH_SEPARATOR))
+        dir += PATH_SEPARATOR_STR;
+
+    bool ok = false;
+    QString dir_alias = QInputDialog::getText(this, tr("Select directory"), tr("Name"),
+                                              QLineEdit::Normal, QDir(dir).dirName(), &ok);
+
+    dir_alias = dir_alias.trimmed();
+
+    if (!ok || dir_alias.isEmpty())
+        return false;
+
+    try {
+        qtCtx()->dcCtx().getShareManager()->addDirectory(dir.toStdString(), dir_alias.toStdString());
+    }
+    catch (const ShareException &e) {
+        QMessageBox msg_box(QMessageBox::Critical,
+                            tr("Error"),
+                            QString::fromStdString(e.getError()),
+                            QMessageBox::Ok);
+        msg_box.exec();
+        return false;
+    }
+
+    return true;
+}
+
+bool SettingsSharing::removeSelectedSharedDirectoriesInteractive()
+{
+    const QList<QTreeWidgetItem*> selected = treeWidget_SIMPLE_MODE->selectedItems();
+    if (selected.isEmpty())
+        return false;
+
+    for (const auto &item : selected)
+        qtCtx()->dcCtx().getShareManager()->removeDirectory(item->text(0).toStdString());
+
+    return true;
+}
+
+bool SettingsSharing::renameSelectedSharedDirectoryInteractive()
+{
+    const QList<QTreeWidgetItem*> selected = treeWidget_SIMPLE_MODE->selectedItems();
+    if (selected.size() != 1)
+        return false;
+
+    QTreeWidgetItem *item = selected.at(0);
+    const QString realname = item->text(0);
+    const QString virtname = item->text(1);
+    bool ok = false;
+    const QString new_virtname = QInputDialog::getText(this, tr("Enter new name"),
+                                                       tr("Name"), QLineEdit::Normal, virtname, &ok);
+
+    if (!ok || new_virtname.isEmpty() || new_virtname == virtname)
+        return false;
+
+    try {
+        qtCtx()->dcCtx().getShareManager()->renameDirectory(realname.toStdString(), new_virtname.toStdString());
+    }
+    catch (const ShareException &e){
+        QMessageBox msg_box(QMessageBox::Critical,
+                            tr("Error"),
+                            QString::fromStdString(e.getError()),
+                            QMessageBox::Ok);
+        msg_box.exec();
+        return false;
+    }
+
+    return true;
+}
+
+void SettingsSharing::slotAddSharedDirectory()
+{
+    if (!checkBox_SIMPLE_SHARE_MODE->isChecked())
+        return;
+
+    if (addSharedDirectoryInteractive()) {
+        updateShareView();
+        slotUpdateShareButtons();
+    }
+}
+
+void SettingsSharing::slotRemoveSelectedSharedDirectories()
+{
+    if (!checkBox_SIMPLE_SHARE_MODE->isChecked())
+        return;
+
+    if (removeSelectedSharedDirectoriesInteractive()) {
+        updateShareView();
+        slotUpdateShareButtons();
+    }
+}
+
+void SettingsSharing::slotUpdateShareButtons()
+{
+    const bool simpleMode = checkBox_SIMPLE_SHARE_MODE->isChecked();
+    pushButton_SHARE_ADD->setEnabled(simpleMode);
+    pushButton_SHARE_REMOVE->setEnabled(simpleMode && !treeWidget_SIMPLE_MODE->selectedItems().isEmpty());
 }
 
 void SettingsSharing::slotContextMenu(const QPoint &){
@@ -313,80 +429,19 @@ void SettingsSharing::slotContextMenu(const QPoint &){
     if (!res)
         return;
 
-    if (res == add_new){
-        QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory"), QDir::homePath());
+    bool changed = false;
 
-        if (dir.isEmpty())
-            return;
+    if (res == add_new)
+        changed = addSharedDirectoryInteractive();
+    else if (res == rem)
+        changed = removeSelectedSharedDirectoriesInteractive();
+    else if (res == rename)
+        changed = renameSelectedSharedDirectoryInteractive();
 
-        dir = QDir::toNativeSeparators(dir);
+    if (changed)
+        updateShareView();
 
-        if (!dir.endsWith(PATH_SEPARATOR))
-            dir += PATH_SEPARATOR_STR;
-
-        bool ok = false;
-        QString dir_alias = QInputDialog::getText(this, tr("Select directory"), tr("Name"),
-                                                  QLineEdit::Normal, QDir(dir).dirName(), &ok);
-
-        dir_alias = dir_alias.trimmed();
-
-        if (!ok || dir_alias.isEmpty())
-            return;
-
-        try
-        {
-            qtCtx()->dcCtx().getShareManager()->addDirectory(dir.toStdString(), dir_alias.toStdString());
-        }
-        catch (const ShareException &e)
-        {
-            QMessageBox msg_box(QMessageBox::Critical,
-                                tr("Error"),
-                                QString::fromStdString(e.getError()),
-                                QMessageBox::Ok);
-
-            msg_box.exec();
-
-            return;
-        }
-
-        QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget_SIMPLE_MODE);
-
-        item->setText(0, dir);
-        item->setText(1, dir_alias);
-        item->setText(2, "");
-        item->setText(3, "");
-    }
-    else if (res == rem){
-        for (const auto &i : selected)
-            qtCtx()->dcCtx().getShareManager()->removeDirectory(i->text(0).toStdString());
-    }
-    else if (res == rename){
-        QTreeWidgetItem *item = selected.at(0);
-        QString realname = item->text(0);
-        QString virtname = item->text(1);
-        bool ok = false;
-        QString new_virtname = QInputDialog::getText(this, tr("Enter new name"),
-                                                     tr("Name"), QLineEdit::Normal, virtname, &ok);
-
-        if (!ok || new_virtname.isEmpty() || new_virtname == virtname)
-            return;
-
-        try {
-            qtCtx()->dcCtx().getShareManager()->renameDirectory(realname.toStdString(), new_virtname.toStdString());
-        }
-        catch (const ShareException &e){
-            QMessageBox msg_box(QMessageBox::Critical,
-                                tr("Error"),
-                                QString::fromStdString(e.getError()),
-                                QMessageBox::Ok);
-
-            msg_box.exec();
-
-            return;
-        }
-    }
-
-    updateShareView();
+    slotUpdateShareButtons();
 }
 
 QString ShareDirModel::filePath( const QModelIndex & index ) const {

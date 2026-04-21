@@ -789,20 +789,50 @@ void TransferViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     progressBarOption.palette = pal;
     progressBarOption.progress = static_cast<int>(percent);
 
-    if (option.state & QStyle::State_Selected)
-        painter->fillRect(option.rect, option.palette.highlight());
-
-    // Draw groove and contents separately, then render text manually
-    // to avoid Qt6 style engines positioning text outside the bar.
-    QApplication::style()->drawControl(QStyle::CE_ProgressBarGroove, &progressBarOption, painter);
-    QApplication::style()->drawControl(QStyle::CE_ProgressBarContents, &progressBarOption, painter);
-
     painter->save();
-    if (option.state & QStyle::State_Selected)
-        painter->setPen(option.palette.highlightedText().color());
-    else
-        painter->setPen(option.palette.text().color());
+
+    QRect r = option.rect.adjusted(1, 2, -1, -2);
+    if (r.width() < 4 || r.height() < 4) {
+        QStyledItemDelegate::paint(painter, option, index);
+        painter->restore();
+        return;
+    }
+
+    const bool selected = option.state & QStyle::State_Selected;
+
+    QColor grooveColor = selected
+        ? option.palette.highlight().color().darker(135)
+        : option.palette.base().color().darker(125);
+
+    QColor borderColor = selected
+        ? option.palette.highlight().color().lighter(130)
+        : option.palette.mid().color();
+
+    QColor fillColor = pal.color(QPalette::Highlight);
+    if (!fillColor.isValid())
+        fillColor = option.palette.highlight().color();
+
+    painter->setRenderHint(QPainter::Antialiasing, false);
+
+    painter->setPen(borderColor);
+    painter->setBrush(grooveColor);
+    painter->drawRect(r);
+
+    int fillWidth = 0;
+    if (percent > 0.0) {
+        fillWidth = qMax(1, qMin(r.width() - 2,
+            static_cast<int>((r.width() - 2) * (percent / 100.0))));
+    }
+
+    if (fillWidth > 0) {
+        QRect fillRect(r.left() + 1, r.top() + 1, fillWidth, r.height() - 2);
+        painter->fillRect(fillRect, fillColor);
+    }
+
+    painter->setPen(selected ? option.palette.highlightedText().color()
+                             : option.palette.text().color());
     painter->drawText(option.rect, Qt::AlignCenter, status);
+
     painter->restore();
 #else
     const QString status = item->data(COLUMN_TRANSFER_STATS).toString();

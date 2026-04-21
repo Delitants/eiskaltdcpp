@@ -151,12 +151,16 @@ void UserConnection::on(BufferedSocketListener::Line, const string& aLine) {
 #ifdef LUA_SCRIPT
 bool UserConnectionScriptInstance::onUserConnectionMessageIn(UserConnection* aConn, const string& aLine) {
     Lock l(cs);
+    if (!ScriptInstance::L)
+        return false;
     MakeCall("dcpp", "UserDataIn", 1, aConn, aLine);
     return GetLuaBool();
 }
 
 bool UserConnectionScriptInstance::onUserConnectionMessageOut(UserConnection* aConn, const string& aLine) {
     Lock l(cs);
+    if (!ScriptInstance::L)
+        return false;
     MakeCall("dcpp", "UserDataOut", 1, aConn, aLine);
     return GetLuaBool();
 }

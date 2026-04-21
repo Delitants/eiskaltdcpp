@@ -55,15 +55,15 @@ class ADLS :
 
     typedef QMap<QString,QVariant> StrMap;
 public:
-    QWidget *getWidget();
-    QString getArenaTitle();
-    QString getArenaShortTitle();
-    QMenu *getMenu();
-    const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiADLS); }
-    ArenaWidget::Role role() const { return ArenaWidget::ADLS; }
+    QWidget *getWidget() override;
+    QString getArenaTitle() override;
+    QString getArenaShortTitle() override;
+    QMenu *getMenu() override;
+    const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiADLS); }
+    ArenaWidget::Role role() const override { return ArenaWidget::ADLS; }
 
 protected:
-    virtual void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *) override;
 
 private Q_SLOTS:
     void slotContexMenu(const QPoint&);

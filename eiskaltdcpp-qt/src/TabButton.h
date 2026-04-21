@@ -27,6 +27,7 @@ public:
     explicit TabButton(QWidget *parent = nullptr);
 
     QSize sizeHint() const;
+    QSize minimumSizeHint() const;
     void setWidgetIcon(const QPixmap &px);
     void resetGeometry() { updateGeometry(); }
     int normalWidth() const;
@@ -45,9 +46,12 @@ protected:
 
 signals:
     void closeRequest();
-    void dropped(TabButton*);
+    void dropped(TabButton *source, TabButton *target);
 
 private:
+    QPoint dragStartPos;
+
+    static TabButton *dragSourceButton;
     void updateStyles();
     void updateGeometry();
 

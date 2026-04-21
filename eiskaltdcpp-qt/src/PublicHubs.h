@@ -62,6 +62,7 @@ private Q_SLOTS:
     void slotContextMenu();
     void slotHeaderMenu();
     void slotHubChanged(int);
+    void slotRefresh();
     void slotFilterColumnChanged();
     void slotDoubleClicked(const QModelIndex&);
     void slotSettingsChanged(const QString&, const QString&);

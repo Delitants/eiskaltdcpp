@@ -142,6 +142,7 @@ void WulforSettings::load(){
             settings.setValue(WS_APP_EMOTICON_THEME,    "default");
             settings.setValue(WS_APP_ASPELL_LANG,       "");
             settings.setValue(WS_APP_ENABLED_SCRIPTS,   "");
+            settings.setValue(WS_CHAT_PICTURE_DIR,      "");
             settings.setValue(WS_PUBLICHUBS_STATE,      "");
             settings.setValue(WS_SETTINGS_GUI_FONTS_STATE, "");
 
@@ -183,6 +184,7 @@ void WulforSettings::load(){
             settings.setValue(WB_APP_ENABLE_EMOTICON,   static_cast<int>(true));
             settings.setValue(WB_APP_FORCE_EMOTICONS,   static_cast<int>(false));
             settings.setValue(WB_APP_ENABLE_ASPELL,     static_cast<int>(true));
+            settings.setValue(WB_CHAT_PICTURE_AUTOCLEAN,static_cast<int>(true));
             settings.setValue(WB_APP_REMOVE_NOT_EX_DIRS,static_cast<int>(false));
             settings.setValue(WB_APP_AUTO_AWAY,         static_cast<int>(false));
             settings.setValue(WB_APP_TBAR_SHOW_CL_BTNS, static_cast<int>(true));
@@ -195,6 +197,7 @@ void WulforSettings::load(){
             settings.setValue(WI_APP_UNIT_BASE,         1024);
             settings.setValue(WI_APP_AUTOAWAY_INTERVAL, 60);
             settings.setValue(WI_APP_SHARED_FILES_ALPHA, 127);
+            settings.setValue(WI_CHAT_PICTURE_CLEAN_DAYS, 7);
             settings.setValue(WI_CHAT_MAXPARAGRAPHS,    1000);
             settings.setValue(WI_DEF_MAGNET_ACTION,     0);
             settings.setValue(WI_CHAT_WIDTH,            -1);
@@ -278,6 +281,7 @@ void WulforSettings::loadOldConfig(){
         strmap.insert(WS_APP_EMOTICON_THEME,    "default");
         strmap.insert(WS_APP_ASPELL_LANG,       "");
         strmap.insert(WS_APP_ENABLED_SCRIPTS,   "");
+        strmap.insert(WS_CHAT_PICTURE_DIR,      "");
         strmap.insert(WS_PUBLICHUBS_STATE,      "");
         strmap.insert(WS_SETTINGS_GUI_FONTS_STATE, "");
 
@@ -319,6 +323,7 @@ void WulforSettings::loadOldConfig(){
         intmap.insert(WB_APP_ENABLE_EMOTICON,   static_cast<int>(true));
         intmap.insert(WB_APP_FORCE_EMOTICONS,   static_cast<int>(false));
         intmap.insert(WB_APP_ENABLE_ASPELL,     static_cast<int>(true));
+        intmap.insert(WB_CHAT_PICTURE_AUTOCLEAN,static_cast<int>(true));
         intmap.insert(WB_APP_REMOVE_NOT_EX_DIRS,static_cast<int>(false));
         intmap.insert(WB_APP_AUTO_AWAY,         static_cast<int>(false));
         intmap.insert(WB_APP_TBAR_SHOW_CL_BTNS, static_cast<int>(true));
@@ -331,6 +336,7 @@ void WulforSettings::loadOldConfig(){
         intmap.insert(WI_APP_UNIT_BASE,         1024);
         intmap.insert(WI_APP_AUTOAWAY_INTERVAL, 60);
         intmap.insert(WI_APP_SHARED_FILES_ALPHA, 127);
+        intmap.insert(WI_CHAT_PICTURE_CLEAN_DAYS, 7);
         intmap.insert(WI_CHAT_MAXPARAGRAPHS,    1000);
         intmap.insert(WI_DEF_MAGNET_ACTION,     0);
         intmap.insert(WI_CHAT_WIDTH,            -1);
@@ -492,6 +498,10 @@ void WulforSettings::installTranslator(QTranslator &translator,
 }
 
 void WulforSettings::loadTheme(){
+#if defined(Q_OS_MAC)
+    settings.setValue(WS_APP_THEME, "");
+    return;
+#endif
     if (!getStr(WS_APP_THEME).isEmpty())
         qApp->setStyle(getStr(WS_APP_THEME));
 }

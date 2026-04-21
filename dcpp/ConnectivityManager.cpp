@@ -75,6 +75,7 @@ void ConnectivityManager::detectConnection() {
     ctx().getSettingsManager()->unset(SettingsManager::NO_IP_OVERRIDE);
     //ctx().getSettingsManager()->unset(SettingsManager::MAPPER);
     ctx().getSettingsManager()->unset(SettingsManager::BIND_ADDRESS);
+    ctx().getSettingsManager()->unset(SettingsManager::BIND_ADDRESS6);
 
     if (ctx().getMappingManager()->getOpened()) {
         ctx().getMappingManager()->close();
@@ -115,7 +116,9 @@ void ConnectivityManager::setup(bool settingsChanged) {
     if(CTX_BOOLSETTING(AUTO_DETECT_CONNECTION)) {
         if (!autoDetected) detectConnection();
     } else {
-        if(autoDetected || (settingsChanged && (ctx().getSearchManager()->getPort() != Util::toString(CTX_SETTING(UDP_PORT)) || ctx().getConnectionManager()->getPort() != Util::toString(CTX_SETTING(TCP_PORT)) || ctx().getConnectionManager()->getSecurePort() != Util::toString(CTX_SETTING(TLS_PORT)) || CTX_SETTING(BIND_ADDRESS) != lastBind))) {
+        const string currentBind = CTX_BOOLSETTING(USE_IPV6) ? CTX_SETTING(BIND_ADDRESS6) : CTX_SETTING(BIND_ADDRESS);
+        const string lastBindRef = lastUseIPv6 ? lastBind6 : lastBind;
+        if(autoDetected || (settingsChanged && (ctx().getSearchManager()->getPort() != Util::toString(CTX_SETTING(UDP_PORT)) || ctx().getConnectionManager()->getPort() != Util::toString(CTX_SETTING(TCP_PORT)) || ctx().getConnectionManager()->getSecurePort() != Util::toString(CTX_SETTING(TLS_PORT)) || CTX_BOOLSETTING(USE_IPV6) != lastUseIPv6 || currentBind != lastBindRef))) {
             if(settingsChanged || CTX_SETTING(INCOMING_CONNECTIONS) != SettingsManager::INCOMING_FIREWALL_UPNP) {
                 ctx().getMappingManager()->close();
             }
@@ -180,6 +183,8 @@ void ConnectivityManager::log(const string& message) {
 
 void ConnectivityManager::updateLast() {
     lastBind = CTX_SETTING(BIND_ADDRESS);
+    lastBind6 = CTX_SETTING(BIND_ADDRESS6);
+    lastUseIPv6 = CTX_BOOLSETTING(USE_IPV6);
 }
 
 } // namespace dcpp

@@ -63,6 +63,8 @@ private Q_SLOTS:
 private:
     ArenaWidget *findWidgetForIndex(const int);
     void rebuildIndexes(const int);
+    void syncCloseButtons();
+    QWidget *makeCloseButton(int index);
 
     QTabBar *tabbar;
     QList<QShortcut*> shortcuts;

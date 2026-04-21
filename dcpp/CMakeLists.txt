@@ -20,6 +20,9 @@ include_directories (${PROJECT_BINARY_DIR}
                      ${OPENSSL_INCLUDE_DIR}
                      ${GETTEXT_INCLUDE_DIR}
                      ${ICONV_INCLUDE_DIR})
+if (MAXMINDDB_FOUND)
+    include_directories (${MAXMINDDB_INCLUDE_DIR})
+endif ()
 if (LUA_SCRIPT)
     include_directories (${LUA_INCLUDE_DIR})
 endif ()
@@ -127,28 +130,18 @@ if (HAVE_IFADDRS_H)
                  PROPERTY COMPILE_DEFINITIONS HAVE_IFADDRS_H APPEND)
 endif (HAVE_IFADDRS_H)
 
+if (MAXMINDDB_FOUND)
+    set_property(SOURCE ${PROJECT_SOURCE_DIR}/Util.cpp
+                 PROPERTY COMPILE_DEFINITIONS USE_MAXMINDDB APPEND)
+endif ()
+
 if (WIN32 OR CYGWIN)
     set_property(TARGET dcpp PROPERTY COMPILE_FLAGS)
 else ()
     set_property(TARGET dcpp PROPERTY COMPILE_FLAGS -fPIC)
 endif ()
 
-target_link_libraries (dcpp
-                       ${DHT_LIB}
-                       ${PTHREADS}
-                       ${IDN2_LIBRARIES}
-                       ${BZIP2_LIBRARIES}
-                       ${ZLIB_LIBRARIES}
-                       ${OPENSSL_LIBRARIES}
-                       ${GETTEXT_LIBRARIES}
-                       ${ICONV_LIBRARIES}
-                       ${WIN32_LIBS}
-                       ${APPLE_LIBS}
-                       ${HAIKU_LIBS}
-                       ${LUA_LIBRARIES}
-                       ${UPNP}
-                       ${PCRE}
-                       ${XATTR_LIBRARIES})
+target_link_libraries (dcpp ${DHT_LIB} ${PTHREADS} ${IDN2_LIBRARIES} ${BZIP2_LIBRARIES} ${ZLIB_LIBRARIES} ${OPENSSL_LIBRARIES} ${GETTEXT_LIBRARIES} ${ICONV_LIBRARIES} ${WIN32_LIBS} ${APPLE_LIBS} ${HAIKU_LIBS} ${LUA_LIBRARIES} ${UPNP} ${PCRE} ${XATTR_LIBRARIES} ${MAXMINDDB_LIBRARIES})
 set_target_properties(dcpp PROPERTIES
                       VERSION ${SO_VERSION}
                       SOVERSION ${SO_VERSION}

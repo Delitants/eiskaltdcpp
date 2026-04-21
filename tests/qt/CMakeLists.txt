@@ -59,14 +59,7 @@ if (LUA_SCRIPT)
     target_include_directories(eiskaltdcpp-qt-tests PRIVATE ${LUA_INCLUDE_DIR})
 endif()
 
-target_link_libraries(eiskaltdcpp-qt-tests PRIVATE
-    dcpp
-    Catch2::Catch2
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::Test
-)
+target_link_libraries(eiskaltdcpp-qt-tests PRIVATE dcpp Catch2::Catch2 Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Test )
 
 # Auto-discover test cases.
 # - PRE_TEST defers discovery to ctest time (avoids build-time env issues)

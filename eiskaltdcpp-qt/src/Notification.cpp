@@ -274,7 +274,10 @@ void Notification::slotShowHide(){
 #if defined(Q_OS_WIN)
         MW->hide();
 #elif defined(Q_OS_MAC)
-        if (!MW->isActiveWindow()){
+        // On macOS, toggle hide/show based on active state
+        if (MW->isActiveWindow()){
+            MW->hide();
+        } else {
             MW->activateWindow();
             MW->raise();
         }

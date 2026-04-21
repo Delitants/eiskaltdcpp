@@ -16,6 +16,7 @@
  */
 
 #include "stdinc.h"
+#include <openssl/x509v3.h>
 #include "SSLSocket.h"
 
 #include "format.h"
@@ -24,8 +25,11 @@
 #include "SettingsManager.h"
 
 #include <openssl/err.h>
+#include <openssl/ssl.h>
 
 namespace dcpp {
+
+std::string SSLSocket::sniHostHint;
 
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
 static const unsigned char alpn_protos_nmdc[] = {
@@ -40,7 +44,16 @@ SSLSocket::SSLSocket(SSL_CTX* context, Socket::Protocol proto) : ctx(context), s
 
 }
 
+void SSLSocket::setSNIHint(const std::string& host) {
+    sniHostHint = host;
+}
+
+void SSLSocket::clearSNIHint() {
+    sniHostHint.clear();
+}
+
 void SSLSocket::connect(const string& aIp, const string& aPort) {
+    sniServerName = !sniHostHint.empty() ? sniHostHint : aIp;
     Socket::connect(aIp, aPort);
 
     waitConnected(0);
@@ -63,6 +76,19 @@ bool SSLSocket::waitConnected(uint32_t millis) {
             checkSSL(-1);
 
         checkSSL(SSL_set_fd(ssl, sock));
+#ifndef OPENSSL_NO_TLSEXT
+        if(!sniServerName.empty()) {
+            SSL_set_tlsext_host_name(ssl, sniServerName.c_str());
+        }
+#endif
+#if OPENSSL_VERSION_NUMBER >= 0x10002000L
+        if(!sniServerName.empty()) {
+            X509_VERIFY_PARAM* param = SSL_get0_param(ssl);
+            if(param) {
+                X509_VERIFY_PARAM_set1_host(param, sniServerName.c_str(), 0);
+            }
+        }
+#endif
     }
 
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
@@ -100,7 +126,31 @@ bool SSLSocket::waitConnected(uint32_t millis) {
 #endif
             return true;
         }
+
+        {
+            int sslErr = SSL_get_error(ssl, ret);
+            unsigned long e = ERR_peek_error();
+            char errBuf[256] = {0};
+            if(e) {
+                ERR_error_string_n(e, errBuf, sizeof(errBuf));
+            }
+            dcdebug("SSL handshake pending/fail: ret=%d sslErr=%d verify=%ld sni=%s openssl=%s\n",
+                    ret, sslErr, SSL_get_verify_result(ssl),
+                    sniServerName.empty() ? "<empty>" : sniServerName.c_str(),
+                    errBuf[0] ? errBuf : "<none>");
+        }
+
         if(!waitWant(ret, millis)) {
+            int sslErr = SSL_get_error(ssl, ret);
+            unsigned long e = ERR_peek_error();
+            char errBuf[256] = {0};
+            if(e) {
+                ERR_error_string_n(e, errBuf, sizeof(errBuf));
+            }
+            dcdebug("SSL handshake abort: ret=%d sslErr=%d verify=%ld sni=%s openssl=%s\n",
+                    ret, sslErr, SSL_get_verify_result(ssl),
+                    sniServerName.empty() ? "<empty>" : sniServerName.c_str(),
+                    errBuf[0] ? errBuf : "<none>");
             return false;
         }
     }
@@ -197,10 +247,27 @@ int SSLSocket::checkSSL(int ret) {
             throw SocketException(_("Connection closed"));
         default:
         {
+            long verifyRes = SSL_get_verify_result(ssl);
+            unsigned long libErr = ERR_get_error();
+            char errbuf[256] = {0};
+            if(libErr) {
+                ERR_error_string_n(libErr, errbuf, sizeof(errbuf));
+            }
+
+            string sni = sniServerName.empty() ? "<empty>" : sniServerName;
+
             ssl.reset();
-            // @todo replace 80 with MAX_ERROR_SZ or whatever's appropriate for yaSSL in some nice way...
-            char errbuf[80];
-            throw SSLSocketException(str(F_("SSL Error: %1% (%2%, %3%)") % ERR_error_string(err, errbuf) % ret % err));
+
+            throw SSLSocketException(
+                str(F_("SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)")
+                    % err
+                    % verifyRes
+                    % sni
+                    % (errbuf[0] ? errbuf : "<none>")
+                    % ret
+                    % err
+                )
+            );
         }
         }
     }

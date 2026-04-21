@@ -292,6 +292,11 @@ void ShareBrowser::init(){
     setupUi(this);
 
     setAttribute(Qt::WA_DeleteOnClose);
+    splitter->setChildrenCollapsible(false);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 4);
+    frame_2->setMinimumWidth(200);
+    treeView_LPANE->setMinimumWidth(180);
 
     toolButton_UP->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiTOP));
     toolButton_FORWARD->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiNEXT));
@@ -391,11 +396,19 @@ void ShareBrowser::load(){
     int wr= qtCtx()->settings()->getInt(WI_SHARE_RPANE_WIDTH);
 
     if (w >= 0 && wr >= 0){
+        const int minLeft = 220;
+        const int minRight = 420;
+        const int total = qMax(w, minLeft + minRight);
+        const int right = qBound(minRight, wr, total - minLeft);
+        const int left = qMax(minLeft, total - right);
         QList<int> frames;
 
-        frames << (w - wr) << wr;
+        frames << left << right;
 
         splitter->setSizes(frames);
+    }
+    else {
+        splitter->setSizes(QList<int>() << 240 << 760);
     }
 
     treeView_LPANE->header()->restoreState(QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_SHARE_LPANE_STATE).toUtf8()));

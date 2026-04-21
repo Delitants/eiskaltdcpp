@@ -17,6 +17,10 @@
 
 #include <QMenu>
 #include <QMouseEvent>
+#include <QSize>
+#include <QToolButton>
+#include <QStyle>
+#include <QHBoxLayout>
 
 #include "ArenaWidget.h"
 #include "ArenaWidgetManager.h"
@@ -88,14 +92,42 @@ void ToolBar::showEvent(QShowEvent *e){
 void ToolBar::initTabs(){
     tabbar = new QTabBar(parentWidget());
     tabbar->setObjectName("arenaTabbar");
-    tabbar->setTabsClosable(qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS));
+    tabbar->setTabsClosable(false);
     tabbar->setDocumentMode(true);
     tabbar->setMovable(true);
     tabbar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
     tabbar->setExpanding(false);
+    tabbar->setElideMode(Qt::ElideNone);
+    tabbar->setUsesScrollButtons(true);
     tabbar->setContextMenuPolicy(Qt::CustomContextMenu);
     tabbar->setSizePolicy(QSizePolicy::Expanding, tabbar->sizePolicy().verticalPolicy());
+    tabbar->setIconSize(QSize(16, 16));
     tabbar->setAcceptDrops(true);
+    tabbar->setStyleSheet(QStringLiteral(
+        "QTabBar#arenaTabbar { background: transparent; }"
+        "QTabBar#arenaTabbar::tab {"
+        " min-width: 0px;"
+        " padding: 4px 42px 4px 12px;"
+        " margin-right: 4px;"
+        " border: 1px solid palette(mid);"
+        " border-radius: 6px;"
+        " background: palette(button);"
+        "}"
+        "QTabBar#arenaTabbar::tab:selected {"
+        " background: palette(window);"
+        " font-weight: 600;"
+        "}"
+        "QTabBar#arenaTabbar::tab:hover:!selected {"
+        " background: palette(alternate-base);"
+        "}"
+        "QTabBar#arenaTabbar::close-button {"
+        " width: 14px;"
+        " height: 14px;"
+        " subcontrol-origin: padding;"
+        " subcontrol-position: right;"
+        " right: 20px;"
+        " margin: 0px;"
+        "}"));
 
     tabbar->installEventFilter(this);
 
@@ -130,19 +162,21 @@ void ToolBar::initTabs(){
     connect(qtCtx()->globalTimer(), &GlobalTimer::second, this, &ToolBar::redraw);
 
     addWidget(tabbar);
+    syncCloseButtons();
 }
 
 void ToolBar::insertWidget(ArenaWidget *awgt){
     if (!(awgt && awgt->getWidget()) || (awgt->state() & ArenaWidget::Hidden) || map.contains(awgt))
         return;
 
-    int index = tabbar->addTab(awgt->getPixmap(), awgt->getArenaShortTitle().left(32));
+    int index = tabbar->addTab(awgt->getPixmap(), awgt->getArenaShortTitle());
 
     if (awgt->toolButton())
         awgt->toolButton()->setChecked(true);
 
     if (index >= 0){
         map.insert(awgt, index);
+        syncCloseButtons();
 
         if (tabbar->isHidden())
             tabbar->show();
@@ -163,10 +197,11 @@ void ToolBar::removeWidget(ArenaWidget *awgt){
 
         rebuildIndexes(index);
 
+        tabbar->removeTab(index);
+        syncCloseButtons();
+
         if (map.isEmpty())
             tabbar->hide();
-
-        tabbar->removeTab(index);
 
         if (awgt->toolButton())
             awgt->toolButton()->setChecked(false);
@@ -223,6 +258,7 @@ void ToolBar::slotTabMoved(int from, int to){
         if (to_wgt && from_wgt){
             map[to_wgt] = from;
             map[from_wgt] = to;
+            syncCloseButtons();
 
             slotIndexChanged(tabbar->currentIndex());
 
@@ -258,7 +294,8 @@ void ToolBar::slotContextMenu(const QPoint &p){
 
         if (m->exec(QCursor::pos())){
             qtCtx()->settings()->setBool(WB_APP_TBAR_SHOW_CL_BTNS, act->isChecked());
-            tabbar->setTabsClosable(act->isChecked());
+            tabbar->setTabsClosable(false);
+            syncCloseButtons();
         }
 
         m->deleteLater();
@@ -298,10 +335,12 @@ ArenaWidget *ToolBar::findWidgetForIndex(const int index){
 
 void ToolBar::redraw(){
     for (auto it = map.begin(); it != map.end(); ++it){
-        tabbar->setTabText(it.value(), it.key()->getArenaShortTitle().left(32));
+        tabbar->setTabText(it.value(), it.key()->getArenaShortTitle());
         tabbar->setTabToolTip(it.value(), qtCtx()->wulforUtil()->compactToolTipText(it.key()->getArenaTitle(), 60, "\n"));
         tabbar->setTabIcon(it.value(), it.key()->getPixmap());
     }
+
+    syncCloseButtons();
 
     tabbar->repaint();
 
@@ -310,6 +349,48 @@ void ToolBar::redraw(){
     if (awgt)
         qtCtx()->mainWindow()->setWindowTitle(awgt->getArenaTitle() +
                                    " :: " + QString::fromStdString(eiskaltdcppAppNameString));
+}
+
+QWidget *ToolBar::makeCloseButton(int index)
+{
+    auto *holder = new QWidget(tabbar);
+    holder->setFixedSize(QSize(30, 16));
+
+    auto *layout = new QHBoxLayout(holder);
+    layout->setContentsMargins(0, 0, 12, 0);
+    layout->setSpacing(0);
+
+    auto *button = new QToolButton(holder);
+    button->setAutoRaise(true);
+    button->setCursor(Qt::ArrowCursor);
+    button->setFixedSize(QSize(16, 16));
+    button->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
+    button->setIconSize(QSize(12, 12));
+    button->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; }"));
+    connect(button, &QToolButton::clicked, this, [this, index]() { slotClose(index); });
+    layout->addWidget(button, 0, Qt::AlignVCenter | Qt::AlignRight);
+
+    return holder;
+}
+
+void ToolBar::syncCloseButtons()
+{
+    if (!tabbar)
+        return;
+
+    const bool showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
+    tabbar->setTabsClosable(false);
+
+    for (int index = 0; index < tabbar->count(); ++index) {
+        QWidget *existing = tabbar->tabButton(index, QTabBar::RightSide);
+        if (existing) {
+            existing->deleteLater();
+            tabbar->setTabButton(index, QTabBar::RightSide, nullptr);
+        }
+
+        if (showClose)
+            tabbar->setTabButton(index, QTabBar::RightSide, makeCloseButton(index));
+    }
 }
 
 void ToolBar::nextTab(){

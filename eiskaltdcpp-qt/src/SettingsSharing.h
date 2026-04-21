@@ -66,10 +66,16 @@ private slots:
     void slotAddDirExeption();
     void slotSimpleShareModeChanged();
     void slotContextMenu(const QPoint&);
+    void slotAddSharedDirectory();
+    void slotRemoveSelectedSharedDirectories();
+    void slotUpdateShareButtons();
 
 private:
     void init();
     void updateShareView();
+    bool addSharedDirectoryInteractive();
+    bool removeSelectedSharedDirectoriesInteractive();
+    bool renameSelectedSharedDirectoryInteractive();
 
     ShareDirModel *model;
 };

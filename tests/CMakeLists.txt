@@ -83,10 +83,7 @@ if (USE_IDN2)
     target_include_directories(eiskaltdcpp-tests PRIVATE ${IDN2_INCLUDE_DIR})
 endif ()
 
-target_link_libraries(eiskaltdcpp-tests PRIVATE
-    dcpp
-    Catch2::Catch2WithMain
-)
+target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain )
 
 # Auto-discover test cases
 catch_discover_tests(eiskaltdcpp-tests)

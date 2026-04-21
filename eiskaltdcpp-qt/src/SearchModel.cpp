@@ -112,7 +112,7 @@ QVariant SearchModel::data(const QModelIndex &index, int role) const
                 if (qtCtx()->dcCtx().getShareManager()->isTTHShared(t)){
                     static QColor c;
 
-                    c.setNamedColor(qtCtx()->settings()->getStr(WS_APP_SHARED_FILES_COLOR));
+                    c = QColor::fromString(qtCtx()->settings()->getStr(WS_APP_SHARED_FILES_COLOR));
                     c.setAlpha(qtCtx()->settings()->getInt(WI_APP_SHARED_FILES_ALPHA));
 
                     return c;

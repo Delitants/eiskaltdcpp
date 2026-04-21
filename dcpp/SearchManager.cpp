@@ -32,8 +32,24 @@
 #include "StringTokenizer.h"
 #include "FinishedManager.h"
 #include "DCPlusPlus.h"
+#ifndef _WIN32
+#include <netdb.h>
+#endif
 
 namespace dcpp {
+
+namespace {
+string remoteAddressToString(const sockaddr_storage& remote) {
+    char host[NI_MAXHOST] = { 0 };
+    if(getnameinfo(reinterpret_cast<const sockaddr*>(&remote),
+                   (remote.ss_family == AF_INET6) ? sizeof(sockaddr_in6) : sizeof(sockaddr_in),
+                   host, sizeof(host), nullptr, 0, NI_NUMERICHOST) == 0) {
+        return host;
+    }
+
+    return Util::emptyString;
+}
+}
 
 const char* SearchManager::types[TYPE_LAST] = {
     N_("Any"),
@@ -89,10 +105,14 @@ void SearchManager::listen() {
 
     try {
         socket.reset(new Socket);
-        socket->create(Socket::TYPE_UDP);
+        const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
+        socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
         socket->setBlocking(true);
         socket->setSocketOpt(SO_REUSEADDR, 1);
-        port = socket->bind(Util::toString(CTX_SETTING(UDP_PORT)), CTX_SETTING(BIND_IFACE)? socket->getIfaceI4(CTX_SETTING(BIND_IFACE_NAME)).c_str() : CTX_SETTING(BIND_ADDRESS));
+        const string bindIp = CTX_SETTING(BIND_IFACE)
+            ? (useIPv6 ? socket->getIfaceI6(CTX_SETTING(BIND_IFACE_NAME)) : socket->getIfaceI4(CTX_SETTING(BIND_IFACE_NAME)))
+            : (useIPv6 ? CTX_SETTING(BIND_ADDRESS6) : CTX_SETTING(BIND_ADDRESS));
+        port = socket->bind(Util::toString(CTX_SETTING(UDP_PORT)), bindIp);
         start();
     } catch(...) {
         socket.reset();
@@ -119,7 +139,8 @@ void SearchManager::disconnect() {
 int SearchManager::run() {
     std::unique_ptr<uint8_t[]> buf(new uint8_t[BUFSIZE]);
     int len;
-    sockaddr_in remoteAddr = { 0 };
+    sockaddr_storage remoteAddr;
+    memset(&remoteAddr, 0, sizeof(remoteAddr));
 
     while(!stop) {
         try {
@@ -130,7 +151,7 @@ int SearchManager::run() {
                 continue;
             }
             if ((len = socket->read(&buf[0], BUFSIZE, remoteAddr)) > 0) {
-                onData(&buf[0], len, inet_ntoa(remoteAddr.sin_addr));
+                onData(&buf[0], len, remoteAddressToString(remoteAddr));
                 continue;
             }
         } catch(const SocketException& e) {
@@ -141,9 +162,13 @@ int SearchManager::run() {
         while(!stop) {
             try {
                 socket->disconnect();
-                socket->create(Socket::TYPE_UDP);
+                const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
+                socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
                 socket->setBlocking(true);
-                socket->bind(port, CTX_SETTING(BIND_ADDRESS));
+                const string bindIp = CTX_SETTING(BIND_IFACE)
+                    ? (useIPv6 ? socket->getIfaceI6(CTX_SETTING(BIND_IFACE_NAME)) : socket->getIfaceI4(CTX_SETTING(BIND_IFACE_NAME)))
+                    : (useIPv6 ? CTX_SETTING(BIND_ADDRESS6) : CTX_SETTING(BIND_ADDRESS));
+                socket->bind(port, bindIp);
                 if(failed) {
                     ctx().getLogManager()->message(_("Search enabled again"));
                     failed = false;
@@ -380,7 +405,8 @@ void SearchManager::onRES(const AdcCommand& cmd, const UserPtr& from, const stri
 
 void SearchManager::onPSR(const AdcCommand& cmd, UserPtr from, const string& remoteIp) {
 
-    string udpPort;
+    string udpPort4;
+    string udpPort6;
     uint32_t partialCount = 0;
     string tth;
     string hubIpPort;
@@ -390,7 +416,9 @@ void SearchManager::onPSR(const AdcCommand& cmd, UserPtr from, const string& rem
     for(StringIterC i = cmd.getParameters().begin(); i != cmd.getParameters().end(); ++i) {
         const string& str = *i;
         if(str.compare(0, 2, "U4") == 0) {
-            udpPort = str.substr(2);
+            udpPort4 = str.substr(2);
+        } else if(str.compare(0, 2, "U6") == 0) {
+            udpPort6 = str.substr(2);
         } else if(str.compare(0, 2, "NI") == 0) {
             nick = str.substr(2);
         } else if(str.compare(0, 2, "HI") == 0) {
@@ -426,6 +454,10 @@ void SearchManager::onPSR(const AdcCommand& cmd, UserPtr from, const string& rem
         }
     }
 
+    const bool remoteIsV6 = remoteIp.find(':') != string::npos;
+    const string udpPort = remoteIsV6
+        ? (!udpPort6.empty() ? udpPort6 : udpPort4)
+        : (!udpPort4.empty() ? udpPort4 : udpPort6);
     ctx().getClientManager()->setIPUser(from, remoteIp, udpPort);
 
     if(partialInfo.size() != partialCount) {
@@ -510,7 +542,11 @@ AdcCommand SearchManager::toPSR(bool wantResponse, const string& myNick, const s
         cmd.addParam("NI", Text::utf8ToAcp(myNick));
 
     cmd.addParam("HI", hubIpPort);
-    cmd.addParam("U4", (wantResponse && ctx().getClientManager()->isActive(hubIpPort)) ? ctx().getSearchManager()->getPort() : Util::emptyString);
+    if(CTX_BOOLSETTING(USE_IPV6)) {
+        cmd.addParam("U6", (wantResponse && ctx().getClientManager()->isActive(hubIpPort)) ? ctx().getSearchManager()->getPort() : Util::emptyString);
+    } else {
+        cmd.addParam("U4", (wantResponse && ctx().getClientManager()->isActive(hubIpPort)) ? ctx().getSearchManager()->getPort() : Util::emptyString);
+    }
     cmd.addParam("TR", tth);
     cmd.addParam("PC", Util::toString(partialInfo.size() / 2));
     cmd.addParam("PI", getPartsString(partialInfo));

@@ -22,3 +22,10 @@ else ()
     set_property(TARGET dht PROPERTY COMPILE_FLAGS -fPIC)
 endif ()
 
+if(APPLE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set_source_files_properties(
+        UDPSocket.cpp
+        PROPERTIES
+        COMPILE_OPTIONS "-Wno-deprecated-declarations"
+    )
+endif()

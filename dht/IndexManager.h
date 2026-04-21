@@ -20,6 +20,7 @@
 #include "Constants.h"
 #include "KBucket.h"
 #include "dcpp/ShareManager.h"
+#include <atomic>
 
 namespace dht
 {
@@ -75,8 +76,8 @@ namespace dht
         void saveIndexes(SimpleXML& xml);
 
         /** How many files is currently being published */
-        void incPublishing() { ++publishing; } //{ Thread::safeInc(publishing); }
-        void decPublishing() { --publishing; } //{ Lock l(cs); Thread::safeDec(publishing); }
+        void incPublishing() { publishing.fetch_add(1, std::memory_order_relaxed); }
+        void decPublishing() { publishing.fetch_sub(1, std::memory_order_relaxed); }
 
         /** Is publishing allowed? */
         void setPublish(bool _publish) { publish = _publish; }
@@ -116,7 +117,7 @@ namespace dht
         bool publish;
 
         /** How many files is currently being published */
-        volatile long publishing;
+        std::atomic<long> publishing{0};
 
         /** Time when our sharelist should be republished */
         uint64_t nextRepublishTime;

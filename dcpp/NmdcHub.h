@@ -94,6 +94,7 @@ private:
     string lastMyInfoB;
     string lastMyInfoC;
     string lastMyInfoD;
+    string autoDetectedEncoding;
 
     typedef list<pair<string, uint64_t> > FloodMap;
     typedef FloodMap::iterator FloodIter;
@@ -104,6 +105,7 @@ private:
     virtual ~NmdcHub();
 
     void clearUsers();
+    void maybeAutoDetectEncoding(const string& aLine);
 
     OnlineUser& getUser(const string& aNick);
     OnlineUser* findUser(const string& aNick);

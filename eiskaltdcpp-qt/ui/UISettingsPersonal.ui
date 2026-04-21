@@ -20,6 +20,21 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>12</number>
+   </property>
+   <property name="topMargin">
+    <number>12</number>
+   </property>
+   <property name="rightMargin">
+    <number>12</number>
+   </property>
+   <property name="bottomMargin">
+    <number>12</number>
+   </property>
+   <property name="spacing">
+    <number>10</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
      <property name="frameShape">
@@ -160,7 +175,7 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</string>
       <item row="0" column="0">
        <widget class="QLabel" name="label_5">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -169,7 +184,7 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</string>
          <string>Line speed (upload)</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -208,7 +223,7 @@ of how fast a source you are likely to be for other users.</string>
       <item row="1" column="0">
        <widget class="QLabel" name="label_6">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -217,7 +232,7 @@ of how fast a source you are likely to be for other users.</string>
          <string>Default hub encoding</string>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

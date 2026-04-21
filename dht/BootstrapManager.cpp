@@ -26,6 +26,7 @@
 #include "dcpp/ClientManager.h"
 #include "dcpp/HttpConnection.h"
 #include "dcpp/LogManager.h"
+#include "dcpp/SettingsManager.h"
 #include <zlib.h>
 #include "dcpp/DCPlusPlus.h"
 
@@ -35,9 +36,28 @@ namespace dht
  
     BootstrapManager::BootstrapManager(DHT& dht) : dht_(dht), httpConnection(dht.ctx())
     {
-        dhtservers.push_back("http://strongdc.sourceforge.net/bootstrap/");
-        dhtservers.push_back("http://dht.fly-server.ru/dcDHT.php");
         httpConnection.addListener(this);
+
+        const string configured = dht_.ctx().getSettingsManager()->get(SettingsManager::DHT_BOOTSTRAP_URLS, true);
+        if(!configured.empty()) {
+            string::size_type start = 0;
+            while(start < configured.size()) {
+                auto end = configured.find(';', start);
+                string url = configured.substr(start, end == string::npos ? string::npos : end - start);
+
+                auto first = url.find_first_not_of(" \t\r\n");
+                auto last  = url.find_last_not_of(" \t\r\n");
+                if(first != string::npos && last != string::npos) {
+                    url = url.substr(first, last - first + 1);
+                    if(!url.empty())
+                        dhtservers.push_back(url);
+                }
+
+                if(end == string::npos)
+                    break;
+                start = end + 1;
+            }
+        }
     }
 
     BootstrapManager::~BootstrapManager(void)
@@ -47,6 +67,10 @@ namespace dht
 
     void BootstrapManager::bootstrap()
     {
+        if(dhtservers.empty()) {
+            return;
+            return;
+        }
         if(bootstrapNodes.empty())
         {
             dht_.ctx().getLogManager()->message(_("DHT bootstrapping started"));

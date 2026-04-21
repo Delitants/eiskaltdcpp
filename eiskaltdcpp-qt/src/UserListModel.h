@@ -58,7 +58,8 @@ static const unsigned COLUMN_COMMENT    = 3;
 static const unsigned COLUMN_TAG        = 4;
 static const unsigned COLUMN_CONN       = 5;
 static const unsigned COLUMN_IP         = 6;
-static const unsigned COLUMN_EMAIL      = 7;
+static const unsigned COLUMN_IPV6       = 7;
+static const unsigned COLUMN_EMAIL      = 8;
 
 typedef QHash<QString, QVariant> UserMap;
 
@@ -85,6 +86,7 @@ public:
     QString      getComment() const;
     QString      getTag() const;
     QString      getIP() const;
+    QString      getIP6() const;
     QString      getConnection() const;
     QString      getEmail() const;
     QString      getCID() const;

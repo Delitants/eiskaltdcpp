@@ -39,15 +39,23 @@ bool Identity::isTcpActive(const Client* c) const {
         return c->isActive(); // userlist should display our real mode
     } else {
         return (!user->isSet(User::NMDC)) ?
-                    !getIp().empty() && supports(AdcHub::TCP4_FEATURE) :
+                    ((!getIp().empty() && supports(AdcHub::TCP4_FEATURE)) ||
+                     (!getIp6().empty() && supports(AdcHub::TCP6_FEATURE))) :
                     !user->isSet(User::PASSIVE);
     }
 }
 
 bool Identity::isUdpActive() const {
-    if(getIp().empty() || getUdpPort().empty())
-        return false;
-    return (!user->isSet(User::NMDC)) ? supports(AdcHub::UDP4_FEATURE) : !user->isSet(User::PASSIVE);
+    if(user->isSet(User::NMDC)) {
+        if(getIp().empty() || getUdpPort().empty()) {
+            return false;
+        }
+        return !user->isSet(User::PASSIVE);
+    }
+
+    const bool udp4 = !getIp().empty() && !getUdpPort().empty() && supports(AdcHub::UDP4_FEATURE);
+    const bool udp6 = !getIp6().empty() && !getUdpPort6().empty() && supports(AdcHub::UDP6_FEATURE);
+    return udp4 || udp6;
 }
 
 void Identity::getParams(ParamMap& params, const string& prefix, bool compatibility, bool dht) const {
@@ -74,7 +82,7 @@ void Identity::getParams(ParamMap& params, const string& prefix, bool compatibil
             } else {
                 params["nick"] = getNick();
                 params["cid"] = user->getCID().toBase32();
-                params["ip"] = get("I4");
+                params["ip"] = getConnectIp();
                 params["tag"] = getTag();
                 params["description"] = get("DE");
                 params["email"] = get("EM");
@@ -93,10 +101,37 @@ bool Identity::isClientType(ClientType ct) const {
 string Identity::getTag() const {
     if(!get("TA").empty())
         return get("TA");
-    if(get("VE").empty() || get("HN").empty() || get("HR").empty() ||get("HO").empty() || get("SL").empty())
+
+    const auto application = get("AP");
+    const auto version = get("VE");
+    const auto hn = get("HN");
+    const auto hr = get("HR");
+    const auto ho = get("HO");
+    const auto sl = get("SL");
+
+    if(version.empty() || hn.empty() || hr.empty() || ho.empty() || sl.empty())
         return Util::emptyString;
-    return "<" + getApplication() + ",M:" + string(isTcpActive() ? "A" : "P") +
-            ",H:" + get("HN") + "/" + get("HR") + "/" + get("HO") + ",S:" + get("SL") + ">";
+
+    string tag = "<";
+
+    if(!application.empty()) {
+        tag += application + ' ';
+    }
+
+    string shownVersion = version;
+#ifdef __APPLE__
+#endif
+
+    tag += shownVersion;
+    tag += ",M:";
+    tag += (isTcpActive() ? "A" : "P");
+    tag += ",H:";
+    tag += hn + "/" + hr + "/" + ho;
+    tag += ",S:";
+    tag += sl;
+    tag += ">";
+
+    return tag;
 }
 
 string Identity::getApplication() const {

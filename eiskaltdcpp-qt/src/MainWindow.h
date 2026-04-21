@@ -128,7 +128,9 @@ friend class QtContext;
         /** */
         void setUnload(bool b);
 
-        ArenaWidget *widgetForRole(ArenaWidget::Role) const;
+        
+    bool confirmExit();
+ArenaWidget *widgetForRole(ArenaWidget::Role) const;
 
     Q_SIGNALS:
         void redrawWidgetPanels();

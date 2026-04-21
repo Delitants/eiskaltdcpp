@@ -70,6 +70,8 @@ public:
     void setGeometry(const QRect &rect);
     QSize sizeHint() const;
     QLayoutItem *takeAt(int index);
+    void setRowAlignment(Qt::Alignment alignment);
+    Qt::Alignment rowAlignment() const;
 
     void place(QWidget *on, QWidget *what);
 
@@ -83,4 +85,5 @@ private:
     QList<QLayoutItem *> itemList;
     int m_hSpace;
     int m_vSpace;
+    Qt::Alignment m_rowAlignment;
 };

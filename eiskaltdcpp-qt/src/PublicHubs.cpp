@@ -20,6 +20,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QFile>
 #include <QItemSelectionModel>
 #include <QHeaderView>
 #include <QKeyEvent>
@@ -39,6 +40,7 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     treeView->setModel(model);
     treeView->setItemDelegate(new AutoToolTipDelegate(treeView));
     treeView->header()->restoreState(qtCtx()->settings()->getVar(WS_PUBLICHUBS_STATE, QByteArray()).toByteArray());
+    treeView->header()->setSectionResizeMode(COLUMN_PHUB_COUNTRY, QHeaderView::ResizeToContents);
 
     lineEdit_FILTER->installEventFilter(this);
 
@@ -70,6 +72,8 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     treeView->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
     toolButton_CLOSEFILTER->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
+    pushButton_REFRESH->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiRELOAD));
+    pushButton_REFRESH->setAutoDefault(false);
 
     connect(this, &PublicHubs::coreDownloadStarted,  this, &PublicHubs::setStatus, Qt::QueuedConnection);
     connect(this, &PublicHubs::coreDownloadFailed,   this, &PublicHubs::setStatus, Qt::QueuedConnection);
@@ -81,6 +85,7 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     connect(treeView->header(), &QHeaderView::customContextMenuRequested, this, &PublicHubs::slotHeaderMenu);
     connect(toolButton_CLOSEFILTER, &QToolButton::clicked, this, &PublicHubs::slotFilter);
     connect(comboBox_HUBS, qOverload<int>(&QComboBox::activated), this, &PublicHubs::slotHubChanged);
+    connect(pushButton_REFRESH, &QPushButton::clicked, this, &PublicHubs::slotRefresh);
     connect(qtCtx()->settings(), &WulforSettings::strValueChanged, this, &PublicHubs::slotSettingsChanged);
     
     ArenaWidget::setState( ArenaWidget::Flags(ArenaWidget::state() | ArenaWidget::Singleton | ArenaWidget::Hidden) );
@@ -139,6 +144,8 @@ void PublicHubs::updateList(){
 
         model->addResult(data, entry);
     }
+
+    treeView->resizeColumnToContents(COLUMN_PHUB_COUNTRY);
 }
 
 void PublicHubs::onFinished(const QString &stat){
@@ -271,6 +278,19 @@ void PublicHubs::slotFilter(){
 void PublicHubs::slotHubChanged(int pos){
     dcCtx().getFavoriteManager()->setHubList(pos);
     dcCtx().getFavoriteManager()->refresh();
+}
+
+void PublicHubs::slotRefresh(){
+    const QString hubListUrl = comboBox_HUBS->currentText().trimmed();
+
+    if (!hubListUrl.isEmpty()) {
+        const QString cachePath = _q(Util::getHubListsPath() + Util::validateFileName(_tq(hubListUrl)));
+        if (QFile::exists(cachePath))
+            QFile::remove(cachePath);
+    }
+
+    setStatus(tr("Refreshing public hub list..."));
+    dcCtx().getFavoriteManager()->refresh(true);
 }
 
 void PublicHubs::slotFilterColumnChanged(){

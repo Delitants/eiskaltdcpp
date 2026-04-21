@@ -255,6 +255,7 @@ if (WIN32)
 endif (WIN32)
 
 if (APPLE)
+    set (EISKALT_MACOS_DEPS_PREFIX "${EISKALT_MACOS_DEPS_PREFIX}" CACHE PATH "Prefix that provides vendored macOS dependencies")
     find_library (COCOA_LIBRARY Cocoa)
     list (APPEND LIBS ${COCOA_LIBRARY})
 endif (APPLE)
@@ -368,6 +369,9 @@ endif ()
 
 if (APPLE)
     target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp iconv)
+    set_target_properties (${PROJECT_NAME} PROPERTIES
+        MACOSX_RPATH ON
+        INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks;@loader_path/../../Frameworks")
 elseif (HAIKU)
     target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp be)
 else (APPLE)
@@ -497,3 +501,45 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
     
 endif()
 
+if(APPLE)
+    find_program(MACDEPLOYQT_EXECUTABLE macdeployqt
+        HINTS
+            "${EISKALT_MACOS_DEPS_PREFIX}/bin"
+            "${EISKALT_MACOS_DEPS_PREFIX}/opt/qtbase/bin"
+            "${CMAKE_INSTALL_PREFIX}/bin"
+            "${CMAKE_INSTALL_PREFIX}/opt/qtbase/bin"
+            /opt/homebrew/opt/qtbase/bin)
+
+    
+
+    if(MACDEPLOYQT_EXECUTABLE)
+        add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Running macdeployqt..."
+            COMMAND "${MACDEPLOYQT_EXECUTABLE}"
+                    "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
+            VERBATIM
+        )
+    endif()
+
+
+endif()
+
+if(APPLE)
+    add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources/aspell"
+        COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/cmake/copy_aspell.sh"
+                "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>/aspell6-en-2020.12.07-0"
+                "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources/aspell"
+        VERBATIM
+    )
+
+
+    add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Writing qt.conf..."
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources"
+            COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/cmake/write_qt_conf.sh"
+                    "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources/qt.conf"
+            VERBATIM
+        )
+endif()

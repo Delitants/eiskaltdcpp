@@ -32,6 +32,13 @@
      <item>
       <widget class="QComboBox" name="comboBox_HUBS"/>
      </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_REFRESH">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>

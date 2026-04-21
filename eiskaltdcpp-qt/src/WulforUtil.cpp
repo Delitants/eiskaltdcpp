@@ -51,8 +51,12 @@
 #include <QPushButton>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QScrollArea>
 #include <QRegularExpression>
 #include <QProcess>
+#include <QLocale>
+#include <QImageReader>
 
 #include <QUrlQuery>
 
@@ -82,6 +86,83 @@
 using namespace dcpp;
 
 const QString WulforUtil::magnetSignature = "magnet:?xt=urn:tree:tiger:";
+
+namespace {
+bool isPreviewableImagePath(const QString &path)
+{
+    const QFileInfo info(path);
+    if (!info.exists() || !info.isFile())
+        return false;
+
+    const QString suffix = info.suffix().toLower();
+    if (suffix == QStringLiteral("heic") || suffix == QStringLiteral("heif"))
+        return true;
+
+    const auto formats = QImageReader::supportedImageFormats();
+    for (const QByteArray &format : formats) {
+        if (suffix == QString::fromLatin1(format).toLower())
+            return true;
+    }
+
+    return false;
+}
+
+void showPreviewableImage(QWidget *parent, const QString &path)
+{
+    QImageReader reader(path);
+    reader.setAutoTransform(true);
+    const QImage image = reader.read();
+    if (image.isNull()) {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        return;
+    }
+
+    auto *dialog = new QDialog(parent);
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setWindowTitle(QFileInfo(path).fileName());
+    dialog->setMinimumSize(480, 360);
+
+    auto *layout = new QVBoxLayout(dialog);
+    layout->setContentsMargins(8, 8, 8, 8);
+    layout->setSpacing(8);
+
+    auto *scrollArea = new QScrollArea(dialog);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setAlignment(Qt::AlignCenter);
+
+    auto *label = new QLabel(scrollArea);
+    label->setAlignment(Qt::AlignCenter);
+    label->setBackgroundRole(QPalette::Base);
+    label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+    const QPixmap pixmap = QPixmap::fromImage(image);
+    QSize previewSize = pixmap.size();
+    previewSize.scale(1200, 900, Qt::KeepAspectRatio);
+    label->setPixmap(pixmap.scaled(previewSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    label->resize(label->pixmap(Qt::ReturnByValue).size());
+    scrollArea->setWidget(label);
+
+    auto *buttonRow = new QHBoxLayout();
+    buttonRow->addStretch();
+    auto *openExternal = new QPushButton(QObject::tr("Open Externally"), dialog);
+    auto *close = new QPushButton(QObject::tr("Close"), dialog);
+    buttonRow->addWidget(openExternal);
+    buttonRow->addWidget(close);
+
+    QObject::connect(openExternal, &QPushButton::clicked, dialog, [path]() {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+    });
+    QObject::connect(close, &QPushButton::clicked, dialog, &QDialog::accept);
+
+    layout->addWidget(scrollArea, 1);
+    layout->addLayout(buttonRow);
+    dialog->resize(previewSize.boundedTo(QSize(1200, 900)) + QSize(48, 96));
+    dialog->show();
+    dialog->raise();
+    dialog->activateWindow();
+}
+}
 
 WulforUtil::WulforUtil(dcpp::DCContext& ctx)
     : QtContextAware(ctx)
@@ -148,26 +229,53 @@ QString WulforUtil::findAppIconsPath() const
     // Try to find application icons directory
     const QString icon_theme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME);
 
-    QStringList settings_path_list = {
-        QDir::currentPath() + "/icons/appl/" + icon_theme,
+    const QStringList roots = {
+        QDir::currentPath() + "/icons/appl",
 #if defined(Q_OS_MAC)
-        bin_path + "/../Resources/icons/appl/" + icon_theme,
-        "/Applications/EiskaltDC++.app/Contents/Resources/icons/appl/" + icon_theme,
+        bin_path + "/../Resources/icons/appl",
+        "/Applications/EiskaltDC++.app/Contents/Resources/icons/appl",
 #endif // defined(Q_OS_MAC)
-        QDir::homePath() + "/.eiskaltdc++/icons/appl/" + icon_theme,
-        bin_path + "/appl/" + icon_theme,
-        bin_path + "/icons/appl/" + icon_theme,
-        bin_path + "/../icons/appl/" + icon_theme,
-        CLIENT_ICONS_DIR "/appl/" + icon_theme,
-        bin_path + CLIENT_ICONS_DIR "/appl/" + icon_theme,
-        bin_path + "/../" CLIENT_ICONS_DIR "/appl/" + icon_theme,
-        bin_path + "/../../" CLIENT_ICONS_DIR "/appl/" + icon_theme
+        QDir::homePath() + "/.eiskaltdc++/icons/appl",
+        bin_path + "/appl",
+        bin_path + "/icons/appl",
+        bin_path + "/../icons/appl",
+        CLIENT_ICONS_DIR "/appl",
+        bin_path + CLIENT_ICONS_DIR "/appl",
+        bin_path + "/../" CLIENT_ICONS_DIR "/appl",
+        bin_path + "/../../" CLIENT_ICONS_DIR "/appl"
     };
 
-    for (QString settings_path : settings_path_list) {
-        settings_path = QDir::toNativeSeparators(settings_path);
-        if (QDir(settings_path).exists())
-            return settings_path;
+    auto findThemePath = [&roots](const QString &theme) -> QString {
+        if (theme.trimmed().isEmpty())
+            return QString();
+
+        for (const QString &root : roots) {
+            const QString settings_path = QDir::toNativeSeparators(root + "/" + theme);
+            if (QDir(settings_path).exists())
+                return settings_path;
+        }
+
+        return QString();
+    };
+
+    QString themePath = findThemePath(icon_theme);
+    if (!themePath.isEmpty())
+        return themePath;
+
+    // Settings can reference a missing/removed theme after upgrades.
+    themePath = findThemePath(QStringLiteral("default"));
+    if (!themePath.isEmpty())
+        return themePath;
+
+    // Last resort: use first available icon theme folder.
+    for (const QString &root : roots) {
+        QDir dir(root);
+        if (!dir.exists())
+            continue;
+
+        const QStringList themes = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        if (!themes.isEmpty())
+            return QDir::toNativeSeparators(dir.absoluteFilePath(themes.first()));
     }
 
     return QString();
@@ -178,27 +286,53 @@ QString WulforUtil::findUserIconsPath() const
     // Try to find icons directory
     const QString user_theme = qtCtx()->settings()->getStr(WS_APP_USERTHEME);
 
-    QStringList settings_path_list = {
-        QDir::currentPath() + "/icons/user/" + user_theme,
+    const QStringList roots = {
+        QDir::currentPath() + "/icons/user",
 #if defined(Q_OS_MAC)
-        bin_path + "/../Resources/icons/user/" + user_theme,
-        "/Applications/EiskaltDC++.app/Contents/Resources/icons/user/" + user_theme,
+        bin_path + "/../Resources/icons/user",
+        "/Applications/EiskaltDC++.app/Contents/Resources/icons/user",
 #endif // defined(Q_OS_MAC)
-        QDir::homePath() + "/.eiskaltdc++/icons/user/" + user_theme,
-        bin_path + "icons/user/" + user_theme,
-        bin_path + "/icons/user/" + user_theme,
-        bin_path + "/../icons/user/" + user_theme,
-        bin_path + "/user/" + user_theme,
-        CLIENT_ICONS_DIR "/user/" + user_theme,
-        bin_path + CLIENT_ICONS_DIR "/user/" + user_theme,
-        bin_path + "/../" CLIENT_ICONS_DIR "/user/" + user_theme,
-        bin_path + "/../../" CLIENT_ICONS_DIR "/user/" + user_theme
+        QDir::homePath() + "/.eiskaltdc++/icons/user",
+        bin_path + "icons/user",
+        bin_path + "/icons/user",
+        bin_path + "/../icons/user",
+        bin_path + "/user",
+        CLIENT_ICONS_DIR "/user",
+        bin_path + CLIENT_ICONS_DIR "/user",
+        bin_path + "/../" CLIENT_ICONS_DIR "/user",
+        bin_path + "/../../" CLIENT_ICONS_DIR "/user"
     };
 
-    for (QString settings_path : settings_path_list) {
-        settings_path = QDir::toNativeSeparators(settings_path);
-        if (QDir(settings_path).exists())
-            return settings_path;
+    auto findThemePath = [&roots](const QString &theme) -> QString {
+        if (theme.trimmed().isEmpty())
+            return QString();
+
+        for (const QString &root : roots) {
+            const QString settings_path = QDir::toNativeSeparators(root + "/" + theme);
+            if (QDir(settings_path).exists())
+                return settings_path;
+        }
+
+        return QString();
+    };
+
+    QString themePath = findThemePath(user_theme);
+    if (!themePath.isEmpty())
+        return themePath;
+
+    themePath = findThemePath(QStringLiteral("default"));
+    if (!themePath.isEmpty())
+        return themePath;
+
+    // Last resort: use first available user icon theme folder.
+    for (const QString &root : roots) {
+        QDir dir(root);
+        if (!dir.exists())
+            continue;
+
+        const QStringList themes = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        if (!themes.isEmpty())
+            return QDir::toNativeSeparators(dir.absoluteFilePath(themes.first()));
     }
 
     return QString();
@@ -265,6 +399,105 @@ QString WulforUtil::getAspellDataPath() const
     static const QString aspellDataPath = QString();
 #endif
     return QDir(aspellDataPath).absolutePath();
+}
+
+QString WulforUtil::countryFlagEmoji(const QString &countryCode)
+{
+    const QString code = countryCode.trimmed().toUpper();
+    if (code.size() != 2 || !code.at(0).isLetter() || !code.at(1).isLetter())
+        return QString();
+
+    const uint first = 0x1F1E6u + static_cast<uint>(code.at(0).unicode() - 'A');
+    const uint second = 0x1F1E6u + static_cast<uint>(code.at(1).unicode() - 'A');
+
+    QString out;
+    out.append(QChar::highSurrogate(first));
+    out.append(QChar::lowSurrogate(first));
+    out.append(QChar::highSurrogate(second));
+    out.append(QChar::lowSurrogate(second));
+    return out;
+}
+
+static QString countryCodeFromLabel(QString label)
+{
+    label = label.trimmed();
+    if (label.isEmpty())
+        return QString();
+
+    if (label.size() == 2 && label.at(0).isLetter() && label.at(1).isLetter())
+        return label.toUpper();
+
+    const QString normalized = label.simplified().toLower();
+    static const QHash<QString, QString> aliases = {
+        {QStringLiteral("russian federation"), QStringLiteral("RU")},
+        {QStringLiteral("czech republic"), QStringLiteral("CZ")},
+        {QStringLiteral("united kingdom"), QStringLiteral("GB")},
+        {QStringLiteral("united states"), QStringLiteral("US")},
+        {QStringLiteral("turkey"), QStringLiteral("TR")},
+        {QStringLiteral("turkiye"), QStringLiteral("TR")},
+        {QStringLiteral("türkiye"), QStringLiteral("TR")},
+        {QStringLiteral("south korea"), QStringLiteral("KR")},
+        {QStringLiteral("north korea"), QStringLiteral("KP")},
+        {QStringLiteral("moldova, republic of"), QStringLiteral("MD")},
+        {QStringLiteral("iran, islamic republic of"), QStringLiteral("IR")},
+        {QStringLiteral("syrian arab republic"), QStringLiteral("SY")},
+        {QStringLiteral("venezuela, bolivarian republic of"), QStringLiteral("VE")},
+        {QStringLiteral("tanzania, united republic of"), QStringLiteral("TZ")},
+        {QStringLiteral("bolivia, plurinational state of"), QStringLiteral("BO")},
+        {QStringLiteral("viet nam"), QStringLiteral("VN")}
+    };
+
+    if (aliases.contains(normalized))
+        return aliases.value(normalized);
+
+    const auto locales = QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
+
+    for (const auto &locale : locales) {
+        const QString countryName = QLocale::territoryToString(locale.territory()).simplified().toLower();
+        if (countryName != normalized)
+            continue;
+
+        const QString localeName = locale.name();
+        const QString code = localeName.section(QLatin1Char('_'), 1, 1).toUpper();
+        if (code.size() == 2)
+            return code;
+    }
+
+    return QString();
+}
+
+QString WulforUtil::flaggedCountryLabel(const QString &countryText, const QString &countryCode)
+{
+    QString code = countryCode.trimmed().toUpper();
+    QString label = countryText.trimmed();
+
+    if (code.isEmpty() && label.size() == 2 && label.at(0).isLetter() && label.at(1).isLetter())
+        code = label.toUpper();
+    if (code.size() != 2)
+        code = countryCodeFromLabel(label);
+
+    const QString flag = countryFlagEmoji(code);
+    if (flag.isEmpty())
+        return label;
+
+    if (label.isEmpty())
+        label = code;
+
+    return flag + QStringLiteral(" ") + label;
+}
+
+QString WulforUtil::flaggedIpLabel(const QString &ip)
+{
+    if (ip.trimmed().isEmpty())
+        return ip;
+
+    const QString countryCode = _q(Util::getIpCountry(_tq(ip)));
+    const QString flag = countryFlagEmoji(countryCode);
+
+    if (flag.isEmpty())
+        return ip;
+
+    return flag + QStringLiteral(" ") + ip;
 }
 
 QString WulforUtil::getClientResourcesPath() const
@@ -675,6 +908,8 @@ void WulforUtil::initFileTypes(){
     m_FileTypeMap["EPS"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["EMF"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["GIF"]  = eiFILETYPE_PICTURE;
+    m_FileTypeMap["HEIC"] = eiFILETYPE_PICTURE;
+    m_FileTypeMap["HEIF"] = eiFILETYPE_PICTURE;
     m_FileTypeMap["ICO"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["IMG"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["JPEG"] = eiFILETYPE_PICTURE;
@@ -692,6 +927,8 @@ void WulforUtil::initFileTypes(){
     m_FileTypeMap["TGA"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["TIF"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["TIFF"] = eiFILETYPE_PICTURE;
+    m_FileTypeMap["WEBP"] = eiFILETYPE_PICTURE;
+    m_FileTypeMap["AVIF"] = eiFILETYPE_PICTURE;
     m_FileTypeMap["XPM"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["XIF"]  = eiFILETYPE_PICTURE;
     m_FileTypeMap["WMF"]  = eiFILETYPE_PICTURE;
@@ -771,7 +1008,23 @@ QStringList WulforUtil::encodings(){
 }
 
 bool WulforUtil::openUrl(const QString &url){
-    if (url.startsWith("http://") || url.startsWith("www.") || url.startsWith(("ftp://")) || url.startsWith("https://")){
+    const QUrl parsedUrl = QUrl::fromUserInput(url);
+    if (parsedUrl.isLocalFile()) {
+        const QString localPath = parsedUrl.toLocalFile();
+        if (isPreviewableImagePath(localPath))
+            showPreviewableImage(qtCtx()->mainWindow(), localPath);
+        else
+            QDesktopServices::openUrl(parsedUrl);
+        return true;
+    }
+    else if (QFileInfo(url).isAbsolute() && QFileInfo(url).exists()) {
+        if (isPreviewableImagePath(url))
+            showPreviewableImage(qtCtx()->mainWindow(), url);
+        else
+            QDesktopServices::openUrl(QUrl::fromLocalFile(url));
+        return true;
+    }
+    else if (url.startsWith("http://") || url.startsWith("www.") || url.startsWith(("ftp://")) || url.startsWith("https://")){
         if (!qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true).empty())
             QProcess::startDetached(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)), QStringList(url));
         else

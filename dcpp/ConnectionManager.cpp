@@ -61,14 +61,16 @@ ConnectionManager::ConnectionManager(DCContext& ctx) :
 void ConnectionManager::listen() {
     disconnect();
 
-    server = new Server(ctx(), false, Util::toString(CTX_SETTING(TCP_PORT)), CTX_SETTING(BIND_ADDRESS));
+    const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
+    const string bindIp = useIPv6 ? CTX_SETTING(BIND_ADDRESS6) : CTX_SETTING(BIND_ADDRESS);
+    server = new Server(ctx(), false, Util::toString(CTX_SETTING(TCP_PORT)), bindIp);
 
     if(!ctx().getCryptoManager()->TLSOk()) {
         dcdebug("Skipping secure port: %d\n", CTX_SETTING(TLS_PORT));
         return;
     }
 
-    secureServer = new Server(ctx(), true, Util::toString(CTX_SETTING(TLS_PORT)), CTX_SETTING(BIND_ADDRESS));
+    secureServer = new Server(ctx(), true, Util::toString(CTX_SETTING(TLS_PORT)), bindIp);
 }
 
 ConnectionQueueItem::ConnectionQueueItem(const HintedUser &aUser, bool aDownload) :
@@ -260,9 +262,12 @@ static const uint32_t FLOOD_TRIGGER = 20000;
 static const uint32_t FLOOD_ADD = 2000;
 
 ConnectionManager::Server::Server(DCContext& ctx, const bool secure_, const string& aPort, const string& ip_ /* = "0.0.0.0" */) : secure(secure_), die(false), ctx_(ctx) {
-    sock.create();
+    const bool bindV6 = ip_.find(':') != string::npos;
+    sock.create(Socket::TYPE_TCP, bindV6 ? AF_INET6 : AF_INET);
     sock.setSocketOpt(SO_REUSEADDR, 1);
-    ip = CTX_SETTING(BIND_IFACE)? sock.getIfaceI4(CTX_SETTING(BIND_IFACE_NAME)).c_str() : ip_;
+    ip = CTX_SETTING(BIND_IFACE)
+        ? (bindV6 ? sock.getIfaceI6(CTX_SETTING(BIND_IFACE_NAME)) : sock.getIfaceI4(CTX_SETTING(BIND_IFACE_NAME)))
+        : ip_;
     port = sock.bind(aPort, ip);
     sock.listen();
 
@@ -291,7 +296,7 @@ int ConnectionManager::Server::run() {
         while(!die) {
             try {
                 sock.disconnect();
-                sock.create();
+                sock.create(Socket::TYPE_TCP, ip.find(':') != string::npos ? AF_INET6 : AF_INET);
                 sock.bind(port, ip);
                 sock.listen();
                 if(failed) {
@@ -413,7 +418,7 @@ void ConnectionManager::adcConnect(const OnlineUser& aUser, const string &aPort,
     uc->setEncoding(Text::utf8);
     uc->setState(UserConnection::STATE_CONNECT);
 #ifdef WITH_DHT
-    uc->setHubUrl(&aUser.getClient() == NULL ? "DHT" : aUser.getClient().getHubUrl());
+    uc->setHubUrl(aUser.getClient().getHubUrl());
 #else
     uc->setHubUrl(aUser.getClient().getHubUrl());
 #endif
@@ -421,7 +426,8 @@ void ConnectionManager::adcConnect(const OnlineUser& aUser, const string &aPort,
         uc->setFlag(UserConnection::FLAG_OP);
     }
     try {
-        uc->connect(aUser.getIdentity().getIp(), aPort, localPort, natRole);
+        const string remoteIp = aUser.getIdentity().getConnectIp(CTX_BOOLSETTING(USE_IPV6));
+        uc->connect(remoteIp, aPort, localPort, natRole);
     } catch(const Exception&) {
         putConnection(uc);
         delete uc;

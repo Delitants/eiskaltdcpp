@@ -74,10 +74,42 @@ public:
     GETSET_FIELD(Nick, "NI")
     GETSET_FIELD(Description, "DE")
     GETSET_FIELD(Ip, "I4")
+    GETSET_FIELD(Ip6, "I6")
     GETSET_FIELD(UdpPort, "U4")
+    GETSET_FIELD(UdpPort6, "U6")
     GETSET_FIELD(Email, "EM")
     GETSET_FIELD(Connection, "CO")
 #undef GETSET_FIELD
+
+    string getConnectIp(bool preferIPv6 = false) const {
+        if(preferIPv6) {
+            string v6 = getIp6();
+            if(!v6.empty()) {
+                return v6;
+            }
+            return getIp();
+        }
+        string v4 = getIp();
+        if(!v4.empty()) {
+            return v4;
+        }
+        return getIp6();
+    }
+
+    string getConnectUdpPort(bool preferIPv6 = false) const {
+        if(preferIPv6) {
+            string p6 = getUdpPort6();
+            if(!p6.empty()) {
+                return p6;
+            }
+            return getUdpPort();
+        }
+        string p4 = getUdpPort();
+        if(!p4.empty()) {
+            return p4;
+        }
+        return getUdpPort6();
+    }
 
     void setBytesShared(const string& bs) { set("SS", bs); }
     int64_t getBytesShared() const { return Util::toInt64(get("SS")); }

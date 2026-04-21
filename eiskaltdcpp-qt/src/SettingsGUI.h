@@ -12,6 +12,11 @@
 #include <QWidget>
 #include "ui_UISettingsGUI.h"
 
+class QCheckBox;
+class QLineEdit;
+class QSpinBox;
+class QToolButton;
+
 class SettingsGUI :
         public QWidget,
         private Ui::UISettingsGUI
@@ -26,15 +31,12 @@ private:
 
 private Q_SLOTS:
     void slotChatColorItemClicked(QListWidgetItem *);
-    void slotTestAppTheme();
-    void slotThemeChanged();
     void slotBrowseLng();
     void slotLngIndexChanged(int);
-    void slotUsersChanged();
-    void slotIconsChanged();
     void slotGetColor();
     void slotSetTransparency(int);
     void slotResetTransferColors();
+    void slotBrowseChatPictureDir();
 
 Q_SIGNALS:
     void saveFonts();
@@ -43,12 +45,15 @@ public Q_SLOTS:
     void ok();
 
 private:
-    bool custom_style;
-
     // clean colors (without transparency)
     QColor h_color;
     QColor shared_files_color;
     QColor chat_background_color;
     QColor downloads_clr;
     QColor uploads_clr;
+
+    QLineEdit *lineEdit_CHAT_PICTURE_DIR = nullptr;
+    QToolButton *toolButton_CHAT_PICTURE_DIR = nullptr;
+    QCheckBox *checkBox_CHAT_PICTURE_AUTOCLEAN = nullptr;
+    QSpinBox *spinBox_CHAT_PICTURE_DAYS = nullptr;
 };

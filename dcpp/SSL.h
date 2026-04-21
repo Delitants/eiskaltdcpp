@@ -19,6 +19,16 @@
 
 #include "w.h"
 #include "typedefs.h"
+// OpenSSL 3.x deprecates low-level APIs such as DH_free/DSA_free/RSA_free.
+// Suppress those warnings locally in this header so they don't flood every TU.
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 
 #include <openssl/ssl.h>
 
@@ -61,6 +71,12 @@ typedef scoped_handle<DH, DH_free> DH;
 typedef scoped_handle<DSA, DSA_free> DSA;
 typedef scoped_handle<EVP_PKEY, EVP_PKEY_free> EVP_PKEY;
 typedef scoped_handle<RSA, RSA_free> RSA;
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 typedef scoped_handle<SSL, SSL_free> SSL;
 typedef scoped_handle<SSL_CTX, SSL_CTX_free> SSL_CTX;
 typedef scoped_handle<X509, X509_free> X509;

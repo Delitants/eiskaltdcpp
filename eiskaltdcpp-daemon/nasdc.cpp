@@ -86,7 +86,19 @@ static void SigHandler(int sig) {
 
 static int eidcpp_daemon( int nochdir, int noclose ) {
 #if defined (USE_OS_DAEMON)
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
     return daemon (nochdir, noclose);
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 #elif defined (USE_EIDCPP_DAEMON)
     switch (fork()) {
         case -1: return -1;

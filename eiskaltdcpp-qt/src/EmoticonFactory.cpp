@@ -40,18 +40,38 @@ EmoticonFactory::~EmoticonFactory(){
 }
 
 void EmoticonFactory::load(){
-    const QString emoTheme = qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME, "default");
+    const QString configuredTheme = qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME, "default").trimmed();
+    const QString emoticonsBasePath = qtCtx()->wulforUtil()->getEmoticonsPath();
 
-    if (emoTheme.isEmpty() || (currentTheme == emoTheme))
+    auto themeUsable = [&emoticonsBasePath](const QString &theme) -> bool {
+        if (theme.isEmpty())
+            return false;
+        return QDir(emoticonsBasePath + theme).exists() &&
+               QFile::exists(emoticonsBasePath + theme + ".xml");
+    };
+
+    QString resolvedTheme = configuredTheme;
+    if (!themeUsable(resolvedTheme))
+        resolvedTheme = QStringLiteral("default");
+
+    if (!themeUsable(resolvedTheme)) {
+        QDir dir(emoticonsBasePath);
+        const QStringList candidates = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
+        for (const QString &candidate : candidates) {
+            if (themeUsable(candidate)) {
+                resolvedTheme = candidate;
+                break;
+            }
+        }
+    }
+
+    if (!themeUsable(resolvedTheme))
         return;
 
-    if (!QDir(qtCtx()->wulforUtil()->getEmoticonsPath() + emoTheme).exists())
+    if (currentTheme == resolvedTheme && !list.isEmpty())
         return;
 
-    const QString xmlFile = qtCtx()->wulforUtil()->getEmoticonsPath() + emoTheme + ".xml";
-
-    if (!QFile::exists(xmlFile))
-        return;
+    const QString xmlFile = emoticonsBasePath + resolvedTheme + ".xml";
 
     QFile f(xmlFile);
 
@@ -59,12 +79,17 @@ void EmoticonFactory::load(){
         return;
 
     clear();
+    currentTheme = resolvedTheme;
 
     QDomDocument dom;
     QString err_msg = "";
     int err_line = 0, err_col = 0;
 
-    if (dom.setContent(&f, &err_msg, &err_line, &err_col))
+    auto parseResult = dom.setContent(&f);
+    err_msg = parseResult.errorMessage;
+    err_line = parseResult.errorLine;
+    err_col = parseResult.errorColumn;
+    if (parseResult)
         createEmoticonMap(dom);
     else{
         qDebug() << err_line << ":" << err_col << " " << err_msg;
@@ -74,15 +99,15 @@ void EmoticonFactory::load(){
 
     for (const auto &d : docs)
         addEmoticons(d);
-
-    currentTheme = emoTheme;
 }
 
 void EmoticonFactory::addEmoticons(QTextDocument *to){
     if (list.isEmpty() || !to)
         return;
 
-    QString emoTheme = qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME);
+    const QString emoTheme = currentTheme.isEmpty()
+        ? qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME, "default")
+        : currentTheme;
 
     for (const auto &i : list){
         to->addResource( QTextDocument::ImageResource,
@@ -102,7 +127,9 @@ QString EmoticonFactory::convertEmoticons(const QString &html){
     if (html.isEmpty() || list.isEmpty() || map.isEmpty())
         return html;
 
-    QString emoTheme = qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME);
+    const QString emoTheme = currentTheme.isEmpty()
+        ? qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME, "default")
+        : currentTheme;
     QString out = "";
     QString buf = html;
 
@@ -128,7 +155,7 @@ QString EmoticonFactory::convertEmoticons(const QString &html){
 
         bool found = false;
 
-        for (it = map.end()-1; it != begin-1; --it){
+        for (it = std::prev(map.end()); ; --it){
             if (force_emot){
                 if (buf.startsWith(it.key())){
                     EmoticonObject *obj = it.value();
@@ -185,6 +212,7 @@ QString EmoticonFactory::convertEmoticons(const QString &html){
 
             buf.remove(0, 1);
         }
+        if (it == begin) break;
     }
 
     if (!force_emot){
@@ -215,7 +243,9 @@ void EmoticonFactory::createEmoticonMap(const QDomNode &root){
     clear();
 
     for (const auto &node : emoNodes){
-        QString emoTheme = qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME);
+        const QString emoTheme = currentTheme.isEmpty()
+            ? qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME, "default")
+            : currentTheme;
 
         EmoticonObject *emot = new EmoticonObject();
         QDomElement el = node.toElement();
@@ -270,12 +300,23 @@ void EmoticonFactory::fillLayout(QLayout *l, QSize &recommendedSize){
         return;
     }
 
+    // Ensure list is valid before iterating
+    if (list.isEmpty()) {
+        recommendedSize = QSize(50, 50);
+        return;
+    }
+
     for (const auto &i : list){
         EmoticonLabel *lbl = new EmoticonLabel();
+        const int targetPx = 28;
+        QPixmap icon = i->pixmap;
+        if (!icon.isNull() && (icon.width() > targetPx || icon.height() > targetPx))
+            icon = icon.scaled(targetPx, targetPx, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-        lbl->setPixmap(i->pixmap);
-        lbl->resize(i->pixmap.size()+QSize(2, 2));
-        lbl->setContentsMargins(1, 1, 1, 1);
+        lbl->setPixmap(icon);
+        lbl->setAlignment(Qt::AlignCenter);
+        lbl->setFixedSize(icon.size() + QSize(4, 4));
+        lbl->setContentsMargins(0, 0, 0, 0);
         lbl->setToolTip(map.keys(i).first());
 
         w += lbl->width();

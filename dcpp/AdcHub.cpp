@@ -47,7 +47,9 @@ const string AdcHub::CLIENT_PROTOCOL("ADC/1.0");
 const string AdcHub::SECURE_CLIENT_PROTOCOL_TEST("ADCS/0.10");
 const string AdcHub::ADCS_FEATURE("ADC0");
 const string AdcHub::TCP4_FEATURE("TCP4");
+const string AdcHub::TCP6_FEATURE("TCP6");
 const string AdcHub::UDP4_FEATURE("UDP4");
+const string AdcHub::UDP6_FEATURE("UDP6");
 const string AdcHub::NAT0_FEATURE("NAT0");
 const string AdcHub::SEGA_FEATURE("SEGA");
 const string AdcHub::BASE_SUPPORT("ADBASE");
@@ -445,8 +447,12 @@ void AdcHub::sendUDP(const AdcCommand& cmd) {
         if(!ou.getIdentity().isUdpActive()) {
             return;
         }
-        ip = ou.getIdentity().getIp();
-        port = ou.getIdentity().getUdpPort();
+        const bool preferIPv6 = CTX_BOOLSETTING(USE_IPV6);
+        ip = ou.getIdentity().getConnectIp(preferIPv6);
+        port = ou.getIdentity().getConnectUdpPort(preferIPv6);
+        if(ip.empty() || port.empty()) {
+            return;
+        }
         command = cmd.toString(ou.getUser()->getCID());
     }
     try {
@@ -896,13 +902,14 @@ void AdcHub::sendSearch(AdcCommand& c) {
         send(c);
     } else {
         string features = c.getFeatures();
+        const string& activeFeature = CTX_BOOLSETTING(USE_IPV6) ? TCP6_FEATURE : TCP4_FEATURE;
         c.setType(AdcCommand::TYPE_FEATURE);
         if (CTX_BOOLSETTING(ALLOW_NATT)) {
-            c.setFeatures(features + '+' + TCP4_FEATURE + '-' + NAT0_FEATURE);
+            c.setFeatures(features + '+' + activeFeature + '-' + NAT0_FEATURE);
             send(c);
             c.setFeatures(features + '+' + NAT0_FEATURE);
         } else {
-            c.setFeatures(features + '+' + TCP4_FEATURE);
+            c.setFeatures(features + '+' + activeFeature);
         }
         send(c);
     }
@@ -963,6 +970,12 @@ void AdcHub::info(bool /*alwaysSend*/) {
         app_version = st.getTokens().at(1);
     }
 
+#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
+    if(app_version.find("-arm64") == string::npos) {
+        app_version += "-arm64";
+    }
+#endif
+
     addParam(lastInfoMap, c, "ID", ctx().getClientManager()->getMyCID().toBase32());
     addParam(lastInfoMap, c, "PD", ctx().getClientManager()->getMyPID().toBase32());
     addParam(lastInfoMap, c, "NI", getCurrentNick());
@@ -998,24 +1011,62 @@ void AdcHub::info(bool /*alwaysSend*/) {
         addParam(lastInfoMap, c, "KP", "SHA256/" + Encoder::toBase32(&kp[0], kp.size()));
     }
 
-    if (!getFavIp().empty()) {
-        addParam(lastInfoMap, c, "I4", getFavIp());
-    } else if(CTX_BOOLSETTING(NO_IP_OVERRIDE) && !CTX_SETTING(EXTERNAL_IP).empty()) {
-        addParam(lastInfoMap, c, "I4", Socket::resolve(CTX_SETTING(EXTERNAL_IP)));
-    } else {
-        addParam(lastInfoMap, c, "I4", "0.0.0.0");
+    const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
+    const string favIp = getFavIp();
+    const string favIp4 = favIp.find(':') == string::npos ? favIp : Util::emptyString;
+    const string favIp6 = favIp.find(':') != string::npos ? favIp : Util::emptyString;
+
+    string ipv4 = favIp4;
+    if(ipv4.empty() && CTX_BOOLSETTING(NO_IP_OVERRIDE) && !CTX_SETTING(EXTERNAL_IP).empty()) {
+        ipv4 = Socket::resolve(CTX_SETTING(EXTERNAL_IP));
+    }
+    if(ipv4.empty()) {
+        ipv4 = "0.0.0.0";
     }
 
-    if(isActive()) {
-        addParam(lastInfoMap, c, "U4", ctx().getSearchManager()->getPort());
-        su += "," + TCP4_FEATURE;
-        su += "," + UDP4_FEATURE;
+    string ipv6 = favIp6;
+    if(ipv6.empty() && !CTX_SETTING(EXTERNAL_IP6).empty()) {
+        ipv6 = Socket::resolve(CTX_SETTING(EXTERNAL_IP6));
+    }
+    if(ipv6.empty()) {
+        const string local6 = Util::getLocalIp(AF_INET6);
+        if(local6 != "::") {
+            ipv6 = local6;
+        }
+    }
+
+    if(useIPv6) {
+        addParam(lastInfoMap, c, "I4", Util::emptyString);
+        addParam(lastInfoMap, c, "U4", Util::emptyString);
+        addParam(lastInfoMap, c, "I6", ipv6);
+
+        if(isActive()) {
+            addParam(lastInfoMap, c, "U6", ctx().getSearchManager()->getPort());
+            su += "," + TCP6_FEATURE;
+            su += "," + UDP6_FEATURE;
+        } else {
+            if(CTX_BOOLSETTING(ALLOW_NATT))
+                su += "," + NAT0_FEATURE;
+            else
+                addParam(lastInfoMap, c, "I6", Util::emptyString);
+            addParam(lastInfoMap, c, "U6", Util::emptyString);
+        }
     } else {
-        if (CTX_BOOLSETTING(ALLOW_NATT))
-            su += "," + NAT0_FEATURE;
-        else
-            addParam(lastInfoMap, c, "I4", "");
-        addParam(lastInfoMap, c, "U4", "");
+        addParam(lastInfoMap, c, "I6", Util::emptyString);
+        addParam(lastInfoMap, c, "U6", Util::emptyString);
+        addParam(lastInfoMap, c, "I4", ipv4);
+
+        if(isActive()) {
+            addParam(lastInfoMap, c, "U4", ctx().getSearchManager()->getPort());
+            su += "," + TCP4_FEATURE;
+            su += "," + UDP4_FEATURE;
+        } else {
+            if (CTX_BOOLSETTING(ALLOW_NATT))
+                su += "," + NAT0_FEATURE;
+            else
+                addParam(lastInfoMap, c, "I4", Util::emptyString);
+            addParam(lastInfoMap, c, "U4", Util::emptyString);
+        }
     }
 
     addParam(lastInfoMap, c, "SU", su);
@@ -1101,7 +1152,7 @@ void AdcHub::on(Line l, const string& aLine) {
         fire(ClientListener::StatusMessage(), this, "<ADC>" + aLine + "</ADC>");
     }
 #ifdef LUA_SCRIPT
-    if (onClientMessage(this, aLine))
+    if (ScriptInstance::L && onClientMessage(this, aLine))
         return;
 #endif
     dispatch(aLine);
@@ -1120,6 +1171,13 @@ void AdcHub::on(Second s, uint64_t aTick) {
 }
 #ifdef LUA_SCRIPT
 bool AdcScriptInstance::onClientMessage(AdcHub* aClient, const string& aLine) {
+#ifdef __APPLE__
+    // TEMP: disable ADC Lua callback path on macOS while debugging crashes.
+    (void)aClient;
+    (void)aLine;
+    return false;
+#endif
+
     Lock l(cs);
     MakeCall("adch", "DataArrival", 1, aClient, aLine);
     return GetLuaBool();

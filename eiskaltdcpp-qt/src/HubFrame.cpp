@@ -40,9 +40,11 @@
 #include "dcpp/UserCommand.h"
 #include "dcpp/CID.h"
 #include "dcpp/HashManager.h"
+#include "dcpp/QueueManager.h"
 #include "dcpp/Util.h"
 #include "dcpp/ChatMessage.h"
 #include "dcpp/DCPlusPlus.h"
+#include "dcpp/format.h"
 
 #if HAVE_MALLOC_TRIM
 #include <malloc.h>
@@ -61,15 +63,107 @@
 #include <QCloseEvent>
 #include <QThread>
 #include <QRegularExpression>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QScrollBar>
 #include <QShortcut>
 #include <QHeaderView>
+#include <QFont>
+#include <QImageReader>
+#include <QSplitter>
+#include <QSplitterHandle>
+#include <QPainter>
+#include <QPointer>
 
 #include <QUrlQuery>
+#include <QApplication>
+#include <QScreen>
 
 #include <QtDebug>
 
 #include <exception>
+
+namespace {
+QString translatedPictureLabel()
+{
+    return _q(_("Picture"));
+}
+
+class ChatInputResizeGrip final : public QWidget
+{
+public:
+    explicit ChatInputResizeGrip(QSplitter *splitter, QWidget *parent = nullptr)
+        : QWidget(parent), splitter_(splitter), dragStartY_(0)
+    {
+        setFixedSize(14, 14);
+        setCursor(Qt::SizeVerCursor);
+        setToolTip(QObject::tr("Drag to resize input area"));
+    }
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        if (event->button() != Qt::LeftButton || !splitter_)
+            return;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        dragStartY_ = event->globalPosition().toPoint().y();
+#else
+        dragStartY_ = event->globalPos().y();
+#endif
+        startSizes_ = splitter_->sizes();
+        event->accept();
+    }
+
+    void mouseMoveEvent(QMouseEvent *event) override
+    {
+        if (!(event->buttons() & Qt::LeftButton) || !splitter_ || startSizes_.size() < 2)
+            return;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        const int deltaY = event->globalPosition().toPoint().y() - dragStartY_;
+#else
+        const int deltaY = event->globalPos().y() - dragStartY_;
+#endif
+        const int total = startSizes_.at(0) + startSizes_.at(1);
+        const int minTop = splitter_->widget(0) ? qMax(splitter_->widget(0)->minimumHeight(), 120) : 120;
+        const int minBottom = splitter_->widget(1) ? qMax(splitter_->widget(1)->minimumHeight(), 80) : 80;
+
+        int newBottom = startSizes_.at(1) - deltaY;
+        newBottom = qBound(minBottom, newBottom, qMax(minBottom, total - minTop));
+
+        splitter_->setSizes(QList<int>() << (total - newBottom) << newBottom);
+        event->accept();
+    }
+
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::LeftButton)
+            startSizes_.clear();
+        QWidget::mouseReleaseEvent(event);
+    }
+
+    void paintEvent(QPaintEvent *event) override
+    {
+        Q_UNUSED(event);
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        painter.setPen(QPen(palette().color(QPalette::Mid), 1));
+
+        const int w = width();
+        const int h = height();
+        painter.drawLine(w - 5, h - 1, w - 1, h - 5);
+        painter.drawLine(w - 9, h - 1, w - 1, h - 9);
+        painter.drawLine(w - 13, h - 1, w - 1, h - 13);
+    }
+
+private:
+    QPointer<QSplitter> splitter_;
+    int dragStartY_;
+    QList<int> startSizes_;
+};
+}
 
 class HubFramePrivate {
     typedef QMap<QString, PMWindow*> PMMap;
@@ -142,6 +236,246 @@ static bool parseBasicBBCode(const QString &tag, const QString &txt, QString &in
     return false;
 }
 
+static QString stripMagnetTTH(QString tth)
+{
+    static const QString prefix = QStringLiteral("urn:tree:tiger:");
+    if (tth.startsWith(prefix, Qt::CaseInsensitive))
+        tth.remove(0, prefix.length());
+    return tth.trimmed();
+}
+
+static QString resolveLocalChatImagePath(const QString &displayName, const QString &tth)
+{
+    if (displayName.trimmed().isEmpty())
+        return QString();
+
+    const QString cleanTth = stripMagnetTTH(tth);
+    if (cleanTth.isEmpty())
+        return QString();
+
+    const QString cachePath = ChatEdit::picturePathForMagnet(displayName, cleanTth);
+    QFileInfo cacheInfo(cachePath);
+    if (cacheInfo.exists() && cacheInfo.isFile())
+        return cacheInfo.absoluteFilePath();
+
+    try {
+        const TTHValue tthValue(cleanTth.toStdString());
+        auto *shareManager = qtCtx()->dcCtx().getShareManager();
+        if (!shareManager->isTTHShared(tthValue))
+            return QString();
+
+        const std::string virtualPath = shareManager->toVirtual(tthValue);
+        const QString sharedPath = _q(shareManager->toReal(virtualPath));
+        QFileInfo sharedInfo(sharedPath);
+        if (sharedInfo.exists() && sharedInfo.isFile())
+            return sharedInfo.absoluteFilePath();
+    } catch (...) {
+    }
+
+    return QString();
+}
+
+static bool mirrorImageIntoChatCache(const QString &sourcePath, const QString &targetPath)
+{
+    QFileInfo sourceInfo(sourcePath);
+    if (!sourceInfo.exists() || !sourceInfo.isFile())
+        return false;
+
+    const QString srcAbs = sourceInfo.absoluteFilePath();
+    const QString dstAbs = QFileInfo(targetPath).absoluteFilePath();
+    if (srcAbs == dstAbs)
+        return true;
+
+    QFileInfo dstInfo(dstAbs);
+    if (dstInfo.exists() && dstInfo.isFile())
+        return true;
+
+    QDir targetDir = QFileInfo(dstAbs).absoluteDir();
+    targetDir.mkpath(QStringLiteral("."));
+
+    if (QFile::link(srcAbs, dstAbs))
+        return true;
+
+    QFile::remove(dstAbs);
+    return QFile::copy(srcAbs, dstAbs);
+}
+
+static QString makeInlineImageSpoilerUrl(const QString &localPath, const QString &displayName, int64_t size)
+{
+    QUrl url;
+    url.setScheme(QStringLiteral("eiskalt-chatimg"));
+    url.setHost(QStringLiteral("open"));
+
+    QUrlQuery query;
+    query.addQueryItem(QStringLiteral("path"), QFileInfo(localPath).absoluteFilePath());
+    query.addQueryItem(QStringLiteral("name"), displayName);
+    query.addQueryItem(QStringLiteral("size"), QString::number(size));
+    url.setQuery(query);
+
+    return url.toString(QUrl::FullyEncoded);
+}
+
+static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)
+{
+    const QUrl url(urlText);
+    if (!url.isValid() || url.scheme() != QLatin1String("eiskalt-chatimg") || url.host() != QLatin1String("open"))
+        return false;
+
+    const QUrlQuery query(url);
+    localPath = query.queryItemValue(QStringLiteral("path"), QUrl::FullyDecoded).trimmed();
+    displayName = query.queryItemValue(QStringLiteral("name"), QUrl::FullyDecoded).trimmed();
+    size = query.queryItemValue(QStringLiteral("size")).toLongLong();
+
+    return !localPath.isEmpty();
+}
+
+static bool toggleInlineImageSpoiler(QTextEdit *editor,
+                                     const QString &urlText,
+                                     const QPoint &globalPos,
+                                     QSet<QString> &expandedKeys,
+                                     QHash<QString, QTextDocumentFragment> &collapsedBlocks)
+{
+    if (!editor)
+        return false;
+
+    QString localPath;
+    QString displayName;
+    int64_t size = 0;
+
+    if (!parseInlineImageSpoilerUrl(urlText, localPath, displayName, size))
+        return false;
+
+    const QFileInfo localInfo(localPath);
+    if (!localInfo.exists() || !localInfo.isFile())
+        return true;
+
+    QTextCursor cursor = editor->cursorForPosition(editor->mapFromGlobal(globalPos));
+    cursor.select(QTextCursor::BlockUnderCursor);
+    const QString expansionKey = QStringLiteral("%1#%2").arg(localInfo.absoluteFilePath()).arg(cursor.block().position());
+
+    if (expandedKeys.contains(expansionKey)) {
+        const auto it = collapsedBlocks.constFind(expansionKey);
+        if (it != collapsedBlocks.constEnd())
+            cursor.insertFragment(it.value());
+
+        expandedKeys.remove(expansionKey);
+        collapsedBlocks.remove(expansionKey);
+        return true;
+    }
+
+    collapsedBlocks.insert(expansionKey, QTextDocumentFragment(cursor));
+
+    cursor.clearSelection();
+    cursor.movePosition(QTextCursor::EndOfBlock);
+
+    const QString imageName = displayName.isEmpty() ? localInfo.fileName() : displayName;
+    const int64_t imageSize = size > 0 ? size : localInfo.size();
+    const QString localUrl = QUrl::fromLocalFile(localInfo.absoluteFilePath()).toString();
+    const QString title = QObject::tr("%1 (%2)").arg(imageName, WulforUtil::formatBytes(imageSize));
+    const QString imageHtml = QStringLiteral("<br/><a href=\"%1\" title=\"%2\" style=\"text-decoration:none\">"
+                                             "<img src=\"%1\" alt=\"%3\" style=\"display:block; width:100%%; height:auto; margin-top:4px;\" />"
+                                             "</a>")
+        .arg(localUrl, title.toHtmlEscaped(), imageName.toHtmlEscaped());
+
+    cursor.insertHtml(imageHtml);
+    expandedKeys.insert(expansionKey);
+
+    return true;
+}
+
+static QString renderInlineChatImage(const QString &magnet, const QString &label)
+{
+    int64_t size = 0;
+    QString tth, name;
+    WulforUtil::splitMagnet(magnet, size, tth, name);
+
+    const QString displayName = label.trimmed().isEmpty() ? name.trimmed() : label.trimmed();
+    if (!ChatEdit::isSupportedChatImageFile(displayName))
+        return QString();
+
+    const QString localPath = resolveLocalChatImagePath(displayName, tth);
+    if (localPath.isEmpty())
+        return QString();
+
+    const QString spoilerUrl = makeInlineImageSpoilerUrl(localPath, displayName, size);
+    const QString spoilerTitle = QObject::tr("Click to expand or collapse");
+    const QString spoilerText = QObject::tr("Spoiler: %1").arg(translatedPictureLabel());
+    return QStringLiteral("<table border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin: 4px 0;\">"
+                          "<tr><td style=\"padding: 2px 6px;\">"
+                          "<a href=\"%1\" title=\"%2\" style=\"text-decoration: none;\"><b>[+]</b> %3</a>"
+                          "</td></tr></table>")
+        .arg(spoilerUrl, spoilerTitle.toHtmlEscaped(), spoilerText.toHtmlEscaped());
+}
+
+static void queueInlineChatImages(const QString &rawMessage, const QString &cid, const QString &hubUrl)
+{
+    if (rawMessage.trimmed().isEmpty())
+        return;
+
+    UserPtr user;
+    bool sourceIsMe = false;
+    bool sourceHasShare = false;
+
+    if (!cid.trimmed().isEmpty()) {
+        user = qtCtx()->dcCtx().getClientManager()->findUser(CID(cid.toStdString()));
+        UserPtr me = qtCtx()->dcCtx().getClientManager()->getMe();
+
+        if (user && me && (user == me || user->getCID() == me->getCID()))
+            sourceIsMe = true;
+
+        if (user && !sourceIsMe)
+            sourceHasShare = qtCtx()->dcCtx().getClientManager()->getBytesShared(user) > 0;
+    }
+
+    QRegularExpression re(QStringLiteral("\\[magnet=\"([^\"]+)\"\\]([^\\[]*)\\[/magnet\\]"));
+    QRegularExpressionMatchIterator it = re.globalMatch(rawMessage);
+
+    ChatEdit::cleanupChatPictureStore();
+
+    while (it.hasNext()) {
+        const QRegularExpressionMatch match = it.next();
+        const QString magnet = match.captured(1).trimmed();
+        const QString label = match.captured(2).trimmed();
+
+        int64_t size = 0;
+        QString tth, name;
+        WulforUtil::splitMagnet(magnet, size, tth, name);
+
+        const QString displayName = label.isEmpty() ? name.trimmed() : label;
+        const QString cleanTth = stripMagnetTTH(tth);
+        if (displayName.isEmpty() || cleanTth.isEmpty() || !ChatEdit::isSupportedChatImageFile(displayName))
+            continue;
+
+        const TTHValue tthValue(cleanTth.toStdString());
+        const QString targetPath = ChatEdit::picturePathForMagnet(displayName, cleanTth);
+        if (QFileInfo::exists(targetPath))
+            continue;
+
+        const QString localPath = resolveLocalChatImagePath(displayName, cleanTth);
+        if (!localPath.isEmpty()) {
+            mirrorImageIntoChatCache(localPath, targetPath);
+            continue;
+        }
+
+        // Don't try to fetch "our own" historical pictures over the network.
+        if (sourceIsMe)
+            continue;
+
+        try {
+            if (user && sourceHasShare && !hubUrl.trimmed().isEmpty())
+                qtCtx()->dcCtx().getQueueManager()->add(targetPath.toStdString(), size, tthValue, HintedUser(user, _tq(hubUrl)));
+            else
+                qtCtx()->dcCtx().getQueueManager()->add(targetPath.toStdString(), size, tthValue);
+        } catch (...) {
+        }
+    }
+}
+
+void HubFrame::LinkParser::setInlineImageMaxWidth(int width)
+{
+    Q_UNUSED(width);
+}
+
 HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
 {
     WulforUtil *WU = qtCtx()->wulforUtil();
@@ -176,6 +510,7 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
     QAction *copy_data_nick  = new QAction(tr("Nick"), nullptr);
     QAction *copy_data_cmnt  = new QAction(tr("Comment"), nullptr);
     QAction *copy_data_ip    = new QAction(tr("IP"), nullptr);
+    QAction *copy_data_ip6   = new QAction(tr("IPv6"), nullptr);
     QAction *copy_data_share = new QAction(tr("Share"), nullptr);
     QAction *copy_data_tag   = new QAction(tr("Tag"), nullptr);
     QAction *copy_data_email = new QAction(tr("E-mail"), nullptr);
@@ -183,7 +518,7 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
     QAction *copy_data_all   = new QAction(tr("All"), nullptr);
 
     QMenu *menuCopyData = new QMenu(nullptr);
-    menuCopyData->addActions(QList<QAction*>() << copy_data_nick << copy_data_cmnt << copy_data_ip << copy_data_share << copy_data_tag << copy_data_email << sep4 << copy_data_all);
+    menuCopyData->addActions(QList<QAction*>() << copy_data_nick << copy_data_cmnt << copy_data_ip << copy_data_ip6 << copy_data_share << copy_data_tag << copy_data_email << sep4 << copy_data_all);
 
     QAction *copy_data   = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("Copy data"), nullptr);
     copy_data->setMenu(menuCopyData);
@@ -253,6 +588,7 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
     chat_actions_map.insert(copy_data_nick,  CopyNick);
     chat_actions_map.insert(copy_data_cmnt,  CopyComment);
     chat_actions_map.insert(copy_data_ip,    CopyIP);
+    chat_actions_map.insert(copy_data_ip6,   CopyIPv6);
     chat_actions_map.insert(copy_data_share, CopyShare);
     chat_actions_map.insert(copy_data_tag,   CopyTag);
     chat_actions_map.insert(copy_data_email, CopyEmail);
@@ -261,13 +597,17 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
 
 
 HubFrame::Menu::~Menu(){
-    delete menu;
-    menu = nullptr;
+    if (menu) {
+        menu->clear();
+        delete menu;
+        menu = nullptr;
+    }
 
-    qDeleteAll(chat_actions);
-    qDeleteAll(actions);
+    // QMenu owns actions/submenus after addAction/addMenu.
+    // Do not qDeleteAll() them here or they may be double-freed.
     chat_actions.clear();
     actions.clear();
+    chat_actions_map.clear();
 }
 
 HubFrame::Menu::Action HubFrame::Menu::execUserMenu(Client *client, const QString &cid = QString()){
@@ -320,7 +660,7 @@ HubFrame::Menu::Action HubFrame::Menu::execUserMenu(Client *client, const QStrin
         return chat_actions_map[res];
     else if (antispam_menu && antispam_menu->actions().contains(res))
         return static_cast<HubFrame::Menu::Action>(res->data().toInt());
-    else if (res && res->data().canConvert(QVariant::Int)){//User command{
+    else if (res && res->data().canConvert<int>()){//User command{
         int id = res->data().toInt();
 
         UserCommand uc;
@@ -407,7 +747,7 @@ HubFrame::Menu::Action HubFrame::Menu::execChatMenu(Client *client, const QStrin
         return chat_actions_map[res];
     else if (antispam_menu && antispam_menu->actions().contains(res))
         return static_cast<HubFrame::Menu::Action>(res->data().toInt());
-    else if (res && res->data().canConvert(QVariant::Int)){//User command
+    else if (res && res->data().canConvert<int>()){//User command
         int id = res->data().toInt();
 
         UserCommand uc;
@@ -602,7 +942,7 @@ QString HubFrame::LinkParser::parseForLinks(QString input, bool use_emot){
         if(smile_found)
             continue;
 
-        if (qtCtx()->settings()->getBool("hubframe/use-bb-code", false)){
+        if (qtCtx()->settings()->getBool("hubframe/use-bb-code", true)){
             if      (parseBasicBBCode("b", "b", input, output))
                 continue;
             else if (parseBasicBBCode("u", "u", input, output))
@@ -712,7 +1052,9 @@ QString HubFrame::LinkParser::parseForLinks(QString input, bool use_emot){
                     break;
 
                 QString toshow = tr("%1 (%2)").arg(chunk).arg(WulforUtil::formatBytes(size));
-                QString html_link = "<a href=\"" + magnet + "\" title=\"" + toshow + "\" style=\"cursor: hand\">" + toshow + "</a>";
+                QString html_link = renderInlineChatImage(magnet, chunk);
+                if (html_link.isEmpty())
+                    html_link = "<a href=\"" + magnet + "\" title=\"" + toshow + "\" style=\"cursor: hand\">" + toshow + "</a>";
 
                 output += html_link;
                 input.remove(0, input.indexOf("[/magnet]")+1+9);
@@ -763,6 +1105,7 @@ void HubFrame::LinkParser::parseForMagnetAlias(QString &output){
 HubFrame::HubFrame(QWidget *parent, QString hub="", QString encoding="")
     : QWidget(parent)
     , d_ptr(new HubFramePrivate())
+    , emojiDialog_(nullptr)
 {
     Q_D(HubFrame);
 
@@ -779,7 +1122,6 @@ HubFrame::HubFrame(QWidget *parent, QString hub="", QString encoding="")
 
     d->client = qtCtx()->dcCtx().getClientManager()->getClient(hub.toStdString());
     d->client->addListener(this);
-
     QString enc = qtCtx()->wulforUtil()->qtEnc2DcEnc(encoding);
 
     if (enc.isEmpty())
@@ -813,21 +1155,10 @@ HubFrame::HubFrame(QWidget *parent, QString hub="", QString encoding="")
 HubFrame::~HubFrame(){
     Q_D(HubFrame);
 
-    // Safety: if the destructor runs without closeEvent() (e.g. the
-    // parent widget is destroyed directly), make sure the dcpp Client
-    // is disconnected and released.  Without this the Client object
-    // outlives the HubFrame and its dangling listener pointers cause
-    // use-after-free crashes during dcpp::shutdown().
-    if (d->client) {
-        d->client->removeListener(this);
-        d->client->disconnect(true);
-        auto *cm = qtCtx()->dcCtx().getClientManager();
-        if (cm)
-            cm->putClient(d->client);
-        d->client = nullptr;
-    }
-
-    treeView_USERS->setModel(nullptr);
+    // IMPORTANT:
+    // During app shutdown, QtContext may already be partially destroyed.
+    // Never call qtCtx()/dcCtx() from here.
+    d->client = nullptr;
 
     delete d->proxy;
     delete d->model;
@@ -863,14 +1194,37 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
     else if (e->type() == QEvent::KeyPress){
         QKeyEvent *k_e = reinterpret_cast<QKeyEvent*>(e);
 
-        const bool controlModifier = (k_e->modifiers() == Qt::ControlModifier);
+        const bool controlModifier = k_e->modifiers().testFlag(Qt::ControlModifier);
 
         if (static_cast<QTextEdit*>(obj) == plainTextEdit_INPUT)
         {
             const bool useCtrlEnter = qtCtx()->settings()->getBool(WB_USE_CTRL_ENTER);
             const bool keyEnter = (k_e->key() == Qt::Key_Enter || k_e->key() == Qt::Key_Return);
-            const bool shiftModifier = (k_e->modifiers() == Qt::ShiftModifier);
+            const bool shiftModifier = k_e->modifiers().testFlag(Qt::ShiftModifier);
 
+            // On macOS, Control+Enter should insert newline, Cmd+Enter or Ctrl+Enter sends message
+            // When useCtrlEnter is true: require modifier to send
+            // When useCtrlEnter is false: Enter sends, Shift+Enter inserts newline
+#if defined(Q_OS_MAC)
+            const bool cmdModifier = k_e->modifiers().testFlag(Qt::MetaModifier);
+            if (keyEnter && (cmdModifier || (controlModifier && !shiftModifier))) {
+                sendChat(plainTextEdit_INPUT->toPlainText(), false, false);
+                plainTextEdit_INPUT->setPlainText("");
+                return true;
+            }
+            if (keyEnter && shiftModifier) {
+                // Shift+Enter inserts newline - let it through
+                return false;
+            }
+            if (keyEnter && !controlModifier && !cmdModifier && !shiftModifier) {
+                // Plain Enter sends when not using Ctrl+Enter mode
+                if (!useCtrlEnter) {
+                    sendChat(plainTextEdit_INPUT->toPlainText(), false, false);
+                    plainTextEdit_INPUT->setPlainText("");
+                    return true;
+                }
+            }
+#else
             if ((useCtrlEnter && keyEnter && controlModifier) ||
                 (!useCtrlEnter && keyEnter && !controlModifier && !shiftModifier))
             {
@@ -880,6 +1234,7 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
 
                 return true;
             }
+#endif
         }
 
         if (qobject_cast<LineEdit*>(obj) == lineEdit_FIND && k_e->key() == Qt::Key_Escape){
@@ -911,7 +1266,17 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
             textEdit_CHAT->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 
         if (isChat && (m_e->button() == Qt::LeftButton)){
-            QString pressedParagraph = textEdit_CHAT->anchorAt(textEdit_CHAT->mapFromGlobal(QCursor::pos()));
+            const QString pressedParagraph = textEdit_CHAT->anchorAt(textEdit_CHAT->mapFromGlobal(QCursor::pos()));
+
+            if (!pressedParagraph.isEmpty() &&
+                toggleInlineImageSpoiler(textEdit_CHAT,
+                                         pressedParagraph,
+                                         QCursor::pos(),
+                                         expandedInlineImageKeys_,
+                                         collapsedInlineImageBlocks_))
+            {
+                return true;
+            }
 
             if (!qtCtx()->wulforUtil()->openUrl(pressedParagraph)){
                 /**
@@ -1057,18 +1422,27 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
 void HubFrame::closeEvent(QCloseEvent *e){
     Q_D(HubFrame);
 
-    blockSignals(true);
+    if (emojiDialog_ && emojiDialog_->isVisible())
+        emojiDialog_->close();
 
+    
+    // Release dcpp client here, while qtCtx()/dcCtx() are still valid.
+    if (d->client) {
+        d->client->removeListener(this);
+        d->client->disconnect(true);
+
+        qtCtx()->hubManager()->unregisterHubUrl(_q(d->client->getHubUrl()));
+
+        auto *cm = qtCtx()->dcCtx().getClientManager();
+        if (cm)
+            cm->putClient(d->client);
+        d->client = nullptr;
+    }
+
+    blockSignals(true);
     QObject::disconnect(this, nullptr, this, nullptr);
 
     qtCtx()->dcCtx().getFavoriteManager()->removeListener(this);
-
-    qtCtx()->hubManager()->unregisterHubUrl(_q(d->client->getHubUrl()));
-
-    d->client->removeListener(this);
-    d->client->disconnect(true);
-    qtCtx()->dcCtx().getClientManager()->putClient(d->client);
-    d->client = nullptr;  // prevent double-cleanup in ~HubFrame()
 
     save();
 
@@ -1130,8 +1504,90 @@ void HubFrame::hideEvent(QHideEvent *e){
 
     d->drawLine = true;
 
+    if (emojiDialog_ && emojiDialog_->isVisible())
+        emojiDialog_->close();
+
     if (!isVisible())
         qtCtx()->hubManager()->setActiveHub(nullptr);
+}
+
+void HubFrame::setupChatInputSplitter()
+{
+    if (!layoutWidget || !verticalLayout_3 || !textEdit_CHAT || !searchFrame || !frame_SMILES || !frame_INPUT)
+        return;
+
+    if (verticalLayout_3->count() == 1) {
+        QLayoutItem *existingItem = verticalLayout_3->itemAt(0);
+        if (existingItem && qobject_cast<QSplitter*>(existingItem->widget()))
+            return;
+    }
+
+    auto *chatPane = new QWidget(layoutWidget);
+    auto *chatPaneLayout = new QVBoxLayout(chatPane);
+    chatPaneLayout->setContentsMargins(0, 0, 0, 0);
+    chatPaneLayout->setSpacing(0);
+
+    auto *inputPane = new QWidget(layoutWidget);
+    auto *inputPaneLayout = new QVBoxLayout(inputPane);
+    inputPaneLayout->setContentsMargins(0, 0, 0, 0);
+    inputPaneLayout->setSpacing(0);
+
+    textEdit_CHAT->setParent(chatPane);
+    searchFrame->setParent(chatPane);
+    frame_SMILES->setParent(inputPane);
+    frame_INPUT->setParent(inputPane);
+
+    chatPaneLayout->addWidget(textEdit_CHAT);
+    chatPaneLayout->addWidget(searchFrame);
+    inputPaneLayout->addWidget(frame_SMILES);
+    inputPaneLayout->addWidget(frame_INPUT);
+
+    while (verticalLayout_3->count() > 0) {
+        QLayoutItem *item = verticalLayout_3->takeAt(0);
+        if (!item)
+            break;
+        delete item;
+    }
+
+    auto *splitter = new QSplitter(Qt::Vertical, layoutWidget);
+    splitter->setObjectName(QStringLiteral("splitter_CHAT_INPUT"));
+    splitter->setChildrenCollapsible(false);
+    splitter->setHandleWidth(1);
+    splitter->setOpaqueResize(true);
+    splitter->setStyleSheet(QStringLiteral(
+        "QSplitter::handle:vertical {"
+        "  background: transparent;"
+        "  height: 1px;"
+        "}"
+        "QSplitter::handle:vertical:hover {"
+        "  background: palette(mid);"
+        "}"
+    ));
+    splitter->addWidget(chatPane);
+    splitter->addWidget(inputPane);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 0);
+    const int totalHeight = qMax(layoutWidget->height(), 600);
+    const int inputHeight = qMax(130, totalHeight / 3);
+    splitter->setSizes(QList<int>() << (totalHeight - inputHeight) << inputHeight);
+    if (QSplitterHandle *handle = splitter->handle(1))
+        handle->setCursor(Qt::SplitVCursor);
+
+    if (gridLayout) {
+        gridLayout->setContentsMargins(6, 6, 6, 6);
+        gridLayout->setHorizontalSpacing(4);
+        gridLayout->setVerticalSpacing(4);
+
+        if (!frame_INPUT->findChild<QWidget*>(QStringLiteral("chatInputResizeGrip"))) {
+            auto *resizeGrip = new ChatInputResizeGrip(splitter, frame_INPUT);
+            resizeGrip->setObjectName(QStringLiteral("chatInputResizeGrip"));
+            gridLayout->addWidget(resizeGrip, 2, 0, 1, 1, Qt::AlignRight | Qt::AlignBottom);
+        }
+    }
+
+    verticalLayout_3->addWidget(splitter);
+    verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+    verticalLayout_3->setSpacing(0);
 }
 
 void HubFrame::init(){
@@ -1160,31 +1616,26 @@ void HubFrame::init(){
     textEdit_CHAT->viewport()->installEventFilter(this); // QTextEdit don't receive all mouse events
     textEdit_CHAT->setMouseTracking(true);
 
-    if (qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->addEmoticons(textEdit_CHAT->document());
-
     searchFrame->setVisible(false);
 
     for (int i = 0; i < d->model->columnCount(); i++)
         comboBox_COLUMNS->addItem(d->model->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString());
 
-    toolButton_SMILE->setVisible(qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory());
+    toolButton_SMILE->setVisible(true);
     toolButton_SMILE->setContextMenuPolicy(Qt::CustomContextMenu);
-    toolButton_SMILE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEMOTICON));
+    toolButton_SMILE->setIcon(QIcon());
+    toolButton_SMILE->setText(QString::fromUtf8("😊"));
+    toolButton_SMILE->setToolTip(tr("Emoji"));
+    toolButton_SMILE->setAutoRaise(true);
+    toolButton_SMILE->setIconSize(QSize(18, 18));
+    toolButton_SMILE->setFixedSize(QSize(28, 28));
+    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { font-size: 18px; }"));
 
     toolButton_HIDE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
+    setupChatInputSplitter();
 
     frame_SMILES->setLayout(new FlowLayout(frame_SMILES));
     frame_SMILES->setVisible(false);
-
-    QSize sz;
-    Q_UNUSED(sz);
-
-    if (qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->fillLayout(frame_SMILES->layout(), sz);
-
-    for (const auto &l : frame_SMILES->findChildren<EmoticonLabel*>())
-        connect(l, &EmoticonLabel::clicked, this, &HubFrame::slotSmileClicked);
 
     connect(this, &HubFrame::coreConnecting, this, &HubFrame::addStatus, Qt::QueuedConnection);
     connect(this, &HubFrame::coreConnected, this, &HubFrame::addStatus, Qt::QueuedConnection);
@@ -1219,10 +1670,60 @@ void HubFrame::init(){
 
 #ifdef USE_ASPELL
     connect(plainTextEdit_INPUT, &ChatEdit::textChanged, this, &HubFrame::slotInputTextChanged);
+#endif
+
     connect(plainTextEdit_INPUT, &ChatEdit::customContextMenuRequested, this, &HubFrame::slotInputContextMenu);
 
     plainTextEdit_INPUT->setContextMenuPolicy(Qt::CustomContextMenu);
-#endif
+    plainTextEdit_INPUT->setMinimumHeight(54);
+    plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
+    frame_INPUT->setStyleSheet(QStringLiteral(
+        "QFrame#frame_INPUT {"
+        " border: 1px solid palette(mid);"
+        " border-radius: 8px;"
+        " background: palette(window);"
+        "}"
+    ));
+    horizontalLayout_BBCODE->setSpacing(horizontalLayout_BBCODE->spacing() + 3);
+    auto *toolButton_IMAGE = new QToolButton(this);
+    toolButton_IMAGE->setAutoRaise(true);
+    toolButton_IMAGE->setMinimumHeight(24);
+    toolButton_IMAGE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILETYPE_PICTURE));
+    toolButton_IMAGE->setToolTip(tr("Image"));
+    const int smileButtonIndex = horizontalLayout_BBCODE->indexOf(toolButton_SMILE);
+    if (smileButtonIndex >= 0)
+        horizontalLayout_BBCODE->insertWidget(smileButtonIndex, toolButton_IMAGE);
+    else
+        horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->count() - 1, toolButton_IMAGE);
+    const QList<QToolButton*> formatButtons = {
+        toolButton_BOLD, toolButton_ITALIC, toolButton_UNDERLINE, toolButton_STRIKE,
+        toolButton_COLOR, toolButton_LINK, toolButton_CODE, toolButton_IMAGE
+    };
+    for (auto *button : formatButtons) {
+        button->setAutoRaise(true);
+        button->setMinimumHeight(24);
+    }
+    QFont boldFont = toolButton_BOLD->font();
+    boldFont.setBold(true);
+    toolButton_BOLD->setFont(boldFont);
+    QFont italicFont = toolButton_ITALIC->font();
+    italicFont.setItalic(true);
+    toolButton_ITALIC->setFont(italicFont);
+    QFont underlineFont = toolButton_UNDERLINE->font();
+    underlineFont.setUnderline(true);
+    toolButton_UNDERLINE->setFont(underlineFont);
+    QFont strikeFont = toolButton_STRIKE->font();
+    strikeFont.setStrikeOut(true);
+    toolButton_STRIKE->setFont(strikeFont);
+
+    connect(toolButton_BOLD, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
+    connect(toolButton_ITALIC, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
+    connect(toolButton_UNDERLINE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
+    connect(toolButton_STRIKE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
+    connect(toolButton_COLOR, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertColorTag(); });
+    connect(toolButton_LINK, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
+    connect(toolButton_CODE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
+    connect(toolButton_IMAGE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
 
     plainTextEdit_INPUT->setWordWrapMode(QTextOption::NoWrap);
     plainTextEdit_INPUT->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1336,7 +1837,7 @@ void HubFrame::reloadSomeSettings(){
         QPalette p = textEdit_CHAT->palette();
         QColor clr = p.color(QPalette::Active, QPalette::Base);
 
-        clr.setNamedColor(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
+        clr = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
@@ -1380,10 +1881,14 @@ QString HubFrame::getArenaShortTitle(){
     QString ret = tr("Not connected");
 
     if (d->client && d->client->isConnected()){
-        ret = QString("[+] %1").arg(_q(d->client->getHubName()));
+        ret = _q(d->client->getHubName()).trimmed();
+        if (ret.isEmpty())
+            ret = _q(d->client->getHubUrl());
+        if (d->client->isSecure())
+            ret.prepend(QString::fromUtf8("🔒 "));
     }
     else if (d->client){
-        ret = QString("[-] %1").arg(_q(d->client->getHubUrl()));
+        ret = _q(d->client->getHubUrl());
     }
 
     return ret;
@@ -1410,12 +1915,11 @@ const QPixmap &HubFrame::getPixmap(){
 
 void HubFrame::clearChat(){
     textEdit_CHAT->setHtml("");
+    expandedInlineImageKeys_.clear();
+    collapsedInlineImageBlocks_.clear();
     addStatus(tr("Chat cleared."));
 
     updateStyles();
-
-    if (qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory())
-        qtCtx()->emoticonFactory()->addEmoticons(textEdit_CHAT->document());
 }
 
 void HubFrame::disableChat(){
@@ -1458,7 +1962,8 @@ QString HubFrame::getUserInfo(UserListItem *item){
     ttip += d->model->headerData(COLUMN_NICK, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getNick() + "\n";
     ttip += d->model->headerData(COLUMN_COMMENT, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getComment() + "\n";
     ttip += d->model->headerData(COLUMN_EMAIL, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getEmail() + "\n";
-    ttip += d->model->headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getIP() + "\n";
+    ttip += d->model->headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + WulforUtil::flaggedIpLabel(item->getIP()) + "\n";
+    ttip += d->model->headerData(COLUMN_IPV6, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getIP6() + "\n";
     ttip += d->model->headerData(COLUMN_SHARE, Qt::Horizontal, Qt::DisplayRole).toString() + ": " +
             WulforUtil::formatBytes(item->getShare()) + "\n";
     ttip += d->model->headerData(COLUMN_TAG, Qt::Horizontal, Qt::DisplayRole).toString() + ": " + item->getTag() + "\n";
@@ -2402,6 +2907,7 @@ void HubFrame::newMsg(const VarMap &map){
 
     QString nicktoout = third? ("* " + nick + " ") : ("<" + nick + "> ");
 
+    queueInlineChatImages(map["MSG"].toString(), map["CID"].toString(), map["HUBURL"].toString());
     message = LinkParser::parseForLinks(message, true);
 
     qtCtx()->wulforUtil()->textToHtml(nicktoout, true);
@@ -2520,6 +3026,7 @@ void HubFrame::newPm(const VarMap &map){
 
     nick = third? ("* " + nick + " ") : ("<" + nick + "> ");
 
+    queueInlineChatImages(map["MSG"].toString(), map["CID"].toString(), map["HUBURL"].toString());
     message = LinkParser::parseForLinks(message, true);
 
     qtCtx()->wulforUtil()->textToHtml(nick, true);
@@ -2647,7 +3154,9 @@ void HubFrame::follow(QString redirect){
         clearUsers();
         d->client = qtCtx()->dcCtx().getClientManager()->getClient(url);
 
+#ifndef Q_OS_MAC
         d->client->addListener(this);
+#endif
         d->client->connect();
     }
 }
@@ -2878,6 +3387,12 @@ void HubFrame::slotUserListMenu(const QPoint&){
         case Menu::CopyIP:
         {
             copyTagToClipboard<&UserListItem::getIP> (list);
+
+            break;
+        }
+        case Menu::CopyIPv6:
+        {
+            copyTagToClipboard<&UserListItem::getIP6> (list);
 
             break;
         }
@@ -3389,7 +3904,7 @@ void HubFrame::slotFindAll(){
         QTextEdit::ExtraSelection selection;
 
         QColor color;
-        color.setNamedColor(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
+        color = QColor::fromString(qtCtx()->settings()->getStr(WS_CHAT_FIND_COLOR));
         color.setAlpha(qtCtx()->settings()->getInt(WI_CHAT_FIND_COLOR_ALPHA));
 
         selection.format.setBackground(color);
@@ -3407,86 +3922,90 @@ void HubFrame::slotFindAll(){
 }
 
 void HubFrame::slotSmile(){
-    if (!(qtCtx()->settings()->getBool(WB_APP_ENABLE_EMOTICON) && qtCtx()->emoticonFactory()))
+    if (emojiDialog_ && emojiDialog_->isVisible()) {
+        emojiDialog_->close();
         return;
-
-    if (qtCtx()->settings()->getBool(WB_CHAT_USE_SMILE_PANEL)){
-        frame_SMILES->setVisible(!frame_SMILES->isVisible());
     }
-    else {
-        EmoticonDialog *dialog = new EmoticonDialog(this);
 
-        if (dialog->exec() == QDialog::Accepted) {
+    if (!emojiDialog_) {
+        emojiDialog_ = new EmoticonDialog(this, Qt::Tool);
+        emojiDialog_->setWindowModality(Qt::NonModal);
+        emojiDialog_->setAttribute(Qt::WA_DeleteOnClose, false);
 
-            QString smiley = dialog->getEmoticonText();
+        connect(emojiDialog_, &QDialog::accepted, this, [this]() {
+            if (emojiDialog_ && !emojiDialog_->getEmoticonText().isEmpty())
+                plainTextEdit_INPUT->insertEmoji(emojiDialog_->getEmoticonText());
+        });
+        connect(emojiDialog_, &QObject::destroyed, this, [this]() {
+            emojiDialog_ = nullptr;
+        });
+    }
 
-            if (!smiley.isEmpty()) {
+    const QPoint smileButtonPos = toolButton_SMILE->mapToGlobal(QPoint(0, 0));
+    QScreen *screen = QApplication::screenAt(smileButtonPos);
+    if (!screen)
+        screen = QApplication::primaryScreen();
 
-                smiley.replace("&lt;", "<");
-                smiley.replace("&gt;", ">");
-                smiley.replace("&amp;", "&");
-                smiley.replace("&apos;", "\'");
-                smiley.replace("&quot;", "\"");
+    const QRect screenGeo = screen ? screen->availableGeometry() : QRect();
 
-                smiley += " ";
+    const int verticalGap = 6;
+    const int chatWidth = textEdit_CHAT && textEdit_CHAT->viewport() ? textEdit_CHAT->viewport()->width() : width();
+    const int preferredWidth = qMax(420, chatWidth - 2);
+    const int maxDialogWidth = screenGeo.isValid() ? qMax(520, screenGeo.width() - 24) : 1400;
+    const int maxDialogHeight = screenGeo.isValid() ? qMax(260, screenGeo.height() - 24) : 620;
+    emojiDialog_->preparePopupGeometry(preferredWidth, maxDialogWidth, maxDialogHeight);
 
-                plainTextEdit_INPUT->textCursor().insertText(smiley);
-                plainTextEdit_INPUT->setFocus();
-            }
+    int dialogWidth = emojiDialog_->width();
+    int dialogHeight = emojiDialog_->height();
+    if (dialogWidth > preferredWidth) {
+        emojiDialog_->resize(preferredWidth, dialogHeight);
+        dialogWidth = emojiDialog_->width();
+        dialogHeight = emojiDialog_->height();
+    }
+
+    if (screenGeo.isValid()) {
+        const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+        const int availableAbove = bbcodeTopY - verticalGap - screenGeo.top();
+        if (availableAbove > 120 && dialogHeight > availableAbove) {
+            emojiDialog_->resize(dialogWidth, availableAbove);
+            dialogHeight = emojiDialog_->height();
         }
-
-        delete dialog;
     }
+
+    const QPoint chatTopLeft = (textEdit_CHAT && textEdit_CHAT->viewport())
+        ? textEdit_CHAT->viewport()->mapToGlobal(QPoint(0, 0))
+        : mapToGlobal(QPoint(0, 0));
+    int dialogX = chatTopLeft.x();
+    const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+    int dialogY = bbcodeTopY - dialogHeight - verticalGap;
+
+    if (screenGeo.isValid()) {
+        if (dialogX < screenGeo.left())
+            dialogX = screenGeo.left();
+        if (dialogX + dialogWidth > screenGeo.right())
+            dialogX = screenGeo.right() - dialogWidth;
+
+        if (dialogY < screenGeo.top())
+            dialogY = screenGeo.top();
+
+        // Keep popup strictly above the BBCode panel.
+        const int maxBottom = bbcodeTopY - verticalGap;
+        if (dialogY + dialogHeight > maxBottom)
+            dialogY = qMax(screenGeo.top(), maxBottom - dialogHeight);
+    }
+
+    emojiDialog_->move(dialogX, dialogY);
+    emojiDialog_->show();
+    emojiDialog_->raise();
+    emojiDialog_->activateWindow();
 }
 
 void HubFrame::slotSmileClicked(){
-    EmoticonLabel *lbl = qobject_cast<EmoticonLabel* >(sender());
-
-    if (!lbl)
-        return;
-
-    QString smiley = lbl->toolTip();
-
-    if (!smiley.isEmpty()) {
-
-        smiley.replace("&lt;", "<");
-        smiley.replace("&gt;", ">");
-        smiley.replace("&amp;", "&");
-        smiley.replace("&apos;", "\'");
-        smiley.replace("&quot;", "\"");
-
-        smiley += " ";
-
-        plainTextEdit_INPUT->textCursor().insertText(smiley);
-        plainTextEdit_INPUT->setFocus();
-    }
-
-    if (qtCtx()->settings()->getBool(WB_CHAT_HIDE_SMILE_PANEL))
-        frame_SMILES->setVisible(false);
+    slotSmile();
 }
 
 void HubFrame::slotSmileContextMenu(){
-    QMenu *m = new QMenu(this);
-
-    for (const auto &f : QDir(qtCtx()->wulforUtil()->getEmoticonsPath())
-                              .entryList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot)){
-        if (!f.isEmpty()){
-            QAction * act = m->addAction(f);
-            act->setCheckable(true);
-
-            if (f == qtCtx()->settings()->getStr(WS_APP_EMOTICON_THEME)){
-                act->setChecked(false);
-                act->setChecked(true);
-            }
-        }
-    }
-
-    QAction *a = m->exec(QCursor::pos());
-
-    if (a && a->isChecked())
-        qtCtx()->settings()->setStr(WS_APP_EMOTICON_THEME, a->text());
-
-    m->deleteLater();
+    slotSmile();
 }
 
 void HubFrame::slotInputTextChanged(){
@@ -3536,11 +4055,16 @@ void HubFrame::slotInputTextChanged(){
 void HubFrame::slotInputContextMenu(){
     PMWindow *p = qobject_cast<PMWindow*>(sender());
     QTextEdit *plainTextEdit_INPUT = (p)? qobject_cast<QTextEdit*>(p->inputWidget()) : this->plainTextEdit_INPUT;
+    ChatEdit *chatEdit = qobject_cast<ChatEdit*>(plainTextEdit_INPUT);
 
     if (!plainTextEdit_INPUT)
         return;
 
     QMenu *m = plainTextEdit_INPUT->createStandardContextMenu();
+    if (chatEdit) {
+        m->addSeparator();
+        chatEdit->populateBBCodeMenu(m);
+    }
 
 #ifndef USE_ASPELL
     m->exec(QCursor::pos());
@@ -3608,7 +4132,7 @@ void HubFrame::slotStatusLinkOpen(const QString &url){
 }
 
 void HubFrame::slotHubMenu(QAction *res) {
-    if (res && res->data().canConvert(QVariant::Int)) {//User command
+    if (res && res->data().canConvert<int>()) {//User command
         const int id = res->data().toInt();
 
         UserCommand uc;
@@ -3631,28 +4155,11 @@ void HubFrame::slotHubMenu(QAction *res) {
 void HubFrame::slotSettingsChanged(const QString &key, const QString &value){
     if (key == WS_CHAT_FONT || key == WS_CHAT_ULIST_FONT)
         updateStyles();
-    else if (key == WS_APP_EMOTICON_THEME){
-        if (qtCtx()->emoticonFactory()){
-            qtCtx()->emoticonFactory()->load();
-
-            frame_SMILES->setVisible(false);
-
-            clearLayout(frame_SMILES->layout());
-
-            QSize sz;
-            Q_UNUSED(sz);
-
-            qtCtx()->emoticonFactory()->fillLayout(frame_SMILES->layout(), sz);
-
-            for (const auto &l : frame_SMILES->findChildren<EmoticonLabel*>())
-                connect(l, &EmoticonLabel::clicked, this, &HubFrame::slotSmileClicked);
-        }
-    }
     else if (key == "hubframe/chat-background-color"){
         QPalette p = textEdit_CHAT->palette();
         QColor clr = p.color(QPalette::Active, QPalette::Base);
 
-        clr.setNamedColor(value);
+        clr = QColor::fromString(value);
 
         if (clr.isValid()){
             p.setColor(QPalette::Base, clr);
@@ -3666,37 +4173,8 @@ void HubFrame::slotSettingsChanged(const QString &key, const QString &value){
 }
 
 void HubFrame::slotBoolSettingsChanged(const QString &key, int value){
-    if (key == WB_APP_ENABLE_EMOTICON){
-        bool enable = static_cast<bool>(value);
-
-        if (enable){
-            qtCtx()->createEmoticonFactory();
-            qtCtx()->emoticonFactory()->load();
-
-            frame_SMILES->setVisible(false);
-
-            clearLayout(frame_SMILES->layout());
-
-            QSize sz;
-            Q_UNUSED(sz);
-
-            qtCtx()->emoticonFactory()->fillLayout(frame_SMILES->layout(), sz);
-
-            for (const auto &l : frame_SMILES->findChildren<EmoticonLabel*>())
-                connect(l, &EmoticonLabel::clicked, this, &HubFrame::slotSmileClicked);
-
-        }
-        else{
-            if (qtCtx()->emoticonFactory())
-                qtCtx()->destroyEmoticonFactory();
-
-            frame_SMILES->setVisible(false);
-
-            clearLayout(frame_SMILES->layout());
-        }
-
-        toolButton_SMILE->setVisible(enable);
-    }
+    Q_UNUSED(key);
+    Q_UNUSED(value);
 }
 
 void HubFrame::slotCopyHubIP(){
@@ -3942,6 +4420,7 @@ void HubFrame::on(ClientListener::Message, Client*, const ChatMessage &message) 
         map["CLR"] = color;
         map["3RD"] = third;
         map["I4"]  = _q(user->getIdentity().getIp());
+        map["CID"] = _q(user->getUser()->getCID().toBase32());
 
         emit coreMessage(map);
 

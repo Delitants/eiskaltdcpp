@@ -45,15 +45,15 @@ public:
     explicit CmdDebug(dcpp::DCContext& ctx, QWidget *parent = nullptr);
     ~CmdDebug() override;
 
-    QWidget *getWidget();
-    QString getArenaTitle();
-    QString getArenaShortTitle();
-    QMenu *getMenu();
-    const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiCONSOLE); }
-    void requestClear() { plainTextEdit_DEBUG->clear(); }
-    void requestFilter() { slotShowSearchBar(); }
-    void requestFocus() { pushButton_ClearLog->setFocus(); }
-    ArenaWidget::Role role() const { return ArenaWidget::CmdDebug; }
+    QWidget *getWidget() override;
+    QString getArenaTitle() override;
+    QString getArenaShortTitle() override;
+    QMenu *getMenu() override;
+    const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiCONSOLE); }
+    void requestClear() override { plainTextEdit_DEBUG->clear(); }
+    void requestFilter() override { slotShowSearchBar(); }
+    void requestFocus() override { pushButton_ClearLog->setFocus(); }
+    ArenaWidget::Role role() const override { return ArenaWidget::CmdDebug; }
 
 Q_SIGNALS:
     void coreDebugCommand(const QString&, const QString&);
@@ -70,11 +70,11 @@ private Q_SLOTS:
     void slotSettingsChanged(const QString&, const QString&);
 
 protected:
-    virtual bool eventFilter(QObject *obj, QEvent *e);
+    bool eventFilter(QObject *obj, QEvent *e) override;
 
 private:
-    void on(dcpp::DebugManagerListener::DebugDetection, const std::string& com) noexcept;
-    void on(dcpp::DebugManagerListener::DebugCommand, const std::string& mess, int typedir, const std::string& ip) noexcept;
+    void on(dcpp::DebugManagerListener::DebugDetection, const std::string& com) noexcept override;
+    void on(dcpp::DebugManagerListener::DebugCommand, const std::string& mess, int typedir, const std::string& ip) noexcept override;
     void findText(QTextDocument::FindFlags );
 
     Q_DECLARE_PRIVATE(CmdDebug)

@@ -14,38 +14,47 @@
 
 #include <QApplication>
 #include <QEvent>
-#include <QTimer>
+#include <QFileOpenEvent>
+#include <QObject>
 #include <QSessionManager>
-#include "WulforSettings.h"
-#include "QtContextAware.h"
+#include <QTimer>
+
 #include "QtContext.h"
+#include "QtContextAware.h"
 #include "MainWindow.h"
 #include "qtsingleapp/qtsinglecoreapplication.h"
-#include <objc/objc.h>
-#include <objc/message.h>
+#include "WulforSettings.h"
+#include "dcpp/Util.h"
 
-bool dockClickHandler(id self,SEL _cmd,...);
-
-class EiskaltEventFilter: public QObject{
+class EiskaltEventFilter : public QObject
+{
     Q_OBJECT
 
 signals:
+    void fileOpenRequested(const QString &path);
     void clickedOnDock();
 
 public:
-    EiskaltEventFilter(): counter(0), has_activity(true), prevAppState(Qt::ApplicationHidden) {
+    explicit EiskaltEventFilter(QObject *parent = nullptr)
+        : QObject(parent), counter(0), has_activity(true),
+          prevAppState(Qt::ApplicationHidden)
+    {
         timer.setInterval(60000);
-
         connect(&timer, &QTimer::timeout, this, &EiskaltEventFilter::tick);
-
         timer.start();
     }
 
     virtual ~EiskaltEventFilter() {}
 
 protected:
-    virtual bool eventFilter(QObject *obj, QEvent *event){
-        switch (event->type()){
+    bool eventFilter(QObject *obj, QEvent *event) override
+    {
+        Q_UNUSED(obj);
+
+        if (!event)
+            return false;
+
+        switch (event->type()) {
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonRelease:
         case QEvent::MouseButtonDblClick:
@@ -56,22 +65,28 @@ protected:
         {
             has_activity = true;
             counter = 0;
-
             break;
         }
         case QEvent::ApplicationStateChange:
         {
-            // https://stackoverflow.com/questions/15143369/qt-on-os-x-how-to-detect-clicking-the-app-dock-icon/46488514#46488514
-            QApplicationStateChangeEvent *ev = static_cast<QApplicationStateChangeEvent*>(event);
+            // Detect Dock click via application state change
+            // https://stackoverflow.com/questions/15143369/qt-on-os-x-how-to-detect-clicking-the-app-dock-icon
+            auto *ev = static_cast<QApplicationStateChangeEvent *>(event);
             if (prevAppState == Qt::ApplicationActive && ev->applicationState() == Qt::ApplicationActive) {
                 emit clickedOnDock();
             }
             prevAppState = ev->applicationState();
+            break;
+        }
+        case QEvent::FileOpen: {
+            auto *foe = static_cast<QFileOpenEvent *>(event);
+            if (foe)
+                emit fileOpenRequested(foe->file());
+            break;
         }
         default:
         {
             has_activity = false;
-
             break;
         }
         }
@@ -79,19 +94,17 @@ protected:
         return QObject::eventFilter(obj, event);
     }
 
-private Q_SLOTS:
-    void tick(){
+private slots:
+    void tick()
+    {
         if (!has_activity)
             ++counter;
 
-        if (qtCtx()->settings()->getBool(WB_APP_AUTOAWAY_BY_TIMER)){
+        if (qtCtx()->settings()->getBool(WB_APP_AUTOAWAY_BY_TIMER)) {
             int mins = qtCtx()->settings()->getInt(WI_APP_AUTOAWAY_INTERVAL);
-
             if (!mins)
                 return;
-
-            int mins_done = (counter*timer.interval()/1000)/60;
-
+            int mins_done = (counter * timer.interval() / 1000) / 60;
             if (mins <= mins_done)
                 dcpp::Util::setAway(qtCtx()->dcCtx(), true);
         }
@@ -106,52 +119,84 @@ private:
     Qt::ApplicationState prevAppState;
 };
 
-class EiskaltApp: public QtSingleCoreApplication{
+class EiskaltApp : public QtSingleCoreApplication
+{
     Q_OBJECT
 
-signals:
-    void clickedOnDock();
-
 public:
-    EiskaltApp(int &argc, char *argv[], const QString& uniqKey): QtSingleCoreApplication(argc, argv, uniqKey)
+    EiskaltApp(int &argc, char **argv, const QString &id)
+        : QtSingleCoreApplication(argc, argv, id),
+          dockFilter_(new EiskaltEventFilter(this))
     {
-        installEventFilter(&ef);
-        installMacHandlers();
+        installEventFilter(dockFilter_);
 
-        connect(&ef, &EiskaltEventFilter::clickedOnDock, this, &EiskaltApp::clickedOnDock);
+        QObject::connect(dockFilter_, &EiskaltEventFilter::fileOpenRequested,
+                         this, &EiskaltApp::fileOpenRequested);
+        QObject::connect(dockFilter_, &EiskaltEventFilter::clickedOnDock,
+                         this, &EiskaltApp::handleDockClick);
     }
 
-    void commitData(QSessionManager& manager){
-        if (qtCtx()->mainWindow()){
-            qtCtx()->mainWindow()->beginExit();
-            qtCtx()->mainWindow()->close();
+signals:
+    void fileOpenRequested(const QString &path);
+
+public slots:
+    void handleDockClick()
+    {
+        // Show/hide main window when Dock icon is clicked
+        if (qtCtx() && qtCtx()->mainWindow()) {
+            MainWindow *mw = qtCtx()->mainWindow();
+            if (mw->isVisible() && mw->isActiveWindow()) {
+                mw->hide();
+            } else {
+                mw->show();
+                mw->showNormal();
+                mw->raise();
+                mw->activateWindow();
+                mw->setWindowState(mw->windowState() & ~Qt::WindowMinimized);
+            }
+        }
+    }
+
+protected:
+    bool event(QEvent *e) override
+    {
+        if (e && e->type() == QEvent::Quit && qtCtx() && qtCtx()->mainWindow()) {
+            auto *mw = qtCtx()->mainWindow();
+            mw->setUnload(true);
+
+            if (!mw->confirmExit()) {
+                e->ignore();
+                return true;
+            }
+
+            mw->beginExit();
+            mw->close();
+            return true;
+        }
+
+        return QtSingleCoreApplication::event(e);
+    }
+
+    void commitData(QSessionManager &manager)
+    {
+        if (qtCtx() && qtCtx()->mainWindow()) {
+            auto *mw = qtCtx()->mainWindow();
+            mw->setUnload(true);
+
+            if (!mw->confirmExit()) {
+                manager.cancel();
+                return;
+            }
+
+            mw->beginExit();
+            mw->close();
         }
 
         manager.release();
     }
 
-    void saveState(QSessionManager &){ /** Do nothing */ }
+    void saveState(QSessionManager &) {}
 
 private:
-    EiskaltEventFilter ef;
-
-    void installMacHandlers(){
-        typedef objc_object* (*object_type)(struct objc_object *self, SEL _cmd);
-        object_type objc_msgSendObject = (object_type)objc_msgSend;
-
-        objc_object* cls = (objc_object*)objc_getClass("NSApplication");
-        SEL sharedApplication = sel_registerName("sharedApplication");
-        objc_object* appInst = objc_msgSendObject(cls, sharedApplication);
-
-        if (appInst){
-            objc_object* delegate = objc_msgSendObject(appInst,  sel_registerName("delegate"));
-            objc_object* delClass = objc_msgSendObject(delegate, sel_registerName("class"));
-            bool test = class_addMethod((objc_class*)delClass,
-                                        sel_registerName("applicationShouldHandleReopen:hasVisibleWindows:"),
-                                        (IMP)dockClickHandler,"B@:");
-            if (!test) {
-                // failed to register handler...
-            }
-        }
-    }
+    EiskaltEventFilter *dockFilter_ = nullptr;
 };

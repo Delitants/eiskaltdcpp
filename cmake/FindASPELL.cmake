@@ -20,9 +20,19 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-FIND_PATH(ASPELL_INCLUDE_DIR aspell.h )
+FIND_PATH(ASPELL_INCLUDE_DIR aspell.h
+  HINTS
+    ENV DEPS_PREFIX
+    /opt/homebrew/opt/aspell
+  PATH_SUFFIXES opt/aspell/include include
+)
 
-FIND_LIBRARY(ASPELL_LIBRARIES NAMES aspell aspell-15 libaspell-15 libaspell)
+FIND_LIBRARY(ASPELL_LIBRARIES NAMES aspell aspell-15 libaspell-15 libaspell
+  HINTS
+    ENV DEPS_PREFIX
+    /opt/homebrew/opt/aspell
+  PATH_SUFFIXES opt/aspell/lib lib
+)
 
 # handle the QUIETLY and REQUIRED arguments and set ASPELL_FOUND to TRUE if 
 # all listed variables are TRUE

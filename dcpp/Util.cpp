@@ -32,6 +32,7 @@
 
 #include <cmath>
 #include <array>
+#include <mutex>
 
 #include "CID.h"
 #include "ClientManager.h"
@@ -72,6 +73,10 @@
 
 #ifdef USE_IDN2
 #include <idn2.h>
+#endif
+
+#ifdef USE_MAXMINDDB
+#include <maxminddb.h>
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -169,7 +174,88 @@ static string getDownloadsPath(const string& def) {
 
 static bool s_utilInitDone = false;
 
+#ifdef USE_MAXMINDDB
+namespace {
+struct MmdbState {
+    MMDB_s db {};
+    string path;
+    bool open = false;
+};
+
+std::mutex g_mmdbMutex;
+MmdbState g_mmdbState;
+
+string getConfiguredCountryDbPath() {
+    if (auto* ctx = getContext()) {
+        if (auto* settings = ctx->getSettingsManager()) {
+            return settings->get(SettingsManager::COUNTRY_DB_PATH);
+        }
+    }
+
+    return Util::emptyString;
+}
+
+bool ensureMmdbLoaded(const string& path) {
+    if (path.empty())
+        return false;
+
+    if (g_mmdbState.open && g_mmdbState.path == path)
+        return true;
+
+    if (g_mmdbState.open) {
+        MMDB_close(&g_mmdbState.db);
+        g_mmdbState = MmdbState();
+    }
+
+    const int status = MMDB_open(path.c_str(), MMDB_MODE_MMAP, &g_mmdbState.db);
+    if (status != MMDB_SUCCESS) {
+        g_mmdbState = MmdbState();
+        return false;
+    }
+
+    g_mmdbState.path = path;
+    g_mmdbState.open = true;
+    return true;
+}
+
+string lookupMmdbCountryCode(const string& ip) {
+    std::lock_guard<std::mutex> lock(g_mmdbMutex);
+    const string path = getConfiguredCountryDbPath();
+
+    if (!ensureMmdbLoaded(path))
+        return Util::emptyString;
+
+    int gaiError = 0;
+    int mmdbError = MMDB_SUCCESS;
+    MMDB_lookup_result_s result = MMDB_lookup_string(&g_mmdbState.db, ip.c_str(), &gaiError, &mmdbError);
+
+    if (gaiError != 0 || mmdbError != MMDB_SUCCESS || !result.found_entry)
+        return Util::emptyString;
+
+    MMDB_entry_data_s entryData;
+    int status = MMDB_get_value(&result.entry, &entryData, "country", "iso_code", NULL);
+    if (status != MMDB_SUCCESS || !entryData.has_data || entryData.type != MMDB_DATA_TYPE_UTF8_STRING) {
+        status = MMDB_get_value(&result.entry, &entryData, "registered_country", "iso_code", NULL);
+    }
+
+    if (status != MMDB_SUCCESS || !entryData.has_data || entryData.type != MMDB_DATA_TYPE_UTF8_STRING)
+        return Util::emptyString;
+
+    return string(entryData.utf8_string, entryData.data_size);
+}
+} // namespace
+#endif
+
 void Util::uninitialize() {
+#ifdef USE_MAXMINDDB
+    {
+        std::lock_guard<std::mutex> lock(g_mmdbMutex);
+        if (g_mmdbState.open) {
+            MMDB_close(&g_mmdbState.db);
+            g_mmdbState = MmdbState();
+        }
+    }
+#endif
     for (auto& p : paths)
         p.clear();
     s_utilInitDone = false;
@@ -696,13 +782,43 @@ void Util::decodeUrl(const string& url, string& protocol, string& host, string& 
 }
 
 void Util::parseIpPort(const string& aIpPort, string& ip, string& port) {
-    string::size_type i = aIpPort.rfind(':');
-    if (i == string::npos) {
-        ip = aIpPort;
-    } else {
-        ip = aIpPort.substr(0, i);
-        port = aIpPort.substr(i + 1);
+    ip.clear();
+    port.clear();
+
+    if(aIpPort.empty()) {
+        return;
     }
+
+    // RFC 3986 style: [ipv6]:port
+    if(aIpPort[0] == '[') {
+        const auto close = aIpPort.find(']');
+        if(close == string::npos) {
+            ip = aIpPort;
+            return;
+        }
+
+        ip = aIpPort.substr(1, close - 1);
+        if(close + 1 < aIpPort.size() && aIpPort[close + 1] == ':') {
+            port = aIpPort.substr(close + 2);
+        }
+        return;
+    }
+
+    const auto firstColon = aIpPort.find(':');
+    const auto lastColon = aIpPort.rfind(':');
+    if(firstColon == string::npos) {
+        ip = aIpPort;
+        return;
+    }
+
+    // Multiple colons and no brackets -> treat as a raw IPv6 literal without port.
+    if(firstColon != lastColon) {
+        ip = aIpPort;
+        return;
+    }
+
+    ip = aIpPort.substr(0, firstColon);
+    port = aIpPort.substr(firstColon + 1);
 }
 
 map<string, string> Util::decodeQuery(const string& query) {
@@ -827,9 +943,9 @@ vector<string> Util::getLocalIPs(unsigned short sa_family) {
 
                 // Convert the binary address to a string and add it to the output list
                 if (src) {
-                    char address[len];
-                    inet_ntop(sa->sa_family, src, address, len);
-                    addresses.push_back(address);
+                    std::vector<char> address(len);
+                    inet_ntop(sa->sa_family, src, address.data(), len);
+                    addresses.push_back(address.data());
                 }
             }
         }
@@ -1267,27 +1383,69 @@ uint32_t Util::rand() {
     more info: https://dev.maxmind.com/geoip/legacy/csv/
 */
 string Util::getIpCountry (string IP) {
-    if (getContext()->getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY)) {
-        dcassert(count(IP.begin(), IP.end(), '.') == 3);
+#ifdef USE_MAXMINDDB
+        const string mmdbCountry = lookupMmdbCountryCode(IP);
+        if (mmdbCountry.size() >= 2)
+            return string{static_cast<char>(toupper(static_cast<unsigned char>(mmdbCountry[0]))),
+                          static_cast<char>(toupper(static_cast<unsigned char>(mmdbCountry[1])))};
+#endif
+    if (count(IP.begin(), IP.end(), '.') != 3)
+        return Util::emptyString;
 
-        //e.g IP 23.24.25.26 : w=23, x=24, y=25, z=26
-        string::size_type a = IP.find('.');
-        string::size_type b = IP.find('.', a+1);
-        string::size_type c = IP.find('.', b+2);
+    //e.g IP 23.24.25.26 : w=23, x=24, y=25, z=26
+    string::size_type a = IP.find('.');
+    string::size_type b = IP.find('.', a+1);
+    string::size_type c = IP.find('.', b+2);
 
-        uint32_t ipnum = (Util::toUInt32(IP.c_str()) << 24) |
-                (Util::toUInt32(IP.c_str() + a + 1) << 16) |
-                (Util::toUInt32(IP.c_str() + b + 1) << 8) |
-                (Util::toUInt32(IP.c_str() + c + 1) );
+    uint32_t ipnum = (Util::toUInt32(IP.c_str()) << 24) |
+            (Util::toUInt32(IP.c_str() + a + 1) << 16) |
+            (Util::toUInt32(IP.c_str() + b + 1) << 8) |
+            (Util::toUInt32(IP.c_str() + c + 1) );
 
-        CountryIter i = countries.lower_bound(ipnum);
+    CountryIter i = countries.lower_bound(ipnum);
 
-        if(i != countries.end()) {
-            return string((char*)&(i->second), 2);
-        }
+    if(i != countries.end()) {
+        return string((char*)&(i->second), 2);
     }
 
     return Util::emptyString; //if doesn't returned anything already, something is wrong...
+}
+
+string Util::getCountryFlag(const string& countryCode) {
+    auto appendUtf8 = [](uint32_t codePoint, string& out) {
+        if (codePoint <= 0x7F) {
+            out += static_cast<char>(codePoint);
+        } else if (codePoint <= 0x7FF) {
+            out += static_cast<char>(0xC0 | (codePoint >> 6));
+            out += static_cast<char>(0x80 | (codePoint & 0x3F));
+        } else if (codePoint <= 0xFFFF) {
+            out += static_cast<char>(0xE0 | (codePoint >> 12));
+            out += static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F));
+            out += static_cast<char>(0x80 | (codePoint & 0x3F));
+        } else {
+            out += static_cast<char>(0xF0 | (codePoint >> 18));
+            out += static_cast<char>(0x80 | ((codePoint >> 12) & 0x3F));
+            out += static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F));
+            out += static_cast<char>(0x80 | (codePoint & 0x3F));
+        }
+    };
+
+    if (countryCode.size() != 2)
+        return Util::emptyString;
+
+    const char first = static_cast<char>(toupper(static_cast<unsigned char>(countryCode[0])));
+    const char second = static_cast<char>(toupper(static_cast<unsigned char>(countryCode[1])));
+
+    if (!isalpha(static_cast<unsigned char>(first)) || !isalpha(static_cast<unsigned char>(second)))
+        return Util::emptyString;
+
+    const uint32_t firstCodePoint = 0x1F1E6u + static_cast<uint32_t>(first - 'A');
+    const uint32_t secondCodePoint = 0x1F1E6u + static_cast<uint32_t>(second - 'A');
+
+    string flag;
+    appendUtf8(firstCodePoint, flag);
+    appendUtf8(secondCodePoint, flag);
+    return flag;
 }
 
 void Util::setLang(DCContext& ctx, const string &lang)
@@ -1429,6 +1587,10 @@ string Util::formatAdditionalInfo(const string& aIp, bool sIp, bool sCC) {
         }
         //printf("%s\n",ret.c_str());
         if(showCc) {
+            const string flag = Util::getCountryFlag(cc);
+            if (!flag.empty()) {
+                ret += flag + " ";
+            }
             ret += "[" + cc + "] ";
             //printf("%s\n",ret.c_str());
         }

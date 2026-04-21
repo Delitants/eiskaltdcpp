@@ -50,7 +50,7 @@ int UserListModel::rowCount(const QModelIndex & ) const {
 }
 
 int UserListModel::columnCount(const QModelIndex & ) const {
-    return 8;
+    return 9;
 }
 
 bool UserListModel::hasChildren(const QModelIndex &parent) const{
@@ -82,7 +82,8 @@ QVariant UserListModel::data(const QModelIndex & index, int role) const {
                 case COLUMN_EMAIL: return item->getEmail();
                 case COLUMN_SHARE: return WulforUtil::formatBytes(item->getShare());
                 case COLUMN_EXACT_SHARE: return item->getShare();
-                case COLUMN_IP: return item->getIP();
+                case COLUMN_IP: return WulforUtil::flaggedIpLabel(item->getIP());
+                case COLUMN_IPV6: return item->getIP6();
             }
 
             break;
@@ -117,7 +118,8 @@ QVariant UserListModel::data(const QModelIndex & index, int role) const {
 
                 ttip += "<b>" + headerData(COLUMN_EMAIL, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + mail + "<br/>";
 
-                ttip += "<b>" + headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + item->getIP() + "<br/>";
+                ttip += "<b>" + headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + WulforUtil::flaggedIpLabel(item->getIP()) + "<br/>";
+                ttip += "<b>" + headerData(COLUMN_IPV6, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + item->getIP6() + "<br/>";
                 ttip += "<b>" + headerData(COLUMN_SHARE, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " +
                         WulforUtil::formatBytes(item->getShare()) + "<br/>";
 
@@ -178,6 +180,7 @@ QVariant UserListModel::headerData(int section, Qt::Orientation orientation, int
             case COLUMN_SHARE: return tr("Share");
             case COLUMN_EXACT_SHARE: return tr("Exact share size");
             case COLUMN_IP: return tr("IP");
+            case COLUMN_IPV6: return tr("IPv6");
         }
     }
 
@@ -251,17 +254,18 @@ struct Compare {
         inline bool static Cmp(const T& l, const T& r) __attribute__((always_inline));
 #endif
         
-        static AttrComp attrs[8];
+        static AttrComp attrs[9];
 };
 
 template <Qt::SortOrder order>
-typename Compare<order>::AttrComp Compare<order>::attrs[8]  = {     AttrCmp<QString, &UserListItem::getNick>,
+typename Compare<order>::AttrComp Compare<order>::attrs[9]  = {     AttrCmp<QString, &UserListItem::getNick>,
                                                                     AttrCmp<qulonglong, &UserListItem::getShare>,
                                                                     AttrCmp<qulonglong, &UserListItem::getShare>,
                                                                     AttrCmp<QString, &UserListItem::getComment>,
                                                                     AttrCmp<QString, &UserListItem::getTag>,
                                                                     AttrCmp<QString, &UserListItem::getConnection>,
                                                                     IPCmp,
+                                                                    AttrCmp<QString, &UserListItem::getIP6>,
                                                                     AttrCmp<QString, &UserListItem::getEmail> };
 
 template <> template <typename T>
@@ -381,6 +385,9 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
                 break;
             case COLUMN_IP:
                 needSorted = needSorted || (item->getIdentity().getIp() != _id.getIp());
+                break;
+            case COLUMN_IPV6:
+                needSorted = needSorted || (item->getIdentity().getIp6() != _id.getIp6());
                 break;
             case COLUMN_EMAIL:
                 needSorted = needSorted || (item->getIdentity().getEmail() != _id.getEmail());
@@ -610,7 +617,7 @@ int UserListItem::childCount() const {
 }
 
 int UserListItem::columnCount() const {
-    return 8;
+    return 9;
 }
 UserListItem *UserListItem::parent() {
     return parentItem;
@@ -642,6 +649,10 @@ QString UserListItem::getEmail()  const{
 QString UserListItem::getIP()  const{
     return _q(id.getIp());
 }   
+
+QString UserListItem::getIP6()  const{
+    return _q(id.getIp6());
+}
 
 QString UserListItem::getNick()  const{
     return _q(id.getNick());

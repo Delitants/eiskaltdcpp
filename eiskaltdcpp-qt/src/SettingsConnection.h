@@ -13,6 +13,9 @@
 #include <QIntValidator>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QLineEdit>
+#include <QToolButton>
+#include <QCheckBox>
 
 #include "ui_UISettingsConnection.h"
 #include "SettingsInterface.h"
@@ -34,14 +37,23 @@ protected:
 private slots:
     void slotToggleIncomming();
     void slotToggleOutgoing();
+    void slotCfgDHTBootstrap();
+    void slotCfgPublicHubs();
+    void slotBrowseCountryDb();
 
 private:
     void init();
 
-    bool validateIp(QString&);
+    bool validateIp4(QString&);
+    bool validateIp6(QString&) const;
     void showMsg(QString, QWidget* = nullptr);
 
     bool dirty;
+    QCheckBox* checkBox_USE_IPV6 = nullptr;
+    QLineEdit* lineEdit_WANIP6 = nullptr;
+    QLineEdit* lineEdit_BIND_ADDRESS6 = nullptr;
+    QLineEdit *lineEdit_COUNTRY_DB = nullptr;
+    QToolButton *toolButton_COUNTRY_DB = nullptr;
 
     int old_tcp, old_udp, old_tls
 #ifdef WITH_DHT

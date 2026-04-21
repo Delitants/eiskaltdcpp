@@ -15,19 +15,34 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="leftMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>2</number>
+    <number>0</number>
    </property>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QTextEdit" name="textEdit_CHAT">
        <property name="focusPolicy">
@@ -60,6 +75,9 @@ p, li { white-space: pre-wrap; }
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -133,6 +151,9 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame">
          <property name="sizePolicy">
@@ -163,33 +184,215 @@ p, li { white-space: pre-wrap; }
           <property name="rightMargin">
            <number>1</number>
           </property>
-          <property name="bottomMargin">
-           <number>1</number>
+         <property name="bottomMargin">
+          <number>1</number>
+         </property>
+          <property name="horizontalSpacing">
+           <number>0</number>
           </property>
-          <item row="1" column="0">
+          <property name="verticalSpacing">
+           <number>0</number>
+          </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+          <item row="1" column="0" colspan="3">
+           <layout class="QHBoxLayout" name="horizontalLayout_BBCODE">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QToolButton" name="toolButton_BOLD">
+              <property name="text">
+               <string notr="true">B</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_ITALIC">
+              <property name="text">
+               <string notr="true">I</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_UNDERLINE">
+              <property name="text">
+               <string notr="true">U</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_STRIKE">
+              <property name="text">
+               <string notr="true">S</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_COLOR">
+              <property name="text">
+               <string>Color</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_LINK">
+              <property name="text">
+               <string>Link</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_CODE">
+              <property name="text">
+               <string>Code</string>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="toolButton_SMILE">
+              <property name="text">
+               <string notr="true"/>
+              </property>
+              <property name="maximumHeight">
+               <number>28</number>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QToolButton { padding: 2px; }</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
            <widget class="ChatEdit" name="plainTextEdit_INPUT">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>40</height>
+              <height>200</height>
              </size>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QToolButton" name="toolButton_SMILE">
-            <property name="text">
-             <string notr="true"/>
+            <property name="placeholderText" stdset="0">
+             <string>Press Shift+Enter for multiline input</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0" colspan="2">
+          <item row="0" column="0" colspan="3">
            <widget class="QFrame" name="frame_SMILES">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
