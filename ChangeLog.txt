@@ -1,3 +1,34 @@
+--- 2.5.2-release 2026-04-20 ---
+*** common changes ***
+* Prepared release and packaging flow for macOS 14+ on ARM64 (Apple Silicon).
+* Updated release documentation and repository screenshot assets for the
+  current UI.
+*** libeiskaltdcpp ***
+* Improved inline image resolution in chat history:
+  - prefer local/shared file resolution for own previously posted files
+  - fallback to remote search/download for files from other users
+  - improved cache reuse behavior for already seen images
+* Added IPv6-related plumbing and compatibility updates in core networking.
+*** eiskaltdcpp-qt ***
+* Reworked chat image rendering:
+  - images are wrapped into forum-style spoiler blocks
+  - spoiler title is "Picture"
+  - spoilers are collapsed by default and toggle on repeated click
+* Updated spoiler/image translations in Qt localization files.
+* Refined chat layout:
+  - removed extra bottom margins around chat areas
+  - improved chat input sizing and user-resizable behavior
+  - improved BBCode row spacing and control ordering
+* Reworked emoji picker:
+  - opens above BBCode panel and does not overlap the trigger button
+  - width follows current chat area
+  - denser centered layout with complete fallback emoji set
+  - repeated click on emoji button toggles picker visibility
+* Improved theme contrast for light/dark modes so input borders remain visible.
+* Added explicit "Add" and "Remove" buttons to Sharing settings.
+* Added IPv6 column support in user list views.
+* Updated tab close button alignment in hub tab UI.
+
 --- 2.4.3 2024-07-xx ---
 *** common changes ***
 * Stopped support of cmake versions less than 3.7.2.
