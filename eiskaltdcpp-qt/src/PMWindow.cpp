@@ -62,8 +62,8 @@ static inline void clearLayout(QLayout *l){
 
 static QString themedChatTextColor(const QPalette &palette)
 {
-    const int lightness = (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2;
-    return lightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+    const int baseLightness = palette.color(QPalette::Base).lightness();
+    return baseLightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
 }
 
 static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)

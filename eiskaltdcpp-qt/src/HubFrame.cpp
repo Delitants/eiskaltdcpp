@@ -92,8 +92,8 @@ QString translatedPictureLabel()
 
 QString themedChatTextColor(const QPalette &palette)
 {
-    const int lightness = (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2;
-    return lightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+    const int baseLightness = palette.color(QPalette::Base).lightness();
+    return baseLightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
 }
 
 class ChatInputResizeGrip final : public QWidget
