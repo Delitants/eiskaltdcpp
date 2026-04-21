@@ -51,22 +51,37 @@ ChatEdit::ChatEdit(QWidget *parent) : QTextEdit(parent), cc(nullptr)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+    const QPalette pal = palette();
+    const bool darkAppearance = (pal.color(QPalette::Window).lightness() + pal.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor borderColor = darkAppearance ? pal.color(QPalette::Window).lighter(165)
+                                        : pal.color(QPalette::Window).darker(135);
+    if (qAbs(borderColor.lightness() - pal.color(QPalette::Base).lightness()) < 22) {
+        const QColor textColor = pal.color(QPalette::Text);
+        borderColor = darkAppearance ? textColor.lighter(145) : textColor.darker(150);
+    }
+    QColor focusBorder = pal.color(QPalette::Highlight);
+    if (darkAppearance && focusBorder.lightness() < 150)
+        focusBorder = focusBorder.lighter(140);
+    else if (!darkAppearance && focusBorder.lightness() > 205)
+        focusBorder = focusBorder.darker(118);
+    const QColor disabledBorder = darkAppearance ? borderColor.darker(118) : borderColor.lighter(112);
+
     setStyleSheet(QStringLiteral(
         "QTextEdit {"
         "    background: palette(base);"
         "    color: palette(text);"
-        "    border: 1px solid palette(mid);"
+        "    border: 1px solid %1;"
         "    border-radius: 7px;"
         "    padding: 12px;"
         "}"
         "QTextEdit:focus {"
-        "    border: 1px solid palette(highlight);"
+        "    border: 1px solid %2;"
         "}"
         "QTextEdit:disabled {"
-        "    border: 1px solid palette(mid);"
+        "    border: 1px solid %3;"
         "    color: palette(mid);"
         "}"
-    ));
+    ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name()));
 
     connect(this, &QTextEdit::textChanged, this, &ChatEdit::recalculateGeometry);
 }

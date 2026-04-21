@@ -63,10 +63,32 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
     panel->setObjectName(QStringLiteral("settingsPagePanel"));
     panel->setFrameShape(QFrame::StyledPanel);
     panel->setFrameShadow(QFrame::Plain);
+    const QPalette panelPalette = panel->palette();
+    const bool darkAppearance = (panelPalette.color(QPalette::Window).lightness() + panelPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor fieldBorder = darkAppearance ? panelPalette.color(QPalette::Window).lighter(165)
+                                        : panelPalette.color(QPalette::Window).darker(135);
+    if (qAbs(fieldBorder.lightness() - panelPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = panelPalette.color(QPalette::Text);
+        fieldBorder = darkAppearance ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor panelBorder = darkAppearance ? fieldBorder.lighter(118) : fieldBorder.darker(112);
+    QColor focusBorder = panelPalette.color(QPalette::Highlight);
+    if (darkAppearance && focusBorder.lightness() < 150)
+        focusBorder = focusBorder.lighter(140);
+    else if (!darkAppearance && focusBorder.lightness() > 205)
+        focusBorder = focusBorder.darker(118);
+
+    const QColor panelBackground = darkAppearance ? panelPalette.color(QPalette::Window).lighter(108)
+                                                  : panelPalette.color(QPalette::Window);
+    const QColor groupBackground = darkAppearance ? panelPalette.color(QPalette::Base).lighter(105)
+                                                  : panelPalette.color(QPalette::AlternateBase);
+    const QColor tabBackground = darkAppearance ? panelBackground.lighter(103)
+                                                : panelPalette.color(QPalette::Base);
+
     panel->setStyleSheet(QStringLiteral(
         "QFrame#settingsPagePanel {"
-        " background-color: palette(window);"
-        " border: 1px solid palette(mid);"
+        " background-color: %1;"
+        " border: 1px solid %3;"
         " border-radius: 12px;"
         "}"
         "QFrame#settingsPagePanel QLabel {"
@@ -82,11 +104,11 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         " min-height: 22px;"
         "}"
         "QFrame#settingsPagePanel QGroupBox {"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %3;"
         " border-radius: 10px;"
         " margin-top: 10px;"
         " padding: 7px 7px 7px 7px;"
-        " background-color: palette(alternate-base);"
+        " background-color: %4;"
         "}"
         "QFrame#settingsPagePanel QGroupBox::title {"
         " subcontrol-origin: margin;"
@@ -95,8 +117,8 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         " color: palette(text);"
         " font-size: 13px;"
         " font-weight: 600;"
-        " background-color: palette(window);"
-        " border: 1px solid palette(mid);"
+        " background-color: %1;"
+        " border: 1px solid %2;"
         " border-radius: 7px;"
         "}"
         "QFrame#settingsPagePanel QGroupBox[settingsSectionHeader=\"true\"]::title {"
@@ -125,7 +147,7 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         "QFrame#settingsPagePanel QPlainTextEdit,"
         "QFrame#settingsPagePanel QAbstractSpinBox {"
         " background-color: palette(base);"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %2;"
         " border-radius: 7px;"
         " padding: 1px 7px;"
         " min-height: 24px;"
@@ -135,11 +157,11 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         "QFrame#settingsPagePanel QTextEdit:focus,"
         "QFrame#settingsPagePanel QPlainTextEdit:focus,"
         "QFrame#settingsPagePanel QAbstractSpinBox:focus {"
-        " border: 1px solid palette(highlight);"
+        " border: 1px solid %5;"
         "}"
         "QFrame#settingsPagePanel QComboBox {"
         " background-color: palette(base);"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %2;"
         " border-radius: 7px;"
         " padding: 1px 24px 1px 7px;"
         " min-height: 24px;"
@@ -150,10 +172,10 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         " subcontrol-origin: padding;"
         " subcontrol-position: top right;"
         " width: 18px;"
-        " border-left: 1px solid palette(mid);"
+        " border-left: 1px solid %2;"
         "}"
         "QFrame#settingsPagePanel QComboBox QAbstractItemView {"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %2;"
         " selection-background-color: palette(highlight);"
         " selection-color: palette(highlighted-text);"
         " outline: 0;"
@@ -165,10 +187,10 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         "}"
         "QFrame#settingsPagePanel QTabWidget { background: transparent; }"
         "QFrame#settingsPagePanel QTabWidget::pane {"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %3;"
         " border-radius: 11px;"
         " top: 0px;"
-        " background-color: palette(base);"
+        " background-color: %6;"
         " padding-top: 8px;"
         " margin-top: -1px;"
         "}"
@@ -180,8 +202,8 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         " background: transparent;"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab {"
-        " background-color: palette(alternate-base);"
-        " border: 1px solid palette(mid);"
+        " background-color: %4;"
+        " border: 1px solid %2;"
         " border-top-left-radius: 8px;"
         " border-top-right-radius: 8px;"
         " min-width: 0px;"
@@ -191,16 +213,18 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         " font-size: 12px;"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:selected {"
-        " background-color: palette(window);"
-        " border-bottom-color: palette(window);"
+        " background-color: %1;"
+        " border-bottom-color: %1;"
         " font-weight: 600;"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:!selected {"
         " color: palette(button-text);"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:hover:!selected {"
-        " background-color: palette(alternate-base);"
-        "}"));
+        " background-color: %6;"
+        "}"
+    ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
+          groupBackground.name(), focusBorder.name(), tabBackground.name()));
 
     auto *layout = new QVBoxLayout(panel);
     layout->setContentsMargins(8, 4, 8, 8);
@@ -411,10 +435,23 @@ void Settings::init(){
     listWidget->setMinimumWidth(150);
     listWidget->setMaximumWidth(180);
 #ifdef Q_OS_MAC
+    const QPalette sidebarPalette = listWidget->palette();
+    const bool darkSidebar = (sidebarPalette.color(QPalette::Window).lightness() + sidebarPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor sidebarBorder = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(170)
+                                       : sidebarPalette.color(QPalette::Window).darker(140);
+    if (qAbs(sidebarBorder.lightness() - sidebarPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = sidebarPalette.color(QPalette::Text);
+        sidebarBorder = darkSidebar ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor sidebarBg = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(108)
+                                         : sidebarPalette.color(QPalette::Window);
+    const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
+                                            : sidebarPalette.color(QPalette::AlternateBase);
+
     listWidget->setStyleSheet(QStringLiteral(
         "QListWidget {"
-        " background-color: palette(window);"
-        " border: 1px solid palette(mid);"
+        " background-color: %1;"
+        " border: 1px solid %2;"
         " border-radius: 10px;"
         " outline: none;"
         " padding: 4px;"
@@ -430,8 +467,9 @@ void Settings::init(){
         " color: palette(highlighted-text);"
         "}"
         "QListWidget::item:hover:!selected {"
-        " background-color: palette(alternate-base);"
-        "}"));
+        " background-color: %3;"
+        "}"
+    ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name()));
 #endif
 
     splitter->setChildrenCollapsible(false);

@@ -1554,15 +1554,25 @@ void HubFrame::setupChatInputSplitter()
     splitter->setChildrenCollapsible(false);
     splitter->setHandleWidth(1);
     splitter->setOpaqueResize(true);
+
+    const QPalette splitterPalette = splitter->palette();
+    const bool darkSplitter = (splitterPalette.color(QPalette::Window).lightness() + splitterPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor splitterHover = darkSplitter ? splitterPalette.color(QPalette::Window).lighter(168)
+                                        : splitterPalette.color(QPalette::Window).darker(138);
+    if (qAbs(splitterHover.lightness() - splitterPalette.color(QPalette::Window).lightness()) < 24) {
+        const QColor textColor = splitterPalette.color(QPalette::Text);
+        splitterHover = darkSplitter ? textColor.lighter(145) : textColor.darker(150);
+    }
+
     splitter->setStyleSheet(QStringLiteral(
         "QSplitter::handle:vertical {"
         "  background: transparent;"
         "  height: 1px;"
         "}"
         "QSplitter::handle:vertical:hover {"
-        "  background: palette(mid);"
+        "  background: %1;"
         "}"
-    ));
+    ).arg(splitterHover.name()));
     splitter->addWidget(chatPane);
     splitter->addWidget(inputPane);
     splitter->setStretchFactor(0, 1);
@@ -1677,13 +1687,23 @@ void HubFrame::init(){
     plainTextEdit_INPUT->setContextMenuPolicy(Qt::CustomContextMenu);
     plainTextEdit_INPUT->setMinimumHeight(54);
     plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
+    const QPalette inputPalette = frame_INPUT->palette();
+    const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)
+                                   : inputPalette.color(QPalette::Window).darker(140);
+    if (qAbs(inputBorder.lightness() - inputPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = inputPalette.color(QPalette::Text);
+        inputBorder = darkInput ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor inputBackground = darkInput ? inputPalette.color(QPalette::Window).lighter(106)
+                                             : inputPalette.color(QPalette::Window);
     frame_INPUT->setStyleSheet(QStringLiteral(
         "QFrame#frame_INPUT {"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %1;"
         " border-radius: 8px;"
-        " background: palette(window);"
+        " background: %2;"
         "}"
-    ));
+    ).arg(inputBorder.name(), inputBackground.name()));
     horizontalLayout_BBCODE->setSpacing(horizontalLayout_BBCODE->spacing() + 3);
     auto *toolButton_IMAGE = new QToolButton(this);
     toolButton_IMAGE->setAutoRaise(true);

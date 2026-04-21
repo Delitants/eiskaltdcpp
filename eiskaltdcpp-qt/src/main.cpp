@@ -135,23 +135,81 @@ static LONG WINAPI earlyExceptionHandler(EXCEPTION_POINTERS *ep)
 #if defined(Q_OS_MAC)
 // Dock click handling is done via EiskaltEventFilter in EiskaltApp_mac.h
 // using QApplicationStateChangeEvent
+static bool isDarkMacPalette(const QPalette &pal)
+{
+    return (pal.color(QPalette::Window).lightness() + pal.color(QPalette::Base).lightness()) / 2 < 128;
+}
+
+static QColor macBorderColor(const QPalette &pal, const bool strong)
+{
+    const bool dark = isDarkMacPalette(pal);
+    const QColor window = pal.color(QPalette::Window);
+    QColor border = dark
+            ? window.lighter(strong ? 185 : 165)
+            : window.darker(strong ? 155 : 135);
+
+    if (qAbs(border.lightness() - window.lightness()) < (strong ? 40 : 26)) {
+        const QColor text = pal.color(QPalette::Text);
+        border = dark
+                ? text.lighter(strong ? 170 : 145)
+                : text.darker(strong ? 170 : 145);
+    }
+
+    return border;
+}
+
+static QColor macFocusColor(const QPalette &pal)
+{
+    QColor focus = pal.color(QPalette::Highlight);
+    const bool dark = isDarkMacPalette(pal);
+
+    if (dark && focus.lightness() < 150)
+        focus = focus.lighter(145);
+    else if (!dark && focus.lightness() > 205)
+        focus = focus.darker(118);
+
+    return focus;
+}
+
 static void applyMacInputContrastStyle(QApplication &app)
 {
+    const QPalette pal = app.palette();
+    const bool dark = isDarkMacPalette(pal);
+    const QColor inputBorder = macBorderColor(pal, false);
+    const QColor panelBorder = macBorderColor(pal, true);
+    const QColor focusBorder = macFocusColor(pal);
+    const QColor panelBg = dark ? pal.color(QPalette::Base).lighter(108) : pal.color(QPalette::Base);
+    const QColor altBg = dark ? pal.color(QPalette::Window).lighter(112) : pal.color(QPalette::AlternateBase);
+
     app.setStyleSheet(app.styleSheet() + QStringLiteral(
         "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
-        " border: 1px solid palette(mid);"
+        " border: 1px solid %1;"
         " border-radius: 6px;"
         " padding: 2px 6px;"
         " background: palette(base);"
         " color: palette(text);"
         "}"
         "QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus, QAbstractSpinBox:focus {"
-        " border: 1px solid palette(highlight);"
+        " border: 1px solid %2;"
         "}"
         "QComboBox::drop-down, QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {"
-        " border-left: 1px solid palette(mid);"
+        " border-left: 1px solid %1;"
         "}"
-    ));
+        "QAbstractItemView, QListView, QTreeView, QTableView {"
+        " border: 1px solid %3;"
+        " background: %4;"
+        " alternate-background-color: %5;"
+        "}"
+        "QFrame#frame_INPUT {"
+        " border: 1px solid %3;"
+        " border-radius: 8px;"
+        " background: %4;"
+        "}"
+        "QFrame#settingsPagePanel {"
+        " border: 1px solid %3;"
+        " background: %4;"
+        "}"
+    ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name(), panelBg.name(), altBg.name()));
 }
 #endif
 
