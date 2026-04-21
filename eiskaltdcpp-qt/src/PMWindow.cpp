@@ -207,8 +207,33 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     plainTextEdit_INPUT->setContextMenuPolicy(Qt::CustomContextMenu);
     plainTextEdit_INPUT->installEventFilter(this);
     plainTextEdit_INPUT->setAcceptRichText(false);
-    plainTextEdit_INPUT->setMinimumHeight(54);
-    plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
+    plainTextEdit_INPUT->setMinimumHeight(72);
+    plainTextEdit_INPUT->setMaximumHeight(200);
+    plainTextEdit_INPUT->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    const QPalette inputPalette = frame->palette();
+    const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)
+                                   : inputPalette.color(QPalette::Window).darker(140);
+    if (qAbs(inputBorder.lightness() - inputPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = inputPalette.color(QPalette::Text);
+        inputBorder = darkInput ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor inputBackground = darkInput ? inputPalette.color(QPalette::Window).lighter(106)
+                                             : inputPalette.color(QPalette::Window);
+    frame->setStyleSheet(QStringLiteral(
+        "QFrame#frame {"
+        " border: 1px solid %1;"
+        " border-radius: 8px;"
+        " background: %2;"
+        "}"
+    ).arg(inputBorder.name(), inputBackground.name()));
+
+    if (gridLayout) {
+        gridLayout->setContentsMargins(6, 6, 6, 6);
+        gridLayout->setHorizontalSpacing(4);
+        gridLayout->setVerticalSpacing(4);
+    }
 
     textEdit_CHAT->viewport()->installEventFilter(this);
     textEdit_CHAT->viewport()->setMouseTracking(true);
@@ -234,7 +259,8 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     toolButton_IMAGE->setMinimumHeight(24);
     toolButton_IMAGE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILETYPE_PICTURE));
     toolButton_IMAGE->setToolTip(tr("Image"));
-    horizontalLayout_BBCODE->setSpacing(horizontalLayout_BBCODE->spacing() + 3);
+    horizontalLayout_BBCODE->setSpacing(3);
+    horizontalLayout_BBCODE->setContentsMargins(0, 0, 0, 0);
     const int smileButtonIndex = horizontalLayout_BBCODE->indexOf(toolButton_SMILE);
     if (smileButtonIndex >= 0)
         horizontalLayout_BBCODE->insertWidget(smileButtonIndex, toolButton_IMAGE);
@@ -245,8 +271,10 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
         toolButton_COLOR, toolButton_LINK, toolButton_CODE, toolButton_IMAGE
     };
     for (auto *button : formatButtons) {
+        button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         button->setAutoRaise(true);
         button->setMinimumHeight(24);
+        button->setMaximumHeight(28);
     }
     QFont boldFont = toolButton_BOLD->font();
     boldFont.setBold(true);
@@ -260,6 +288,11 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     QFont strikeFont = toolButton_STRIKE->font();
     strikeFont.setStrikeOut(true);
     toolButton_STRIKE->setFont(strikeFont);
+
+    for (int i = 0; i < horizontalLayout_BBCODE->count(); ++i)
+        horizontalLayout_BBCODE->setStretch(i, 0);
+    horizontalLayout_BBCODE->addStretch(1);
+    horizontalLayout_BBCODE->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     connect(toolButton_BOLD, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
     connect(toolButton_ITALIC, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
     connect(toolButton_UNDERLINE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });

@@ -187,8 +187,13 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor){
     editor.comboBox_ENC->addItem(tr("System default"));
     editor.comboBox_ENC->addItems(qtCtx()->wulforUtil()->encodings());
     editor.spinBox_MINSEARCH_INTERVAL->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MINIMUM_SEARCH_INTERVAL, true));
-    connect(editor.checkBox_CID, &QCheckBox::clicked, this, &FavoriteHubs::slotUpdateComboBox_CID);
-    connect(editor.lineEdit_ADDRESS, &QLineEdit::textChanged, this, &FavoriteHubs::slotUpdateComboBox_CID);
+
+    // Client ID override (faking) is no longer exposed in the favorite hub editor.
+    editor.checkBox_CID->setChecked(false);
+    editor.checkBox_CID->setEnabled(false);
+    editor.checkBox_CID->setVisible(false);
+    editor.comboBox_CID->setEnabled(false);
+    editor.comboBox_CID->setVisible(false);
 }
 
 static bool isValidIP(const QString &ip){
@@ -230,7 +235,7 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor, StrMap &map){
     editor.checkBox_IP->setChecked(isValidIP(map["IP"].toString()));
     editor.checkBox_USEINTERNET->setChecked(map["IIP"].toBool());
     editor.checkBox_DISABLECHAT->setChecked(map["DCHAT"].toBool());
-    editor.checkBox_CID->setChecked(map["OVERTAG"].toBool());
+    editor.checkBox_CID->setChecked(false);
     editor.comboBox_MODE->setCurrentIndex(map["MODE"].toInt());
     editor.spinBox_MINSEARCH_INTERVAL->setValue(map["SINT"].toInt());
 
@@ -315,11 +320,11 @@ void FavoriteHubs::getParams(const FavoriteHubEditor &editor, StrMap &map){
         map["IP"] = editor.lineEdit_IP->text();
     else
         map["IP"] = "";
-    map["OVERTAG"] = editor.checkBox_CID->isChecked();
-    if (editor.comboBox_CID->currentIndex() && editor.checkBox_CID->isChecked())
-        map["TAG"] = editor.comboBox_CID->currentText();
-    else
-        map["TAG"] = editor.comboBox_CID->itemText(0);
+    const bool adcProtocol = map["ADDR"].toString().startsWith("adc://", Qt::CaseInsensitive) ||
+                             map["ADDR"].toString().startsWith("adcs://", Qt::CaseInsensitive);
+    map["OVERTAG"] = false;
+    map["TAG"] = adcProtocol ? fakeADCTags.value(0, QString::fromStdString(fullADCVersionString))
+                             : fakeNMDCTags.value(0, QString::fromStdString(fullNMDCVersionString));
 
     if (editor.checkBox_NICK->isChecked() && !editor.lineEdit_NICK->text().isEmpty())
         map["NICK"] = editor.lineEdit_NICK->text();
