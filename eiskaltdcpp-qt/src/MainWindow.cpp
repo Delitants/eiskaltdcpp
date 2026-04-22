@@ -568,6 +568,17 @@ void MainWindow::hideEvent(QHideEvent *e){
     }
 }
 
+void MainWindow::changeEvent(QEvent *e){
+    QMainWindow::changeEvent(e);
+
+    if (e->type() == QEvent::PaletteChange ||
+        e->type() == QEvent::ApplicationPaletteChange ||
+        e->type() == QEvent::StyleChange) {
+        reloadSomeSettings();
+        redrawToolPanel();
+    }
+}
+
 bool MainWindow::eventFilter(QObject *obj, QEvent *e){
     Q_D(MainWindow);
 
@@ -2272,10 +2283,10 @@ void MainWindow::reloadSomeSettings(){
     Q_D(MainWindow);
 
     for (const auto &awgt : d->menuWidgetsHash.values()){
-        HubFrame *fr = qobject_cast<HubFrame *>(awgt->getWidget());
-
-        if (fr)
+        if (HubFrame *fr = qobject_cast<HubFrame *>(awgt->getWidget()))
             fr->reloadSomeSettings();
+        else if (PMWindow *pm = qobject_cast<PMWindow *>(awgt->getWidget()))
+            pm->reloadSomeSettings();
     }
 
     d->toolsSwitchSpeedLimit->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::THROTTLE_ENABLE, true));

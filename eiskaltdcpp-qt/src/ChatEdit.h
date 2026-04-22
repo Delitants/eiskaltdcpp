@@ -81,6 +81,7 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *);
     void keyReleaseEvent(QKeyEvent *);
+    void changeEvent(QEvent *) override;
     void focusInEvent(QFocusEvent *);
     void dropEvent(QDropEvent *);
     void dragEnterEvent(QDragEnterEvent *e);
@@ -92,6 +93,7 @@ private Q_SLOTS:
     void updateScrollBar();
 
 private:
+    void applyContrastStyle();
     QString textUnderCursor() const;
     void insertToPos(const QString &, int);
     void complete();

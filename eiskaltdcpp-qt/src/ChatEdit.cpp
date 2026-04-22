@@ -50,7 +50,16 @@ ChatEdit::ChatEdit(QWidget *parent) : QTextEdit(parent), cc(nullptr)
     setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    applyContrastStyle();
 
+    connect(this, &QTextEdit::textChanged, this, &ChatEdit::recalculateGeometry);
+}
+
+ChatEdit::~ChatEdit()
+{}
+
+void ChatEdit::applyContrastStyle()
+{
     const QPalette pal = palette();
     const bool darkAppearance = (pal.color(QPalette::Window).lightness() + pal.color(QPalette::Base).lightness()) / 2 < 128;
     QColor borderColor = darkAppearance ? pal.color(QPalette::Window).lighter(165)
@@ -82,12 +91,18 @@ ChatEdit::ChatEdit(QWidget *parent) : QTextEdit(parent), cc(nullptr)
         "    color: palette(mid);"
         "}"
     ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name()));
-
-    connect(this, &QTextEdit::textChanged, this, &ChatEdit::recalculateGeometry);
 }
 
-ChatEdit::~ChatEdit()
-{}
+void ChatEdit::changeEvent(QEvent *event)
+{
+    QTextEdit::changeEvent(event);
+
+    if (event->type() == QEvent::PaletteChange ||
+        event->type() == QEvent::ApplicationPaletteChange ||
+        event->type() == QEvent::StyleChange) {
+        applyContrastStyle();
+    }
+}
 
 QString ChatEdit::defaultChatPictureDir()
 {

@@ -310,24 +310,7 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     QAction *close_wnd = new QAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILECLOSE), tr("Close"), arena_menu);
     arena_menu->addAction(close_wnd);
 
-    if (!qtCtx()->settings()->getStr("hubframe/chat-background-color", "").isEmpty()){
-        QPalette p = textEdit_CHAT->palette();
-        QColor clr = p.color(QPalette::Active, QPalette::Base);
-
-        clr = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
-
-        if (clr.isValid()){
-            p.setColor(QPalette::Base, clr);
-            const QColor foreground(themedChatTextColor(p));
-            p.setColor(QPalette::Text, foreground);
-            p.setColor(QPalette::WindowText, foreground);
-
-            textEdit_CHAT->setPalette(p);
-        }
-    }
-
-    // Re-apply text style after potential chat background override.
-    updateStyles();
+    reloadSomeSettings();
 
     connect(close_wnd, &QAction::triggered, this, &PMWindow::slotClose);
     connect(pushButton_HUB, &QPushButton::clicked, this, &PMWindow::slotHub);
@@ -525,6 +508,17 @@ void PMWindow::showEvent(QShowEvent *e){
     }
 }
 
+void PMWindow::changeEvent(QEvent *event)
+{
+    QWidget::changeEvent(event);
+
+    if (event->type() == QEvent::PaletteChange ||
+        event->type() == QEvent::ApplicationPaletteChange ||
+        event->type() == QEvent::StyleChange) {
+        reloadSomeSettings();
+    }
+}
+
 void PMWindow::slotActivate(){
     plainTextEdit_INPUT->setFocus();
 }
@@ -583,6 +577,41 @@ void PMWindow::clearChat(){
     expandedInlineImageKeys_.clear();
     collapsedInlineImageBlocks_.clear();
     addStatus(tr("Chat cleared."));
+
+    updateStyles();
+}
+
+void PMWindow::reloadSomeSettings()
+{
+    QPalette chatPalette = QApplication::palette(textEdit_CHAT);
+    const bool useCustomChatBg = qtCtx()->settings()->getBool("hubframe/change-chat-background-color", false);
+    if (useCustomChatBg) {
+        const QColor customBg = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
+        if (customBg.isValid())
+            chatPalette.setColor(QPalette::Base, customBg);
+    }
+    const QColor foreground(themedChatTextColor(chatPalette));
+    chatPalette.setColor(QPalette::Text, foreground);
+    chatPalette.setColor(QPalette::WindowText, foreground);
+    textEdit_CHAT->setPalette(chatPalette);
+
+    const QPalette inputPalette = QApplication::palette(frame);
+    const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)
+                                   : inputPalette.color(QPalette::Window).darker(140);
+    if (qAbs(inputBorder.lightness() - inputPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = inputPalette.color(QPalette::Text);
+        inputBorder = darkInput ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor inputBackground = darkInput ? inputPalette.color(QPalette::Window).lighter(106)
+                                             : inputPalette.color(QPalette::Window);
+    frame->setStyleSheet(QStringLiteral(
+        "QFrame#frame {"
+        " border: 1px solid %1;"
+        " border-radius: 8px;"
+        " background: %2;"
+        "}"
+    ).arg(inputBorder.name(), inputBackground.name()));
 
     updateStyles();
 }
@@ -877,24 +906,8 @@ void PMWindow::slotSettingChanged(const QString &key, const QString &value){
 
     if (key == WS_CHAT_PM_FONT)
         updateStyles();
-    else if (key == "hubframe/chat-background-color"){
-        QPalette p = textEdit_CHAT->palette();
-        QColor clr = p.color(QPalette::Active, QPalette::Base);
-
-        clr = QColor::fromString(value);
-
-        if (clr.isValid()){
-            p.setColor(QPalette::Base, clr);
-            const QColor foreground(themedChatTextColor(p));
-            p.setColor(QPalette::Text, foreground);
-            p.setColor(QPalette::WindowText, foreground);
-
-            textEdit_CHAT->setPalette(p);
-        }
-
-        // Keep foreground color synchronized with chat base color.
-        updateStyles();
-    }
+    else if (key == "hubframe/chat-background-color" || key == "hubframe/change-chat-background-color")
+        reloadSomeSettings();
     else if (key == WS_TRANSLATION_FILE)
         retranslateUi(this);
 }

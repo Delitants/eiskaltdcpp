@@ -1571,6 +1571,17 @@ void HubFrame::hideEvent(QHideEvent *e){
         qtCtx()->hubManager()->setActiveHub(nullptr);
 }
 
+void HubFrame::changeEvent(QEvent *event)
+{
+    QWidget::changeEvent(event);
+
+    if (event->type() == QEvent::PaletteChange ||
+        event->type() == QEvent::ApplicationPaletteChange ||
+        event->type() == QEvent::StyleChange) {
+        reloadSomeSettings();
+    }
+}
+
 void HubFrame::setupChatInputSplitter()
 {
     if (!layoutWidget || !verticalLayout_3 || !textEdit_CHAT || !searchFrame || !frame_SMILES || !frame_INPUT)
@@ -1884,7 +1895,8 @@ void HubFrame::save(){
     qtCtx()->settings()->setInt(WI_CHAT_USERLIST_WIDTH, treeView_USERS->width());
     qtCtx()->settings()->setInt(WI_CHAT_SORT_COLUMN, d->model->getSortColumn());
     qtCtx()->settings()->setInt(WI_CHAT_SORT_ORDER, qtCtx()->wulforUtil()->sortOrderToInt(d->model->getSortOrder()));
-    qtCtx()->settings()->setStr("hubframe/chat-background-color", textEdit_CHAT->palette().color(QPalette::Active, QPalette::Base).name());
+    if (qtCtx()->settings()->getBool("hubframe/change-chat-background-color", false))
+        qtCtx()->settings()->setStr("hubframe/chat-background-color", textEdit_CHAT->palette().color(QPalette::Active, QPalette::Base).name());
 }
 
 void HubFrame::load(){
@@ -1913,20 +1925,55 @@ void HubFrame::reloadSomeSettings(){
 
     label_LAST_STATUS->setVisible(qtCtx()->settings()->getBool(WB_LAST_STATUS));
 
-    if (!qtCtx()->settings()->getStr("hubframe/chat-background-color", "").isEmpty()){
-        QPalette p = textEdit_CHAT->palette();
-        QColor clr = p.color(QPalette::Active, QPalette::Base);
+    QPalette chatPalette = QApplication::palette(textEdit_CHAT);
+    const bool useCustomChatBg = qtCtx()->settings()->getBool("hubframe/change-chat-background-color", false);
+    if (useCustomChatBg) {
+        const QColor customBg = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
+        if (customBg.isValid())
+            chatPalette.setColor(QPalette::Base, customBg);
+    }
+    const QColor foreground(themedChatTextColor(chatPalette));
+    chatPalette.setColor(QPalette::Text, foreground);
+    chatPalette.setColor(QPalette::WindowText, foreground);
+    textEdit_CHAT->setPalette(chatPalette);
 
-        clr = QColor::fromString(qtCtx()->settings()->getStr("hubframe/chat-background-color"));
+    const QPalette inputPalette = QApplication::palette(frame_INPUT);
+    const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)
+                                   : inputPalette.color(QPalette::Window).darker(140);
+    if (qAbs(inputBorder.lightness() - inputPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = inputPalette.color(QPalette::Text);
+        inputBorder = darkInput ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor inputBackground = darkInput ? inputPalette.color(QPalette::Window).lighter(106)
+                                             : inputPalette.color(QPalette::Window);
+    frame_INPUT->setStyleSheet(QStringLiteral(
+        "QFrame#frame_INPUT {"
+        " border: 1px solid %1;"
+        " border-radius: 8px;"
+        " background: %2;"
+        "}"
+    ).arg(inputBorder.name(), inputBackground.name()));
 
-        if (clr.isValid()){
-            p.setColor(QPalette::Base, clr);
-            const QColor foreground(themedChatTextColor(p));
-            p.setColor(QPalette::Text, foreground);
-            p.setColor(QPalette::WindowText, foreground);
-
-            textEdit_CHAT->setPalette(p);
+    if (QSplitter *splitter = findChild<QSplitter*>(QStringLiteral("splitter_CHAT_INPUT"))) {
+        const QPalette splitterPalette = splitter->palette();
+        const bool darkSplitter = (splitterPalette.color(QPalette::Window).lightness() + splitterPalette.color(QPalette::Base).lightness()) / 2 < 128;
+        QColor splitterHover = darkSplitter ? splitterPalette.color(QPalette::Window).lighter(168)
+                                            : splitterPalette.color(QPalette::Window).darker(138);
+        if (qAbs(splitterHover.lightness() - splitterPalette.color(QPalette::Window).lightness()) < 24) {
+            const QColor textColor = splitterPalette.color(QPalette::Text);
+            splitterHover = darkSplitter ? textColor.lighter(145) : textColor.darker(150);
         }
+
+        splitter->setStyleSheet(QStringLiteral(
+            "QSplitter::handle:vertical {"
+            "  background: transparent;"
+            "  height: 1px;"
+            "}"
+            "QSplitter::handle:vertical:hover {"
+            "  background: %1;"
+            "}"
+        ).arg(splitterHover.name()));
     }
 
     // Re-evaluate chat foreground color after palette/background updates.
@@ -4256,26 +4303,12 @@ void HubFrame::slotHubMenu(QAction *res) {
 }
 
 void HubFrame::slotSettingsChanged(const QString &key, const QString &value){
+    Q_UNUSED(value);
+
     if (key == WS_CHAT_FONT || key == WS_CHAT_ULIST_FONT)
         updateStyles();
-    else if (key == "hubframe/chat-background-color"){
-        QPalette p = textEdit_CHAT->palette();
-        QColor clr = p.color(QPalette::Active, QPalette::Base);
-
-        clr = QColor::fromString(value);
-
-        if (clr.isValid()){
-            p.setColor(QPalette::Base, clr);
-            const QColor foreground(themedChatTextColor(p));
-            p.setColor(QPalette::Text, foreground);
-            p.setColor(QPalette::WindowText, foreground);
-
-            textEdit_CHAT->setPalette(p);
-        }
-
-        // Keep text color synchronized with updated chat base color.
-        updateStyles();
-    }
+    else if (key == "hubframe/chat-background-color" || key == "hubframe/change-chat-background-color")
+        reloadSomeSettings();
     else if (key == WS_TRANSLATION_FILE){
         retranslateUi(this);
     }

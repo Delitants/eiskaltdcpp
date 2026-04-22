@@ -33,6 +33,10 @@
   - denser centered layout with complete fallback emoji set
   - repeated click on emoji button toggles picker visibility
 * Improved theme contrast for light/dark modes so input borders remain visible.
+* Fixed live macOS light/dark switching while app is running:
+  - chat and PM palettes now refresh immediately on runtime palette/style changes
+  - custom chat background applies only when explicitly enabled in settings
+  - list/input backgrounds now follow palette roles instead of startup-only colors
 * Added explicit "Add" and "Remove" buttons to Sharing settings.
 * Added IPv6 column support in user list views.
 * Updated tab close button alignment in hub tab UI.

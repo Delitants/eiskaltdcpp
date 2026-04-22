@@ -217,6 +217,7 @@ public Q_SLOTS:
 
 protected:
     virtual bool eventFilter(QObject *, QEvent *);
+    virtual void changeEvent(QEvent *) override;
     virtual void closeEvent(QCloseEvent*);
     virtual void showEvent(QShowEvent *);
     virtual void hideEvent(QHideEvent *);

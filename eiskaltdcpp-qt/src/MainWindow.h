@@ -164,6 +164,7 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
 
     protected:
         void closeEvent(QCloseEvent*) override;
+        void changeEvent(QEvent *) override;
         void showEvent(QShowEvent *) override;
         void hideEvent(QHideEvent *) override;
         bool eventFilter(QObject *, QEvent *) override;

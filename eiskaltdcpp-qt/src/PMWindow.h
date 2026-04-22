@@ -66,6 +66,7 @@ public Q_SLOTS:
     void clearChat();
     void nextMsg();
     void prevMsg();
+    void reloadSomeSettings();
 
 private Q_SLOTS:
     void slotHub();
@@ -89,6 +90,7 @@ Q_SIGNALS:
 
 protected:
     virtual bool eventFilter(QObject*, QEvent*);
+    virtual void changeEvent(QEvent *) override;
     virtual void closeEvent(QCloseEvent *);
     virtual void showEvent(QShowEvent *);
 

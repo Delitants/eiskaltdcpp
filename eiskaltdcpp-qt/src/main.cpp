@@ -174,12 +174,9 @@ static QColor macFocusColor(const QPalette &pal)
 static void applyMacInputContrastStyle(QApplication &app)
 {
     const QPalette pal = app.palette();
-    const bool dark = isDarkMacPalette(pal);
     const QColor inputBorder = macBorderColor(pal, false);
-    const QColor panelBorder = macBorderColor(pal, true);
+    const QColor panelBorder = pal.color(QPalette::Mid);
     const QColor focusBorder = macFocusColor(pal);
-    const QColor panelBg = dark ? pal.color(QPalette::Base).lighter(108) : pal.color(QPalette::Base);
-    const QColor altBg = dark ? pal.color(QPalette::Window).lighter(112) : pal.color(QPalette::AlternateBase);
 
     app.setStyleSheet(app.styleSheet() + QStringLiteral(
         "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
@@ -197,19 +194,19 @@ static void applyMacInputContrastStyle(QApplication &app)
         "}"
         "QAbstractItemView, QListView, QTreeView, QTableView {"
         " border: 1px solid %3;"
-        " background: %4;"
-        " alternate-background-color: %5;"
+        " background: palette(base);"
+        " alternate-background-color: palette(alternate-base);"
         "}"
         "QFrame#frame_INPUT {"
         " border: 1px solid %3;"
         " border-radius: 8px;"
-        " background: %4;"
+        " background: palette(base);"
         "}"
         "QFrame#settingsPagePanel {"
         " border: 1px solid %3;"
-        " background: %4;"
+        " background: palette(base);"
         "}"
-    ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name(), panelBg.name(), altBg.name()));
+    ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name()));
 }
 #endif
 
