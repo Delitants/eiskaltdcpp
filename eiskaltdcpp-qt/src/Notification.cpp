@@ -183,7 +183,6 @@ void Notification::showMessage(int t, const QString &title, const QString &msg){
                 break;
 
 #if defined(Q_OS_MAC)
-            qApp->setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMESSAGE_TRAY_ICON));
             qApp->alert(qtCtx()->mainWindow(), 0);
 #else // defined(Q_OS_MAC)
             if (tray && t == PM && (!qtCtx()->mainWindow()->isVisible() || qtCtx()->settings()->getBool(WB_NOTIFY_CH_ICON_ALWAYS))){

@@ -2092,12 +2092,6 @@ void MainWindow::redrawToolPanel(){
 #if !defined(Q_OS_MAC)
     if (!has_unread)
         qtCtx()->notification()->resetTrayIcon();
-#else // !defined(Q_OS_MAC)
-    // Change program icon in dock when there are new unread personal messages.
-    if (has_unread)
-        qApp->setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMESSAGE_TRAY_ICON));
-    else
-        qApp->setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
 #endif // !defined(Q_OS_MAC)
 
     emit redrawWidgetPanels();
