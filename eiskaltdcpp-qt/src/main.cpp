@@ -239,8 +239,14 @@ int main(int argc, char *argv[])
 
     parseCmdLine(app.arguments());
 
-    // TEMP: disable single-instance early exit while debugging startup.
-    // The old block was causing clean exit(0) before the UI came up.
+    if (app.isRunning()){
+        QStringList args = app.arguments();
+        args.removeFirst(); // remove path to executable
+#if !defined(Q_OS_HAIKU)
+        app.sendMessage(args.join("\n"));
+#endif
+        return 0;
+    }
 
 #if !defined (Q_OS_WIN) && !defined (Q_OS_HAIKU) && defined (__GLIBC__)
     installHandlers();
