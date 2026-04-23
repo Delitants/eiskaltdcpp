@@ -60,6 +60,11 @@ ChatEdit::~ChatEdit()
 
 void ChatEdit::applyContrastStyle()
 {
+    if (contrastStyleInProgress)
+        return;
+
+    contrastStyleInProgress = true;
+
     const QPalette pal = palette();
     const bool darkAppearance = (pal.color(QPalette::Window).lightness() + pal.color(QPalette::Base).lightness()) / 2 < 128;
     QColor borderColor = darkAppearance ? pal.color(QPalette::Window).lighter(165)
@@ -75,7 +80,7 @@ void ChatEdit::applyContrastStyle()
         focusBorder = focusBorder.darker(118);
     const QColor disabledBorder = darkAppearance ? borderColor.darker(118) : borderColor.lighter(112);
 
-    setStyleSheet(QStringLiteral(
+    const QString contrastStyle = QStringLiteral(
         "QTextEdit {"
         "    background: palette(base);"
         "    color: palette(text);"
@@ -90,7 +95,14 @@ void ChatEdit::applyContrastStyle()
         "    border: 1px solid %3;"
         "    color: palette(mid);"
         "}"
-    ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name()));
+    ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name());
+
+    if (contrastStyle != lastContrastStyle) {
+        lastContrastStyle = contrastStyle;
+        setStyleSheet(contrastStyle);
+    }
+
+    contrastStyleInProgress = false;
 }
 
 void ChatEdit::changeEvent(QEvent *event)

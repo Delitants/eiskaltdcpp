@@ -107,4 +107,6 @@ private:
 
     UserListModel *cc_model;
     QCompleter *cc;
+    bool contrastStyleInProgress = false;
+    QString lastContrastStyle;
 };
