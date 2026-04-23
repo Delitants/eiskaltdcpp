@@ -521,6 +521,50 @@ if(APPLE)
         )
     endif()
 
+    set(EISKALT_QT_PLUGINS_ROOT_CANDIDATES
+        "${_qt_install_prefix}/../share/qt/plugins"
+        "${_qt_install_prefix}/../plugins"
+        "${EISKALT_MACOS_DEPS_PREFIX}/share/qt/plugins"
+        "${EISKALT_MACOS_DEPS_PREFIX}/plugins"
+        "/opt/homebrew/opt/qtbase/share/qt/plugins"
+        "/opt/homebrew/opt/qtbase/plugins"
+    )
+
+    set(EISKALT_QCOCOA_PLUGIN "")
+    set(EISKALT_QMACSTYLE_PLUGIN "")
+    foreach(_plugins_root IN LISTS EISKALT_QT_PLUGINS_ROOT_CANDIDATES)
+        if(NOT EISKALT_QCOCOA_PLUGIN AND EXISTS "${_plugins_root}/platforms/libqcocoa.dylib")
+            set(EISKALT_QCOCOA_PLUGIN "${_plugins_root}/platforms/libqcocoa.dylib")
+        endif()
+        if(NOT EISKALT_QMACSTYLE_PLUGIN AND EXISTS "${_plugins_root}/styles/libqmacstyle.dylib")
+            set(EISKALT_QMACSTYLE_PLUGIN "${_plugins_root}/styles/libqmacstyle.dylib")
+        endif()
+    endforeach()
+
+    if(EISKALT_QCOCOA_PLUGIN)
+        add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Copying macOS Qt platform plugin: ${EISKALT_QCOCOA_PLUGIN}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${EISKALT_QCOCOA_PLUGIN}"
+                    "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/platforms/libqcocoa.dylib"
+            VERBATIM
+        )
+    else()
+        message(WARNING "Could not locate libqcocoa.dylib; resulting macOS app bundle may fail to launch outside the build environment.")
+    endif()
+
+    if(EISKALT_QMACSTYLE_PLUGIN)
+        add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Copying macOS Qt style plugin: ${EISKALT_QMACSTYLE_PLUGIN}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/styles"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${EISKALT_QMACSTYLE_PLUGIN}"
+                    "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/styles/libqmacstyle.dylib"
+            VERBATIM
+        )
+    endif()
+
 
 endif()
 
