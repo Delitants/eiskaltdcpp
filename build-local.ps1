@@ -35,7 +35,7 @@
           [auto-cloned to C:\vcpkg if not found]
           The following vcpkg packages are installed automatically:
             openssl, bzip2, zlib, miniupnpc, pcre2, lua,
-            libiconv, libidn2, gettext[tools]
+            libiconv, libidn2, gettext[tools], boost-smart-ptr
       - Qt 6 (>= 6.2) for MSVC 2022 64-bit, with the Qt Multimedia module.
           Install via one of:
             1. Qt Online Installer  https://www.qt.io/download-qt-installer
@@ -54,7 +54,7 @@
           The following UCRT64 packages are installed automatically:
             gcc, cmake, ninja, pkgconf, gtk3, openssl, bzip2, zlib,
             miniupnpc, pcre2, lua, libidn2, gettext-tools,
-            gettext-runtime, libiconv, libnotify
+            gettext-runtime, libiconv, libnotify, boost
 
     For NSIS installer packaging (optional):
       - NSIS (Nullsoft Scriptable Install System)
@@ -156,6 +156,27 @@ function Write-Err   { param([string]$msg) Write-Host "  ERROR: $msg" -Foregroun
 function Bail        { param([string]$msg) Write-Err $msg; exit 1 }
 
 function Test-Command { param([string]$cmd) $null -ne (Get-Command $cmd -ErrorAction SilentlyContinue) }
+
+function Add-PathIfExists {
+    param([string]$Path)
+    if ($Path -and (Test-Path $Path -ErrorAction SilentlyContinue)) {
+        $env:Path = "$Path;$env:Path"
+    }
+}
+
+function Test-IsUncPath {
+    param([string]$Path)
+    return ($Path -match '^[\\/]{2}[^\\/]+[\\/]+[^\\/]+')
+}
+
+function Get-SafePathName {
+    param([string]$Path)
+    $trimmed = $Path.TrimEnd('\', '/')
+    $name = $trimmed -replace '^[\\/]+', ''
+    $name = $name -replace '[\\/:*?"<>|]+', '_'
+    if (-not $name) { $name = 'repo' }
+    return $name
+}
 
 # Run a native command without PS5.1 treating stderr as a terminating error.
 # Usage: Invoke-Native cmd arg1 arg2 ...
@@ -301,6 +322,17 @@ if ($InstallPrefix) {
 
 $BuildDirQt  = Join-Path $RepoRoot 'build-qt'
 $BuildDirGtk = Join-Path $RepoRoot 'build-gtk'
+$MsvcNativeWorkDir = $RepoRoot
+
+if ($NeedMSVC -and (Test-IsUncPath $RepoRoot)) {
+    $safeRepoName = Get-SafePathName $RepoRoot
+    $localBuildRoot = Join-Path $env:LOCALAPPDATA "EiskaltDC++\native-build\$safeRepoName"
+    $BuildDirQt = Join-Path $localBuildRoot 'build-qt'
+    $MsvcNativeWorkDir = $localBuildRoot
+    if (-not (Test-Path $MsvcNativeWorkDir)) {
+        New-Item -ItemType Directory -Path $MsvcNativeWorkDir -Force | Out-Null
+    }
+}
 
 # ─── Banner ──────────────────────────────────────────────────────────
 
@@ -313,7 +345,11 @@ Write-Host "  Build type : $BuildType"
 Write-Host "  Jobs       : $Jobs"
 Write-Host "  Repo root  : $RepoRoot"
 if ($NeedMSVC)  { Write-Host "  Qt prefix  : $QtInstallPrefix" }
+if ($NeedMSVC)  { Write-Host "  Qt build   : $BuildDirQt" }
 if ($NeedMSYS2) { Write-Host "  GTK prefix : $GtkInstallPrefix" }
+if ($NeedMSVC -and (Test-IsUncPath $RepoRoot)) {
+    Write-Warn "UNC repo detected; using local MSVC build dir so CMake/Ninja do not run cmd.exe inside a UNC path."
+}
 Write-Host ""
 
 # Declare variables that are set inside -SkipDeps block but used later
@@ -343,6 +379,8 @@ if (-not $SkipDeps) {
         Write-Warn "ninja not found – attempting install via winget"
         winget install --id Ninja-build.Ninja --silent --accept-source-agreements --accept-package-agreements
         $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
+        $ninjaPkg = Join-Path $env:LOCALAPPDATA 'Microsoft\WinGet\Packages\Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe'
+        Add-PathIfExists $ninjaPkg
         if (-not (Test-Command ninja)) { Bail "ninja still not found after install. Please install Ninja and add it to PATH." }
     }
     Write-Ok "ninja $(ninja --version)"
@@ -352,6 +390,8 @@ if (-not $SkipDeps) {
         Write-Warn "git not found – attempting install via winget"
         winget install --id Git.Git --silent --accept-source-agreements --accept-package-agreements
         $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
+        Add-PathIfExists 'C:\Program Files\Git\cmd'
+        Add-PathIfExists 'C:\Program Files\Git\bin'
     }
     if (Test-Command git) { Write-Ok "git $(git --version)" } else { Write-Warn "git not found – version detection may use fallback" }
 
@@ -400,12 +440,16 @@ if (-not $SkipDeps) {
         # vcpkg
         Write-Step "Checking vcpkg"
         $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT.Trim() } else { $null }
+        if ($vcpkgRoot -like '*\Microsoft Visual Studio\*') { $vcpkgRoot = $null }
         if (-not $vcpkgRoot -and $env:VCPKG_ROOT) { $vcpkgRoot = $env:VCPKG_ROOT.Trim() }
+        if ($vcpkgRoot -like '*\Microsoft Visual Studio\*') { $vcpkgRoot = $null }
         if (-not $vcpkgRoot -and (Test-Path "C:\vcpkg")) { $vcpkgRoot = "C:\vcpkg" }
         if (-not $vcpkgRoot) {
             # Try to find vcpkg in PATH
             $vcpkgCmd = Get-Command vcpkg -ErrorAction SilentlyContinue
-            if ($vcpkgCmd) { $vcpkgRoot = Split-Path $vcpkgCmd.Source }
+            if ($vcpkgCmd -and $vcpkgCmd.Source -notlike '*\Microsoft Visual Studio\*') {
+                $vcpkgRoot = Split-Path $vcpkgCmd.Source
+            }
         }
 
         $vcpkgExe = if ($vcpkgRoot) { Join-Path $vcpkgRoot 'vcpkg.exe' } else { $null }
@@ -418,6 +462,7 @@ if (-not $SkipDeps) {
             $vcpkgRoot = "C:\vcpkg"
         }
         $env:VCPKG_INSTALLATION_ROOT = $vcpkgRoot
+        $env:VCPKG_ROOT = $vcpkgRoot
         $env:Path = "$vcpkgRoot;$env:Path"
         Write-Ok "vcpkg at $vcpkgRoot"
 
@@ -432,6 +477,7 @@ if (-not $SkipDeps) {
             'lua',
             'libiconv',
             'libidn2',
+            'boost-smart-ptr',
             'gettext[tools]'
         )
         & vcpkg install --triplet x64-windows @vcpkgPackages
@@ -553,6 +599,7 @@ if (-not $SkipDeps) {
             'mingw-w64-ucrt-x86_64-miniupnpc',
             'mingw-w64-ucrt-x86_64-pcre2',
             'mingw-w64-ucrt-x86_64-lua',
+            'mingw-w64-ucrt-x86_64-boost',
             'mingw-w64-ucrt-x86_64-libidn2',
             'mingw-w64-ucrt-x86_64-gettext-tools',
             'mingw-w64-ucrt-x86_64-gettext-runtime',
@@ -611,14 +658,19 @@ if ($NeedMSVC) {
 
     # ── Detect vcpkg root ────────────────────────────────────────────
     $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) { $env:VCPKG_INSTALLATION_ROOT.Trim() } else { $null }
+    if ($vcpkgRoot -like '*\Microsoft Visual Studio\*') { $vcpkgRoot = $null }
     if (-not $vcpkgRoot -and $env:VCPKG_ROOT) { $vcpkgRoot = $env:VCPKG_ROOT.Trim() }
+    if ($vcpkgRoot -like '*\Microsoft Visual Studio\*') { $vcpkgRoot = $null }
     if (-not $vcpkgRoot -and (Test-Path "C:\vcpkg")) { $vcpkgRoot = "C:\vcpkg" }
     if (-not $vcpkgRoot) {
         $vcpkgCmd = Get-Command vcpkg -ErrorAction SilentlyContinue
-        if ($vcpkgCmd) { $vcpkgRoot = Split-Path $vcpkgCmd.Source }
+        if ($vcpkgCmd -and $vcpkgCmd.Source -notlike '*\Microsoft Visual Studio\*') {
+            $vcpkgRoot = Split-Path $vcpkgCmd.Source
+        }
     }
     if ($vcpkgRoot) {
         $env:VCPKG_INSTALLATION_ROOT = $vcpkgRoot
+        $env:VCPKG_ROOT = $vcpkgRoot
         $env:Path = "$vcpkgRoot;$env:Path"
         # Add vcpkg tool directories to PATH
         $vcpkgBase = "$vcpkgRoot\installed\x64-windows"
@@ -679,10 +731,18 @@ if ($NeedMSVC) {
     if ((Test-Path $iconsSrc) -and -not (Test-Path $iconsDst)) {
         $parent = Split-Path $iconsDst -Parent
         if (-not (Test-Path $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
-        cmd /c mklink /J "`"$iconsDst`"" "`"$iconsSrc`"" >$null 2>&1
+        if (Test-IsUncPath $iconsSrc) {
+            Copy-Item -Path $iconsSrc -Destination $iconsDst -Recurse -Force
+        } else {
+            cmd /c mklink /J "`"$iconsDst`"" "`"$iconsSrc`"" >$null 2>&1
+            if (-not (Test-Path $iconsDst)) {
+                Copy-Item -Path $iconsSrc -Destination $iconsDst -Recurse -Force
+            }
+        }
     }
 
     $cmakeArgs = @(
+        '-S', $RepoRoot,
         '-B', $BuildDirQt,
         '-G', 'Ninja',
         "-DCMAKE_BUILD_TYPE=$BuildType",
@@ -730,14 +790,26 @@ if ($NeedMSVC) {
     )
 
     Write-Host "  cmake $($cmakeArgs -join ' ')" -ForegroundColor DarkGray
-    & cmake @cmakeArgs
-    if ($LASTEXITCODE -ne 0) { Bail "CMake configure failed (MSVC build)" }
+    Push-Location $MsvcNativeWorkDir
+    try {
+        & cmake @cmakeArgs
+        $cmakeConfigureExitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if ($cmakeConfigureExitCode -ne 0) { Bail "CMake configure failed (MSVC build)" }
     Write-Ok "Configuration succeeded"
 
     # Build
     Write-Step "Building MSVC targets (Qt6 + Daemon + CLI)"
-    & cmake --build $BuildDirQt --parallel $Jobs
-    if ($LASTEXITCODE -ne 0) { Bail "Build failed (MSVC)" }
+    Push-Location $MsvcNativeWorkDir
+    try {
+        & cmake --build $BuildDirQt --parallel $Jobs
+        $cmakeBuildExitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if ($cmakeBuildExitCode -ne 0) { Bail "Build failed (MSVC)" }
     Write-Ok "Build succeeded"
 
     # Deploy DLLs to build directory so devs can run/debug from there
@@ -752,19 +824,35 @@ if ($NeedMSVC) {
     foreach ($exeDir in $buildDirExeDirs) {
         $dirLabel = "build-dir/$([IO.Path]::GetFileName($exeDir))"
         $isQtDir  = $exeDir -like '*eiskaltdcpp-qt*'
-        Deploy-WindowsDlls -TargetDir $exeDir -Label $dirLabel `
-            -VcpkgRoot $vcpkgRoot -BuildType $BuildType -DeployQt:($wantQt -and $isQtDir)
+        Push-Location $MsvcNativeWorkDir
+        try {
+            Deploy-WindowsDlls -TargetDir $exeDir -Label $dirLabel `
+                -VcpkgRoot $vcpkgRoot -BuildType $BuildType -DeployQt:($wantQt -and $isQtDir)
+        } finally {
+            Pop-Location
+        }
     }
 
     # Install
     Write-Step "Installing to $QtInstallPrefix"
-    & cmake --install $BuildDirQt --config $BuildType
-    if ($LASTEXITCODE -ne 0) { Bail "Install failed (MSVC)" }
+    Push-Location $MsvcNativeWorkDir
+    try {
+        & cmake --install $BuildDirQt --config $BuildType
+        $cmakeInstallExitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if ($cmakeInstallExitCode -ne 0) { Bail "Install failed (MSVC)" }
     Write-Ok "Install succeeded"
 
     # Deploy DLLs to install directory
-    Deploy-WindowsDlls -TargetDir $QtInstallPrefix -Label 'install-dir' `
-        -VcpkgRoot $vcpkgRoot -BuildType $BuildType -DeployQt:$wantQt
+    Push-Location $MsvcNativeWorkDir
+    try {
+        Deploy-WindowsDlls -TargetDir $QtInstallPrefix -Label 'install-dir' `
+            -VcpkgRoot $vcpkgRoot -BuildType $BuildType -DeployQt:$wantQt
+    } finally {
+        Pop-Location
+    }
 }
 
 # =====================================================================

@@ -10,14 +10,13 @@
 
 #include "qtsinglecoreapplication.h"
 
-#include <QTimer>
 #include <QByteArray>
 #include <QDebug>
 
 static const unsigned int SHARED_MEM_SIZE = 2048;
 
 QtSingleCoreApplication::QtSingleCoreApplication(int &argc, char **argv, const QString &uniqueKey)
-    : QApplication(argc, argv), sharedMemory()
+    : QApplication(argc, argv), _isRunning(false), sharedMemory(), messageTimer(nullptr)
 {
     sharedMemory.setKey(uniqueKey);
 
@@ -40,14 +39,14 @@ QtSingleCoreApplication::QtSingleCoreApplication(int &argc, char **argv, const Q
         memcpy(to, from, qMin(sharedMemory.size(), byteArray.size()));
         sharedMemory.unlock();
         // start checking for messages of other instances.
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(checkForMessage()));
-        timer->start(2000);
+        messageTimer = new QTimer(this);
+        connect(messageTimer, SIGNAL(timeout()), this, SLOT(checkForMessage()));
+        messageTimer->start(2000);
     }
 }
 
 QtSingleCoreApplication::~QtSingleCoreApplication(){
-    sharedMemory.detach();
+    releaseSingleInstance();
 }
 
 bool QtSingleCoreApplication::isRunning()
@@ -58,7 +57,7 @@ bool QtSingleCoreApplication::isRunning()
 
 bool QtSingleCoreApplication::sendMessage(QString message)
 {
-    if (!_isRunning)
+    if (!_isRunning || !sharedMemory.isAttached())
         return false;
 
     if (message.length() > sharedMemory.size() - 2)//two reserved bytes
@@ -68,7 +67,8 @@ bool QtSingleCoreApplication::sendMessage(QString message)
     byteArray.append(message.toUtf8());
     byteArray.append('\0');
 
-    sharedMemory.lock();
+    if (!sharedMemory.lock())
+        return false;
 
     char *to = (char*)sharedMemory.data();
     const char *from = byteArray.data();
@@ -80,10 +80,25 @@ bool QtSingleCoreApplication::sendMessage(QString message)
     return true;
 }
 
+void QtSingleCoreApplication::releaseSingleInstance()
+{
+    if (messageTimer)
+        messageTimer->stop();
+
+    if (sharedMemory.isAttached())
+        sharedMemory.detach();
+
+    _isRunning = false;
+}
+
 
 void QtSingleCoreApplication::checkForMessage()
 {
-    sharedMemory.lock();
+    if (!sharedMemory.isAttached())
+        return;
+
+    if (!sharedMemory.lock())
+        return;
 
     QByteArray byteArray = QByteArray((char*)sharedMemory.constData(), sharedMemory.size());
 

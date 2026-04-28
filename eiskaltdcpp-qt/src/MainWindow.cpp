@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include <QPainter>
+#include <QCoreApplication>
 #include <QPushButton>
 #include <QSize>
 #include <QModelIndex>
@@ -46,6 +47,7 @@
 #include <objc/objc.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
+#include "qtsingleapp/qtsinglecoreapplication.h"
 #endif
 #include <QAction>
 #include <QActionGroup>
@@ -368,15 +370,20 @@ void MainWindow::closeEvent(QCloseEvent *e){
     Q_D(MainWindow);
 
 #if defined(Q_OS_MAC)
-    if (!d->isUnload){
+    if (!d->isUnload) {
+        // On macOS the red close button was hiding the only main window while
+        // leaving the process alive. Treat an explicit window close as app exit;
+        // the separate Hide action still calls hide() directly.
+        setUnload(true);
+    }
 #else // defined(Q_OS_MAC)
     if (!d->isUnload && qtCtx()->settings()->getBool(WB_TRAY_ENABLED)){
-#endif // defined(Q_OS_MAC)
         hide();
         e->ignore();
 
         return;
     }
+#endif // defined(Q_OS_MAC)
 
     if (d->isUnload && qtCtx()->settings()->getBool(WB_EXIT_CONFIRM) && !d->exitBegin){
         QMessageBox::StandardButton ret;
@@ -423,6 +430,11 @@ void MainWindow::closeEvent(QCloseEvent *e){
         qtCtx()->globalTimer()->stop();
     }
 
+#if defined(Q_OS_MAC)
+    if (auto *singleApp = qobject_cast<QtSingleCoreApplication *>(qApp))
+        singleApp->releaseSingleInstance();
+#endif
+
     saveSettings();
 
     if (qtCtx()->settings()->getBool("app/clear-search-history-on-exit", false))
@@ -460,10 +472,13 @@ void MainWindow::closeEvent(QCloseEvent *e){
 
     e->accept();
 
-    // In Qt6 the quit-on-last-window-closed mechanism may not fire when
-    // blockSignals(true) has been called on this widget. Explicitly ask
-    // the application to quit so that QCoreApplication::exec() returns.
+    // In Qt6/Cocoa the posted quit event can leave the process alive with no
+    // windows. Exit the event loop directly after shutdown cleanup.
+#if defined(Q_OS_MAC)
+    QCoreApplication::exit(0);
+#else
     qApp->quit();
+#endif
 }
 
 void MainWindow::beginExit(){
@@ -634,7 +649,9 @@ void MainWindow::init(){
 
     d->transfer_dock->hide();
 
+#if !defined(Q_OS_MAC)
     this->setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
+#endif
 
     setWindowTitle(QString::fromStdString(eiskaltdcppAppNameString));
 
@@ -654,6 +671,16 @@ void MainWindow::init(){
     initSideBar();
 
     loadSettings();
+
+#if defined(Q_OS_MAC)
+    // Qt 6.11/Cocoa can crash while creating the custom drag cursor for
+    // movable QToolBars. Keep toolbars fixed on macOS; users can still
+    // customize shown actions from the toolbar context menu.
+    for (QToolBar *tb : findChildren<QToolBar*>()) {
+        tb->setMovable(false);
+        tb->setFloatable(false);
+    }
+#endif
 
 #if !defined(Q_OS_MAC)
     connect(qApp, &QApplication::aboutToQuit, this, &MainWindow::slotExit);

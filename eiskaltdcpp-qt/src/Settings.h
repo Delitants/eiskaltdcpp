@@ -43,6 +43,10 @@ public:
     virtual ~Settings();
 
     void navigate(enum Page, int tab = -1);
+
+protected:
+    void changeEvent(QEvent *event) override;
+
 signals:
     void timeToDie();
 
@@ -58,4 +62,5 @@ private:
 
     WidgetMap widgets;
     bool is_dirty;
+    bool appearance_style_in_progress;
 };

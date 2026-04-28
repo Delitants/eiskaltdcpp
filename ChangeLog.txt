@@ -4,6 +4,20 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.3-release 2026-04-27 ---
+*** common changes ***
+* Bumped release version to 2.5.3-release for macOS ARM64 packaging.
+*** eiskaltdcpp-qt ***
+* Fixed macOS Dock icon switching between the bundle icon while closed and a
+  different Qt runtime icon while open. macOS now keeps the bundle icon as the
+  single application icon source.
+* Preserved the previous macOS reopen-after-close fix by releasing the
+  single-instance marker before emergency process termination.
+* Kept the 2.5.2-release macOS 14+ ARM64/Qt 6 UI refresh work, including
+  light/dark repaint fixes, chat input polish, emoji picker behavior, image
+  spoilers, IPv6 user-list support, sharing buttons, tab close alignment, and
+  self-contained bundle packaging.
+
 --- 2.5.2-release 2026-04-20 ---
 *** common changes ***
 * Prepared release and packaging flow for macOS 14+ on ARM64 (Apple Silicon).
@@ -37,6 +51,21 @@
   - chat and PM palettes now refresh immediately on runtime palette/style changes
   - custom chat background applies only when explicitly enabled in settings
   - list/input backgrounds now follow palette roles instead of startup-only colors
+  - open Preferences pages, item views, headers, and existing chat history repaint
+    using the new system appearance instead of keeping stale light/dark colors
+* Fixed macOS open/close behavior:
+  - closing the main window now exits the app instead of hiding the only window
+    and leaving a hidden single-instance process behind
+  - bundled Qt SQLite driver is copied into the app so QSQLITE is available at
+    startup
+  - release bundles are ad-hoc signed after Qt plugin/resource deployment so
+    macOS does not reject the app after bundled plugin changes
+  - confirmed exit now ends the Qt event loop directly on macOS instead of
+    leaving a no-window process alive
+  - macOS emergency shutdown now explicitly releases the single-instance marker
+    before process termination so the first reopen after close starts normally
+  - macOS toolbars are kept fixed to avoid Qt/Cocoa crashes while generating
+    toolbar drag cursors
 * Added explicit "Add" and "Remove" buttons to Sharing settings.
 * Added IPv6 column support in user list views.
 * Updated tab close button alignment in hub tab UI.

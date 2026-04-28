@@ -633,6 +633,8 @@ void PMWindow::updateStyles(){
                                                         .arg(QApplication::font().family()).arg(chatTextColor)
                                                        );
     }
+    textEdit_CHAT->document()->markContentsDirty(0, textEdit_CHAT->document()->characterCount());
+    textEdit_CHAT->viewport()->update();
 }
 
 void PMWindow::addStatusMessage(const QString &msg){

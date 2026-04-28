@@ -89,6 +89,22 @@ cmake -B build -DUSE_QT6=ON -DUSE_JS=ON
 cmake --build build
 ```
 
+Windows 11 + Visual Studio 2022:
+
+```bat
+cmake --preset windows-vs2022-x64
+cmake --build --preset build-windows-vs2022-release
+```
+
+Windows 11 + Visual Studio 2026:
+
+```bat
+cmake --preset windows-vs2026-x64
+cmake --build --preset build-windows-vs2026-release
+```
+
+See [windows/README.txt](./windows/README.txt) for full setup (vcpkg, Qt6, VS presets).
+
 GNU/Linux and FreeBSD users may install [packages](https://github.com/eiskaltdcpp/eiskaltdcpp#packages-and-installers) from official and unofficial repositories, ports, etc.
 
 macOS users may install and update official builds using [Homebrew](https://brew.sh/) cask:

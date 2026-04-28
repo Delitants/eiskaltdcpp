@@ -10,6 +10,7 @@
 
 #include <QApplication>
 #include <QSharedMemory>
+#include <QTimer>
 
 class QtSingleCoreApplication : public QApplication
 {
@@ -22,6 +23,7 @@ public:
 
     bool isRunning();
     QSharedMemory& getSharedMemory(){ return sharedMemory; }
+    void releaseSingleInstance();
     
 public Q_SLOTS:
     bool sendMessage(QString message);
@@ -33,4 +35,5 @@ Q_SIGNALS:
 private:
     bool _isRunning;
     QSharedMemory sharedMemory;
+    QTimer *messageTimer;
 };

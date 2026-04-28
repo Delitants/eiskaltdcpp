@@ -55,8 +55,10 @@ if (-not (Test-Path "C:\vcpkg")) {
 
 # Set vcpkg environment variables permanently
 [System.Environment]::SetEnvironmentVariable("VCPKG_INSTALLATION_ROOT", "C:\vcpkg", "Machine")
+[System.Environment]::SetEnvironmentVariable("VCPKG_ROOT", "C:\vcpkg", "Machine")
 [System.Environment]::SetEnvironmentVariable("VCPKG_DEFAULT_TRIPLET", "x64-windows", "Machine")
 $env:VCPKG_INSTALLATION_ROOT = "C:\vcpkg"
+$env:VCPKG_ROOT = "C:\vcpkg"
 $env:VCPKG_DEFAULT_TRIPLET = "x64-windows"
 $env:Path += ";C:\vcpkg"
 
@@ -64,7 +66,7 @@ $env:Path += ";C:\vcpkg"
 Write-Step "Installing vcpkg dependencies (this may take 20-30 minutes)"
 & C:\vcpkg\vcpkg.exe install --triplet x64-windows `
     openssl bzip2 zlib miniupnpc pcre2 lua `
-    libiconv libidn2 "gettext[tools]"
+    libiconv libidn2 boost-smart-ptr "gettext[tools]"
 
 # ── 8. Install Qt6 via aqtinstall (command-line Qt installer) ──
 Write-Step "Installing Qt 6.8.3 via aqtinstall"
@@ -98,7 +100,7 @@ if (Test-Path $msys2) {
     Write-Step "Installing MSYS2/UCRT64 packages for GTK3 build"
     & $msys2 -lc "pacman --noconfirm -Syu"
     & $msys2 -lc "pacman --noconfirm -S mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-pkg-config"
-    & $msys2 -lc "pacman --noconfirm -S mingw-w64-ucrt-x86_64-gtk3 mingw-w64-ucrt-x86_64-openssl mingw-w64-ucrt-x86_64-bzip2 mingw-w64-ucrt-x86_64-zlib mingw-w64-ucrt-x86_64-miniupnpc mingw-w64-ucrt-x86_64-pcre2 mingw-w64-ucrt-x86_64-lua mingw-w64-ucrt-x86_64-libidn2 mingw-w64-ucrt-x86_64-gettext-tools mingw-w64-ucrt-x86_64-gettext-runtime mingw-w64-ucrt-x86_64-libiconv mingw-w64-ucrt-x86_64-libnotify"
+    & $msys2 -lc "pacman --noconfirm -S mingw-w64-ucrt-x86_64-gtk3 mingw-w64-ucrt-x86_64-openssl mingw-w64-ucrt-x86_64-bzip2 mingw-w64-ucrt-x86_64-zlib mingw-w64-ucrt-x86_64-miniupnpc mingw-w64-ucrt-x86_64-pcre2 mingw-w64-ucrt-x86_64-lua mingw-w64-ucrt-x86_64-boost mingw-w64-ucrt-x86_64-libidn2 mingw-w64-ucrt-x86_64-gettext-tools mingw-w64-ucrt-x86_64-gettext-runtime mingw-w64-ucrt-x86_64-libiconv mingw-w64-ucrt-x86_64-libnotify"
 } else {
     Write-Host "MSYS2 not found at expected path. Install GTK3 deps manually." -ForegroundColor Yellow
 }
@@ -107,7 +109,7 @@ if (Test-Path $msys2) {
 Write-Step "Cloning eiskaltdcpp repository"
 $repoDir = "C:\src\eiskaltdcpp"
 if (-not (Test-Path $repoDir)) {
-    git clone https://github.com/eiskaltdcpp/eiskaltdcpp.git $repoDir
+    git clone https://github.com/Delitants/eiskaltdcpp.git $repoDir
 } else {
     Write-Host "Repository already exists at $repoDir"
 }
@@ -123,34 +125,16 @@ REM Run from "x64 Native Tools Command Prompt for VS 2022"
 
 set VCPKG_ROOT=C:\vcpkg
 set Qt6_DIR=C:\Qt\6.8.3\msvc2022_64
-set CMAKE_PREFIX_PATH=%Qt6_DIR%
 set PATH=%Qt6_DIR%\bin;%VCPKG_ROOT%\installed\x64-windows\bin;%VCPKG_ROOT%\installed\x64-windows\tools\gettext\bin;%PATH%
 
 cd /d C:\src\eiskaltdcpp
 
-cmake -B build-qt6 -G Ninja ^
-    -DCMAKE_BUILD_TYPE=Debug ^
-    -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake ^
-    -DGETTEXT_SEARCH_PATH=%VCPKG_ROOT%\installed\x64-windows ^
-    -DUSE_QT6=ON ^
-    -DUSE_GTK3=OFF ^
-    -DUSE_JS=ON ^
-    -DUSE_QT_QML=OFF ^
-    -DUSE_MINIUPNP=ON ^
-    -DWITH_DHT=ON ^
-    -DUSE_IDN2=ON ^
-    -DLUA_SCRIPT=ON ^
-    -DPERL_REGEX=ON ^
-    -DUSE_ASPELL=OFF ^
-    -DDBUS_NOTIFY=OFF ^
-    -DWITH_EMOTICONS=ON ^
-    -DWITH_SOUNDS=ON ^
-    -DBUILD_TESTS=ON ^
-    -DOPENSSL_MSVC=ON
-
-cmake --build build-qt6
+cmake --preset windows-vs2022-x64
+cmake --build --preset build-windows-vs2022-release
 echo.
-echo Build complete! Binary at: C:\src\eiskaltdcpp\build-qt6\
+echo Build complete!
+echo Binary location:
+echo C:\src\eiskaltdcpp\out\build\windows-vs2022-x64\eiskaltdcpp-qt\Release\EiskaltDC++.exe
 '@
 
 Set-Content -Path "C:\src\build-qt6.bat" -Value $qt6BuildScript
@@ -202,7 +186,8 @@ To build Qt6 (MSVC):
   1. Open "x64 Native Tools Command Prompt for VS 2022"
      (or open VS 2022 > Tools > Command Line > Developer Command Prompt)
   2. Run: C:\src\build-qt6.bat
-  3. To debug: Open C:\src\eiskaltdcpp in VS 2022 (File > Open > CMake)
+  3. To debug: Open C:\src\eiskaltdcpp in VS 2022 (File > Open > Folder),
+     then use preset: windows-vs2022-x64
 
 To build GTK3 (MSYS2):
   1. Open "MSYS2 UCRT64" from Start Menu

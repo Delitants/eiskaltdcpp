@@ -195,10 +195,10 @@ if(CREATE_MO)
 				OUTPUT ${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo
 				COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
 						${GETTEXT_MSGFMT_PARAMETER}
-						-o ${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo ${LANG}.po
+						-o ${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo
+						${dcpp_SOURCE_DIR}/po/${LANG}.po
 				DEPENDS
 					${dcpp_SOURCE_DIR}/po/${LANG}.po
-				WORKING_DIRECTORY ${dcpp_SOURCE_DIR}/po
 				COMMENT "Creating mo file ${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo"
 			)
 			if (USE_GTK OR USE_GTK3)
@@ -207,10 +207,10 @@ if(CREATE_MO)
 				OUTPUT ${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo
 				COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
 						${GETTEXT_MSGFMT_PARAMETER}
-						-o ${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo ${LANG}.po
+						-o ${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo
+						${eiskaltdcpp-gtk_SOURCE_DIR}/po/${LANG}.po
 				DEPENDS
 					${eiskaltdcpp-gtk_SOURCE_DIR}/po/${LANG}.po
-				WORKING_DIRECTORY ${eiskaltdcpp-gtk_SOURCE_DIR}/po
 				COMMENT "Creating mo file ${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo"
 			)
 

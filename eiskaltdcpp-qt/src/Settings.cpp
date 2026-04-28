@@ -37,10 +37,12 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QLabel>
+#include <QApplication>
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 #include <QSplitter>
 #include <QSize>
+#include <QEvent>
 
 #include "WulforUtil.h"
 
@@ -54,16 +56,12 @@
 
 namespace {
 #ifdef Q_OS_MAC
-QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
+void applyMacSettingsPanelStyle(QFrame *panel)
 {
-    if (page)
-        page->show();
+    if (!panel)
+        return;
 
-    QFrame *panel = new QFrame(owner);
-    panel->setObjectName(QStringLiteral("settingsPagePanel"));
-    panel->setFrameShape(QFrame::StyledPanel);
-    panel->setFrameShadow(QFrame::Plain);
-    const QPalette panelPalette = panel->palette();
+    const QPalette panelPalette = QApplication::palette(panel);
     const bool darkAppearance = (panelPalette.color(QPalette::Window).lightness() + panelPalette.color(QPalette::Base).lightness()) / 2 < 128;
     QColor fieldBorder = darkAppearance ? panelPalette.color(QPalette::Window).lighter(165)
                                         : panelPalette.color(QPalette::Window).darker(135);
@@ -225,6 +223,60 @@ QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
         "}"
     ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
           groupBackground.name(), focusBorder.name(), tabBackground.name()));
+}
+
+void applyMacSettingsSidebarStyle(QListWidget *listWidget)
+{
+    if (!listWidget)
+        return;
+
+    const QPalette sidebarPalette = QApplication::palette(listWidget);
+    const bool darkSidebar = (sidebarPalette.color(QPalette::Window).lightness() + sidebarPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor sidebarBorder = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(170)
+                                       : sidebarPalette.color(QPalette::Window).darker(140);
+    if (qAbs(sidebarBorder.lightness() - sidebarPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = sidebarPalette.color(QPalette::Text);
+        sidebarBorder = darkSidebar ? textColor.lighter(145) : textColor.darker(150);
+    }
+    const QColor sidebarBg = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(108)
+                                         : sidebarPalette.color(QPalette::Window);
+    const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
+                                            : sidebarPalette.color(QPalette::AlternateBase);
+
+    listWidget->setStyleSheet(QStringLiteral(
+        "QListWidget {"
+        " background-color: %1;"
+        " border: 1px solid %2;"
+        " border-radius: 10px;"
+        " outline: none;"
+        " padding: 4px;"
+        " font-size: 13px;"
+        "}"
+        "QListWidget::item {"
+        " border-radius: 8px;"
+        " padding: 3px 10px;"
+        " margin: 1px 0px;"
+        "}"
+        "QListWidget::item:selected {"
+        " background-color: palette(highlight);"
+        " color: palette(highlighted-text);"
+        "}"
+        "QListWidget::item:hover:!selected {"
+        " background-color: %3;"
+        "}"
+    ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name()));
+}
+
+QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
+{
+    if (page)
+        page->show();
+
+    QFrame *panel = new QFrame(owner);
+    panel->setObjectName(QStringLiteral("settingsPagePanel"));
+    panel->setFrameShape(QFrame::StyledPanel);
+    panel->setFrameShadow(QFrame::Plain);
+    applyMacSettingsPanelStyle(panel);
 
     auto *layout = new QVBoxLayout(panel);
     layout->setContentsMargins(8, 4, 8, 8);
@@ -243,7 +295,7 @@ void polishMacScrollArea(QScrollArea *scrollArea)
     scrollArea->setFrameShape(QFrame::NoFrame);
     scrollArea->viewport()->setAutoFillBackground(true);
 
-    QPalette palette = scrollArea->viewport()->palette();
+    QPalette palette = QApplication::palette(scrollArea->viewport());
     palette.setColor(QPalette::Window, palette.color(QPalette::AlternateBase));
     palette.setColor(QPalette::Base, palette.color(QPalette::AlternateBase));
     scrollArea->viewport()->setPalette(palette);
@@ -304,7 +356,7 @@ void polishMacSettingsPage(QWidget *page)
 #endif
 }
 
-Settings::Settings(): is_dirty(false)
+Settings::Settings(): is_dirty(false), appearance_style_in_progress(false)
 {
     setupUi(this);
 
@@ -361,6 +413,31 @@ Settings::~Settings(){
         qtCtx()->settings()->save();
         qtCtx()->dcCtx().getSettingsManager()->save();
     }
+}
+
+void Settings::changeEvent(QEvent *event)
+{
+    QDialog::changeEvent(event);
+
+#ifdef Q_OS_MAC
+    if (event->type() == QEvent::PaletteChange ||
+        event->type() == QEvent::ApplicationPaletteChange ||
+        event->type() == QEvent::StyleChange) {
+        if (appearance_style_in_progress)
+            return;
+
+        appearance_style_in_progress = true;
+        applyMacSettingsSidebarStyle(listWidget);
+
+        for (auto *panel : findChildren<QFrame*>(QStringLiteral("settingsPagePanel")))
+            applyMacSettingsPanelStyle(panel);
+
+        for (auto *scrollArea : findChildren<QScrollArea*>())
+            polishMacScrollArea(scrollArea);
+
+        appearance_style_in_progress = false;
+    }
+#endif
 }
 
 void Settings::init(){
@@ -435,41 +512,7 @@ void Settings::init(){
     listWidget->setMinimumWidth(150);
     listWidget->setMaximumWidth(180);
 #ifdef Q_OS_MAC
-    const QPalette sidebarPalette = listWidget->palette();
-    const bool darkSidebar = (sidebarPalette.color(QPalette::Window).lightness() + sidebarPalette.color(QPalette::Base).lightness()) / 2 < 128;
-    QColor sidebarBorder = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(170)
-                                       : sidebarPalette.color(QPalette::Window).darker(140);
-    if (qAbs(sidebarBorder.lightness() - sidebarPalette.color(QPalette::Window).lightness()) < 26) {
-        const QColor textColor = sidebarPalette.color(QPalette::Text);
-        sidebarBorder = darkSidebar ? textColor.lighter(145) : textColor.darker(150);
-    }
-    const QColor sidebarBg = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(108)
-                                         : sidebarPalette.color(QPalette::Window);
-    const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
-                                            : sidebarPalette.color(QPalette::AlternateBase);
-
-    listWidget->setStyleSheet(QStringLiteral(
-        "QListWidget {"
-        " background-color: %1;"
-        " border: 1px solid %2;"
-        " border-radius: 10px;"
-        " outline: none;"
-        " padding: 4px;"
-        " font-size: 13px;"
-        "}"
-        "QListWidget::item {"
-        " border-radius: 8px;"
-        " padding: 3px 10px;"
-        " margin: 1px 0px;"
-        "}"
-        "QListWidget::item:selected {"
-        " background-color: palette(highlight);"
-        " color: palette(highlighted-text);"
-        "}"
-        "QListWidget::item:hover:!selected {"
-        " background-color: %3;"
-        "}"
-    ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name()));
+    applyMacSettingsSidebarStyle(listWidget);
 #endif
 
     splitter->setChildrenCollapsible(false);

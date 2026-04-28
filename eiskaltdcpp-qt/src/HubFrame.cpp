@@ -3349,6 +3349,8 @@ void HubFrame::updateStyles(){
                                                         .arg(QApplication::font().family()).arg(chatTextColor)
                                                        );
     }
+    textEdit_CHAT->document()->markContentsDirty(0, textEdit_CHAT->document()->characterCount());
+    textEdit_CHAT->viewport()->update();
 
     custom_font_desc = qtCtx()->settings()->getStr(WS_CHAT_ULIST_FONT);
 

@@ -15,9 +15,9 @@ find_package (${QT} ${QT_MIN_VERSION} COMPONENTS Core Gui Widgets Xml Network
 # Multimedia is optional (needed for QSoundEffect notification sounds)
 find_package (${QT} COMPONENTS Multimedia QUIET)
 if (${QT}Multimedia_FOUND)
-    message (STATUS "Found ${QT}::Multimedia — sound notifications enabled")
+    message (STATUS "Found ${QT}::Multimedia - sound notifications enabled")
 else ()
-    message (STATUS "${QT}::Multimedia not found — sound notifications disabled")
+    message (STATUS "${QT}::Multimedia not found - sound notifications disabled")
     add_definitions (-DNO_QT_MULTIMEDIA)
 endif ()
 # LinguistTools is optional (only needed for updating translations)
@@ -328,8 +328,12 @@ add_executable (${PROJECT_NAME} MACOSX_BUNDLE WIN32 src/main.cpp
 # to mt.exe for merging with its auto-generated manifest.  Embedding via
 # the RC file would cause a duplicate-resource link error (LNK1123).
 if (WIN32 AND MSVC)
+    configure_file(
+        "${CMAKE_SOURCE_DIR}/windows/eiskaltdcpp.manifest"
+        "${CMAKE_CURRENT_BINARY_DIR}/eiskaltdcpp.manifest"
+        COPYONLY)
     target_sources (${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/windows/eiskaltdcpp.manifest)
+        "${CMAKE_CURRENT_BINARY_DIR}/eiskaltdcpp.manifest")
 endif ()
 
 add_definitions (-DCLIENT_DATA_DIR="${CLIENT_DATA_DIR}")
@@ -532,12 +536,16 @@ if(APPLE)
 
     set(EISKALT_QCOCOA_PLUGIN "")
     set(EISKALT_QMACSTYLE_PLUGIN "")
+    set(EISKALT_QSQLITE_PLUGIN "")
     foreach(_plugins_root IN LISTS EISKALT_QT_PLUGINS_ROOT_CANDIDATES)
         if(NOT EISKALT_QCOCOA_PLUGIN AND EXISTS "${_plugins_root}/platforms/libqcocoa.dylib")
             set(EISKALT_QCOCOA_PLUGIN "${_plugins_root}/platforms/libqcocoa.dylib")
         endif()
         if(NOT EISKALT_QMACSTYLE_PLUGIN AND EXISTS "${_plugins_root}/styles/libqmacstyle.dylib")
             set(EISKALT_QMACSTYLE_PLUGIN "${_plugins_root}/styles/libqmacstyle.dylib")
+        endif()
+        if(NOT EISKALT_QSQLITE_PLUGIN AND EXISTS "${_plugins_root}/sqldrivers/libqsqlite.dylib")
+            set(EISKALT_QSQLITE_PLUGIN "${_plugins_root}/sqldrivers/libqsqlite.dylib")
         endif()
     endforeach()
 
@@ -565,6 +573,19 @@ if(APPLE)
         )
     endif()
 
+    if(EISKALT_QSQLITE_PLUGIN)
+        add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Copying macOS Qt SQLite plugin: ${EISKALT_QSQLITE_PLUGIN}"
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/sqldrivers"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${EISKALT_QSQLITE_PLUGIN}"
+                    "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/PlugIns/sqldrivers/libqsqlite.dylib"
+            VERBATIM
+        )
+    else()
+        message(WARNING "Could not locate libqsqlite.dylib; Qt SQL history/storage features may fail at runtime.")
+    endif()
+
 
 endif()
 
@@ -586,4 +607,14 @@ if(APPLE)
                     "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources/qt.conf"
             VERBATIM
         )
+
+    find_program(CODESIGN_EXECUTABLE codesign)
+    if(CODESIGN_EXECUTABLE)
+        add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E echo "Ad-hoc signing macOS app bundle..."
+            COMMAND "${CODESIGN_EXECUTABLE}" --force --deep --sign -
+                    "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
+            VERBATIM
+        )
+    endif()
 endif()

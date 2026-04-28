@@ -70,10 +70,12 @@ using namespace std;
 #endif
 
 #include <QApplication>
+#include <QEvent>
 #include <QMainWindow>
 #include <QRegularExpression>
 #include <QObject>
 #include <QScopeGuard>
+#include <QTimer>
 #include <cstdlib>
 
 #ifdef DBUS_NOTIFY
@@ -171,20 +173,32 @@ static QColor macFocusColor(const QPalette &pal)
     return focus;
 }
 
-static void applyMacInputContrastStyle(QApplication &app)
+static QString macInputContrastStyle(const QPalette &pal)
 {
-    const QPalette pal = app.palette();
+    const bool dark = isDarkMacPalette(pal);
     const QColor inputBorder = macBorderColor(pal, false);
-    const QColor panelBorder = pal.color(QPalette::Mid);
+    QColor panelBorder = pal.color(QPalette::Mid);
+    if (qAbs(panelBorder.lightness() - pal.color(QPalette::Base).lightness()) < 22)
+        panelBorder = macBorderColor(pal, true);
     const QColor focusBorder = macFocusColor(pal);
+    const QColor base = pal.color(QPalette::Base);
+    const QColor alternate = pal.color(QPalette::AlternateBase);
+    const QColor text = pal.color(QPalette::Text);
+    const QColor highlight = pal.color(QPalette::Highlight);
+    const QColor highlightedText = pal.color(QPalette::HighlightedText);
+    const QColor header = dark ? pal.color(QPalette::Window).lighter(115)
+                               : pal.color(QPalette::Window).darker(104);
+    const QColor disabledText = pal.color(QPalette::Disabled, QPalette::Text);
 
-    app.setStyleSheet(app.styleSheet() + QStringLiteral(
+    return QStringLiteral(
         "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
         " border: 1px solid %1;"
         " border-radius: 6px;"
         " padding: 2px 6px;"
-        " background: palette(base);"
-        " color: palette(text);"
+        " background-color: %4;"
+        " color: %6;"
+        " selection-background-color: %7;"
+        " selection-color: %8;"
         "}"
         "QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus, QAbstractSpinBox:focus {"
         " border: 1px solid %2;"
@@ -194,20 +208,84 @@ static void applyMacInputContrastStyle(QApplication &app)
         "}"
         "QAbstractItemView, QListView, QTreeView, QTableView {"
         " border: 1px solid %3;"
-        " background: palette(base);"
-        " alternate-background-color: palette(alternate-base);"
+        " background-color: %4;"
+        " alternate-background-color: %5;"
+        " color: %6;"
+        " selection-background-color: %7;"
+        " selection-color: %8;"
+        " outline: 0;"
+        "}"
+        "QAbstractItemView:disabled, QListView:disabled, QTreeView:disabled, QTableView:disabled {"
+        " color: %10;"
+        "}"
+        "QHeaderView::section {"
+        " background-color: %9;"
+        " color: %6;"
+        " border: 0px;"
+        " border-right: 1px solid %3;"
+        " border-bottom: 1px solid %3;"
+        " padding: 2px 5px;"
+        "}"
+        "QTableCornerButton::section {"
+        " background-color: %9;"
+        " border: 0px;"
+        " border-right: 1px solid %3;"
+        " border-bottom: 1px solid %3;"
         "}"
         "QFrame#frame_INPUT {"
         " border: 1px solid %3;"
         " border-radius: 8px;"
-        " background: palette(base);"
+        " background-color: %4;"
         "}"
         "QFrame#settingsPagePanel {"
         " border: 1px solid %3;"
-        " background: palette(base);"
+        " background-color: %4;"
         "}"
-    ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name()));
+    ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name(),
+          base.name(), alternate.name(), text.name(), highlight.name(),
+          highlightedText.name(), header.name(), disabledText.name());
 }
+
+class MacAppearanceStyleUpdater : public QObject
+{
+public:
+    explicit MacAppearanceStyleUpdater(QApplication &app) :
+        QObject(&app),
+        app_(app)
+    {
+        apply();
+        app_.installEventFilter(this);
+    }
+
+protected:
+    bool eventFilter(QObject *object, QEvent *event) override
+    {
+        if (!updating_ &&
+            (event->type() == QEvent::PaletteChange ||
+             event->type() == QEvent::ApplicationPaletteChange ||
+             event->type() == QEvent::StyleChange)) {
+            QTimer::singleShot(0, this, [this]() { apply(); });
+        }
+
+        return QObject::eventFilter(object, event);
+    }
+
+private:
+    void apply()
+    {
+        if (updating_)
+            return;
+
+        updating_ = true;
+        const QString style = macInputContrastStyle(app_.palette());
+        if (style != app_.styleSheet())
+            app_.setStyleSheet(style);
+        updating_ = false;
+    }
+
+    QApplication &app_;
+    bool updating_ = false;
+};
 #endif
 
 
@@ -233,7 +311,7 @@ int main(int argc, char *argv[])
     EiskaltApp app(argc, argv, _q(dcpp::Util::getLoginName()+"EDCPP"));
     app.setQuitOnLastWindowClosed(false);
 #if defined(Q_OS_MAC)
-    applyMacInputContrastStyle(app);
+    MacAppearanceStyleUpdater macAppearanceStyleUpdater(app);
 #endif
     int ret = 0;
 
@@ -303,7 +381,9 @@ int main(int argc, char *argv[])
     if (qtCtx()->wulforUtil()->loadIcons())
         std::cout << QObject::tr("Application icons has been loaded").toStdString() << std::endl;
 
+#if !defined(Q_OS_MAC)
     app.setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
+#endif
 
     ctx.createArenaWidgetManager();
 
@@ -359,9 +439,11 @@ int main(int argc, char *argv[])
     // macOS emergency exit path:
     // background core threads can still fire ClientListener callbacks during
     // DCContext shutdown/destruction, causing EXC_BAD_ACCESS on exit.
-    // Save settings, flush stdio, and terminate the process before core teardown.
+    // Save settings, release the single-instance marker, flush stdio, and
+    // terminate the process before core teardown.
     if (qtCtx() && qtCtx()->settings())
         qtCtx()->settings()->save();
+    app.releaseSingleInstance();
     fflush(nullptr);
     std::_Exit(ret);
 #endif
