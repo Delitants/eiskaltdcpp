@@ -21,6 +21,10 @@
   - item views now use soft derived alternating row colors instead of raw
     system AlternateBase values that produced harsh striping after switching
   - item-view text is forced to readable light/dark contrast after repaint
+  - Preferences group boxes now keep complete rounded outlines in dark mode
+    instead of cutting broken title gaps into the border
+  - Preferences sidebar focus/current rows now use contrast-safe focus styling
+    instead of the washed-out white macOS focus fill in dark mode
   - existing chat document fragments with stale low-contrast foreground colors
     are repaired when chat styles update, so old black text does not remain on
     dark chat backgrounds

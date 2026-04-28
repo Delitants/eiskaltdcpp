@@ -82,6 +82,8 @@ void applyMacSettingsPanelStyle(QFrame *panel)
                                                   : panelPalette.color(QPalette::AlternateBase);
     const QColor tabBackground = darkAppearance ? panelBackground.lighter(103)
                                                 : panelPalette.color(QPalette::Base);
+    const QColor titleBackground = darkAppearance ? groupBackground.lighter(104)
+                                                  : groupBackground;
 
     panel->setStyleSheet(QStringLiteral(
         "QFrame#settingsPagePanel {"
@@ -104,20 +106,25 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "QFrame#settingsPagePanel QGroupBox {"
         " border: 1px solid %3;"
         " border-radius: 10px;"
-        " margin-top: 10px;"
-        " padding: 7px 7px 7px 7px;"
+        " margin-top: 6px;"
+        " padding: 24px 8px 8px 8px;"
         " background-color: %4;"
         "}"
         "QFrame#settingsPagePanel QGroupBox::title {"
-        " subcontrol-origin: margin;"
+        " subcontrol-origin: padding;"
+        " subcontrol-position: top left;"
+        " top: 4px;"
         " left: 10px;"
-        " padding: 1px 8px;"
+        " padding: 1px 7px;"
         " color: palette(text);"
         " font-size: 13px;"
         " font-weight: 600;"
-        " background-color: %1;"
-        " border: 1px solid %2;"
-        " border-radius: 7px;"
+        " background-color: %7;"
+        " border: none;"
+        " border-radius: 6px;"
+        "}"
+        "QFrame#settingsPagePanel QGroupBox::indicator {"
+        " margin-right: 5px;"
         "}"
         "QFrame#settingsPagePanel QGroupBox[settingsSectionHeader=\"true\"]::title {"
         " padding: 2px 10px;"
@@ -136,6 +143,7 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " margin: 0px;"
         " background: transparent;"
         " border: none;"
+        " border-radius: 0px;"
         " font-size: 13px;"
         " font-weight: 700;"
         " color: palette(text);"
@@ -222,7 +230,8 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " background-color: %6;"
         "}"
     ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
-          groupBackground.name(), focusBorder.name(), tabBackground.name()));
+          groupBackground.name(), focusBorder.name(), tabBackground.name(),
+          titleBackground.name()));
 }
 
 void applyMacSettingsSidebarStyle(QListWidget *listWidget)
@@ -242,6 +251,24 @@ void applyMacSettingsSidebarStyle(QListWidget *listWidget)
                                          : sidebarPalette.color(QPalette::Window);
     const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
                                             : sidebarPalette.color(QPalette::AlternateBase);
+    QColor selectedBg = sidebarPalette.color(QPalette::Highlight);
+    if (darkSidebar && selectedBg.lightness() < 95)
+        selectedBg = selectedBg.lighter(135);
+    else if (!darkSidebar && selectedBg.lightness() > 210)
+        selectedBg = selectedBg.darker(112);
+    const QColor selectedText = sidebarPalette.color(QPalette::HighlightedText);
+    QColor focusBg = darkSidebar ? selectedBg.darker(145) : selectedBg.lighter(180);
+    focusBg.setAlpha(darkSidebar ? 170 : 95);
+    QColor focusBorder = selectedBg;
+    if (darkSidebar && focusBorder.lightness() < 130)
+        focusBorder = focusBorder.lighter(150);
+    else if (!darkSidebar && focusBorder.lightness() > 190)
+        focusBorder = focusBorder.darker(125);
+    const QString focusBackground = QStringLiteral("rgba(%1, %2, %3, %4)")
+        .arg(focusBg.red())
+        .arg(focusBg.green())
+        .arg(focusBg.blue())
+        .arg(focusBg.alpha());
 
     listWidget->setStyleSheet(QStringLiteral(
         "QListWidget {"
@@ -253,18 +280,30 @@ void applyMacSettingsSidebarStyle(QListWidget *listWidget)
         " font-size: 13px;"
         "}"
         "QListWidget::item {"
+        " border: 1px solid transparent;"
         " border-radius: 8px;"
         " padding: 3px 10px;"
         " margin: 1px 0px;"
+        " color: palette(text);"
         "}"
-        "QListWidget::item:selected {"
-        " background-color: palette(highlight);"
-        " color: palette(highlighted-text);"
+        "QListWidget::item:selected,"
+        "QListWidget::item:selected:active,"
+        "QListWidget::item:selected:!active {"
+        " background-color: %4;"
+        " color: %5;"
+        " border: 1px solid %4;"
+        "}"
+        "QListWidget::item:focus:!selected {"
+        " background-color: %6;"
+        " color: palette(text);"
+        " border: 1px solid %7;"
         "}"
         "QListWidget::item:hover:!selected {"
         " background-color: %3;"
         "}"
-    ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name()));
+    ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name(),
+          selectedBg.name(), selectedText.name(),
+          focusBackground, focusBorder.name()));
 }
 
 QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
