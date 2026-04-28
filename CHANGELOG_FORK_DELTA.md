@@ -3,47 +3,55 @@
 Comparison against original upstream EiskaltDC++.
 
 - Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
-- Head: codex-2.5.2-release @ 1bd11379 (1bd11379a69e56129eb7a8672099191232a03781)
-- Generated on: 2026-04-21
-- Commits ahead of upstream: 238
-- Files changed vs upstream: 554
+- Head: codex-2.5.2-release @ bf20fca3 (bf20fca36aa905bb2f18dee4b8540b8da7818822)
+- Generated on: 2026-04-27
+- Commits ahead of upstream: 245
+- Files changed vs upstream: 567
 
 ## Contributors In This Delta
- -  211 Joe Rivera
- -   27 Neolo
+ -    211	Joe Rivera <j@jriv.us>
+ -     34	Neolo <admin@nlight.org.ua>
 
 ## Top-Level Areas Changed (file counts)
-- 156 eiskaltdcpp-qt
+- 163 eiskaltdcpp-qt
 - 145 dcpp
-- 98 eiskaltdcpp-gtk
-- 82 tests
-- 20 dht
-- 10 eiskaltdcpp-daemon
-- 8 extra
-- 6 cmake
-- 5 windows
-- 3 macos
-- 3 json
-- 2 haiku
-- 1 update-translations.sh
-- 1 screenshot.png
-- 1 linux
-- 1 data
-- 1 build-local.ps1
-- 1 Version.h.in
-- 1 SAFE_PORT_STATUS.txt
-- 1 README.md
-- 1 README.html
-- 1 INSTALL
-- 1 ChangeLog.txt
-- 1 CMakeLists.txt
-- 1 CHANGELOG_FORK_DELTA.md
-- 1 AUTHORS
-- 1 .gitignore
-- 1 .github
+-  98 eiskaltdcpp-gtk
+-  82 tests
+-  20 dht
+-  10 eiskaltdcpp-daemon
+-   8 extra
+-   7 cmake
+-   6 windows
+-   6 macos
+-   3 json
+-   2 haiku
+-   1 update-translations.sh
+-   1 screenshot.png
+-   1 linux
+-   1 data
+-   1 build-local.ps1
+-   1 Version.h.in
+-   1 SAFE_PORT_STATUS.txt
+-   1 README.md
+-   1 README.html
+-   1 INSTALL
+-   1 ChangeLog.txt
+-   1 CMakePresets.json
+-   1 CMakeLists.txt
+-   1 CHANGELOG_FORK_DELTA.md
+-   1 AUTHORS
+-   1 .gitignore
+-   1 .github
 
 ## Complete Commit List (newest first)
 
+- 2026-04-27 bf20fca3 Release 2.5.3 for macOS ARM64
+- 2026-04-22 880186ff Bundle macOS Qt platform plugin to prevent startup abort
+- 2026-04-22 960422f2 Fix ChatEdit contrast stylesheet recursion crash on macOS
+- 2026-04-22 07214285 Keep macOS dock icon stable and disable runtime icon swapping
+- 2026-04-22 638aa935 Fix duplicate dock icons by restoring single-instance guard
+- 2026-04-21 f82691c4 ui: refresh hub/pm theme immediately on live macOS mode switch
+- 2026-04-21 e452539c docs: refresh full fork delta changelog after branch sync
 - 2026-04-21 1bd11379 docs: add full fork delta changelog and fix changelog links
 - 2026-04-21 90417f83 ui: fix PM input/bbcode layout and disable favorite hub CID override
 - 2026-04-21 a3a7f547 Update README.md
