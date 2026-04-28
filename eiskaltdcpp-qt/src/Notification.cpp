@@ -16,6 +16,10 @@
 
 #include <QMenu>
 #include <QList>
+#include <QApplication>
+#include <QIcon>
+#include <QImage>
+#include <QPalette>
 #ifndef NO_QT_MULTIMEDIA
 #include <QSoundEffect>
 #endif
@@ -101,8 +105,7 @@ void Notification::enableTray(bool enable){
         checkSystemTrayCounter = 0;
 
         tray = new QSystemTrayIcon(this);
-        tray->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
-                    .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        tray->setIcon(trayIcon());
 
         QMenu *menu = new QMenu(qtCtx()->mainWindow());
         menu->setTitle("EiskaltDC++");
@@ -361,8 +364,34 @@ void Notification::slotSuppressSnd(){
 
 void Notification::resetTrayIcon(){
     if (tray)
-        tray->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
-                    .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        tray->setIcon(trayIcon());
+}
+
+QIcon Notification::trayIcon() const
+{
+    QPixmap pixmap = qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
+            .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    if (!qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
+        return QIcon(pixmap);
+
+    QColor color = qApp ? qApp->palette().color(QPalette::WindowText) : QColor(Qt::black);
+    if (!color.isValid())
+        color = QColor(Qt::black);
+
+    QImage image = pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    for (int y = 0; y < image.height(); ++y) {
+        QRgb *line = reinterpret_cast<QRgb*>(image.scanLine(y));
+        for (int x = 0; x < image.width(); ++x) {
+            const int alpha = qAlpha(line[x]);
+            if (alpha == 0)
+                continue;
+
+            line[x] = qRgba(color.red(), color.green(), color.blue(), alpha);
+        }
+    }
+
+    return QIcon(QPixmap::fromImage(image));
 }
 
 void QtNotifyModule::showMessage(const QString &title, const QString &msg, QObject *obj) {

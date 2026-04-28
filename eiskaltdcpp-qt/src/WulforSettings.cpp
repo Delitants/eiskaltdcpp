@@ -161,6 +161,7 @@ void WulforSettings::load(){
             settings.setValue(WB_CHAT_HIDE_SMILE_PANEL, static_cast<bool>(true));
             settings.setValue(WB_MAINWINDOW_MAXIMIZED,  static_cast<int>(true));
             settings.setValue(WB_MAINWINDOW_HIDE,       static_cast<int>(false));
+            settings.setValue(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, static_cast<int>(false));
             settings.setValue(WB_MAINWINDOW_REMEMBER,   static_cast<int>(false));
             settings.setValue(WB_MAINWINDOW_USE_M_TABBAR, static_cast<int>(true));
             settings.setValue(WB_MAINWINDOW_USE_SIDEBAR, static_cast<int>(true));
@@ -170,6 +171,7 @@ void WulforSettings::load(){
             settings.setValue(WB_ANTISPAM_AS_FILTER,    static_cast<int>(false));
             settings.setValue(WB_ANTISPAM_FILTER_OPS,   static_cast<int>(false));
             settings.setValue(WB_TRAY_ENABLED,          static_cast<int>(true));
+            settings.setValue(WB_TRAY_ICON_MONOCHROME,  static_cast<int>(false));
             settings.setValue(WB_EXIT_CONFIRM,          static_cast<int>(false));
             settings.setValue(WB_SHOW_IP_IN_CHAT,       static_cast<int>(false));
             settings.setValue(WB_SHOW_HIDDEN_USERS,     static_cast<int>(false));
@@ -300,6 +302,7 @@ void WulforSettings::loadOldConfig(){
         intmap.insert(WB_CHAT_HIDE_SMILE_PANEL, static_cast<bool>(true));
         intmap.insert(WB_MAINWINDOW_MAXIMIZED,  static_cast<int>(true));
         intmap.insert(WB_MAINWINDOW_HIDE,       static_cast<int>(false));
+        intmap.insert(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, static_cast<int>(false));
         intmap.insert(WB_MAINWINDOW_REMEMBER,   static_cast<int>(false));
         intmap.insert(WB_MAINWINDOW_USE_M_TABBAR, static_cast<int>(true));
         intmap.insert(WB_MAINWINDOW_USE_SIDEBAR, static_cast<int>(true));
@@ -309,6 +312,7 @@ void WulforSettings::loadOldConfig(){
         intmap.insert(WB_ANTISPAM_AS_FILTER,    static_cast<int>(false));
         intmap.insert(WB_ANTISPAM_FILTER_OPS,   static_cast<int>(false));
         intmap.insert(WB_TRAY_ENABLED,          static_cast<int>(true));
+        intmap.insert(WB_TRAY_ICON_MONOCHROME,  static_cast<int>(false));
         intmap.insert(WB_EXIT_CONFIRM,          static_cast<int>(false));
         intmap.insert(WB_SHOW_IP_IN_CHAT,       static_cast<int>(false));
         intmap.insert(WB_SHOW_HIDDEN_USERS,     static_cast<int>(false));
@@ -332,7 +336,7 @@ void WulforSettings::loadOldConfig(){
         intmap.insert(WB_SEARCH_PANEL_VISIBLE,  static_cast<int>(false));
         intmap.insert(WB_MAIN_MENU_VISIBLE,     static_cast<int>(true));
         intmap.insert(WB_USE_CTRL_ENTER,        static_cast<int>(false));
-        intmap.insert(WB_SIMPLE_SHARE_MODE,     static_cast<int>(false));
+        intmap.insert(WB_SIMPLE_SHARE_MODE,     static_cast<int>(true));
         intmap.insert(WI_APP_UNIT_BASE,         1024);
         intmap.insert(WI_APP_AUTOAWAY_INTERVAL, 60);
         intmap.insert(WI_APP_SHARED_FILES_ALPHA, 127);

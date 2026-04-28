@@ -371,9 +371,17 @@ void MainWindow::closeEvent(QCloseEvent *e){
 
 #if defined(Q_OS_MAC)
     if (!d->isUnload) {
-        // On macOS the red close button was hiding the only main window while
-        // leaving the process alive. Treat an explicit window close as app exit;
-        // the separate Hide action still calls hide() directly.
+        if (qtCtx()->settings()->getBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE) &&
+            qtCtx()->settings()->getBool(WB_TRAY_ENABLED)) {
+            hide();
+            e->ignore();
+
+            return;
+        }
+
+        // By default, treat an explicit window close as app exit on macOS.
+        // The separate Hide action and the optional close-to-status-icon mode
+        // still hide the window without tearing down the process.
         setUnload(true);
     }
 #else // defined(Q_OS_MAC)
@@ -2322,6 +2330,9 @@ void MainWindow::reloadSomeSettings(){
     }
 
     d->toolsSwitchSpeedLimit->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::THROTTLE_ENABLE, true));
+
+    if (qtCtx()->notification())
+        qtCtx()->notification()->resetTrayIcon();
 }
 
 void MainWindow::slotFileOpenLogFile(){
@@ -2857,12 +2868,12 @@ void MainWindow::slotAboutOpenUrl(){
     QAction *act = qobject_cast<QAction *>(sender());
 
     const QHash<QAction*, QUrl> urlsTable = {
-        { d->aboutHomepage,     QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/#description") },
-        { d->aboutBuilds,       QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/#packages-and-installers") },
-        { d->aboutSource,       QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/") },
-        { d->aboutIssues,       QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/issues") },
-        { d->aboutWiki,         QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/wiki") },
-        { d->aboutChangelog,    QUrl("https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/ChangeLog.txt") },
+        { d->aboutHomepage,     QUrl("https://github.com/Delitants/eiskaltdcpp") },
+        { d->aboutBuilds,       QUrl("https://github.com/Delitants/eiskaltdcpp/releases") },
+        { d->aboutSource,       QUrl("https://github.com/Delitants/eiskaltdcpp") },
+        { d->aboutIssues,       QUrl("https://github.com/Delitants/eiskaltdcpp/issues") },
+        { d->aboutWiki,         QUrl("https://github.com/Delitants/eiskaltdcpp/wiki") },
+        { d->aboutChangelog,    QUrl("https://github.com/Delitants/eiskaltdcpp/blob/master/ChangeLog.txt") },
     };
 
     if (urlsTable.contains(act)) {
@@ -2896,8 +2907,8 @@ void MainWindow::slotAboutClient() {
                          QString("<br/>")+
                          QString("<br/>")+
                          tr("Home page: ")+
-                         QString("<a href=\"https://github.com/eiskaltdcpp/eiskaltdcpp/\">"
-                                 "https://github.com/eiskaltdcpp/eiskaltdcpp/</a>")+
+                         QString("<a href=\"https://github.com/Delitants/eiskaltdcpp\">"
+                                 "https://github.com/Delitants/eiskaltdcpp</a>")+
                          QString("<br/>")+
                          QString("<br/>")+
                          tr("Total up: <b>%1</b>").arg(WulforUtil::formatBytes(up))+
@@ -2911,8 +2922,8 @@ void MainWindow::slotAboutClient() {
     a.textBrowser_AUTHORS->document()->setDefaultStyleSheet(html_format);
 
     a.textBrowser_AUTHORS->setText(
-        tr("Please use <a href=\"https://github.com/eiskaltdcpp/eiskaltdcpp/issues\">"
-        "https://github.com/eiskaltdcpp/eiskaltdcpp/issues</a> to report bugs.<br/>")+
+        tr("Please use <a href=\"https://github.com/Delitants/eiskaltdcpp/issues\">"
+        "https://github.com/Delitants/eiskaltdcpp/issues</a> to report bugs.<br/>")+
         QString("<br/>")+
         tr("<b>Developers</b><br/>")+
         tr("2026 <a href=\"mailto:admin@nlight.org.ua\">Neolo</a><br/>")+

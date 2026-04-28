@@ -50,12 +50,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_TRAY">
+        <widget class="QGroupBox" name="groupBox_WINDOW">
          <property name="title">
-          <string>Show icon in system tray</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
+          <string>Window behavior</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -79,6 +76,42 @@
            <widget class="QRadioButton" name="radioButton_SHOW">
             <property name="text">
              <string>Always show window at startup</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBox_MINIMIZE_ON_CLOSE">
+            <property name="text">
+             <string>Minimize to status icon when clicking the close button</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_TRAY">
+         <property name="title">
+          <string>Status icon</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_TRAY_ICON">
+          <item>
+           <widget class="QRadioButton" name="radioButton_TRAY_COLORED">
+            <property name="text">
+             <string>Use colored status icon</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButton_TRAY_MONOCHROME">
+            <property name="text">
+             <string>Use monochrome status icon</string>
             </property>
            </widget>
           </item>

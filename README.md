@@ -7,11 +7,11 @@
 Website: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp) <br>
 Sources: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp)
 
-Wiki: https://github.com/eiskaltdcpp/eiskaltdcpp/wiki
+Wiki: https://github.com/Delitants/eiskaltdcpp/wiki
 
 ## License
 
-This program is licensed under the GNU General Public License. See the [COPYING](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/COPYING) file for more information.
+This program is licensed under the GNU General Public License. See the [COPYING](https://github.com/Delitants/eiskaltdcpp/blob/master/COPYING) file for more information.
 
 ## Description
 
@@ -68,7 +68,7 @@ See [ChangeLog.txt](./ChangeLog.txt) and [CHANGELOG_FORK_DELTA.md](./CHANGELOG_F
 
 ## Installation
 
-For build from sources see [INSTALL](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/INSTALL) file.
+For build from sources see [INSTALL](https://github.com/Delitants/eiskaltdcpp/blob/master/INSTALL) file.
 
 ### Build requirements (Qt GUI)
 
@@ -105,7 +105,7 @@ cmake --build --preset build-windows-vs2026-release
 
 See [windows/README.txt](./windows/README.txt) for full setup (vcpkg, Qt6, VS presets).
 
-GNU/Linux and FreeBSD users may install [packages](https://github.com/eiskaltdcpp/eiskaltdcpp#packages-and-installers) from official and unofficial repositories, ports, etc.
+GNU/Linux and FreeBSD users may install [packages](https://github.com/Delitants/eiskaltdcpp#packages-and-installers) from official and unofficial repositories, ports, etc.
 
 macOS users may install and update official builds using [Homebrew](https://brew.sh/) cask:
 
@@ -113,7 +113,7 @@ macOS users may install and update official builds using [Homebrew](https://brew
 brew install --cask eiskaltdcpp
 ```
 
-or download app bundles from [SourceForge](https://github.com/eiskaltdcpp/eiskaltdcpp#packages-and-installers) and install them manually. Program doesn't have embedded mechanism of updates, so in this case users should monitor updates themselves.
+or download app bundles from [SourceForge](https://github.com/Delitants/eiskaltdcpp#packages-and-installers) and install them manually. Program doesn't have embedded mechanism of updates, so in this case users should monitor updates themselves.
 
 Haiku users may install official package from HaikuPorts:
 
@@ -121,7 +121,7 @@ Haiku users may install official package from HaikuPorts:
 pkgman install eiskaltdcpp
 ```
 
-MS Windows users may download official installers and portable builds from [SourceForge](https://github.com/eiskaltdcpp/eiskaltdcpp#packages-and-installers). Program doesn't have embedded mechanism of updates, so users should monitor updates themselves.
+MS Windows users may download official installers and portable builds from [SourceForge](https://github.com/Delitants/eiskaltdcpp#packages-and-installers). Program doesn't have embedded mechanism of updates, so users should monitor updates themselves.
 
 ## Usage
 
@@ -158,19 +158,19 @@ During development all changes are tested on Continuous Integration services.
 
 ### Main developers
 
-* Main developers of EiskaltDC++ are listed in [AUTHORS](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/AUTHORS) file.
-* Program contains source code from other free and and open-source projects. All copyright information from them is pedantically documented in [special file](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/full.copyrights.info.in.Debian.style).
-* Part of program with GTK+ UI contains additional [Credits.txt](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/eiskaltdcpp-gtk/Credits.txt) file. (This is just a list of contributors from LinuxDC++ and FreeDC++ projects, not all of them are copyright holders.)
+* Main developers of EiskaltDC++ are listed in [AUTHORS](https://github.com/Delitants/eiskaltdcpp/blob/master/AUTHORS) file.
+* Program contains source code from other free and and open-source projects. All copyright information from them is pedantically documented in [special file](https://github.com/Delitants/eiskaltdcpp/blob/master/full.copyrights.info.in.Debian.style).
+* Part of program with GTK+ UI contains additional [Credits.txt](https://github.com/Delitants/eiskaltdcpp/blob/master/eiskaltdcpp-gtk/Credits.txt) file. (This is just a list of contributors from LinuxDC++ and FreeDC++ projects, not all of them are copyright holders.)
 
 ### Other contributors
 
-There are a lot of people who were involved into EiskaltDC++ development. Some of them are listed in license headers in source files, some of them might be found only in the history of commits in our git repository. Also there are [translators](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/AUTHORS), testers and just active users. We are thankful to all them!
+There are a lot of people who were involved into EiskaltDC++ development. Some of them are listed in license headers in source files, some of them might be found only in the history of commits in our git repository. Also there are [translators](https://github.com/Delitants/eiskaltdcpp/blob/master/AUTHORS), testers and just active users. We are thankful to all them!
 
 ## How you can help
 
 ### Bug reports
 
-If you found a bug please report about it in our [Bug Tracker](https://github.com/eiskaltdcpp/eiskaltdcpp/issues).
+If you found a bug please report about it in our [Bug Tracker](https://github.com/Delitants/eiskaltdcpp/issues).
 
 ### Beta testing
 
@@ -178,13 +178,13 @@ You may use daily builds of program or program compiled from sources by yourself
 
 ### Comments and wishes
 
-We like constructive comments and wishes to functions of program. You may contact with us in public chat room for discussing of your ideas. Some of them will be drawn up as feature requests in our [Bug Tracker](https://github.com/eiskaltdcpp/eiskaltdcpp/issues).
+We like constructive comments and wishes to functions of program. You may contact with us in public chat room for discussing of your ideas. Some of them will be drawn up as feature requests in our [Bug Tracker](https://github.com/Delitants/eiskaltdcpp/issues).
 
 ### Translations
 
 The work of translators is quite routine and boring. People who do it usually lose interests and their translations become incomplete. If you see such situation for translation to your native language, please join to our [translations team](https://www.transifex.com/tehnick/eiskaltdcpp/). It is extremely welcome!
 
-Some useful notes about translation process you may find at [special wiki page](https://github.com/eiskaltdcpp/eiskaltdcpp/wiki/Translations).
+Some useful notes about translation process you may find at [special wiki page](https://github.com/Delitants/eiskaltdcpp/wiki/Translations).
 
 ### Graphics
 
@@ -206,7 +206,7 @@ For other GNU/Linux and *BSD systems the situation is quite clear: just update p
 
 We do not accept donations for EiskaltDC++ project as a whole, because there are no expenditures for infrastructure and such like. (Thanks to owners of GitHub, SourceForge, Transifex and Travis CI services for their support of FOSS projects!)
 
-But you may send donations to project contributors (developers, maintainers, translators, etc.) on personal basis. Just contact with them using the contact information from [AUTHORS](https://github.com/eiskaltdcpp/eiskaltdcpp/blob/master/AUTHORS) file.
+But you may send donations to project contributors (developers, maintainers, translators, etc.) on personal basis. Just contact with them using the contact information from [AUTHORS](https://github.com/Delitants/eiskaltdcpp/blob/master/AUTHORS) file.
 
 ## Packages and installers
 
@@ -232,10 +232,10 @@ But you may send donations to project contributors (developers, maintainers, tra
 
 ## Extra links
 
-* [Project statistics on GitHub](https://github.com/eiskaltdcpp/eiskaltdcpp/graphs/contributors)
+* [Project statistics on GitHub](https://github.com/Delitants/eiskaltdcpp/graphs/contributors)
 * [Project statistics on OpenHub](https://www.openhub.net/p/eiskaltdcpp)
 * [Project FreeDC++ (was basis of eiskaltdcpp-gtk)](https://github.com/eiskaltdcpp/freedcpp) (sources)
-* [Official Web UI for eiskaltdcpp-daemon](https://github.com/eiskaltdcpp/eiskaltdcpp-web) (sources)
+* [Official Web UI for eiskaltdcpp-daemon](https://github.com/Delitants/eiskaltdcpp-web) (sources)
 * [Alternative Web UI for eiskaltdcpp-daemon ](https://github.com/eiskaltdcpp/icecult) (sources)
 * [Old screenshots](https://tehnick.github.io/eiskaltdcpp/en/screenshots.html) (in English)
 * [Old screenshots](https://tehnick.github.io/eiskaltdcpp/screenshots.html) (in Russian)

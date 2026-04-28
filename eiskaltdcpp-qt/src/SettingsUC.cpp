@@ -14,6 +14,8 @@
 #include "UCModel.h"
 
 #include <QItemSelectionModel>
+#include <QPushButton>
+#include <QSizePolicy>
 
 #include <dcpp/FavoriteManager.h>
 
@@ -26,6 +28,20 @@ SettingsUC::SettingsUC(QWidget *parent) :
     model->loadUC();
 
     treeView->setModel(model);
+    gridLayout->setHorizontalSpacing(10);
+    gridLayout->setVerticalSpacing(6);
+
+    const QList<QPushButton*> buttons {
+        pushButton_ADD,
+        pushButton_CH,
+        pushButton_REM,
+        pushButton_UP,
+        pushButton_DOWN
+    };
+    for (QPushButton *button : buttons) {
+        button->setMinimumSize(78, 28);
+        button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    }
 
     connect(pushButton_ADD, &QPushButton::clicked,          model, &UCModel::newUC);
     connect(pushButton_REM, &QPushButton::clicked,          this,  &SettingsUC::slotRemClicked);

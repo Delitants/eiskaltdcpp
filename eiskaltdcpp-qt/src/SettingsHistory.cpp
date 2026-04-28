@@ -29,7 +29,7 @@ SettingsHistory::SettingsHistory(QWidget *parent): QWidget(parent) {
     pushButton_ClearDirectoriesHistory->setAutoDefault(false);
     pushButton_ClearSearchHistory->setMinimumSize(86, 28);
     pushButton_ClearDirectoriesHistory->setMinimumSize(86, 28);
-    frame->setFrameShape(QFrame::StyledPanel);
+    frame->setFrameShape(QFrame::NoFrame);
     frame->setFrameShadow(QFrame::Plain);
 #endif
     

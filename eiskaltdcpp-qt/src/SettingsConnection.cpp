@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QFileDialog>
 #include <QLabel>
 #include <QToolButton>
@@ -154,6 +155,18 @@ SettingsConnection::SettingsConnection( QWidget *parent):
 
     gridLayout_13->removeWidget(lineEdit_DHT_BOOTSTRAP_URLS);
     lineEdit_DHT_BOOTSTRAP_URLS->hide();
+    horizontalSpacer_3->changeSize(0, 0, QSizePolicy::Fixed, QSizePolicy::Minimum);
+    horizontalLayout_2->setContentsMargins(12, 6, 12, 8);
+    horizontalLayout_2->setSpacing(0);
+    horizontalLayout_2->setStretch(0, 0);
+    horizontalLayout_2->setStretch(1, 1);
+    label_23->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label_DHT_BOOTSTRAP_URLS->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    gridLayout_13->setHorizontalSpacing(12);
+    gridLayout_13->setVerticalSpacing(8);
+    gridLayout_13->setColumnStretch(0, 0);
+    gridLayout_13->setColumnStretch(1, 0);
+    gridLayout_13->setColumnStretch(2, 1);
     auto *buttonEditDHT = new QPushButton(tr("Configure DHT bootstrap URLs"), groupBox_DHT);
     buttonEditDHT->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     gridLayout_13->addWidget(buttonEditDHT, 1, 1);

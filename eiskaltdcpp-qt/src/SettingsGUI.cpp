@@ -134,9 +134,14 @@ void SettingsGUI::init(){
             radioButton_HIDE->setChecked(true);
         else
             radioButton_SHOW->setChecked(true);
+        checkBox_MINIMIZE_ON_CLOSE->setChecked(qtCtx()->settings()->getBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE));
 
         groupBox_TRAY->setChecked(qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
         groupBox_TRAY->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
+        if (qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
+            radioButton_TRAY_MONOCHROME->setChecked(true);
+        else
+            radioButton_TRAY_COLORED->setChecked(true);
 
         if (qtCtx()->settings()->getBool(WB_MAINWINDOW_USE_SIDEBAR))
             comboBox_TABBAR->setCurrentIndex(2);
@@ -148,10 +153,6 @@ void SettingsGUI::init(){
 
         checkBox_HIDE_ICONS_IN_MENU->setChecked(qtCtx()->settings()->getBool("mainwindow/dont-show-icons-in-menus", false));
 
-        // Hide options which do not work in Mac OS X, MS Windows or Haiku:
-#if defined(Q_OS_MAC)
-        groupBox_TRAY->hide();
-#endif
     }
     {//Chat tab
         checkBox_CHATJOINS->setChecked(qtCtx()->settings()->getBool(WB_CHAT_SHOW_JOINS));
@@ -338,12 +339,19 @@ void SettingsGUI::ok(){
 
         qtCtx()->settings()->setBool(WB_MAINWINDOW_REMEMBER, radioButton_REMEMBER->isChecked());
         qtCtx()->settings()->setBool(WB_MAINWINDOW_HIDE, radioButton_HIDE->isChecked());
+        qtCtx()->settings()->setBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, checkBox_MINIMIZE_ON_CLOSE->isChecked());
 
-        if (qtCtx()->settings()->getBool(WB_TRAY_ENABLED) != groupBox_TRAY->isChecked()){
-            qtCtx()->settings()->setBool(WB_TRAY_ENABLED, groupBox_TRAY->isChecked());
+        const bool trayEnabledChanged = qtCtx()->settings()->getBool(WB_TRAY_ENABLED) != groupBox_TRAY->isChecked();
+        const bool trayMonochrome = radioButton_TRAY_MONOCHROME->isChecked();
+        const bool trayIconChanged = qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME) != trayMonochrome;
 
+        qtCtx()->settings()->setBool(WB_TRAY_ENABLED, groupBox_TRAY->isChecked());
+        qtCtx()->settings()->setBool(WB_TRAY_ICON_MONOCHROME, trayMonochrome);
+
+        if (trayEnabledChanged)
             qtCtx()->notification()->enableTray(qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
-        }
+        else if (trayIconChanged)
+            qtCtx()->notification()->resetTrayIcon();
 
         if (comboBox_TABBAR->currentIndex() == 2){
             qtCtx()->settings()->setBool(WB_MAINWINDOW_USE_SIDEBAR, true);

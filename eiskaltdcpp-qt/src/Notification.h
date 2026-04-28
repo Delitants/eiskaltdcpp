@@ -10,6 +10,7 @@
 #pragma once
 
 #include <QObject>
+#include <QIcon>
 #include <QSystemTrayIcon>
 #ifdef DBUS_NOTIFY
 #include <QtDBus>
@@ -89,6 +90,8 @@ private Q_SLOTS:
     void slotSuppressSnd();
 
 private:
+    QIcon trayIcon() const;
+
     QStringList sounds;
 
     QSystemTrayIcon *tray;

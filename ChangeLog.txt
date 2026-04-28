@@ -4,6 +4,28 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.4-v1 2026-04-28 ---
+*** common changes ***
+* Bumped release version to 2.5.4-v1 for the next macOS ARM64 build.
+*** eiskaltdcpp-qt ***
+* Removed the user-facing "View share in simple mode" toggle and kept the
+  simple sharing view enabled by default to avoid broken mixed sharing layouts.
+* Cleaned Preferences layout issues:
+  - removed the inner History page border around the clear-history options
+  - spaced User Commands Add/Change/Remove/Up/Down buttons so they no longer
+    touch each other
+  - shifted DHT settings left by removing the oversized spacer in the DHT group
+* Added GUI/Basic controls for macOS window/status behavior:
+  - optional minimize-to-status-icon behavior when clicking the close button
+  - show/hide status icon setting exposed on macOS
+  - colored or monochrome status icon choice
+* Added runtime-generated monochrome status icon support and refresh it when
+  the app palette changes during light/dark mode switches.
+* Replaced About/Homepage and project links with the fork repository:
+  https://github.com/Delitants/eiskaltdcpp.
+* Improved combo boxes and popup menus on macOS with clearer padding, rounded
+  popup styling, readable dark/light colors and explicit arrow indicators.
+
 --- 2.5.3-release 2026-04-27 ---
 *** common changes ***
 * Bumped release version to 2.5.3-release for macOS ARM64 packaging.

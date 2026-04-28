@@ -85,10 +85,9 @@ void SettingsSharing::ok(){
 
     SM->set(SettingsManager::SKIPLIST_SHARE, (list.isEmpty()? "|" : _tq(list.join("|"))));
 
-    qtCtx()->settings()->setBool(WB_SIMPLE_SHARE_MODE, checkBox_SIMPLE_SHARE_MODE->isChecked());
+    qtCtx()->settings()->setBool(WB_SIMPLE_SHARE_MODE, true);
 
-    if (checkBox_SIMPLE_SHARE_MODE->isChecked())
-        SM->save();
+    SM->save();
 
     qtCtx()->settings()->setStr(WS_SHAREHEADER_STATE, treeView->header()->saveState().toBase64());
     qtCtx()->settings()->setStr("settings-simple-share-headerstate", treeWidget_SIMPLE_MODE->header()->saveState().toBase64());
@@ -126,10 +125,11 @@ void SettingsSharing::init(){
     label_TOTALSHARED->setText(tr("Total shared: %1")
                                .arg(WulforUtil::formatBytes(qtCtx()->dcCtx().getShareManager()->getShareSize())));
 
-    checkBox_SIMPLE_SHARE_MODE->setChecked(qtCtx()->settings()->getBool(WB_SIMPLE_SHARE_MODE));
-    treeWidget_SIMPLE_MODE->setVisible(qtCtx()->settings()->getBool(WB_SIMPLE_SHARE_MODE));
+    checkBox_SIMPLE_SHARE_MODE->setChecked(true);
+    checkBox_SIMPLE_SHARE_MODE->hide();
+    treeWidget_SIMPLE_MODE->setVisible(true);
     treeWidget_SIMPLE_MODE->setContextMenuPolicy(Qt::CustomContextMenu);
-    treeView->setHidden(qtCtx()->settings()->getBool(WB_SIMPLE_SHARE_MODE));
+    treeView->setHidden(true);
 
     checkBox_MAPNORESERVE->setChecked(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HASH_BUFFER_NORESERVE, true));
     checkBox_MAPPOPULATE->setChecked(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HASH_BUFFER_POPULATE, true));
@@ -150,7 +150,6 @@ void SettingsSharing::init(){
     connect(treeView->header(), &QHeaderView::customContextMenuRequested, this, &SettingsSharing::slotHeaderMenu);
 
     connect(treeWidget_SIMPLE_MODE, &QTreeWidget::customContextMenuRequested, this, &SettingsSharing::slotContextMenu);
-    connect(checkBox_SIMPLE_SHARE_MODE, &QCheckBox::clicked, this, &SettingsSharing::slotSimpleShareModeChanged);
     connect(pushButton_SHARE_ADD, &QPushButton::clicked, this, &SettingsSharing::slotAddSharedDirectory);
     connect(pushButton_SHARE_REMOVE, &QPushButton::clicked, this, &SettingsSharing::slotRemoveSelectedSharedDirectories);
     connect(treeWidget_SIMPLE_MODE, &QTreeWidget::itemSelectionChanged, this, &SettingsSharing::slotUpdateShareButtons);
