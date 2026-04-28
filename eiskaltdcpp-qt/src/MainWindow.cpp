@@ -1841,7 +1841,10 @@ void MainWindow::newHubFrame(QString address, QString enc){
 void MainWindow::updateStatus(const QMap<QString, QString> &map){
     Q_D(MainWindow);
 
-    if (!d->statusLabel)
+    if (d->isUnload || d->exitBegin)
+        return;
+
+    if (!d->statusLabel || !d->statusSPLabel || !d->statusDLabel)
         return;
 
     QString statsText = map["STATS"];
@@ -1876,6 +1879,9 @@ void MainWindow::updateStatus(const QMap<QString, QString> &map){
 
     if (qtCtx()->settings()->getBool(WB_SHOW_FREE_SPACE)) {
 #ifdef FREE_SPACE_BAR_C
+        if (!d->progressFreeSpace)
+            return;
+
         std::string s = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DOWNLOAD_DIRECTORY, true);
         unsigned long long available = 0;
         unsigned long long total = 0;
@@ -1893,7 +1899,7 @@ void MainWindow::updateStatus(const QMap<QString, QString> &map){
                 .arg(WulforUtil::formatBytes(total));
 
 #if defined(USE_PROGRESS_BARS)
-        const float percent = 100.0f*(total-available)/total;
+        const float percent = total > 0 ? 100.0f*(total-available)/total : 0.0f;
         d->progressFreeSpace->setFormat(text);
         d->progressFreeSpace->setValue(static_cast<unsigned>(percent));
 #else
@@ -1910,18 +1916,23 @@ void MainWindow::updateStatus(const QMap<QString, QString> &map){
 #endif //FREE_SPACE_BAR_C
     }
 
-    if ((Util::getAway() && !d->toolsAwayOn->isChecked()) || (!Util::getAway() && d->toolsAwayOff->isChecked())){
+    if (d->toolsAwayOn && d->toolsAwayOff &&
+        ((Util::getAway() && !d->toolsAwayOn->isChecked()) || (!Util::getAway() && d->toolsAwayOff->isChecked()))){
         QAction *act = Util::getAway()? d->toolsAwayOn : d->toolsAwayOff;
 
         act->setChecked(true);
     }
 
-    updateHashProgressStatus();
+    if (d->fileRefreshShareHashProgress && d->progressHashing)
+        updateHashProgressStatus();
 }
 
 void MainWindow::updateHashProgressStatus() {
     WulforUtil *WU = qtCtx()->wulforUtil();
     Q_D(MainWindow);
+
+    if (!WU || !d->fileRefreshShareHashProgress || !d->progressHashing)
+        return;
 
     switch( HashProgress::getHashStatus() ) {
     case HashProgress::IDLE:

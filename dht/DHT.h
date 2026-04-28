@@ -74,7 +74,10 @@ namespace dht
         bool addNode(const Node::Ptr& node, bool makeOnline);
 
         /** Returns counts of nodes available in k-buckets */
-        size_t getNodesCount() { Lock l(cs); return bucket->getNodes().size(); }
+        size_t getNodesCount() {
+            Lock l(cs);
+            return bucket ? bucket->getNodes().size() : 0;
+        }
 
         /** Removes dead nodes */
         void checkExpiration(uint64_t aTick);

@@ -8,6 +8,10 @@
 *** common changes ***
 * Bumped release version to 2.5.3-release for macOS ARM64 packaging.
 *** eiskaltdcpp-qt ***
+* Fixed a macOS startup crash in the status bar update path when DHT was
+  constructed but not fully started yet. The DHT node counter now reports zero
+  until its bucket is available, and queued status updates skip incomplete or
+  shutting-down status widgets.
 * Fixed macOS Dock icon switching between the bundle icon while closed and a
   different Qt runtime icon while open. macOS now keeps the bundle icon as the
   single application icon source.
