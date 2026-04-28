@@ -3,48 +3,50 @@
 Comparison against original upstream EiskaltDC++.
 
 - Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
-- Head: codex-2.5.2-release @ e796e8e5 (e796e8e5325f61cea42e4c97a24a817da567bd17)
+- Head: codex-2.5.2-release @ 593235c6 (593235c67ec86f3a2f4fd2d999e8330cf305ea30)
 - Generated on: 2026-04-28
-- Commits ahead of upstream: 248
+- Commits ahead of upstream: 250
 - Files changed vs upstream: 567
 
 ## Contributors In This Delta
- -    211	Joe Rivera <j@jriv.us>
- -     37	Neolo <admin@nlight.org.ua>
+ -  211 Joe Rivera <j@jriv.us>
+ -   39 Neolo <admin@nlight.org.ua>
 
 ## Top-Level Areas Changed (file counts)
-- 163 eiskaltdcpp-qt
-- 145 dcpp
--  98 eiskaltdcpp-gtk
--  82 tests
--  20 dht
--  10 eiskaltdcpp-daemon
--   8 extra
--   7 cmake
--   6 windows
--   6 macos
--   3 json
--   2 haiku
--   1 update-translations.sh
--   1 screenshot.png
--   1 linux
--   1 data
--   1 build-local.ps1
--   1 Version.h.in
--   1 SAFE_PORT_STATUS.txt
--   1 README.md
--   1 README.html
--   1 INSTALL
--   1 ChangeLog.txt
--   1 CMakePresets.json
--   1 CMakeLists.txt
--   1 CHANGELOG_FORK_DELTA.md
--   1 AUTHORS
--   1 .gitignore
--   1 .github
+-  163 eiskaltdcpp-qt
+-  145 dcpp
+-   98 eiskaltdcpp-gtk
+-   82 tests
+-   20 dht
+-   10 eiskaltdcpp-daemon
+-    8 extra
+-    7 cmake
+-    6 windows
+-    6 macos
+-    3 json
+-    2 haiku
+-    1 update-translations.sh
+-    1 screenshot.png
+-    1 linux
+-    1 data
+-    1 build-local.ps1
+-    1 Version.h.in
+-    1 SAFE_PORT_STATUS.txt
+-    1 README.md
+-    1 README.html
+-    1 INSTALL
+-    1 ChangeLog.txt
+-    1 CMakePresets.json
+-    1 CMakeLists.txt
+-    1 CHANGELOG_FORK_DELTA.md
+-    1 AUTHORS
+-    1 .gitignore
+-    1 .github
 
 ## Complete Commit List (newest first)
 
+- 2026-04-28 593235c6 Fix macOS Preferences dark-mode focus styling
+- 2026-04-28 5f7e03a6 docs: refresh fork delta after crash fix
 - 2026-04-28 e796e8e5 Fix DHT status startup crash
 - 2026-04-27 b8ea0275 Fix macOS dark-mode repaint and legacy GUI config
 - 2026-04-27 8d68ce15 docs: refresh fork delta for 2.5.3
