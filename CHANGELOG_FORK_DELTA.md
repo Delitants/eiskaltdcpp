@@ -3,14 +3,14 @@
 Comparison against original upstream EiskaltDC++.
 
 - Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
-- Head: codex-2.5.2-release @ bf20fca3 (bf20fca36aa905bb2f18dee4b8540b8da7818822)
-- Generated on: 2026-04-27
-- Commits ahead of upstream: 245
+- Head: codex-2.5.2-release @ e796e8e5 (e796e8e5325f61cea42e4c97a24a817da567bd17)
+- Generated on: 2026-04-28
+- Commits ahead of upstream: 248
 - Files changed vs upstream: 567
 
 ## Contributors In This Delta
  -    211	Joe Rivera <j@jriv.us>
- -     34	Neolo <admin@nlight.org.ua>
+ -     37	Neolo <admin@nlight.org.ua>
 
 ## Top-Level Areas Changed (file counts)
 - 163 eiskaltdcpp-qt
@@ -45,6 +45,9 @@ Comparison against original upstream EiskaltDC++.
 
 ## Complete Commit List (newest first)
 
+- 2026-04-28 e796e8e5 Fix DHT status startup crash
+- 2026-04-27 b8ea0275 Fix macOS dark-mode repaint and legacy GUI config
+- 2026-04-27 8d68ce15 docs: refresh fork delta for 2.5.3
 - 2026-04-27 bf20fca3 Release 2.5.3 for macOS ARM64
 - 2026-04-22 880186ff Bundle macOS Qt platform plugin to prevent startup abort
 - 2026-04-22 960422f2 Fix ChatEdit contrast stylesheet recursion crash on macOS
