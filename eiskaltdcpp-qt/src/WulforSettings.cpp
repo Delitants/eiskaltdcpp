@@ -397,7 +397,7 @@ void WulforSettings::loadOldConfig(){
 }
 
 void WulforSettings::save(){
-    //Do nothing
+    settings.sync();
 }
 
 void WulforSettings::parseCmd(const QString &cmd, QString& res) {

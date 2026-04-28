@@ -13,6 +13,22 @@
   single application icon source.
 * Preserved the previous macOS reopen-after-close fix by releasing the
   single-instance marker before emergency process termination.
+* Improved live macOS light/dark switching again:
+  - item views now use soft derived alternating row colors instead of raw
+    system AlternateBase values that produced harsh striping after switching
+  - item-view text is forced to readable light/dark contrast after repaint
+  - existing chat document fragments with stale low-contrast foreground colors
+    are repaired when chat styles update, so old black text does not remain on
+    dark chat backgrounds
+* Added one-time GUI config compatibility migration for old/incompatible
+  EiskaltDC++ Qt configs:
+  - keeps safe data such as hubs, account details, sharing, downloads and
+    history
+  - resets incompatible theme, chat color, window layout and table-column state
+  - saves a backup of the previous GUI config before discarding incompatible
+    visual settings
+* Made Qt GUI settings sync explicitly on save so compatibility flags and
+  repaired settings survive the macOS emergency exit path.
 * Kept the 2.5.2-release macOS 14+ ARM64/Qt 6 UI refresh work, including
   light/dark repaint fixes, chat input polish, emoji picker behavior, image
   spoilers, IPv6 user-list support, sharing buttons, tab close alignment, and

@@ -71,10 +71,14 @@ using namespace std;
 
 #include <QApplication>
 #include <QEvent>
+#include <QFile>
+#include <QFileInfo>
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QRegularExpression>
 #include <QObject>
 #include <QScopeGuard>
+#include <QSettings>
 #include <QTimer>
 #include <cstdlib>
 
@@ -173,6 +177,29 @@ static QColor macFocusColor(const QPalette &pal)
     return focus;
 }
 
+static QColor macReadableTextColor(const QColor &base, const bool dark)
+{
+    QColor text = dark ? QColor(242, 242, 242) : QColor(18, 18, 18);
+
+    if (qAbs(text.lightness() - base.lightness()) < 96)
+        text = dark ? QColor(Qt::white) : QColor(Qt::black);
+
+    return text;
+}
+
+static QColor macSoftAlternateBase(const QColor &base, const bool dark)
+{
+    QColor alternate = dark ? base.lighter(112) : base.darker(104);
+
+    if (qAbs(alternate.lightness() - base.lightness()) > 18)
+        alternate = dark ? base.lighter(106) : base.darker(102);
+
+    if (qAbs(alternate.lightness() - base.lightness()) < 4)
+        alternate = dark ? base.lighter(118) : base.darker(108);
+
+    return alternate;
+}
+
 static QString macInputContrastStyle(const QPalette &pal)
 {
     const bool dark = isDarkMacPalette(pal);
@@ -182,8 +209,8 @@ static QString macInputContrastStyle(const QPalette &pal)
         panelBorder = macBorderColor(pal, true);
     const QColor focusBorder = macFocusColor(pal);
     const QColor base = pal.color(QPalette::Base);
-    const QColor alternate = pal.color(QPalette::AlternateBase);
-    const QColor text = pal.color(QPalette::Text);
+    const QColor alternate = macSoftAlternateBase(base, dark);
+    const QColor text = macReadableTextColor(base, dark);
     const QColor highlight = pal.color(QPalette::Highlight);
     const QColor highlightedText = pal.color(QPalette::HighlightedText);
     const QColor header = dark ? pal.color(QPalette::Window).lighter(115)
@@ -214,6 +241,16 @@ static QString macInputContrastStyle(const QPalette &pal)
         " selection-background-color: %7;"
         " selection-color: %8;"
         " outline: 0;"
+        "}"
+        "QListView::item, QTreeView::item, QTableView::item {"
+        " color: %6;"
+        "}"
+        "QListView::item:alternate, QTreeView::item:alternate, QTableView::item:alternate {"
+        " background-color: %5;"
+        "}"
+        "QListView::item:selected, QTreeView::item:selected, QTableView::item:selected {"
+        " background-color: %7;"
+        " color: %8;"
         "}"
         "QAbstractItemView:disabled, QListView:disabled, QTreeView:disabled, QTableView:disabled {"
         " color: %10;"
@@ -286,6 +323,97 @@ private:
     QApplication &app_;
     bool updating_ = false;
 };
+
+struct MacGuiConfigMigration
+{
+    bool needed = false;
+    QString configPath;
+    QString backupPath;
+};
+
+static QString macGuiConfigCompatibilityVersion()
+{
+    return QString::fromStdString(eiskaltdcppVersionString);
+}
+
+static QString macGuiConfigCompatibilityKey()
+{
+    return QStringLiteral("app/config-compat-version");
+}
+
+static MacGuiConfigMigration inspectMacGuiConfigForMigration()
+{
+    MacGuiConfigMigration migration;
+    migration.configPath = _q(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)) +
+            QStringLiteral("EiskaltDC++_Qt.conf");
+
+    if (!QFileInfo::exists(migration.configPath))
+        return migration;
+
+    QSettings settings(migration.configPath, QSettings::IniFormat);
+    const QString storedVersion = settings.value(macGuiConfigCompatibilityKey()).toString();
+    migration.needed = storedVersion != macGuiConfigCompatibilityVersion();
+
+    if (migration.needed) {
+        QString backupPath = migration.configPath + QStringLiteral(".backup-before-") +
+                macGuiConfigCompatibilityVersion();
+        int suffix = 1;
+        while (QFileInfo::exists(backupPath)) {
+            backupPath = migration.configPath + QStringLiteral(".backup-before-") +
+                    macGuiConfigCompatibilityVersion() + QStringLiteral(".%1").arg(suffix++);
+        }
+
+        if (QFile::copy(migration.configPath, backupPath))
+            migration.backupPath = backupPath;
+    }
+
+    return migration;
+}
+
+static void applyMacGuiConfigMigration(const MacGuiConfigMigration &migration)
+{
+    if (!qtCtx() || !qtCtx()->settings())
+        return;
+
+    WulforSettings *settings = qtCtx()->settings();
+
+    settings->setBool(QStringLiteral("hubframe/change-chat-background-color"), false);
+    settings->setStr(QStringLiteral("hubframe/chat-background-color"), QString());
+    settings->setStr(WS_CHAT_TIME_COLOR, QString());
+    settings->setStr(WS_CHAT_MSG_COLOR, QString());
+
+    settings->setStr(WS_CHAT_USERLIST_STATE, QString());
+    settings->setStr(WS_TRANSFERS_STATE, QString());
+    settings->setStr(WS_DQUEUE_STATE, QString());
+    settings->setStr(WS_SEARCH_STATE, QString());
+    settings->setStr(WS_MAINWINDOW_STATE, QString());
+    settings->setStr(WS_FTRANSFERS_FILES_STATE, QString());
+    settings->setStr(WS_FTRANSFERS_USERS_STATE, QString());
+    settings->setStr(WS_FAV_HUBS_STATE, QString());
+    settings->setStr(WS_PUBLICHUBS_STATE, QString());
+    settings->setStr(WS_SETTINGS_GUI_FONTS_STATE, QString());
+
+    settings->setStr(macGuiConfigCompatibilityKey(), macGuiConfigCompatibilityVersion());
+    settings->save();
+
+    QString message = QObject::tr(
+        "Old or incompatible EiskaltDC++ GUI settings were detected.\n\n"
+        "Safe settings such as hubs, account details, sharing, downloads and history were kept. "
+        "Theme, chat color, window layout and table-column state from the older config were reset "
+        "because they can break live light/dark switching on current macOS.\n\n");
+
+    if (!migration.backupPath.isEmpty()) {
+        message += QObject::tr("A backup of the previous GUI config was saved here:\n%1")
+                .arg(migration.backupPath);
+    } else {
+        message += QObject::tr("The previous GUI config could not be backed up, but incompatible "
+                               "visual settings were still discarded.");
+    }
+
+    QMessageBox::warning(nullptr,
+                         QObject::tr("EiskaltDC++ settings updated"),
+                         message);
+}
 #endif
 
 
@@ -339,6 +467,10 @@ int main(int argc, char *argv[])
 
     dcContext->getHashManager()->setPriority(Thread::IDLE);
 
+#if defined(Q_OS_MAC)
+    const MacGuiConfigMigration macGuiConfigMigration = inspectMacGuiConfigForMigration();
+#endif
+
     app.setOrganizationName("EiskaltDC++ Team");
     app.setApplicationName("EiskaltDC++ Qt");
     app.setApplicationVersion(QString::fromStdString(eiskaltdcppVersionString));
@@ -354,6 +486,14 @@ int main(int argc, char *argv[])
     ctx.createSettings();
 
     ctx.settings()->load();
+#if defined(Q_OS_MAC)
+    if (macGuiConfigMigration.needed)
+        applyMacGuiConfigMigration(macGuiConfigMigration);
+    else {
+        ctx.settings()->setStr(macGuiConfigCompatibilityKey(), macGuiConfigCompatibilityVersion());
+        ctx.settings()->save();
+    }
+#endif
     ctx.settings()->loadTheme();
 
     ctx.createWulforUtil();

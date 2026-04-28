@@ -30,6 +30,7 @@
 #include "dcpp/DCPlusPlus.h"
 
 #include <QTextBlock>
+#include <QTextFragment>
 #include <QTextDocument>
 #include <QKeyEvent>
 #include <QMouseEvent>
@@ -42,6 +43,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QFileInfo>
+#include <QBrush>
 #include <QUrl>
 #include <QUrlQuery>
 #include <algorithm>
@@ -68,6 +70,13 @@ static QString themedChatTextColor(const QPalette &palette)
     const QColor window = palette.color(QPalette::Window);
     const int baseLightness = qMin(base.lightness(), window.lightness());
     return baseLightness < 128 ? QStringLiteral("#ffffff") : QStringLiteral("#000000");
+}
+
+static QColor effectiveChatBaseColor(const QPalette &palette)
+{
+    const QColor base = palette.color(QPalette::Base);
+    const QColor window = palette.color(QPalette::Window);
+    return base.lightness() <= window.lightness() ? base : window;
 }
 
 static double channelToLinear(const int channel)
@@ -100,8 +109,7 @@ static QString ensureReadableChatColor(const QString &candidate, const QPalette 
     if (!resolved.isValid())
         return themedChatTextColor(palette);
 
-    const QColor base = palette.color(QPalette::Base);
-    if (contrastRatio(resolved, base) < 3.0)
+    if (contrastRatio(resolved, effectiveChatBaseColor(palette)) < 3.0)
         return themedChatTextColor(palette);
 
     return resolved.name(QColor::HexRgb);
@@ -114,6 +122,48 @@ static QString resolveChatColorValue(const QString &settingKeyOrColor, const QPa
         return ensureReadableChatColor(keyOrColor, palette);
 
     return ensureReadableChatColor(qtCtx()->settings()->getStr(keyOrColor), palette);
+}
+
+static void repairChatDocumentContrast(QTextDocument *document, const QPalette &palette)
+{
+    if (!document)
+        return;
+
+    const QColor base = effectiveChatBaseColor(palette);
+    const QColor replacement = QColor::fromString(themedChatTextColor(palette));
+    if (!replacement.isValid())
+        return;
+
+    QTextCursor cursor(document);
+    cursor.beginEditBlock();
+
+    for (QTextBlock block = document->begin(); block.isValid(); block = block.next()) {
+        for (QTextBlock::iterator it = block.begin(); !it.atEnd(); ++it) {
+            const QTextFragment fragment = it.fragment();
+            if (!fragment.isValid() || fragment.length() <= 0)
+                continue;
+
+            const QTextCharFormat format = fragment.charFormat();
+            if (format.isAnchor())
+                continue;
+
+            const QBrush foreground = format.foreground();
+            if (foreground.style() == Qt::NoBrush)
+                continue;
+
+            const QColor color = foreground.color();
+            if (!color.isValid() || contrastRatio(color, base) >= 3.0)
+                continue;
+
+            QTextCharFormat replacementFormat;
+            replacementFormat.setForeground(replacement);
+            cursor.setPosition(fragment.position());
+            cursor.setPosition(fragment.position() + fragment.length(), QTextCursor::KeepAnchor);
+            cursor.mergeCharFormat(replacementFormat);
+        }
+    }
+
+    cursor.endEditBlock();
 }
 
 static bool parseInlineImageSpoilerUrl(const QString &urlText, QString &localPath, QString &displayName, int64_t &size)
@@ -634,6 +684,7 @@ void PMWindow::updateStyles(){
                                                        );
     }
     textEdit_CHAT->document()->markContentsDirty(0, textEdit_CHAT->document()->characterCount());
+    repairChatDocumentContrast(textEdit_CHAT->document(), textEdit_CHAT->palette());
     textEdit_CHAT->viewport()->update();
 }
 

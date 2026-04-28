@@ -57,6 +57,7 @@
 #include <QInputDialog>
 #include <QTextCursor>
 #include <QTextBlock>
+#include <QTextFragment>
 #include <QTextLayout>
 #include <QTextDocument>
 #include <QUrl>
@@ -71,6 +72,7 @@
 #include <QHeaderView>
 #include <QFont>
 #include <QImageReader>
+#include <QBrush>
 #include <QSplitter>
 #include <QSplitterHandle>
 #include <QPainter>
@@ -148,6 +150,48 @@ QString resolveChatColorValue(const QString &settingKeyOrColor, const QPalette &
         return ensureReadableChatColor(keyOrColor, palette);
 
     return ensureReadableChatColor(qtCtx()->settings()->getStr(keyOrColor), palette);
+}
+
+void repairChatDocumentContrast(QTextDocument *document, const QPalette &palette)
+{
+    if (!document)
+        return;
+
+    const QColor base = effectiveChatBaseColor(palette);
+    const QColor replacement = QColor::fromString(themedChatTextColor(palette));
+    if (!replacement.isValid())
+        return;
+
+    QTextCursor cursor(document);
+    cursor.beginEditBlock();
+
+    for (QTextBlock block = document->begin(); block.isValid(); block = block.next()) {
+        for (QTextBlock::iterator it = block.begin(); !it.atEnd(); ++it) {
+            const QTextFragment fragment = it.fragment();
+            if (!fragment.isValid() || fragment.length() <= 0)
+                continue;
+
+            const QTextCharFormat format = fragment.charFormat();
+            if (format.isAnchor())
+                continue;
+
+            const QBrush foreground = format.foreground();
+            if (foreground.style() == Qt::NoBrush)
+                continue;
+
+            const QColor color = foreground.color();
+            if (!color.isValid() || contrastRatio(color, base) >= 3.0)
+                continue;
+
+            QTextCharFormat replacementFormat;
+            replacementFormat.setForeground(replacement);
+            cursor.setPosition(fragment.position());
+            cursor.setPosition(fragment.position() + fragment.length(), QTextCursor::KeepAnchor);
+            cursor.mergeCharFormat(replacementFormat);
+        }
+    }
+
+    cursor.endEditBlock();
 }
 
 class ChatInputResizeGrip final : public QWidget
@@ -3350,6 +3394,7 @@ void HubFrame::updateStyles(){
                                                        );
     }
     textEdit_CHAT->document()->markContentsDirty(0, textEdit_CHAT->document()->characterCount());
+    repairChatDocumentContrast(textEdit_CHAT->document(), textEdit_CHAT->palette());
     textEdit_CHAT->viewport()->update();
 
     custom_font_desc = qtCtx()->settings()->getStr(WS_CHAT_ULIST_FONT);
