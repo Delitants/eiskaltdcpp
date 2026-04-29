@@ -3,10 +3,9 @@
 Comparison against original upstream EiskaltDC++.
 
 - Base: origin/master @ 697db4b0 (697db4b03e3d9ffa48b3d4c74fd043dee7663266)
-- Head: codex-2.5.2-release @ 0bbc5c13 (0bbc5c13c20fc00a23e852cc83e70eee5ec9acd6)
+- Head: codex-2.5.2-release @ v2.5.4-v1 release tag
 - Generated on: 2026-04-28
-- Commits ahead of upstream: 252
-- Files changed vs upstream: 568
+- Scope: current fork history through the 2.5.4-v1 macOS ARM64 release
 
 ## 2.5.4-v1 Release Notes
 
