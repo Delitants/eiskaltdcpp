@@ -237,8 +237,11 @@ OnlineUser& NmdcHub::getUser(const string& aNick) {
 
 void NmdcHub::supports(const StringList& feat) {
     string x;
-    for(auto& i: feat) {
-        x += i + ' ';
+    for(auto i = feat.cbegin(); i != feat.cend(); ++i) {
+        if(i != feat.cbegin()) {
+            x += ' ';
+        }
+        x += *i;
     }
     send("$Supports " + x + '|');
 }
