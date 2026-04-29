@@ -5,7 +5,6 @@
 </a>
 
 Website: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp) <br>
-Sources: [https://github.com/Delitants/eiskaltdcpp](https://github.com/Delitants/eiskaltdcpp)
 
 Wiki: https://github.com/Delitants/eiskaltdcpp/wiki
 
