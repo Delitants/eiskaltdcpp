@@ -4,58 +4,58 @@
 <context>
     <name>ADLS</name>
     <message>
-        <location filename="../src/ADLS.cpp" line="53"/>
+        <location filename="../src/ADLS.cpp" line="61"/>
         <source>ADLSearch</source>
         <translation>ADLArama</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="138"/>
-        <location filename="../src/ADLS.cpp" line="155"/>
+        <location filename="../src/ADLS.cpp" line="146"/>
+        <location filename="../src/ADLS.cpp" line="163"/>
         <source>Add new</source>
         <translation>Yeni ekle</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="156"/>
+        <location filename="../src/ADLS.cpp" line="164"/>
         <source>Change</source>
         <translation>Değiştir</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="157"/>
+        <location filename="../src/ADLS.cpp" line="165"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="383"/>
+        <location filename="../src/ADLS.cpp" line="391"/>
         <source>Filename</source>
         <translation>Dosya ismi</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="384"/>
+        <location filename="../src/ADLS.cpp" line="392"/>
         <source>Directory</source>
         <translation>Klasör</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="385"/>
+        <location filename="../src/ADLS.cpp" line="393"/>
         <source>Full Path</source>
         <translation>Tam Yol</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="391"/>
+        <location filename="../src/ADLS.cpp" line="399"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="392"/>
+        <location filename="../src/ADLS.cpp" line="400"/>
         <source>KiB</source>
         <translation>KiB</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="393"/>
+        <location filename="../src/ADLS.cpp" line="401"/>
         <source>MiB</source>
         <translation>MiB</translation>
     </message>
     <message>
-        <location filename="../src/ADLS.cpp" line="394"/>
+        <location filename="../src/ADLS.cpp" line="402"/>
         <source>GiB</source>
         <translation>GiB</translation>
     </message>
@@ -63,37 +63,37 @@
 <context>
     <name>ADLSModel</name>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="19"/>
+        <location filename="../src/ADLSModel.cpp" line="22"/>
         <source>Checked</source>
         <translation>Denetlendi</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="19"/>
+        <location filename="../src/ADLSModel.cpp" line="22"/>
         <source>Search String</source>
         <translation>Arama Metni</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="19"/>
+        <location filename="../src/ADLSModel.cpp" line="22"/>
         <source>Type source</source>
         <translation>Kaynağı gir</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="20"/>
+        <location filename="../src/ADLSModel.cpp" line="23"/>
         <source>Name directory</source>
         <translation>Klasör ismi</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="20"/>
+        <location filename="../src/ADLSModel.cpp" line="23"/>
         <source>Min. Size</source>
         <translation>Asgari Boyut</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="20"/>
+        <location filename="../src/ADLSModel.cpp" line="23"/>
         <source>Max. Size</source>
         <translation>Azami Boyut</translation>
     </message>
     <message>
-        <location filename="../src/ADLSModel.cpp" line="20"/>
+        <location filename="../src/ADLSModel.cpp" line="23"/>
         <source>Type Size</source>
         <translation>Türü Gir</translation>
     </message>
@@ -123,13 +123,13 @@ Anahtarlar:
 <context>
     <name>ActionCustomizer</name>
     <message>
-        <location filename="../src/ActionCustomizer.cpp" line="17"/>
+        <location filename="../src/ActionCustomizer.cpp" line="20"/>
         <source>Customize actions</source>
         <translation>Etkinlikleri özelleştir</translation>
     </message>
     <message>
-        <location filename="../src/ActionCustomizer.cpp" line="26"/>
-        <location filename="../src/ActionCustomizer.cpp" line="38"/>
+        <location filename="../src/ActionCustomizer.cpp" line="29"/>
+        <location filename="../src/ActionCustomizer.cpp" line="41"/>
         <source>-- Separator --</source>
         <translation>-- Ayraç --</translation>
     </message>
@@ -137,35 +137,69 @@ Anahtarlar:
 <context>
     <name>AntiSpam</name>
     <message>
-        <location filename="../src/Antispam.cpp" line="141"/>
+        <location filename="../src/Antispam.cpp" line="159"/>
         <source>Checking user %1 (message: %2, cid: %3)...</source>
         <translation>%1 kullanıcısı kontrol ediliyor (mesaj: %2, cid: %3)...</translation>
     </message>
     <message>
-        <location filename="../src/Antispam.cpp" line="152"/>
+        <location filename="../src/Antispam.cpp" line="170"/>
         <source>%1: Moving user to GRAY.</source>
         <translation>%1: Kullanıcı GRİ&apos;ye taşınıyor.</translation>
     </message>
     <message>
-        <location filename="../src/Antispam.cpp" line="162"/>
+        <location filename="../src/Antispam.cpp" line="180"/>
         <source>%1: Moving user to BLACK.</source>
         <translation>%1: Kullanıcı SİYAH&apos;a taşınıyor.</translation>
     </message>
     <message>
-        <location filename="../src/Antispam.cpp" line="170"/>
+        <location filename="../src/Antispam.cpp" line="188"/>
         <source>%1: Sending &quot;Try again&quot; message.</source>
         <translation>%1: &quot;Yeniden Dene&quot; mesajı gönderiliyor.</translation>
     </message>
     <message>
-        <location filename="../src/Antispam.cpp" line="177"/>
+        <location filename="../src/Antispam.cpp" line="195"/>
         <source>Hi, this is AntiSpam bot. So question is &quot;%1&quot;</source>
         <translation>Merhaba, bu AntiSpam robotudur. Böylece soru şudur: &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
+    <name>ChatEdit</name>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="381"/>
+        <location filename="../src/ChatEdit.cpp" line="488"/>
+        <source>Link</source>
+        <translation type="unfinished">Bağlantı</translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="381"/>
+        <source>Address</source>
+        <translation type="unfinished">Adres</translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="402"/>
+        <source>Select image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="485"/>
+        <source>Color</source>
+        <translation type="unfinished">Renk</translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="491"/>
+        <source>Code</source>
+        <translation type="unfinished">Kod</translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="494"/>
+        <source>Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CmdDebug</name>
     <message>
-        <location filename="../src/CmdDebug.cpp" line="65"/>
+        <location filename="../src/CmdDebug.cpp" line="74"/>
         <source>Debug Console</source>
         <translation>Hata Ayıklama Komutu</translation>
     </message>
@@ -173,14 +207,14 @@ Anahtarlar:
 <context>
     <name>CustomFontModel</name>
     <message>
-        <location filename="../src/CustomFontModel.cpp" line="34"/>
-        <location filename="../src/CustomFontModel.cpp" line="98"/>
+        <location filename="../src/CustomFontModel.cpp" line="35"/>
+        <location filename="../src/CustomFontModel.cpp" line="99"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
     <message>
-        <location filename="../src/CustomFontModel.cpp" line="34"/>
-        <location filename="../src/CustomFontModel.cpp" line="98"/>
+        <location filename="../src/CustomFontModel.cpp" line="35"/>
+        <location filename="../src/CustomFontModel.cpp" line="99"/>
         <source>Font</source>
         <translation>Yazıtipi</translation>
     </message>
@@ -189,19 +223,39 @@ Anahtarlar:
         <translation type="vanished">Uygulama</translation>
     </message>
     <message>
-        <location filename="../src/CustomFontModel.cpp" line="38"/>
+        <location filename="../src/CustomFontModel.cpp" line="39"/>
         <source>Public Chat: Chat</source>
         <translation>Herkese Açık Sohbet: Sohbet</translation>
     </message>
     <message>
-        <location filename="../src/CustomFontModel.cpp" line="39"/>
+        <location filename="../src/CustomFontModel.cpp" line="40"/>
         <source>Public Chat: Userlist</source>
         <translation>Herkese Açık Sohbet: Kullanıcı Listesi</translation>
     </message>
     <message>
-        <location filename="../src/CustomFontModel.cpp" line="40"/>
+        <location filename="../src/CustomFontModel.cpp" line="41"/>
         <source>Private Chat</source>
         <translation>Özel Sohbet</translation>
+    </message>
+</context>
+<context>
+    <name>DHTBootstrapList</name>
+    <message>
+        <location filename="../src/DHTBootstrapList.cpp" line="34"/>
+        <source>DHT bootstrap URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/DHTBootstrapList.cpp" line="87"/>
+        <location filename="../src/DHTBootstrapList.cpp" line="111"/>
+        <source>DHT bootstrap URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/DHTBootstrapList.cpp" line="87"/>
+        <location filename="../src/DHTBootstrapList.cpp" line="111"/>
+        <source>URL</source>
+        <translation type="unfinished">URL</translation>
     </message>
 </context>
 <context>
@@ -235,162 +289,162 @@ Anahtarlar:
 <context>
     <name>DownloadQueue</name>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="58"/>
+        <location filename="../src/DownloadQueue.cpp" line="65"/>
         <source>Magnet</source>
         <translation>Magnet</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="60"/>
+        <location filename="../src/DownloadQueue.cpp" line="68"/>
         <source>Search for alternates</source>
         <translation>Alternatifleri ara</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="61"/>
+        <location filename="../src/DownloadQueue.cpp" line="70"/>
         <source>Copy magnet</source>
         <translation>Magnet&apos;i kopyala</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="62"/>
+        <location filename="../src/DownloadQueue.cpp" line="71"/>
         <source>Copy web-magnet</source>
         <translation>Ağ magnet&apos;ini kopyala</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="63"/>
+        <location filename="../src/DownloadQueue.cpp" line="72"/>
         <source>Properties of magnet</source>
         <translation>Magnet&apos;in özellikleri</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="64"/>
+        <location filename="../src/DownloadQueue.cpp" line="73"/>
         <source>Rename/Move</source>
         <translation>Yeniden adlandır/taşı</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="69"/>
+        <location filename="../src/DownloadQueue.cpp" line="78"/>
         <source>Set priority</source>
         <translation>Öncelik belirle</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="71"/>
+        <location filename="../src/DownloadQueue.cpp" line="81"/>
         <source>Paused</source>
         <translation>Duraklatılmış</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="74"/>
+        <location filename="../src/DownloadQueue.cpp" line="84"/>
         <source>Lowest</source>
         <translation>En düşük</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="77"/>
+        <location filename="../src/DownloadQueue.cpp" line="87"/>
         <source>Low</source>
         <translation>Düşük</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="80"/>
+        <location filename="../src/DownloadQueue.cpp" line="90"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="83"/>
+        <location filename="../src/DownloadQueue.cpp" line="93"/>
         <source>High</source>
         <translation>Yüksek</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="86"/>
+        <location filename="../src/DownloadQueue.cpp" line="96"/>
         <source>Highest</source>
         <translation>En yüksek</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="92"/>
+        <location filename="../src/DownloadQueue.cpp" line="102"/>
         <source>Browse files</source>
         <translation>Dosyaları tara</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="93"/>
+        <location filename="../src/DownloadQueue.cpp" line="104"/>
         <source>Send private message</source>
         <translation>Özel mesaj gönder</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="98"/>
+        <location filename="../src/DownloadQueue.cpp" line="110"/>
         <source>Remove source</source>
         <translation>Kaynağı kaldır</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="99"/>
+        <location filename="../src/DownloadQueue.cpp" line="112"/>
         <source>Remove user</source>
         <translation>Kullanıcıyı kaldır</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="101"/>
+        <location filename="../src/DownloadQueue.cpp" line="115"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="357"/>
+        <location filename="../src/DownloadQueue.cpp" line="375"/>
         <source>No users...</source>
         <translation>Hiçbir kullanıcı yok...</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="364"/>
+        <location filename="../src/DownloadQueue.cpp" line="382"/>
         <source>%1 of %2 user(s) online</source>
         <translation>Toplam %2 üzeri %1 kullanıcı mevcut</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="366"/>
+        <location filename="../src/DownloadQueue.cpp" line="384"/>
         <source>Running...</source>
         <translation>Çalışıyor...</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="390"/>
+        <location filename="../src/DownloadQueue.cpp" line="408"/>
         <source>File not available</source>
         <translation>Dosya mevcut değil</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="392"/>
+        <location filename="../src/DownloadQueue.cpp" line="410"/>
         <source>Passive user</source>
         <translation>Pasif kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="394"/>
+        <location filename="../src/DownloadQueue.cpp" line="412"/>
         <source>Checksum mismatch</source>
         <translation>Karma değer uyuşmazlığı</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="396"/>
+        <location filename="../src/DownloadQueue.cpp" line="414"/>
         <source>Full tree does not match TTH root</source>
         <translation>Tüm ağaç TTH köküyle eşleşmiyor</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="398"/>
+        <location filename="../src/DownloadQueue.cpp" line="416"/>
         <source>Source too slow</source>
         <translation>Kaynak çok yavaş</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="400"/>
+        <location filename="../src/DownloadQueue.cpp" line="418"/>
         <source>Remote client does not fully support TTH - cannot download</source>
         <translation>Uzaktaki istemcinin tam TTH desteği yok -- indirme yapılamaz</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="407"/>
+        <location filename="../src/DownloadQueue.cpp" line="425"/>
         <source>No errors</source>
         <translation>Hiçbir hata yok</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="643"/>
+        <location filename="../src/DownloadQueue.cpp" line="661"/>
         <source>Choose filename</source>
         <translation>Dosya ismi seç</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="643"/>
+        <location filename="../src/DownloadQueue.cpp" line="661"/>
         <source>All files (*.*)</source>
         <translation>Tüm dosyalar (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.cpp" line="783"/>
+        <location filename="../src/DownloadQueue.cpp" line="801"/>
         <source>Total files: &lt;b&gt;%1&lt;/b&gt; Total size: &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Toplam dosya: &lt;b&gt;%1&lt;/b&gt; Toplam boyut: &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueue.h" line="88"/>
+        <location filename="../src/DownloadQueue.h" line="90"/>
         <source>Download Queue</source>
         <translation>İndirme kuyruğu</translation>
     </message>
@@ -398,103 +452,103 @@ Anahtarlar:
 <context>
     <name>DownloadQueueModel</name>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="79"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="281"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="79"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="281"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="79"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="281"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="79"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="281"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
         <source>Downloaded</source>
         <translation>İndirildi</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="282"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="284"/>
         <source>Priority</source>
         <translation>Öncelik</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="282"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="284"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="282"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="284"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="80"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="282"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="284"/>
         <source>Exact size</source>
         <translation>Tam boyut</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="82"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="285"/>
         <source>Errors</source>
         <translation>Hatalar</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="81"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="283"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="82"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="285"/>
         <source>Added</source>
         <translation>Eklendi</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="137"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="139"/>
         <source>Paused</source>
         <translation>Duraklatıldı</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="140"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="142"/>
         <source>Lowest</source>
         <translation>En düşük</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="143"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="145"/>
         <source>Low</source>
         <translation>Düşük</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="146"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="148"/>
         <source>High</source>
         <translation>Yüksek</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="149"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="151"/>
         <source>Highest</source>
         <translation>En Yüksek</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="152"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="154"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="173"/>
-        <location filename="../src/DownloadQueueModel.cpp" line="190"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="175"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="192"/>
         <source>No errors</source>
         <translation>Hiçbir hata yok</translation>
     </message>
     <message>
-        <location filename="../src/DownloadQueueModel.cpp" line="192"/>
+        <location filename="../src/DownloadQueueModel.cpp" line="194"/>
         <source>&lt;b&gt;Added: &lt;/b&gt; %1
 &lt;b&gt;Path: &lt;/b&gt; %2
 &lt;b&gt;Errors: &lt;/b&gt; %3
@@ -508,7 +562,7 @@ Anahtarlar:
 <context>
     <name>EmoticonDialog</name>
     <message>
-        <location filename="../src/EmoticonDialog.cpp" line="27"/>
+        <location filename="../src/EmoticonDialog.cpp" line="32"/>
         <source>Select emoticon</source>
         <translation>Gülümseme ikonu seç</translation>
     </message>
@@ -516,42 +570,42 @@ Anahtarlar:
 <context>
     <name>FavoriteHubModel</name>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="19"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="22"/>
         <source>Autoconnect</source>
         <translation>Otomatik bağlan</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="19"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="22"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="19"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="22"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="20"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="23"/>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="20"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="23"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="20"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="23"/>
         <source>Password</source>
         <translation>Parola</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="20"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="23"/>
         <source>User description</source>
         <translation>Kullanıcı tanımlaması</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubModel.cpp" line="21"/>
+        <location filename="../src/FavoriteHubModel.cpp" line="24"/>
         <source>Remote encoding</source>
         <translation>Uzaktaki kodlama</translation>
     </message>
@@ -559,35 +613,35 @@ Anahtarlar:
 <context>
     <name>FavoriteHubs</name>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="58"/>
+        <location filename="../src/FavoriteHubs.cpp" line="66"/>
         <source>Favorite hubs</source>
         <translation>Favori hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="179"/>
-        <location filename="../src/FavoriteHubs.cpp" line="209"/>
-        <location filename="../src/FavoriteHubs.cpp" line="321"/>
+        <location filename="../src/FavoriteHubs.cpp" line="187"/>
+        <location filename="../src/FavoriteHubs.cpp" line="222"/>
+        <location filename="../src/FavoriteHubs.cpp" line="334"/>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="381"/>
-        <location filename="../src/FavoriteHubs.cpp" line="411"/>
+        <location filename="../src/FavoriteHubs.cpp" line="394"/>
+        <location filename="../src/FavoriteHubs.cpp" line="424"/>
         <source>Add new</source>
         <translation>Yeni ekle</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="412"/>
+        <location filename="../src/FavoriteHubs.cpp" line="425"/>
         <source>Change</source>
         <translation>Değiştir</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="413"/>
+        <location filename="../src/FavoriteHubs.cpp" line="426"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteHubs.cpp" line="414"/>
+        <location filename="../src/FavoriteHubs.cpp" line="427"/>
         <source>Connect</source>
         <translation>Bağlan</translation>
     </message>
@@ -595,34 +649,34 @@ Anahtarlar:
 <context>
     <name>FavoriteUsers</name>
     <message>
-        <location filename="../src/FavoriteUsers.cpp" line="119"/>
-        <location filename="../src/FavoriteUsers.cpp" line="332"/>
+        <location filename="../src/FavoriteUsers.cpp" line="126"/>
+        <location filename="../src/FavoriteUsers.cpp" line="339"/>
         <source>Online</source>
         <translation>Çevrimiçi</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsers.cpp" line="196"/>
-        <location filename="../src/FavoriteUsers.cpp" line="272"/>
+        <location filename="../src/FavoriteUsers.cpp" line="203"/>
+        <location filename="../src/FavoriteUsers.cpp" line="279"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsers.cpp" line="269"/>
+        <location filename="../src/FavoriteUsers.cpp" line="276"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsers.cpp" line="275"/>
+        <location filename="../src/FavoriteUsers.cpp" line="282"/>
         <source>Grant/Remove slot</source>
         <translation>Oluk Ver/Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsers.cpp" line="278"/>
+        <location filename="../src/FavoriteUsers.cpp" line="285"/>
         <source>Browse Files</source>
         <translation>Dosyaları tara</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsers.h" line="46"/>
+        <location filename="../src/FavoriteUsers.h" line="48"/>
         <source>Favourite users</source>
         <translation>Favori kullanıcılar</translation>
     </message>
@@ -630,22 +684,22 @@ Anahtarlar:
 <context>
     <name>FavoriteUsersModel</name>
     <message>
-        <location filename="../src/FavoriteUsersModel.cpp" line="27"/>
+        <location filename="../src/FavoriteUsersModel.cpp" line="33"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsersModel.cpp" line="27"/>
+        <location filename="../src/FavoriteUsersModel.cpp" line="33"/>
         <source>Hub</source>
         <translation>Hub</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsersModel.cpp" line="27"/>
+        <location filename="../src/FavoriteUsersModel.cpp" line="33"/>
         <source>Last seen</source>
         <translation>Son görülme tarihi</translation>
     </message>
     <message>
-        <location filename="../src/FavoriteUsersModel.cpp" line="27"/>
+        <location filename="../src/FavoriteUsersModel.cpp" line="33"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
@@ -653,87 +707,87 @@ Anahtarlar:
 <context>
     <name>FileBrowserModel</name>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="112"/>
+        <location filename="../src/FileBrowserModel.cpp" line="115"/>
         <source>%1 [%2 Gb]</source>
         <translation>%1 [%2 Gb]</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="176"/>
+        <location filename="../src/FileBrowserModel.cpp" line="179"/>
         <source>File marked as a duplicate of another file: %1</source>
         <translation>Dosya başka bir dosyanın çifti olarak işaretlendi: %1</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="191"/>
+        <location filename="../src/FileBrowserModel.cpp" line="194"/>
         <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Ortam bilgisi:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="193"/>
+        <location filename="../src/FileBrowserModel.cpp" line="196"/>
         <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
         <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="195"/>
+        <location filename="../src/FileBrowserModel.cpp" line="198"/>
         <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
         <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Ses:&lt;/b&gt; %1&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="197"/>
+        <location filename="../src/FileBrowserModel.cpp" line="200"/>
         <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
         <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Veri oranı:&lt;/b&gt; %1&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="199"/>
+        <location filename="../src/FileBrowserModel.cpp" line="202"/>
         <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
         <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Çözünürlük:&lt;/b&gt; %1&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="210"/>
+        <location filename="../src/FileBrowserModel.cpp" line="213"/>
         <source>File already exists: %1</source>
         <translation>Dosya zaten mevcut: %1</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="312"/>
+        <location filename="../src/FileBrowserModel.cpp" line="315"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="312"/>
+        <location filename="../src/FileBrowserModel.cpp" line="315"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="312"/>
+        <location filename="../src/FileBrowserModel.cpp" line="315"/>
         <source>Exact size</source>
         <translation>Tam boyut</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="313"/>
+        <location filename="../src/FileBrowserModel.cpp" line="316"/>
         <source>Bitrate</source>
         <translation>Veri oranı</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="313"/>
+        <location filename="../src/FileBrowserModel.cpp" line="316"/>
         <source>Resolution</source>
         <translation>Çözünürlük</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="313"/>
+        <location filename="../src/FileBrowserModel.cpp" line="316"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="313"/>
+        <location filename="../src/FileBrowserModel.cpp" line="316"/>
         <source>Audio</source>
         <translation>Ses</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="314"/>
+        <location filename="../src/FileBrowserModel.cpp" line="317"/>
         <source>Downloaded</source>
         <translation>İndirildi</translation>
     </message>
     <message>
-        <location filename="../src/FileBrowserModel.cpp" line="314"/>
+        <location filename="../src/FileBrowserModel.cpp" line="317"/>
         <source>Shared</source>
         <translation>Paylaşıldı</translation>
     </message>
@@ -741,12 +795,12 @@ Anahtarlar:
 <context>
     <name>FileHasher</name>
     <message>
-        <location filename="../src/FileHasher.cpp" line="165"/>
+        <location filename="../src/FileHasher.cpp" line="171"/>
         <source>Select file</source>
         <translation>Dosya seç</translation>
     </message>
     <message>
-        <location filename="../src/FileHasher.cpp" line="165"/>
+        <location filename="../src/FileHasher.cpp" line="171"/>
         <source>All files (*.*)</source>
         <translation>Tüm dosyalar (*.*)</translation>
     </message>
@@ -767,12 +821,12 @@ Anahtarlar:
 <context>
     <name>FinishedTransfers</name>
     <message>
-        <location filename="../src/FinishedTransfers.h" line="481"/>
+        <location filename="../src/FinishedTransfers.h" line="488"/>
         <source>Open file</source>
         <translation>Dosya aç</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfers.h" line="482"/>
+        <location filename="../src/FinishedTransfers.h" line="489"/>
         <source>Open directory</source>
         <translation>Klasör aç</translation>
     </message>
@@ -780,69 +834,69 @@ Anahtarlar:
 <context>
     <name>FinishedTransfersModel</name>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="45"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="51"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="45"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
         <source>Files</source>
         <translation>Dosyalar</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="45"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="51"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
         <source>Time</source>
         <translation>Zaman</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="45"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
         <source>Transferred</source>
         <translation>Aktarılan</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="47"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
         <source>Speed</source>
         <translation>Hız</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="47"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="54"/>
         <source>Elapsed time</source>
         <translation>Geçen vakit</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="46"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="47"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="54"/>
         <source>Full</source>
         <translation>Tam</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="51"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
         <source>Filename</source>
         <translation>Dosya ismi</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="51"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="52"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
         <source>Check sum</source>
         <translation>Karma değer</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="53"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="54"/>
         <source>Target</source>
         <translation>Hedef</translation>
     </message>
     <message>
-        <location filename="../src/FinishedTransfersModel.cpp" line="116"/>
-        <location filename="../src/FinishedTransfersModel.cpp" line="126"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="117"/>
+        <location filename="../src/FinishedTransfersModel.cpp" line="127"/>
         <source>%1/s</source>
         <translation>%1/s</translation>
     </message>
@@ -850,64 +904,64 @@ Anahtarlar:
 <context>
     <name>HashProgress</name>
     <message>
-        <location filename="../src/HashProgress.cpp" line="102"/>
+        <location filename="../src/HashProgress.cpp" line="118"/>
         <source>Refreshing file list</source>
         <translation>Dosya listesi tazeleniyor</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="134"/>
+        <location filename="../src/HashProgress.cpp" line="150"/>
         <source>-.-- files/h, %1 files left</source>
         <translation>-.-- dosya/s, %1 dosya kaldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="135"/>
+        <location filename="../src/HashProgress.cpp" line="151"/>
         <source>-.-- B/s, %1 left</source>
         <translation>-.-- B/s, %1 kaldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="136"/>
-        <location filename="../src/HashProgress.cpp" line="154"/>
+        <location filename="../src/HashProgress.cpp" line="152"/>
+        <location filename="../src/HashProgress.cpp" line="170"/>
         <source>-:--:--</source>
         <translation>-:--:--</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="139"/>
-        <location filename="../src/HashProgress.cpp" line="165"/>
+        <location filename="../src/HashProgress.cpp" line="155"/>
+        <location filename="../src/HashProgress.cpp" line="181"/>
         <source>%1% %2 left</source>
         <translation>%1% %2 kaldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="148"/>
+        <location filename="../src/HashProgress.cpp" line="164"/>
         <source>%1 files/h, %2 files left</source>
         <translation>%1 dosya/s, %2 dosya kaldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="149"/>
+        <location filename="../src/HashProgress.cpp" line="165"/>
         <source>%1/s, %2 left, %3 shared</source>
         <translation>%1/s, %2 kaldı, %3 paylaşıldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="163"/>
+        <location filename="../src/HashProgress.cpp" line="179"/>
         <source>%p% %1 left</source>
         <translation>%p% %1 kaldı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="173"/>
+        <location filename="../src/HashProgress.cpp" line="189"/>
         <source>Done</source>
         <translation>Tamamlandı</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="241"/>
+        <location filename="../src/HashProgress.cpp" line="260"/>
         <source>Start</source>
         <translation>Başlat</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="245"/>
+        <location filename="../src/HashProgress.cpp" line="264"/>
         <source>Pause</source>
         <translation>Duraklat</translation>
     </message>
     <message>
-        <location filename="../src/HashProgress.cpp" line="249"/>
+        <location filename="../src/HashProgress.cpp" line="268"/>
         <source>Resume</source>
         <translation>Sürdür</translation>
     </message>
@@ -915,645 +969,665 @@ Anahtarlar:
 <context>
     <name>HubFrame</name>
     <message>
-        <location filename="../src/HubFrame.cpp" line="178"/>
-        <location filename="../src/HubFrame.cpp" line="1287"/>
+        <location filename="../src/HubFrame.cpp" line="590"/>
+        <location filename="../src/HubFrame.cpp" line="1893"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="179"/>
+        <location filename="../src/HubFrame.cpp" line="591"/>
         <source>Search text</source>
         <translation>Metin ara</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="180"/>
+        <location filename="../src/HubFrame.cpp" line="592"/>
         <source>Copy nick</source>
         <translation>Rumuzu kopyala</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="181"/>
+        <location filename="../src/HubFrame.cpp" line="593"/>
         <source>Show in list</source>
         <translation>Listede göster</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="182"/>
+        <location filename="../src/HubFrame.cpp" line="594"/>
         <source>Browse files</source>
         <translation>Dosyaları tara</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="183"/>
+        <location filename="../src/HubFrame.cpp" line="595"/>
         <source>Match Queue</source>
         <translation>Kuyrukla Eşleştir</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="184"/>
+        <location filename="../src/HubFrame.cpp" line="596"/>
         <source>Private Message</source>
         <translation>Özel Mesaj</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="185"/>
-        <location filename="../src/HubFrame.cpp" line="1286"/>
+        <location filename="../src/HubFrame.cpp" line="597"/>
+        <location filename="../src/HubFrame.cpp" line="1892"/>
         <source>Add to Favorites</source>
         <translation>Favorilere Ekle</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="186"/>
+        <location filename="../src/HubFrame.cpp" line="598"/>
         <source>Remove from Favorites</source>
         <translation>Favorilerden Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="187"/>
+        <location filename="../src/HubFrame.cpp" line="599"/>
         <source>Grant slot</source>
         <translation>Oluk ver</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="188"/>
+        <location filename="../src/HubFrame.cpp" line="600"/>
         <source>Remove from Queue</source>
         <translation>Kuyruktan Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="192"/>
+        <location filename="../src/HubFrame.cpp" line="604"/>
         <source>Clear chat</source>
         <translation>Sohbeti temizle</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="193"/>
+        <location filename="../src/HubFrame.cpp" line="605"/>
         <source>Find in chat</source>
         <translation>Sohbette bul</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="194"/>
+        <location filename="../src/HubFrame.cpp" line="606"/>
         <source>Disable/Enable chat</source>
         <translation>Sohbeti etkinleştir/devre dışı bırak</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="196"/>
+        <location filename="../src/HubFrame.cpp" line="608"/>
         <source>Select all</source>
         <translation>Tümünü seç</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="198"/>
+        <location filename="../src/HubFrame.cpp" line="610"/>
         <source>Zoom In</source>
         <translation>Yakınlaştır</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="199"/>
+        <location filename="../src/HubFrame.cpp" line="611"/>
         <source>Zoom Out</source>
         <translation>Uzaklaştır</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="202"/>
+        <location filename="../src/HubFrame.cpp" line="614"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="203"/>
+        <location filename="../src/HubFrame.cpp" line="615"/>
         <source>Comment</source>
         <translation>Yorum</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="204"/>
+        <location filename="../src/HubFrame.cpp" line="616"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="205"/>
+        <location filename="../src/HubFrame.cpp" line="617"/>
+        <source>IPv6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="618"/>
         <source>Share</source>
         <translation>Paylaşım</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="206"/>
+        <location filename="../src/HubFrame.cpp" line="619"/>
         <source>Tag</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="207"/>
+        <location filename="../src/HubFrame.cpp" line="620"/>
         <source>E-mail</source>
         <translation>E-posta</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="209"/>
+        <location filename="../src/HubFrame.cpp" line="622"/>
         <source>All</source>
         <translation>Tümü</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="214"/>
+        <location filename="../src/HubFrame.cpp" line="627"/>
         <source>Copy data</source>
         <translation>Veri kopyala</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="309"/>
-        <location filename="../src/HubFrame.cpp" line="389"/>
+        <location filename="../src/HubFrame.cpp" line="727"/>
+        <location filename="../src/HubFrame.cpp" line="807"/>
         <source>[User went offline]</source>
         <translation>[Kullanıcı çevrimdışına çıktı]</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="326"/>
-        <location filename="../src/HubFrame.cpp" line="415"/>
+        <location filename="../src/HubFrame.cpp" line="744"/>
+        <location filename="../src/HubFrame.cpp" line="833"/>
         <source>AntiSpam</source>
         <translation>Antispam</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="330"/>
-        <location filename="../src/HubFrame.cpp" line="417"/>
+        <location filename="../src/HubFrame.cpp" line="748"/>
+        <location filename="../src/HubFrame.cpp" line="835"/>
         <source>Add to Black</source>
         <translation>Kara listeye ekle</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="331"/>
-        <location filename="../src/HubFrame.cpp" line="418"/>
+        <location filename="../src/HubFrame.cpp" line="749"/>
+        <location filename="../src/HubFrame.cpp" line="836"/>
         <source>Add to White</source>
         <translation>Beyaz listeye ekle</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="543"/>
+        <location filename="../src/HubFrame.cpp" line="949"/>
         <source>Invalid keywords</source>
         <translation>Geçersiz anahtar kelimeler</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="567"/>
+        <location filename="../src/HubFrame.cpp" line="967"/>
         <source>search</source>
         <translation>ara</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="760"/>
+        <location filename="../src/HubFrame.cpp" line="1158"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="799"/>
+        <location filename="../src/HubFrame.cpp" line="1203"/>
         <source>not shared</source>
         <translation>paylaşılmayan</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1282"/>
+        <location filename="../src/HubFrame.cpp" line="1735"/>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="1754"/>
+        <source>Emoji</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="1828"/>
+        <source>Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="1888"/>
         <source>Hub menu</source>
         <translation>Hub menüsü</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1284"/>
+        <location filename="../src/HubFrame.cpp" line="1890"/>
         <source>Reconnect</source>
         <translation>Tekrar bağlan</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1285"/>
+        <location filename="../src/HubFrame.cpp" line="1891"/>
         <source>Show widget</source>
         <translation>Widget&apos;i göster</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1288"/>
+        <location filename="../src/HubFrame.cpp" line="1894"/>
         <source>Hub IP</source>
         <translation>Hub IP adresi</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1289"/>
+        <location filename="../src/HubFrame.cpp" line="1895"/>
         <source>Hub URL</source>
         <translation>Hub URL&apos;i</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1290"/>
+        <location filename="../src/HubFrame.cpp" line="1896"/>
         <source>Hub Title</source>
         <translation>Hub başlığı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1294"/>
+        <location filename="../src/HubFrame.cpp" line="1900"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1308"/>
+        <location filename="../src/HubFrame.cpp" line="1914"/>
         <source>Hub Menu</source>
         <translation>Hub Menüsü</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1386"/>
-        <location filename="../src/HubFrame.cpp" line="1411"/>
+        <location filename="../src/HubFrame.cpp" line="2034"/>
+        <location filename="../src/HubFrame.cpp" line="2059"/>
         <source>Not connected</source>
         <translation>Bağlantıda değil</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1444"/>
+        <location filename="../src/HubFrame.cpp" line="2098"/>
         <source>Chat cleared.</source>
         <translation>Sohbet temizlendi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1456"/>
+        <location filename="../src/HubFrame.cpp" line="2107"/>
         <source>Chat disabled.</source>
         <translation>Sohbet devre dışı bırakıldı.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1463"/>
+        <location filename="../src/HubFrame.cpp" line="2114"/>
         <source>Chat enabled.</source>
         <translation>Sohbet etkinleştirildi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1499"/>
+        <location filename="../src/HubFrame.cpp" line="2151"/>
         <source>Hub role: Operator</source>
         <translation>Hub rolü: Operatör</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1501"/>
+        <location filename="../src/HubFrame.cpp" line="2153"/>
         <source>Hub role: User</source>
         <translation>Hub rolü: Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1504"/>
+        <location filename="../src/HubFrame.cpp" line="2156"/>
         <source>
 Favorite user</source>
         <translation>
 Favori kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1579"/>
-        <location filename="../src/HubFrame.cpp" line="1581"/>
-        <location filename="../src/HubFrame.cpp" line="1802"/>
-        <location filename="../src/HubFrame.cpp" line="1804"/>
+        <location filename="../src/HubFrame.cpp" line="2231"/>
+        <location filename="../src/HubFrame.cpp" line="2233"/>
+        <location filename="../src/HubFrame.cpp" line="2454"/>
+        <location filename="../src/HubFrame.cpp" line="2456"/>
         <source>Away mode off</source>
         <translation>Uzakta kipi kapalı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1593"/>
-        <location filename="../src/HubFrame.cpp" line="1595"/>
+        <location filename="../src/HubFrame.cpp" line="2245"/>
+        <location filename="../src/HubFrame.cpp" line="2247"/>
         <source>Away mode on: </source>
         <translation>Uzakta kipi açık: </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1613"/>
-        <location filename="../src/HubFrame.cpp" line="1615"/>
+        <location filename="../src/HubFrame.cpp" line="2265"/>
+        <location filename="../src/HubFrame.cpp" line="2267"/>
         <source>Aliases not found.</source>
         <translation>Aliaslar bulunamadı.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1635"/>
-        <location filename="../src/HubFrame.cpp" line="1637"/>
+        <location filename="../src/HubFrame.cpp" line="2287"/>
+        <location filename="../src/HubFrame.cpp" line="2289"/>
         <source>Alias removed.</source>
         <translation>Alias kaldırıldı.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1648"/>
-        <location filename="../src/HubFrame.cpp" line="1650"/>
-        <location filename="../src/HubFrame.cpp" line="1657"/>
-        <location filename="../src/HubFrame.cpp" line="1659"/>
+        <location filename="../src/HubFrame.cpp" line="2300"/>
+        <location filename="../src/HubFrame.cpp" line="2302"/>
+        <location filename="../src/HubFrame.cpp" line="2309"/>
+        <location filename="../src/HubFrame.cpp" line="2311"/>
         <source>Invalid alias syntax.</source>
         <translation>Geçersiz alias sözdizimi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1667"/>
-        <location filename="../src/HubFrame.cpp" line="1669"/>
+        <location filename="../src/HubFrame.cpp" line="2319"/>
+        <location filename="../src/HubFrame.cpp" line="2321"/>
         <source>Alias %1 =&gt; %2 has been added</source>
         <translation>Alias %1 =&gt; %2 eklendi</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1691"/>
-        <location filename="../src/HubFrame.cpp" line="1693"/>
-        <location filename="../src/HubFrame.cpp" line="1700"/>
-        <location filename="../src/HubFrame.cpp" line="1702"/>
+        <location filename="../src/HubFrame.cpp" line="2343"/>
+        <location filename="../src/HubFrame.cpp" line="2345"/>
+        <location filename="../src/HubFrame.cpp" line="2352"/>
+        <location filename="../src/HubFrame.cpp" line="2354"/>
         <source>Invalid command syntax.</source>
         <translation>Geçersiz komut sözdizimi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1712"/>
+        <location filename="../src/HubFrame.cpp" line="2364"/>
         <source>List of keywords:
 </source>
         <translation>Anahtar kelime listesi:
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1759"/>
+        <location filename="../src/HubFrame.cpp" line="2411"/>
         <source>ratio: %1 (uploads: %2, downloads: %3)</source>
         <translation>oran:%1 (göndermeler: %2, indirmeler: %3)</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1793"/>
-        <location filename="../src/HubFrame.cpp" line="1795"/>
+        <location filename="../src/HubFrame.cpp" line="2445"/>
+        <location filename="../src/HubFrame.cpp" line="2447"/>
         <source>Aspell switched %1</source>
         <translation>Aspell şuna geçiş yaptı: %1</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1793"/>
-        <location filename="../src/HubFrame.cpp" line="1795"/>
+        <location filename="../src/HubFrame.cpp" line="2445"/>
+        <location filename="../src/HubFrame.cpp" line="2447"/>
         <source>on</source>
         <translation>açık</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1793"/>
-        <location filename="../src/HubFrame.cpp" line="1795"/>
+        <location filename="../src/HubFrame.cpp" line="2445"/>
+        <location filename="../src/HubFrame.cpp" line="2447"/>
         <source>off</source>
         <translation>kapalı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1810"/>
-        <location filename="../src/HubFrame.cpp" line="1812"/>
+        <location filename="../src/HubFrame.cpp" line="2462"/>
+        <location filename="../src/HubFrame.cpp" line="2464"/>
         <source>Chat has been cleared</source>
         <translation>Sohbet temizlendi</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1862"/>
+        <location filename="../src/HubFrame.cpp" line="2514"/>
         <source>/aspell on/off - enable/disable spell checking
 </source>
         <translation>/aspell on/off - imla denetimini etkinleştir/devre dışı bırak
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1864"/>
+        <location filename="../src/HubFrame.cpp" line="2516"/>
         <source>/alias &lt;ALIAS_NAME&gt;::&lt;COMMAND&gt; - make alias /ALIAS_NAME to /COMMAND
 </source>
         <translation>/alias &lt;ALIAS_İSMİ&gt;::&lt;KOMUT&gt; - alias oluştur /ALIAS_İSMİ şuna /KOMUT
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1865"/>
+        <location filename="../src/HubFrame.cpp" line="2517"/>
         <source>/alias purge &lt;ALIAS_NAME&gt; - remove alias
 </source>
         <translation>/alias purge &lt;ALIAS_İSMİ&gt; - aliası kaldır
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1866"/>
+        <location filename="../src/HubFrame.cpp" line="2518"/>
         <source>/alias list - list all aliases
 </source>
         <translation>/alias list - bütün alisasları listele
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1867"/>
+        <location filename="../src/HubFrame.cpp" line="2519"/>
         <source>/away &lt;message&gt; - set away-mode on/off
 </source>
         <translation>/away &lt;mesaj&gt; - uzakta kipini aç/kapat
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1868"/>
+        <location filename="../src/HubFrame.cpp" line="2520"/>
         <source>/back - set away-mode off
 </source>
         <translation>/back - uzakta kipini kapat
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1869"/>
+        <location filename="../src/HubFrame.cpp" line="2521"/>
         <source>/browse &lt;nick&gt; - browse user files
 </source>
         <translation>/browse &lt;rumuz&gt; - kullanıcı dosyalarını tara
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1870"/>
+        <location filename="../src/HubFrame.cpp" line="2522"/>
         <source>/clear - clear chat window
 </source>
         <translation>/clear - sohbet penceresini temizle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1871"/>
+        <location filename="../src/HubFrame.cpp" line="2523"/>
         <source>/kword add &lt;keyword&gt; - add user-defined keyword which will be highlighted in the chat
 </source>
         <translation>/kword add &lt;anahtar_kelime&gt; - sohbette vurgulanacak kullanıcı tarafından belirlenen anahtar kelime ekle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1872"/>
+        <location filename="../src/HubFrame.cpp" line="2524"/>
         <source>/kword purge &lt;keyword&gt; - remove user-defined keyword
 </source>
         <translation>/kword purge &lt;anahtar_kelime&gt; - kullanıcı tarafından belirlenen anahtar kelimeyi kaldır
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1873"/>
+        <location filename="../src/HubFrame.cpp" line="2525"/>
         <source>/kword list - full list of keywords which will be highlighted in the chat
 </source>
         <translation>/kword list - sohbette vurgulanacak anahtar kelimelerin tam listesi
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1874"/>
+        <location filename="../src/HubFrame.cpp" line="2526"/>
         <source>/magnet - default action with magnet (0-ask, 1-search, 2-download)
 </source>
         <translation>/magnet - magnet ile varsayılan eylem (0-sor, 1-ara, 2-indir)
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1875"/>
+        <location filename="../src/HubFrame.cpp" line="2527"/>
         <source>/close - close this hub
 </source>
         <translation>/close - bu hub&apos;ı kapat
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1876"/>
+        <location filename="../src/HubFrame.cpp" line="2528"/>
         <source>/fav - add this hub to favorites
 </source>
         <translation>/fav - bu hub&apos;ı favorilere ekle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1877"/>
+        <location filename="../src/HubFrame.cpp" line="2529"/>
         <source>/grant &lt;nick&gt; - grant extra slot to user
 </source>
         <translation>/grant &lt;rumuz&gt; - kullanıcıya ekstra oluk ver
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1878"/>
+        <location filename="../src/HubFrame.cpp" line="2530"/>
         <source>/help, /?, /h - show this help
 </source>
         <translation>/help, /?, /h - bu yardımı göster
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1879"/>
+        <location filename="../src/HubFrame.cpp" line="2531"/>
         <source>/info &lt;nick&gt; - show info about user
 </source>
         <translation>/info &lt;rumuz&gt; - kullanıcı hakkında bilgi göster
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1880"/>
+        <location filename="../src/HubFrame.cpp" line="2532"/>
         <source>/ratio [show] - show ratio [send in chat]
 </source>
         <translation>/ratio [show] - oranı göster [sohbete gönder]
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1881"/>
+        <location filename="../src/HubFrame.cpp" line="2533"/>
         <source>/rebuild - rebuild hash
 </source>
         <translation>/rebuild - karma değerini yeniden hesapla
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1882"/>
+        <location filename="../src/HubFrame.cpp" line="2534"/>
         <source>/refresh - update own file list
 </source>
         <translation>/refresh - kendi dosya listenizi güncelle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1883"/>
+        <location filename="../src/HubFrame.cpp" line="2535"/>
         <source>/me - say a third person
 </source>
         <translation>/me - üçüncü kişi olarak söyle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1884"/>
+        <location filename="../src/HubFrame.cpp" line="2536"/>
         <source>/pm &lt;nick&gt; - begin private chat with user
 </source>
         <translation>/pm &lt;nick&gt; - kullanıcı ile özel sohbet başlat
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1885"/>
+        <location filename="../src/HubFrame.cpp" line="2537"/>
         <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
         <translation>/ws param değeri - değerde grafik arayüz seçeneğini ayarla (değer yoksa seçeneğin güncel değerini göster)
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1886"/>
+        <location filename="../src/HubFrame.cpp" line="2538"/>
         <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
         <translation>/dcpps param değer - değerde çekirdek seçeneğini ayarla (değer yoksa seçeneğin güncel değerini göster)
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1888"/>
+        <location filename="../src/HubFrame.cpp" line="2540"/>
         <source>/luafile &lt;file&gt; - load Lua file
 </source>
         <translation>/luafile &lt;dosya&gt; - Lua dosyası yükle
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="1889"/>
+        <location filename="../src/HubFrame.cpp" line="2541"/>
         <source>/lua &lt;chunk&gt; - execute Lua chunk
 </source>
         <translation>/lua &lt;parça&gt; Lua parçası çalıştır
 </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2165"/>
+        <location filename="../src/HubFrame.cpp" line="2821"/>
         <source> joins the chat</source>
         <translation> sohbete katıldı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2170"/>
-        <location filename="../src/HubFrame.cpp" line="2228"/>
+        <location filename="../src/HubFrame.cpp" line="2826"/>
+        <location filename="../src/HubFrame.cpp" line="2884"/>
         <source>Favorites</source>
         <translation>Favoriler</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2170"/>
+        <location filename="../src/HubFrame.cpp" line="2826"/>
         <source>%1 is now online</source>
         <translation>%1 artık çevrimiçinde</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2183"/>
+        <location filename="../src/HubFrame.cpp" line="2839"/>
         <source>User online.</source>
         <translation>Kullanıcı çevrimiçinde.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2223"/>
+        <location filename="../src/HubFrame.cpp" line="2879"/>
         <source> left the chat</source>
         <translation> sohbetten ayrıldı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2228"/>
+        <location filename="../src/HubFrame.cpp" line="2884"/>
         <source>%1 is now offline</source>
         <translation>%1 artık çevrimdışında</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2267"/>
-        <location filename="../src/HubFrame.cpp" line="2281"/>
+        <location filename="../src/HubFrame.cpp" line="2923"/>
+        <location filename="../src/HubFrame.cpp" line="2937"/>
         <source>User not found</source>
         <translation>Kullanıcı bulunamadı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2288"/>
+        <location filename="../src/HubFrame.cpp" line="2944"/>
         <source>Slot granted to </source>
         <translation>Oluk şuna verildi: </translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2347"/>
+        <location filename="../src/HubFrame.cpp" line="3003"/>
         <source> has been added to favorites.</source>
         <translation> favorilere eklendi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2347"/>
+        <location filename="../src/HubFrame.cpp" line="3003"/>
         <source> has been removed from favorites.</source>
         <translation> favorilerden kaldırıldı.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2379"/>
+        <location filename="../src/HubFrame.cpp" line="3035"/>
         <source>Favorite hub added.</source>
         <translation>Favori hub eklendi.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2382"/>
+        <location filename="../src/HubFrame.cpp" line="3038"/>
         <source>Favorite hub already exists.</source>
         <translation>Favori hub zaten mevcut.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2611"/>
+        <location filename="../src/HubFrame.cpp" line="3278"/>
         <source>User offline.</source>
         <translation>Kullanıcı çevrimdışında.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2650"/>
+        <location filename="../src/HubFrame.cpp" line="3320"/>
         <source>Stored password sent...</source>
         <translation>Saklanan parola gönderildi...</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2653"/>
+        <location filename="../src/HubFrame.cpp" line="3323"/>
         <source>Password</source>
         <translation>Parola</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2667"/>
-        <location filename="../src/HubFrame.cpp" line="3811"/>
+        <location filename="../src/HubFrame.cpp" line="3337"/>
+        <location filename="../src/HubFrame.cpp" line="4448"/>
         <source>Redirect request received to a hub that&apos;s already connected</source>
         <translation>Zaten bağlantıda olan bir hub&apos;a yeniden yönlendirme isteği alındı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2739"/>
+        <location filename="../src/HubFrame.cpp" line="3415"/>
         <source>Users count: %3/%1 | Total share: %2</source>
         <translation>Kullanıcı sayısı %3/%1 | Toplam paylaşım: %2</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="2745"/>
+        <location filename="../src/HubFrame.cpp" line="3421"/>
         <source>Users count: %1 | Total share: %2</source>
         <translation>Kullanıcı sayısı: %1 | Toplam paylaşım: %2</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="3597"/>
+        <location filename="../src/HubFrame.cpp" line="4288"/>
         <source>Add to dictionary</source>
         <translation>Sözlüğe ekle</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="3603"/>
+        <location filename="../src/HubFrame.cpp" line="4294"/>
         <source>Suggestions</source>
         <translation>Öneriler</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="3769"/>
+        <location filename="../src/HubFrame.cpp" line="4406"/>
         <source>Connecting to %1</source>
         <translation>%1 unsuruna bağlanılıyor</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="3777"/>
+        <location filename="../src/HubFrame.cpp" line="4414"/>
         <source>Connected to %1</source>
         <translation>%1 unsuruna bağlanıldı</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="3821"/>
+        <location filename="../src/HubFrame.cpp" line="4458"/>
         <source>Fail: %1...</source>
         <translation>Başarısız: %1...</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="4015"/>
+        <location filename="../src/HubFrame.cpp" line="4653"/>
         <source>Sorry, but nick &quot;%1&quot; is already taken by another user.</source>
         <translation>Özür dileriz ancak &quot;%1&quot; rumuzu zaten başka bir kullanıcı tarafından alınmıştır.</translation>
     </message>
     <message>
-        <location filename="../src/HubFrame.cpp" line="4021"/>
+        <location filename="../src/HubFrame.cpp" line="4659"/>
         <source>Search flood detected: %1</source>
         <translation>Aşırı arama tekrarı (flood) tespit edildi: %1</translation>
     </message>
@@ -1561,42 +1635,42 @@ Favori kullanıcı</translation>
 <context>
     <name>IPFilterFrame</name>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="177"/>
+        <location filename="../src/IPFilterFrame.cpp" line="175"/>
         <source>Change rule direction</source>
         <translation>Kuralın yönünü değiştir</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="185"/>
+        <location filename="../src/IPFilterFrame.cpp" line="183"/>
         <source>Change IP/Mask</source>
         <translation>IP/Maske Değiştir</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="186"/>
+        <location filename="../src/IPFilterFrame.cpp" line="184"/>
         <source>Delete rule</source>
         <translation>Kural sil</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="218"/>
+        <location filename="../src/IPFilterFrame.cpp" line="216"/>
         <source>Enter new rule</source>
         <translation>Yeni kural gir</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="218"/>
+        <location filename="../src/IPFilterFrame.cpp" line="216"/>
         <source>Rule:</source>
         <translation>Kural:</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="321"/>
+        <location filename="../src/IPFilterFrame.cpp" line="319"/>
         <source>Import list</source>
         <translation>Liste içe aktar</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="376"/>
+        <location filename="../src/IPFilterFrame.cpp" line="374"/>
         <source>Export list</source>
         <translation>Liste dışa aktar</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterFrame.cpp" line="377"/>
+        <location filename="../src/IPFilterFrame.cpp" line="375"/>
         <source>All Files (*)</source>
         <translation>Tüm Dosyalar (*)</translation>
     </message>
@@ -1604,12 +1678,12 @@ Favori kullanıcı</translation>
 <context>
     <name>IPFilterModel</name>
     <message>
-        <location filename="../src/IPFilterModel.cpp" line="23"/>
+        <location filename="../src/IPFilterModel.cpp" line="26"/>
         <source>IP/Mask</source>
         <translation>IP/Maske</translation>
     </message>
     <message>
-        <location filename="../src/IPFilterModel.cpp" line="23"/>
+        <location filename="../src/IPFilterModel.cpp" line="26"/>
         <source>Direction</source>
         <translation>Yön</translation>
     </message>
@@ -1617,32 +1691,32 @@ Favori kullanıcı</translation>
 <context>
     <name>Magnet</name>
     <message>
-        <location filename="../src/Magnet.cpp" line="53"/>
+        <location filename="../src/Magnet.cpp" line="61"/>
         <source>Run search alternatives manually.</source>
         <translation>Alternatif aramayı elle işlet.</translation>
     </message>
     <message>
-        <location filename="../src/Magnet.cpp" line="56"/>
+        <location filename="../src/Magnet.cpp" line="64"/>
         <source>Download file via auto search alternatives</source>
         <translation>Dosyayı otomatik alternatif aramalarıyla indir</translation>
     </message>
     <message>
-        <location filename="../src/Magnet.cpp" line="241"/>
+        <location filename="../src/Magnet.cpp" line="251"/>
         <source>Browse</source>
         <translation>Tara</translation>
     </message>
     <message>
-        <location filename="../src/Magnet.cpp" line="261"/>
+        <location filename="../src/Magnet.cpp" line="271"/>
         <source>Select directory</source>
         <translation>Klasör seç</translation>
     </message>
     <message>
-        <location filename="../src/Magnet.cpp" line="278"/>
+        <location filename="../src/Magnet.cpp" line="288"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../src/Magnet.cpp" line="278"/>
+        <location filename="../src/Magnet.cpp" line="288"/>
         <source>Some error ocurred when starting download:
  %1</source>
         <translation>İndirmenin başlamasında bir hata meydana geldi:
@@ -1652,7 +1726,7 @@ Favori kullanıcı</translation>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="268"/>
+        <location filename="../src/MainWindow.cpp" line="305"/>
         <source>Ready</source>
         <translation>Hazır</translation>
     </message>
@@ -1661,843 +1735,864 @@ Favori kullanıcı</translation>
         <translation type="vanished">Çıkış teyidi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="349"/>
+        <location filename="../src/MainWindow.cpp" line="399"/>
+        <location filename="../src/MainWindow.cpp" line="3357"/>
         <source>Exit program?</source>
         <translation>Programdan çıkılsın mı?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="351"/>
+        <location filename="../src/MainWindow.cpp" line="401"/>
         <source>Kill all humans?</source>
         <translation>Tüm insanlar öldürülsün mü?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="353"/>
+        <location filename="../src/MainWindow.cpp" line="403"/>
         <source>Action confirm</source>
         <translation>Eylem teyidi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="462"/>
+        <location filename="../src/MainWindow.cpp" line="549"/>
         <source>Enter user nick</source>
         <translation>Kullanıcı rumuzu gir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="462"/>
+        <location filename="../src/MainWindow.cpp" line="549"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="462"/>
+        <location filename="../src/MainWindow.cpp" line="549"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="467"/>
+        <location filename="../src/MainWindow.cpp" line="554"/>
         <source>Would you like to change other settings?</source>
         <translation>Diğer ayarları değiştirmek ister misiniz?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1088"/>
+        <location filename="../src/MainWindow.cpp" line="1200"/>
         <source>Next widget</source>
         <translation>Sonraki widget</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1089"/>
+        <location filename="../src/MainWindow.cpp" line="1201"/>
         <source>Previous widget</source>
         <translation>Önceki widget</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1090"/>
+        <location filename="../src/MainWindow.cpp" line="1202"/>
         <source>Next message</source>
         <translation>Sonraki mesaj</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1091"/>
+        <location filename="../src/MainWindow.cpp" line="1203"/>
         <source>Previous message</source>
         <translation>Önceki mesaj</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1092"/>
+        <location filename="../src/MainWindow.cpp" line="1204"/>
         <source>Close current widget</source>
         <translation>Güncel widget&apos;i kapat</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1093"/>
+        <location filename="../src/MainWindow.cpp" line="1205"/>
         <source>Toggle main menu</source>
         <translation>Ana menüde geçiş yap</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1239"/>
+        <location filename="../src/MainWindow.cpp" line="1351"/>
         <source>Counts</source>
         <translation>Sayı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1245"/>
+        <location filename="../src/MainWindow.cpp" line="1357"/>
         <source>Download/Upload speed</source>
         <translation>İndirme/Gönderme hızı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1251"/>
+        <location filename="../src/MainWindow.cpp" line="1363"/>
         <source>Downloaded/Uploaded</source>
         <translation>İndirilen/Gönderilen</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1270"/>
-        <location filename="../src/MainWindow.cpp" line="1277"/>
+        <location filename="../src/MainWindow.cpp" line="1382"/>
+        <location filename="../src/MainWindow.cpp" line="1389"/>
         <source>Space free</source>
         <translation>Boş alan</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1291"/>
+        <location filename="../src/MainWindow.cpp" line="1403"/>
         <source>Hashing progress</source>
         <translation>Karma hesap ilerlemesi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1318"/>
+        <location filename="../src/MainWindow.cpp" line="1430"/>
         <source>&amp;File</source>
         <translation>&amp;Dosya</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1320"/>
-        <location filename="../src/MainWindow.cpp" line="2234"/>
+        <location filename="../src/MainWindow.cpp" line="1432"/>
+        <location filename="../src/MainWindow.cpp" line="2410"/>
         <source>Open magnet link</source>
         <translation>Magnet bağlantısı aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1322"/>
-        <location filename="../src/MainWindow.cpp" line="2163"/>
+        <location filename="../src/MainWindow.cpp" line="1434"/>
+        <location filename="../src/MainWindow.cpp" line="2339"/>
         <source>Open log file</source>
         <translation>Kütük dosyası aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1324"/>
+        <location filename="../src/MainWindow.cpp" line="1436"/>
         <source>Open download directory</source>
         <translation>İndirme klasörü aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1326"/>
+        <location filename="../src/MainWindow.cpp" line="1438"/>
         <source>Open filelist...</source>
         <translation>Dosya listesi aç...</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1328"/>
+        <location filename="../src/MainWindow.cpp" line="1440"/>
         <source>Calculate file TTH</source>
         <translation>Dosya TTH değerini hesapla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1330"/>
+        <location filename="../src/MainWindow.cpp" line="1442"/>
         <source>Open own filelist</source>
         <translation>Kendi dosya listenizi aç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1332"/>
+        <location filename="../src/MainWindow.cpp" line="1444"/>
         <source>Match all listings</source>
         <translation>Tüm listeleri eşleştir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1334"/>
-        <location filename="../src/MainWindow.cpp" line="1769"/>
+        <location filename="../src/MainWindow.cpp" line="1446"/>
+        <location filename="../src/MainWindow.cpp" line="1948"/>
         <source>Refresh share</source>
         <translation>Paylaşımı tazele</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1336"/>
-        <location filename="../src/MainWindow.cpp" line="2455"/>
+        <location filename="../src/MainWindow.cpp" line="1448"/>
+        <location filename="../src/MainWindow.cpp" line="2631"/>
         <source>Hide window</source>
         <translation>Pencereyi sakla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1339"/>
-        <location filename="../src/MainWindow.cpp" line="2453"/>
+        <location filename="../src/MainWindow.cpp" line="1451"/>
+        <location filename="../src/MainWindow.cpp" line="2629"/>
         <source>Show/hide find frame</source>
         <translation>Bulma çerçevesini sakla/göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1341"/>
+        <location filename="../src/MainWindow.cpp" line="1453"/>
         <source>Quit</source>
         <translation>Çık</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1343"/>
+        <location filename="../src/MainWindow.cpp" line="1455"/>
         <source>&amp;Hubs</source>
         <translation>&amp;Hublar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1345"/>
+        <location filename="../src/MainWindow.cpp" line="1457"/>
         <source>Reconnect to hub</source>
         <translation>Hub&apos;a tekrar bağlan</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1347"/>
+        <location filename="../src/MainWindow.cpp" line="1459"/>
         <source>Favourite hubs</source>
         <translation>Favori hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1349"/>
+        <location filename="../src/MainWindow.cpp" line="1461"/>
         <source>Public hubs</source>
         <translation>Herkese açık hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1351"/>
+        <location filename="../src/MainWindow.cpp" line="1463"/>
         <source>Favourite users</source>
         <translation>Favori kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1353"/>
+        <location filename="../src/MainWindow.cpp" line="1465"/>
         <source>Quick connect</source>
         <translation>Çabuk bağlan</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1355"/>
+        <location filename="../src/MainWindow.cpp" line="1467"/>
         <source>&amp;Tools</source>
         <translation>&amp;Araçlar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1357"/>
+        <location filename="../src/MainWindow.cpp" line="1469"/>
         <source>Transfers</source>
         <translation>Aktarımlar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1359"/>
+        <location filename="../src/MainWindow.cpp" line="1471"/>
         <source>Download queue</source>
         <translation>İndirme kuyruğu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1361"/>
+        <location filename="../src/MainWindow.cpp" line="1473"/>
         <source>Queued Users</source>
         <translation>Kuyruktaki kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1363"/>
+        <location filename="../src/MainWindow.cpp" line="1475"/>
         <source>Hub Manager</source>
         <translation>Hub Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1365"/>
+        <location filename="../src/MainWindow.cpp" line="1477"/>
         <source>Finished downloads</source>
         <translation>Tamamlanan indirmeler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1367"/>
+        <location filename="../src/MainWindow.cpp" line="1479"/>
         <source>Finished uploads</source>
         <translation>Tamamlanan göndermeler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1369"/>
+        <location filename="../src/MainWindow.cpp" line="1481"/>
         <source>Search Spy</source>
         <translation>Arama Casusu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1371"/>
+        <location filename="../src/MainWindow.cpp" line="1483"/>
         <source>AntiSpam module</source>
         <translation>AntiSpam öbeği</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1373"/>
+        <location filename="../src/MainWindow.cpp" line="1485"/>
         <source>IPFilter module</source>
         <translation>IPFiltresi öbeği</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1375"/>
-        <location filename="../src/MainWindow.cpp" line="2585"/>
+        <location filename="../src/MainWindow.cpp" line="1487"/>
+        <location filename="../src/MainWindow.cpp" line="2761"/>
         <source>Hide free space bar</source>
         <translation>Boş alan çubuğunu sakla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1378"/>
-        <location filename="../src/MainWindow.cpp" line="2580"/>
+        <location filename="../src/MainWindow.cpp" line="1490"/>
+        <location filename="../src/MainWindow.cpp" line="2756"/>
         <source>Show free space bar</source>
         <translation>Boş alan çubuğunu göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1380"/>
-        <location filename="../src/MainWindow.cpp" line="2601"/>
+        <location filename="../src/MainWindow.cpp" line="1492"/>
+        <location filename="../src/MainWindow.cpp" line="2777"/>
         <source>Hide last status message</source>
         <translation>Son durum mesajını sakla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1383"/>
-        <location filename="../src/MainWindow.cpp" line="2599"/>
+        <location filename="../src/MainWindow.cpp" line="1495"/>
+        <location filename="../src/MainWindow.cpp" line="2775"/>
         <source>Show last status message</source>
         <translation>Son durum mesajını göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1385"/>
-        <location filename="../src/MainWindow.cpp" line="2618"/>
+        <location filename="../src/MainWindow.cpp" line="1497"/>
+        <location filename="../src/MainWindow.cpp" line="2794"/>
         <source>Hide users statistics</source>
         <translation>Kullanıcı istatistiklerini sakla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1388"/>
-        <location filename="../src/MainWindow.cpp" line="2616"/>
+        <location filename="../src/MainWindow.cpp" line="1500"/>
+        <location filename="../src/MainWindow.cpp" line="2792"/>
         <source>Show users statistics</source>
         <translation>Kullanıcı istatistiklerini göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1390"/>
+        <location filename="../src/MainWindow.cpp" line="1502"/>
         <source>Away message</source>
         <translation>Uzakta mesajı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1392"/>
+        <location filename="../src/MainWindow.cpp" line="1504"/>
         <source>On</source>
         <translation>Açık</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1394"/>
+        <location filename="../src/MainWindow.cpp" line="1506"/>
         <source>Off</source>
         <translation>Kapalı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1396"/>
+        <location filename="../src/MainWindow.cpp" line="1508"/>
         <source>Away when not visible</source>
         <translation>Görünür olmadığında uzakta</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1398"/>
+        <location filename="../src/MainWindow.cpp" line="1510"/>
         <source>Copy window title</source>
         <translation>Pencere başlığını kopyala</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1400"/>
+        <location filename="../src/MainWindow.cpp" line="1512"/>
         <source>Preferences</source>
         <translation>Tercihler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1402"/>
+        <location filename="../src/MainWindow.cpp" line="1514"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1404"/>
+        <location filename="../src/MainWindow.cpp" line="1516"/>
         <source>ADLSearch</source>
         <translation>ADLArama</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1406"/>
+        <location filename="../src/MainWindow.cpp" line="1518"/>
         <source>Debug Console</source>
         <translation>Hata Ayıklama Komutu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1408"/>
+        <location filename="../src/MainWindow.cpp" line="1520"/>
         <source>Secretary</source>
         <translation>Sekreter</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1410"/>
+        <location filename="../src/MainWindow.cpp" line="1522"/>
         <source>Speed limit On/Off</source>
         <translation>Hız sınırı Açık/Kapalı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1413"/>
+        <location filename="../src/MainWindow.cpp" line="1525"/>
         <source>Scripts Manager</source>
         <translation>Betik Yöneticisi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1415"/>
+        <location filename="../src/MainWindow.cpp" line="1527"/>
         <source>Script Console</source>
         <translation>Betik Konsolu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1418"/>
+        <location filename="../src/MainWindow.cpp" line="1530"/>
         <source>Clear chat</source>
         <translation>Sohbeti temizle</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1420"/>
+        <location filename="../src/MainWindow.cpp" line="1532"/>
         <source>Find/Filter</source>
         <translation>Bul/Filtrele</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1422"/>
+        <location filename="../src/MainWindow.cpp" line="1534"/>
         <source>Disable/enable chat</source>
         <translation>Sohbeti etkinleştir/devre dışı bırak</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1424"/>
+        <location filename="../src/MainWindow.cpp" line="1536"/>
         <source>&amp;Widgets</source>
         <translation>&amp;Widgetler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1426"/>
+        <location filename="../src/MainWindow.cpp" line="1538"/>
         <source>&amp;Panels</source>
         <translation>&amp;Paneller</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1429"/>
+        <location filename="../src/MainWindow.cpp" line="1541"/>
         <source>Widgets panel</source>
         <translation>Widget paneli</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1431"/>
+        <location filename="../src/MainWindow.cpp" line="1543"/>
         <source>Widgets side dock</source>
         <translation>Widgetlerin yan doku</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1433"/>
+        <location filename="../src/MainWindow.cpp" line="1545"/>
         <source>Tools panel</source>
         <translation>Araçlar paneli</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1435"/>
+        <location filename="../src/MainWindow.cpp" line="1547"/>
         <source>Fast search panel</source>
         <translation>Çabuk arama paneli</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1437"/>
+        <location filename="../src/MainWindow.cpp" line="1549"/>
         <source>&amp;Help</source>
         <translation>&amp;Yardım</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1439"/>
+        <location filename="../src/MainWindow.cpp" line="1551"/>
         <source>Homepage</source>
         <translation>Ana sayfa</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="3356"/>
+        <source>Exit</source>
+        <translation type="unfinished">Çık</translation>
     </message>
     <message>
         <source>Source (git)</source>
         <translation type="vanished">Kaynak (git)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1443"/>
+        <location filename="../src/MainWindow.cpp" line="1555"/>
         <source>Report a Bug</source>
         <translation>Hata rapor et</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1445"/>
+        <location filename="../src/MainWindow.cpp" line="1557"/>
         <source>Wiki of project</source>
         <translation>Projenin vikisi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1447"/>
+        <location filename="../src/MainWindow.cpp" line="1559"/>
         <source>Changelog (git)</source>
         <translation>Değişiklikler kütüğü (git)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1449"/>
+        <location filename="../src/MainWindow.cpp" line="1561"/>
         <source>Source code (git)</source>
         <translation>Kaynak kodu (git)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1451"/>
+        <location filename="../src/MainWindow.cpp" line="1563"/>
         <source>About EiskaltDC++</source>
         <translation>EiskaltDC++ Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1453"/>
+        <location filename="../src/MainWindow.cpp" line="1565"/>
         <source>About Qt</source>
         <translation>Qt Hakkında</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1456"/>
-        <location filename="../src/MainWindow.cpp" line="1488"/>
+        <location filename="../src/MainWindow.cpp" line="1568"/>
+        <location filename="../src/MainWindow.cpp" line="1600"/>
         <source>Actions</source>
         <translation>Eylemler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1459"/>
+        <location filename="../src/MainWindow.cpp" line="1571"/>
         <source>Main layout</source>
         <translation>Ana düzen</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1700"/>
+        <location filename="../src/MainWindow.cpp" line="1862"/>
+        <source> | DHT nodes: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1870"/>
         <source>%1/s / %2/s</source>
         <translation>%1/s / %2/s</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1701"/>
+        <location filename="../src/MainWindow.cpp" line="1871"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1708"/>
+        <location filename="../src/MainWindow.cpp" line="1878"/>
+        <location filename="../src/MainWindow.cpp" line="1878"/>
         <source>/s</source>
         <translation>/s</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1728"/>
+        <location filename="../src/MainWindow.cpp" line="1902"/>
         <source>Free %1</source>
         <translation>Boş %1</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1731"/>
+        <location filename="../src/MainWindow.cpp" line="1905"/>
         <source>Free %1 of %2</source>
         <translation>%2 üzeri %1 boş</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1778"/>
-        <location filename="../src/MainWindow.cpp" line="1788"/>
-        <location filename="../src/MainWindow.cpp" line="1804"/>
-        <location filename="../src/MainWindow.cpp" line="1819"/>
+        <location filename="../src/MainWindow.cpp" line="1957"/>
+        <location filename="../src/MainWindow.cpp" line="1967"/>
+        <location filename="../src/MainWindow.cpp" line="1983"/>
+        <location filename="../src/MainWindow.cpp" line="1998"/>
         <source>Hash progress</source>
         <translation>Karma hesap ilerlemesi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1781"/>
+        <location filename="../src/MainWindow.cpp" line="1960"/>
         <source>List update</source>
         <translation>Güncellemeyi listele</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1793"/>
+        <location filename="../src/MainWindow.cpp" line="1972"/>
         <source>Delayed</source>
         <translation>Gecikmiş</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1808"/>
+        <location filename="../src/MainWindow.cpp" line="1987"/>
         <source>Paused</source>
         <translation>Duraklatılmış</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1822"/>
+        <location filename="../src/MainWindow.cpp" line="2001"/>
         <source>%p%</source>
         <translation>%p%</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1911"/>
+        <location filename="../src/MainWindow.cpp" line="2090"/>
         <source>Choose file to open</source>
         <translation>Açılacak dosya seç</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1913"/>
+        <location filename="../src/MainWindow.cpp" line="2092"/>
         <source>Modern XML Filelists</source>
         <translation>Modern XML Dosya Listeleri</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1914"/>
+        <location filename="../src/MainWindow.cpp" line="2093"/>
         <source>Modern XML Filelists uncompressed</source>
         <translation>Sıkıştırılmamış Modern XML Dosya Listeleri</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1915"/>
+        <location filename="../src/MainWindow.cpp" line="2094"/>
         <source>All files</source>
         <translation>Tüm dosyalar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1926"/>
+        <location filename="../src/MainWindow.cpp" line="2105"/>
         <source>Unable to load file list: Invalid file list name</source>
         <translation>Dosya listesi yüklenemedi: geçersiz dosya listesi ismi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2105"/>
+        <location filename="../src/MainWindow.cpp" line="2278"/>
         <source>Menu</source>
         <translation>Menü</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2142"/>
+        <location filename="../src/MainWindow.cpp" line="2315"/>
         <source>Unable to open %1 port. Searching or file transfers will not work correctly until you change settings or turn off any application that might be using that port.</source>
         <translation>%1 portu açılamadı. Aramalar ve dosya aktarımları ayarlar değiştirilinceye dek ya da bu portu kullanıyor olan başka bir program kapatılana dek doğru şekilde çalışmayacaktır.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2143"/>
+        <location filename="../src/MainWindow.cpp" line="2316"/>
         <source>Connectivity Manager: Warning</source>
         <translation>Bağlantı Yöneticisi: İkaz</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2163"/>
+        <location filename="../src/MainWindow.cpp" line="2339"/>
         <source>Log files (*.log);;All files (*.*)</source>
         <translation>Kütük dosyaları (*.log);;Tüm dosyalar (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2234"/>
+        <location filename="../src/MainWindow.cpp" line="2410"/>
         <source>Enter magnet link:</source>
         <translation>Magnet bağlantısı gir:</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2393"/>
+        <location filename="../src/MainWindow.cpp" line="2569"/>
         <source>Script Engine</source>
         <translation>Betik Motoru</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2636"/>
+        <location filename="../src/MainWindow.cpp" line="2812"/>
         <source>Button style</source>
         <translation>Düğme biçemi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2637"/>
+        <location filename="../src/MainWindow.cpp" line="2813"/>
         <source>Icons only</source>
         <translation>Sadece ikonlar</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2638"/>
+        <location filename="../src/MainWindow.cpp" line="2814"/>
         <source>Text only</source>
         <translation>Sadece metin</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2639"/>
+        <location filename="../src/MainWindow.cpp" line="2815"/>
         <source>Text beside icons</source>
         <translation>İkon yanında metin</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2640"/>
+        <location filename="../src/MainWindow.cpp" line="2816"/>
         <source>Text under icons</source>
         <translation>İkon altında metin</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2650"/>
+        <location filename="../src/MainWindow.cpp" line="2826"/>
         <source>Customize</source>
         <translation>Özelleştir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2737"/>
+        <location filename="../src/MainWindow.cpp" line="2903"/>
         <source>EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.</source>
         <translation>EiskaltDC++, Direct Connect ve ADC protokolleri için grafik arayüzlü bir istemcidir.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2740"/>
+        <location filename="../src/MainWindow.cpp" line="2906"/>
         <source>DC++ core version: %1 (modified)</source>
         <translation>DC++ çekirdek sürümü: %1 (değiştirilmiştir)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2743"/>
+        <location filename="../src/MainWindow.cpp" line="2909"/>
         <source>Home page: </source>
         <translation>Ana sayfa: </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2748"/>
+        <location filename="../src/MainWindow.cpp" line="2914"/>
         <source>Total up: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Toplam gönderilen: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2750"/>
+        <location filename="../src/MainWindow.cpp" line="2916"/>
         <source>Total down: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Toplam indirilen: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2752"/>
+        <location filename="../src/MainWindow.cpp" line="2918"/>
         <source>Ratio: &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Oran: &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2762"/>
+        <location filename="../src/MainWindow.cpp" line="2925"/>
+        <source>Please use &lt;a href=&quot;https://github.com/Delitants/eiskaltdcpp/issues&quot;&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="2928"/>
         <source>&lt;b&gt;Developers&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Geliştiriciler&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2816"/>
+        <location filename="../src/MainWindow.cpp" line="2929"/>
+        <source>2026 &lt;a href=&quot;mailto:admin@nlight.org.ua&quot;&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="2983"/>
         <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Grafik dosyalar&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2837"/>
+        <location filename="../src/MainWindow.cpp" line="3004"/>
         <source>Russian translation&lt;br/&gt;</source>
         <translation>Rusça tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2843"/>
+        <location filename="../src/MainWindow.cpp" line="3010"/>
         <source>Belarusian translation&lt;br/&gt;</source>
         <translation>Beyaz Rusça tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2847"/>
+        <location filename="../src/MainWindow.cpp" line="3014"/>
         <source>Hungarian translation&lt;br/&gt;</source>
         <translation>Macarca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2851"/>
+        <location filename="../src/MainWindow.cpp" line="3018"/>
         <source>French translation&lt;br/&gt;</source>
         <translation>Fransızca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2854"/>
+        <location filename="../src/MainWindow.cpp" line="3021"/>
         <source>Polish translation&lt;br/&gt;</source>
         <translation>Lehçe tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2857"/>
+        <location filename="../src/MainWindow.cpp" line="3024"/>
         <source>Ukrainian translation&lt;br/&gt;</source>
         <translation>Ukraynaca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2861"/>
+        <location filename="../src/MainWindow.cpp" line="3028"/>
         <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
         <translation>Sırpça (Kiril) tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2865"/>
+        <location filename="../src/MainWindow.cpp" line="3032"/>
         <source>Serbian (Latin) translation&lt;br/&gt;</source>
         <translation>Sırpça (Latin) tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2869"/>
+        <location filename="../src/MainWindow.cpp" line="3036"/>
         <source>Spanish translation&lt;br/&gt;</source>
         <translation>İspanyolca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2873"/>
+        <location filename="../src/MainWindow.cpp" line="3040"/>
         <source>Basque translation&lt;br/&gt;</source>
         <translation>Baskça tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2876"/>
+        <location filename="../src/MainWindow.cpp" line="3043"/>
         <source>Bulgarian translation&lt;br/&gt;</source>
         <translation>Bulgarca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2879"/>
+        <location filename="../src/MainWindow.cpp" line="3046"/>
         <source>Slovak translation&lt;br/&gt;</source>
         <translation>Slovakça tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2882"/>
+        <location filename="../src/MainWindow.cpp" line="3049"/>
         <source>Czech translation&lt;br/&gt;</source>
         <translation>Çekçe tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2885"/>
+        <location filename="../src/MainWindow.cpp" line="3052"/>
         <source>German translation&lt;br/&gt;</source>
         <translation>Almanca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2890"/>
+        <location filename="../src/MainWindow.cpp" line="3057"/>
         <source>Greek translation&lt;br/&gt;</source>
         <translation>Yunanca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2893"/>
+        <location filename="../src/MainWindow.cpp" line="3060"/>
         <source>Italian translation&lt;br/&gt;</source>
         <translation>İtalyanca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2897"/>
+        <location filename="../src/MainWindow.cpp" line="3064"/>
         <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
         <translation>Portekizce (Brezilya) tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2900"/>
+        <location filename="../src/MainWindow.cpp" line="3067"/>
         <source>Vietnamese translation&lt;br/&gt;</source>
         <translation>Vietnamca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2903"/>
+        <location filename="../src/MainWindow.cpp" line="3070"/>
         <source>Chinese (China) translation&lt;br/&gt;</source>
         <translation>Çince (Çin) tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2906"/>
+        <location filename="../src/MainWindow.cpp" line="3073"/>
         <source>Swedish (Sweden) translation&lt;br/&gt;</source>
         <translation>İsveççe (İsveç) tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2909"/>
+        <location filename="../src/MainWindow.cpp" line="3076"/>
         <source>Turkish translation&lt;br/&gt;</source>
         <translation>Türkçe tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2912"/>
+        <location filename="../src/MainWindow.cpp" line="3079"/>
         <source>Danish translation&lt;br/&gt;</source>
         <translation>Danca tercüme&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2915"/>
+        <location filename="../src/MainWindow.cpp" line="3082"/>
         <source>Georgian translation&lt;br/&gt;</source>
         <translation>Gürcüce tercüme &lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3146"/>
+        <location filename="../src/MainWindow.cpp" line="3311"/>
         <source>Additional</source>
         <translation>Ek</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3147"/>
+        <location filename="../src/MainWindow.cpp" line="3312"/>
         <source>Suppress sound notifications</source>
         <translation>Ses bildirimlerini kaldır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3148"/>
+        <location filename="../src/MainWindow.cpp" line="3313"/>
         <source>Suppress text notifications</source>
         <translation>Metin bildirimlerini kaldır</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3142"/>
+        <location filename="../src/MainWindow.cpp" line="3307"/>
         <source>Setup speed limits</source>
         <translation>Hız sınırlarını ayarla</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="1441"/>
+        <location filename="../src/MainWindow.cpp" line="1553"/>
         <source>Download program</source>
         <translation>Programı indir</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2759"/>
         <source>Please use &lt;a href=&quot;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&quot;&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-        <translation>Hata rapoları için lütfen &lt;a href=&quot;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&quot;&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; adresini kullanınız.&lt;br/&gt;</translation>
+        <translation type="vanished">Hata rapoları için lütfen &lt;a href=&quot;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&quot;&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; adresini kullanınız.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2766"/>
-        <location filename="../src/MainWindow.cpp" line="2794"/>
+        <location filename="../src/MainWindow.cpp" line="2933"/>
+        <location filename="../src/MainWindow.cpp" line="2961"/>
         <source>lead developer</source>
         <translation>lider geliştirici</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2769"/>
-        <location filename="../src/MainWindow.cpp" line="2791"/>
+        <location filename="../src/MainWindow.cpp" line="2936"/>
+        <location filename="../src/MainWindow.cpp" line="2958"/>
         <source>release manager</source>
         <translation>yayın yöneticisi</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2774"/>
+        <location filename="../src/MainWindow.cpp" line="2941"/>
         <source>Arch Linux maintainer</source>
         <translation>Arch Linux bakımcıs</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2777"/>
-        <location filename="../src/MainWindow.cpp" line="2785"/>
-        <location filename="../src/MainWindow.cpp" line="2808"/>
-        <location filename="../src/MainWindow.cpp" line="2813"/>
+        <location filename="../src/MainWindow.cpp" line="2944"/>
+        <location filename="../src/MainWindow.cpp" line="2952"/>
+        <location filename="../src/MainWindow.cpp" line="2975"/>
+        <location filename="../src/MainWindow.cpp" line="2980"/>
         <source>developer</source>
         <translation>geliştirici</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2782"/>
+        <location filename="../src/MainWindow.cpp" line="2949"/>
         <source>Debian/Ubuntu maintainer</source>
         <translation>Debian/Ubuntu bakımcısı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2788"/>
+        <location filename="../src/MainWindow.cpp" line="2955"/>
         <source>translations coordinator</source>
         <translation>tercüme koordinatörü</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2797"/>
+        <location filename="../src/MainWindow.cpp" line="2964"/>
         <source>macOS maintainer</source>
         <translation>macOS bakımcısı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2800"/>
-        <location filename="../src/MainWindow.cpp" line="2805"/>
+        <location filename="../src/MainWindow.cpp" line="2967"/>
+        <location filename="../src/MainWindow.cpp" line="2972"/>
         <source>MS Windows maintainer</source>
         <translation>MS Windows bakımcısı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2820"/>
+        <location filename="../src/MainWindow.cpp" line="2987"/>
         <source>creator of the logo of the project</source>
         <translation>proje logosunun yaratıcısı</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2825"/>
+        <location filename="../src/MainWindow.cpp" line="2992"/>
         <source>tiny updates of the logo</source>
         <translation>logoya küçük güncellemeler</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2833"/>
+        <location filename="../src/MainWindow.cpp" line="3000"/>
         <source>Participate in the translation. It is easy:</source>
         <translation>Tercümelere katılın. Bu çok kolaydır:</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2955"/>
+        <location filename="../src/MainWindow.cpp" line="3122"/>
         <source>Show close buttons</source>
         <translation>Kapatma düğmelerini göster</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="2987"/>
+        <location filename="../src/MainWindow.cpp" line="3154"/>
         <source>[No name]</source>
         <translation>[İsimsiz]</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3076"/>
+        <location filename="../src/MainWindow.cpp" line="3243"/>
         <source>Download Queue</source>
         <translation>İndirme Kuyruğu</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="3076"/>
+        <location filename="../src/MainWindow.cpp" line="3243"/>
         <source>All downloads complete</source>
         <translation>Tüm indirmeler tamamlandı</translation>
     </message>
@@ -2505,7 +2600,7 @@ Favori kullanıcı</translation>
 <context>
     <name>MultiLineToolBar</name>
     <message>
-        <location filename="../src/MultiLineToolBar.cpp" line="56"/>
+        <location filename="../src/MultiLineToolBar.cpp" line="61"/>
         <source>Show close buttons</source>
         <translation>Kapatma düğmelerini göster</translation>
     </message>
@@ -2513,32 +2608,32 @@ Favori kullanıcı</translation>
 <context>
     <name>Notification</name>
     <message>
-        <location filename="../src/Notification.cpp" line="101"/>
+        <location filename="../src/Notification.cpp" line="116"/>
         <source>Additional</source>
         <translation>İlave</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="102"/>
+        <location filename="../src/Notification.cpp" line="117"/>
         <source>Suppress sound notifications</source>
         <translation>Ses bildirimleri kaldır</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="103"/>
+        <location filename="../src/Notification.cpp" line="118"/>
         <source>Suppress text notifications</source>
         <translation>Metin bildirimleri kaldır</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="113"/>
+        <location filename="../src/Notification.cpp" line="128"/>
         <source>Show/Hide window</source>
         <translation>Pencereyi Göster/Sakla</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="114"/>
+        <location filename="../src/Notification.cpp" line="129"/>
         <source>Setup speed limits</source>
         <translation>Hız sınırlarını ayarla</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="115"/>
+        <location filename="../src/Notification.cpp" line="130"/>
         <source>Exit</source>
         <translation>Çık</translation>
     </message>
@@ -2547,7 +2642,7 @@ Favori kullanıcı</translation>
         <translation type="vanished">&lt;b&gt;Hız&lt;/b&gt;&lt;br/&gt;İndirme: &lt;font_color=&quot;green&quot;&gt;%1&lt;/font&gt; Gönderme: &lt;font_color=&quot;red&quot;&gt;%2&lt;/font&gt;&lt;br/&gt;&lt;b&gt;İstatistikler&lt;/b&gt;&lt;br/&gt;İndirilen: &lt;font_color=&quot;green&quot;&gt;%3&lt;/font&gt; Gönderilen: &lt;font_color=&quot;red&quot;&gt;%4&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../src/Notification.cpp" line="228"/>
+        <location filename="../src/Notification.cpp" line="249"/>
         <source>Speed
 Download: %1 Upload: %2
 Statistics
@@ -2561,27 +2656,37 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>PMWindow</name>
     <message>
-        <location filename="../src/PMWindow.cpp" line="104"/>
+        <location filename="../src/PMWindow.cpp" line="301"/>
+        <source>Emoji</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PMWindow.cpp" line="311"/>
+        <source>Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PMWindow.cpp" line="359"/>
         <source>Private message</source>
         <translation>Özel mesaj</translation>
     </message>
     <message>
-        <location filename="../src/PMWindow.cpp" line="105"/>
+        <location filename="../src/PMWindow.cpp" line="360"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../src/PMWindow.cpp" line="313"/>
+        <location filename="../src/PMWindow.cpp" line="581"/>
         <source>%1 on hub %2</source>
         <translation>%1, %2 hub&apos;ında</translation>
     </message>
     <message>
-        <location filename="../src/PMWindow.cpp" line="359"/>
+        <location filename="../src/PMWindow.cpp" line="629"/>
         <source>Chat cleared.</source>
         <translation>Sohbet temizlendi.</translation>
     </message>
     <message>
-        <location filename="../src/PMWindow.cpp" line="457"/>
+        <location filename="../src/PMWindow.cpp" line="768"/>
         <source>User went offline</source>
         <translation>Kullanıcı çevrimdışına gitti</translation>
     </message>
@@ -2589,62 +2694,62 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>PublicHubModel</name>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="27"/>
+        <location filename="../src/PublicHubModel.cpp" line="31"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="27"/>
+        <location filename="../src/PublicHubModel.cpp" line="31"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="27"/>
+        <location filename="../src/PublicHubModel.cpp" line="31"/>
         <source>Users</source>
         <translation>Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="27"/>
+        <location filename="../src/PublicHubModel.cpp" line="31"/>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="28"/>
+        <location filename="../src/PublicHubModel.cpp" line="32"/>
         <source>Country</source>
         <translation>Ülke</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="28"/>
+        <location filename="../src/PublicHubModel.cpp" line="32"/>
         <source>Shared</source>
         <translation>Paylaşılan</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="28"/>
+        <location filename="../src/PublicHubModel.cpp" line="32"/>
         <source>Min share</source>
         <translation>Asgari paylaşım</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="28"/>
+        <location filename="../src/PublicHubModel.cpp" line="32"/>
         <source>Min slots</source>
         <translation>Asgari oluklar</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="29"/>
+        <location filename="../src/PublicHubModel.cpp" line="33"/>
         <source>Max hubs</source>
         <translation>Azami hub</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="29"/>
+        <location filename="../src/PublicHubModel.cpp" line="33"/>
         <source>Max users</source>
         <translation>Azami kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="29"/>
+        <location filename="../src/PublicHubModel.cpp" line="33"/>
         <source>Reliability</source>
         <translation>Güvenilirlik</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubModel.cpp" line="29"/>
+        <location filename="../src/PublicHubModel.cpp" line="33"/>
         <source>Rating</source>
         <translation>Değerlendirme</translation>
     </message>
@@ -2652,37 +2757,42 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>PublicHubs</name>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="57"/>
+        <location filename="../src/PublicHubs.cpp" line="66"/>
         <source>Downloading public hub list...</source>
         <translation>Herkese açık hub listesi indiriliyor...</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="158"/>
+        <location filename="../src/PublicHubs.cpp" line="172"/>
         <source>Connect</source>
         <translation>Bağlan</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="159"/>
+        <location filename="../src/PublicHubs.cpp" line="173"/>
         <source>Add to favorites</source>
         <translation>Favorilere ekle</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="160"/>
+        <location filename="../src/PublicHubs.cpp" line="174"/>
         <source>Copy &amp;address to clipboard</source>
         <translation>&amp;Adresi panoya kopyala</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="282"/>
+        <location filename="../src/PublicHubs.cpp" line="292"/>
+        <source>Refreshing public hub list...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PublicHubs.cpp" line="310"/>
         <source>Downloading public hub list... (%1)</source>
         <translation>Herkese açık hub listesi indiriliyor... (%1)</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="286"/>
+        <location filename="../src/PublicHubs.cpp" line="314"/>
         <source>Download failed: %1</source>
         <translation>İndirme başarısız oldu: %1</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="290"/>
+        <location filename="../src/PublicHubs.cpp" line="318"/>
         <source>Hub list downloaded... (%1)</source>
         <translation>Hub listesi indirildi… (%1)</translation>
     </message>
@@ -2695,22 +2805,22 @@ Downloaded: %3 Uploaded: %4</source>
         <translation type="vanished">Coral&apos;den</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="294"/>
+        <location filename="../src/PublicHubs.cpp" line="322"/>
         <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
         <translation>Yerel tampondaki (%1 tarihinde) hub listesi sürümü yüklendi (%2)</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="299"/>
+        <location filename="../src/PublicHubs.cpp" line="327"/>
         <source>Cached hub list is corrupted or unsupported</source>
         <translation>Tampondaki hub listesi bozuk ya da desteklenmiyor</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.cpp" line="301"/>
+        <location filename="../src/PublicHubs.cpp" line="329"/>
         <source>Downloaded hub list is corrupted or unsupported (%1)</source>
         <translation>İndirilen hub listesi bozuk ya da desteklenmiyor (%1)</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubs.h" line="40"/>
+        <location filename="../src/PublicHubs.h" line="42"/>
         <source>Public Hubs</source>
         <translation>Herkese Açık Hub&apos;lar</translation>
     </message>
@@ -2718,14 +2828,19 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>PublicHubsList</name>
     <message>
-        <location filename="../src/PublicHubsList.cpp" line="71"/>
-        <location filename="../src/PublicHubsList.cpp" line="95"/>
+        <location filename="../src/PublicHubsList.cpp" line="30"/>
+        <source>Public hub list URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/PublicHubsList.cpp" line="77"/>
+        <location filename="../src/PublicHubsList.cpp" line="101"/>
         <source>Public hub</source>
         <translation>Herkese açık hub</translation>
     </message>
     <message>
-        <location filename="../src/PublicHubsList.cpp" line="71"/>
-        <location filename="../src/PublicHubsList.cpp" line="95"/>
+        <location filename="../src/PublicHubsList.cpp" line="77"/>
+        <location filename="../src/PublicHubsList.cpp" line="101"/>
         <source>Link</source>
         <translation>Bağlantı</translation>
     </message>
@@ -2733,40 +2848,99 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/main.cpp" line="81"/>
+        <location filename="../src/main.cpp" line="91"/>
         <source>Loading: </source>
         <translation>Yükleniyor: </translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="179"/>
+        <location filename="../src/main.cpp" line="484"/>
+        <source>Old or incompatible EiskaltDC++ GUI settings were detected.
+
+Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="491"/>
+        <source>A backup of the previous GUI config was saved here:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="494"/>
+        <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="499"/>
+        <source>EiskaltDC++ settings updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/main.cpp" line="599"/>
         <source>UserList icons has been loaded</source>
         <translation>Kullanıcı Listesi ikonları yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="182"/>
+        <location filename="../src/main.cpp" line="602"/>
         <source>Application icons has been loaded</source>
         <translation>Uygulama ikonları yüklendi</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="235"/>
         <source>Shutting down libeiskaltdcpp...</source>
-        <translation>libeiskaltdcpp kapatılıyor...</translation>
+        <translation type="vanished">libeiskaltdcpp kapatılıyor...</translation>
     </message>
     <message>
-        <location filename="../src/main.cpp" line="265"/>
         <source>Quit...</source>
-        <translation>Çık...</translation>
+        <translation type="vanished">Çık...</translation>
+    </message>
+    <message>
+        <location filename="../src/ChatEdit.cpp" line="297"/>
+        <source>Images (%1);;All files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="205"/>
+        <source>Drag to resize input area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="478"/>
+        <location filename="../src/PMWindow.cpp" line="225"/>
+        <source>%1 (%2)</source>
+        <translation type="unfinished">%1 (%2)</translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="505"/>
+        <source>Click to expand or collapse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/HubFrame.cpp" line="506"/>
+        <source>Spoiler: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/WulforUtil.cpp" line="148"/>
+        <source>Open Externally</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/WulforUtil.cpp" line="149"/>
+        <source>Close</source>
+        <translation type="unfinished">Kapat</translation>
     </message>
 </context>
 <context>
     <name>QueuedUsers</name>
     <message>
-        <location filename="../src/QueuedUsers.cpp" line="72"/>
+        <location filename="../src/QueuedUsers.cpp" line="78"/>
         <source>Grant slot</source>
         <translation>Oluk ver</translation>
     </message>
     <message>
-        <location filename="../src/QueuedUsers.h" line="102"/>
+        <location filename="../src/QueuedUsers.h" line="104"/>
         <source>Queued Users</source>
         <translation>Kuyruktaki kullanıcılar</translation>
     </message>
@@ -2774,12 +2948,12 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>QueuedUsersModel</name>
     <message>
-        <location filename="../src/QueuedUsers.cpp" line="120"/>
+        <location filename="../src/QueuedUsers.cpp" line="126"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/QueuedUsers.cpp" line="120"/>
+        <location filename="../src/QueuedUsers.cpp" line="126"/>
         <source>File</source>
         <translation>Dosya</translation>
     </message>
@@ -2787,15 +2961,14 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ScriptConsole</name>
     <message>
-        <location filename="../scriptengine/ScriptConsole.cpp" line="23"/>
         <source>Script Console</source>
-        <translation>Betik Konsolu</translation>
+        <translation type="vanished">Betik Konsolu</translation>
     </message>
 </context>
 <context>
     <name>ScriptManagerDialog</name>
     <message>
-        <location filename="../src/ScriptManagerDialog.cpp" line="41"/>
+        <location filename="../src/ScriptManagerDialog.cpp" line="46"/>
         <source>Script Manager</source>
         <translation>Betik Yöneticisi</translation>
     </message>
@@ -2803,7 +2976,7 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SearchBlackListDelegate</name>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="346"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="351"/>
         <source>Filename</source>
         <translation>Dosya ismi</translation>
     </message>
@@ -2811,12 +2984,12 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SearchBlackListDialog</name>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="58"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="63"/>
         <source>Add new</source>
         <translation>Yeni ekle</translation>
     </message>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="59"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="64"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
@@ -2824,22 +2997,22 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SearchBlackListModel</name>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="164"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="169"/>
         <source>Filename</source>
         <translation>Dosya ismi</translation>
     </message>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="179"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="184"/>
         <source>Key</source>
         <translation>Anahtar</translation>
     </message>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="180"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="185"/>
         <source>Type</source>
         <translation>Tür</translation>
     </message>
     <message>
-        <location filename="../src/SearchBlacklistDialog.cpp" line="279"/>
+        <location filename="../src/SearchBlacklistDialog.cpp" line="284"/>
         <source>Set text...</source>
         <translation>Metin ayarla...</translation>
     </message>
@@ -2848,7 +3021,7 @@ Downloaded: %3 Uploaded: %4</source>
     <name>SearchFrame</name>
     <message>
         <location filename="../ui/UISearchFrame.ui" line="44"/>
-        <location filename="../src/SearchFrame.cpp" line="362"/>
+        <location filename="../src/SearchFrame.cpp" line="367"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
@@ -2948,139 +3121,139 @@ Downloaded: %3 Uploaded: %4</source>
         <translation>Vurgula</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="120"/>
+        <location filename="../src/SearchFrame.cpp" line="125"/>
         <source>Magnet</source>
         <translation>Magnet</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="122"/>
+        <location filename="../src/SearchFrame.cpp" line="127"/>
         <source>Download</source>
         <translation>İndir</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="125"/>
+        <location filename="../src/SearchFrame.cpp" line="130"/>
         <source>Download to...</source>
         <translation>Şuraya indir...</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="128"/>
+        <location filename="../src/SearchFrame.cpp" line="133"/>
         <source>Download Whole Directory</source>
         <translation>Tüm Klasörü İndir</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="131"/>
+        <location filename="../src/SearchFrame.cpp" line="136"/>
         <source>Download Whole Directory to...</source>
         <translation>Tüm Klasörü Şuraya İndir...</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="137"/>
+        <location filename="../src/SearchFrame.cpp" line="142"/>
         <source>Search TTH</source>
         <translation>TTH Ara</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="140"/>
+        <location filename="../src/SearchFrame.cpp" line="145"/>
         <source>Copy magnet</source>
         <translation>Magnet&apos;i kopyala</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="143"/>
+        <location filename="../src/SearchFrame.cpp" line="148"/>
         <source>Copy web-magnet</source>
         <translation>Ağ magnet&apos;ini kopyala</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="146"/>
+        <location filename="../src/SearchFrame.cpp" line="151"/>
         <source>Properties of magnet</source>
         <translation>Magnet özellikleri</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="149"/>
+        <location filename="../src/SearchFrame.cpp" line="154"/>
         <source>Browse files</source>
         <translation>Dosyaları tara</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="152"/>
+        <location filename="../src/SearchFrame.cpp" line="157"/>
         <source>Match Queue</source>
         <translation>Kuyrukla Eşleştir</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="155"/>
+        <location filename="../src/SearchFrame.cpp" line="160"/>
         <source>Send Private Message</source>
         <translation>Özel Mesaj Gönder</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="158"/>
+        <location filename="../src/SearchFrame.cpp" line="163"/>
         <source>Add to favorites</source>
         <translation>Favorilere ekle</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="161"/>
+        <location filename="../src/SearchFrame.cpp" line="166"/>
         <source>Grant extra slot</source>
         <translation>Ekstra oluk ver</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="173"/>
+        <location filename="../src/SearchFrame.cpp" line="178"/>
         <source>Remove from Queue</source>
         <translation>Kuyruktan Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="176"/>
+        <location filename="../src/SearchFrame.cpp" line="181"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="179"/>
+        <location filename="../src/SearchFrame.cpp" line="184"/>
         <source>Blacklist...</source>
         <translation>Kara liste...</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="182"/>
+        <location filename="../src/SearchFrame.cpp" line="187"/>
         <source>Blacklist</source>
         <translation>Kara liste</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="185"/>
+        <location filename="../src/SearchFrame.cpp" line="190"/>
         <source>Add to Blacklist</source>
         <translation>Kara Listeye Ekle</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="291"/>
-        <location filename="../src/SearchFrame.cpp" line="294"/>
+        <location filename="../src/SearchFrame.cpp" line="296"/>
+        <location filename="../src/SearchFrame.cpp" line="299"/>
         <source>Browse</source>
         <translation>Tara</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="481"/>
+        <location filename="../src/SearchFrame.cpp" line="485"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1084"/>
+        <location filename="../src/SearchFrame.cpp" line="1088"/>
         <source>Search - %1</source>
         <translation>Ara - %1</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1192"/>
-        <location filename="../src/SearchFrame.cpp" line="1250"/>
+        <location filename="../src/SearchFrame.cpp" line="1196"/>
+        <location filename="../src/SearchFrame.cpp" line="1254"/>
         <source>Select directory</source>
         <translation>Klasör seç</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1557"/>
+        <location filename="../src/SearchFrame.cpp" line="1561"/>
         <source>Searching for %1 ...</source>
         <translation>%1 aranıyor...</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1561"/>
+        <location filename="../src/SearchFrame.cpp" line="1565"/>
         <source>Search progress of &quot;%1&quot; is %2%</source>
         <translation>&quot;%1&quot; aramasının ilerleyişi şudur: %2%</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1584"/>
+        <location filename="../src/SearchFrame.cpp" line="1588"/>
         <source>&lt;b&gt;No results&lt;/b&gt;</source>
         <translation>&lt;b&gt;Hiçbir sonuç yok&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/SearchFrame.cpp" line="1593"/>
+        <location filename="../src/SearchFrame.cpp" line="1597"/>
         <source>Found: &lt;b&gt;%1&lt;/b&gt;  Dropped: &lt;b&gt;%2&lt;/b&gt;</source>
         <translation>Bulundu: &lt;b&gt;%1&lt;/b&gt;  Atıldı: &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
@@ -3088,67 +3261,67 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SearchModel</name>
     <message>
-        <location filename="../src/SearchModel.cpp" line="50"/>
+        <location filename="../src/SearchModel.cpp" line="52"/>
         <source>Count</source>
         <translation>Sayı</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="50"/>
+        <location filename="../src/SearchModel.cpp" line="52"/>
         <source>File</source>
         <translation>Dosya</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="50"/>
+        <location filename="../src/SearchModel.cpp" line="52"/>
         <source>Ext</source>
         <translation>Uzantı</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="50"/>
+        <location filename="../src/SearchModel.cpp" line="52"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="51"/>
+        <location filename="../src/SearchModel.cpp" line="53"/>
         <source>Exact size</source>
         <translation>Tam boyutu</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="51"/>
+        <location filename="../src/SearchModel.cpp" line="53"/>
         <source>Path</source>
         <translation>Yol</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="51"/>
+        <location filename="../src/SearchModel.cpp" line="53"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="52"/>
+        <location filename="../src/SearchModel.cpp" line="54"/>
         <source>Free slots</source>
         <translation>Boş oluklar</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="52"/>
+        <location filename="../src/SearchModel.cpp" line="54"/>
         <source>Total slots</source>
         <translation>Toplam oluklar</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="53"/>
+        <location filename="../src/SearchModel.cpp" line="55"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="53"/>
+        <location filename="../src/SearchModel.cpp" line="55"/>
         <source>Hub</source>
         <translation>Hub</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="53"/>
+        <location filename="../src/SearchModel.cpp" line="55"/>
         <source>Host</source>
         <translation>Bilgisayar</translation>
     </message>
     <message>
-        <location filename="../src/SearchModel.cpp" line="132"/>
+        <location filename="../src/SearchModel.cpp" line="134"/>
         <source>File already exists: %1</source>
         <translation>Dosya zaten mevcut: %1</translation>
     </message>
@@ -3156,47 +3329,47 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>Secretary</name>
     <message>
-        <location filename="../src/Secretary.cpp" line="86"/>
+        <location filename="../src/Secretary.cpp" line="92"/>
         <source>Secretary</source>
         <translation>Sekreter</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="311"/>
+        <location filename="../src/Secretary.cpp" line="315"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="312"/>
+        <location filename="../src/Secretary.cpp" line="316"/>
         <source>Search text</source>
         <translation>Metin ara</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="313"/>
+        <location filename="../src/Secretary.cpp" line="317"/>
         <source>Copy nick</source>
         <translation>Rumuzu kopyala</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="315"/>
+        <location filename="../src/Secretary.cpp" line="319"/>
         <source>Clear notes</source>
         <translation>Notları sil</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="316"/>
+        <location filename="../src/Secretary.cpp" line="320"/>
         <source>Find in notes</source>
         <translation>Notlarda bul</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="318"/>
+        <location filename="../src/Secretary.cpp" line="322"/>
         <source>Select all</source>
         <translation>Tümünü seç</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="320"/>
+        <location filename="../src/Secretary.cpp" line="324"/>
         <source>Zoom In</source>
         <translation>Yakınlaştır</translation>
     </message>
     <message>
-        <location filename="../src/Secretary.cpp" line="321"/>
+        <location filename="../src/Secretary.cpp" line="325"/>
         <source>Zoom Out</source>
         <translation>Uzaklaştır</translation>
     </message>
@@ -3204,62 +3377,62 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../src/Settings.cpp" line="38"/>
+        <location filename="../src/Settings.cpp" line="465"/>
         <source>Preferences</source>
         <translation>Tercihler</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="51"/>
+        <location filename="../src/Settings.cpp" line="503"/>
         <source>Personal</source>
         <translation>Kişisel</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="56"/>
+        <location filename="../src/Settings.cpp" line="508"/>
         <source>Connection</source>
         <translation>Bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="61"/>
+        <location filename="../src/Settings.cpp" line="513"/>
         <source>Downloads</source>
         <translation>İndirmeler</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="66"/>
+        <location filename="../src/Settings.cpp" line="518"/>
         <source>Sharing</source>
         <translation>Paylaşılan</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="71"/>
+        <location filename="../src/Settings.cpp" line="523"/>
         <source>GUI</source>
         <translation>Grafik Arayüz</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="76"/>
+        <location filename="../src/Settings.cpp" line="528"/>
         <source>Notifications</source>
         <translation>Bildirimler</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="81"/>
+        <location filename="../src/Settings.cpp" line="533"/>
         <source>Logs</source>
         <translation>Kütükler</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="86"/>
+        <location filename="../src/Settings.cpp" line="538"/>
         <source>User Commands</source>
         <translation>Kullanıcı komutları</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="91"/>
+        <location filename="../src/Settings.cpp" line="543"/>
         <source>Shortcuts</source>
         <translation>Kısayollar</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="96"/>
+        <location filename="../src/Settings.cpp" line="548"/>
         <source>History</source>
         <translation>Tarihçe</translation>
     </message>
     <message>
-        <location filename="../src/Settings.cpp" line="101"/>
+        <location filename="../src/Settings.cpp" line="553"/>
         <source>Advanced</source>
         <translation>Gelişmiş</translation>
     </message>
@@ -3267,7 +3440,7 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsAdvanced</name>
     <message>
-        <location filename="../src/SettingsAdvanced.cpp" line="44"/>
+        <location filename="../src/SettingsAdvanced.cpp" line="50"/>
         <source>Select mime handler binary</source>
         <translation>MİME yöneticisi ikili dosyası seç</translation>
     </message>
@@ -3275,18 +3448,85 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsConnection</name>
     <message>
-        <location filename="../src/SettingsConnection.cpp" line="109"/>
+        <location filename="../src/SettingsConnection.cpp" line="127"/>
+        <source>Enable IPv6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="130"/>
+        <source>External/WAN IPv6:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="133"/>
+        <source>e.g. 2001:db8::1234</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="136"/>
+        <source>Bind IPv6 address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="143"/>
+        <source>Country MMDB file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="146"/>
+        <source>Path to GeoLite2/MaxMind country .mmdb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="170"/>
+        <source>Configure DHT bootstrap URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="175"/>
+        <source>Public hub list URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="177"/>
+        <source>Configure public hub list URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="235"/>
+        <location filename="../src/SettingsConnection.cpp" line="259"/>
+        <source>No valid external IPv6 address found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="239"/>
+        <location filename="../src/SettingsConnection.cpp" line="263"/>
+        <source>No valid bind IPv6 address found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="283"/>
         <source>No valid SOCKS5 server IP found!</source>
         <translation>Geçerli SOCKS5 sunucu IP adresi bulunamadı!</translation>
     </message>
     <message>
-        <location filename="../src/SettingsConnection.cpp" line="154"/>
-        <location filename="../src/SettingsConnection.cpp" line="167"/>
+        <location filename="../src/SettingsConnection.cpp" line="329"/>
+        <location filename="../src/SettingsConnection.cpp" line="342"/>
         <source>Program need root privileges to open ports less than 1024</source>
         <translation>Programın 1024 saysının altındaki portları açmak için root izinlerine ihtiyacı vardır</translation>
     </message>
     <message>
-        <location filename="../src/SettingsConnection.cpp" line="365"/>
+        <location filename="../src/SettingsConnection.cpp" line="560"/>
+        <source>Select MaxMind country database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="562"/>
+        <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="602"/>
         <source>Warning</source>
         <translation>İKAZ</translation>
     </message>
@@ -3294,28 +3534,33 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsDownloads</name>
     <message>
-        <location filename="../src/SettingsDownloads.cpp" line="158"/>
-        <location filename="../src/SettingsDownloads.cpp" line="193"/>
+        <location filename="../src/SettingsDownloads.cpp" line="112"/>
+        <source>Public Hub list proxy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="165"/>
+        <location filename="../src/SettingsDownloads.cpp" line="200"/>
         <source>Select directory</source>
         <translation>Klasör seç</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDownloads.cpp" line="175"/>
+        <location filename="../src/SettingsDownloads.cpp" line="182"/>
         <source>New</source>
         <translation>Yeni</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDownloads.cpp" line="181"/>
+        <location filename="../src/SettingsDownloads.cpp" line="188"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDownloads.cpp" line="188"/>
+        <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Enter alias for directory</source>
         <translation>Klasör için alias gir</translation>
     </message>
     <message>
-        <location filename="../src/SettingsDownloads.cpp" line="188"/>
+        <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation>Alias</translation>
     </message>
@@ -3323,200 +3568,224 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsGUI</name>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="53"/>
         <source>Default (need to restart)</source>
-        <translation>Varsayılan (tekrar başlatma gerektirir)</translation>
+        <translation type="vanished">Varsayılan (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="66"/>
+        <location filename="../src/SettingsGUI.cpp" line="82"/>
         <source>English</source>
         <translation>İngilizce</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="67"/>
+        <location filename="../src/SettingsGUI.cpp" line="83"/>
         <source>Russian</source>
         <translation>Rusça</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="68"/>
+        <location filename="../src/SettingsGUI.cpp" line="84"/>
         <source>Belarusian</source>
         <translation>Beyaz Rusça</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="69"/>
+        <location filename="../src/SettingsGUI.cpp" line="85"/>
         <source>Hungarian</source>
         <translation>Macarca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="70"/>
+        <location filename="../src/SettingsGUI.cpp" line="86"/>
         <source>French</source>
         <translation>Fransızca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="71"/>
+        <location filename="../src/SettingsGUI.cpp" line="87"/>
         <source>Polish</source>
         <translation>Lehçe</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="72"/>
+        <location filename="../src/SettingsGUI.cpp" line="88"/>
         <source>Portuguese (Brazil)</source>
         <translation>Portekizce (Brezilya)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="73"/>
+        <location filename="../src/SettingsGUI.cpp" line="89"/>
         <source>Serbian (Cyrillic)</source>
         <translation>Sırpça (Kiril)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="74"/>
+        <location filename="../src/SettingsGUI.cpp" line="90"/>
         <source>Serbian (Latin)</source>
         <translation>Sırpça (Latin)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="75"/>
+        <location filename="../src/SettingsGUI.cpp" line="91"/>
         <source>Ukrainian</source>
         <translation>Ukraynaca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="76"/>
+        <location filename="../src/SettingsGUI.cpp" line="92"/>
         <source>Spanish</source>
         <translation>İspanyolca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="77"/>
+        <location filename="../src/SettingsGUI.cpp" line="93"/>
         <source>Basque</source>
         <translation>Baskça</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="78"/>
+        <location filename="../src/SettingsGUI.cpp" line="94"/>
         <source>Bulgarian</source>
         <translation>Bulgarca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="79"/>
+        <location filename="../src/SettingsGUI.cpp" line="95"/>
         <source>Slovak</source>
         <translation>Slovakça</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="80"/>
+        <location filename="../src/SettingsGUI.cpp" line="96"/>
         <source>Czech</source>
         <translation>Çekçe</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="81"/>
+        <location filename="../src/SettingsGUI.cpp" line="97"/>
         <source>German</source>
         <translation>Almanca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="82"/>
+        <location filename="../src/SettingsGUI.cpp" line="98"/>
         <source>Greek</source>
         <translation>Yunanca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="83"/>
+        <location filename="../src/SettingsGUI.cpp" line="99"/>
         <source>Italian</source>
         <translation>İtalyanca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="84"/>
+        <location filename="../src/SettingsGUI.cpp" line="100"/>
         <source>Vietnamese</source>
         <translation>Vietnamca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="85"/>
+        <location filename="../src/SettingsGUI.cpp" line="101"/>
         <source>Chinese (China)</source>
         <translation>Çince (Çin)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="86"/>
+        <location filename="../src/SettingsGUI.cpp" line="102"/>
         <source>Swedish (Sweden)</source>
         <translation>İsveççe (İsveç)</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="87"/>
+        <location filename="../src/SettingsGUI.cpp" line="103"/>
         <source>Turkish</source>
         <translation>Türkçe</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="88"/>
+        <location filename="../src/SettingsGUI.cpp" line="104"/>
         <source>Danish</source>
         <translation>Danca</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="89"/>
+        <location filename="../src/SettingsGUI.cpp" line="105"/>
         <source>Georgian</source>
         <translation>Gürcüce</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="227"/>
+        <location filename="../src/SettingsGUI.cpp" line="186"/>
+        <source>Chat pictures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsGUI.cpp" line="188"/>
+        <source>Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsGUI.cpp" line="192"/>
+        <source>Auto-clean files older than</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsGUI.cpp" line="195"/>
+        <source> days</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsGUI.cpp" line="228"/>
         <source>Local user</source>
         <translation>Yerel kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="231"/>
+        <location filename="../src/SettingsGUI.cpp" line="232"/>
         <source>Operator</source>
         <translation>Operatör</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="235"/>
+        <location filename="../src/SettingsGUI.cpp" line="236"/>
         <source>Bot</source>
         <translation>Robot</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="239"/>
+        <location filename="../src/SettingsGUI.cpp" line="240"/>
         <source>Private: local user</source>
         <translation>Özel: yerel kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="243"/>
+        <location filename="../src/SettingsGUI.cpp" line="244"/>
         <source>Private: user</source>
         <translation>Özel: kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="247"/>
+        <location filename="../src/SettingsGUI.cpp" line="248"/>
         <source>Chat: Say nick</source>
         <translation>Sohbet: rumuz</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="251"/>
+        <location filename="../src/SettingsGUI.cpp" line="252"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="255"/>
+        <location filename="../src/SettingsGUI.cpp" line="256"/>
         <source>User</source>
         <translation>Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="259"/>
+        <location filename="../src/SettingsGUI.cpp" line="260"/>
         <source>Favorite User</source>
         <translation>Favori kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="263"/>
+        <location filename="../src/SettingsGUI.cpp" line="264"/>
         <source>Time stamp</source>
         <translation>Zaman etiketi</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="267"/>
+        <location filename="../src/SettingsGUI.cpp" line="268"/>
         <source>Message</source>
         <translation>Mesaj</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="567"/>
+        <location filename="../src/SettingsGUI.cpp" line="545"/>
         <source>Select translation</source>
         <translation>Tercüme seç</translation>
     </message>
     <message>
-        <location filename="../src/SettingsGUI.cpp" line="569"/>
+        <location filename="../src/SettingsGUI.cpp" line="547"/>
         <source>Translation (*.qm)</source>
         <translation>Tercüme (*.qm)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsGUI.cpp" line="570"/>
+        <source>Select chat pictures folder</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SettingsLog</name>
     <message>
-        <location filename="../src/SettingsLog.cpp" line="103"/>
+        <location filename="../src/SettingsLog.cpp" line="109"/>
         <source>Choose the directory</source>
         <translation>Klasörü seç</translation>
     </message>
@@ -3524,12 +3793,12 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsNotification</name>
     <message>
-        <location filename="../src/SettingsNotification.cpp" line="194"/>
+        <location filename="../src/SettingsNotification.cpp" line="209"/>
         <source>Select file</source>
         <translation>Dosya seç</translation>
     </message>
     <message>
-        <location filename="../src/SettingsNotification.cpp" line="194"/>
+        <location filename="../src/SettingsNotification.cpp" line="209"/>
         <source>All files (*.*)</source>
         <translation>Tüm dosyalar (*.*)</translation>
     </message>
@@ -3537,7 +3806,7 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsPersonal</name>
     <message>
-        <location filename="../src/SettingsPersonal.cpp" line="78"/>
+        <location filename="../src/SettingsPersonal.cpp" line="84"/>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
@@ -3545,65 +3814,65 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SettingsSharing</name>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="118"/>
-        <location filename="../src/SettingsSharing.cpp" line="165"/>
+        <location filename="../src/SettingsSharing.cpp" line="125"/>
+        <location filename="../src/SettingsSharing.cpp" line="176"/>
         <source>Total shared: %1</source>
         <translation>Toplam paylaşılan: %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="192"/>
-        <location filename="../src/SettingsSharing.cpp" line="311"/>
-        <location filename="../src/SettingsSharing.cpp" line="322"/>
+        <location filename="../src/SettingsSharing.cpp" line="203"/>
+        <location filename="../src/SettingsSharing.cpp" line="299"/>
+        <location filename="../src/SettingsSharing.cpp" line="310"/>
         <source>Select directory</source>
         <translation>Klasör seç</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="192"/>
-        <location filename="../src/SettingsSharing.cpp" line="322"/>
-        <location filename="../src/SettingsSharing.cpp" line="363"/>
+        <location filename="../src/SettingsSharing.cpp" line="203"/>
+        <location filename="../src/SettingsSharing.cpp" line="310"/>
+        <location filename="../src/SettingsSharing.cpp" line="356"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="209"/>
-        <location filename="../src/SettingsSharing.cpp" line="238"/>
+        <location filename="../src/SettingsSharing.cpp" line="220"/>
+        <location filename="../src/SettingsSharing.cpp" line="249"/>
         <source>Add item</source>
         <translation>Unsur ekle</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="209"/>
-        <location filename="../src/SettingsSharing.cpp" line="238"/>
+        <location filename="../src/SettingsSharing.cpp" line="220"/>
+        <location filename="../src/SettingsSharing.cpp" line="249"/>
         <source>Enter text:</source>
         <translation>Metin gir:</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="216"/>
+        <location filename="../src/SettingsSharing.cpp" line="227"/>
         <source>Choose the directory</source>
         <translation>Klasörü seç</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="290"/>
+        <location filename="../src/SettingsSharing.cpp" line="411"/>
         <source>Add</source>
         <translation>Ekle</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="294"/>
+        <location filename="../src/SettingsSharing.cpp" line="415"/>
         <source>Rename</source>
         <translation>Yeniden adlandır</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="299"/>
+        <location filename="../src/SettingsSharing.cpp" line="420"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="337"/>
-        <location filename="../src/SettingsSharing.cpp" line="373"/>
+        <location filename="../src/SettingsSharing.cpp" line="323"/>
+        <location filename="../src/SettingsSharing.cpp" line="366"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="362"/>
+        <location filename="../src/SettingsSharing.cpp" line="355"/>
         <source>Enter new name</source>
         <translation>Yeni isim gir</translation>
     </message>
@@ -3611,133 +3880,134 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ShareBrowser</name>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="74"/>
+        <location filename="../src/ShareBrowser.cpp" line="75"/>
         <source>Restrictions</source>
         <translation>Kısıtlamalar</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="75"/>
+        <location filename="../src/ShareBrowser.cpp" line="76"/>
         <source>Magnet</source>
         <translation>Magnet</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="77"/>
+        <location filename="../src/ShareBrowser.cpp" line="78"/>
         <source>Download</source>
         <translation>İndir</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="79"/>
+        <location filename="../src/ShareBrowser.cpp" line="80"/>
         <source>Download to...</source>
         <translation>Şuraya indir...</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="82"/>
+        <location filename="../src/ShareBrowser.cpp" line="83"/>
         <source>Search for alternates</source>
         <translation>Alternatifleri ara</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="84"/>
+        <location filename="../src/ShareBrowser.cpp" line="85"/>
         <source>Copy magnet</source>
         <translation>Magnet&apos;i kopyala</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="86"/>
+        <location filename="../src/ShareBrowser.cpp" line="87"/>
         <source>Copy web-magnet</source>
         <translation>Ağ magnetini kopyala</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="88"/>
+        <location filename="../src/ShareBrowser.cpp" line="89"/>
         <source>Properties of magnet</source>
         <translation>Magnet&apos;in özellikleri</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="91"/>
+        <location filename="../src/ShareBrowser.cpp" line="92"/>
         <source>Add to favorites</source>
         <translation>Favorilere ekle</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="93"/>
+        <location filename="../src/ShareBrowser.cpp" line="94"/>
         <source>Add restriction</source>
         <translation>Kısıtlama ekle</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="94"/>
+        <location filename="../src/ShareBrowser.cpp" line="95"/>
         <source>Remove restriction</source>
         <translation>Kısıtlamayı kaldır</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="95"/>
+        <location filename="../src/ShareBrowser.cpp" line="96"/>
         <source>Open directory</source>
         <translation>Klasör aç</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="175"/>
+        <location filename="../src/ShareBrowser.cpp" line="176"/>
         <source>Browse</source>
         <translation>Tara</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="223"/>
+        <location filename="../src/ShareBrowser.cpp" line="224"/>
         <source>Own files</source>
         <translation>Kendi dosyalarınız</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="225"/>
+        <location filename="../src/ShareBrowser.cpp" line="226"/>
+        <location filename="../src/ShareBrowser.cpp" line="229"/>
         <source>Listing: </source>
         <translation>Döküm: </translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="327"/>
+        <location filename="../src/ShareBrowser.cpp" line="334"/>
         <source>Filebrowser</source>
         <translation>Dosya tarayıcısı</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="329"/>
+        <location filename="../src/ShareBrowser.cpp" line="336"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="417"/>
+        <location filename="../src/ShareBrowser.cpp" line="432"/>
         <source>Total share size: %1;  Files: %2</source>
         <translation>Toplam paylaşım boyutu: %1;  Dosyalar: %2</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="451"/>
+        <location filename="../src/ShareBrowser.cpp" line="466"/>
         <source>Share browser error: %1</source>
         <translation>Paylaşım tarayıcı hatası: %1</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="621"/>
-        <location filename="../src/ShareBrowser.cpp" line="643"/>
+        <location filename="../src/ShareBrowser.cpp" line="636"/>
+        <location filename="../src/ShareBrowser.cpp" line="658"/>
         <source>Total size: %1</source>
         <translation>Toplam boyut: %1</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="641"/>
+        <location filename="../src/ShareBrowser.cpp" line="656"/>
         <source>Selected %1 from %2 items; </source>
         <translation>%2 unsurdan %1 seçildi; </translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="646"/>
+        <location filename="../src/ShareBrowser.cpp" line="661"/>
         <source>; Selected: %1</source>
         <translation>; Seçilen: %1</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="847"/>
+        <location filename="../src/ShareBrowser.cpp" line="862"/>
         <source>Select directory</source>
         <translation>Klasör seç</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="977"/>
+        <location filename="../src/ShareBrowser.cpp" line="992"/>
         <source>Enter restriction size (in GB)</source>
         <translation>Kısıtlama boyutunu gir (GB olarak)</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="1115"/>
+        <location filename="../src/ShareBrowser.cpp" line="1130"/>
         <source>Share browser</source>
         <translation>Paylaşım tarayıcısı</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowser.cpp" line="1122"/>
+        <location filename="../src/ShareBrowser.cpp" line="1137"/>
         <source>Matched %1 files</source>
         <translation>%1 dosya eşleşti</translation>
     </message>
@@ -3745,12 +4015,12 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ShareBrowserSearch</name>
     <message>
-        <location filename="../src/ShareBrowserSearch.cpp" line="71"/>
+        <location filename="../src/ShareBrowserSearch.cpp" line="76"/>
         <source>Search - %1</source>
         <translation>Ara - %1</translation>
     </message>
     <message>
-        <location filename="../src/ShareBrowserSearch.cpp" line="106"/>
+        <location filename="../src/ShareBrowserSearch.cpp" line="113"/>
         <source>Found %1 items</source>
         <translation>%1 unsur bulundu</translation>
     </message>
@@ -3758,7 +4028,7 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ShareDirModel</name>
     <message>
-        <location filename="../src/SettingsSharing.cpp" line="525"/>
+        <location filename="../src/SettingsSharing.cpp" line="586"/>
         <source>Error</source>
         <translation>Hata</translation>
     </message>
@@ -3766,27 +4036,27 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ShortcutGetter</name>
     <message>
-        <location filename="../src/ShortcutGetter.cpp" line="214"/>
+        <location filename="../src/ShortcutGetter.cpp" line="217"/>
         <source>Modify shortcut</source>
         <translation>Kısayol değiştir</translation>
     </message>
     <message>
-        <location filename="../src/ShortcutGetter.cpp" line="222"/>
+        <location filename="../src/ShortcutGetter.cpp" line="225"/>
         <source>Press the key combination you want to assign</source>
         <translation>Atamak istediğiniz tuş birleşimine basın</translation>
     </message>
     <message>
-        <location filename="../src/ShortcutGetter.cpp" line="237"/>
+        <location filename="../src/ShortcutGetter.cpp" line="240"/>
         <source>Clear</source>
         <translation>Temizle</translation>
     </message>
     <message>
-        <location filename="../src/ShortcutGetter.cpp" line="239"/>
+        <location filename="../src/ShortcutGetter.cpp" line="242"/>
         <source>Capture</source>
         <translation>Yakala</translation>
     </message>
     <message>
-        <location filename="../src/ShortcutGetter.cpp" line="240"/>
+        <location filename="../src/ShortcutGetter.cpp" line="243"/>
         <source>Capture keystrokes</source>
         <translation>Tuş basımlarını yakala</translation>
     </message>
@@ -3794,12 +4064,12 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>ShortcutsModel</name>
     <message>
-        <location filename="../src/SettingsShortcuts.cpp" line="172"/>
+        <location filename="../src/SettingsShortcuts.cpp" line="177"/>
         <source>Action</source>
         <translation>Etkinlik</translation>
     </message>
     <message>
-        <location filename="../src/SettingsShortcuts.cpp" line="173"/>
+        <location filename="../src/SettingsShortcuts.cpp" line="178"/>
         <source>Hotkey</source>
         <translation>Kısayol</translation>
     </message>
@@ -3807,87 +4077,87 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SideBarModel</name>
     <message>
-        <location filename="../src/SideBar.cpp" line="69"/>
-        <location filename="../src/SideBar.cpp" line="424"/>
+        <location filename="../src/SideBar.cpp" line="74"/>
+        <location filename="../src/SideBar.cpp" line="428"/>
         <source>Hubs</source>
         <translation>Hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="70"/>
-        <location filename="../src/SideBar.cpp" line="425"/>
+        <location filename="../src/SideBar.cpp" line="75"/>
+        <location filename="../src/SideBar.cpp" line="429"/>
         <source>Private Messages</source>
         <translation>Özel Mesajlar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="71"/>
-        <location filename="../src/SideBar.cpp" line="426"/>
+        <location filename="../src/SideBar.cpp" line="76"/>
+        <location filename="../src/SideBar.cpp" line="430"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="72"/>
-        <location filename="../src/SideBar.cpp" line="427"/>
+        <location filename="../src/SideBar.cpp" line="77"/>
+        <location filename="../src/SideBar.cpp" line="431"/>
         <source>Share Browsers</source>
         <translation>Paylaşım Tarayıcıları</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="73"/>
-        <location filename="../src/SideBar.cpp" line="428"/>
+        <location filename="../src/SideBar.cpp" line="78"/>
+        <location filename="../src/SideBar.cpp" line="432"/>
         <source>ADLSearch</source>
         <translation>ADLArama</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="74"/>
-        <location filename="../src/SideBar.cpp" line="429"/>
+        <location filename="../src/SideBar.cpp" line="79"/>
+        <location filename="../src/SideBar.cpp" line="433"/>
         <source>Download Queue</source>
         <translation>İndirme Kuyruğu</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="75"/>
-        <location filename="../src/SideBar.cpp" line="438"/>
+        <location filename="../src/SideBar.cpp" line="80"/>
+        <location filename="../src/SideBar.cpp" line="442"/>
         <source>Queued Users</source>
         <translation>Kuyruktaki Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="76"/>
-        <location filename="../src/SideBar.cpp" line="430"/>
+        <location filename="../src/SideBar.cpp" line="81"/>
+        <location filename="../src/SideBar.cpp" line="434"/>
         <source>Finished Uploads</source>
         <translation>Tamamlanan Göndermeler</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="77"/>
-        <location filename="../src/SideBar.cpp" line="431"/>
+        <location filename="../src/SideBar.cpp" line="82"/>
+        <location filename="../src/SideBar.cpp" line="435"/>
         <source>Finished Downloads</source>
         <translation>Tamamlanan İndirmeler</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="78"/>
-        <location filename="../src/SideBar.cpp" line="432"/>
+        <location filename="../src/SideBar.cpp" line="83"/>
+        <location filename="../src/SideBar.cpp" line="436"/>
         <source>Favorite Hubs</source>
         <translation>Favori Hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="79"/>
-        <location filename="../src/SideBar.cpp" line="433"/>
+        <location filename="../src/SideBar.cpp" line="84"/>
+        <location filename="../src/SideBar.cpp" line="437"/>
         <source>Favorite Users</source>
         <translation>Favori Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="80"/>
-        <location filename="../src/SideBar.cpp" line="434"/>
+        <location filename="../src/SideBar.cpp" line="85"/>
+        <location filename="../src/SideBar.cpp" line="438"/>
         <source>Public Hubs</source>
         <translation>Herkese Açık Hub&apos;lar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="81"/>
-        <location filename="../src/SideBar.cpp" line="435"/>
-        <location filename="../src/SideBar.cpp" line="440"/>
+        <location filename="../src/SideBar.cpp" line="86"/>
+        <location filename="../src/SideBar.cpp" line="439"/>
+        <location filename="../src/SideBar.cpp" line="444"/>
         <source>Secretary</source>
         <translation>Sekreter</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="82"/>
-        <location filename="../src/SideBar.cpp" line="436"/>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="440"/>
         <source>Search Spy</source>
         <translation>Arama Casusu</translation>
     </message>
@@ -3896,19 +4166,19 @@ Downloaded: %3 Uploaded: %4</source>
         <translation type="vanished">Casus</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="83"/>
-        <location filename="../src/SideBar.cpp" line="439"/>
+        <location filename="../src/SideBar.cpp" line="88"/>
+        <location filename="../src/SideBar.cpp" line="443"/>
         <source>Debug Console</source>
         <translation>CmdDebug</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="85"/>
-        <location filename="../src/SideBar.cpp" line="437"/>
+        <location filename="../src/SideBar.cpp" line="90"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
         <source>Other Widgets</source>
         <translation>Diğer Widget&apos;ler</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="155"/>
+        <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation>Widget&apos;ler</translation>
     </message>
@@ -3916,42 +4186,42 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SideBarView</name>
     <message>
-        <location filename="../src/SideBar.cpp" line="572"/>
+        <location filename="../src/SideBar.cpp" line="576"/>
         <source>Close all</source>
         <translation>Hepsini kapat</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="593"/>
+        <location filename="../src/SideBar.cpp" line="597"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="652"/>
+        <location filename="../src/SideBar.cpp" line="656"/>
         <source>Choose file to open</source>
         <translation>Açılacak dosya seç</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="654"/>
+        <location filename="../src/SideBar.cpp" line="658"/>
         <source>Modern XML Filelists</source>
         <translation>Modern XML Dosya listeleri</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="655"/>
+        <location filename="../src/SideBar.cpp" line="659"/>
         <source>Modern XML Filelists uncompressed</source>
         <translation>Sıkıştırılmamış modern XML Dosya listeleri</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="656"/>
+        <location filename="../src/SideBar.cpp" line="660"/>
         <source>All files</source>
         <translation>Tüm dosyalar</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="671"/>
+        <location filename="../src/SideBar.cpp" line="675"/>
         <source>Open log file</source>
         <translation>Kütük dosyasını aç</translation>
     </message>
     <message>
-        <location filename="../src/SideBar.cpp" line="671"/>
+        <location filename="../src/SideBar.cpp" line="675"/>
         <source>Log files (*.log);;All files (*.*)</source>
         <translation>Kütük dosyaları (*.log);;Tüm dosyalar (*.*)</translation>
     </message>
@@ -3959,19 +4229,19 @@ Downloaded: %3 Uploaded: %4</source>
 <context>
     <name>SpyFrame</name>
     <message>
-        <location filename="../src/SpyFrame.cpp" line="54"/>
-        <location filename="../src/SpyFrame.cpp" line="76"/>
+        <location filename="../src/SpyFrame.cpp" line="61"/>
+        <location filename="../src/SpyFrame.cpp" line="83"/>
         <source>Stop</source>
         <translation>Durdur</translation>
     </message>
     <message>
-        <location filename="../src/SpyFrame.cpp" line="55"/>
-        <location filename="../src/SpyFrame.h" line="38"/>
+        <location filename="../src/SpyFrame.cpp" line="62"/>
+        <location filename="../src/SpyFrame.h" line="40"/>
         <source>Search Spy</source>
         <translation>Arama Casusu</translation>
     </message>
     <message>
-        <location filename="../src/SpyFrame.cpp" line="56"/>
+        <location filename="../src/SpyFrame.cpp" line="63"/>
         <source>Search Spy is now running.
 It will continue to work when the widget is hidden.
 Do you want to stop it?
@@ -3982,12 +4252,12 @@ Onu durdurmak istiyor musunuz?
 </translation>
     </message>
     <message>
-        <location filename="../src/SpyFrame.cpp" line="81"/>
+        <location filename="../src/SpyFrame.cpp" line="88"/>
         <source>Start</source>
         <translation>Başlat</translation>
     </message>
     <message>
-        <location filename="../src/SpyFrame.cpp" line="98"/>
+        <location filename="../src/SpyFrame.cpp" line="105"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
@@ -3995,12 +4265,12 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>SpyModel</name>
     <message>
-        <location filename="../src/SpyModel.cpp" line="22"/>
+        <location filename="../src/SpyModel.cpp" line="27"/>
         <source>Count</source>
         <translation>Sayı</translation>
     </message>
     <message>
-        <location filename="../src/SpyModel.cpp" line="22"/>
+        <location filename="../src/SpyModel.cpp" line="27"/>
         <source>Search string</source>
         <translation>Arama metni</translation>
     </message>
@@ -4008,7 +4278,7 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>TabFrame</name>
     <message>
-        <location filename="../src/TabFrame.cpp" line="359"/>
+        <location filename="../src/TabFrame.cpp" line="361"/>
         <source>Close</source>
         <translation>Kapat</translation>
     </message>
@@ -4016,7 +4286,7 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>ToolBar</name>
     <message>
-        <location filename="../src/ToolBar.cpp" line="247"/>
+        <location filename="../src/ToolBar.cpp" line="288"/>
         <source>Show close buttons</source>
         <translation>Kapatma düğmelerini göster</translation>
     </message>
@@ -4024,183 +4294,191 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>TransferView</name>
     <message>
-        <location filename="../src/TransferView.cpp" line="47"/>
+        <location filename="../src/TransferView.cpp" line="53"/>
         <source>Browse files</source>
         <translation>Dosyaları tara</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="50"/>
+        <location filename="../src/TransferView.cpp" line="56"/>
         <source>Search Alternates</source>
         <translation>Alternatifleri Ara</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="53"/>
+        <location filename="../src/TransferView.cpp" line="59"/>
         <source>Match Queue</source>
         <translation>Kuyrukla Eşleştir</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="56"/>
+        <location filename="../src/TransferView.cpp" line="62"/>
         <source>Send Private Message</source>
         <translation>Özel Mesaj Yolla</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="59"/>
+        <location filename="../src/TransferView.cpp" line="65"/>
         <source>Add to favorites</source>
         <translation>Favorilere ekle</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="62"/>
+        <location filename="../src/TransferView.cpp" line="68"/>
         <source>Grant extra slot</source>
         <translation>Ekstra oluk ver</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="65"/>
+        <location filename="../src/TransferView.cpp" line="71"/>
         <source>Copy</source>
         <translation>Kopyala</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="68"/>
+        <location filename="../src/TransferView.cpp" line="74"/>
         <source>Users</source>
         <translation>Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="69"/>
+        <location filename="../src/TransferView.cpp" line="75"/>
         <source>Speed</source>
         <translation>Hız</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="70"/>
+        <location filename="../src/TransferView.cpp" line="76"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="71"/>
+        <location filename="../src/TransferView.cpp" line="77"/>
         <source>Flags</source>
         <translation>Bayraklar</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="72"/>
+        <location filename="../src/TransferView.cpp" line="78"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="73"/>
+        <location filename="../src/TransferView.cpp" line="79"/>
         <source>Time left</source>
         <translation>Kalan süre</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="74"/>
+        <location filename="../src/TransferView.cpp" line="80"/>
         <source>Filename</source>
         <translation>Dosya ismi</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="75"/>
+        <location filename="../src/TransferView.cpp" line="81"/>
         <source>Hub</source>
         <translation>Hub</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="76"/>
+        <location filename="../src/TransferView.cpp" line="82"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="77"/>
+        <location filename="../src/TransferView.cpp" line="83"/>
         <source>Encryption</source>
         <translation>Şifreleme</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="78"/>
+        <location filename="../src/TransferView.cpp" line="84"/>
         <source>Magnet</source>
         <translation>Magnet</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="83"/>
+        <location filename="../src/TransferView.cpp" line="89"/>
+        <source>Cancel download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/TransferView.cpp" line="92"/>
         <source>Remove Source</source>
         <translation>Kaynak kaldır</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="89"/>
+        <location filename="../src/TransferView.cpp" line="98"/>
         <source>Force attempt</source>
         <translation>Teşebbüsü zorla</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="92"/>
+        <location filename="../src/TransferView.cpp" line="101"/>
         <source>Close connection(s)</source>
         <translation>Bağlantıyı kapat</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="95"/>
+        <location filename="../src/TransferView.cpp" line="104"/>
         <source>Show only transferred files</source>
         <translation>Sadece aktarılan dosyaları göster</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="348"/>
-        <location filename="../src/TransferView.cpp" line="660"/>
+        <location filename="../src/TransferView.cpp" line="370"/>
+        <location filename="../src/TransferView.cpp" line="698"/>
         <source>Download complete</source>
         <translation>İndirme tamamlandı</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="386"/>
+        <location filename="../src/TransferView.cpp" line="408"/>
         <source>File list</source>
         <translation>Dosya listesi</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="603"/>
+        <location filename="../src/TransferView.cpp" line="641"/>
         <source>Requesting</source>
         <translation>Talep ediliyor</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="614"/>
+        <location filename="../src/TransferView.cpp" line="652"/>
         <source>Download starting...</source>
         <translation>İndirme başlıyor...</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="644"/>
+        <location filename="../src/TransferView.cpp" line="682"/>
         <source>Downloaded %1</source>
         <translation>%1 indirildi</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="699"/>
+        <location filename="../src/TransferView.cpp" line="737"/>
         <source>Connecting...</source>
         <translation>Bağlanılıyor...</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="723"/>
+        <location filename="../src/TransferView.cpp" line="761"/>
         <source>Connected</source>
         <translation>Bağlandı</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="754"/>
+        <location filename="../src/TransferView.cpp" line="792"/>
         <source>Connecting</source>
         <translation>Bağlanılıyor</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="756"/>
+        <location filename="../src/TransferView.cpp" line="794"/>
         <source>No download slots</source>
         <translation>Hiçbir indirme oluğu yok</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="758"/>
+        <location filename="../src/TransferView.cpp" line="722"/>
+        <location filename="../src/TransferView.cpp" line="780"/>
+        <location filename="../src/TransferView.cpp" line="796"/>
+        <location filename="../src/TransferView.cpp" line="802"/>
         <source>Waiting to retry</source>
         <translation>Tekrar denemek için bekliyor</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="792"/>
+        <location filename="../src/TransferView.cpp" line="840"/>
         <source>Upload starting...</source>
         <translation>Gönderme başlıyor...</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="819"/>
+        <location filename="../src/TransferView.cpp" line="867"/>
         <source>Uploaded %1 (%2%) </source>
         <translation>%1 Gönderildi (%2%) </translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="836"/>
+        <location filename="../src/TransferView.cpp" line="884"/>
         <source>Upload complete</source>
         <translation>Gönderme tamamlandı</translation>
     </message>
     <message>
-        <location filename="../src/TransferView.cpp" line="850"/>
+        <location filename="../src/TransferView.cpp" line="898"/>
         <source>Upload failed</source>
         <translation>Gönderme başarısız oldu</translation>
     </message>
@@ -4208,80 +4486,80 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>TransferViewModel</name>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="50"/>
+        <location filename="../src/TransferViewModel.cpp" line="51"/>
         <source>Users</source>
         <translation>Kullanıcılar</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="50"/>
+        <location filename="../src/TransferViewModel.cpp" line="51"/>
         <source>Speed</source>
         <translation>Hız</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="50"/>
+        <location filename="../src/TransferViewModel.cpp" line="51"/>
         <source>Status</source>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="50"/>
+        <location filename="../src/TransferViewModel.cpp" line="51"/>
         <source>Flags</source>
         <translation>Bayraklar</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="50"/>
+        <location filename="../src/TransferViewModel.cpp" line="51"/>
         <source>Size</source>
         <translation>Boyut</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="51"/>
+        <location filename="../src/TransferViewModel.cpp" line="52"/>
         <source>Time left</source>
         <translation>Kalan süre</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="51"/>
+        <location filename="../src/TransferViewModel.cpp" line="52"/>
         <source>File name</source>
         <translation>Dosya ismi</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="51"/>
+        <location filename="../src/TransferViewModel.cpp" line="52"/>
         <source>Host</source>
         <translation>Bilgisayar</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="51"/>
+        <location filename="../src/TransferViewModel.cpp" line="52"/>
         <source>IP</source>
         <translation>IP</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="52"/>
+        <location filename="../src/TransferViewModel.cpp" line="53"/>
         <source>Encryption</source>
         <translation>Şifreleme</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="111"/>
+        <location filename="../src/TransferViewModel.cpp" line="113"/>
         <source>/s</source>
         <translation>/s</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="304"/>
-        <location filename="../src/TransferViewModel.cpp" line="362"/>
-        <location filename="../src/TransferViewModel.cpp" line="403"/>
+        <location filename="../src/TransferViewModel.cpp" line="306"/>
+        <location filename="../src/TransferViewModel.cpp" line="364"/>
+        <location filename="../src/TransferViewModel.cpp" line="405"/>
         <source>File list</source>
         <translation>Dosya listesi</translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="575"/>
+        <location filename="../src/TransferViewModel.cpp" line="577"/>
         <source>Downloaded </source>
         <translation>İndirildi </translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="577"/>
+        <location filename="../src/TransferViewModel.cpp" line="579"/>
         <source>Waiting for slot </source>
         <translation>Oluk bekleniyor </translation>
     </message>
     <message>
-        <location filename="../src/TransferViewModel.cpp" line="631"/>
-        <location filename="../src/TransferViewModel.cpp" line="637"/>
+        <location filename="../src/TransferViewModel.cpp" line="633"/>
+        <location filename="../src/TransferViewModel.cpp" line="639"/>
         <source>Finished</source>
         <translation>Tamamlandı</translation>
     </message>
@@ -4289,23 +4567,23 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>UCModel</name>
     <message>
-        <location filename="../src/UCModel.cpp" line="84"/>
+        <location filename="../src/UCModel.cpp" line="88"/>
         <source>Name</source>
         <translation>İsim</translation>
     </message>
     <message>
-        <location filename="../src/UCModel.cpp" line="85"/>
+        <location filename="../src/UCModel.cpp" line="89"/>
         <source>Command</source>
         <translation>Komut</translation>
     </message>
     <message>
-        <location filename="../src/UCModel.cpp" line="86"/>
+        <location filename="../src/UCModel.cpp" line="90"/>
         <source>Hub</source>
         <translation>Hub</translation>
     </message>
     <message>
-        <location filename="../src/UCModel.cpp" line="152"/>
-        <location filename="../src/UCModel.cpp" line="205"/>
+        <location filename="../src/UCModel.cpp" line="156"/>
+        <location filename="../src/UCModel.cpp" line="209"/>
         <source>Separator</source>
         <translation>Ayraç</translation>
     </message>
@@ -4893,42 +5171,62 @@ Onu durdurmak istiyor musunuz?
 <context>
     <name>UIHubFrame</name>
     <message>
-        <location filename="../ui/HubFrame.ui" line="97"/>
+        <location filename="../ui/HubFrame.ui" line="142"/>
         <source>Find: </source>
         <translation>Bul: </translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="111"/>
+        <location filename="../ui/HubFrame.ui" line="156"/>
         <source>Previous (Shift+F3)</source>
         <translation>Önceki (Shift+F3)</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="117"/>
+        <location filename="../ui/HubFrame.ui" line="162"/>
         <source>Shift+F3</source>
         <translation>Shift+F3</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="124"/>
+        <location filename="../ui/HubFrame.ui" line="169"/>
         <source>Next (F3)</source>
         <translation>Sonraki (F3)</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="130"/>
+        <location filename="../ui/HubFrame.ui" line="175"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="137"/>
+        <location filename="../ui/HubFrame.ui" line="182"/>
         <source>Highlight all</source>
         <translation>Tümünü vurgula</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="153"/>
+        <location filename="../ui/HubFrame.ui" line="198"/>
         <source>Hide search panel (Ctrl+F)</source>
         <translation>Bulma çerçevesini sakla (Ctrl+F)</translation>
     </message>
     <message>
-        <location filename="../ui/HubFrame.ui" line="306"/>
+        <location filename="../ui/HubFrame.ui" line="364"/>
+        <source>Color</source>
+        <translation type="unfinished">Renk</translation>
+    </message>
+    <message>
+        <location filename="../ui/HubFrame.ui" line="383"/>
+        <source>Link</source>
+        <translation type="unfinished">Bağlantı</translation>
+    </message>
+    <message>
+        <location filename="../ui/HubFrame.ui" line="402"/>
+        <source>Code</source>
+        <translation type="unfinished">Kod</translation>
+    </message>
+    <message>
+        <location filename="../ui/HubFrame.ui" line="473"/>
+        <source>Press Shift+Enter for multiline input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/HubFrame.ui" line="552"/>
         <source>Last status message on hub</source>
         <translation>Hub&apos;daki son durum mesajı</translation>
     </message>
@@ -5087,49 +5385,77 @@ etkinleştirildiyse, dosya arama diyaloğu açılmadan indirilecektir.</translat
 <context>
     <name>UIPrivateMessage</name>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="81"/>
+        <location filename="../ui/PrivateMessage.ui" line="99"/>
         <source>Find:</source>
         <translation>Bul:</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="88"/>
+        <location filename="../ui/PrivateMessage.ui" line="106"/>
         <source>Previous (Shift+F3)</source>
         <translation>Önceki (Shift+F3)</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="94"/>
+        <location filename="../ui/PrivateMessage.ui" line="112"/>
         <source>Shift+F3</source>
         <translation>Shift+F3</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="101"/>
+        <location filename="../ui/PrivateMessage.ui" line="119"/>
         <source>Next (F3)</source>
         <translation>Sonraki (F3)</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="107"/>
+        <location filename="../ui/PrivateMessage.ui" line="125"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="114"/>
+        <location filename="../ui/PrivateMessage.ui" line="132"/>
         <source>Hide search panel (Ctrl+F)</source>
         <translation>Bulma çerçevesini sakla (Ctrl+F)</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="124"/>
+        <location filename="../ui/PrivateMessage.ui" line="142"/>
         <source>Highlight all</source>
         <translation>Tümünü vurgula</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="229"/>
+        <location filename="../ui/PrivateMessage.ui" line="295"/>
+        <source>Color</source>
+        <translation type="unfinished">Renk</translation>
+    </message>
+    <message>
+        <location filename="../ui/PrivateMessage.ui" line="314"/>
+        <source>Link</source>
+        <translation type="unfinished">Bağlantı</translation>
+    </message>
+    <message>
+        <location filename="../ui/PrivateMessage.ui" line="333"/>
+        <source>Code</source>
+        <translation type="unfinished">Kod</translation>
+    </message>
+    <message>
+        <location filename="../ui/PrivateMessage.ui" line="391"/>
+        <source>Press Shift+Enter for multiline input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/PrivateMessage.ui" line="432"/>
         <source>Go to hub</source>
         <translation>Hub&apos;a git</translation>
     </message>
     <message>
-        <location filename="../ui/PrivateMessage.ui" line="236"/>
+        <location filename="../ui/PrivateMessage.ui" line="439"/>
         <source>User share</source>
         <translation>Kullanıcı paylaşımı</translation>
+    </message>
+</context>
+<context>
+    <name>UIPublicHubs</name>
+    <message>
+        <location filename="../ui/UIPublicHubs.ui" line="38"/>
+        <source>Refresh</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5324,7 +5650,7 @@ etkinleştirildiyse, dosya arama diyaloğu açılmadan indirilecektir.</translat
 <context>
     <name>UISettingsAdvanced</name>
     <message>
-        <location filename="../ui/UISettingsAdvanced.ui" line="23"/>
+        <location filename="../ui/UISettingsAdvanced.ui" line="41"/>
         <source>Mime Handler</source>
         <translation>MIME Yöneticisi</translation>
     </message>
@@ -5664,32 +5990,42 @@ p, li { white-space: pre-wrap; }
         <translation>DHT portu</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="988"/>
+        <location filename="../ui/UISettingsConnection.ui" line="983"/>
+        <source>DHT bootstrap URLs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsConnection.ui" line="990"/>
+        <source>Separate multiple URLs with semicolons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsConnection.ui" line="1002"/>
         <source>TLS settings</source>
         <translation>TLS ayarları</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="995"/>
+        <location filename="../ui/UISettingsConnection.ui" line="1009"/>
         <source>Disable TLS</source>
         <translation>TLS&apos;i devre dışı bırak</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="1000"/>
+        <location filename="../ui/UISettingsConnection.ui" line="1014"/>
         <source>Allow TLS</source>
         <translation>TLS&apos;e izin ver</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="1005"/>
+        <location filename="../ui/UISettingsConnection.ui" line="1019"/>
         <source>Require TLS</source>
         <translation>TLS gerektir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="1013"/>
+        <location filename="../ui/UISettingsConnection.ui" line="1027"/>
         <source>Allow untrusted certificate for hubs</source>
         <translation>Hub&apos;lar için güvenilmeyen sertifikalara izin ver</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsConnection.ui" line="1020"/>
+        <location filename="../ui/UISettingsConnection.ui" line="1034"/>
         <source>Allow untrusted certificate for clients</source>
         <translation>İstemciler için güvenilmeyen sertifikalara müsaade et</translation>
     </message>
@@ -6181,14 +6517,12 @@ unsurlar kuyruktan kaldırılmayacaktır, bunu elle yapmanız gerekir.</translat
         <translation>Dil dosyası</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="55"/>
         <source>Theme</source>
-        <translation>Tema</translation>
+        <translation type="vanished">Tema</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="73"/>
         <source>Apply</source>
-        <translation>Uygula</translation>
+        <translation type="vanished">Uygula</translation>
     </message>
     <message>
         <source>Application font</source>
@@ -6199,138 +6533,131 @@ unsurlar kuyruktan kaldırılmayacaktır, bunu elle yapmanız gerekir.</translat
         <translation type="vanished">Değiştir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="83"/>
         <source>Show icon in system tray</source>
-        <translation>İkonu sistem çekmecesinde göster</translation>
+        <translation type="vanished">İkonu sistem çekmecesinde göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="92"/>
+        <location filename="../ui/UISettingsGUI.ui" line="61"/>
         <source>Remember window position on exit</source>
         <translation>Çıkışta pencere konumunu hatırla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="102"/>
+        <location filename="../ui/UISettingsGUI.ui" line="71"/>
         <source>Always hide window to system tray at startup</source>
         <translation>Başlangıçta daima pencereyi sistem çekmecesine sakla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="109"/>
+        <location filename="../ui/UISettingsGUI.ui" line="78"/>
         <source>Always show window at startup</source>
         <translation>Başlangıçta daima pencereyi göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="121"/>
-        <location filename="../ui/UISettingsGUI.ui" line="137"/>
         <source>(need restart)</source>
-        <translation>(tekrar başlatma gerektirir)</translation>
+        <translation type="vanished">(tekrar başlatma gerektirir)</translation>
+    </message>
+    <message>
+        <source>User theme</source>
+        <translation type="vanished">Kullanıcı teması</translation>
+    </message>
+    <message>
+        <source>Icon theme</source>
+        <translation type="vanished">İkon teması</translation>
+    </message>
+    <message>
+        <source>Emoticon theme</source>
+        <translation type="vanished">Gülümseme ikonları teması</translation>
+    </message>
+    <message>
+        <source>Try to use system icons (need restart)</source>
+        <translation type="vanished">Sistem ikonlarını kullanmayı dene (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
         <location filename="../ui/UISettingsGUI.ui" line="124"/>
-        <source>User theme</source>
-        <translation>Kullanıcı teması</translation>
-    </message>
-    <message>
-        <location filename="../ui/UISettingsGUI.ui" line="144"/>
-        <source>Icon theme</source>
-        <translation>İkon teması</translation>
-    </message>
-    <message>
-        <location filename="../ui/UISettingsGUI.ui" line="160"/>
-        <source>Emoticon theme</source>
-        <translation>Gülümseme ikonları teması</translation>
-    </message>
-    <message>
-        <location filename="../ui/UISettingsGUI.ui" line="178"/>
-        <source>Try to use system icons (need restart)</source>
-        <translation>Sistem ikonlarını kullanmayı dene (tekrar başlatma gerektirir)</translation>
-    </message>
-    <message>
-        <location filename="../ui/UISettingsGUI.ui" line="185"/>
         <source>Don&apos;t show icons in menus (need restart)</source>
         <translation>Menülerde ikonları gösterme (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="193"/>
+        <location filename="../ui/UISettingsGUI.ui" line="132"/>
         <source>Use default ToolBar (need restart)</source>
         <translation>Varsayılan araç çubuğunu kullan (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="198"/>
+        <location filename="../ui/UISettingsGUI.ui" line="137"/>
         <source>Use multi-line ToolBar (need restart)</source>
         <translation>Çok satırlı araç çubuğunu kullan (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="203"/>
+        <location filename="../ui/UISettingsGUI.ui" line="142"/>
         <source>Use SideBar instead of ToolBar (need restart)</source>
         <translation>Araç çubuğu yerine kenar çubuğunu kullan (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="225"/>
+        <location filename="../ui/UISettingsGUI.ui" line="164"/>
         <source>Chat</source>
         <translation>Sohbet</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="231"/>
+        <location filename="../ui/UISettingsGUI.ui" line="170"/>
         <source>Show joins</source>
         <translation>Katılmaları göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="241"/>
+        <location filename="../ui/UISettingsGUI.ui" line="180"/>
         <source>Show joins only for favorite users</source>
         <translation>Katılmaları sadece favori kullanıcılar için göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="248"/>
+        <location filename="../ui/UISettingsGUI.ui" line="187"/>
         <source>Show hidden users</source>
         <translation>Gizli kullanıcıları göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="255"/>
+        <location filename="../ui/UISettingsGUI.ui" line="194"/>
         <source>Ignore private messages from Hub</source>
         <translation>Hub&apos;dan özel mesajları görmezden gel</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="262"/>
+        <location filename="../ui/UISettingsGUI.ui" line="201"/>
         <source>Ignore private messages from Bot</source>
         <translation>Robotlardan özel mesajları görmezden gel</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="269"/>
+        <location filename="../ui/UISettingsGUI.ui" line="208"/>
         <source>Redirect messages from Bot to the main chat</source>
         <translation>Robotlardan özel mesajları ana sohbete yönlendir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="276"/>
+        <location filename="../ui/UISettingsGUI.ui" line="215"/>
         <source>Redirect new personal messages to the main chat</source>
         <translation>Yeni özel mesajları ana sohbete yönlendir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="283"/>
+        <location filename="../ui/UISettingsGUI.ui" line="222"/>
         <source>Do not change focus on new incoming private messages</source>
         <translation>Gelen yeni özel mesajlar için odaklama değiştirme</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="293"/>
+        <location filename="../ui/UISettingsGUI.ui" line="232"/>
         <source>Use separator for unread messages in the chat</source>
         <translation>Sohbette okunmamış mesajlar için ayraç kullan</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="300"/>
+        <location filename="../ui/UISettingsGUI.ui" line="239"/>
         <source>Filter kick-messages from the chat</source>
         <translation>Kovma mesajlarını sohbetten filtrele</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="307"/>
+        <location filename="../ui/UISettingsGUI.ui" line="246"/>
         <source>Use Ctrl+Enter to send messages</source>
         <translation>Mesaj yollamak için Ctrl+Enter kullan</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="317"/>
+        <location filename="../ui/UISettingsGUI.ui" line="256"/>
         <source>Enable emoticons</source>
         <translation>Gülümseme ikonlarını etkinleştir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="324"/>
+        <location filename="../ui/UISettingsGUI.ui" line="263"/>
         <source>If checked, you&apos;ll see emoticons even in the middle of words.
 If unchecked, you&apos;ll see emoticons only if they are isolated
 from other words by spaces.</source>
@@ -6339,195 +6666,220 @@ görürsünüz. Eğer seçili değilse, gülümseme ikonlarını sadece
 diğer kelimelerden boşluklarla ayrılmışlar ise görürsünüz.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="329"/>
+        <location filename="../ui/UISettingsGUI.ui" line="268"/>
         <source>Force emoticon parsing</source>
         <translation>Gülümseme ikonu ayrıştırmayı zorla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="336"/>
+        <location filename="../ui/UISettingsGUI.ui" line="275"/>
         <source>Use emoticons panel</source>
         <translation>Gülümseme ikonları paneli kullan</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="343"/>
+        <location filename="../ui/UISettingsGUI.ui" line="282"/>
         <source>Autohide emoticons panel</source>
         <translation>Gülümseme ikonları panelini otomatik sakla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="364"/>
+        <location filename="../ui/UISettingsGUI.ui" line="303"/>
         <source>Chat (extended)</source>
         <translation>Sohbet (genişletilmiş)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="378"/>
+        <location filename="../ui/UISettingsGUI.ui" line="317"/>
         <source>Double click action</source>
         <translation>Çift tıklama etkinliği</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="392"/>
-        <location filename="../ui/UISettingsGUI.ui" line="411"/>
+        <location filename="../ui/UISettingsGUI.ui" line="331"/>
+        <location filename="../ui/UISettingsGUI.ui" line="350"/>
         <source>Insert nick into input widget</source>
         <translation>Girdi widget&apos;ine rumuz ekle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="397"/>
-        <location filename="../ui/UISettingsGUI.ui" line="416"/>
+        <location filename="../ui/UISettingsGUI.ui" line="336"/>
+        <location filename="../ui/UISettingsGUI.ui" line="355"/>
         <source>Get file list</source>
         <translation>Dosya listesi al</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="402"/>
-        <location filename="../ui/UISettingsGUI.ui" line="421"/>
+        <location filename="../ui/UISettingsGUI.ui" line="341"/>
+        <location filename="../ui/UISettingsGUI.ui" line="360"/>
         <source>Private message</source>
         <translation>Özel mesaj</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="438"/>
+        <location filename="../ui/UISettingsGUI.ui" line="377"/>
         <source>Application unit base</source>
         <translation>Uygulama birim temeli</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="482"/>
+        <location filename="../ui/UISettingsGUI.ui" line="421"/>
         <source>Timestamp</source>
         <translation>Zaman etiketi</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="501"/>
+        <location filename="../ui/UISettingsGUI.ui" line="440"/>
         <source>Middle click action</source>
         <translation>Orta tıklama etkinliği</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="435"/>
+        <location filename="../ui/UISettingsGUI.ui" line="374"/>
         <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
         <translation>Kibibayt (KiB) ya da kilobayt (KB) vs. göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="465"/>
+        <location filename="../ui/UISettingsGUI.ui" line="55"/>
+        <source>Window behavior</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsGUI.ui" line="85"/>
+        <source>Minimize to status icon when clicking the close button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsGUI.ui" line="95"/>
+        <source>Status icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsGUI.ui" line="104"/>
+        <source>Use colored status icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsGUI.ui" line="114"/>
+        <source>Use monochrome status icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsGUI.ui" line="404"/>
         <source>Metric</source>
         <translation>Metrik</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="479"/>
+        <location filename="../ui/UISettingsGUI.ui" line="418"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border=&quot;0&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;&quot; cellspacing=&quot;2&quot; cellpadding=&quot;0&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;use AM/PM display. &lt;span style=&quot; font-style:italic;&quot;&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;use am/pm display. &lt;span style=&quot; font-style:italic;&quot;&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bu ifadeler zaman için kullanılabilir:&lt;/p&gt;&lt;table border=&quot;0&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;&quot; cellspacing=&quot;2&quot; cellpadding=&quot;0&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;İfade&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Çıktı&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olmayacak şekilde saat (0 ila 23 veya 1 ila 12 AM/PM ise)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olacak şekilde saat (00 ila 23 veya 01 ila 12 AM/PM ise)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olmayacak şekilde saat (0 ila 23, AM/PM olsa bile)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olacak şekilde saat (00 ila 23, AM/PM olsa bile)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olmayacak şekilde dakika (0 ila 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olacak şekilde dakika (00 ila 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olmayacak şekilde saniye (0 ila 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başında sıfır olacak şekilde saniye (00 ila 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başlarında sıfır olmayacak şekilde milisaniyeler (0 ila 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;başlarında sıfır olacak şekilde milisaniyeler (000 ila 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;AP veya A&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;AM/PM görünümünü kullan. &lt;span style=&quot; font-style:italic;&quot;&gt;A/AP&lt;/span&gt; ya &amp;quot;AM&amp;quot; ya da &amp;quot;PM&amp;quot; ile değiştirilecek.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;ap veya a&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;am/pm görünümünü kullan. &lt;span style=&quot; font-style:italic;&quot;&gt;a/ap&lt;/span&gt; ya &amp;quot;am&amp;quot; ya da &amp;quot;pm&amp;quot; ile değiştirilecek.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=&quot; vertical-align:top;&quot;&gt;&lt;p&gt;saat dilimi (mesela &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="520"/>
+        <location filename="../ui/UISettingsGUI.ui" line="459"/>
         <source>Default action with magnet</source>
         <translation>Magnet ile varsayılan etkinlik</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="534"/>
+        <location filename="../ui/UISettingsGUI.ui" line="473"/>
         <source>Ask</source>
         <translation>Sor</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="539"/>
+        <location filename="../ui/UISettingsGUI.ui" line="478"/>
         <source>Search</source>
         <translation>Ara</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="544"/>
-        <location filename="../ui/UISettingsGUI.ui" line="856"/>
+        <location filename="../ui/UISettingsGUI.ui" line="483"/>
+        <location filename="../ui/UISettingsGUI.ui" line="795"/>
         <source>Download</source>
         <translation>İndir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="569"/>
+        <location filename="../ui/UISettingsGUI.ui" line="508"/>
         <source>Remember outgoing messages (0 = don&apos;t remember)</source>
         <translation>Dışarıya giden mesajları hatırla (0 = hatırlama)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="598"/>
+        <location filename="../ui/UISettingsGUI.ui" line="537"/>
         <source>Maximum paragraphs</source>
         <translation>Azami paragraflar</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="624"/>
+        <location filename="../ui/UISettingsGUI.ui" line="563"/>
         <source>Separator in chat</source>
         <translation>Sohbette ayraç</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="653"/>
+        <location filename="../ui/UISettingsGUI.ui" line="592"/>
         <source>Highlight favorite users in user list</source>
         <translation>Kullanıcı listesinde favori kullanıcıları vurgula</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="660"/>
+        <location filename="../ui/UISettingsGUI.ui" line="599"/>
         <source>Depending on hub configuration: information about
 them is usually available only to operators</source>
         <translation>Hub yapılandırmasına göre: onlar hakkındaki bilgi genelde
 sadece operatörler için mevcuttur</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="664"/>
+        <location filename="../ui/UISettingsGUI.ui" line="603"/>
         <source>Show ip-addresses of users in chat</source>
         <translation>Sohbette kullanıcıların IP adreslerini göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="671"/>
+        <location filename="../ui/UISettingsGUI.ui" line="610"/>
         <source>Show country of users in chat</source>
         <translation>Sohbette kullanıcıların ülkesini göster</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="678"/>
+        <location filename="../ui/UISettingsGUI.ui" line="617"/>
         <source>Parse BBCode</source>
         <translation>BBCode&apos;u ayrıştır</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="699"/>
+        <location filename="../ui/UISettingsGUI.ui" line="638"/>
         <source>Colors</source>
         <translation>Renkler</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="705"/>
+        <location filename="../ui/UISettingsGUI.ui" line="644"/>
         <source>Text colors in chat</source>
         <translation>Sohbette metin renkleri</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="727"/>
+        <location filename="../ui/UISettingsGUI.ui" line="666"/>
         <source>Highlighting of search results in the chat</source>
         <translation>Sohbette arama sonuçlarını vurgula</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="736"/>
-        <location filename="../ui/UISettingsGUI.ui" line="794"/>
+        <location filename="../ui/UISettingsGUI.ui" line="675"/>
+        <location filename="../ui/UISettingsGUI.ui" line="733"/>
         <source>Color</source>
         <translation>Renk</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="756"/>
-        <location filename="../ui/UISettingsGUI.ui" line="811"/>
+        <location filename="../ui/UISettingsGUI.ui" line="695"/>
+        <location filename="../ui/UISettingsGUI.ui" line="750"/>
         <source>Transparency</source>
         <translation>Şeffaflık</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="785"/>
+        <location filename="../ui/UISettingsGUI.ui" line="724"/>
         <source>Highlighting of already shared files</source>
         <translation>Zaten paylaşılan dosyaların vurgulanması</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="840"/>
+        <location filename="../ui/UISettingsGUI.ui" line="779"/>
         <source>Transfer colors</source>
         <translation>Aktarım renkleri</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="863"/>
+        <location filename="../ui/UISettingsGUI.ui" line="802"/>
         <source>Upload</source>
         <translation>Gönder</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="890"/>
+        <location filename="../ui/UISettingsGUI.ui" line="829"/>
         <source>Reset</source>
         <translation>Sıfırla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="902"/>
+        <location filename="../ui/UISettingsGUI.ui" line="841"/>
         <source>Change background color in the chat</source>
         <translation>Sohbette arka plan rengini değiştir</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsGUI.ui" line="945"/>
+        <location filename="../ui/UISettingsGUI.ui" line="884"/>
         <source>Fonts</source>
         <translation>Yazıtipleri</translation>
     </message>
@@ -6535,33 +6887,33 @@ sadece operatörler için mevcuttur</translation>
 <context>
     <name>UISettingsHistory</name>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="53"/>
+        <location filename="../ui/UISettingsHistory.ui" line="71"/>
         <source>Clear search history on program exit</source>
         <translation>Programdan çıkışta arama tarihçesini temizle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="66"/>
+        <location filename="../ui/UISettingsHistory.ui" line="84"/>
         <source>Clear download directories history on program exit</source>
         <translation>Programdan çıkışta indirme klasörleri tarihçesini temizle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="76"/>
-        <location filename="../ui/UISettingsHistory.ui" line="83"/>
+        <location filename="../ui/UISettingsHistory.ui" line="100"/>
+        <location filename="../ui/UISettingsHistory.ui" line="113"/>
         <source>Clear now</source>
         <translation>Şimdi temizle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="96"/>
+        <location filename="../ui/UISettingsHistory.ui" line="126"/>
         <source>Number of search history elements to store:</source>
         <translation>Arama tarihçesi boyutu:</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="122"/>
+        <location filename="../ui/UISettingsHistory.ui" line="152"/>
         <source>Number of download directories history elements to store:</source>
         <translation>İndirme klasörleri tarihçesinde hatırlanacak unsur sayısı:</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsHistory.ui" line="161"/>
+        <location filename="../ui/UISettingsHistory.ui" line="191"/>
         <source>Memorize TTH search phrases</source>
         <translation>TTH arama cümlelerini hatırla</translation>
     </message>
@@ -6641,6 +6993,15 @@ sadece operatörler için mevcuttur</translation>
         <translation>Durum mesajları</translation>
     </message>
     <message>
+        <location filename="../ui/UISettingsLog.ui" line="385"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;https://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://dcplusplus.sourceforge.io/webhelp/settings_logs.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../ui/UISettingsLog.ui" line="408"/>
         <source>Auto search alternates</source>
         <translation>Alternatifleri otomatik arama</translation>
@@ -6656,13 +7017,12 @@ sadece operatörler için mevcuttur</translation>
         <translation>Tamamlanan indirmeler</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsLog.ui" line="385"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;https://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://dcplusplus.sourceforge.io/webhelp/settings_logs.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#296fbe;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;https://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;https://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -6790,63 +7150,63 @@ Mesela: /usr/bin/mplayer</translation>
 <context>
     <name>UISettingsPersonal</name>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="47"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="62"/>
         <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <translation>Bu tanımlama kullanıcı listesinde gösterilecektir.
 Hub başına başka bir şey kullanmak Favori Hub özelliklerinde mümkündür.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="55"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="70"/>
         <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
         <translation>Uzakta kipindeyseniz, bu mesaj size özel mesaj gönderen herkese
 gönderilecektir.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="63"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="78"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="70"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="85"/>
         <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <translation>Bu rumuz, ya da takma ad,bir hub&apos;a katıldığınızda sizi tanımlayacaktır.
 Hub başına başka bir rumuz kullanmak Favori Hub özelliklerinde mümkündür.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="78"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="93"/>
         <source>E-Mail</source>
         <translation>E-Posta</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="85"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="100"/>
         <source>Description</source>
         <translation>Tanımlama</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="92"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="107"/>
         <source>Away message</source>
         <translation>Uzakta mesajı</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="99"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="114"/>
         <source>Auto away interval (min)</source>
         <translation>Otomatik uzakta aralığı (dakika)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="119"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="134"/>
         <source>This field is for sharing your email address, if you wish it.</source>
         <translation>Bu alan istiyorsanız e-posta adresinizi paylaşmak içindir.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="169"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="184"/>
         <source>Line speed (upload)</source>
         <translation>Hat hızı (gönderim)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="188"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="203"/>
         <source>This drop-down contains a number of common upload speeds (in MiB/s),
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
@@ -6857,12 +7217,12 @@ en yakın olanı seçiniz.
 olacağınızı gösterir.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="204"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="219"/>
         <source>MiB/s</source>
         <translation>MiB/s</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsPersonal.ui" line="217"/>
+        <location filename="../ui/UISettingsPersonal.ui" line="232"/>
         <source>Default hub encoding</source>
         <translation>Varsayılan hub kodlaması</translation>
     </message>
@@ -6900,52 +7260,62 @@ olacağınızı gösterir.</translation>
         <translation>Toplam paylaşım: %1</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="116"/>
+        <location filename="../ui/UISettingsSharing.ui" line="118"/>
+        <source>Add</source>
+        <translation type="unfinished">Ekle</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsSharing.ui" line="125"/>
+        <source>Remove</source>
+        <translation type="unfinished">Kaldır</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsSharing.ui" line="143"/>
         <source>Exceptions</source>
         <translation>İstisnalar</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="122"/>
+        <location filename="../ui/UISettingsSharing.ui" line="149"/>
         <source>Don&apos;t share files and folders containing:</source>
         <translation>Şunu içeren dosya ve klasörleri paylaşma:</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="129"/>
+        <location filename="../ui/UISettingsSharing.ui" line="156"/>
         <source>Here you can specify templates for files you don&apos;t want to share. </source>
         <translation>Burada paylaşmak istemediğiniz dosyalar için şablonlar oluşturabilirsiniz. </translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="138"/>
+        <location filename="../ui/UISettingsSharing.ui" line="165"/>
         <source>Add new</source>
         <translation>Yeni ekle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="148"/>
+        <location filename="../ui/UISettingsSharing.ui" line="175"/>
         <source>Select and add the directory</source>
         <translation>Klasörü seç ve ekle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="158"/>
+        <location filename="../ui/UISettingsSharing.ui" line="185"/>
         <source>Edit</source>
         <translation>Düzenle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="168"/>
+        <location filename="../ui/UISettingsSharing.ui" line="195"/>
         <source>Delete</source>
         <translation>Sil</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="194"/>
+        <location filename="../ui/UISettingsSharing.ui" line="221"/>
         <source>Advanced</source>
         <translation>Gelişmiş</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="206"/>
+        <location filename="../ui/UISettingsSharing.ui" line="233"/>
         <source>Follow symlinks</source>
         <translation>Sembolik bağlantıları izle</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="219"/>
+        <location filename="../ui/UISettingsSharing.ui" line="246"/>
         <source>Share files with the Hidden attribute set and files inside directory with
 the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
@@ -6958,72 +7328,72 @@ Not: bu seçenek dosya listesinin tazelenmesini gerektirir ve istemcinin
 donmuş gibi görünmesine yol açabilir.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="226"/>
+        <location filename="../ui/UISettingsSharing.ui" line="253"/>
         <source>Share hidden files</source>
         <translation>Gizli dosyaları paylaş</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="239"/>
+        <location filename="../ui/UISettingsSharing.ui" line="266"/>
         <source>Share temporary files</source>
         <translation>Geçici dosyaları paylaş</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="246"/>
+        <location filename="../ui/UISettingsSharing.ui" line="273"/>
         <source>Skip zero sized files</source>
         <translation>Sıfır boyutlu dosyaları atla</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="253"/>
+        <location filename="../ui/UISettingsSharing.ui" line="280"/>
         <source>Auto remove non-existing directories</source>
         <translation>Mevcut olmayan klasörleri otomatik kaldır</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="262"/>
+        <location filename="../ui/UISettingsSharing.ui" line="289"/>
         <source>Use fast hash</source>
         <translation>Hızlı karma hesabını kullan</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="275"/>
+        <location filename="../ui/UISettingsSharing.ui" line="302"/>
         <source>Buffer size (MiB)</source>
         <translation>Tampon boyutu (MiB)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="288"/>
+        <location filename="../ui/UISettingsSharing.ui" line="315"/>
         <source>8</source>
         <translation>8</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="341"/>
+        <location filename="../ui/UISettingsSharing.ui" line="368"/>
         <source>FastHash options (restart needed)</source>
         <translation>Hızlı karma hesap seçenekleri (tekrar başlatma gerektirir)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="349"/>
+        <location filename="../ui/UISettingsSharing.ui" line="376"/>
         <source>Private page mapping</source>
         <translation>Özel sayfa haritalaması</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="356"/>
+        <location filename="../ui/UISettingsSharing.ui" line="383"/>
         <source>No reserve</source>
         <translation>Rezerv yok</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="370"/>
+        <location filename="../ui/UISettingsSharing.ui" line="397"/>
         <source>Proactive read from disk</source>
         <translation>Diskten proaktif okuma</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="382"/>
+        <location filename="../ui/UISettingsSharing.ui" line="409"/>
         <source>Use ADL search only in own file list</source>
         <translation>ADL aramayı sadece kendi dosya listende kullan</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="397"/>
+        <location filename="../ui/UISettingsSharing.ui" line="424"/>
         <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
         <translation>Hız şunun altındaysa otomatik olarak ekstra oluk aç (KiB/s, 0 = sonsuz)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="413"/>
+        <location filename="../ui/UISettingsSharing.ui" line="440"/>
         <source>If the average upload speed drops below the given number,
 an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
@@ -7035,40 +7405,40 @@ Bu oluklar en çok 30 saniyede bir verilir.
 Orijinal gönderimin hızı artarsa verilen oluk kapatılmayacaktır.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="433"/>
+        <location filename="../ui/UISettingsSharing.ui" line="460"/>
         <source>Hashing delay on startup (seconds, -1 = infinity)</source>
         <translation>Başlangıçta karma hesap gecikmesi (saniye, 1 = sonsuz)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="449"/>
-        <location filename="../ui/UISettingsSharing.ui" line="484"/>
+        <location filename="../ui/UISettingsSharing.ui" line="476"/>
+        <location filename="../ui/UISettingsSharing.ui" line="511"/>
         <source>Here you can set time interval of auto refreshing your share.</source>
         <translation>Burada paylaşımınızın otomatik tazelenme zaman aralığını ayarlayabilirsiniz.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="468"/>
+        <location filename="../ui/UISettingsSharing.ui" line="495"/>
         <source>Auto refresh time (minutes, 0 = off)</source>
         <translation>Otomatik tazelenme zamanı (dakika, 0 = devre dışı)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="500"/>
+        <location filename="../ui/UISettingsSharing.ui" line="527"/>
         <source>Max hash speed (MB/s) (0 = infinite)</source>
         <translation>Azami karma hesap hızı (MB/s) (0 = sonsuz)</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="513"/>
+        <location filename="../ui/UISettingsSharing.ui" line="540"/>
         <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
         <translation>Eğer sisteminiz dosyaların karma değerlerini hesaplarken
 yavaşlıyorsa burada azami hesap hızını kısıtlayabilirsiniz.</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="527"/>
+        <location filename="../ui/UISettingsSharing.ui" line="554"/>
         <source>Upload slots</source>
         <translation>Gönderme olukları</translation>
     </message>
     <message>
-        <location filename="../ui/UISettingsSharing.ui" line="537"/>
+        <location filename="../ui/UISettingsSharing.ui" line="564"/>
         <source>Configure the number of slots that other users can occupy
 to download files from you. A remote user can use only
 one slot for each hub that they&apos;re on with you.
@@ -7269,70 +7639,75 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
 <context>
     <name>UserListModel</name>
     <message>
-        <location filename="../src/UserListModel.cpp" line="131"/>
+        <location filename="../src/UserListModel.cpp" line="137"/>
         <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
         <translation>&lt;b&gt;Hub rolü&lt;/b&gt;: Operatör</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="133"/>
+        <location filename="../src/UserListModel.cpp" line="139"/>
         <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
         <translation>&lt;b&gt;Hub rolü&lt;/b&gt;: Kullanıcı</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="136"/>
+        <location filename="../src/UserListModel.cpp" line="142"/>
         <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
         <translation>&lt;br/&gt;&lt;b&gt;Favori kullanıcı&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="169"/>
+        <location filename="../src/UserListModel.cpp" line="175"/>
         <source>Nick</source>
         <translation>Rumuz</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="170"/>
+        <location filename="../src/UserListModel.cpp" line="176"/>
         <source>Comment</source>
         <translation>Yorum</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="171"/>
+        <location filename="../src/UserListModel.cpp" line="177"/>
         <source>Tag</source>
         <translation>Etiket</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="172"/>
+        <location filename="../src/UserListModel.cpp" line="178"/>
         <source>Connection</source>
         <translation>Bağlantı</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="173"/>
+        <location filename="../src/UserListModel.cpp" line="179"/>
         <source>E-mail</source>
         <translation>E-posta</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="174"/>
+        <location filename="../src/UserListModel.cpp" line="180"/>
         <source>Share</source>
         <translation>Paylaşım</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="175"/>
+        <location filename="../src/UserListModel.cpp" line="181"/>
         <source>Exact share size</source>
         <translation>Tam paylaşım boyutu</translation>
     </message>
     <message>
-        <location filename="../src/UserListModel.cpp" line="176"/>
+        <location filename="../src/UserListModel.cpp" line="182"/>
         <source>IP</source>
         <translation>IP</translation>
+    </message>
+    <message>
+        <location filename="../src/UserListModel.cpp" line="183"/>
+        <source>IPv6</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>WulforSettings</name>
     <message>
-        <location filename="../src/WulforSettings.cpp" line="398"/>
+        <location filename="../src/WulforSettings.cpp" line="411"/>
         <source>GUI setting %1: %2</source>
         <translation>Grafik arayüz ayarı %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/WulforSettings.cpp" line="407"/>
+        <location filename="../src/WulforSettings.cpp" line="420"/>
         <source>Change GUI setting %1 to %2</source>
         <translation>%1 grafik arayüz ayarını %2 olarak değiştir</translation>
     </message>
@@ -7340,17 +7715,17 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
 <context>
     <name>WulforUtil</name>
     <message>
-        <location filename="../src/WulforUtil.cpp" line="750"/>
+        <location filename="../src/WulforUtil.cpp" line="1003"/>
         <source>System default</source>
         <translation>Sistem varsayılanı</translation>
     </message>
     <message>
-        <location filename="../src/WulforUtil.cpp" line="1072"/>
+        <location filename="../src/WulforUtil.cpp" line="1322"/>
         <source>Offline</source>
         <translation>Çevrimdışı</translation>
     </message>
     <message>
-        <location filename="../src/WulforUtil.cpp" line="1175"/>
+        <location filename="../src/WulforUtil.cpp" line="1425"/>
         <source>User commands</source>
         <translation>Kullanıcı komutları</translation>
     </message>

@@ -25,6 +25,20 @@
   https://github.com/Delitants/eiskaltdcpp.
 * Improved combo boxes and popup menus on macOS with clearer padding, rounded
   popup styling, readable dark/light colors and explicit arrow indicators.
+* Redesigned dark Preferences tab bars so sub-tabs use rounded contrast-safe
+  pills instead of flat dark grey segmented blocks.
+* Added the "Filter" placeholder below the hub user list and regenerated Qt
+  translations for the new/changed UI strings.
+* Cleaned the Download Queue context menu:
+  - added spacing, icons and safer minimum width
+  - kept generic actions available even when an item has no current source
+  - disabled only source-specific submenus when no source data is available
+* Fixed Transfer View "Cancel download" from the right-click menu so it also
+  removes queued source entries and closes the active connection.
+* Hardened the hub user-list model against stale indexes while live hub user
+  data changes, and disabled the Qt 6.11 Cocoa accessibility crash path on
+  macOS startup to avoid QMacAccessibilityElement aborts during fast item-view
+  updates or teardown.
 
 --- 2.5.3-release 2026-04-27 ---
 *** common changes ***

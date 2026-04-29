@@ -16,6 +16,11 @@ Comparison against original upstream EiskaltDC++.
 - Added runtime-generated monochrome status icon support and refresh handling during light/dark mode changes.
 - Cleaned Preferences layout problems: History inner border, User Commands button spacing, and DHT alignment.
 - Improved macOS combo boxes and popup menus with clearer padding, rounded popup styling, readable dark/light colors, and explicit arrow indicators.
+- Redesigned Preferences sub-tabs to match the rounded macOS fork styling instead of the old flat grey segmented tabs.
+- Added the hub user-list "Filter" placeholder and refreshed Qt translation catalogs for the new UI strings.
+- Reworked Download Queue context menus so generic actions remain available when source data is missing, source-specific submenus disable cleanly, and the menu has consistent spacing/icons.
+- Fixed Transfer View right-click "Cancel download" so it removes queued source entries and closes the active connection instead of becoming a no-op for source-only rows.
+- Hardened the hub user-list model against stale indexes during live updates and added a macOS startup guard for the Qt 6.11 Cocoa accessibility crash path.
 - Updated About/Homepage/project links to https://github.com/Delitants/eiskaltdcpp.
 
 ## Prior Fork Changes Included

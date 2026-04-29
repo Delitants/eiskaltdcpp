@@ -45,16 +45,22 @@ UserListModel::~UserListModel() {
 }
 
 
-int UserListModel::rowCount(const QModelIndex & ) const {
+int UserListModel::rowCount(const QModelIndex &parent) const {
+    if (parent.isValid())
+        return 0;
+
     return rootItem->childCount();
 }
 
-int UserListModel::columnCount(const QModelIndex & ) const {
-    return 9;
+int UserListModel::columnCount(const QModelIndex &parent) const {
+    if (parent.isValid())
+        return 0;
+
+    return rootItem->columnCount();
 }
 
 bool UserListModel::hasChildren(const QModelIndex &parent) const{
-    return (!parent.isValid());
+    return rowCount(parent) > 0;
 }
 
 bool UserListModel::canFetchMore(const QModelIndex &parent) const{
@@ -66,9 +72,13 @@ QVariant UserListModel::data(const QModelIndex & index, int role) const {
     if (!index.isValid())
         return QVariant();
 
+    if (index.model() != this || index.row() < 0 || index.row() >= rootItem->childCount() ||
+            index.column() < 0 || index.column() >= rootItem->columnCount())
+        return QVariant();
+
     UserListItem * item = static_cast<UserListItem*>(index.internalPointer());
 
-    if (!item)
+    if (!item || item != rootItem->child(index.row()))
         return QVariant();
 
     switch (role){
@@ -316,8 +326,9 @@ void UserListModel::sort(int column, Qt::SortOrder order) {
     emit layoutChanged();
 }
 
-QModelIndex UserListModel::index(int row, int column, const QModelIndex &) const {
-    if (row > (rootItem->childCount() - 1) || row < 0)
+QModelIndex UserListModel::index(int row, int column, const QModelIndex &parent) const {
+    if (parent.isValid() || row < 0 || row >= rootItem->childCount() ||
+            column < 0 || column >= rootItem->columnCount())
         return QModelIndex();
 
     return createIndex(row, column, rootItem->child(row));
@@ -328,14 +339,14 @@ QModelIndex UserListModel::parent(const QModelIndex & ) const {
 }
 
 void UserListModel::clear() {
-    emit layoutAboutToBeChanged();
+    beginResetModel();
 
     users.clear();
 
     qDeleteAll(rootItem->childItems);
     rootItem->childItems.clear();
 
-    emit layoutChanged();
+    endResetModel();
 }
 
 void UserListModel::removeUser(const UserPtr &ptr) {
@@ -345,6 +356,9 @@ void UserListModel::removeUser(const UserPtr &ptr) {
         return;
 
     const int index = (iter.value())->row();
+
+    if (index < 0 || index >= rootItem->childCount())
+        return;
 
     beginRemoveRows(QModelIndex(), index, index);
 
@@ -404,6 +418,9 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
 
         const int oldRow = item->row();
 
+        if (oldRow < 0 || oldRow >= rootItem->childCount())
+            return;
+
         beginRemoveRows(QModelIndex(), oldRow, oldRow);
         {
             rootItem->childItems.removeAt(oldRow);
@@ -425,7 +442,12 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
         }
         endInsertRows();
     } else {
-        repaintData(index(item->row(), COLUMN_NICK), index(item->row(), COLUMN_EMAIL));
+        const int row = item->row();
+
+        if (row < 0 || row >= rootItem->childCount())
+            return;
+
+        repaintData(index(row, COLUMN_NICK), index(row, COLUMN_EMAIL));
     }
 
     return;
@@ -562,6 +584,9 @@ QStringList UserListModel::matchNicksAny(const QString &part, bool stripTags) co
 
 QStringList UserListModel::findItems(const QString &part, Qt::MatchFlags flags, int column) const
 {
+    if (column < 0 || column >= columnCount())
+        return QStringList();
+
     QModelIndexList indexes = match(index(0, column, QModelIndex()),
                                     Qt::DisplayRole, part, -1, flags);
     QStringList items;

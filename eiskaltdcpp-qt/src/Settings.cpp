@@ -38,8 +38,11 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QApplication>
+#include <QCoreApplication>
 #include <QDialogButtonBox>
 #include <QAbstractButton>
+#include <QDir>
+#include <QFileInfo>
 #include <QSplitter>
 #include <QSize>
 #include <QEvent>
@@ -56,6 +59,17 @@
 
 namespace {
 #ifdef Q_OS_MAC
+QString macBundledStyleIcon(const QString &name)
+{
+    const QString bundlePath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(
+        QStringLiteral("../Resources/icons/appl/default/") + name);
+
+    if (QFileInfo::exists(bundlePath))
+        return QStringLiteral("url(\"%1\")").arg(bundlePath);
+
+    return QStringLiteral("none");
+}
+
 void applyMacSettingsPanelStyle(QFrame *panel)
 {
     if (!panel)
@@ -84,6 +98,8 @@ void applyMacSettingsPanelStyle(QFrame *panel)
                                                 : panelPalette.color(QPalette::Base);
     const QColor titleBackground = darkAppearance ? groupBackground.lighter(104)
                                                   : groupBackground;
+    const QString comboArrow = macBundledStyleIcon(darkAppearance ? QStringLiteral("combo-arrow-down-light.svg")
+                                                                  : QStringLiteral("combo-arrow-down-dark.svg"));
 
     panel->setStyleSheet(QStringLiteral(
         "QFrame#settingsPagePanel {"
@@ -183,9 +199,13 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " border-bottom-right-radius: 7px;"
         "}"
         "QFrame#settingsPagePanel QComboBox::down-arrow {"
-        " image: url(:/go-down.png);"
+        " image: %8;"
         " width: 9px;"
         " height: 9px;"
+        " margin-right: 7px;"
+        "}"
+        "QFrame#settingsPagePanel QComboBox::down-arrow:disabled {"
+        " image: %8;"
         "}"
         "QFrame#settingsPagePanel QComboBox QAbstractItemView {"
         " border: 1px solid %2;"
@@ -206,10 +226,10 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "QFrame#settingsPagePanel QTabWidget { background: transparent; }"
         "QFrame#settingsPagePanel QTabWidget::pane {"
         " border: 1px solid %3;"
-        " border-radius: 11px;"
+        " border-radius: 10px;"
         " top: 0px;"
         " background-color: %6;"
-        " padding-top: 8px;"
+        " padding-top: 10px;"
         " margin-top: -1px;"
         "}"
         "QFrame#settingsPagePanel QTabWidget::tab-bar {"
@@ -220,30 +240,32 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " background: transparent;"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab {"
-        " background-color: %4;"
+        " background-color: %1;"
         " border: 1px solid %2;"
-        " border-top-left-radius: 8px;"
-        " border-top-right-radius: 8px;"
+        " border-radius: 8px;"
         " min-width: 0px;"
-        " padding: 5px 16px 6px 16px;"
-        " margin-right: 4px;"
-        " margin-bottom: -1px;"
-        " font-size: 12px;"
+        " padding: 5px 18px 6px 18px;"
+        " margin-right: 6px;"
+        " margin-bottom: 4px;"
+        " font-size: 13px;"
+        " color: palette(text);"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:selected {"
-        " background-color: %1;"
-        " border-bottom-color: %1;"
+        " background-color: %5;"
+        " color: palette(highlighted-text);"
+        " border-color: %5;"
         " font-weight: 600;"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:!selected {"
-        " color: palette(button-text);"
+        " color: palette(text);"
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:hover:!selected {"
         " background-color: %6;"
+        " border-color: %3;"
         "}"
     ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
           groupBackground.name(), focusBorder.name(), tabBackground.name(),
-          titleBackground.name()));
+          titleBackground.name(), comboArrow));
 }
 
 void applyMacSettingsSidebarStyle(QListWidget *listWidget)

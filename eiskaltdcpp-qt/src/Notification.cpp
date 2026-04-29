@@ -19,7 +19,10 @@
 #include <QApplication>
 #include <QIcon>
 #include <QImage>
+#include <QPainter>
+#include <QPainterPath>
 #include <QPalette>
+#include <QPixmap>
 #ifndef NO_QT_MULTIMEDIA
 #include <QSoundEffect>
 #endif
@@ -375,21 +378,42 @@ QIcon Notification::trayIcon() const
     if (!qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
         return QIcon(pixmap);
 
-    QColor color = qApp ? qApp->palette().color(QPalette::WindowText) : QColor(Qt::black);
-    if (!color.isValid())
-        color = QColor(Qt::black);
+    const QPalette palette = qApp ? qApp->palette() : QPalette();
+    const bool dark = qApp && (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor color = dark ? QColor(245, 245, 245) : QColor(28, 28, 30);
+    QColor shadow = dark ? QColor(0, 0, 0, 120) : QColor(255, 255, 255, 150);
 
-    QImage image = pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
-    for (int y = 0; y < image.height(); ++y) {
-        QRgb *line = reinterpret_cast<QRgb*>(image.scanLine(y));
-        for (int x = 0; x < image.width(); ++x) {
-            const int alpha = qAlpha(line[x]);
-            if (alpha == 0)
-                continue;
+    QImage image(QSize(22, 22), QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::transparent);
 
-            line[x] = qRgba(color.red(), color.green(), color.blue(), alpha);
-        }
-    }
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    const QRectF globe(3.3, 3.3, 15.4, 15.4);
+    QPen shadowPen(shadow, 2.2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen iconPen(color, 1.7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+
+    painter.setPen(shadowPen);
+    painter.drawEllipse(globe);
+    painter.drawArc(QRectF(6.2, 3.6, 9.6, 14.8), 90 * 16, 180 * 16);
+    painter.drawArc(QRectF(6.2, 3.6, 9.6, 14.8), -90 * 16, 180 * 16);
+    painter.drawLine(QPointF(4.8, 11.0), QPointF(17.2, 11.0));
+
+    painter.setPen(iconPen);
+    painter.drawEllipse(globe);
+    painter.drawArc(QRectF(6.2, 3.6, 9.6, 14.8), 90 * 16, 180 * 16);
+    painter.drawArc(QRectF(6.2, 3.6, 9.6, 14.8), -90 * 16, 180 * 16);
+    painter.drawLine(QPointF(4.8, 11.0), QPointF(17.2, 11.0));
+
+    QPainterPath arrow;
+    arrow.moveTo(12.4, 4.8);
+    arrow.lineTo(16.9, 4.8);
+    arrow.lineTo(16.9, 9.3);
+    arrow.moveTo(16.9, 4.8);
+    arrow.lineTo(11.7, 10.0);
+    painter.drawPath(arrow);
+
+    painter.end();
 
     return QIcon(QPixmap::fromImage(image));
 }

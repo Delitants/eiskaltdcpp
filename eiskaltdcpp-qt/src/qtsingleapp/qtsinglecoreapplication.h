@@ -33,6 +33,9 @@ Q_SIGNALS:
     void messageReceived(const QString &message);
 
 private:
+    bool attachedInstanceIsAlive();
+    bool createSingleInstanceMemory();
+
     bool _isRunning;
     QSharedMemory sharedMemory;
     QTimer *messageTimer;

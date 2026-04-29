@@ -536,10 +536,12 @@ void TransferView::slotContextMenu(const QPoint &){
     case Menu::CancelDownload:
     {
         for (const auto &i : items) {
-            if (!i->download || i->target.isEmpty())
-                continue;
+            if (!i->target.isEmpty())
+                cancelDownload(i->target);
 
-            cancelDownload(i->target);
+            if (!i->cid.isEmpty())
+                removeFromQueue(i->cid);
+
             closeConection(i->cid, true);
         }
 

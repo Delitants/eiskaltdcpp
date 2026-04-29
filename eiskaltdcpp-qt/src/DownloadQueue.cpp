@@ -61,9 +61,12 @@ public:
 
 DownloadQueue::Menu::Menu() : menu(new QMenu(nullptr))
 {
+    WulforUtil *WU = ::qtCtx()->wulforUtil();
     QMenu *menu_magnet = new QMenu(tr("Magnet"), ::qtCtx()->downloadQueue());
+    menu->setMinimumWidth(230);
 
     QAction *search_alt  = new QAction(tr("Search for alternates"), menu);
+    search_alt->setIcon(WU->getPixmap(WulforUtil::eiFIND));
     QAction *copy_magnet = new QAction(tr("Copy magnet"), menu_magnet);
     QAction *copy_magnet_web = new QAction(tr("Copy web-magnet"), menu_magnet);
     QAction *magnet_info = new QAction(tr("Properties of magnet"), menu_magnet);
@@ -73,6 +76,7 @@ DownloadQueue::Menu::Menu() : menu(new QMenu(nullptr))
     sep1->setSeparator(true);
 
     set_prio = new QMenu(tr("Set priority"), menu);
+    set_prio->setIcon(WU->getPixmap(WulforUtil::eiSPEED_LIMIT_ON));
     {
         QAction *paused = new QAction(tr("Paused"), set_prio);
         paused->setData(static_cast<int>(QueueItem::PAUSED));
@@ -96,15 +100,20 @@ DownloadQueue::Menu::Menu() : menu(new QMenu(nullptr))
     }
 
     browse = new QMenu(tr("Browse files"), menu);
+    browse->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
     send_pm = new QMenu(tr("Send private message"), menu);
+    send_pm->setIcon(WU->getPixmap(WulforUtil::eiMESSAGE));
 
     QAction *sep2 = new QAction(menu);
     sep2->setSeparator(true);
 
     rem_src  = new QMenu(tr("Remove source"), menu);
+    rem_src->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
     rem_usr  = new QMenu(tr("Remove user"), menu);
+    rem_usr->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
 
     QAction *remove   = new QAction(tr("Remove"), menu);
+    remove->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
 
     QAction *sep3 = new QAction(menu);
     sep3->setSeparator(true);
@@ -116,6 +125,7 @@ DownloadQueue::Menu::Menu() : menu(new QMenu(nullptr))
     map[ren_move] = RenameMove;
     map[remove] = Remove;
 
+    menu_magnet->setIcon(WU->getPixmap(WulforUtil::eiMAGNET));
     menu_magnet->addActions(QList<QAction*>()
             << copy_magnet << copy_magnet_web << sep3 << magnet_info);
 
@@ -151,19 +161,20 @@ void DownloadQueue::Menu::clearMenu(QMenu *m){
 }
 
 DownloadQueue::Menu::Action DownloadQueue::Menu::exec(const DownloadQueue::SourceMap &sources, const QString &target, bool multiselect){
-    if (target.isEmpty() || sources.isEmpty() || !sources.contains(target))
+    if (target.isEmpty())
         return None;
 
     arg = QVariant();
 
     clearMenu(browse), clearMenu(send_pm), clearMenu(rem_src), clearMenu(rem_usr);
 
-    browse->setDisabled(multiselect);
-    send_pm->setDisabled(multiselect);
-    rem_src->setDisabled(multiselect);
-    rem_usr->setDisabled(multiselect);
+    const QMap<QString, QString> users = sources.value(target);
+    const bool sourceActionsAvailable = !multiselect && !users.isEmpty();
 
-    QMap<QString, QString>  users = sources[target];
+    browse->setDisabled(!sourceActionsAvailable);
+    send_pm->setDisabled(!sourceActionsAvailable);
+    rem_src->setDisabled(!sourceActionsAvailable);
+    rem_usr->setDisabled(!sourceActionsAvailable);
 
     for (const auto &key : users.keys()){
         QAction *act = new QAction(key, menu);

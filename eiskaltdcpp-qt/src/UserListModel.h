@@ -151,7 +151,10 @@ public:
 
     void repaint() { emit layoutChanged(); }
     void repaintItem(const UserListItem *item);
-    inline void repaintData(const QModelIndex &left, const QModelIndex &right){ emit dataChanged(left, right); }
+    inline void repaintData(const QModelIndex &left, const QModelIndex &right){
+        if (left.isValid() && right.isValid())
+            emit dataChanged(left, right);
+    }
 
 private:
     UserListItem *rootItem;

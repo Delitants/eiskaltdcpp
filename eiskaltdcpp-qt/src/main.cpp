@@ -70,6 +70,12 @@ using namespace std;
 #endif
 
 #include <QApplication>
+#if defined(Q_OS_MAC)
+#include <QAccessible>
+#endif
+#include <QByteArray>
+#include <QCoreApplication>
+#include <QDir>
 #include <QEvent>
 #include <QFile>
 #include <QFileInfo>
@@ -141,6 +147,17 @@ static LONG WINAPI earlyExceptionHandler(EXCEPTION_POINTERS *ep)
 #if defined(Q_OS_MAC)
 // Dock click handling is done via EiskaltEventFilter in EiskaltApp_mac.h
 // using QApplicationStateChangeEvent
+static QString macBundledStyleIcon(const QString &name)
+{
+    const QString bundlePath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(
+        QStringLiteral("../Resources/icons/appl/default/") + name);
+
+    if (QFileInfo::exists(bundlePath))
+        return QStringLiteral("url(\"%1\")").arg(bundlePath);
+
+    return QStringLiteral("none");
+}
+
 static bool isDarkMacPalette(const QPalette &pal)
 {
     return (pal.color(QPalette::Window).lightness() + pal.color(QPalette::Base).lightness()) / 2 < 128;
@@ -216,6 +233,11 @@ static QString macInputContrastStyle(const QPalette &pal)
     const QColor header = dark ? pal.color(QPalette::Window).lighter(115)
                                : pal.color(QPalette::Window).darker(104);
     const QColor disabledText = pal.color(QPalette::Disabled, QPalette::Text);
+    const QString comboArrow = macBundledStyleIcon(dark ? QStringLiteral("combo-arrow-down-light.svg")
+                                                       : QStringLiteral("combo-arrow-down-dark.svg"));
+    const QString menuArrow = macBundledStyleIcon(dark ? QStringLiteral("menu-arrow-right-light.svg")
+                                                      : QStringLiteral("menu-arrow-right-dark.svg"));
+    const QString menuArrowSelected = macBundledStyleIcon(QStringLiteral("menu-arrow-right-light.svg"));
 
     return QStringLiteral(
         "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
@@ -230,6 +252,7 @@ static QString macInputContrastStyle(const QPalette &pal)
         "QComboBox {"
         " padding: 3px 30px 3px 9px;"
         " min-height: 24px;"
+        " combobox-popup: 0;"
         "}"
         "QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus, QAbstractSpinBox:focus {"
         " border: 1px solid %2;"
@@ -243,9 +266,13 @@ static QString macInputContrastStyle(const QPalette &pal)
         " border-bottom-right-radius: 6px;"
         "}"
         "QComboBox::down-arrow {"
-        " image: url(:/go-down.png);"
+        " image: %11;"
         " width: 9px;"
         " height: 9px;"
+        " margin-right: 7px;"
+        "}"
+        "QComboBox::down-arrow:disabled {"
+        " image: %11;"
         "}"
         "QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {"
         " border-left: 1px solid %1;"
@@ -270,11 +297,17 @@ static QString macInputContrastStyle(const QPalette &pal)
         " color: %8;"
         "}"
         "QComboBox QAbstractItemView {"
-        " padding: 4px;"
+        " border: 1px solid %3;"
+        " border-radius: 8px;"
+        " padding: 6px;"
+        " background-color: %4;"
+        " color: %6;"
+        " selection-background-color: %7;"
+        " selection-color: %8;"
         "}"
         "QComboBox QAbstractItemView::item {"
-        " padding: 5px 10px;"
-        " min-height: 22px;"
+        " padding: 6px 12px;"
+        " min-height: 24px;"
         "}"
         "QAbstractItemView:disabled, QListView:disabled, QTreeView:disabled, QTableView:disabled {"
         " color: %10;"
@@ -284,25 +317,38 @@ static QString macInputContrastStyle(const QPalette &pal)
         " color: %6;"
         " border: 1px solid %3;"
         " border-radius: 8px;"
-        " padding: 5px;"
+        " padding: 7px;"
         "}"
         "QMenu::item {"
-        " padding: 5px 28px 5px 12px;"
-        " border-radius: 5px;"
+        " padding: 6px 34px 6px 14px;"
+        " border-radius: 6px;"
+        " min-width: 140px;"
         "}"
         "QMenu::item:selected {"
         " background-color: %7;"
         " color: %8;"
         "}"
+        "QMenu::item:disabled {"
+        " color: %10;"
+        "}"
         "QMenu::separator {"
         " height: 1px;"
         " background: %3;"
-        " margin: 5px 8px;"
+        " margin: 6px 8px;"
+        "}"
+        "QMenu::indicator {"
+        " width: 14px;"
+        " height: 14px;"
+        " left: 7px;"
         "}"
         "QMenu::right-arrow {"
-        " image: url(:/go-next.png);"
+        " image: %12;"
         " width: 9px;"
         " height: 9px;"
+        " margin-right: 8px;"
+        "}"
+        "QMenu::right-arrow:selected {"
+        " image: %13;"
         "}"
         "QHeaderView::section {"
         " background-color: %9;"
@@ -329,7 +375,8 @@ static QString macInputContrastStyle(const QPalette &pal)
         "}"
     ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name(),
           base.name(), alternate.name(), text.name(), highlight.name(),
-          highlightedText.name(), header.name(), disabledText.name());
+          highlightedText.name(), header.name(), disabledText.name(),
+          comboArrow, menuArrow, menuArrowSelected);
 }
 
 class MacAppearanceStyleUpdater : public QObject
@@ -484,6 +531,13 @@ int main(int argc, char *argv[])
 #endif
 
     setlocale(LC_ALL, "");
+
+#if defined(Q_OS_MAC)
+    // Qt 6.11's Cocoa accessibility bridge can abort when fast-changing item
+    // views are inspected while their accessible wrappers are being deleted.
+    qputenv("QT_ACCESSIBILITY", QByteArray("0"));
+    QAccessible::setActive(false);
+#endif
 
     EiskaltApp app(argc, argv, _q(dcpp::Util::getLoginName()+"EDCPP"));
     app.setQuitOnLastWindowClosed(false);

@@ -1732,6 +1732,7 @@ void HubFrame::init(){
 
     installEventFilter(this);
     lineEdit_FILTER->installEventFilter(this);
+    lineEdit_FILTER->setPlaceholderText(tr("Filter"));
     lineEdit_FIND->installEventFilter(this);
 
     textEdit_CHAT->document()->setMaximumBlockCount(qtCtx()->settings()->getInt(WI_CHAT_MAXPARAGRAPHS));
@@ -3258,10 +3259,10 @@ void HubFrame::clearUsers(){
     Q_D(HubFrame);
 
     if (d->model){
-        d->model->blockSignals(true);
         d->model->clear();
-        d-> model->blockSignals(false);
-        treeView_USERS->setModel(d->model);
+
+        if (treeView_USERS->model() != d->model)
+            treeView_USERS->setModel(d->model);
     }
 
     d->total_shared = 0;
@@ -3269,8 +3270,6 @@ void HubFrame::clearUsers(){
     treeView_USERS->repaint();
 
     slotUsersUpdated();
-
-    d->model->repaint();
 }
 
 void HubFrame::pmUserOffline(const QString &cid){
