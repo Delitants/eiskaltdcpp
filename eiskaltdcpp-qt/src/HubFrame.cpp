@@ -171,11 +171,7 @@ void repairChatDocumentContrast(QTextDocument *document, const QPalette &palette
             if (!fragment.isValid() || fragment.length() <= 0)
                 continue;
 
-            const QTextCharFormat format = fragment.charFormat();
-            if (format.isAnchor())
-                continue;
-
-            const QBrush foreground = format.foreground();
+            const QBrush foreground = fragment.charFormat().foreground();
             if (foreground.style() == Qt::NoBrush)
                 continue;
 
