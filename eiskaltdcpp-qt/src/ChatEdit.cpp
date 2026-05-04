@@ -79,6 +79,7 @@ void ChatEdit::applyContrastStyle()
     else if (!darkAppearance && focusBorder.lightness() > 205)
         focusBorder = focusBorder.darker(118);
     const QColor disabledBorder = darkAppearance ? borderColor.darker(118) : borderColor.lighter(112);
+    const int padding = property("compactInputStyle").toBool() ? 7 : 12;
 
     const QString contrastStyle = QStringLiteral(
         "QTextEdit {"
@@ -86,7 +87,7 @@ void ChatEdit::applyContrastStyle()
         "    color: palette(text);"
         "    border: 1px solid %1;"
         "    border-radius: 7px;"
-        "    padding: 12px;"
+        "    padding: %4px;"
         "}"
         "QTextEdit:focus {"
         "    border: 1px solid %2;"
@@ -95,7 +96,7 @@ void ChatEdit::applyContrastStyle()
         "    border: 1px solid %3;"
         "    color: palette(mid);"
         "}"
-    ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name());
+    ).arg(borderColor.name(), focusBorder.name(), disabledBorder.name()).arg(padding);
 
     if (contrastStyle != lastContrastStyle) {
         lastContrastStyle = contrastStyle;
@@ -103,6 +104,13 @@ void ChatEdit::applyContrastStyle()
     }
 
     contrastStyleInProgress = false;
+}
+
+void ChatEdit::setCompactInputStyle(bool compact)
+{
+    setProperty("compactInputStyle", compact);
+    document()->setDocumentMargin(compact ? 4 : 10);
+    applyContrastStyle();
 }
 
 void ChatEdit::changeEvent(QEvent *event)

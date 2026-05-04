@@ -162,6 +162,22 @@ void showPreviewableImage(QWidget *parent, const QString &path)
     dialog->raise();
     dialog->activateWindow();
 }
+
+bool openWithConfiguredExternalHandler(const QString &url)
+{
+    const QString handler = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)).trimmed();
+
+    if (handler.isEmpty())
+        return false;
+
+#ifdef Q_OS_MAC
+    const QFileInfo handlerInfo(handler);
+    if (handler.endsWith(QStringLiteral(".app"), Qt::CaseInsensitive) && handlerInfo.isDir())
+        return QProcess::startDetached(QStringLiteral("/usr/bin/open"), QStringList() << QStringLiteral("-a") << handler << url);
+#endif
+
+    return QProcess::startDetached(handler, QStringList(url));
+}
 }
 
 WulforUtil::WulforUtil(dcpp::DCContext& ctx)
@@ -1025,9 +1041,7 @@ bool WulforUtil::openUrl(const QString &url){
         return true;
     }
     else if (url.startsWith("http://") || url.startsWith("www.") || url.startsWith(("ftp://")) || url.startsWith("https://")){
-        if (!qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true).empty())
-            QProcess::startDetached(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)), QStringList(url));
-        else
+        if (!openWithConfiguredExternalHandler(url))
             QDesktopServices::openUrl(QUrl::fromEncoded(url.toUtf8()));
     }
     else if (url.startsWith("adc://") || url.startsWith("adcs://")){
@@ -1079,9 +1093,7 @@ bool WulforUtil::openUrl(const QString &url){
             sfr->fastSearch(keywords, false);
         }
         else {
-            if (!qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true).empty())
-                QProcess::startDetached(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)), QStringList(url));
-            else
+            if (!openWithConfiguredExternalHandler(url))
                 QDesktopServices::openUrl(QUrl::fromEncoded(url.toUtf8()));
         }
     }

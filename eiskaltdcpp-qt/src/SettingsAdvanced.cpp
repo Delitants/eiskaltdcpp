@@ -17,6 +17,8 @@
 #include "MainWindow.h"
 #include "WulforSettings.h"
 #include "WulforUtil.h"
+#include <QCheckBox>
+#include <QDir>
 #include <QFileDialog>
 
 using namespace dcpp;
@@ -35,11 +37,24 @@ SettingsAdvanced::~SettingsAdvanced() {
 void SettingsAdvanced::ok() {
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
 
-    SM->set(SettingsManager::MIME_HANDLER, _tq(lineEdit_MIME->text()));
+    const QString handler = checkBox_CUSTOM_MIME->isChecked() ? lineEdit_MIME->text().trimmed() : QString();
+    SM->set(SettingsManager::MIME_HANDLER, _tq(handler));
 }
 
 void SettingsAdvanced::init() {
-    lineEdit_MIME->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)));
+    const QString handler = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MIME_HANDLER, true)).trimmed();
+    lineEdit_MIME->setText(handler);
+    lineEdit_MIME->setPlaceholderText(tr("Use system defaults unless a custom handler is enabled"));
+    lineEdit_MIME->setToolTip(tr("Optional command or macOS .app used for web links and non-DC magnet links."));
+    checkBox_CUSTOM_MIME->setChecked(!handler.isEmpty());
+
+    const auto updateMimeControls = [this](bool enabled) {
+        lineEdit_MIME->setEnabled(enabled);
+        toolButton_BROWSE->setEnabled(enabled);
+    };
+    connect(checkBox_CUSTOM_MIME, &QCheckBox::toggled, this, updateMimeControls);
+    updateMimeControls(checkBox_CUSTOM_MIME->isChecked());
+
     toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
 
     connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsAdvanced::slotBrowse);
@@ -47,7 +62,10 @@ void SettingsAdvanced::init() {
 
 void SettingsAdvanced::slotBrowse()
 {
-    QString file = QFileDialog::getOpenFileName(this, tr("Select mime handler binary"), QDir::homePath());
+    QString file = QFileDialog::getOpenFileName(this,
+                                                tr("Select application or executable"),
+                                                QStringLiteral("/Applications"),
+                                                tr("Applications (*.app);;All files (*)"));
 
     if (file.isEmpty())
         return;

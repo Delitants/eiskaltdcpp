@@ -204,6 +204,26 @@ static QColor macReadableTextColor(const QColor &base, const bool dark)
     return text;
 }
 
+static QColor macReadableForegroundOn(const QColor &background)
+{
+    return background.lightness() < 150 ? QColor(Qt::white) : QColor(18, 18, 18);
+}
+
+static QColor macSelectionBackground(const QPalette &pal)
+{
+    QColor selection = pal.color(QPalette::Highlight);
+    const bool dark = isDarkMacPalette(pal);
+
+    if (dark && (selection.lightness() > 190 || selection.saturation() < 35))
+        selection = QColor(55, 112, 220);
+    else if (dark && selection.lightness() < 80)
+        selection = selection.lighter(145);
+    else if (!dark && selection.lightness() > 230)
+        selection = selection.darker(112);
+
+    return selection;
+}
+
 static QColor macSoftAlternateBase(const QColor &base, const bool dark)
 {
     QColor alternate = dark ? base.lighter(112) : base.darker(104);
@@ -228,8 +248,8 @@ static QString macInputContrastStyle(const QPalette &pal)
     const QColor base = pal.color(QPalette::Base);
     const QColor alternate = macSoftAlternateBase(base, dark);
     const QColor text = macReadableTextColor(base, dark);
-    const QColor highlight = pal.color(QPalette::Highlight);
-    const QColor highlightedText = pal.color(QPalette::HighlightedText);
+    const QColor highlight = macSelectionBackground(pal);
+    const QColor highlightedText = macReadableForegroundOn(highlight);
     const QColor header = dark ? pal.color(QPalette::Window).lighter(115)
                                : pal.color(QPalette::Window).darker(104);
     const QColor disabledText = pal.color(QPalette::Disabled, QPalette::Text);

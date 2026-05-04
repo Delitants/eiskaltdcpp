@@ -67,6 +67,7 @@ public:
     void insertEmoji(const QString &emoji);
     void populateEmojiMenu(QMenu *menu);
     void populateBBCodeMenu(QMenu *menu);
+    void setCompactInputStyle(bool compact);
 
     static QString defaultChatPictureDir();
     static QString configuredChatPictureDir();

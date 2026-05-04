@@ -256,6 +256,7 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     plainTextEdit_INPUT->setMinimumHeight(72);
     plainTextEdit_INPUT->setMaximumHeight(200);
     plainTextEdit_INPUT->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    plainTextEdit_INPUT->setCompactInputStyle(true);
 
     const QPalette inputPalette = frame->palette();
     const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
@@ -276,7 +277,7 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     ).arg(inputBorder.name(), inputBackground.name()));
 
     if (gridLayout) {
-        gridLayout->setContentsMargins(6, 6, 6, 6);
+        gridLayout->setContentsMargins(4, 4, 4, 4);
         gridLayout->setHorizontalSpacing(4);
         gridLayout->setVerticalSpacing(4);
     }

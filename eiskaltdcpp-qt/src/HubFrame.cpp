@@ -1640,7 +1640,7 @@ void HubFrame::setupChatInputSplitter()
 
     auto *inputPane = new QWidget(layoutWidget);
     auto *inputPaneLayout = new QVBoxLayout(inputPane);
-    inputPaneLayout->setContentsMargins(0, 0, 0, 0);
+    inputPaneLayout->setContentsMargins(8, 0, 8, 0);
     inputPaneLayout->setSpacing(0);
 
     textEdit_CHAT->setParent(chatPane);
@@ -1695,7 +1695,7 @@ void HubFrame::setupChatInputSplitter()
         handle->setCursor(Qt::SplitVCursor);
 
     if (gridLayout) {
-        gridLayout->setContentsMargins(6, 6, 6, 6);
+        gridLayout->setContentsMargins(4, 4, 4, 4);
         gridLayout->setHorizontalSpacing(4);
         gridLayout->setVerticalSpacing(4);
 
@@ -1799,6 +1799,7 @@ void HubFrame::init(){
     plainTextEdit_INPUT->setContextMenuPolicy(Qt::CustomContextMenu);
     plainTextEdit_INPUT->setMinimumHeight(54);
     plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
+    plainTextEdit_INPUT->setCompactInputStyle(true);
     const QPalette inputPalette = frame_INPUT->palette();
     const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
     QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)

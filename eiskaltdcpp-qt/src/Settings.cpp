@@ -70,6 +70,25 @@ QString macBundledStyleIcon(const QString &name)
     return QStringLiteral("none");
 }
 
+QColor macReadableSelectionText(const QColor &background)
+{
+    return background.lightness() < 150 ? QColor(Qt::white) : QColor(18, 18, 18);
+}
+
+QColor macSettingsSelectionBackground(const QPalette &palette, const bool darkAppearance)
+{
+    QColor selection = palette.color(QPalette::Highlight);
+
+    if (darkAppearance && (selection.lightness() > 190 || selection.saturation() < 35))
+        selection = QColor(55, 112, 220);
+    else if (darkAppearance && selection.lightness() < 80)
+        selection = selection.lighter(145);
+    else if (!darkAppearance && selection.lightness() > 230)
+        selection = selection.darker(112);
+
+    return selection;
+}
+
 void applyMacSettingsPanelStyle(QFrame *panel)
 {
     if (!panel)
@@ -84,11 +103,12 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         fieldBorder = darkAppearance ? textColor.lighter(145) : textColor.darker(150);
     }
     const QColor panelBorder = darkAppearance ? fieldBorder.lighter(118) : fieldBorder.darker(112);
-    QColor focusBorder = panelPalette.color(QPalette::Highlight);
+    QColor focusBorder = macSettingsSelectionBackground(panelPalette, darkAppearance);
     if (darkAppearance && focusBorder.lightness() < 150)
         focusBorder = focusBorder.lighter(140);
     else if (!darkAppearance && focusBorder.lightness() > 205)
         focusBorder = focusBorder.darker(118);
+    const QColor selectedText = macReadableSelectionText(focusBorder);
 
     const QColor panelBackground = darkAppearance ? panelPalette.color(QPalette::Window).lighter(108)
                                                   : panelPalette.color(QPalette::Window);
@@ -210,8 +230,8 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "QFrame#settingsPagePanel QComboBox QAbstractItemView {"
         " border: 1px solid %2;"
         " padding: 4px;"
-        " selection-background-color: palette(highlight);"
-        " selection-color: palette(highlighted-text);"
+        " selection-background-color: %5;"
+        " selection-color: %9;"
         " outline: 0;"
         "}"
         "QFrame#settingsPagePanel QComboBox QAbstractItemView::item {"
@@ -252,7 +272,7 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "}"
         "QFrame#settingsPagePanel QTabBar::tab:selected {"
         " background-color: %5;"
-        " color: palette(highlighted-text);"
+        " color: %9;"
         " border-color: %5;"
         " font-weight: 600;"
         "}"
@@ -265,7 +285,7 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "}"
     ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
           groupBackground.name(), focusBorder.name(), tabBackground.name(),
-          titleBackground.name(), comboArrow));
+          titleBackground.name(), comboArrow).arg(selectedText.name()));
 }
 
 void applyMacSettingsSidebarStyle(QListWidget *listWidget)
@@ -285,12 +305,10 @@ void applyMacSettingsSidebarStyle(QListWidget *listWidget)
                                          : sidebarPalette.color(QPalette::Window);
     const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
                                             : sidebarPalette.color(QPalette::AlternateBase);
-    QColor selectedBg = sidebarPalette.color(QPalette::Highlight);
+    QColor selectedBg = macSettingsSelectionBackground(sidebarPalette, darkSidebar);
     if (darkSidebar && selectedBg.lightness() < 95)
         selectedBg = selectedBg.lighter(135);
-    else if (!darkSidebar && selectedBg.lightness() > 210)
-        selectedBg = selectedBg.darker(112);
-    const QColor selectedText = sidebarPalette.color(QPalette::HighlightedText);
+    const QColor selectedText = macReadableSelectionText(selectedBg);
     QColor focusBg = darkSidebar ? selectedBg.darker(145) : selectedBg.lighter(180);
     focusBg.setAlpha(darkSidebar ? 170 : 95);
     QColor focusBorder = selectedBg;
