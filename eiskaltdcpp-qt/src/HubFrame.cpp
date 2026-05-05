@@ -1663,7 +1663,7 @@ void HubFrame::setupChatInputSplitter()
 
     auto *inputPane = new QWidget(layoutWidget);
     auto *inputPaneLayout = new QVBoxLayout(inputPane);
-    inputPaneLayout->setContentsMargins(16, 0, 16, 0);
+    inputPaneLayout->setContentsMargins(0, 0, 0, 0);
     inputPaneLayout->setSpacing(0);
 
     textEdit_CHAT->setParent(chatPane);
