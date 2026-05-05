@@ -1640,7 +1640,7 @@ void HubFrame::setupChatInputSplitter()
 
     auto *inputPane = new QWidget(layoutWidget);
     auto *inputPaneLayout = new QVBoxLayout(inputPane);
-    inputPaneLayout->setContentsMargins(8, 0, 8, 0);
+    inputPaneLayout->setContentsMargins(16, 0, 16, 0);
     inputPaneLayout->setSpacing(0);
 
     textEdit_CHAT->setParent(chatPane);
@@ -1695,9 +1695,9 @@ void HubFrame::setupChatInputSplitter()
         handle->setCursor(Qt::SplitVCursor);
 
     if (gridLayout) {
-        gridLayout->setContentsMargins(4, 4, 4, 4);
-        gridLayout->setHorizontalSpacing(4);
-        gridLayout->setVerticalSpacing(4);
+        gridLayout->setContentsMargins(2, 2, 2, 2);
+        gridLayout->setHorizontalSpacing(2);
+        gridLayout->setVerticalSpacing(2);
 
         if (!frame_INPUT->findChild<QWidget*>(QStringLiteral("chatInputResizeGrip"))) {
             auto *resizeGrip = new ChatInputResizeGrip(splitter, frame_INPUT);

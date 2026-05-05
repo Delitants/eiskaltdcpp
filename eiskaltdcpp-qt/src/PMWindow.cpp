@@ -277,9 +277,9 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     ).arg(inputBorder.name(), inputBackground.name()));
 
     if (gridLayout) {
-        gridLayout->setContentsMargins(4, 4, 4, 4);
-        gridLayout->setHorizontalSpacing(4);
-        gridLayout->setVerticalSpacing(4);
+        gridLayout->setContentsMargins(2, 2, 2, 2);
+        gridLayout->setHorizontalSpacing(2);
+        gridLayout->setVerticalSpacing(2);
     }
 
     textEdit_CHAT->viewport()->installEventFilter(this);

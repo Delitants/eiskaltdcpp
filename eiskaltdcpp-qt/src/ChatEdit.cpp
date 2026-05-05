@@ -79,7 +79,7 @@ void ChatEdit::applyContrastStyle()
     else if (!darkAppearance && focusBorder.lightness() > 205)
         focusBorder = focusBorder.darker(118);
     const QColor disabledBorder = darkAppearance ? borderColor.darker(118) : borderColor.lighter(112);
-    const int padding = property("compactInputStyle").toBool() ? 7 : 12;
+    const int padding = property("compactInputStyle").toBool() ? 2 : 12;
 
     const QString contrastStyle = QStringLiteral(
         "QTextEdit {"
@@ -109,7 +109,7 @@ void ChatEdit::applyContrastStyle()
 void ChatEdit::setCompactInputStyle(bool compact)
 {
     setProperty("compactInputStyle", compact);
-    document()->setDocumentMargin(compact ? 4 : 10);
+    document()->setDocumentMargin(compact ? 1 : 10);
     applyContrastStyle();
 }
 

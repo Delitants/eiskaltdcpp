@@ -40,6 +40,8 @@
 namespace dht
 {
     namespace {
+        constexpr size_t MAX_SEND_QUEUE_SIZE = 2048;
+
         string toIpString(const sockaddr_storage& remoteAddr) {
             char host[NI_MAXHOST] = { 0 };
             if(getnameinfo(reinterpret_cast<const sockaddr*>(&remoteAddr),
@@ -324,6 +326,11 @@ namespace dht
         Packet* p = new Packet(ip, port, command, targetCID, udpKey);
 
         Lock l(cs);
+        while(sendQueue.size() >= MAX_SEND_QUEUE_SIZE)
+        {
+            delete sendQueue.front();
+            sendQueue.pop_front();
+        }
         sendQueue.push_back(p);
     }
 

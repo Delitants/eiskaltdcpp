@@ -303,8 +303,11 @@ void applyMacSettingsSidebarStyle(QListWidget *listWidget)
     }
     const QColor sidebarBg = darkSidebar ? sidebarPalette.color(QPalette::Window).lighter(108)
                                          : sidebarPalette.color(QPalette::Window);
-    const QColor sidebarHover = darkSidebar ? sidebarPalette.color(QPalette::AlternateBase).lighter(118)
-                                            : sidebarPalette.color(QPalette::AlternateBase);
+    QColor sidebarHover = darkSidebar ? sidebarBg.lighter(124)
+                                      : sidebarPalette.color(QPalette::AlternateBase);
+    if (darkSidebar && sidebarHover.lightness() > 115)
+        sidebarHover = sidebarBg.lighter(116);
+    const QColor hoverText = macReadableSelectionText(sidebarHover);
     QColor selectedBg = macSettingsSelectionBackground(sidebarPalette, darkSidebar);
     if (darkSidebar && selectedBg.lightness() < 95)
         selectedBg = selectedBg.lighter(135);
@@ -350,12 +353,16 @@ void applyMacSettingsSidebarStyle(QListWidget *listWidget)
         " color: palette(text);"
         " border: 1px solid %7;"
         "}"
-        "QListWidget::item:hover:!selected {"
+        "QListWidget::item:hover:!selected,"
+        "QListWidget::item:hover:!selected:active,"
+        "QListWidget::item:hover:!selected:!active {"
         " background-color: %3;"
+        " color: %8;"
+        " border: 1px solid %3;"
         "}"
     ).arg(sidebarBg.name(), sidebarBorder.name(), sidebarHover.name(),
           selectedBg.name(), selectedText.name(),
-          focusBackground, focusBorder.name()));
+          focusBackground, focusBorder.name(), hoverText.name()));
 }
 
 QWidget *wrapSettingsPage(QWidget *owner, QWidget *page)
