@@ -1760,6 +1760,7 @@ void HubFrame::init(){
     textEdit_CHAT->setContextMenuPolicy(Qt::CustomContextMenu);
     textEdit_CHAT->setReadOnly(true);
     textEdit_CHAT->setAutoFormatting(QTextEdit::AutoNone);
+    textEdit_CHAT->document()->setDocumentMargin(5);
     textEdit_CHAT->viewport()->installEventFilter(this); // QTextEdit don't receive all mouse events
     textEdit_CHAT->setMouseTracking(true);
 
@@ -1825,6 +1826,8 @@ void HubFrame::init(){
     plainTextEdit_INPUT->setMinimumHeight(54);
     plainTextEdit_INPUT->setMaximumHeight(QWIDGETSIZE_MAX);
     plainTextEdit_INPUT->setCompactInputStyle(true);
+    plainTextEdit_INPUT->document()->setDocumentMargin(5);
+    label_LAST_STATUS->setContentsMargins(5, 0, 0, 0);
     const QPalette inputPalette = frame_INPUT->palette();
     const bool darkInput = (inputPalette.color(QPalette::Window).lightness() + inputPalette.color(QPalette::Base).lightness()) / 2 < 128;
     QColor inputBorder = darkInput ? inputPalette.color(QPalette::Window).lighter(170)
