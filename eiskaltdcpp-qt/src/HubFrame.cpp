@@ -263,6 +263,24 @@ private:
     int dragStartY_;
     QList<int> startSizes_;
 };
+
+void positionChatInputResizeGrip(QWidget *frame)
+{
+    if (!frame)
+        return;
+
+    auto *grip = frame->findChild<QWidget*>(QStringLiteral("chatInputResizeGrip"));
+    if (!grip)
+        return;
+
+    const int margin = 5;
+    const QSize size = grip->sizeHint().expandedTo(QSize(14, 14));
+    grip->setGeometry(frame->width() - size.width() - margin,
+                      frame->height() - size.height() - margin,
+                      size.width(),
+                      size.height());
+    grip->raise();
+}
 }
 
 class HubFramePrivate {
@@ -1269,6 +1287,11 @@ HubFrame::~HubFrame(){
 bool HubFrame::eventFilter(QObject *obj, QEvent *e){
     Q_D(HubFrame);
 
+    if (obj == frame_INPUT && e->type() == QEvent::Resize) {
+        positionChatInputResizeGrip(frame_INPUT);
+        return false;
+    }
+
     if (e->type() == QEvent::KeyRelease){
         QKeyEvent *k_e = reinterpret_cast<QKeyEvent*>(e);
 
@@ -1695,16 +1718,18 @@ void HubFrame::setupChatInputSplitter()
         handle->setCursor(Qt::SplitVCursor);
 
     if (gridLayout) {
-        gridLayout->setContentsMargins(2, 2, 2, 2);
+        gridLayout->setContentsMargins(5, 4, 5, 4);
         gridLayout->setHorizontalSpacing(2);
         gridLayout->setVerticalSpacing(2);
 
         if (!frame_INPUT->findChild<QWidget*>(QStringLiteral("chatInputResizeGrip"))) {
             auto *resizeGrip = new ChatInputResizeGrip(splitter, frame_INPUT);
             resizeGrip->setObjectName(QStringLiteral("chatInputResizeGrip"));
-            gridLayout->addWidget(resizeGrip, 2, 0, 1, 1, Qt::AlignRight | Qt::AlignBottom);
+            positionChatInputResizeGrip(frame_INPUT);
         }
     }
+
+    frame_INPUT->installEventFilter(this);
 
     verticalLayout_3->addWidget(splitter);
     verticalLayout_3->setContentsMargins(0, 0, 0, 0);

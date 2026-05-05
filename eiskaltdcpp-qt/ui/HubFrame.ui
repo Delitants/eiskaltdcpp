@@ -449,7 +449,7 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
+          <item row="1" column="0" colspan="8">
            <widget class="ChatEdit" name="plainTextEdit_INPUT">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
