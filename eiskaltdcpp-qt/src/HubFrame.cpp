@@ -4170,8 +4170,9 @@ void HubFrame::slotSmile(){
     const QRect screenGeo = screen ? screen->availableGeometry() : QRect();
 
     const int verticalGap = 6;
-    const int inputWidth = frame_INPUT ? frame_INPUT->width() : width();
-    const int preferredWidth = qMax(420, inputWidth);
+    const QRect bbcodeRect = horizontalLayout_BBCODE ? horizontalLayout_BBCODE->geometry() : QRect();
+    const int bbcodeWidth = bbcodeRect.width() > 0 ? bbcodeRect.width() : (frame_INPUT ? frame_INPUT->width() : width());
+    const int preferredWidth = qMax(420, bbcodeWidth);
     const int maxDialogWidth = screenGeo.isValid() ? qMax(520, screenGeo.width() - 24) : 1400;
     const int maxDialogHeight = screenGeo.isValid() ? qMax(260, screenGeo.height() - 24) : 620;
     emojiDialog_->preparePopupGeometry(preferredWidth, maxDialogWidth, maxDialogHeight);
@@ -4185,7 +4186,10 @@ void HubFrame::slotSmile(){
     }
 
     if (screenGeo.isValid()) {
-        const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+        const QPoint bbcodeTopLeft = (horizontalLayout_BBCODE && horizontalLayout_BBCODE->parentWidget() && bbcodeRect.width() > 0)
+            ? horizontalLayout_BBCODE->parentWidget()->mapToGlobal(bbcodeRect.topLeft())
+            : toolButton_BOLD->mapToGlobal(QPoint(0, 0));
+        const int bbcodeTopY = bbcodeTopLeft.y();
         const int availableAbove = bbcodeTopY - verticalGap - screenGeo.top();
         if (availableAbove > 120 && dialogHeight > availableAbove) {
             emojiDialog_->resize(dialogWidth, availableAbove);
@@ -4193,11 +4197,11 @@ void HubFrame::slotSmile(){
         }
     }
 
-    const QPoint inputTopLeft = frame_INPUT
-        ? frame_INPUT->mapToGlobal(QPoint(0, 0))
-        : mapToGlobal(QPoint(0, 0));
-    int dialogX = inputTopLeft.x();
-    const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
+    const QPoint bbcodeTopLeft = (horizontalLayout_BBCODE && horizontalLayout_BBCODE->parentWidget() && bbcodeRect.width() > 0)
+        ? horizontalLayout_BBCODE->parentWidget()->mapToGlobal(bbcodeRect.topLeft())
+        : toolButton_BOLD->mapToGlobal(QPoint(0, 0));
+    int dialogX = bbcodeTopLeft.x();
+    const int bbcodeTopY = bbcodeTopLeft.y();
     int dialogY = bbcodeTopY - dialogHeight - verticalGap;
 
     if (screenGeo.isValid()) {
