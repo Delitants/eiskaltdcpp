@@ -23,10 +23,6 @@
 
 using namespace dcpp;
 
-namespace {
-constexpr auto DEFAULT_DHT_BOOTSTRAP_URL = "https://dht.hublist.eu/dcDHT.php";
-}
-
 DHTBootstrapList::DHTBootstrapList(QWidget *parent): QDialog(parent)
 {
     setupUi(this);
@@ -34,9 +30,6 @@ DHTBootstrapList::DHTBootstrapList(QWidget *parent): QDialog(parent)
     setWindowTitle(tr("DHT bootstrap URLs"));
 
     QString urls = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DHT_BOOTSTRAP_URLS));
-    if (urls.trimmed().isEmpty())
-        urls = QString::fromLatin1(DEFAULT_DHT_BOOTSTRAP_URL);
-
     listWidget->addItems(urls.split(";", Qt::SkipEmptyParts));
 
     connect(pushButton_DOWN, &QPushButton::clicked, this, &DHTBootstrapList::slotDown);
@@ -51,9 +44,6 @@ void DHTBootstrapList::slotAccepted(){
     QString urls;
     for (int i = 0; i < listWidget->count(); i++)
         urls += (urls.isEmpty() ? "" : ";") + listWidget->item(i)->text().trimmed();
-
-    if (urls.trimmed().isEmpty())
-        urls = QString::fromLatin1(DEFAULT_DHT_BOOTSTRAP_URL);
 
     qtCtx()->dcCtx().getSettingsManager()->set(SettingsManager::DHT_BOOTSTRAP_URLS, _tq(urls));
 }

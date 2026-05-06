@@ -30,7 +30,7 @@
 #endif
 
 namespace {
-constexpr auto DEFAULT_DHT_BOOTSTRAP_URL = "https://dht.hublist.eu/dcDHT.php";
+constexpr auto DEFAULT_DHT_BOOTSTRAP_URL = "";
 }
 #include "SearchManager.h"
 #include "StringTokenizer.h"
@@ -442,10 +442,6 @@ void SettingsManager::load(string const& aFileName)
                     lists += ";" + i;
             }
             set(HUBLIST_SERVERS, lists);
-        }
-
-        if(get(DHT_BOOTSTRAP_URLS).empty()) {
-            set(DHT_BOOTSTRAP_URLS, getDefault(DHT_BOOTSTRAP_URLS));
         }
 
         if(CTX_SETTING(SET_MINISLOT_SIZE) < 64)

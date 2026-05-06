@@ -28,11 +28,17 @@
 #include "dcpp/LogManager.h"
 #include "dcpp/SettingsManager.h"
 #include <zlib.h>
+#include <algorithm>
 #include "dcpp/DCPlusPlus.h"
 
 namespace dht
 {
-    vector<string> dhtservers;
+    namespace {
+        constexpr size_t MAX_BOOTSTRAP_COMPRESSED_BYTES = 1024 * 1024;
+        constexpr uLongf MAX_BOOTSTRAP_DECOMPRESSED_BYTES = 4 * 1024 * 1024;
+        constexpr size_t MAX_BOOTSTRAP_NODES = 4096;
+        constexpr auto DISABLED_DEFAULT_DHT_BOOTSTRAP_URL = "https://dht.hublist.eu/dcDHT.php";
+    }
  
     BootstrapManager::BootstrapManager(DHT& dht) : dht_(dht), httpConnection(dht.ctx())
     {
@@ -49,8 +55,9 @@ namespace dht
                 auto last  = url.find_last_not_of(" \t\r\n");
                 if(first != string::npos && last != string::npos) {
                     url = url.substr(first, last - first + 1);
-                    if(!url.empty())
-                        dhtservers.push_back(url);
+
+                    if(url != DISABLED_DEFAULT_DHT_BOOTSTRAP_URL && std::find(servers.begin(), servers.end(), url) == servers.end())
+                        servers.push_back(url);
                 }
 
                 if(end == string::npos)
@@ -67,36 +74,76 @@ namespace dht
 
     void BootstrapManager::bootstrap()
     {
-        if(dhtservers.empty()) {
+        if(servers.empty())
             return;
-            return;
-        }
-        if(bootstrapNodes.empty())
+
         {
-            dht_.ctx().getLogManager()->message(_("DHT bootstrapping started"));
-            string dhturl = dhtservers[Util::rand(dhtservers.size())];
-            // TODO: make URL settable
-            string url = dhturl  + "?cid=" + dht_.ctx().getClientManager()->getMe()->getCID().toBase32() + "&encryption=1";
+            Lock l(cs);
+            if(requestActive || !bootstrapNodes.empty())
+                return;
 
-            // store only active nodes to database
-            if(dht_.ctx().getClientManager()->isActive(Util::emptyString))
-            {
-                url += "&u4=" + dht_.getPort();
-            }
-
-            httpConnection.downloadFile(url);
+            nodesXML.clear();
+            requestActive = true;
         }
+
+        dht_.ctx().getLogManager()->message(_("DHT bootstrapping started"));
+        string dhturl = servers[Util::rand(servers.size())];
+        string url = dhturl  + "?cid=" + dht_.ctx().getClientManager()->getMe()->getCID().toBase32() + "&encryption=1";
+
+        // store only active nodes to database
+        if(dht_.ctx().getClientManager()->isActive(Util::emptyString))
+        {
+            url += "&u4=" + dht_.getPort();
+        }
+
+        httpConnection.downloadFile(url);
     }
 
-    void BootstrapManager::on(HttpConnectionListener::Data, HttpConnection*, const uint8_t* buf, size_t len) throw()
+    void BootstrapManager::on(HttpConnectionListener::Data, HttpConnection* conn, const uint8_t* buf, size_t len) throw()
     {
-        nodesXML += string((const char*)buf, len);
+        bool abortRequest = false;
+        bool responseTooLarge = false;
+
+        {
+            Lock l(cs);
+            if(!requestActive)
+            {
+                abortRequest = true;
+            }
+            else if(len > MAX_BOOTSTRAP_COMPRESSED_BYTES || nodesXML.size() > MAX_BOOTSTRAP_COMPRESSED_BYTES - len)
+            {
+                nodesXML.clear();
+                requestActive = false;
+                abortRequest = true;
+                responseTooLarge = true;
+            }
+            else
+            {
+                nodesXML.append(reinterpret_cast<const char*>(buf), len);
+            }
+        }
+
+        if(abortRequest)
+        {
+            conn->abort();
+            if(responseTooLarge)
+                dht_.ctx().getLogManager()->message(string(_("DHT bootstrap error: ")) + "response is too large");
+            return;
+        }
     }
 
     #define BUFSIZE 16384
     void BootstrapManager::on(HttpConnectionListener::Complete, HttpConnection*, string const&) throw()
     {
-        if(!nodesXML.empty())
+        string compressedNodesXML;
+
+        {
+            Lock l(cs);
+            requestActive = false;
+            compressedNodesXML.swap(nodesXML);
+        }
+
+        if(!compressedNodesXML.empty())
         {
             try
             {
@@ -108,10 +155,14 @@ namespace dht
 
                 do
                 {
+                    if(destLen >= MAX_BOOTSTRAP_DECOMPRESSED_BYTES)
+                        throw Exception("Decompressed response is too large.");
+
                     destLen *= 2;
+                    destLen = std::min<uLongf>(destLen, MAX_BOOTSTRAP_DECOMPRESSED_BYTES);
                     destBuf.reset(new uint8_t[destLen]);
 
-                    result = uncompress(&destBuf[0], &destLen, (Bytef*)nodesXML.data(), nodesXML.length());
+                    result = uncompress(&destBuf[0], &destLen, (Bytef*)compressedNodesXML.data(), compressedNodesXML.length());
                 }
                 while (result == Z_BUF_ERROR);
 
@@ -125,13 +176,21 @@ namespace dht
                 remoteXml.fromXML(string((char*)&destBuf[0], destLen));
                 remoteXml.stepIn();
 
+                size_t nodeCount = 0;
                 while(remoteXml.findChild("Node"))
                 {
+                    if(nodeCount >= MAX_BOOTSTRAP_NODES)
+                    {
+                        dht_.ctx().getLogManager()->message(string(_("DHT bootstrap error: ")) + "response contains too many nodes; ignored the rest");
+                        break;
+                    }
+
                     CID cid     = CID(remoteXml.getChildAttrib("CID"));
                     string i4   = remoteXml.getChildAttrib("I4");
                     string u4   = remoteXml.getChildAttrib("U4");
 
                     addBootstrapNode(i4, u4, cid, UDPKey());
+                    ++nodeCount;
                 }
 
                 remoteXml.stepOut();
@@ -147,37 +206,47 @@ namespace dht
 
     void BootstrapManager::on(HttpConnectionListener::Failed, HttpConnection*, const string& aLine) throw()
     {
+        {
+            Lock l(cs);
+            requestActive = false;
+            nodesXML.clear();
+        }
+
         dht_.ctx().getLogManager()->message(_("DHT bootstrap error: ") + aLine);
     }
 
     void BootstrapManager::addBootstrapNode(const string& ip, const string& udpPort, const CID& targetCID, const UDPKey& udpKey)
     {
         BootstrapNode node = { ip, udpPort, targetCID, udpKey };
+        Lock l(cs);
         bootstrapNodes.push_back(node);
     }
 
     void BootstrapManager::process()
     {
-        Lock l(cs);
-        if(!bootstrapNodes.empty())
+        BootstrapNode node;
+
         {
-            // send bootstrap request
-            AdcCommand cmd(AdcCommand::CMD_GET, AdcCommand::TYPE_UDP);
-            cmd.addParam("nodes");
-            cmd.addParam("dht.xml");
+            Lock l(cs);
+            if(bootstrapNodes.empty())
+                return;
 
-            const BootstrapNode& node = bootstrapNodes.front();
-
-            CID key;
-            // if our external IP changed from the last time, we can't encrypt packet with this key
-            // this won't probably work now
-            if(dht_.getLastExternalIP() == node.udpKey.ip)
-                key = node.udpKey.key;
-
-            dht_.send(cmd, node.ip, node.udpPort, node.cid, key);
-
+            node = bootstrapNodes.front();
             bootstrapNodes.pop_front();
         }
+
+        // send bootstrap request
+        AdcCommand cmd(AdcCommand::CMD_GET, AdcCommand::TYPE_UDP);
+        cmd.addParam("nodes");
+        cmd.addParam("dht.xml");
+
+        CID key;
+        // if our external IP changed from the last time, we can't encrypt packet with this key
+        // this won't probably work now
+        if(dht_.getLastExternalIP() == node.udpKey.ip)
+            key = node.udpKey.key;
+
+        dht_.send(cmd, node.ip, node.udpPort, node.cid, key);
     }
 
 }

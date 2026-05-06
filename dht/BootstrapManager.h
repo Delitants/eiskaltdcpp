@@ -64,6 +64,12 @@ namespace dht
         /** Downloaded node list */
         string nodesXML;
 
+        /** Per-instance bootstrap servers */
+        vector<string> servers;
+
+        /** True while an HTTP bootstrap request is in flight */
+        bool requestActive = false;
+
         // HttpConnectionListener
         void on(HttpConnectionListener::Data, HttpConnection* conn, const uint8_t* buf, size_t len) throw();
         void on(HttpConnectionListener::Complete, HttpConnection* conn, string const& aLine) throw();
