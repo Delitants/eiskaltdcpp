@@ -2,10 +2,13 @@ name: Build
 
 on:
   workflow_dispatch:
+  schedule:
+    # Run nightly at 00:00 HST / 10:00 UTC on the default branch.
+    - cron: '0 10 * * *'
 
 permissions:
   actions: write      # vcpkg binary caching via x-gha
-  contents: write     # GitHub Releases
+  contents: read
 
 jobs:
   # ─── Version Info ──────────────────────────────────────────────────
@@ -1159,92 +1162,3 @@ jobs:
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-gtk3-dmg
         path: build/*.dmg
-
-  # ─── Release ───────────────────────────────────────────────────────
-
-  release:
-    name: Create Release
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-    needs:
-      - prepare
-      - build-windows-qt6
-      - build-windows-gtk3
-      - build-linux-qt6
-      - build-linux-gtk3
-      - build-macos-qt6
-      - build-macos-gtk3
-      - package-linux-qt6
-      - package-linux-gtk3
-      - package-macos-qt6
-      - package-macos-gtk3
-    env:
-      AP: ${{ needs.prepare.outputs.artifact_prefix }}
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Download all packaging artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: release-assets/
-
-    - name: Prepare release files
-      run: |
-        mkdir -p release
-        TAG="${GITHUB_REF#refs/tags/}"
-        # Zip Windows Qt6 (Debug + Release)
-        for bt in Debug Release; do
-          dir="release-assets/${AP}-windows-x64-qt6-${bt}"
-          if [ -d "$dir" ]; then
-            (cd "$dir" && zip -r "../../release/EiskaltDC++-Qt6-${TAG}-windows-x64-${bt}.zip" .)
-          fi
-        done
-        # Zip Windows GTK3 (Debug + Release)
-        for bt in Debug Release; do
-          dir="release-assets/${AP}-windows-x64-gtk3-${bt}"
-          if [ -d "$dir" ]; then
-            (cd "$dir" && zip -r "../../release/EiskaltDC++-GTK3-${TAG}-windows-x64-${bt}.zip" .)
-          fi
-        done
-        # Zip Linux Qt6 Debug
-        dir="release-assets/${AP}-linux-x64-qt6-Debug"
-        if [ -d "$dir" ]; then
-          (cd "$dir" && zip -r "../../release/EiskaltDC++-Qt6-${TAG}-linux-x64-Debug.zip" .)
-        fi
-        # Zip Linux GTK3 Debug
-        dir="release-assets/${AP}-linux-x64-gtk3-Debug"
-        if [ -d "$dir" ]; then
-          (cd "$dir" && zip -r "../../release/EiskaltDC++-GTK3-${TAG}-linux-x64-Debug.zip" .)
-        fi
-        # Copy Linux .deb files (Release)
-        find "release-assets/${AP}-linux-x64-qt6-deb" -name '*.deb' -exec cp {} release/ \; 2>/dev/null || true
-        find "release-assets/${AP}-linux-x64-gtk3-deb" -name '*.deb' -exec cp {} release/ \; 2>/dev/null || true
-        # Copy NSIS installer if present
-        find "release-assets/${AP}-windows-x64-qt6-nsis-installer" -name '*.exe' -exec cp {} release/ \; 2>/dev/null || true
-        # Copy macOS DMG files (Release, arm64)
-        for arch in arm64; do
-          find "release-assets/${AP}-macos-${arch}-qt6-dmg" -name '*.dmg' -exec cp {} release/ \; 2>/dev/null || true
-          find "release-assets/${AP}-macos-${arch}-gtk3-dmg" -name '*.dmg' -exec cp {} release/ \; 2>/dev/null || true
-        done
-        # Zip macOS Debug (arm64)
-        for arch in arm64; do
-          dir="release-assets/${AP}-macos-${arch}-qt6-Debug"
-          if [ -d "$dir" ]; then
-            (cd "$dir" && zip -r "../../release/EiskaltDC++-Qt6-${TAG}-macos-${arch}-Debug.zip" .)
-          fi
-          dir="release-assets/${AP}-macos-${arch}-gtk3-Debug"
-          if [ -d "$dir" ]; then
-            (cd "$dir" && zip -r "../../release/EiskaltDC++-GTK3-${TAG}-macos-${arch}-Debug.zip" .)
-          fi
-        done
-        ls -la release/
-
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        name: "EiskaltDC++ ${{ github.ref_name }}"
-        draft: false
-        prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
-        generate_release_notes: true
-        files: release/*

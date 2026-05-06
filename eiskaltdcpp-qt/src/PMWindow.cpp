@@ -891,8 +891,8 @@ void PMWindow::slotSmile(){
     const QRect screenGeo = screen ? screen->availableGeometry() : QRect();
 
     const int verticalGap = 6;
-    const int chatWidth = textEdit_CHAT && textEdit_CHAT->viewport() ? textEdit_CHAT->viewport()->width() : width();
-    const int preferredWidth = qMax(420, chatWidth - 2);
+    const int inputWidth = frame ? frame->width() : width();
+    const int preferredWidth = qMax(420, inputWidth);
     const int maxDialogWidth = screenGeo.isValid() ? qMax(520, screenGeo.width() - 24) : 1400;
     const int maxDialogHeight = screenGeo.isValid() ? qMax(260, screenGeo.height() - 24) : 620;
     emojiDialog_->preparePopupGeometry(preferredWidth, maxDialogWidth, maxDialogHeight);
@@ -914,10 +914,10 @@ void PMWindow::slotSmile(){
         }
     }
 
-    const QPoint chatTopLeft = (textEdit_CHAT && textEdit_CHAT->viewport())
-        ? textEdit_CHAT->viewport()->mapToGlobal(QPoint(0, 0))
+    const QPoint inputTopLeft = frame
+        ? frame->mapToGlobal(QPoint(0, 0))
         : mapToGlobal(QPoint(0, 0));
-    int dialogX = chatTopLeft.x();
+    int dialogX = inputTopLeft.x();
     const int bbcodeTopY = toolButton_BOLD->mapToGlobal(QPoint(0, 0)).y();
     int dialogY = bbcodeTopY - dialogHeight - verticalGap;
 
