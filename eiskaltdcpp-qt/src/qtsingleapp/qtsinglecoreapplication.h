@@ -22,6 +22,8 @@ public:
     virtual ~QtSingleCoreApplication();
 
     bool isRunning();
+    qint64 instanceOwnerPid() const;
+    QString instanceOwnerPath() const;
     QSharedMemory& getSharedMemory(){ return sharedMemory; }
     void releaseSingleInstance();
     
@@ -37,6 +39,8 @@ private:
     bool createSingleInstanceMemory();
 
     bool _isRunning;
+    qint64 _instanceOwnerPid;
+    QString _instanceOwnerPath;
     QSharedMemory sharedMemory;
     QTimer *messageTimer;
 };

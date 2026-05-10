@@ -13,10 +13,16 @@
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFileInfo>
 
 #if defined(Q_OS_UNIX)
 #include <cerrno>
 #include <signal.h>
+#endif
+#if defined(Q_OS_MAC)
+#include <libproc.h>
+#elif defined(Q_OS_LINUX)
+#include <unistd.h>
 #endif
 
 static const unsigned int SHARED_MEM_SIZE = 2048;
@@ -40,6 +46,8 @@ static QByteArray singleInstancePayload(const char messageFlag, const qint64 pid
     byteArray.append('\n');
     byteArray.append(QByteArray::number(pid));
     byteArray.append('\n');
+    byteArray.append(QCoreApplication::applicationFilePath().toUtf8());
+    byteArray.append('\n');
     byteArray.append(message);
     byteArray.append('\0');
     byteArray.resize(SHARED_MEM_SIZE);
@@ -47,8 +55,36 @@ static QByteArray singleInstancePayload(const char messageFlag, const qint64 pid
     return byteArray;
 }
 
+static QString canonicalProcessPath(const qint64 pid)
+{
+#if defined(Q_OS_MAC)
+    char pathBuffer[PROC_PIDPATHINFO_MAXSIZE];
+    const int pathLength = proc_pidpath(static_cast<int>(pid), pathBuffer, sizeof(pathBuffer));
+    if (pathLength <= 0)
+        return QString();
+
+    return QFileInfo(QString::fromLocal8Bit(pathBuffer, pathLength)).canonicalFilePath();
+#elif defined(Q_OS_LINUX)
+    char pathBuffer[4096];
+    const QByteArray procPath = QByteArrayLiteral("/proc/") + QByteArray::number(pid) + QByteArrayLiteral("/exe");
+    const ssize_t pathLength = readlink(procPath.constData(), pathBuffer, sizeof(pathBuffer) - 1);
+    if (pathLength <= 0)
+        return QString();
+
+    pathBuffer[pathLength] = '\0';
+    return QFileInfo(QString::fromLocal8Bit(pathBuffer)).canonicalFilePath();
+#else
+    Q_UNUSED(pid);
+    return QString();
+#endif
+}
+
 QtSingleCoreApplication::QtSingleCoreApplication(int &argc, char **argv, const QString &uniqueKey)
-    : QApplication(argc, argv), _isRunning(false), sharedMemory(), messageTimer(nullptr)
+    : QApplication(argc, argv),
+      _isRunning(false),
+      _instanceOwnerPid(-1),
+      sharedMemory(),
+      messageTimer(nullptr)
 {
     sharedMemory.setKey(uniqueKey);
 
@@ -75,6 +111,16 @@ QtSingleCoreApplication::~QtSingleCoreApplication(){
 bool QtSingleCoreApplication::isRunning()
 {
     return _isRunning;
+}
+
+qint64 QtSingleCoreApplication::instanceOwnerPid() const
+{
+    return _instanceOwnerPid;
+}
+
+QString QtSingleCoreApplication::instanceOwnerPath() const
+{
+    return _instanceOwnerPath;
 }
 
 
@@ -118,6 +164,9 @@ void QtSingleCoreApplication::releaseSingleInstance()
 
 bool QtSingleCoreApplication::attachedInstanceIsAlive()
 {
+    _instanceOwnerPid = -1;
+    _instanceOwnerPath.clear();
+
     if (!sharedMemory.isAttached())
         return false;
 
@@ -131,9 +180,23 @@ bool QtSingleCoreApplication::attachedInstanceIsAlive()
     if (pid <= 0)
         return false;
 
+    _instanceOwnerPid = pid;
+    _instanceOwnerPath = canonicalProcessPath(pid);
+
 #if defined(Q_OS_UNIX)
     errno = 0;
-    return ::kill(static_cast<pid_t>(pid), 0) == 0 || errno == EPERM;
+    if (::kill(static_cast<pid_t>(pid), 0) != 0 && errno != EPERM)
+        return false;
+
+    if (_instanceOwnerPath.isEmpty())
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+        return false;
+#else
+        return true;
+#endif
+
+    const QString currentPath = QFileInfo(QCoreApplication::applicationFilePath()).canonicalFilePath();
+    return !currentPath.isEmpty() && _instanceOwnerPath == currentPath;
 #else
     return true;
 #endif
@@ -164,7 +227,9 @@ static QString singleInstanceMessageFromData(const QByteArray &byteArray)
 {
     const QList<QByteArray> parts = byteArray.split('\n');
     if (parts.size() >= 3)
-        return QString::fromUtf8(byteArray.mid(parts.at(0).size() + parts.at(1).size() + 2).constData());
+        return parts.size() >= 4
+                ? QString::fromUtf8(byteArray.mid(parts.at(0).size() + parts.at(1).size() + parts.at(2).size() + 3).constData())
+                : QString::fromUtf8(byteArray.mid(parts.at(0).size() + parts.at(1).size() + 2).constData());
 
     QByteArray legacy = byteArray;
     legacy.remove(0, 1);

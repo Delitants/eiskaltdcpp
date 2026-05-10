@@ -75,6 +75,7 @@ public:
                       LANGUAGE, SKIPLIST_SHARE, INTERNETIP, BIND_IFACE_NAME,
                       DHT_KEY, DHT_BOOTSTRAP_URLS, COUNTRY_DB_PATH, DYNDNS_SERVER, MIME_HANDLER,
                       LOG_FILE_CMD_DEBUG, LOG_FORMAT_CMD_DEBUG,
+                      LOG_FILE_DIAGNOSTIC,
                       EXTERNAL_IP6, BIND_ADDRESS6,
                       STR_LAST };
 
@@ -127,6 +128,7 @@ public:
                       NMDC_DEBUG, SHARE_SKIP_ZERO_BYTE, REQUIRE_TLS, LOG_SPY,
                       APP_UNIT_BASE,
                       LOG_CMD_DEBUG,
+                      LOG_DIAGNOSTIC,
                       NMDC_GETINFO_LIMIT,
                       USE_IPV6,
                       INT_LAST };

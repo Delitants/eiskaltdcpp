@@ -11,6 +11,7 @@
  */
 
 #include "SettingsLog.h"
+#include "DiagnosticLog.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforUtil.h"
@@ -67,6 +68,9 @@ void SettingsLog::init(){
     lineEdit_CMD_DEBUGFMT->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::LOG_FORMAT_CMD_DEBUG, true)));
     lineEdit_FILE_CMD_DEBUGFMT->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::LOG_FILE_CMD_DEBUG, true)));
 
+    groupBox_DIAGNOSTIC->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_DIAGNOSTIC, true));
+    lineEdit_FILE_DIAGNOSTIC->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::LOG_FILE_DIAGNOSTIC, true)));
+
     toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
 
     connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsLog::slotBrowse);
@@ -98,11 +102,17 @@ void SettingsLog::ok(){
     sm->set(SettingsManager::LOG_CMD_DEBUG, groupBox_CMD_DEBUG->isChecked());
     sm->set(SettingsManager::LOG_FORMAT_CMD_DEBUG, _tq(lineEdit_CMD_DEBUGFMT->text()));
     sm->set(SettingsManager::LOG_FILE_CMD_DEBUG, _tq(lineEdit_FILE_CMD_DEBUGFMT->text()));
+    sm->set(SettingsManager::LOG_DIAGNOSTIC, groupBox_DIAGNOSTIC->isChecked());
+    sm->set(SettingsManager::LOG_FILE_DIAGNOSTIC, _tq(lineEdit_FILE_DIAGNOSTIC->text()));
     sm->set(SettingsManager::LOG_SYSTEM, checkBox_SYSTEM->isChecked());
     sm->set(SettingsManager::LOG_STATUS_MESSAGES, checkBox_STAT->isChecked());
     sm->set(SettingsManager::LOG_FILELIST_TRANSFERS, checkBox_FILELIST->isChecked());
     sm->set(SettingsManager::LOG_SPY, groupBox_SPYLOG->isChecked());
     sm->set(SettingsManager::REPORT_ALTERNATES, checkBox_REPORT_ALTERNATES->isChecked());
+
+    DiagnosticLog::instance().configure(sm->getBool(SettingsManager::LOG_DIAGNOSTIC, true),
+                                        _q(sm->get(SettingsManager::LOG_DIRECTORY, true)),
+                                        _q(sm->get(SettingsManager::LOG_FILE_DIAGNOSTIC, true)));
 }
 
 void SettingsLog::slotBrowse(){

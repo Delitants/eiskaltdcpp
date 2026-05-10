@@ -56,6 +56,7 @@ const string SettingsManager::settingTags[] =
     "Language", "SkipListShare", "InternetIp", "BindIfaceName",
     "DHTKey", "DHTBootstrapURLs", "CountryDbPath", "DynDNSServer", "MimeHandler",
     "LogFileCmdDebug", "LogFormatCmdDebug",
+    "LogFileDiagnostic",
     "ExternalIp6", "BindAddress6",
     "SENTRY",
     // Ints
@@ -103,6 +104,7 @@ const string SettingsManager::settingTags[] =
     "UseADLOnlyOnOwnList", "AllowSimUploads", "CheckTargetsPathsOnStart", "NmdcDebug",
     "ShareSkipZeroByte", "RequireTLS", "LogSpy", "AppUnitBase",
     "LogCmdDebug",
+    "LogDiagnostic",
     "NmdcGetinfoLimit",
     "UseIPv6",
     "SENTRY",
@@ -191,6 +193,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(LOG_MAIN_CHAT, false);
     setDefault(LOG_SPY, false);
     setDefault(LOG_CMD_DEBUG, false);
+    setDefault(LOG_DIAGNOSTIC, true);
     setDefault(UPLOAD_SPEED, connectionSpeeds[11]);
     setDefault(MIN_UPLOAD_SPEED, 0);
     setDefault(LOG_FORMAT_POST_DOWNLOAD, "[%Y-%m-%d %H:%M:%S] %[target] downloaded from %[userNI] (%[userCID]), %[fileSI] (%[fileSIchunk]), %[speed], %[time], %[fileTR]");
@@ -211,6 +214,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(LOG_FILE_SYSTEM,       "System.log");
     setDefault(LOG_FILE_SPY,          "Spy.log");
     setDefault(LOG_FILE_CMD_DEBUG,    "CmdDebug.log");
+    setDefault(LOG_FILE_DIAGNOSTIC,   "Diagnostic.log");
     setDefault(SOCKS_PORT, 1080);
     setDefault(SOCKS_RESOLVE, 1);
     setDefault(CONFIG_VERSION, "0.181");        // 0.181 is the last version missing configversion

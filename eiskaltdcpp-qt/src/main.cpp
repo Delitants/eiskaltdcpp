@@ -35,6 +35,7 @@ using namespace std;
 #include "dcpp/forward.h"
 #include "dcpp/QueueManager.h"
 #include "dcpp/HashManager.h"
+#include "dcpp/SettingsManager.h"
 #include "dcpp/Thread.h"
 #include "dcpp/Singleton.h"
 
@@ -49,6 +50,7 @@ using namespace std;
 #include "QueuedUsers.h"
 #include "ArenaWidgetManager.h"
 #include "ArenaWidgetFactory.h"
+#include "DiagnosticLog.h"
 #include "MainWindow.h"
 #include "GlobalTimer.h"
 #include "EmoticonFactory.h"
@@ -95,6 +97,39 @@ using namespace std;
 void callBack(void *, const std::string &a)
 {
     std::cout << QObject::tr("Loading: ").toStdString() << a << std::endl;
+}
+
+QString readBootstrapSetting(const QString& tag)
+{
+    QFile file(QDir::home().filePath(QStringLiteral(".config/eiskaltdc++/DCPlusPlus.xml")));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return QString();
+
+    const QString xml = QString::fromUtf8(file.readAll());
+    const QRegularExpression expression(QStringLiteral("<%1\\b[^>]*>([^<]*)</%1>").arg(tag));
+    const QRegularExpressionMatch match = expression.match(xml);
+
+    return match.hasMatch() ? match.captured(1).trimmed() : QString();
+}
+
+bool bootstrapDiagnosticLogEnabled()
+{
+    const QString value = readBootstrapSetting(QStringLiteral("LogDiagnostic"));
+    return value.isEmpty() || value != QStringLiteral("0");
+}
+
+QString bootstrapDiagnosticLogDirectory()
+{
+    const QString value = readBootstrapSetting(QStringLiteral("LogDirectory"));
+    return value.isEmpty()
+            ? QDir::home().filePath(QStringLiteral(".local/share/eiskaltdc++/Logs/"))
+            : value;
+}
+
+QString bootstrapDiagnosticLogFileName()
+{
+    const QString value = readBootstrapSetting(QStringLiteral("LogFileDiagnostic"));
+    return value.isEmpty() ? QStringLiteral("Diagnostic.log") : value;
 }
 
 void parseCmdLine(const QStringList &);
@@ -552,6 +587,8 @@ int main(int argc, char *argv[])
 
     setlocale(LC_ALL, "");
 
+    DiagnosticLog::instance().install();
+
 #if defined(Q_OS_MAC)
     // Qt 6.11's Cocoa accessibility bridge can abort when fast-changing item
     // views are inspected while their accessible wrappers are being deleted.
@@ -561,6 +598,10 @@ int main(int argc, char *argv[])
 
     EiskaltApp app(argc, argv, _q(dcpp::Util::getLoginName()+"EDCPP"));
     app.setQuitOnLastWindowClosed(false);
+    DiagnosticLog::instance().configure(bootstrapDiagnosticLogEnabled(),
+                                        bootstrapDiagnosticLogDirectory(),
+                                        bootstrapDiagnosticLogFileName());
+    DiagnosticLog::instance().logLine(QStringLiteral("bootstrap started"));
 #if defined(Q_OS_MAC)
     MacAppearanceStyleUpdater macAppearanceStyleUpdater(app);
 #endif
@@ -569,6 +610,12 @@ int main(int argc, char *argv[])
     parseCmdLine(app.arguments());
 
     if (app.isRunning()){
+        DiagnosticLog::instance().logLine(
+            QStringLiteral("secondary instance detected; owner_pid=%1 owner_path=%2; forwarding arguments and exiting")
+                .arg(app.instanceOwnerPid())
+                .arg(app.instanceOwnerPath().isEmpty()
+                        ? QStringLiteral("<unknown>")
+                        : app.instanceOwnerPath()));
         QStringList args = app.arguments();
         args.removeFirst(); // remove path to executable
 #if !defined(Q_OS_HAIKU)
@@ -586,6 +633,13 @@ int main(int argc, char *argv[])
 #endif
 
     auto dcContext = dcpp::startup(callBack, nullptr);
+    DiagnosticLog::instance().configure(dcContext->getSettingsManager()->getBool(dcpp::SettingsManager::LOG_DIAGNOSTIC, true),
+                                        _q(dcContext->getSettingsManager()->get(dcpp::SettingsManager::LOG_DIRECTORY, true)),
+                                        _q(dcContext->getSettingsManager()->get(dcpp::SettingsManager::LOG_FILE_DIAGNOSTIC, true)));
+    DiagnosticLog::instance().startHeartbeat(&app);
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, [] {
+        DiagnosticLog::instance().logLine(QStringLiteral("aboutToQuit"));
+    });
     dcContext->getTimerManager()->start();
 
     dcContext->getHashManager()->setPriority(Thread::IDLE);
