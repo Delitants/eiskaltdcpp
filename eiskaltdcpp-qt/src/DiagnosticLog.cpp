@@ -302,6 +302,15 @@ void DiagnosticLog::fatalSignalHandler(int signalNumber)
 
 void DiagnosticLog::installSignalHandlers()
 {
+    // A closed peer on a socket/pipe must be reported as EPIPE, not allowed to
+    // terminate the whole client. macOS does not provide MSG_NOSIGNAL, so keep
+    // this process-wide guard in the GUI startup path.
+    struct sigaction pipeAction;
+    memset(&pipeAction, 0, sizeof(pipeAction));
+    pipeAction.sa_handler = SIG_IGN;
+    sigemptyset(&pipeAction.sa_mask);
+    sigaction(SIGPIPE, &pipeAction, nullptr);
+
     struct sigaction action;
     memset(&action, 0, sizeof(action));
     action.sa_handler = DiagnosticLog::fatalSignalHandler;
