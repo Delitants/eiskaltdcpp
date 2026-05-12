@@ -11,7 +11,7 @@ endif ()
 
 add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 set (PROJECT_NAME "EiskaltDC++")
-set (APP_VERSION "2.5.4-v2") # Main program version (displayed in UI)
+set (APP_VERSION "2.5.4-v3-pre.1") # Main program version (displayed in UI)
 set (CONF_VERSION "2.0500") # Config version (for updating of DCPlusPlus.xml)
 set (SO_VERSION "2.5") # Library version (incremented after changes in API or ABI)
 
@@ -254,7 +254,7 @@ message (STATUS "Data directory: ${CLIENT_DATA_DIR}")
 if (REPLACE_VERSION)
     set (APP_VERSION "${REPLACE_VERSION}")
 elseif (APPLE)
-    set (APP_VERSION "2.5.4-v2")
+    set (APP_VERSION "2.5.4-v3-pre.1")
 elseif (GIT_FOUND)
     if (EXISTS "${PROJECT_SOURCE_DIR}/.git/config")
         execute_process (COMMAND ${GIT_EXECUTABLE} describe --tags

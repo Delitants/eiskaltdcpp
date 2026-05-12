@@ -4,6 +4,17 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.4-v3-pre.1 2026-05-12 ---
+*** common changes ***
+* Bumped pre-release version to 2.5.4-v3-pre.1 for the next macOS ARM64 test build.
+*** eiskaltdcpp-qt ***
+* Added optional persistent diagnostic crash logging under Preferences > Logs.
+* Added startup, heartbeat, Qt warning, terminate, fatal signal and normal quit
+  markers to the diagnostic log.
+* Ignored SIGPIPE in the Qt startup path so a closed socket/pipe reports EPIPE
+  instead of terminating the whole application.
+* Added single-instance owner PID/path logging to diagnose silent forwarding exits.
+
 --- 2.5.4-v1 2026-04-28 ---
 *** common changes ***
 * Bumped release version to 2.5.4-v1 for the next macOS ARM64 build.
