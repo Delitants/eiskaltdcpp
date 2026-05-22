@@ -303,8 +303,8 @@ if (ENABLE_STACKTRACE)
 endif (ENABLE_STACKTRACE)
 
 if (APPLE)
-    set (MACOSICON "${PROJECT_SOURCE_DIR}/../data/icons/icon_1024x1024.icns")
-    set (MACOSICONINBUNDLE "icon_1024x1024.icns")
+    set (MACOSICON "${PROJECT_SOURCE_DIR}/../data/icons/eiskaltdcpp-dock-icon.icns")
+    set (MACOSICONINBUNDLE "eiskaltdcpp-dock-icon")
     # Set how it shows up in the Info.plist file
     set (MACOSX_BUNDLE_ICON_FILE ${MACOSICONINBUNDLE})
     # Set where in the bundle to put the icns file

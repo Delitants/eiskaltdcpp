@@ -15,11 +15,13 @@
 #include "QtContext.h"
 
 #include <QComboBox>
+#include <QLabel>
 
 #include "dcpp/stdinc.h"
 #include "dcpp/SettingsManager.h"
 #include "dcpp/DCPlusPlus.h"
 
+#include "ClientTagPresets.h"
 #include "WulforUtil.h"
 #include "WulforSettings.h"
 
@@ -45,6 +47,8 @@ void SettingsPersonal::ok(){
     SM->set(SettingsManager::DESCRIPTION, lineEdit_DESC->text().toStdString());
     SM->set(SettingsManager::UPLOAD_SPEED, SettingsManager::connectionSpeeds[comboBox_SPEED->currentIndex()]);
     SM->set(SettingsManager::DEFAULT_AWAY_MESSAGE, lineEdit_AWAYMSG->text().toStdString());
+    SM->set(SettingsManager::CLIENT_ID_NMDC, comboBox_CLIENT_ID->currentData(Qt::UserRole).toString().toStdString());
+    SM->set(SettingsManager::CLIENT_ID_ADC, comboBox_CLIENT_ID->currentData(Qt::UserRole + 1).toString().toStdString());
 
     QString enc = comboBox_ENC->currentText();
 
@@ -93,4 +97,34 @@ void SettingsPersonal::init(){
 
     checkBox_AUTOAWAY->setChecked(qtCtx()->settings()->getBool(WB_APP_AUTOAWAY_BY_TIMER));
     spinBox->setValue(qtCtx()->settings()->getInt(WI_APP_AUTOAWAY_INTERVAL));
+
+    initClientTagPresets();
+}
+
+void SettingsPersonal::initClientTagPresets(){
+    comboBox_CLIENT_ID = new QComboBox(frame_2);
+
+    const auto presetList = ClientTagPresets::presets();
+    for (const ClientTagPresets::Preset &preset : presetList) {
+        comboBox_CLIENT_ID->addItem(preset.label);
+        const int index = comboBox_CLIENT_ID->count() - 1;
+        comboBox_CLIENT_ID->setItemData(index, preset.nmdc, Qt::UserRole);
+        comboBox_CLIENT_ID->setItemData(index, preset.adc, Qt::UserRole + 1);
+    }
+
+    const QString currentNMDC = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::CLIENT_ID_NMDC, false));
+    const QString currentADC = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::CLIENT_ID_ADC, false));
+    for (int i = 0; i < comboBox_CLIENT_ID->count(); ++i) {
+        if (comboBox_CLIENT_ID->itemData(i, Qt::UserRole).toString() == currentNMDC &&
+            comboBox_CLIENT_ID->itemData(i, Qt::UserRole + 1).toString() == currentADC) {
+            comboBox_CLIENT_ID->setCurrentIndex(i);
+            break;
+        }
+    }
+
+    QLabel *label = new QLabel(tr("Client tag"), frame_2);
+    label->setWordWrap(true);
+    comboBox_CLIENT_ID->setToolTip(tr("Optional client tag spoofing preset. Favorite hub settings can override this per hub."));
+    gridLayout->addWidget(label, 2, 0);
+    gridLayout->addWidget(comboBox_CLIENT_ID, 2, 1, 1, 2);
 }

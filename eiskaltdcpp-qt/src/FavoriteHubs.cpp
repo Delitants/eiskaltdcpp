@@ -12,6 +12,7 @@
 
 #include "FavoriteHubs.h"
 #include "FavoriteHubModel.h"
+#include "ClientTagPresets.h"
 #include "WulforUtil.h"
 #include "WulforSettings.h"
 #include "VersionGlobal.h"
@@ -91,43 +92,8 @@ void FavoriteHubs::init(){
     fakeNMDCTags.clear();
     fakeADCTags.clear();
 
-    fakeNMDCTags = QStringList({
-        QString::fromStdString(fullNMDCVersionString),
-        "++ V:0.791",
-        "++ V:0.851",
-        "++ V:0.868",
-        "StrgDC++ V:2.21",
-        "StrgDC++ V:2.42",
-        "AirDC++ V:3.53",
-        "AirDC++w V:2.5.0",
-        "ApexDC++ V:0.4.0",
-        "ApexDC++ V:1.6.5",
-        "FlylinkDC++ V:r504-21653",
-        "FlylinkDC++ V:r504-x64-21131",
-        "FlylinkDC++ V:r505-beta-21669",
-        "FlylinkDC++ V:r505-beta-x64-2177",
-        "HomeDC++ V:2.22",
-        "FakeDC++ V:1.3"
-    });
-
-    fakeADCTags = QStringList({
-        QString::fromStdString(fullADCVersionString),
-        "++ 0.791",
-        "++ 0.851",
-        "++ 0.868",
-        "StrgDC++ 2.21",
-        "StrgDC++ 2.42",
-        "AirDC++ 3.53",
-        "AirDC++w 2.5.0",
-        "ApexDC++ 0.4.0",
-        "ApexDC++ 1.6.5",
-        "FlylinkDC++ r504-21653",
-        "FlylinkDC++ r504-x64-21131",
-        "FlylinkDC++ r505-beta-21669",
-        "FlylinkDC++ r505-beta-x64-2177",
-        "HomeDC++ 2.22",
-        "FakeDC++ 1.3"
-    });
+    fakeNMDCTags = ClientTagPresets::nmdcTags();
+    fakeADCTags = ClientTagPresets::adcTags();
 
     const FavoriteHubEntryList& fl = dcCtx().getFavoriteManager()->getFavoriteHubs();
     for (const FavoriteHubEntry* entry : fl) {
@@ -188,12 +154,13 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor){
     editor.comboBox_ENC->addItems(qtCtx()->wulforUtil()->encodings());
     editor.spinBox_MINSEARCH_INTERVAL->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MINIMUM_SEARCH_INTERVAL, true));
 
-    // Client ID override (faking) is no longer exposed in the favorite hub editor.
+    editor.checkBox_CID->setText(tr("Client tag"));
     editor.checkBox_CID->setChecked(false);
-    editor.checkBox_CID->setEnabled(false);
-    editor.checkBox_CID->setVisible(false);
+    editor.checkBox_CID->setEnabled(true);
+    editor.checkBox_CID->setVisible(true);
     editor.comboBox_CID->setEnabled(false);
-    editor.comboBox_CID->setVisible(false);
+    editor.comboBox_CID->setVisible(true);
+    connect(editor.lineEdit_ADDRESS, &QLineEdit::textChanged, this, &FavoriteHubs::slotUpdateComboBox_CID);
 }
 
 static bool isValidIP(const QString &ip){
@@ -235,7 +202,7 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor, StrMap &map){
     editor.checkBox_IP->setChecked(isValidIP(map["IP"].toString()));
     editor.checkBox_USEINTERNET->setChecked(map["IIP"].toBool());
     editor.checkBox_DISABLECHAT->setChecked(map["DCHAT"].toBool());
-    editor.checkBox_CID->setChecked(false);
+    editor.checkBox_CID->setChecked(map["OVERTAG"].toBool());
     editor.comboBox_MODE->setCurrentIndex(map["MODE"].toInt());
     editor.spinBox_MINSEARCH_INTERVAL->setValue(map["SINT"].toInt());
 
@@ -259,7 +226,12 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor, StrMap &map){
 }
 
 void FavoriteHubs::slotUpdateComboBox_CID(){
-    FavoriteHubEditor *editor = qobject_cast<FavoriteHubEditor *>(sender()->parent()->parent());
+    FavoriteHubEditor *editor = nullptr;
+    for (QObject *object = sender(); object; object = object->parent()) {
+        editor = qobject_cast<FavoriteHubEditor *>(object);
+        if (editor)
+            break;
+    }
 
     if(!editor)
         return;
@@ -320,11 +292,8 @@ void FavoriteHubs::getParams(const FavoriteHubEditor &editor, StrMap &map){
         map["IP"] = editor.lineEdit_IP->text();
     else
         map["IP"] = "";
-    const bool adcProtocol = map["ADDR"].toString().startsWith("adc://", Qt::CaseInsensitive) ||
-                             map["ADDR"].toString().startsWith("adcs://", Qt::CaseInsensitive);
-    map["OVERTAG"] = false;
-    map["TAG"] = adcProtocol ? fakeADCTags.value(0, QString::fromStdString(fullADCVersionString))
-                             : fakeNMDCTags.value(0, QString::fromStdString(fullNMDCVersionString));
+    map["OVERTAG"] = editor.checkBox_CID->isChecked();
+    map["TAG"] = editor.checkBox_CID->isChecked() ? editor.comboBox_CID->currentText() : QString();
 
     if (editor.checkBox_NICK->isChecked() && !editor.lineEdit_NICK->text().isEmpty())
         map["NICK"] = editor.lineEdit_NICK->text();

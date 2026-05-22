@@ -14,6 +14,8 @@
 #include "ui_UISettingsPersonal.h"
 #include "SettingsInterface.h"
 
+class QComboBox;
+
 class SettingsPersonal :
         public QWidget,
         private Ui::UISettingsPersonal,
@@ -29,4 +31,7 @@ public slots:
 
 private:
     void init();
+    void initClientTagPresets();
+
+    QComboBox *comboBox_CLIENT_ID = nullptr;
 };

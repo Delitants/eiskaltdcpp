@@ -77,6 +77,7 @@ public:
                       LOG_FILE_CMD_DEBUG, LOG_FORMAT_CMD_DEBUG,
                       LOG_FILE_DIAGNOSTIC,
                       EXTERNAL_IP6, BIND_ADDRESS6,
+                      CLIENT_ID_NMDC, CLIENT_ID_ADC,
                       STR_LAST };
 
     enum IntSetting { INT_FIRST = STR_LAST + 1,

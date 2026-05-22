@@ -1277,6 +1277,80 @@ void MainWindow::initActions(){
     }
 }
 
+void MainWindow::reloadIconTheme()
+{
+    Q_D(MainWindow);
+
+    WulforUtil *WU = qtCtx()->wulforUtil();
+    WU->loadIcons();
+
+    auto setActionIcon = [WU](QAction *action, WulforUtil::Icons icon) {
+        if (action)
+            action->setIcon(WU->getPixmap(icon));
+    };
+
+    setWindowIcon(WU->getPixmap(WulforUtil::eiICON_APPL));
+
+    setActionIcon(d->fileOpenMagnet, WulforUtil::eiDOWNLOAD);
+    setActionIcon(d->fileFileListBrowserLocal, WulforUtil::eiOWN_FILELIST);
+    setActionIcon(d->fileFileListBrowser, WulforUtil::eiOPENLIST);
+    setActionIcon(d->fileFileHasher, WulforUtil::eiOPENLIST);
+    setActionIcon(d->fileOpenLogFile, WulforUtil::eiOPEN_LOG_FILE);
+    setActionIcon(d->fileOpenDownloadDirectory, WulforUtil::eiFOLDER_BLUE);
+    setActionIcon(d->fileHideWindow, WulforUtil::eiHIDEWINDOW);
+    setActionIcon(d->fileQuit, WulforUtil::eiEXIT);
+
+    setActionIcon(d->hubsHubReconnect, WulforUtil::eiRECONNECT);
+    setActionIcon(d->hubsQuickConnect, WulforUtil::eiCONNECT);
+    setActionIcon(d->hubsFavoriteHubs, WulforUtil::eiFAVSERVER);
+    setActionIcon(d->hubsPublicHubs, WulforUtil::eiSERVER);
+    setActionIcon(d->hubsFavoriteUsers, WulforUtil::eiFAVUSERS);
+
+    setActionIcon(d->toolsHubManager, WulforUtil::eiSERVER);
+    setActionIcon(d->toolsCopyWindowTitle, WulforUtil::eiEDITCOPY);
+    setActionIcon(d->toolsOptions, WulforUtil::eiCONFIGURE);
+    setActionIcon(d->toolsADLS, WulforUtil::eiADLS);
+    setActionIcon(d->toolsCmdDebug, WulforUtil::eiCONSOLE);
+    setActionIcon(d->toolsSecretary, WulforUtil::eiMAGNET);
+    setActionIcon(d->toolsTransfers, WulforUtil::eiTRANSFER);
+    setActionIcon(d->toolsDownloadQueue, WulforUtil::eiDOWNLOAD);
+    setActionIcon(d->toolsQueuedUsers, WulforUtil::eiUSERS);
+    setActionIcon(d->toolsFinishedDownloads, WulforUtil::eiDOWNLIST);
+    setActionIcon(d->toolsFinishedUploads, WulforUtil::eiUPLIST);
+    setActionIcon(d->toolsSearchSpy, WulforUtil::eiSPY);
+    setActionIcon(d->toolsAntiSpam, WulforUtil::eiSPAM);
+    setActionIcon(d->toolsIPFilter, WulforUtil::eiFILTER);
+    setActionIcon(d->toolsSearch, WulforUtil::eiFILEFIND);
+    setActionIcon(d->toolsHideProgressSpace, WulforUtil::eiFREESPACE);
+    setActionIcon(d->toolsHideLastStatus, WulforUtil::eiSTATUS);
+    setActionIcon(d->toolsHideUsersStatisctics, WulforUtil::eiUSERS);
+    setActionIcon(d->toolsSwitchSpeedLimit,
+                  qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::THROTTLE_ENABLE, true)
+                  ? WulforUtil::eiSPEED_LIMIT_ON
+                  : WulforUtil::eiSPEED_LIMIT_OFF);
+
+#ifdef USE_JS
+    setActionIcon(d->toolsJS, WulforUtil::eiPLUGIN);
+    setActionIcon(d->toolsJSConsole, WulforUtil::eiCONSOLE);
+#endif
+
+    setActionIcon(d->chatClear, WulforUtil::eiCLEAR);
+    setActionIcon(d->findInWidget, WulforUtil::eiFIND);
+    setActionIcon(d->chatDisable, WulforUtil::eiEDITDELETE);
+
+    if (d->menuAwayAction)
+        d->menuAwayAction->setIcon(QIcon(WU->getPixmap(WulforUtil::eiAWAY)));
+    if (d->aboutClient)
+        d->aboutClient->setIcon(WU->getPixmap(WulforUtil::eiICON_APPL)
+                                .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    setActionIcon(d->aboutQt, WulforUtil::eiQT_LOGO);
+
+    updateHashProgressStatus();
+    if (d->fBar)
+        d->fBar->update();
+    redrawToolPanel();
+}
+
 void MainWindow::initMenuBar(){
 #if defined(Q_OS_MAC)
     setMenuBar(new QMenuBar());

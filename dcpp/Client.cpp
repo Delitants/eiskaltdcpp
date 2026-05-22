@@ -84,6 +84,12 @@ void Client::reloadSettings(bool updateNick) {
     else
         ClientId = fullNMDCVersionString;
 
+    const bool adcProtocol = (::strncmp(getHubUrl().c_str(),"adc://", 6) == 0 ||
+            ::strncmp(getHubUrl().c_str(),"adcs://", 7) == 0);
+    const string globalClientId = adcProtocol ? CTX_SETTING(CLIENT_ID_ADC) : CTX_SETTING(CLIENT_ID_NMDC);
+    if (!globalClientId.empty())
+        ClientId = globalClientId;
+
     if(fav) {
         if(updateNick) {
             setCurrentNick(checkNick(fav->getNick(true)));

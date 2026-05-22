@@ -375,6 +375,9 @@ QIcon Notification::trayIcon() const
     QPixmap pixmap = qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
             .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
+#ifdef Q_OS_DARWIN
+    return QIcon(pixmap);
+#else
     if (!qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
         return QIcon(pixmap);
 
@@ -416,6 +419,7 @@ QIcon Notification::trayIcon() const
     painter.end();
 
     return QIcon(QPixmap::fromImage(image));
+#endif
 }
 
 void QtNotifyModule::showMessage(const QString &title, const QString &msg, QObject *obj) {

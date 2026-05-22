@@ -883,67 +883,8 @@ void PMWindow::slotSmile(){
         });
     }
 
-    const QPoint smileButtonPos = toolButton_SMILE->mapToGlobal(QPoint(0, 0));
-    QScreen *screen = QApplication::screenAt(smileButtonPos);
-    if (!screen)
-        screen = QApplication::primaryScreen();
-
-    const QRect screenGeo = screen ? screen->availableGeometry() : QRect();
-
-    const int verticalGap = 6;
-    const QRect bbcodeRect = horizontalLayout_BBCODE ? horizontalLayout_BBCODE->geometry() : QRect();
-    const int bbcodeWidth = bbcodeRect.width() > 0 ? bbcodeRect.width() : (frame ? frame->width() : width());
-    const int preferredWidth = qMax(420, bbcodeWidth);
-    const int maxDialogWidth = screenGeo.isValid() ? qMax(520, screenGeo.width() - 24) : 1400;
-    const int maxDialogHeight = screenGeo.isValid() ? qMax(260, screenGeo.height() - 24) : 620;
-    emojiDialog_->preparePopupGeometry(preferredWidth, maxDialogWidth, maxDialogHeight);
-
-    int dialogWidth = emojiDialog_->width();
-    int dialogHeight = emojiDialog_->height();
-    if (dialogWidth > preferredWidth) {
-        emojiDialog_->resize(preferredWidth, dialogHeight);
-        dialogWidth = emojiDialog_->width();
-        dialogHeight = emojiDialog_->height();
-    }
-
-    if (screenGeo.isValid()) {
-        const QPoint bbcodeTopLeft = (horizontalLayout_BBCODE && horizontalLayout_BBCODE->parentWidget() && bbcodeRect.width() > 0)
-            ? horizontalLayout_BBCODE->parentWidget()->mapToGlobal(bbcodeRect.topLeft())
-            : toolButton_BOLD->mapToGlobal(QPoint(0, 0));
-        const int bbcodeTopY = bbcodeTopLeft.y();
-        const int availableAbove = bbcodeTopY - verticalGap - screenGeo.top();
-        if (availableAbove > 120 && dialogHeight > availableAbove) {
-            emojiDialog_->resize(dialogWidth, availableAbove);
-            dialogHeight = emojiDialog_->height();
-        }
-    }
-
-    const QPoint bbcodeTopLeft = (horizontalLayout_BBCODE && horizontalLayout_BBCODE->parentWidget() && bbcodeRect.width() > 0)
-        ? horizontalLayout_BBCODE->parentWidget()->mapToGlobal(bbcodeRect.topLeft())
-        : toolButton_BOLD->mapToGlobal(QPoint(0, 0));
-    int dialogX = bbcodeTopLeft.x();
-    const int bbcodeTopY = bbcodeTopLeft.y();
-    int dialogY = bbcodeTopY - dialogHeight - verticalGap;
-
-    if (screenGeo.isValid()) {
-        if (dialogX < screenGeo.left())
-            dialogX = screenGeo.left();
-        if (dialogX + dialogWidth > screenGeo.right())
-            dialogX = screenGeo.right() - dialogWidth;
-
-        if (dialogY < screenGeo.top())
-            dialogY = screenGeo.top();
-
-        // Keep popup strictly above the BBCode panel.
-        const int maxBottom = bbcodeTopY - verticalGap;
-        if (dialogY + dialogHeight > maxBottom)
-            dialogY = qMax(screenGeo.top(), maxBottom - dialogHeight);
-    }
-
-    emojiDialog_->move(dialogX, dialogY);
-    emojiDialog_->show();
-    emojiDialog_->raise();
-    emojiDialog_->activateWindow();
+    const int popupWidth = qBound(620, textEdit_CHAT->width() - 160, 790);
+    emojiDialog_->showCenteredAbove(textEdit_CHAT, toolButton_SMILE, popupWidth, popupWidth, 320);
 }
 
 void PMWindow::slotSmileClicked(){

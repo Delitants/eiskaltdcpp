@@ -219,6 +219,7 @@ private:
 
     QPixmap *userIconCache[USERLIST_XPM_COLUMNS][USERLIST_XPM_ROWS];
     QImage  *userIcons;
+    bool    apexUserIcons;
 
     QMap<QString, int> connectionSpeeds;
     QMap<QString, Icons> m_FileTypeMap;

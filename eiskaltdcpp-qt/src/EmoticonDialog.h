@@ -15,6 +15,7 @@
 #include <QDialog>
 #include <QEvent>
 #include <QPixmap>
+#include <QPointer>
 
 class QLabel;
 class QGridLayout;
@@ -33,14 +34,23 @@ public:
 
     QString getEmoticonText() const { return selectedSmile; }
     void preparePopupGeometry(int preferredWidth, int maxWidth, int maxHeight);
+    void showAnchoredAbove(QWidget *anchor, int preferredWidth, int maxWidth, int maxHeight, int verticalGap = 6);
+    void showCenteredAbove(QWidget *centerWidget, QWidget *anchor, int preferredWidth, int maxWidth, int maxHeight, int verticalGap = 6);
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private Q_SLOTS:
     void smileClicked();
 
 private:
+    void placeCenteredAbove(QWidget *centerWidget, QWidget *anchor, int preferredWidth, int maxWidth, int maxHeight, int verticalGap);
+
     /** */
     FlowLayout * m_pLayout;
     QScrollArea * m_scrollArea;
     QWidget * m_scrollContent;
     QString selectedSmile;
+    QPointer<QWidget> currentAnchor_;
+    bool appFilterInstalled_ = false;
 };

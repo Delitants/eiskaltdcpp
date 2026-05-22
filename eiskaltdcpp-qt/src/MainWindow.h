@@ -121,6 +121,7 @@ friend class QtContext;
         void autoconnect();
         /** */
         void retranslateUi();
+        void reloadIconTheme();
 
         /** */
         void reloadSomeSettings();

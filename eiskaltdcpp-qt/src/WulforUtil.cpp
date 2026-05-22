@@ -178,6 +178,76 @@ bool openWithConfiguredExternalHandler(const QString &url)
 
     return QProcess::startDetached(handler, QStringList(url));
 }
+
+int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const QString &connection)
+{
+    constexpr int APEX_STATUS_AWAY = 0x02;
+    constexpr int APEX_STATUS_SERVER = 0x04;
+    constexpr int APEX_STATUS_FIREBALL = 0x08;
+
+    int image = 12;
+    const int status = static_cast<int>(identity.getStatus());
+    const std::string conn = _tq(connection.trimmed());
+
+    if (isOp || identity.isOp()) {
+        image = 0;
+    } else if (status & APEX_STATUS_FIREBALL) {
+        image = 1;
+    } else if (status & APEX_STATUS_SERVER) {
+        image = 2;
+    } else if (conn == "28.8Kbps" || conn == "33.6Kbps" ||
+               conn == "56Kbps" || conn == "Modem" || conn == "ISDN") {
+        image = 6;
+    } else if (conn == "Satellite" || conn == "Microwave" || conn == "Wireless") {
+        image = 8;
+    } else if (conn == "DSL" || conn == "Cable") {
+        image = 9;
+    } else if (conn.compare(0, 3, "LAN") == 0) {
+        image = 11;
+    } else if (conn.compare(0, 10, "NetLimiter") == 0) {
+        image = 3;
+    } else {
+        const double uploadSpeedMbit = conn.empty()
+            ? (8 * Util::toDouble(identity.get("US")) / 1024 / 1024)
+            : Util::toDouble(conn);
+
+        if (uploadSpeedMbit >= 10) {
+            image = 10;
+        } else if (uploadSpeedMbit > 0.1) {
+            image = 7;
+        } else if (uploadSpeedMbit >= 0.01) {
+            image = 4;
+        } else if (uploadSpeedMbit > 0) {
+            image = 5;
+        }
+    }
+
+    if (isAway || identity.isAway() || (status & APEX_STATUS_AWAY))
+        image += 13;
+
+    const bool apexConnectableAdc =
+        !identity.get("FS").empty() &&
+        identity.supports(AdcHub::ADCS_FEATURE) &&
+        identity.supports(AdcHub::SEGA_FEATURE) &&
+        ((identity.supports(AdcHub::TCP4_FEATURE) && identity.supports(AdcHub::UDP4_FEATURE)) ||
+         identity.supports(AdcHub::NAT0_FEATURE));
+
+    if (apexConnectableAdc)
+        image += 26;
+
+    const UserPtr &user = identity.getUser();
+    const bool tcpActive = user
+        ? ((!user->isSet(User::NMDC))
+            ? ((!identity.getIp().empty() && identity.supports(AdcHub::TCP4_FEATURE)) ||
+               (!identity.getIp6().empty() && identity.supports(AdcHub::TCP6_FEATURE)))
+            : !user->isSet(User::PASSIVE))
+        : true;
+
+    if (!tcpActive && !identity.supports(AdcHub::NAT0_FEATURE))
+        image += 52;
+
+    return qBound(0, image, 103);
+}
 }
 
 WulforUtil::WulforUtil(dcpp::DCContext& ctx)
@@ -191,6 +261,7 @@ WulforUtil::WulforUtil(dcpp::DCContext& ctx)
     memset(userIconCache, 0, sizeof (userIconCache));
 
     userIcons = new QImage();
+    apexUserIcons = false;
 
     connectionSpeeds["0.005"]   = 0;
     connectionSpeeds["0.01"]    = 0;
@@ -237,7 +308,16 @@ WulforUtil::~WulforUtil(){
 }
 
 bool WulforUtil::loadUserIcons(){
-    return loadUserIconsFromFile(findUserIconsPath() + QString("/usericons.png"));
+    const QString userIconsPath = findUserIconsPath();
+    const bool isApexTheme = QFileInfo(userIconsPath).fileName().compare(QStringLiteral("apex"), Qt::CaseInsensitive) == 0;
+
+    if (loadUserIconsFromFile(userIconsPath + QString("/usericons.png"))) {
+        apexUserIcons = isApexTheme;
+        return true;
+    }
+
+    apexUserIcons = false;
+    return false;
 }
 
 QString WulforUtil::findAppIconsPath() const
@@ -558,29 +638,38 @@ void WulforUtil::clearUserIconCache(){
 
 QPixmap *WulforUtil::getUserIcon(const UserPtr &id, bool isAway, bool isOp, const QString &sp){
 
-    int x = connectionSpeeds.value(sp, 5);
-    int y = 0;
-
-    if (isAway)
-        y += 1;
-
-    if (id->isSet(User::TLS))
-        y += 2;
+    if (!id)
+        return &m_PixmapMap[eiUSERS];
 
     Identity iid = dcCtx().getClientManager()->getOnlineUserIdentity(id);
 
-    if( (iid.supports(AdcHub::ADCS_FEATURE) && iid.supports(AdcHub::SEGA_FEATURE)) &&
-        ((iid.supports(AdcHub::TCP4_FEATURE) && iid.supports(AdcHub::UDP4_FEATURE)) || iid.supports(AdcHub::NAT0_FEATURE)))
-        y += 4;
+    int x = connectionSpeeds.value(sp, 5);
+    int y = 0;
 
-    if (isOp)
-        y += 8;
+    if (apexUserIcons) {
+        const int image = apexUserImageIndex(iid, isAway, isOp, sp);
+        x = image % USERLIST_XPM_COLUMNS;
+        y = image / USERLIST_XPM_COLUMNS;
+    } else {
+        if (isAway)
+            y += 1;
 
-    if (id->isSet(User::PASSIVE)){
-        y += 16;
+        if (id->isSet(User::TLS))
+            y += 2;
 
-        if (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) == SettingsManager::INCOMING_FIREWALL_PASSIVE)
-            x = 7;
+        if( (iid.supports(AdcHub::ADCS_FEATURE) && iid.supports(AdcHub::SEGA_FEATURE)) &&
+            ((iid.supports(AdcHub::TCP4_FEATURE) && iid.supports(AdcHub::UDP4_FEATURE)) || iid.supports(AdcHub::NAT0_FEATURE)))
+            y += 4;
+
+        if (isOp)
+            y += 8;
+
+        if (id->isSet(User::PASSIVE)){
+            y += 16;
+
+            if (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) == SettingsManager::INCOMING_FIREWALL_PASSIVE)
+                x = 7;
+        }
     }
 
     if (userIconCache[x][y] == nullptr) {

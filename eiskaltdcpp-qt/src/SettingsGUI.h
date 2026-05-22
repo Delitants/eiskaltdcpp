@@ -13,6 +13,7 @@
 #include "ui_UISettingsGUI.h"
 
 class QCheckBox;
+class QComboBox;
 class QLineEdit;
 class QSpinBox;
 class QToolButton;
@@ -56,4 +57,6 @@ private:
     QToolButton *toolButton_CHAT_PICTURE_DIR = nullptr;
     QCheckBox *checkBox_CHAT_PICTURE_AUTOCLEAN = nullptr;
     QSpinBox *spinBox_CHAT_PICTURE_DAYS = nullptr;
+    QComboBox *comboBox_APP_ICON_THEME = nullptr;
+    QComboBox *comboBox_USER_ICON_THEME = nullptr;
 };

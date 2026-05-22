@@ -58,6 +58,7 @@ const string SettingsManager::settingTags[] =
     "LogFileCmdDebug", "LogFormatCmdDebug",
     "LogFileDiagnostic",
     "ExternalIp6", "BindAddress6",
+    "ClientIdNMDC", "ClientIdADC",
     "SENTRY",
     // Ints
     "IncomingConnections", "InPort", "Slots", "AutoFollow",
@@ -155,6 +156,8 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(BIND_ADDRESS, "0.0.0.0");
     setDefault(BIND_ADDRESS6, "::");
     setDefault(EXTERNAL_IP6, "");
+    setDefault(CLIENT_ID_NMDC, "");
+    setDefault(CLIENT_ID_ADC, "");
     setDefault(COUNTRY_DB_PATH, "");
     setDefault(SLOTS, 5);
     setDefault(TCP_PORT, 3000);

@@ -35,8 +35,11 @@
 #include <QMap>
 #include <QComboBox>
 #include <QAbstractItemView>
+#include <QApplication>
+#include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QToolButton>
@@ -152,6 +155,55 @@ void SettingsGUI::init(){
         polishCombo(comboBox_TABBAR, 28);
 
         checkBox_HIDE_ICONS_IN_MENU->setChecked(qtCtx()->settings()->getBool("mainwindow/dont-show-icons-in-menus", false));
+
+        if (!comboBox_APP_ICON_THEME) {
+            auto *group = new QGroupBox(tr("Toolbar icon theme"), tab_2);
+            auto *layout = new QGridLayout(group);
+            auto *labelTheme = new QLabel(tr("Theme"), group);
+
+            comboBox_APP_ICON_THEME = new QComboBox(group);
+            comboBox_APP_ICON_THEME->addItem(tr("Default"), QStringLiteral("default"));
+            comboBox_APP_ICON_THEME->addItem(QStringLiteral("Faenza"), QStringLiteral("faenza"));
+            comboBox_APP_ICON_THEME->addItem(QStringLiteral("Haiku"), QStringLiteral("haiku"));
+            comboBox_APP_ICON_THEME->addItem(tr("Monochrome"), QStringLiteral("monochrome"));
+            comboBox_APP_ICON_THEME->addItem(QStringLiteral("Apex"), QStringLiteral("apex"));
+
+            layout->addWidget(labelTheme, 0, 0);
+            layout->addWidget(comboBox_APP_ICON_THEME, 0, 1);
+            layout->setColumnStretch(1, 1);
+
+            verticalLayout_4->insertWidget(verticalLayout_4->count() - 1, group);
+            polishCombo(comboBox_APP_ICON_THEME, 12);
+        }
+
+        const QString appIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("default"));
+        const int appIconThemeIndex = comboBox_APP_ICON_THEME->findData(appIconTheme.trimmed().isEmpty()
+                                                                        ? QStringLiteral("default")
+                                                                        : appIconTheme);
+        comboBox_APP_ICON_THEME->setCurrentIndex(appIconThemeIndex >= 0 ? appIconThemeIndex : 0);
+
+        if (!comboBox_USER_ICON_THEME) {
+            auto *group = new QGroupBox(tr("User list icon theme"), tab_2);
+            auto *layout = new QGridLayout(group);
+            auto *labelTheme = new QLabel(tr("Theme"), group);
+
+            comboBox_USER_ICON_THEME = new QComboBox(group);
+            comboBox_USER_ICON_THEME->addItem(tr("Original"), QStringLiteral("default"));
+            comboBox_USER_ICON_THEME->addItem(QStringLiteral("Apex"), QStringLiteral("apex"));
+
+            layout->addWidget(labelTheme, 0, 0);
+            layout->addWidget(comboBox_USER_ICON_THEME, 0, 1);
+            layout->setColumnStretch(1, 1);
+
+            verticalLayout_4->insertWidget(verticalLayout_4->count() - 1, group);
+            polishCombo(comboBox_USER_ICON_THEME, 12);
+        }
+
+        const QString userIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("default"));
+        const int userIconThemeIndex = comboBox_USER_ICON_THEME->findData(userIconTheme == QStringLiteral("apex")
+                                                                         ? QStringLiteral("apex")
+                                                                         : QStringLiteral("default"));
+        comboBox_USER_ICON_THEME->setCurrentIndex(userIconThemeIndex >= 0 ? userIconThemeIndex : 0);
 
     }
     {//Chat tab
@@ -367,6 +419,36 @@ void SettingsGUI::ok(){
         }
 
         qtCtx()->settings()->setBool("mainwindow/dont-show-icons-in-menus", checkBox_HIDE_ICONS_IN_MENU->isChecked());
+
+        const QString oldAppIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("default"));
+        const QString newAppIconTheme = comboBox_APP_ICON_THEME
+                ? comboBox_APP_ICON_THEME->currentData().toString()
+                : QStringLiteral("default");
+        const bool appIconThemeChanged = oldAppIconTheme != newAppIconTheme;
+
+        qtCtx()->settings()->setStr(WS_APP_ICONTHEME, newAppIconTheme);
+
+        if (appIconThemeChanged && qtCtx()->mainWindow())
+            qtCtx()->mainWindow()->reloadIconTheme();
+
+        const QString oldUserIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("default"));
+        const QString newUserIconTheme = comboBox_USER_ICON_THEME
+                ? comboBox_USER_ICON_THEME->currentData().toString()
+                : QStringLiteral("default");
+        const bool userIconThemeChanged = oldUserIconTheme != newUserIconTheme;
+
+        qtCtx()->settings()->setStr(WS_APP_USERTHEME, newUserIconTheme);
+
+        if (userIconThemeChanged && qtCtx()->wulforUtil()->loadUserIcons()) {
+            for (QWidget *widget : QApplication::allWidgets()) {
+                if (widget->objectName() != QStringLiteral("treeView_USERS"))
+                    continue;
+
+                widget->update();
+                if (auto *view = qobject_cast<QAbstractItemView *>(widget))
+                    view->viewport()->update();
+            }
+        }
     }
     {//Chat tab
         qtCtx()->settings()->setBool(WB_SHOW_HIDDEN_USERS, checkBox_CHATHIDDEN->isChecked());
@@ -445,8 +527,6 @@ void SettingsGUI::ok(){
     emit saveFonts();
 
     qtCtx()->settings()->setStr(WS_APP_EMOTICON_THEME, QString());
-    qtCtx()->settings()->setStr(WS_APP_USERTHEME, QString());
-    qtCtx()->settings()->setStr(WS_APP_ICONTHEME, QString());
 }
 
 void SettingsGUI::slotChatColorItemClicked(QListWidgetItem *item){
