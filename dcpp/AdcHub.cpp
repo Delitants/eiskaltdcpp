@@ -970,12 +970,6 @@ void AdcHub::info(bool /*alwaysSend*/) {
         app_version = st.getTokens().at(1);
     }
 
-#if defined(__aarch64__) || defined(__arm64__) || defined(_M_ARM64)
-    if(app_version.find("-arm64") == string::npos) {
-        app_version += "-arm64";
-    }
-#endif
-
     addParam(lastInfoMap, c, "ID", ctx().getClientManager()->getMyCID().toBase32());
     addParam(lastInfoMap, c, "PD", ctx().getClientManager()->getMyPID().toBase32());
     addParam(lastInfoMap, c, "NI", getCurrentNick());

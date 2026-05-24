@@ -1065,9 +1065,6 @@ void NmdcHub::myInfo(bool alwaysSend) {
     string gslot = "["+Util::toString(ctx().getUploadManager()->getFreeSlots())+"]";
     string uMin = (CTX_SETTING(MIN_UPLOAD_SPEED) == 0) ? Util::emptyString : ",O:" + Util::toString(CTX_SETTING(MIN_UPLOAD_SPEED));
     string clientIdTag = getClientId();
-    if(clientIdTag.find("-arm64") == string::npos) {
-        clientIdTag += "-arm64";
-    }
 
     string myInfoA =
             "$MyINFO $ALL " + fromUtf8(getMyNick()) + " " +

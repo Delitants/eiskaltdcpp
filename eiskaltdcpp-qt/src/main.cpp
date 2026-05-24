@@ -632,6 +632,10 @@ int main(int argc, char *argv[])
     // views are inspected while their accessible wrappers are being deleted.
     qputenv("QT_ACCESSIBILITY", QByteArray("0"));
     QAccessible::setActive(false);
+    // Native macOS menus convert QAction icons to CGImages during menu-bar
+    // focus sync. Keep menu icons disabled there while preserving toolbar and
+    // tab icons that use the same actions/pixmaps.
+    QApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
 #endif
 
     EiskaltApp app(argc, argv, _q(dcpp::Util::getLoginName()+"EDCPP"));

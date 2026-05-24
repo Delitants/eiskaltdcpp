@@ -755,8 +755,12 @@ void MainWindow::loadSettings(){
     if (!qtCtx()->settings()->getBool(WB_MAIN_MENU_VISIBLE))
         toggleMainMenu(false);
 
+#if defined(Q_OS_MAC)
+    qApp->setAttribute(Qt::AA_DontShowIconsInMenus);
+#else
     if (qtCtx()->settings()->getBool("mainwindow/dont-show-icons-in-menus", false))
         qApp->setAttribute(Qt::AA_DontShowIconsInMenus);
+#endif
 }
 
 void MainWindow::saveSettings(){

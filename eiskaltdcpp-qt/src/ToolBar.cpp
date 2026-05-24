@@ -21,6 +21,8 @@
 #include <QToolButton>
 #include <QStyle>
 #include <QHBoxLayout>
+#include <QColor>
+#include <QPalette>
 
 #include "ArenaWidget.h"
 #include "ArenaWidgetManager.h"
@@ -28,6 +30,65 @@
 #include "PMWindow.h"
 #include "WulforSettings.h"
 #include "GlobalTimer.h"
+
+namespace {
+
+QString chromeTabStyleSheet(const QWidget *widget)
+{
+    const QPalette palette = widget ? widget->palette() : QPalette();
+    const QColor window = palette.color(QPalette::Window);
+    const QColor base = palette.color(QPalette::Base);
+    const QColor text = palette.color(QPalette::Text);
+    const QColor border = palette.color(QPalette::Mid);
+    const bool dark = window.lightness() < 128;
+
+    const QColor active = base.isValid() ? base : window;
+    const QColor inactive = dark ? window.lighter(145) : window.darker(118);
+    const QColor hover = dark ? inactive.lighter(112) : inactive.lighter(106);
+
+    return QStringLiteral(
+        "QTabBar#arenaTabbar {"
+        " background: transparent;"
+        " qproperty-drawBase: 0;"
+        "}"
+        "QTabBar#arenaTabbar::tab {"
+        " min-width: 0px;"
+        " min-height: 20px;"
+        " padding: 5px 38px 5px 14px;"
+        " margin: 2px 2px 0px 0px;"
+        " border: 1px solid %1;"
+        " border-bottom-color: %2;"
+        " border-top-left-radius: 9px;"
+        " border-top-right-radius: 9px;"
+        " border-bottom-left-radius: 3px;"
+        " border-bottom-right-radius: 3px;"
+        " background: %3;"
+        " color: %4;"
+        "}"
+        "QTabBar#arenaTabbar::tab:selected {"
+        " background: %2;"
+        " border-bottom-color: %2;"
+        " font-weight: 600;"
+        "}"
+        "QTabBar#arenaTabbar::tab:hover:!selected {"
+        " background: %5;"
+        "}"
+        "QTabBar#arenaTabbar::close-button {"
+        " width: 14px;"
+        " height: 14px;"
+        " subcontrol-origin: padding;"
+        " subcontrol-position: right;"
+        " right: 18px;"
+        " margin: 0px;"
+        "}")
+        .arg(border.name(QColor::HexRgb),
+             active.name(QColor::HexRgb),
+             inactive.name(QColor::HexRgb),
+             text.name(QColor::HexRgb),
+             hover.name(QColor::HexRgb));
+}
+
+}
 
 ToolBar::ToolBar(QWidget *parent):
     QToolBar(parent),
@@ -103,31 +164,7 @@ void ToolBar::initTabs(){
     tabbar->setSizePolicy(QSizePolicy::Expanding, tabbar->sizePolicy().verticalPolicy());
     tabbar->setIconSize(QSize(16, 16));
     tabbar->setAcceptDrops(true);
-    tabbar->setStyleSheet(QStringLiteral(
-        "QTabBar#arenaTabbar { background: transparent; }"
-        "QTabBar#arenaTabbar::tab {"
-        " min-width: 0px;"
-        " padding: 4px 42px 4px 12px;"
-        " margin-right: 4px;"
-        " border: 1px solid palette(mid);"
-        " border-radius: 6px;"
-        " background: palette(button);"
-        "}"
-        "QTabBar#arenaTabbar::tab:selected {"
-        " background: palette(window);"
-        " font-weight: 600;"
-        "}"
-        "QTabBar#arenaTabbar::tab:hover:!selected {"
-        " background: palette(alternate-base);"
-        "}"
-        "QTabBar#arenaTabbar::close-button {"
-        " width: 14px;"
-        " height: 14px;"
-        " subcontrol-origin: padding;"
-        " subcontrol-position: right;"
-        " right: 20px;"
-        " margin: 0px;"
-        "}"));
+    tabbar->setStyleSheet(chromeTabStyleSheet(tabbar));
 
     tabbar->installEventFilter(this);
 

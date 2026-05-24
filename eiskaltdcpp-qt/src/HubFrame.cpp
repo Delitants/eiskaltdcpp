@@ -77,6 +77,8 @@
 #include <QSplitterHandle>
 #include <QPainter>
 #include <QPointer>
+#include <QTimer>
+#include <QTreeView>
 
 #include <QUrlQuery>
 #include <QApplication>
@@ -92,6 +94,34 @@ namespace {
 QString translatedPictureLabel()
 {
     return _q(_("Picture"));
+}
+
+QPixmap loadDefaultHubTabPixmap(const QString &fileName, const WulforUtil::Icons fallbackIcon)
+{
+    const QString appDir = QApplication::applicationDirPath();
+    const QStringList roots = {
+        appDir + QStringLiteral("/../Resources/icons/appl/default"),
+        appDir + QStringLiteral("/icons/appl/default"),
+        appDir + QStringLiteral("/../icons/appl/default"),
+        QDir::currentPath() + QStringLiteral("/eiskaltdcpp-qt/icons/appl/default"),
+        QDir::currentPath() + QStringLiteral("/icons/appl/default")
+    };
+
+    for (const QString &root : roots) {
+        QPixmap pixmap(QDir(root).filePath(fileName + QStringLiteral(".png")));
+        if (!pixmap.isNull())
+            return pixmap;
+    }
+
+    return qtCtx()->wulforUtil()->getPixmap(fallbackIcon);
+}
+
+const QPixmap &hubTabPixmap(const bool hasUnreadMainChat)
+{
+    static const QPixmap readPixmap = loadDefaultHubTabPixmap(QStringLiteral("server"), WulforUtil::eiSERVER);
+    static const QPixmap unreadPixmap = loadDefaultHubTabPixmap(QStringLiteral("hubmsg"), WulforUtil::eiHUBMSG);
+
+    return hasUnreadMainChat ? unreadPixmap : readPixmap;
 }
 
 QColor effectiveChatBaseColor(const QPalette &palette)
@@ -281,6 +311,17 @@ void positionChatInputResizeGrip(QWidget *frame)
                       size.height());
     grip->raise();
 }
+
+void persistChatUserListLayout(QTreeView *userList, QWidget *chat)
+{
+    if (!userList || !userList->header() || !chat)
+        return;
+
+    qtCtx()->settings()->setStr(WS_CHAT_USERLIST_STATE,
+                                QString::fromLatin1(userList->header()->saveState().toBase64()));
+    qtCtx()->settings()->setInt(WI_CHAT_WIDTH, chat->width());
+    qtCtx()->settings()->setInt(WI_CHAT_USERLIST_WIDTH, userList->width());
+}
 }
 
 class HubFramePrivate {
@@ -300,6 +341,7 @@ public:
     bool hasMessages;
     bool hasHighlightMessages;
     bool drawLine;
+    bool persistUserListLayoutChanges;
 
     QStringList status_msg_history;
     QStringList out_messages;
@@ -1232,6 +1274,7 @@ HubFrame::HubFrame(QWidget *parent, QString hub="", QString encoding="")
     d->chatDisabled = false;
     d->hasMessages = false;
     d->hasHighlightMessages = false;
+    d->persistUserListLayoutChanges = false;
     d->client = nullptr;
 
     setupUi(this);
@@ -1802,6 +1845,27 @@ void HubFrame::init(){
     connect(label_LAST_STATUS, &QLabel::linkActivated, this, &HubFrame::slotStatusLinkOpen);
     connect(treeView_USERS, &QTreeView::customContextMenuRequested, this, &HubFrame::slotUserListMenu);
     connect(treeView_USERS->header(), &QHeaderView::customContextMenuRequested, this, &HubFrame::slotHeaderMenu);
+    auto persistUserListLayout = [this, d]() {
+        if (!d->persistUserListLayoutChanges)
+            return;
+
+        persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
+    };
+    connect(treeView_USERS->header(), &QHeaderView::sectionResized, this,
+            [persistUserListLayout](int, int, int) { persistUserListLayout(); });
+    connect(treeView_USERS->header(), &QHeaderView::sectionMoved, this,
+            [persistUserListLayout](int, int, int) { persistUserListLayout(); });
+    connect(treeView_USERS->header(), &QHeaderView::sortIndicatorChanged, this,
+            [this, d](int column, Qt::SortOrder order) {
+                if (!d->persistUserListLayoutChanges)
+                    return;
+
+                qtCtx()->settings()->setInt(WI_CHAT_SORT_COLUMN, column);
+                qtCtx()->settings()->setInt(WI_CHAT_SORT_ORDER,
+                                            qtCtx()->wulforUtil()->sortOrderToInt(order));
+            });
+    connect(splitter_2, &QSplitter::splitterMoved, this,
+            [persistUserListLayout](int, int) { persistUserListLayout(); });
     connect(qtCtx()->globalTimer(), &GlobalTimer::second, this, &HubFrame::slotUsersUpdated);
     connect(textEdit_CHAT, &QTextEdit::customContextMenuRequested, this, &HubFrame::slotChatMenu);
     connect(toolButton_BACK, &QToolButton::clicked, this, &HubFrame::slotFindBackward);
@@ -1960,9 +2024,7 @@ void HubFrame::initMenu(){
 void HubFrame::save(){
     Q_D(HubFrame);
 
-    qtCtx()->settings()->setStr(WS_CHAT_USERLIST_STATE, treeView_USERS->header()->saveState().toBase64());
-    qtCtx()->settings()->setInt(WI_CHAT_WIDTH, textEdit_CHAT->width());
-    qtCtx()->settings()->setInt(WI_CHAT_USERLIST_WIDTH, treeView_USERS->width());
+    persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
     qtCtx()->settings()->setInt(WI_CHAT_SORT_COLUMN, d->model->getSortColumn());
     qtCtx()->settings()->setInt(WI_CHAT_SORT_ORDER, qtCtx()->wulforUtil()->sortOrderToInt(d->model->getSortOrder()));
     if (qtCtx()->settings()->getBool("hubframe/change-chat-background-color", false))
@@ -1970,6 +2032,10 @@ void HubFrame::save(){
 }
 
 void HubFrame::load(){
+    Q_D(HubFrame);
+
+    d->persistUserListLayoutChanges = false;
+
     const int w_chat = qtCtx()->settings()->getInt(WI_CHAT_WIDTH), w_ulist = qtCtx()->settings()->getInt(WI_CHAT_USERLIST_WIDTH);
 
     QString ustate = qtCtx()->settings()->getStr(WS_CHAT_USERLIST_STATE);
@@ -1988,6 +2054,10 @@ void HubFrame::load(){
     treeView_USERS->sortByColumn(qtCtx()->settings()->getInt(WI_CHAT_SORT_COLUMN), qtCtx()->wulforUtil()->intToSortOrder(qtCtx()->settings()->getInt(WI_CHAT_SORT_ORDER)));
 
     reloadSomeSettings();
+
+    QTimer::singleShot(0, this, [d]() {
+        d->persistUserListLayoutChanges = true;
+    });
 }
 
 void HubFrame::reloadSomeSettings(){
@@ -2108,12 +2178,7 @@ QMenu *HubFrame::getMenu(){
 const QPixmap &HubFrame::getPixmap(){
     Q_D(HubFrame);
 
-    if (d->hasHighlightMessages)
-        return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMESSAGE);
-    else if (d->hasMessages)
-        return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiHUBMSG);
-    else
-        return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiSERVER);
+    return hubTabPixmap(d->hasHighlightMessages || d->hasMessages);
 }
 
 void HubFrame::clearChat(){
@@ -3944,7 +4009,12 @@ void HubFrame::slotChatMenu(const QPoint &){
 }
 
 void HubFrame::slotHeaderMenu(const QPoint&){
+    Q_D(HubFrame);
+
     WulforUtil::headerMenu(treeView_USERS);
+
+    if (d->persistUserListLayoutChanges)
+        persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
 }
 
 void HubFrame::slotShowWnd(){

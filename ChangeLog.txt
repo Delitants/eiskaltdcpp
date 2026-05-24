@@ -4,6 +4,22 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.4-v3-pre.3 2026-05-23 ---
+*** common changes ***
+* Bumped pre-release version to 2.5.4-v3-pre.3 for the next macOS ARM64 test build.
+*** dcpp ***
+* Restored configurable client tag spoofing while keeping generated spoofed tags
+  free of the macOS "-arm64" suffix.
+*** eiskaltdcpp-qt ***
+* Fixed hub tab icons so regular hubs use the hub icon and the mail overlay
+  appears only while the hub main chat has unread messages.
+* Updated hub tabs toward a Chrome-style shape with darker inactive tabs.
+* Persisted user-adjusted hub user-list column widths, ordering, sorting and
+  chat/user-list splitter width immediately, including macOS app shutdown paths
+  that do not close each hub widget.
+* Disabled native macOS menu item icons early during startup to avoid a Qt/Cocoa
+  CGImage conversion crash when the app regains focus after wake.
+
 --- 2.5.4-v3-pre.1 2026-05-12 ---
 *** common changes ***
 * Bumped pre-release version to 2.5.4-v3-pre.1 for the next macOS ARM64 test build.
