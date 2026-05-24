@@ -2,9 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  schedule:
-    # Run nightly at 00:00 HST / 10:00 UTC on the default branch.
-    - cron: '0 10 * * *'
 
 permissions:
   actions: write      # vcpkg binary caching via x-gha
