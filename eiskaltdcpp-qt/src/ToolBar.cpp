@@ -19,7 +19,6 @@
 #include <QMouseEvent>
 #include <QSize>
 #include <QToolButton>
-#include <QStyle>
 #include <QHBoxLayout>
 #include <QColor>
 #include <QPalette>
@@ -42,9 +41,21 @@ QString chromeTabStyleSheet(const QWidget *widget)
     const QColor border = palette.color(QPalette::Mid);
     const bool dark = window.lightness() < 128;
 
-    const QColor active = base.isValid() ? base : window;
-    const QColor inactive = dark ? window.lighter(145) : window.darker(118);
-    const QColor hover = dark ? inactive.lighter(112) : inactive.lighter(106);
+    const auto blend = [](const QColor &foreground, const QColor &background, double amount) {
+        const auto channel = [amount](int fg, int bg) {
+            return static_cast<int>(bg + (fg - bg) * amount + 0.5);
+        };
+
+        return QColor(channel(foreground.red(), background.red()),
+                      channel(foreground.green(), background.green()),
+                      channel(foreground.blue(), background.blue()));
+    };
+
+    const QColor active = dark ? blend(Qt::white, window, 0.18) : base;
+    const QColor inactive = dark ? blend(Qt::white, window, 0.09) : window.darker(118);
+    const QColor hover = dark ? blend(Qt::white, window, 0.14) : inactive.lighter(106);
+    const QColor tabText = (dark && text.lightness() < 150) ? QColor(245, 245, 245) : text;
+    const QColor tabBorder = dark ? blend(Qt::white, window, 0.26) : border;
 
     return QStringLiteral(
         "QTabBar#arenaTabbar {"
@@ -81,10 +92,10 @@ QString chromeTabStyleSheet(const QWidget *widget)
         " right: 18px;"
         " margin: 0px;"
         "}")
-        .arg(border.name(QColor::HexRgb),
+        .arg(tabBorder.name(QColor::HexRgb),
              active.name(QColor::HexRgb),
              inactive.name(QColor::HexRgb),
-             text.name(QColor::HexRgb),
+             tabText.name(QColor::HexRgb),
              hover.name(QColor::HexRgb));
 }
 
@@ -137,7 +148,6 @@ bool ToolBar::eventFilter(QObject *obj, QEvent *e){
         }
         return true;
     }
-
     return QToolBar::eventFilter(obj, e);
 }
 
@@ -401,8 +411,8 @@ QWidget *ToolBar::makeCloseButton(int index)
     button->setAutoRaise(true);
     button->setCursor(Qt::ArrowCursor);
     button->setFixedSize(QSize(16, 16));
-    button->setIcon(style()->standardIcon(QStyle::SP_TitleBarCloseButton));
-    button->setIconSize(QSize(12, 12));
+    button->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILECLOSE));
+    button->setIconSize(QSize(14, 14));
     button->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; }"));
     connect(button, &QToolButton::clicked, this, [this, index]() { slotClose(index); });
     layout->addWidget(button, 0, Qt::AlignVCenter | Qt::AlignRight);

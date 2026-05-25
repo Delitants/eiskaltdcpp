@@ -130,8 +130,8 @@ void WulforSettings::load(){
             settings.setValue(WS_FAV_HUBS_STATE,        "");
             settings.setValue(WS_ADLS_STATE,            "");
             settings.setValue(WS_APP_THEME,             "");
-            settings.setValue(WS_APP_ICONTHEME,         "default");
-            settings.setValue(WS_APP_USERTHEME,         "default");
+            settings.setValue(WS_APP_ICONTHEME,         "apex");
+            settings.setValue(WS_APP_USERTHEME,         "apex");
             settings.setValue(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
             settings.setValue(WS_NOTIFY_SOUNDS,         "");
             settings.setValue(WS_NOTIFY_SND_CMD,        "");
@@ -271,8 +271,8 @@ void WulforSettings::loadOldConfig(){
         strmap.insert(WS_FAV_HUBS_STATE,        "");
         strmap.insert(WS_ADLS_STATE,            "");
         strmap.insert(WS_APP_THEME,             "");
-        strmap.insert(WS_APP_ICONTHEME,         "default");
-        strmap.insert(WS_APP_USERTHEME,         "default");
+        strmap.insert(WS_APP_ICONTHEME,         "apex");
+        strmap.insert(WS_APP_USERTHEME,         "apex");
         strmap.insert(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
         strmap.insert(WS_NOTIFY_SOUNDS,         "");
         strmap.insert(WS_NOTIFY_SND_CMD,        "");

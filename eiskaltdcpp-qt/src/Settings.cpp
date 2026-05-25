@@ -114,8 +114,6 @@ void applyMacSettingsPanelStyle(QFrame *panel)
                                                   : panelPalette.color(QPalette::Window);
     const QColor groupBackground = darkAppearance ? panelPalette.color(QPalette::Base).lighter(105)
                                                   : panelPalette.color(QPalette::AlternateBase);
-    const QColor tabBackground = darkAppearance ? panelBackground.lighter(103)
-                                                : panelPalette.color(QPalette::Base);
     const QColor titleBackground = darkAppearance ? groupBackground.lighter(104)
                                                   : groupBackground;
     const QString comboArrow = macBundledStyleIcon(darkAppearance ? QStringLiteral("combo-arrow-down-light.svg")
@@ -155,7 +153,7 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " color: palette(text);"
         " font-size: 13px;"
         " font-weight: 600;"
-        " background-color: %7;"
+        " background-color: %6;"
         " border: none;"
         " border-radius: 6px;"
         "}"
@@ -219,19 +217,19 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " border-bottom-right-radius: 7px;"
         "}"
         "QFrame#settingsPagePanel QComboBox::down-arrow {"
-        " image: %8;"
+        " image: %7;"
         " width: 9px;"
         " height: 9px;"
         " margin-right: 7px;"
         "}"
         "QFrame#settingsPagePanel QComboBox::down-arrow:disabled {"
-        " image: %8;"
+        " image: %7;"
         "}"
         "QFrame#settingsPagePanel QComboBox QAbstractItemView {"
         " border: 1px solid %2;"
         " padding: 4px;"
         " selection-background-color: %5;"
-        " selection-color: %9;"
+        " selection-color: %8;"
         " outline: 0;"
         "}"
         "QFrame#settingsPagePanel QComboBox QAbstractItemView::item {"
@@ -243,49 +241,104 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " width: 16px;"
         " height: 16px;"
         "}"
-        "QFrame#settingsPagePanel QTabWidget { background: transparent; }"
-        "QFrame#settingsPagePanel QTabWidget::pane {"
-        " border: 1px solid %3;"
-        " border-radius: 10px;"
-        " top: 0px;"
-        " background-color: %6;"
-        " padding-top: 10px;"
-        " margin-top: -1px;"
-        "}"
-        "QFrame#settingsPagePanel QTabWidget::tab-bar {"
-        " alignment: left;"
-        " left: 12px;"
-        "}"
-        "QFrame#settingsPagePanel QTabBar {"
+    ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
+          groupBackground.name(), focusBorder.name(), titleBackground.name(),
+          comboArrow, selectedText.name()));
+}
+
+void applyMacSettingsTabWidgetStyle(QTabWidget *tabs)
+{
+    if (!tabs)
+        return;
+
+    tabs->setDocumentMode(false);
+    tabs->setAutoFillBackground(false);
+    if (auto *tabBar = tabs->tabBar()) {
+        tabBar->setDocumentMode(false);
+        tabBar->setAutoFillBackground(false);
+    }
+
+    const QPalette tabPalette = QApplication::palette(tabs);
+    const bool darkAppearance = (tabPalette.color(QPalette::Window).lightness() + tabPalette.color(QPalette::Base).lightness()) / 2 < 128;
+    QColor fieldBorder = darkAppearance ? tabPalette.color(QPalette::Window).lighter(165)
+                                        : tabPalette.color(QPalette::Window).darker(135);
+    if (qAbs(fieldBorder.lightness() - tabPalette.color(QPalette::Window).lightness()) < 26) {
+        const QColor textColor = tabPalette.color(QPalette::Text);
+        fieldBorder = darkAppearance ? textColor.lighter(145) : textColor.darker(150);
+    }
+
+    const QColor panelBorder = darkAppearance ? fieldBorder.lighter(118) : fieldBorder.darker(112);
+    const QColor panelBackground = darkAppearance ? tabPalette.color(QPalette::Window).lighter(108)
+                                                  : tabPalette.color(QPalette::Window);
+    const QColor groupBackground = darkAppearance ? tabPalette.color(QPalette::Base).lighter(105)
+                                                  : tabPalette.color(QPalette::AlternateBase);
+    const QColor activeTabBackground = darkAppearance ? panelBackground.lighter(107)
+                                                      : tabPalette.color(QPalette::Base);
+    const QColor inactiveTabBackground = darkAppearance ? panelBackground.darker(116)
+                                                        : panelBackground.darker(104);
+    const QColor inactiveTabHoverBackground = darkAppearance ? inactiveTabBackground.lighter(116)
+                                                             : groupBackground;
+
+    tabs->setStyleSheet(QStringLiteral(
+        "QTabWidget {"
         " background: transparent;"
         "}"
-        "QFrame#settingsPagePanel QTabBar::tab {"
-        " background-color: %1;"
-        " border: 1px solid %2;"
+        "QTabWidget::pane {"
+        " border: 1px solid %1;"
         " border-radius: 8px;"
+        " top: -1px;"
+        " background-color: %2;"
+        " padding: 8px 8px 10px 8px;"
+        " margin-top: 0px;"
+        "}"
+        "QTabWidget::tab-bar {"
+        " alignment: left;"
+        " left: 8px;"
+        "}"
+        "QTabBar {"
+        " background: transparent;"
+        "}"
+        "QTabBar::base {"
+        " background: transparent;"
+        " border: 0px;"
+        " height: 0px;"
+        "}"
+        "QTabBar::tab {"
+        " background-color: %3;"
+        " border: 1px solid %1;"
+        " border-bottom-color: %1;"
+        " border-top-left-radius: 7px;"
+        " border-top-right-radius: 7px;"
+        " border-bottom-left-radius: 0px;"
+        " border-bottom-right-radius: 0px;"
         " min-width: 0px;"
-        " padding: 5px 18px 6px 18px;"
-        " margin-right: 6px;"
-        " margin-bottom: 4px;"
-        " font-size: 13px;"
+        " padding: 3px 18px 4px 18px;"
+        " margin-top: 2px;"
+        " margin-right: 2px;"
+        " margin-bottom: 0px;"
+        " font-size: 12px;"
         " color: palette(text);"
         "}"
-        "QFrame#settingsPagePanel QTabBar::tab:selected {"
-        " background-color: %5;"
-        " color: %9;"
-        " border-color: %5;"
+        "QTabBar::tab:selected {"
+        " background-color: %2;"
+        " color: palette(text);"
+        " border-color: %1;"
+        " border-bottom-color: %2;"
         " font-weight: 600;"
+        " margin-top: 0px;"
+        " margin-bottom: -1px;"
+        " padding-top: 4px;"
+        " padding-bottom: 5px;"
         "}"
-        "QFrame#settingsPagePanel QTabBar::tab:!selected {"
+        "QTabBar::tab:!selected {"
         " color: palette(text);"
         "}"
-        "QFrame#settingsPagePanel QTabBar::tab:hover:!selected {"
-        " background-color: %6;"
-        " border-color: %3;"
+        "QTabBar::tab:hover:!selected {"
+        " background-color: %4;"
+        " border-color: %1;"
         "}"
-    ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
-          groupBackground.name(), focusBorder.name(), tabBackground.name(),
-          titleBackground.name(), comboArrow).arg(selectedText.name()));
+    ).arg(panelBorder.name(), activeTabBackground.name(),
+          inactiveTabBackground.name(), inactiveTabHoverBackground.name()));
 }
 
 void applyMacSettingsSidebarStyle(QListWidget *listWidget)
@@ -441,8 +494,9 @@ void polishMacSettingsPage(QWidget *page)
     }
 
     for (auto *tabs : page->findChildren<QTabWidget*>()) {
-        tabs->setDocumentMode(true);
+        tabs->setDocumentMode(false);
         tabs->setUsesScrollButtons(false);
+        applyMacSettingsTabWidgetStyle(tabs);
         if (auto *tabBar = tabs->tabBar()) {
             tabBar->setExpanding(false);
             tabBar->setElideMode(Qt::ElideNone);
@@ -530,6 +584,9 @@ void Settings::changeEvent(QEvent *event)
         for (auto *panel : findChildren<QFrame*>(QStringLiteral("settingsPagePanel")))
             applyMacSettingsPanelStyle(panel);
 
+        for (auto *tabs : findChildren<QTabWidget*>())
+            applyMacSettingsTabWidgetStyle(tabs);
+
         for (auto *scrollArea : findChildren<QScrollArea*>())
             polishMacScrollArea(scrollArea);
 
@@ -541,17 +598,17 @@ void Settings::changeEvent(QEvent *event)
 void Settings::init(){
     WulforUtil *WU = qtCtx()->wulforUtil();
 
-    QListWidgetItem *item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiUSERS), tr("Personal"), listWidget);
+    QListWidgetItem *item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_MAIN), tr("Main"), listWidget);
     SettingsPersonal *personal = new SettingsPersonal(this);
     connect(this, &Settings::timeToDie, personal, &SettingsPersonal::ok);
     widgets.insert(item, (int)Page::Personal);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiCONNECT), tr("Connection"), listWidget);
+    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_CONNECTION), tr("Connection"), listWidget);
     SettingsConnection *connection = new SettingsConnection(this);
     connect(this, &Settings::timeToDie, connection, &SettingsConnection::ok);
     widgets.insert(item, (int)Page::Connection);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiDOWNLOAD), tr("Downloads"), listWidget);
+    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_DOWNLOADS), tr("Downloads"), listWidget);
     SettingsDownloads *downloads = new SettingsDownloads(this);
     connect(this, &Settings::timeToDie, downloads, &SettingsDownloads::ok);
     widgets.insert(item, (int)Page::Downloads);
@@ -561,7 +618,7 @@ void Settings::init(){
     connect(this, &Settings::timeToDie, sharing, &SettingsSharing::ok);
     widgets.insert(item, (int)Page::Sharing);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiGUI), tr("GUI"), listWidget);
+    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_GUI), tr("GUI"), listWidget);
     SettingsGUI *gui = new SettingsGUI(this);
     connect(this, &Settings::timeToDie, gui, &SettingsGUI::ok);
     widgets.insert(item, (int)Page::GUI);
@@ -586,7 +643,7 @@ void Settings::init(){
     connect(this, &Settings::timeToDie, sshs, &SettingsShortcuts::ok);
     widgets.insert(item, (int)Page::Shortcuts);
     
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiEDIT), tr("History"), listWidget);
+    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiHISTORY), tr("History"), listWidget);
     SettingsHistory *shist = new SettingsHistory(this);
     connect(this, &Settings::timeToDie, shist, &SettingsHistory::ok);
     widgets.insert(item, (int)Page::History);
@@ -685,7 +742,7 @@ QWidget *Settings::prepareWidget(QWidget *w)
     const bool containsTabs = !w->findChildren<QTabWidget*>().isEmpty();
     if (containsTabs) {
         for (auto *tw : w->findChildren<QTabWidget*>()) {
-            tw->setDocumentMode(true);
+            tw->setDocumentMode(false);
             QList<QWidget*> pages;
             QStringList titles;
 
@@ -712,6 +769,9 @@ QWidget *Settings::prepareWidget(QWidget *w)
                 tw->addTab(scrollArea, titles.at(k));
             }
             tw->setCurrentIndex(0);
+#ifdef Q_OS_MAC
+            applyMacSettingsTabWidgetStyle(tw);
+#endif
         }
     }
     else { // Single widget may be placed directly to QScrollArea

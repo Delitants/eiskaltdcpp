@@ -40,6 +40,7 @@
 #include <QShortcut>
 #include <QKeySequence>
 #include <QToolButton>
+#include <QIcon>
 #include <QTreeView>
 #include <QMetaType>
 #include <QTimer>
@@ -807,6 +808,16 @@ void MainWindow::initActions(){
 
     WulforUtil *WU = qtCtx()->wulforUtil();
     ShortcutManager *SM = qtCtx()->shortcutManager();
+    auto highlightedIcon = [WU](WulforUtil::Icons normal, WulforUtil::Icons active) {
+        QIcon icon;
+        icon.addPixmap(WU->getPixmap(normal), QIcon::Normal, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Active, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Selected, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Normal, QIcon::On);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Active, QIcon::On);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Selected, QIcon::On);
+        return icon;
+    };
 
     {
         d->fileOpenMagnet = new QAction("", this);
@@ -930,7 +941,7 @@ void MainWindow::initActions(){
         d->toolsTransfers = new QAction("", this);
         d->toolsTransfers->setObjectName("toolsTransfers");
         SM->registerShortcut(d->toolsTransfers, QString("Ctrl+T"));
-        d->toolsTransfers->setIcon(WU->getPixmap(WulforUtil::eiTRANSFER));
+        d->toolsTransfers->setIcon(highlightedIcon(WulforUtil::eiTRANSFER, WulforUtil::eiTRANSFER_HIGHLIGHT));
         d->toolsTransfers->setCheckable(true);
         connect(d->toolsTransfers, &QAction::toggled, this, &MainWindow::slotToolsTransfer);
         //transfer_dock->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -944,7 +955,7 @@ void MainWindow::initActions(){
         d->toolsQueuedUsers = new QAction("", this);
         d->toolsQueuedUsers->setObjectName("toolsQueuedUsers");
         SM->registerShortcut(d->toolsQueuedUsers, QString("Ctrl+Shift+U"));
-        d->toolsQueuedUsers->setIcon(WU->getPixmap(WulforUtil::eiUSERS));
+        d->toolsQueuedUsers->setIcon(highlightedIcon(WulforUtil::eiQUEUED_USERS, WulforUtil::eiQUEUED_USERS_HIGHLIGHT));
         connect(d->toolsQueuedUsers, &QAction::triggered, this, &MainWindow::slotToolsQueuedUsers);
 
         d->toolsFinishedDownloads = new QAction("", this);
@@ -1292,6 +1303,19 @@ void MainWindow::reloadIconTheme()
         if (action)
             action->setIcon(WU->getPixmap(icon));
     };
+    auto setHighlightedActionIcon = [WU](QAction *action, WulforUtil::Icons normal, WulforUtil::Icons active) {
+        if (!action)
+            return;
+
+        QIcon icon;
+        icon.addPixmap(WU->getPixmap(normal), QIcon::Normal, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Active, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Selected, QIcon::Off);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Normal, QIcon::On);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Active, QIcon::On);
+        icon.addPixmap(WU->getPixmap(active), QIcon::Selected, QIcon::On);
+        action->setIcon(icon);
+    };
 
     setWindowIcon(WU->getPixmap(WulforUtil::eiICON_APPL));
 
@@ -1316,9 +1340,9 @@ void MainWindow::reloadIconTheme()
     setActionIcon(d->toolsADLS, WulforUtil::eiADLS);
     setActionIcon(d->toolsCmdDebug, WulforUtil::eiCONSOLE);
     setActionIcon(d->toolsSecretary, WulforUtil::eiMAGNET);
-    setActionIcon(d->toolsTransfers, WulforUtil::eiTRANSFER);
+    setHighlightedActionIcon(d->toolsTransfers, WulforUtil::eiTRANSFER, WulforUtil::eiTRANSFER_HIGHLIGHT);
     setActionIcon(d->toolsDownloadQueue, WulforUtil::eiDOWNLOAD);
-    setActionIcon(d->toolsQueuedUsers, WulforUtil::eiUSERS);
+    setHighlightedActionIcon(d->toolsQueuedUsers, WulforUtil::eiQUEUED_USERS, WulforUtil::eiQUEUED_USERS_HIGHLIGHT);
     setActionIcon(d->toolsFinishedDownloads, WulforUtil::eiDOWNLIST);
     setActionIcon(d->toolsFinishedUploads, WulforUtil::eiUPLIST);
     setActionIcon(d->toolsSearchSpy, WulforUtil::eiSPY);

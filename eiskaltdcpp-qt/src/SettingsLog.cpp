@@ -19,8 +19,11 @@
 #include "dcpp/SettingsManager.h"
 #include "dcpp/DCPlusPlus.h"
 
+#include <QCoreApplication>
 #include <QDir>
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QUrl>
 
 using namespace dcpp;
 
@@ -33,6 +36,18 @@ SettingsLog::SettingsLog(QWidget *parent) :
 }
 
 void SettingsLog::init(){
+    const QString bundledHelpPath = QDir(QCoreApplication::applicationDirPath())
+        .absoluteFilePath(QStringLiteral("../Resources/help/settings_logs.html"));
+    const QString helpUrl = QFileInfo::exists(bundledHelpPath)
+        ? QUrl::fromLocalFile(bundledHelpPath).toString()
+        : QStringLiteral("https://dcplusplus.sourceforge.io/webhelp/settings_logs.html");
+    label_11->setTextFormat(Qt::RichText);
+    label_11->setOpenExternalLinks(true);
+    label_11->setText(QStringLiteral(
+        "<a href=\"%1\"><span style=\"font-size:14pt; font-weight:600; "
+        "text-decoration: underline; color:#296fbe;\">%2</span></a>"
+    ).arg(helpUrl.toHtmlEscaped(), tr("Help").toHtmlEscaped()));
+
     lineEdit_LOGDIR->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::LOG_DIRECTORY, true)));
 
     groupBox_MAINCHAT->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true));

@@ -176,7 +176,7 @@ void SettingsGUI::init(){
             polishCombo(comboBox_APP_ICON_THEME, 12);
         }
 
-        const QString appIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("default"));
+        const QString appIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("apex"));
         const int appIconThemeIndex = comboBox_APP_ICON_THEME->findData(appIconTheme.trimmed().isEmpty()
                                                                         ? QStringLiteral("default")
                                                                         : appIconTheme);
@@ -199,7 +199,7 @@ void SettingsGUI::init(){
             polishCombo(comboBox_USER_ICON_THEME, 12);
         }
 
-        const QString userIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("default"));
+        const QString userIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("apex"));
         const int userIconThemeIndex = comboBox_USER_ICON_THEME->findData(userIconTheme == QStringLiteral("apex")
                                                                          ? QStringLiteral("apex")
                                                                          : QStringLiteral("default"));
@@ -420,7 +420,7 @@ void SettingsGUI::ok(){
 
         qtCtx()->settings()->setBool("mainwindow/dont-show-icons-in-menus", checkBox_HIDE_ICONS_IN_MENU->isChecked());
 
-        const QString oldAppIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("default"));
+        const QString oldAppIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("apex"));
         const QString newAppIconTheme = comboBox_APP_ICON_THEME
                 ? comboBox_APP_ICON_THEME->currentData().toString()
                 : QStringLiteral("default");
@@ -431,7 +431,7 @@ void SettingsGUI::ok(){
         if (appIconThemeChanged && qtCtx()->mainWindow())
             qtCtx()->mainWindow()->reloadIconTheme();
 
-        const QString oldUserIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("default"));
+        const QString oldUserIconTheme = qtCtx()->settings()->getStr(WS_APP_USERTHEME, QStringLiteral("apex"));
         const QString newUserIconTheme = comboBox_USER_ICON_THEME
                 ? comboBox_USER_ICON_THEME->currentData().toString()
                 : QStringLiteral("default");

@@ -433,6 +433,8 @@ else ()
     install (FILES ${PROJECT_BINARY_DIR}/default.rcc DESTINATION "${CLIENT_DATA_DIR}/client-res")
 endif ()
 
+install (DIRECTORY help DESTINATION "${CLIENT_DATA_DIR}")
+
 if (UNIX AND NOT APPLE AND NOT HAIKU)
     install (FILES ${PROJECT_NAME}.desktop DESTINATION ${SHARE_DIR}/applications)
 endif ()
@@ -463,6 +465,7 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/icons"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/translations"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/locale"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/help"
         VERBATIM
     )
 
@@ -470,6 +473,7 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
         "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons"
         "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/translations"
         "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/locale"
+        "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/help"
         "${CMAKE_SOURCE_DIR}/icons"
         "${CMAKE_SOURCE_DIR}/translations"
         "${CMAKE_SOURCE_DIR}/locale"

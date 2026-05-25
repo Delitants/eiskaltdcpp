@@ -4,6 +4,24 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.4-v3-pre.4 2026-05-24 ---
+*** common changes ***
+* Bumped pre-release version to 2.5.4-v3-pre.4 for the next macOS ARM64 test build.
+*** eiskaltdcpp-qt ***
+* Made Apex the default application and user icon theme for new/legacy settings.
+* Added Apex-derived toolbar, transfer, queued-user, settings and history icons
+  across bundled application icon themes.
+* Updated transfers and queued-users toolbar actions to use highlighted icon
+  variants for active/selected states.
+* Restyled Preferences sub-tabs as slim Chrome-like tabs that blend with the
+  surrounding macOS settings panel in light and dark mode.
+* Bundled the Logs settings help page inside the app and made its Help link
+  larger, local-first and browser-openable.
+* Fixed ADC user passive/firewall icon detection so M:A tags are active and
+  M:P tags display the passive/firewall overlay.
+* Restored hub-tab close buttons to the red X close icon and adjusted dark-mode
+  hub tab colors to avoid bright inactive tabs.
+
 --- 2.5.4-v3-pre.3 2026-05-23 ---
 *** common changes ***
 * Bumped pre-release version to 2.5.4-v3-pre.3 for the next macOS ARM64 test build.

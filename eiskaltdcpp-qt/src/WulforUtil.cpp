@@ -179,6 +179,78 @@ bool openWithConfiguredExternalHandler(const QString &url)
     return QProcess::startDetached(handler, QStringList(url));
 }
 
+enum class AdcTagMode {
+    Unknown,
+    Active,
+    Passive
+};
+
+AdcTagMode adcTagMode(const Identity &identity)
+{
+    const std::string tag = identity.getTag();
+
+    for (size_t pos = tag.find("M:"); pos != std::string::npos; pos = tag.find("M:", pos + 2)) {
+        if (pos > 0 && tag[pos - 1] != '<' && tag[pos - 1] != ',' && tag[pos - 1] != ' ')
+            continue;
+
+        if (pos + 2 >= tag.size())
+            continue;
+
+        switch (tag[pos + 2]) {
+        case 'A':
+        case 'a':
+            return AdcTagMode::Active;
+        case 'P':
+        case 'p':
+            return AdcTagMode::Passive;
+        default:
+            break;
+        }
+    }
+
+    return AdcTagMode::Unknown;
+}
+
+bool isPassiveForUserIcon(const Identity &identity, const UserPtr &user)
+{
+    if (!user)
+        return false;
+
+    switch (adcTagMode(identity)) {
+    case AdcTagMode::Active:
+        return false;
+    case AdcTagMode::Passive:
+        return true;
+    case AdcTagMode::Unknown:
+        break;
+    }
+
+    if (user->isSet(User::NMDC))
+        return user->isSet(User::PASSIVE);
+
+    return !identity.isTcpActive();
+}
+
+bool showPassiveOverlayForApexIcon(const Identity &identity, const UserPtr &user)
+{
+    if (!user)
+        return false;
+
+    switch (adcTagMode(identity)) {
+    case AdcTagMode::Active:
+        return false;
+    case AdcTagMode::Passive:
+        return true;
+    case AdcTagMode::Unknown:
+        break;
+    }
+
+    if (user->isSet(User::NMDC))
+        return user->isSet(User::PASSIVE);
+
+    return isPassiveForUserIcon(identity, user) && !identity.supports(AdcHub::NAT0_FEATURE);
+}
+
 int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const QString &connection)
 {
     constexpr int APEX_STATUS_AWAY = 0x02;
@@ -235,15 +307,7 @@ int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const Q
     if (apexConnectableAdc)
         image += 26;
 
-    const UserPtr &user = identity.getUser();
-    const bool tcpActive = user
-        ? ((!user->isSet(User::NMDC))
-            ? ((!identity.getIp().empty() && identity.supports(AdcHub::TCP4_FEATURE)) ||
-               (!identity.getIp6().empty() && identity.supports(AdcHub::TCP6_FEATURE)))
-            : !user->isSet(User::PASSIVE))
-        : true;
-
-    if (!tcpActive && !identity.supports(AdcHub::NAT0_FEATURE))
+    if (showPassiveOverlayForApexIcon(identity, identity.getUser()))
         image += 52;
 
     return qBound(0, image, 103);
@@ -664,7 +728,7 @@ QPixmap *WulforUtil::getUserIcon(const UserPtr &id, bool isAway, bool isOp, cons
         if (isOp)
             y += 8;
 
-        if (id->isSet(User::PASSIVE)){
+        if (isPassiveForUserIcon(iid, id)){
             y += 16;
 
             if (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) == SettingsManager::INCOMING_FIREWALL_PASSIVE)
@@ -771,6 +835,7 @@ bool WulforUtil::loadIcons(){
     m_PixmapMap[eiGUI]          = FROMTHEME("gui", resourceFound);
     m_PixmapMap[eiGV]           = QPixmap(gv_xpm);
     m_PixmapMap[eiHASHING]      = FROMTHEME("hashing", resourceFound);
+    m_PixmapMap[eiHISTORY]      = FROMTHEME("history", resourceFound);
     m_PixmapMap[eiHUBMSG]       = FROMTHEME("hubmsg", resourceFound);
     m_PixmapMap[eiICON_APPL]    = FROMTHEME_SIDE("icon_appl_big", resourceFound, 128);
     m_PixmapMap[eiMAGNET]       = FROMTHEME("magnet", resourceFound);
@@ -785,6 +850,10 @@ bool WulforUtil::loadIcons(){
     m_PixmapMap[eiREFRLIST]     = FROMTHEME("refrlist", resourceFound);
     m_PixmapMap[eiRELOAD]       = FROMTHEME("reload", resourceFound);
     m_PixmapMap[eiSERVER]       = FROMTHEME("server", resourceFound);
+    m_PixmapMap[eiSETTINGS_CONNECTION] = FROMTHEME("settings-connection", resourceFound);
+    m_PixmapMap[eiSETTINGS_DOWNLOADS]  = FROMTHEME("settings-downloads", resourceFound);
+    m_PixmapMap[eiSETTINGS_GUI]        = FROMTHEME("settings-gui", resourceFound);
+    m_PixmapMap[eiSETTINGS_MAIN]       = FROMTHEME("settings-main", resourceFound);
     m_PixmapMap[eiSPAM]         = FROMTHEME("spam", resourceFound);
     m_PixmapMap[eiSPY]          = FROMTHEME("spy", resourceFound);
     m_PixmapMap[eiSPEED_LIMIT_OFF]  = FROMTHEME("slow_off", resourceFound);
@@ -793,7 +862,10 @@ bool WulforUtil::loadIcons(){
     m_PixmapMap[eiSPLASH]       = QPixmap();
     m_PixmapMap[eiSTATUS]       = FROMTHEME("status", resourceFound);
     m_PixmapMap[eiTRANSFER]     = FROMTHEME("transfer", resourceFound);
+    m_PixmapMap[eiTRANSFER_HIGHLIGHT] = FROMTHEME("transfer-highlight", resourceFound);
     m_PixmapMap[eiUSERS]        = FROMTHEME("users", resourceFound);
+    m_PixmapMap[eiQUEUED_USERS] = FROMTHEME("queued-users", resourceFound);
+    m_PixmapMap[eiQUEUED_USERS_HIGHLIGHT] = FROMTHEME("queued-users-highlight", resourceFound);
     m_PixmapMap[eiQT_LOGO]      = FROMTHEME("qt-logo", resourceFound);
 
     return !m_bError;
