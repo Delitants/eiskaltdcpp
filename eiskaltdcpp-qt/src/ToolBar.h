@@ -45,6 +45,7 @@ public Q_SLOTS:
     void nextTab();
     void prevTab();
     void initTabs();
+    void refreshTabStyle();
 
 private Q_SLOTS:
     void slotIndexChanged(int);

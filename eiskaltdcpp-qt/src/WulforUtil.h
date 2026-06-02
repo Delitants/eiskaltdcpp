@@ -113,6 +113,7 @@ public:
         eiSETTINGS_DOWNLOADS,
         eiSETTINGS_GUI,
         eiSETTINGS_MAIN,
+        eiSETTINGS_SHORTCUTS,
         eiSPAM,
         eiSPY,
         eiSPLASH,

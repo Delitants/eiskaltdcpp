@@ -150,6 +150,8 @@ public:
     void privateMessage(const HintedUser& user, const string& msg, bool thirdPerson);
     void userCommand(const HintedUser& user, const UserCommand& uc, ParamMap& params, bool compatibility);
     int getMode(const string& aHubUrl) const;
+    bool isProxyHubStealth() const;
+    bool isTcpActive(const HintedUser& user);
     bool isActive(const string& aHubUrl = Util::emptyString) const { return getMode(aHubUrl) != SettingsManager::INCOMING_FIREWALL_PASSIVE; }
     bool ucExecuteLua(const string& cmd, StringMap& params);
 

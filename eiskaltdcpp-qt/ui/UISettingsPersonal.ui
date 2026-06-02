@@ -181,7 +181,7 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Line speed (upload)</string>
+         <string>ADC line speed</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -200,7 +200,7 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</string>
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>This drop-down contains a number of common upload speeds (in MiB/s),
+         <string>This drop-down contains a number of common upload speeds (in Mbit/s),
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</string>
@@ -216,11 +216,43 @@ of how fast a source you are likely to be for other users.</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>MiB/s</string>
+         <string>Mbit/s</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
+       <widget class="QLabel" name="label_NMDC_SPEED">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>NMDC line speed</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QComboBox" name="comboBox_NMDC_SPEED">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Legacy NMDC connection type sent in $MyINFO.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
        <widget class="QLabel" name="label_6">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -239,7 +271,7 @@ of how fast a source you are likely to be for other users.</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QComboBox" name="comboBox_ENC">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

@@ -57,6 +57,7 @@ public:
 
     virtual void accept(const Socket& listeningSocket);
     virtual void connect(const string& aIp, const string &aPort);
+    void setServerName(const string& host);
     virtual int read(void* aBuffer, int aBufLen);
     virtual int write(const void* aBuffer, int aLen);
     virtual int wait(uint32_t millis, int waitFor);

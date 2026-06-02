@@ -303,8 +303,8 @@ if (ENABLE_STACKTRACE)
 endif (ENABLE_STACKTRACE)
 
 if (APPLE)
-    set (MACOSICON "${PROJECT_SOURCE_DIR}/../data/icons/eiskaltdcpp-dock-icon.icns")
-    set (MACOSICONINBUNDLE "eiskaltdcpp-dock-icon")
+    set (MACOSICON "${PROJECT_SOURCE_DIR}/../data/icons/eiskaltdcpp-borderless.icns")
+    set (MACOSICONINBUNDLE "eiskaltdcpp-borderless.icns")
     # Set how it shows up in the Info.plist file
     set (MACOSX_BUNDLE_ICON_FILE ${MACOSICONINBUNDLE})
     # Set where in the bundle to put the icns file
@@ -322,6 +322,7 @@ add_executable (${PROJECT_NAME} MACOSX_BUNDLE WIN32 src/main.cpp
                 ${TRANSLATIONS}
                 ${WIN_RESOURCES}
                 translations)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_tr)
 
 # Embed application manifest for proper DLL loading, DPI awareness, and
 # Windows version compatibility.  For MSVC, CMake passes .manifest sources
@@ -460,6 +461,10 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
     set(EISKALT_APP_BUNDLE "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>")
     set(EISKALT_RES_DIR "${EISKALT_APP_BUNDLE}/Contents/Resources")
 
+    if(TARGET mo-update)
+        add_dependencies(eiskaltdcpp-qt mo-update)
+    endif()
+
     add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/icons"
@@ -490,6 +495,13 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
             )
         endif()
     endforeach()
+
+    add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+        COMMAND /bin/sh -c
+            "set -e; for mo in '${CMAKE_BINARY_DIR}/dcpp/'*_libeiskaltdcpp.mo; do [ -e \"$mo\" ] || continue; lang=`basename \"$mo\" _libeiskaltdcpp.mo`; mkdir -p '${EISKALT_RES_DIR}/locale/'\"$lang\"'/LC_MESSAGES'; cp -p \"$mo\" '${EISKALT_RES_DIR}/locale/'\"$lang\"'/LC_MESSAGES/libeiskaltdcpp.mo'; done"
+        VERBATIM
+    )
+
 
     foreach(_file
         "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/eiskaltdcpp.icns"

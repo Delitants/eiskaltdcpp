@@ -600,6 +600,10 @@ void MainWindow::changeEvent(QEvent *e){
         e->type() == QEvent::StyleChange) {
         reloadSomeSettings();
         redrawToolPanel();
+        QTimer::singleShot(0, this, [this]() {
+            for (auto *toolbar : findChildren<ToolBar*>())
+                toolbar->refreshTabStyle();
+        });
     }
 }
 

@@ -38,16 +38,59 @@ constexpr auto DEFAULT_DHT_BOOTSTRAP_URL = "";
 namespace dcpp {
 
 StringList SettingsManager::connectionSpeeds;
+StringList SettingsManager::nmdcConnectionSpeeds;
+
+namespace {
+
+bool isNumericSpeed(const string& value)
+{
+    return !value.empty() && value.find_first_of("0123456789") != string::npos &&
+           value.find_first_not_of("0123456789.") == string::npos;
+}
+
+string nmdcConnectionFromSpeed(const string& value)
+{
+    const double speed = Util::toDouble(value);
+
+    if(speed <= 0.03)
+        return "28.8Kbps";
+    if(speed <= 0.04)
+        return "33.6Kbps";
+    if(speed <= 0.07)
+        return "56Kbps";
+    if(speed <= 0.2)
+        return "ISDN";
+    if(speed <= 2)
+        return "DSL";
+    if(speed <= 10)
+        return "Cable";
+    if(speed <= 100)
+        return "LAN(T1)";
+
+    return "LAN(T3)";
+}
+
+string normalizeNmdcConnectionSpeed(const string& value)
+{
+    if(isNumericSpeed(value))
+        return nmdcConnectionFromSpeed(value);
+
+    return value;
+}
+
+}
 
 const string SettingsManager::settingTags[] =
 {
     // Strings
-    "Nick", "UploadSpeed", "Description", "DownloadDirectory", "EMail",
+    "Nick", "UploadSpeed", "AdcUploadSpeed", "NmdcUploadSpeed",
+    "Description", "DownloadDirectory", "EMail",
     "ExternalIp", "HublistServers", "HttpProxy",
     "LogDirectory", "LogFormatPostDownload","LogFormatPostFinishedDownload",
     "LogFormatPostUpload", "LogFormatMainChat", "LogFormatPrivateChat",
     "TempDownloadDirectory", "BindAddress", "SocksServer",
-    "SocksUser", "SocksPassword", "ConfigVersion", "DefaultAwayMessage",
+    "SocksUser", "SocksPassword", "ShadowsocksServer", "ShadowsocksPassword", "ShadowsocksMethod",
+    "ConfigVersion", "DefaultAwayMessage",
     "TimeStampsFormat", "CID", "LogFileMainChat", "LogFilePrivateChat",
     "LogFileStatus", "LogFileUpload", "LogFileDownload", "LogFileFinishedDownload",
     "LogFileSystem",
@@ -68,7 +111,7 @@ const string SettingsManager::settingTags[] =
     "ListDuplicates", "BufferSize", "DownloadSlots", "MaxDownloadSpeed",
     "LogMainChat", "LogPrivateChat", "LogDownloads","LogFileFinishedDownload",
     "LogUploads", "MinUploadSpeed", "AutoAway",
-    "SocksPort", "SocksResolve", "KeepLists", "AutoKick",
+    "SocksPort", "SocksResolve", "SocksStealth", "ProxyP2PConnections", "ShadowsocksPort", "KeepLists", "AutoKick",
     "CompressTransfers", "SFVCheck",
     "MaxCompression", "NoAwayMsgToBots", "SkipZeroByte", "AdlsBreakOnFirst",
     "HubUserCommands", "AutoSearchAutoMatch","LogSystem",
@@ -135,6 +178,18 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     connectionSpeeds.push_back("100");
     connectionSpeeds.push_back("1000");
 
+    nmdcConnectionSpeeds.clear();
+    nmdcConnectionSpeeds.push_back("28.8Kbps");
+    nmdcConnectionSpeeds.push_back("33.6Kbps");
+    nmdcConnectionSpeeds.push_back("56Kbps");
+    nmdcConnectionSpeeds.push_back("Modem");
+    nmdcConnectionSpeeds.push_back("Satellite");
+    nmdcConnectionSpeeds.push_back("ISDN");
+    nmdcConnectionSpeeds.push_back("DSL");
+    nmdcConnectionSpeeds.push_back("Cable");
+    nmdcConnectionSpeeds.push_back("LAN(T1)");
+    nmdcConnectionSpeeds.push_back("LAN(T3)");
+
     for(int i=0; i<SETTINGS_LAST; i++)
         isSet[i] = false;
 
@@ -198,6 +253,8 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(LOG_CMD_DEBUG, false);
     setDefault(LOG_DIAGNOSTIC, true);
     setDefault(UPLOAD_SPEED, connectionSpeeds[11]);
+    setDefault(ADC_UPLOAD_SPEED, connectionSpeeds[11]);
+    setDefault(NMDC_UPLOAD_SPEED, "DSL");
     setDefault(MIN_UPLOAD_SPEED, 0);
     setDefault(LOG_FORMAT_POST_DOWNLOAD, "[%Y-%m-%d %H:%M:%S] %[target] downloaded from %[userNI] (%[userCID]), %[fileSI] (%[fileSIchunk]), %[speed], %[time], %[fileTR]");
     setDefault(LOG_FORMAT_POST_FINISHED_DOWNLOAD, "%Y-%m-%d %H:%M: %[target] " + string(_("downloaded from")) + " %[userNI] (%[userCID]), %[fileSI] (%[fileSIsession]), %[speed], %[time], %[fileTR]");
@@ -220,6 +277,12 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(LOG_FILE_DIAGNOSTIC,   "Diagnostic.log");
     setDefault(SOCKS_PORT, 1080);
     setDefault(SOCKS_RESOLVE, 1);
+    setDefault(SOCKS_STEALTH, false);
+    setDefault(PROXY_P2P_CONNECTIONS, false);
+    setDefault(SHADOWSOCKS_PORT, 8388);
+    setDefault(SHADOWSOCKS_SERVER, Util::emptyString);
+    setDefault(SHADOWSOCKS_PASSWORD, Util::emptyString);
+    setDefault(SHADOWSOCKS_METHOD, "aes-256-gcm");
     setDefault(CONFIG_VERSION, "0.181");        // 0.181 is the last version missing configversion
     setDefault(KEEP_LISTS, false);
     setDefault(AUTO_KICK, false);
@@ -360,6 +423,16 @@ void SettingsManager::load(string const& aFileName)
                 if(xml.findChild(attr))
                     set(StrSetting(i), xml.getChildData());
                 xml.resetCurrentChild();
+            }
+            if(!isDefault(UPLOAD_SPEED)) {
+                const string legacyUploadSpeed = get(UPLOAD_SPEED, false);
+                if(isDefault(ADC_UPLOAD_SPEED))
+                    set(ADC_UPLOAD_SPEED, legacyUploadSpeed);
+                if(isDefault(NMDC_UPLOAD_SPEED))
+                    set(NMDC_UPLOAD_SPEED, nmdcConnectionFromSpeed(legacyUploadSpeed));
+            }
+            if(!isDefault(NMDC_UPLOAD_SPEED)) {
+                set(NMDC_UPLOAD_SPEED, normalizeNmdcConnectionSpeed(get(NMDC_UPLOAD_SPEED, false)));
             }
             for(i=INT_FIRST; i<INT_LAST; i++)
             {

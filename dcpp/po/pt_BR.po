@@ -813,3 +813,7 @@ msgstr "DHT novamente habilitado"
 #: ../../dht/UDPSocket.cpp:258
 msgid "DHT disabled: "
 msgstr "DHT desabilitado: "
+
+#: ../ConnectionManager.cpp:185 ../QueueManager.cpp:887
+msgid "Cannot download from passive user while you are in passive mode"
+msgstr "Não é possível baixar de um usuário passivo enquanto você está no modo passivo"

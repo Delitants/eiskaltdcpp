@@ -179,6 +179,12 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     gridLayout_11->addWidget(labelHubLists, 3, 0);
     gridLayout_11->addWidget(buttonEditHubLists, 3, 1);
     connect(buttonEditHubLists, &QPushButton::clicked, this, &SettingsConnection::slotCfgPublicHubs);
+
+    checkBox_PROXY_P2P = new QCheckBox(tr("Proxy downloads and uploads too (passive mode)"), frame_2);
+    checkBox_PROXY_P2P->setToolTip(tr("When enabled, peer-to-peer transfers use the selected proxy. "
+                                      "Incoming connection options are disabled and the client is advertised as passive."));
+    gridLayout_8->addWidget(checkBox_PROXY_P2P, 7, 0, 1, 4);
+
     comboBox_TOS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     comboBox_TLS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
@@ -195,11 +201,15 @@ bool SettingsConnection::eventFilter(QObject *obj, QEvent *e){
 
 void SettingsConnection::ok(){
 
-    bool active = !radioButton_PASSIVE->isChecked();
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
+    const bool use_proxy = !radioButton_DC->isChecked();
+    const bool proxyP2P = use_proxy && checkBox_PROXY_P2P && checkBox_PROXY_P2P->isChecked();
+    const bool hubStealth = use_proxy && checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked();
+    const bool hubPassive = proxyP2P || hubStealth;
+    bool active = !radioButton_PASSIVE->isChecked() && !hubPassive;
 
     int old_mode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true);
-    SM->set(SettingsManager::AUTO_DETECT_CONNECTION, checkBox_AUTO_DETECT_CONNECTION->isChecked());
+    SM->set(SettingsManager::AUTO_DETECT_CONNECTION, checkBox_AUTO_DETECT_CONNECTION->isChecked() && !hubPassive);
     if (active){
         if (radioButton_ACTIVE->isChecked())
             SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_DIRECT);
@@ -247,6 +257,10 @@ void SettingsConnection::ok(){
     }
     else {
         SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
+        QString bind_ip=lineEdit_BIND_ADDRESS->text();
+        if (validateIp4(bind_ip))
+            SM->set(SettingsManager::BIND_ADDRESS, lineEdit_BIND_ADDRESS->text().toStdString());
+
         const bool useIPv6 = checkBox_USE_IPV6 && checkBox_USE_IPV6->isChecked();
         QString wanIp6 = lineEdit_WANIP6 ? lineEdit_WANIP6->text().trimmed() : QString();
         QString bindIp6 = lineEdit_BIND_ADDRESS6 ? lineEdit_BIND_ADDRESS6->text().trimmed() : QString();
@@ -270,37 +284,52 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
 
-    bool use_socks = !radioButton_DC->isChecked();
+    const bool use_shadowsocks = radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
     int type = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true);
 
     SM->set(SettingsManager::BIND_IFACE, radioButton_BIND_IFACE->isChecked());
     SM->set(SettingsManager::BIND_IFACE_NAME, _tq(comboBox_IFACES->currentText()));
 
-    if (use_socks){
-        QString ip = lineEdit_SIP->text();
+    if (use_proxy){
+        const QString server = lineEdit_SIP->text().trimmed();
 
-        if (!validateIp4(ip)){
-            showMsg(tr("No valid SOCKS5 server IP found!"), nullptr);
+        if (server.isEmpty()){
+            showMsg(use_shadowsocks ? tr("No Shadowsocks server found!") : tr("No SOCKS5 server found!"), lineEdit_SIP);
 
             return;
         }
 
         int port = lineEdit_SPORT->text().toInt();
+        if (port <= 0 || port > 65535) {
+            showMsg(tr("No valid proxy port found!"), lineEdit_SPORT);
 
-        SM->set(SettingsManager::SOCKS_SERVER, lineEdit_SIP->text().toStdString());
-        SM->set(SettingsManager::SOCKS_USER, lineEdit_SUSR->text().toStdString());
-        SM->set(SettingsManager::SOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
+            return;
+        }
+
         SM->set(SettingsManager::SOCKS_RESOLVE, checkBox_RESOLVE->checkState() == Qt::Checked);
-        SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
+        SM->set(SettingsManager::SOCKS_STEALTH, checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked());
+        SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, proxyP2P);
 
-        if (port > 0 && port <= 65535)
+        if (use_shadowsocks) {
+            SM->set(SettingsManager::SHADOWSOCKS_SERVER, server.toStdString());
+            SM->set(SettingsManager::SHADOWSOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
+            SM->set(SettingsManager::SHADOWSOCKS_METHOD, comboBox_SHADOWSOCKS_METHOD->currentData().toString().toStdString());
+            SM->set(SettingsManager::SHADOWSOCKS_PORT, port);
+            SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
+        } else {
+            SM->set(SettingsManager::SOCKS_SERVER, server.toStdString());
+            SM->set(SettingsManager::SOCKS_USER, lineEdit_SUSR->text().toStdString());
+            SM->set(SettingsManager::SOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
             SM->set(SettingsManager::SOCKS_PORT, port);
+            SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
+        }
     }
     else{
         SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
+        SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, false);
     }
 
-    if (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true) != type)
+    if (use_proxy || qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true) != type)
         Socket::socksUpdated(qtCtx()->dcCtx());
 
     SM->set(SettingsManager::THROTTLE_ENABLE, checkBox_THROTTLE_ENABLE->isChecked());
@@ -442,14 +471,34 @@ void SettingsConnection::init(){
     radioButton_UPNP->setEnabled(false);
 #endif
 
-    lineEdit_SIP->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_SERVER, true)));
+    if(comboBox_SHADOWSOCKS_METHOD && comboBox_SHADOWSOCKS_METHOD->count() == 0) {
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("aes-256-gcm"), QStringLiteral("aes-256-gcm"));
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("aes-128-gcm"), QStringLiteral("aes-128-gcm"));
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("chacha20-ietf-poly1305"), QStringLiteral("chacha20-ietf-poly1305"));
+    }
+
+    const int outgoingMode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true);
+    const bool shadowsocksMode = outgoingMode == SettingsManager::OUTGOING_SHADOWSOCKS;
+
+    lineEdit_SIP->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(
+        shadowsocksMode ? SettingsManager::SHADOWSOCKS_SERVER : SettingsManager::SOCKS_SERVER, true)));
     lineEdit_SUSR->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_USER, true)));
-    lineEdit_SPORT->setText(QString().setNum(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_PORT, true)));
-    lineEdit_SPSWD->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_PASSWORD, true)));
+    lineEdit_SPORT->setText(QString().setNum(qtCtx()->dcCtx().getSettingsManager()->get(
+        shadowsocksMode ? SettingsManager::SHADOWSOCKS_PORT : SettingsManager::SOCKS_PORT, true)));
+    lineEdit_SPSWD->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(
+        shadowsocksMode ? SettingsManager::SHADOWSOCKS_PASSWORD : SettingsManager::SOCKS_PASSWORD, true)));
 
     checkBox_RESOLVE->setCheckState( qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_RESOLVE, true)? Qt::Checked : Qt::Unchecked );
+    if(checkBox_SOCKS_STEALTH)
+        checkBox_SOCKS_STEALTH->setChecked(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_STEALTH, true));
+    if(checkBox_PROXY_P2P)
+        checkBox_PROXY_P2P->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::PROXY_P2P_CONNECTIONS, true));
 
-    switch (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true)){
+    const QString shadowsocksMethod = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_METHOD, true));
+    const int methodIndex = comboBox_SHADOWSOCKS_METHOD->findData(shadowsocksMethod);
+    comboBox_SHADOWSOCKS_METHOD->setCurrentIndex(methodIndex >= 0 ? methodIndex : 0);
+
+    switch (outgoingMode){
     case SettingsManager::OUTGOING_DIRECT:
         {
             radioButton_DC->toggle();
@@ -459,6 +508,12 @@ void SettingsConnection::init(){
     case SettingsManager::OUTGOING_SOCKS5:
         {
             radioButton_SOCKS->toggle();
+
+            break;
+        }
+    case SettingsManager::OUTGOING_SHADOWSOCKS:
+        {
+            radioButton_SHADOWSOCKS->toggle();
 
             break;
         }
@@ -489,6 +544,11 @@ void SettingsConnection::init(){
 #endif
     connect(radioButton_DC, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
     connect(radioButton_SOCKS, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    connect(radioButton_SHADOWSOCKS, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    if(checkBox_PROXY_P2P)
+        connect(checkBox_PROXY_P2P, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    if(checkBox_SOCKS_STEALTH)
+        connect(checkBox_SOCKS_STEALTH, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_USE_IPV6 && lineEdit_WANIP6 && lineEdit_BIND_ADDRESS6) {
         auto syncIpv6Fields = [this]() {
             const bool enabled = checkBox_USE_IPV6->isChecked();
@@ -503,6 +563,7 @@ void SettingsConnection::init(){
     lineEdit_SPORT->installEventFilter(this);
     lineEdit_SPSWD->installEventFilter(this);
     lineEdit_SUSR->installEventFilter(this);
+    comboBox_SHADOWSOCKS_METHOD->installEventFilter(this);
     lineEdit_WANIP->installEventFilter(this);
     if (lineEdit_WANIP6)
         lineEdit_WANIP6->installEventFilter(this);
@@ -522,23 +583,79 @@ void SettingsConnection::init(){
     radioButton_PASSIVE->installEventFilter(this);
     radioButton_PORT->installEventFilter(this);
     radioButton_SOCKS->installEventFilter(this);
+    radioButton_SHADOWSOCKS->installEventFilter(this);
 #if (defined USE_MINIUPNP)
     radioButton_UPNP->installEventFilter(this);
 #endif
     checkBox_DONTOVERRIDE->installEventFilter(this);
     checkBox_RESOLVE->installEventFilter(this);
+    checkBox_SOCKS_STEALTH->installEventFilter(this);
+    if (checkBox_PROXY_P2P)
+        checkBox_PROXY_P2P->installEventFilter(this);
 }
 
 void SettingsConnection::slotToggleIncomming(){
-    bool b = !radioButton_PASSIVE->isChecked();
+    const bool hubPassive = isProxyP2PMode() || isProxyHubStealthMode();
+    if(hubPassive && !radioButton_PASSIVE->isChecked())
+        radioButton_PASSIVE->setChecked(true);
+
+    bool b = !radioButton_PASSIVE->isChecked() && !hubPassive;
 
     frame->setEnabled(b);
+    checkBox_AUTO_DETECT_CONNECTION->setEnabled(!hubPassive);
+    radioButton_ACTIVE->setEnabled(!hubPassive);
+    radioButton_PORT->setEnabled(!hubPassive);
+    radioButton_PASSIVE->setEnabled(!hubPassive);
+#if (defined USE_MINIUPNP)
+    radioButton_UPNP->setEnabled(!hubPassive);
+#endif
+    groupBox_5->setEnabled(true);
 }
 
 void SettingsConnection::slotToggleOutgoing(){
-    bool b = !radioButton_DC->isChecked();
+    const bool proxy = !radioButton_DC->isChecked();
+    const bool socks = proxy && radioButton_SOCKS && radioButton_SOCKS->isChecked();
+    const bool shadowsocks = proxy && radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
 
-    frame_2->setEnabled(b);
+    frame_2->setEnabled(true);
+    if(label_5)
+        label_5->setEnabled(proxy);
+    if(lineEdit_SIP)
+        lineEdit_SIP->setEnabled(proxy);
+    if(label_6)
+        label_6->setEnabled(proxy);
+    if(lineEdit_SPORT)
+        lineEdit_SPORT->setEnabled(proxy);
+    if(label_7)
+        label_7->setEnabled(socks);
+    if(lineEdit_SUSR)
+        lineEdit_SUSR->setEnabled(socks);
+    if(label_8)
+        label_8->setEnabled(proxy);
+    if(lineEdit_SPSWD)
+        lineEdit_SPSWD->setEnabled(proxy);
+    if(label_SHADOWSOCKS_METHOD)
+        label_SHADOWSOCKS_METHOD->setEnabled(shadowsocks);
+    if(comboBox_SHADOWSOCKS_METHOD)
+        comboBox_SHADOWSOCKS_METHOD->setEnabled(shadowsocks);
+    if(checkBox_RESOLVE)
+        checkBox_RESOLVE->setEnabled(proxy);
+    if(checkBox_SOCKS_STEALTH)
+        checkBox_SOCKS_STEALTH->setEnabled(proxy);
+    if(checkBox_PROXY_P2P)
+        checkBox_PROXY_P2P->setEnabled(proxy);
+
+    slotToggleIncomming();
+}
+
+bool SettingsConnection::isProxyP2PMode() const {
+    return radioButton_DC && !radioButton_DC->isChecked() &&
+           checkBox_PROXY_P2P && checkBox_PROXY_P2P->isChecked();
+}
+
+bool SettingsConnection::isProxyHubStealthMode() const {
+    return radioButton_DC && !radioButton_DC->isChecked() &&
+           checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked();
 }
 
 void SettingsConnection::slotCfgDHTBootstrap(){

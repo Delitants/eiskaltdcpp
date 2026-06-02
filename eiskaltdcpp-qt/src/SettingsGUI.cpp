@@ -39,14 +39,72 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPainter>
+#include <QSize>
 #include <QSpinBox>
 #include <QToolButton>
 
 #ifndef CLIENT_ICONS_DIR
 #define CLIENT_ICONS_DIR ""
 #endif
+
+namespace {
+
+QString languageFlagForFile(const QString &fileName)
+{
+    static const QMap<QString, QString> flags({
+        { QStringLiteral("en.qm"),       QStringLiteral("🇬🇧") },
+        { QStringLiteral("ru.qm"),       QStringLiteral("🇷🇺") },
+        { QStringLiteral("be.qm"),       QStringLiteral("🇧🇾") },
+        { QStringLiteral("hu.qm"),       QStringLiteral("🇭🇺") },
+        { QStringLiteral("fr.qm"),       QStringLiteral("🇫🇷") },
+        { QStringLiteral("pl.qm"),       QStringLiteral("🇵🇱") },
+        { QStringLiteral("pt_BR.qm"),    QStringLiteral("🇧🇷") },
+        { QStringLiteral("sr.qm"),       QStringLiteral("🇷🇸") },
+        { QStringLiteral("sr@latin.qm"), QStringLiteral("🇷🇸") },
+        { QStringLiteral("uk.qm"),       QStringLiteral("🇺🇦") },
+        { QStringLiteral("es.qm"),       QStringLiteral("🇪🇸") },
+        { QStringLiteral("eu.qm"),       QStringLiteral("🇪🇸") },
+        { QStringLiteral("bg.qm"),       QStringLiteral("🇧🇬") },
+        { QStringLiteral("sk.qm"),       QStringLiteral("🇸🇰") },
+        { QStringLiteral("cs.qm"),       QStringLiteral("🇨🇿") },
+        { QStringLiteral("de.qm"),       QStringLiteral("🇩🇪") },
+        { QStringLiteral("el.qm"),       QStringLiteral("🇬🇷") },
+        { QStringLiteral("it.qm"),       QStringLiteral("🇮🇹") },
+        { QStringLiteral("vi.qm"),       QStringLiteral("🇻🇳") },
+        { QStringLiteral("zh_CN.qm"),    QStringLiteral("🇨🇳") },
+        { QStringLiteral("sv_SE.qm"),    QStringLiteral("🇸🇪") },
+        { QStringLiteral("tr.qm"),       QStringLiteral("🇹🇷") },
+        { QStringLiteral("da.qm"),       QStringLiteral("🇩🇰") },
+        { QStringLiteral("ka.qm"),       QStringLiteral("🇬🇪") },
+    });
+
+    return flags.value(fileName);
+}
+
+QIcon languageFlagIcon(const QString &emoji)
+{
+    if (emoji.isEmpty())
+        return QIcon();
+
+    QPixmap pixmap(32, 32);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+
+    QFont font = QApplication::font();
+    font.setPixelSize(21);
+    painter.setFont(font);
+    painter.drawText(pixmap.rect(), Qt::AlignCenter, emoji);
+
+    return QIcon(pixmap);
+}
+
+}
 
 SettingsGUI::SettingsGUI(QWidget *parent) :
     QWidget(parent)
@@ -111,12 +169,14 @@ void SettingsGUI::init(){
         QString full_path;
         QString lang;
 
+        comboBox_LANGS->setIconSize(QSize(20, 20));
+
         for (const auto &f : translationsDir.entryList(QDir::Files | QDir::NoSymLinks)){
             full_path = QDir::toNativeSeparators( translationsDir.filePath(f) );
             lang = langNames[f];
 
             if (!lang.isEmpty()){
-                comboBox_LANGS->addItem(lang, full_path);
+                comboBox_LANGS->addItem(languageFlagIcon(languageFlagForFile(f)), lang, full_path);
 
                 if (qtCtx()->settings()->getStr(WS_TRANSLATION_FILE).endsWith(f))
                     k = i;

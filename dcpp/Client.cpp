@@ -253,6 +253,12 @@ string Client::getLocalIp() const {
     if (!externalIP.empty())
         return Socket::resolve(externalIP);
 
+    // When hub traffic is proxied, the hub-detected address is the proxy.
+    // Active/UPnP transfer requests must advertise the mapped public IP instead.
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT && !CTX_SETTING(EXTERNAL_IP).empty()) {
+        return Socket::resolve(CTX_SETTING(EXTERNAL_IP));
+    }
+
     // Best case - the server detected it
     if((!CTX_BOOLSETTING(NO_IP_OVERRIDE) || CTX_SETTING(EXTERNAL_IP).empty()) && !getMyIdentity().getIp().empty()) {
         return getMyIdentity().getIp();

@@ -131,6 +131,19 @@ static const char ciphersuites[] =
         "AES256-GCM-SHA384:AES256-SHA256:AES256-SHA:AES128-SHA"
         "!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK";
 
+static long tlsContextOptions() {
+    long options = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION;
+#ifdef SSL_OP_IGNORE_UNEXPECTED_EOF
+    // Many DC hubs/proxies close TLS sockets without close_notify; keep that as a clean close.
+    options |= SSL_OP_IGNORE_UNEXPECTED_EOF;
+#endif
+    return options;
+}
+
+static long tlsServerContextOptions() {
+    return tlsContextOptions() | SSL_OP_SINGLE_DH_USE;
+}
+
 CryptoManager::CryptoManager(DCContext& ctx)
     :
       ContextAware(ctx),
@@ -152,10 +165,10 @@ CryptoManager::CryptoManager(DCContext& ctx)
     serverVerContext.reset(SSL_CTX_new(SSLv23_server_method()));
 #endif
 
-    SSL_CTX_set_options(clientContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
-    SSL_CTX_set_options(clientVerContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
-    SSL_CTX_set_options(serverContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
-    SSL_CTX_set_options(serverVerContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+    SSL_CTX_set_options(clientContext, tlsContextOptions());
+    SSL_CTX_set_options(clientVerContext, tlsContextOptions());
+    SSL_CTX_set_options(serverContext, tlsContextOptions());
+    SSL_CTX_set_options(serverVerContext, tlsContextOptions());
 
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #ifdef TLS1_2_VERSION
@@ -241,13 +254,13 @@ CryptoManager::CryptoManager(DCContext& ctx)
             }
         }
 
-        SSL_CTX_set_options(clientContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+        SSL_CTX_set_options(clientContext, tlsContextOptions());
         SSL_CTX_set_cipher_list(clientContext, ciphersuites);
-        SSL_CTX_set_options(serverContext, SSL_OP_SINGLE_DH_USE | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+        SSL_CTX_set_options(serverContext, tlsServerContextOptions());
         SSL_CTX_set_cipher_list(serverContext, ciphersuites);
-        SSL_CTX_set_options(clientVerContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+        SSL_CTX_set_options(clientVerContext, tlsContextOptions());
         SSL_CTX_set_cipher_list(clientVerContext, ciphersuites);
-        SSL_CTX_set_options(serverVerContext, SSL_OP_SINGLE_DH_USE | SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION);
+        SSL_CTX_set_options(serverVerContext, tlsServerContextOptions());
         SSL_CTX_set_cipher_list(serverVerContext, ciphersuites);
 
         EC_KEY* tmp_ecdh;

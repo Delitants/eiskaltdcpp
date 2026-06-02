@@ -43,6 +43,7 @@
 #include <QAbstractButton>
 #include <QDir>
 #include <QFileInfo>
+#include <QFontMetrics>
 #include <QSplitter>
 #include <QSize>
 #include <QEvent>
@@ -89,6 +90,25 @@ QColor macSettingsSelectionBackground(const QPalette &palette, const bool darkAp
     return selection;
 }
 
+int settingsSidebarWidth(QListWidget *listWidget)
+{
+    if (!listWidget)
+        return 180;
+
+    const QFontMetrics metrics(listWidget->font());
+    int textWidth = 0;
+
+    for (int row = 0; row < listWidget->count(); ++row) {
+        if (QListWidgetItem *item = listWidget->item(row))
+            textWidth = qMax(textWidth, metrics.horizontalAdvance(item->text()));
+    }
+
+    listWidget->doItemsLayout();
+    const int delegateWidth = listWidget->sizeHintForColumn(0);
+    const int iconWidth = listWidget->iconSize().isValid() ? listWidget->iconSize().width() : 0;
+    return qBound(180, qMax(delegateWidth + 24, textWidth + iconWidth + 76), 360);
+}
+
 void applyMacSettingsPanelStyle(QFrame *panel)
 {
     if (!panel)
@@ -118,6 +138,14 @@ void applyMacSettingsPanelStyle(QFrame *panel)
                                                   : groupBackground;
     const QString comboArrow = macBundledStyleIcon(darkAppearance ? QStringLiteral("combo-arrow-down-light.svg")
                                                                   : QStringLiteral("combo-arrow-down-dark.svg"));
+    const QColor disabledFieldBackground = darkAppearance ? QColor(46, 46, 46)
+                                                          : QColor(207, 207, 207);
+    const QColor disabledFieldBorder = darkAppearance ? QColor(78, 78, 78)
+                                                      : QColor(166, 166, 166);
+    const QColor disabledFieldText = darkAppearance ? QColor(138, 138, 138)
+                                                    : QColor(78, 78, 78);
+    const QColor disabledDropBackground = darkAppearance ? QColor(40, 40, 40)
+                                                         : QColor(188, 188, 188);
 
     panel->setStyleSheet(QStringLiteral(
         "QFrame#settingsPagePanel {"
@@ -199,6 +227,19 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "QFrame#settingsPagePanel QAbstractSpinBox:focus {"
         " border: 1px solid %5;"
         "}"
+        "QFrame#settingsPagePanel QLabel:disabled,"
+        "QFrame#settingsPagePanel QCheckBox:disabled,"
+        "QFrame#settingsPagePanel QRadioButton:disabled {"
+        " color: %11;"
+        "}"
+        "QFrame#settingsPagePanel QLineEdit:disabled,"
+        "QFrame#settingsPagePanel QTextEdit:disabled,"
+        "QFrame#settingsPagePanel QPlainTextEdit:disabled,"
+        "QFrame#settingsPagePanel QAbstractSpinBox:disabled {"
+        " background-color: %9;"
+        " border: 1px solid %10;"
+        " color: %11;"
+        "}"
         "QFrame#settingsPagePanel QComboBox {"
         " background-color: palette(base);"
         " border: 1px solid %2;"
@@ -208,6 +249,11 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " font-size: 13px;"
         " combobox-popup: 0;"
         "}"
+        "QFrame#settingsPagePanel QComboBox:disabled {"
+        " background-color: %9;"
+        " border: 1px solid %10;"
+        " color: %11;"
+        "}"
         "QFrame#settingsPagePanel QComboBox::drop-down {"
         " subcontrol-origin: border;"
         " subcontrol-position: top right;"
@@ -215,6 +261,10 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         " border-left: 1px solid %2;"
         " border-top-right-radius: 7px;"
         " border-bottom-right-radius: 7px;"
+        "}"
+        "QFrame#settingsPagePanel QComboBox::drop-down:disabled {"
+        " background-color: %12;"
+        " border-left: 1px solid %10;"
         "}"
         "QFrame#settingsPagePanel QComboBox::down-arrow {"
         " image: %7;"
@@ -243,7 +293,9 @@ void applyMacSettingsPanelStyle(QFrame *panel)
         "}"
     ).arg(panelBackground.name(), fieldBorder.name(), panelBorder.name(),
           groupBackground.name(), focusBorder.name(), titleBackground.name(),
-          comboArrow, selectedText.name()));
+          comboArrow, selectedText.name(), disabledFieldBackground.name(),
+          disabledFieldBorder.name(), disabledFieldText.name(),
+          disabledDropBackground.name()));
 }
 
 void applyMacSettingsTabWidgetStyle(QTabWidget *tabs)
@@ -638,7 +690,7 @@ void Settings::init(){
     connect(this, &Settings::timeToDie, ucs, &SettingsUC::ok);
     widgets.insert(item, (int)Page::UserCommands);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiEDIT), tr("Shortcuts"), listWidget);
+    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_SHORTCUTS), tr("Shortcuts"), listWidget);
     SettingsShortcuts *sshs = new SettingsShortcuts(this);
     connect(this, &Settings::timeToDie, sshs, &SettingsShortcuts::ok);
     widgets.insert(item, (int)Page::Shortcuts);
@@ -664,8 +716,9 @@ void Settings::init(){
 
     listWidget->setIconSize(QSize(18, 18));
     listWidget->setSpacing(2);
-    listWidget->setMinimumWidth(150);
-    listWidget->setMaximumWidth(180);
+    const int sidebarWidth = settingsSidebarWidth(listWidget);
+    listWidget->setMinimumWidth(sidebarWidth);
+    listWidget->setMaximumWidth(sidebarWidth);
 #ifdef Q_OS_MAC
     applyMacSettingsSidebarStyle(listWidget);
 #endif

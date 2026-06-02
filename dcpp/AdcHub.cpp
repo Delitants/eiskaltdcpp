@@ -394,6 +394,11 @@ void AdcHub::handle(AdcCommand::RCM, AdcCommand& c) {
         return;
     }
 
+    if(ctx().getClientManager()->isProxyHubStealth() ||
+            (CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+             CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)))
+        return;
+
     if (!u->getIdentity().supports(NAT0_FEATURE) && !CTX_BOOLSETTING(ALLOW_NATT))
         return;
 
@@ -605,7 +610,10 @@ void AdcHub::handle(AdcCommand::NAT, AdcCommand& c) {
     if (c.getParameters().size() < 3)
         return;
 
-    if (!CTX_BOOLSETTING(ALLOW_NATT))
+    if (!CTX_BOOLSETTING(ALLOW_NATT) ||
+            ctx().getClientManager()->isProxyHubStealth() ||
+            (CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+             CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)))
         return;
 
     OnlineUser* u = findUser(c.getFrom());
@@ -642,7 +650,10 @@ void AdcHub::handle(AdcCommand::RNT, AdcCommand& c) {
 
     // Sent request for NAT traversal cooperation, which
     // was acknowledged (with requisite local port information).
-    if(!CTX_BOOLSETTING(ALLOW_NATT))
+    if(!CTX_BOOLSETTING(ALLOW_NATT) ||
+            ctx().getClientManager()->isProxyHubStealth() ||
+            (CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+             CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)))
         return;
 
     OnlineUser* u = findUser(c.getFrom());
@@ -904,7 +915,9 @@ void AdcHub::sendSearch(AdcCommand& c) {
         string features = c.getFeatures();
         const string& activeFeature = CTX_BOOLSETTING(USE_IPV6) ? TCP6_FEATURE : TCP4_FEATURE;
         c.setType(AdcCommand::TYPE_FEATURE);
-        if (CTX_BOOLSETTING(ALLOW_NATT)) {
+        const bool proxyP2P = CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+                CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS);
+        if (CTX_BOOLSETTING(ALLOW_NATT) && !ctx().getClientManager()->isProxyHubStealth() && !proxyP2P) {
             c.setFeatures(features + '+' + activeFeature + '-' + NAT0_FEATURE);
             send(c);
             c.setFeatures(features + '+' + NAT0_FEATURE);
@@ -995,7 +1008,7 @@ void AdcHub::info(bool /*alwaysSend*/) {
     if (limit > 0 && CTX_BOOLSETTING(THROTTLE_ENABLE)) {
         addParam(lastInfoMap, c, "US", Util::toString(limit * 1024));
     } else {
-        addParam(lastInfoMap, c, "US", Util::toString((long)(Util::toDouble(CTX_SETTING(UPLOAD_SPEED))*1024*1024/8)));
+        addParam(lastInfoMap, c, "US", Util::toString((long)(Util::toDouble(CTX_SETTING(ADC_UPLOAD_SPEED))*1024*1024/8)));
     }
 
     string su(SEGA_FEATURE);
@@ -1010,26 +1023,51 @@ void AdcHub::info(bool /*alwaysSend*/) {
     const string favIp4 = favIp.find(':') == string::npos ? favIp : Util::emptyString;
     const string favIp6 = favIp.find(':') != string::npos ? favIp : Util::emptyString;
 
+    const bool outgoingProxied = CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT;
+    const bool proxyP2P = outgoingProxied && CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS);
+    const bool hubStealth = ctx().getClientManager()->isProxyHubStealth();
+    const bool hideHubAddress = proxyP2P || hubStealth;
+    string proxyHubIp;
+    if(hideHubAddress) {
+        string proxyHost;
+        const int outgoingMode = CTX_SETTING(OUTGOING_CONNECTIONS);
+        if(outgoingMode == SettingsManager::OUTGOING_SHADOWSOCKS) {
+            proxyHost = CTX_SETTING(SHADOWSOCKS_SERVER);
+        } else if(outgoingMode == SettingsManager::OUTGOING_SOCKS5) {
+            proxyHost = CTX_SETTING(SOCKS_SERVER);
+        }
+
+        if(!proxyHost.empty()) {
+            proxyHubIp = Socket::resolve(proxyHost);
+        }
+    }
+
     string ipv4 = favIp4;
-    if(ipv4.empty() && CTX_BOOLSETTING(NO_IP_OVERRIDE) && !CTX_SETTING(EXTERNAL_IP).empty()) {
+    if(!hideHubAddress && ipv4.empty() && (outgoingProxied || CTX_BOOLSETTING(NO_IP_OVERRIDE)) && !CTX_SETTING(EXTERNAL_IP).empty()) {
         ipv4 = Socket::resolve(CTX_SETTING(EXTERNAL_IP));
     }
-    if(ipv4.empty()) {
+    if(!hideHubAddress && ipv4.empty()) {
         ipv4 = "0.0.0.0";
     }
 
     string ipv6 = favIp6;
-    if(ipv6.empty() && !CTX_SETTING(EXTERNAL_IP6).empty()) {
+    if(!hideHubAddress && ipv6.empty() && !CTX_SETTING(EXTERNAL_IP6).empty()) {
         ipv6 = Socket::resolve(CTX_SETTING(EXTERNAL_IP6));
     }
-    if(ipv6.empty()) {
+    if(!hideHubAddress && ipv6.empty()) {
         const string local6 = Util::getLocalIp(AF_INET6);
         if(local6 != "::") {
             ipv6 = local6;
         }
     }
 
-    if(useIPv6) {
+    if(hideHubAddress) {
+        const bool proxyHubIp6 = proxyHubIp.find(':') != string::npos;
+        addParam(lastInfoMap, c, "I4", (!proxyHubIp.empty() && !proxyHubIp6) ? proxyHubIp : Util::emptyString);
+        addParam(lastInfoMap, c, "U4", Util::emptyString);
+        addParam(lastInfoMap, c, "I6", (!proxyHubIp.empty() && proxyHubIp6) ? proxyHubIp : Util::emptyString);
+        addParam(lastInfoMap, c, "U6", Util::emptyString);
+    } else if(useIPv6) {
         addParam(lastInfoMap, c, "I4", Util::emptyString);
         addParam(lastInfoMap, c, "U4", Util::emptyString);
         addParam(lastInfoMap, c, "I6", ipv6);
@@ -1039,7 +1077,7 @@ void AdcHub::info(bool /*alwaysSend*/) {
             su += "," + TCP6_FEATURE;
             su += "," + UDP6_FEATURE;
         } else {
-            if(CTX_BOOLSETTING(ALLOW_NATT))
+            if(CTX_BOOLSETTING(ALLOW_NATT) && !proxyP2P && !hubStealth)
                 su += "," + NAT0_FEATURE;
             else
                 addParam(lastInfoMap, c, "I6", Util::emptyString);
@@ -1055,7 +1093,7 @@ void AdcHub::info(bool /*alwaysSend*/) {
             su += "," + TCP4_FEATURE;
             su += "," + UDP4_FEATURE;
         } else {
-            if (CTX_BOOLSETTING(ALLOW_NATT))
+            if (CTX_BOOLSETTING(ALLOW_NATT) && !proxyP2P && !hubStealth)
                 su += "," + NAT0_FEATURE;
             else
                 addParam(lastInfoMap, c, "I4", Util::emptyString);
@@ -1159,7 +1197,7 @@ void AdcHub::on(Failed f, const string& aLine) {
 
 void AdcHub::on(Second s, uint64_t aTick) {
     Client::on(s, aTick);
-    if(state == STATE_NORMAL && (aTick > (getLastActivity() + 120*1000)) ) {
+    if(state == STATE_NORMAL && (aTick > (getLastActivity() + 30*1000)) ) {
         send("\n", 1);
     }
 }

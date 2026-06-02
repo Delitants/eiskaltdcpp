@@ -21,7 +21,10 @@
 #include <QToolButton>
 #include <QHBoxLayout>
 #include <QColor>
+#include <QGuiApplication>
 #include <QPalette>
+#include <QStyleHints>
+#include <QTimer>
 
 #include "ArenaWidget.h"
 #include "ArenaWidgetManager.h"
@@ -36,10 +39,15 @@ QString chromeTabStyleSheet(const QWidget *widget)
 {
     const QPalette palette = widget ? widget->palette() : QPalette();
     const QColor window = palette.color(QPalette::Window);
-    const QColor base = palette.color(QPalette::Base);
     const QColor text = palette.color(QPalette::Text);
-    const QColor border = palette.color(QPalette::Mid);
-    const bool dark = window.lightness() < 128;
+    bool dark = window.lightness() < 128;
+    if (const QStyleHints *styleHints = QGuiApplication::styleHints()) {
+        const Qt::ColorScheme colorScheme = styleHints->colorScheme();
+        if (colorScheme == Qt::ColorScheme::Dark)
+            dark = true;
+        else if (colorScheme == Qt::ColorScheme::Light)
+            dark = false;
+    }
 
     const auto blend = [](const QColor &foreground, const QColor &background, double amount) {
         const auto channel = [amount](int fg, int bg) {
@@ -51,11 +59,13 @@ QString chromeTabStyleSheet(const QWidget *widget)
                       channel(foreground.blue(), background.blue()));
     };
 
-    const QColor active = dark ? blend(Qt::white, window, 0.18) : base;
-    const QColor inactive = dark ? blend(Qt::white, window, 0.09) : window.darker(118);
-    const QColor hover = dark ? blend(Qt::white, window, 0.14) : inactive.lighter(106);
-    const QColor tabText = (dark && text.lightness() < 150) ? QColor(245, 245, 245) : text;
-    const QColor tabBorder = dark ? blend(Qt::white, window, 0.26) : border;
+    const QColor active = dark ? blend(Qt::white, window, 0.18) : QColor(255, 255, 255);
+    const QColor inactive = dark ? blend(Qt::white, window, 0.09) : QColor(214, 214, 214);
+    const QColor hover = dark ? blend(Qt::white, window, 0.14) : QColor(228, 228, 228);
+    const QColor tabText = dark
+            ? ((text.lightness() < 150) ? QColor(245, 245, 245) : text)
+            : QColor(18, 18, 18);
+    const QColor tabBorder = dark ? blend(Qt::white, window, 0.26) : QColor(176, 176, 176);
 
     return QStringLiteral(
         "QTabBar#arenaTabbar {"
@@ -174,9 +184,13 @@ void ToolBar::initTabs(){
     tabbar->setSizePolicy(QSizePolicy::Expanding, tabbar->sizePolicy().verticalPolicy());
     tabbar->setIconSize(QSize(16, 16));
     tabbar->setAcceptDrops(true);
-    tabbar->setStyleSheet(chromeTabStyleSheet(tabbar));
+    refreshTabStyle();
 
     tabbar->installEventFilter(this);
+
+    connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, this, [this]() {
+        QTimer::singleShot(0, this, &ToolBar::refreshTabStyle);
+    });
 
     shortcuts << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_1)), parentWidget()))
               << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_2)), parentWidget()))
@@ -210,6 +224,16 @@ void ToolBar::initTabs(){
 
     addWidget(tabbar);
     syncCloseButtons();
+}
+
+void ToolBar::refreshTabStyle()
+{
+    if (!tabbar)
+        return;
+
+    const QString style = chromeTabStyleSheet(tabbar);
+    if (tabbar->styleSheet() != style)
+        tabbar->setStyleSheet(style);
 }
 
 void ToolBar::insertWidget(ArenaWidget *awgt){

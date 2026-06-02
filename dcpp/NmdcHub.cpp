@@ -620,7 +620,11 @@ void NmdcHub::onLine(const string& aLine) {
         fprintf(stderr, "[NmdcHub::$ConnectToMe] server=%s port=%s secure=%d\n",
                 server.c_str(), port.c_str(), (int)secure);
 
-        if(CTX_BOOLSETTING(ALLOW_NATT)) {
+        const bool proxyP2P = CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+                CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS);
+        const bool hubStealth = ctx().getClientManager()->isProxyHubStealth();
+
+        if(CTX_BOOLSETTING(ALLOW_NATT) && !proxyP2P && !hubStealth) {
             if(port[port.size() - 1] == 'N') {
                 if(senderNick.empty())
                     return;
@@ -671,7 +675,11 @@ void NmdcHub::onLine(const string& aLine) {
 
         if(isActive()) {
             connectToMe(*u);
-        } else if(CTX_BOOLSETTING(ALLOW_NATT) && (u->getIdentity().getStatus() & Identity::NAT)) {
+        } else if(CTX_BOOLSETTING(ALLOW_NATT) &&
+                  !ctx().getClientManager()->isProxyHubStealth() &&
+                  !(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+                    CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)) &&
+                  (u->getIdentity().getStatus() & Identity::NAT)) {
             bool secure = ctx().getCryptoManager()->TLSOk() && u->getUser()->isSet(User::TLS);
             // NMDC v2.205 supports "$ConnectToMe sender_nick remote_nick ip:port", but many NMDC hubsofts block it
             // sender_nick at the end should work at least in most used hubsofts
@@ -1038,8 +1046,14 @@ void NmdcHub::myInfo(bool alwaysSend) {
     char StatusMode = Identity::NORMAL;
 
     char modeChar = '?';
-    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5)
+    const bool proxyP2P = CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+            CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS);
+    const bool hubStealth = ctx().getClientManager()->isProxyHubStealth();
+    if(proxyP2P && CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 &&
+            !CTX_BOOLSETTING(SOCKS_STEALTH))
         modeChar = '5';
+    else if(proxyP2P || hubStealth)
+        modeChar = 'P';
     else if(isActive())
         modeChar = 'A';
     else
@@ -1049,12 +1063,12 @@ void NmdcHub::myInfo(bool alwaysSend) {
     if (upLimit > 0 && CTX_BOOLSETTING(THROTTLE_ENABLE)) {
         uploadSpeed = Util::toString(upLimit) + " KiB/s";
     } else {
-        uploadSpeed = CTX_SETTING(UPLOAD_SPEED);
+        uploadSpeed = CTX_SETTING(NMDC_UPLOAD_SPEED);
     }
     if(Util::getAway()) {
         StatusMode |= Identity::AWAY;
     }
-    if(CTX_BOOLSETTING(ALLOW_NATT) && !isActive()) {
+    if(CTX_BOOLSETTING(ALLOW_NATT) && !isActive() && !hubStealth) {
         StatusMode |= Identity::NAT;
     }
     if (ctx().getCryptoManager()->TLSOk()) {
@@ -1267,7 +1281,7 @@ void NmdcHub::on(Failed, const string& aLine) {
 void NmdcHub::on(Second, uint64_t aTick) {
     Client::on(Second(), aTick);
 
-    if(state == STATE_NORMAL && (aTick > (getLastActivity() + 120*1000)) ) {
+    if(state == STATE_NORMAL && (aTick > (getLastActivity() + 30*1000)) ) {
         send("|", 1);
     }
 }

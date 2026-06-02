@@ -123,7 +123,8 @@ void BufferedSocket::connect(const string& aAddress, const string& aPort, const 
     sock->bind(localPort, bindIp);
 
     Lock l(cs);
-    addTask(CONNECT, new ConnectInfo(aAddress, aPort, localPort, natRole, proxy && (ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5)));
+    const int outgoing = ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS);
+    addTask(CONNECT, new ConnectInfo(aAddress, aPort, localPort, natRole, proxy && outgoing != SettingsManager::OUTGOING_DIRECT));
 }
 
 #define LONG_TIMEOUT 30000
@@ -140,12 +141,13 @@ void BufferedSocket::threadConnect(const string& aAddr, const string &aPort, con
     while (GET_TICK() < endTime) {
         dcdebug("threadConnect attempt to addr \"%s\"\n", aAddr.c_str());
         try {
-            if(dynamic_cast<SSLSocket*>(sock.get()) && !proxy) {
+            if(auto* sslSock = dynamic_cast<SSLSocket*>(sock.get())) {
+                sslSock->setServerName(aAddr);
                 SSLSocket::setSNIHint(aAddr);
             }
 
             if(proxy) {
-                sock->socksConnect(aAddr, aPort, LONG_TIMEOUT);
+                sock->proxyConnect(aAddr, aPort, LONG_TIMEOUT);
             } else if(auto* sslSock = dynamic_cast<SSLSocket*>(sock.get())) {
                 sslSock->connect(aAddr, aPort);
             } else {

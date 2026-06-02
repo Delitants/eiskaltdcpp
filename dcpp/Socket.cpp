@@ -55,6 +55,13 @@
 #include <sys/sockio.h>
 #endif
 
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/md5.h>
+#include <openssl/rand.h>
+
+#include <cctype>
+
 namespace dcpp {
 
 string Socket::udpServer;
@@ -403,6 +410,286 @@ inline uint64_t timeLeft(uint64_t start, uint64_t timeout) {
         throw SocketException(_("Connection timeout"));
     return start + timeout - now;
 }
+
+constexpr size_t SHADOWSOCKS_TAG_LEN = 16;
+constexpr size_t SHADOWSOCKS_NONCE_LEN = 12;
+constexpr size_t SHADOWSOCKS_MAX_CHUNK = 0x3fff;
+
+string normalizeCipherName(string method) {
+    transform(method.begin(), method.end(), method.begin(), [](unsigned char c) { return static_cast<char>(tolower(c)); });
+    return method;
+}
+
+int shadowsocksMethodId(const string& method) {
+    const string normalized = normalizeCipherName(method);
+    if(normalized == "aes-128-gcm")
+        return Socket::SHADOWSOCKS_AES_128_GCM;
+    if(normalized == "aes-256-gcm")
+        return Socket::SHADOWSOCKS_AES_256_GCM;
+    if(normalized == "chacha20-ietf-poly1305")
+        return Socket::SHADOWSOCKS_CHACHA20_IETF_POLY1305;
+    return Socket::SHADOWSOCKS_NONE;
+}
+
+const EVP_CIPHER* shadowsocksCipher(int method) {
+    switch(method) {
+    case Socket::SHADOWSOCKS_AES_128_GCM:
+        return EVP_aes_128_gcm();
+    case Socket::SHADOWSOCKS_AES_256_GCM:
+        return EVP_aes_256_gcm();
+    case Socket::SHADOWSOCKS_CHACHA20_IETF_POLY1305:
+        return EVP_chacha20_poly1305();
+    default:
+        return nullptr;
+    }
+}
+
+size_t shadowsocksKeyLen(int method) {
+    switch(method) {
+    case Socket::SHADOWSOCKS_AES_128_GCM:
+        return 16;
+    case Socket::SHADOWSOCKS_AES_256_GCM:
+    case Socket::SHADOWSOCKS_CHACHA20_IETF_POLY1305:
+        return 32;
+    default:
+        return 0;
+    }
+}
+
+ByteVector evpBytesToKey(const string& password, size_t keyLen) {
+    ByteVector key;
+    ByteVector previous;
+    const auto* passwordData = reinterpret_cast<const unsigned char*>(password.data());
+
+    while(key.size() < keyLen) {
+        EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+        if(!ctx)
+            throw SocketException(_("Failed to initialize Shadowsocks key derivation"));
+
+        unsigned char digest[EVP_MAX_MD_SIZE];
+        unsigned int digestLen = 0;
+        EVP_DigestInit_ex(ctx, EVP_md5(), nullptr);
+        if(!previous.empty())
+            EVP_DigestUpdate(ctx, previous.data(), previous.size());
+        EVP_DigestUpdate(ctx, passwordData, password.size());
+        EVP_DigestFinal_ex(ctx, digest, &digestLen);
+        EVP_MD_CTX_free(ctx);
+
+        previous.assign(digest, digest + digestLen);
+        key.insert(key.end(), previous.begin(), previous.end());
+    }
+
+    key.resize(keyLen);
+    return key;
+}
+
+ByteVector hkdfSha1(const ByteVector& key, const ByteVector& salt, const string& info, size_t outLen) {
+    unsigned int prkLen = 0;
+    unsigned char prk[EVP_MAX_MD_SIZE];
+    HMAC(EVP_sha1(), salt.data(), static_cast<int>(salt.size()), key.data(), key.size(), prk, &prkLen);
+
+    ByteVector out;
+    ByteVector previous;
+    uint8_t counter = 1;
+    while(out.size() < outLen) {
+        HMAC_CTX* ctx = HMAC_CTX_new();
+        if(!ctx)
+            throw SocketException(_("Failed to initialize Shadowsocks subkey derivation"));
+
+        unsigned char digest[EVP_MAX_MD_SIZE];
+        unsigned int digestLen = 0;
+        HMAC_Init_ex(ctx, prk, prkLen, EVP_sha1(), nullptr);
+        if(!previous.empty())
+            HMAC_Update(ctx, previous.data(), previous.size());
+        HMAC_Update(ctx, reinterpret_cast<const unsigned char*>(info.data()), info.size());
+        HMAC_Update(ctx, &counter, 1);
+        HMAC_Final(ctx, digest, &digestLen);
+        HMAC_CTX_free(ctx);
+
+        previous.assign(digest, digest + digestLen);
+        out.insert(out.end(), previous.begin(), previous.end());
+        ++counter;
+    }
+
+    out.resize(outLen);
+    return out;
+}
+
+void incrementNonce(ByteVector& nonce) {
+    for(auto& b : nonce) {
+        if(++b != 0)
+            break;
+    }
+}
+
+ByteVector shadowsocksAeadEncrypt(int method, const ByteVector& key, ByteVector& nonce, const uint8_t* data, size_t dataLen) {
+    const EVP_CIPHER* cipher = shadowsocksCipher(method);
+    if(!cipher)
+        throw SocketException(_("Unsupported Shadowsocks cipher"));
+
+    ByteVector out(dataLen + SHADOWSOCKS_TAG_LEN);
+    int outLen = 0;
+    int finalLen = 0;
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if(!ctx)
+        throw SocketException(_("Failed to initialize Shadowsocks encryption"));
+
+    if(EVP_EncryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) != 1 ||
+       EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, SHADOWSOCKS_NONCE_LEN, nullptr) != 1 ||
+       EVP_EncryptInit_ex(ctx, nullptr, nullptr, key.data(), nonce.data()) != 1 ||
+       EVP_EncryptUpdate(ctx, out.data(), &outLen, data, static_cast<int>(dataLen)) != 1 ||
+       EVP_EncryptFinal_ex(ctx, out.data() + outLen, &finalLen) != 1 ||
+       EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, SHADOWSOCKS_TAG_LEN, out.data() + outLen + finalLen) != 1) {
+        EVP_CIPHER_CTX_free(ctx);
+        throw SocketException(_("Shadowsocks encryption failed"));
+    }
+
+    EVP_CIPHER_CTX_free(ctx);
+    out.resize(outLen + finalLen + SHADOWSOCKS_TAG_LEN);
+    incrementNonce(nonce);
+    return out;
+}
+
+bool shadowsocksAeadDecrypt(int method, const ByteVector& key, ByteVector& nonce, const uint8_t* data, size_t dataLen, ByteVector& out) {
+    if(dataLen < SHADOWSOCKS_TAG_LEN)
+        return false;
+
+    const EVP_CIPHER* cipher = shadowsocksCipher(method);
+    if(!cipher)
+        return false;
+
+    const size_t cipherLen = dataLen - SHADOWSOCKS_TAG_LEN;
+    out.assign(cipherLen, 0);
+    int outLen = 0;
+    int finalLen = 0;
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if(!ctx)
+        return false;
+
+    const bool ok = EVP_DecryptInit_ex(ctx, cipher, nullptr, nullptr, nullptr) == 1 &&
+        EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, SHADOWSOCKS_NONCE_LEN, nullptr) == 1 &&
+        EVP_DecryptInit_ex(ctx, nullptr, nullptr, key.data(), nonce.data()) == 1 &&
+        EVP_DecryptUpdate(ctx, out.data(), &outLen, data, static_cast<int>(cipherLen)) == 1 &&
+        EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, SHADOWSOCKS_TAG_LEN, const_cast<uint8_t*>(data + cipherLen)) == 1 &&
+        EVP_DecryptFinal_ex(ctx, out.data() + outLen, &finalLen) == 1;
+
+    EVP_CIPHER_CTX_free(ctx);
+    if(!ok)
+        return false;
+
+    out.resize(outLen + finalLen);
+    incrementNonce(nonce);
+    return true;
+}
+
+bool appendSocksAddress(ByteVector& out, const string& address, const string& port, bool remoteResolve) {
+    if(remoteResolve) {
+        if(address.size() > 255)
+            return false;
+        out.push_back(3);
+        out.push_back(static_cast<uint8_t>(address.size()));
+        out.insert(out.end(), address.begin(), address.end());
+    } else {
+        in_addr ipv4;
+        in6_addr ipv6;
+        const string resolved = Socket::resolve(address);
+        const string& ip = resolved.empty() ? address : resolved;
+
+        if(inet_pton(AF_INET, ip.c_str(), &ipv4) == 1) {
+            out.push_back(1);
+            const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&ipv4);
+            out.insert(out.end(), bytes, bytes + 4);
+        } else if(inet_pton(AF_INET6, ip.c_str(), &ipv6) == 1) {
+            out.push_back(4);
+            const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&ipv6);
+            out.insert(out.end(), bytes, bytes + 16);
+        } else {
+            return false;
+        }
+    }
+
+    const uint16_t nport = htons(static_cast<uint16_t>(Util::toInt(port)));
+    const uint8_t* portBytes = reinterpret_cast<const uint8_t*>(&nport);
+    out.push_back(portBytes[0]);
+    out.push_back(portBytes[1]);
+    return true;
+}
+
+bool resolveSockaddr(const string& host, const string& port, sockaddr_storage& remote) {
+    addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+
+    addrinfo* result = nullptr;
+    if(getaddrinfo(host.c_str(), port.c_str(), &hints, &result) != 0 || result == nullptr)
+        return false;
+
+    memset(&remote, 0, sizeof(remote));
+    memcpy(&remote, result->ai_addr, min(sizeof(remote), static_cast<size_t>(result->ai_addrlen)));
+    freeaddrinfo(result);
+    return true;
+}
+
+bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& payloadOffset) {
+    if(in.empty())
+        return false;
+
+    size_t pos = 0;
+    const uint8_t atyp = in[pos++];
+
+    if(atyp == 1) {
+        if(in.size() < pos + 4 + 2)
+            return false;
+
+        sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        memcpy(&addr.sin_addr, in.data() + pos, 4);
+        pos += 4;
+        memcpy(&addr.sin_port, in.data() + pos, 2);
+        pos += 2;
+
+        memset(&remote, 0, sizeof(remote));
+        memcpy(&remote, &addr, sizeof(addr));
+    } else if(atyp == 4) {
+        if(in.size() < pos + 16 + 2)
+            return false;
+
+        sockaddr_in6 addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin6_family = AF_INET6;
+        memcpy(&addr.sin6_addr, in.data() + pos, 16);
+        pos += 16;
+        memcpy(&addr.sin6_port, in.data() + pos, 2);
+        pos += 2;
+
+        memset(&remote, 0, sizeof(remote));
+        memcpy(&remote, &addr, sizeof(addr));
+    } else if(atyp == 3) {
+        if(in.size() < pos + 1)
+            return false;
+
+        const size_t hostLen = in[pos++];
+        if(in.size() < pos + hostLen + 2)
+            return false;
+
+        const string host(reinterpret_cast<const char*>(in.data() + pos), hostLen);
+        pos += hostLen;
+
+        uint16_t nport = 0;
+        memcpy(&nport, in.data() + pos, 2);
+        pos += 2;
+
+        if(!resolveSockaddr(host, Util::toString(ntohs(nport)), remote))
+            return false;
+    } else {
+        return false;
+    }
+
+    payloadOffset = pos;
+    return true;
+}
 }
 
 void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
@@ -414,9 +701,9 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
 
     uint64_t start = GET_TICK();
 
-    connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
+    Socket::connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
 
-    if(wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT) {
+    if(Socket::wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT) {
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
@@ -445,23 +732,87 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
     connStr.push_back(pport[0]);
     connStr.push_back(pport[1]);
 
-    writeAll(&connStr[0], connStr.size(), timeLeft(start, timeout));
+    streamWriteAll(connStr.data(), connStr.size(), timeLeft(start, timeout));
 
-    // We assume we'll get a ipv4 address back...therefore, 10 bytes...
-    /// @todo add support for ipv6
-    if(readAll(&connStr[0], 10, timeLeft(start, timeout)) != 10) {
+    uint8_t replyHeader[4] = {};
+    if(streamReadAll(replyHeader, sizeof(replyHeader), timeLeft(start, timeout)) != static_cast<int>(sizeof(replyHeader))) {
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
-    if(connStr[0] != 5 || connStr[1] != 0) {
+    if(replyHeader[0] != 5 || replyHeader[1] != 0) {
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
-    in_addr sock_addr;
+    size_t addressLength = 0;
+    switch(replyHeader[3]) {
+    case 1:
+        addressLength = 4;
+        break;
+    case 3: {
+        uint8_t domainLength = 0;
+        if(streamReadAll(&domainLength, 1, timeLeft(start, timeout)) != 1) {
+            throw SocketException(_("The socks server failed establish a connection"));
+        }
+        addressLength = domainLength;
+        break;
+    }
+    case 4:
+        addressLength = 16;
+        break;
+    default:
+        throw SocketException(_("The socks server failed establish a connection"));
+    }
 
-    memset(&sock_addr, 0, sizeof(sock_addr));
-    sock_addr.s_addr = *((unsigned long*)&connStr[4]);
-    setIp(inet_ntoa(sock_addr));
+    ByteVector boundAddress(addressLength + 2);
+    if(streamReadAll(boundAddress.data(), boundAddress.size(), timeLeft(start, timeout)) != static_cast<int>(boundAddress.size())) {
+        throw SocketException(_("The socks server failed establish a connection"));
+    }
+
+    setIp(aAddr);
+}
+
+void Socket::proxyConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
+    auto* sm = ctx().getSettingsManager();
+    switch(sm->get(SettingsManager::OUTGOING_CONNECTIONS)) {
+    case SettingsManager::OUTGOING_SOCKS5:
+        socksConnect(aAddr, aPort, timeout);
+        break;
+    case SettingsManager::OUTGOING_SHADOWSOCKS:
+        shadowsocksConnect(aAddr, aPort, timeout);
+        break;
+    default:
+        connect(aAddr, aPort);
+        break;
+    }
+}
+
+void Socket::shadowsocksConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
+    auto* sm = ctx().getSettingsManager();
+
+    if(sm->get(SettingsManager::SHADOWSOCKS_SERVER).empty() || sm->get(SettingsManager::SHADOWSOCKS_PORT) == 0) {
+        throw SocketException(_("The Shadowsocks server failed to establish a connection"));
+    }
+    if(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+        throw SocketException(_("No Shadowsocks password configured"));
+    }
+
+    uint64_t start = GET_TICK();
+    Socket::connect(sm->get(SettingsManager::SHADOWSOCKS_SERVER), Util::toString(sm->get(SettingsManager::SHADOWSOCKS_PORT)));
+
+    if(Socket::wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT) {
+        throw SocketException(_("The Shadowsocks server failed to establish a connection"));
+    }
+
+    shadowsocksStart(sm->get(SettingsManager::SHADOWSOCKS_METHOD),
+        sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), timeLeft(start, timeout));
+
+    ByteVector target;
+    if(!appendSocksAddress(target, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
+        throw SocketException(_("The Shadowsocks target address is invalid"));
+    }
+
+    streamWriteAll(target.data(), target.size(), timeLeft(start, timeout));
+    setIp(aAddr);
 }
 
 void Socket::socksAuth(uint32_t timeout) {
@@ -476,9 +827,9 @@ void Socket::socksAuth(uint32_t timeout) {
         connStr.push_back(1);           // 1 method
         connStr.push_back(0);           // Method 0: No auth...
 
-        writeAll(&connStr[0], 3, timeLeft(start, timeout));
+        streamWriteAll(connStr.data(), 3, timeLeft(start, timeout));
 
-        if(readAll(&connStr[0], 2, timeLeft(start, timeout)) != 2) {
+        if(streamReadAll(connStr.data(), 2, timeLeft(start, timeout)) != 2) {
             throw SocketException(_("The socks server failed establish a connection"));
         }
 
@@ -491,9 +842,9 @@ void Socket::socksAuth(uint32_t timeout) {
         connStr.push_back(5);           // SOCKSv5
         connStr.push_back(1);           // 1 method
         connStr.push_back(2);           // Method 2: Name/Password...
-        writeAll(&connStr[0], 3, timeLeft(start, timeout));
+        streamWriteAll(connStr.data(), 3, timeLeft(start, timeout));
 
-        if(readAll(&connStr[0], 2, timeLeft(start, timeout)) != 2) {
+        if(streamReadAll(connStr.data(), 2, timeLeft(start, timeout)) != 2) {
             throw SocketException(_("The socks server failed establish a connection"));
         }
         if(connStr[1] != 2) {
@@ -508,9 +859,9 @@ void Socket::socksAuth(uint32_t timeout) {
         connStr.push_back((uint8_t)sm->get(SettingsManager::SOCKS_PASSWORD).length());
         connStr.insert(connStr.end(), sm->get(SettingsManager::SOCKS_PASSWORD).begin(), sm->get(SettingsManager::SOCKS_PASSWORD).end());
 
-        writeAll(&connStr[0], connStr.size(), timeLeft(start, timeout));
+        streamWriteAll(connStr.data(), connStr.size(), timeLeft(start, timeout));
 
-        if(readAll(&connStr[0], 2, timeLeft(start, timeout)) != 2) {
+        if(streamReadAll(connStr.data(), 2, timeLeft(start, timeout)) != 2) {
             throw SocketException(_("Socks server authentication failed (bad login / password?)"));
         }
 
@@ -585,6 +936,14 @@ void Socket::setSocketOpt(int option, int val) {
 }
 
 int Socket::read(void* aBuffer, int aBufLen) {
+    if(shadowsocksActive && type == TYPE_TCP) {
+        return shadowsocksRead(aBuffer, aBufLen);
+    }
+
+    return rawRead(aBuffer, aBufLen);
+}
+
+int Socket::rawRead(void* aBuffer, int aBufLen) {
     int len = 0;
 
     dcassert(type == TYPE_TCP || type == TYPE_UDP);
@@ -606,6 +965,8 @@ int Socket::read(void* aBuffer, int aBufLen) {
 
 int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
     dcassert(type == TYPE_UDP);
+    if(aBufLen <= 0)
+        return 0;
 
     sockaddr_storage remote_addr;
     memset(&remote_addr, 0, sizeof(remote_addr));
@@ -620,6 +981,36 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
     if(len > 0) {
         stats.totalDown += len;
     }
+
+    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS && len > 0) {
+        auto* sm = ctx().getSettingsManager();
+        const int method = shadowsocksMethodId(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
+        const size_t keyLen = shadowsocksKeyLen(method);
+        const auto* buf = static_cast<const uint8_t*>(aBuffer);
+        if(keyLen == 0 || static_cast<size_t>(len) <= keyLen + SHADOWSOCKS_TAG_LEN || sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+            throw SocketException(_("Shadowsocks UDP relay response is invalid"));
+        }
+
+        const ByteVector salt(buf, buf + keyLen);
+        const ByteVector masterKey = evpBytesToKey(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), keyLen);
+        const ByteVector subkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
+        ByteVector nonce(SHADOWSOCKS_NONCE_LEN, 0);
+        ByteVector plain;
+        if(!shadowsocksAeadDecrypt(method, subkey, nonce, buf + keyLen, len - keyLen, plain)) {
+            throw SocketException(_("Shadowsocks UDP relay response decryption failed"));
+        }
+
+        size_t payloadOffset = 0;
+        if(!parseSocksAddress(plain, remote, payloadOffset) || payloadOffset > plain.size()) {
+            throw SocketException(_("Shadowsocks UDP relay response address is invalid"));
+        }
+
+        const size_t payloadLen = plain.size() - payloadOffset;
+        const size_t copyLen = min(payloadLen, static_cast<size_t>(aBufLen));
+        memcpy(aBuffer, plain.data() + payloadOffset, copyLen);
+        return static_cast<int>(copyLen);
+    }
+
     remote = remote_addr;
     return len;
 }
@@ -643,6 +1034,25 @@ int Socket::readAll(void* aBuffer, int aBufLen, uint32_t timeout) {
     return i;
 }
 
+int Socket::streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout) {
+    uint8_t* buf = static_cast<uint8_t*>(aBuffer);
+    int i = 0;
+    while(i < aBufLen) {
+        int j = Socket::read(buf + i, aBufLen - i);
+        if(j == 0) {
+            return i;
+        } else if(j == -1) {
+            if(Socket::wait(timeout, WAIT_READ) != WAIT_READ) {
+                return i;
+            }
+            continue;
+        }
+
+        i += j;
+    }
+    return i;
+}
+
 void Socket::writeAll(const void* aBuffer, int aLen, uint32_t timeout) {
     const uint8_t* buf = (const uint8_t*)aBuffer;
     int pos = 0;
@@ -652,15 +1062,50 @@ void Socket::writeAll(const void* aBuffer, int aLen, uint32_t timeout) {
     while(pos < aLen) {
         int i = write(buf+pos, (int)min(aLen-pos, sendSize));
         if(i == -1) {
-            wait(timeout, WAIT_WRITE);
+            if(wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+                throw SocketException(_("Connection timeout"));
         } else {
             pos+=i;
             stats.totalUp += i;
         }
     }
+
+    while(shadowsocksActive && type == TYPE_TCP && !shadowsocksPendingOut.empty()) {
+        if(!shadowsocksFlushPending() && wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+            throw SocketException(_("Connection timeout"));
+    }
+}
+
+void Socket::streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
+    const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
+    int pos = 0;
+    int sendSize = getSocketOptInt(SO_SNDBUF);
+
+    while(pos < aLen) {
+        int i = Socket::write(buf + pos, static_cast<int>(min(aLen - pos, sendSize)));
+        if(i == -1) {
+            if(Socket::wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+                throw SocketException(_("Connection timeout"));
+        } else {
+            pos += i;
+        }
+    }
+
+    while(shadowsocksActive && type == TYPE_TCP && !shadowsocksPendingOut.empty()) {
+        if(!shadowsocksFlushPending() && Socket::wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+            throw SocketException(_("Connection timeout"));
+    }
 }
 
 int Socket::write(const void* aBuffer, int aLen) {
+    if(shadowsocksActive && type == TYPE_TCP) {
+        return shadowsocksWrite(aBuffer, aLen);
+    }
+
+    return rawWrite(aBuffer, aLen);
+}
+
+int Socket::rawWrite(const void* aBuffer, int aLen) {
     int sent;
     do {
         sent = ::send(sock, (const char*)aBuffer, aLen, MSG_NOSIGNAL);
@@ -671,6 +1116,179 @@ int Socket::write(const void* aBuffer, int aLen) {
         stats.totalUp += sent;
     }
     return sent;
+}
+
+void Socket::shadowsocksReset() {
+    shadowsocksActive = false;
+    shadowsocksMethod = SHADOWSOCKS_NONE;
+    shadowsocksSubkey.clear();
+    shadowsocksEncNonce.clear();
+    shadowsocksDecNonce.clear();
+    shadowsocksPlainIn.clear();
+    shadowsocksPlainPos = 0;
+    shadowsocksCipherIn.clear();
+    shadowsocksPendingOut.clear();
+    shadowsocksPendingOutPos = 0;
+    shadowsocksExpectedPayload = 0;
+    shadowsocksReadingPayload = false;
+}
+
+void Socket::shadowsocksStart(const string& method, const string& password, uint32_t timeout) {
+    shadowsocksReset();
+
+    shadowsocksMethod = shadowsocksMethodId(method);
+    const size_t keyLen = shadowsocksKeyLen(shadowsocksMethod);
+    if(keyLen == 0) {
+        throw SocketException(_("Unsupported Shadowsocks cipher"));
+    }
+
+    ByteVector salt(keyLen);
+    if(RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) {
+        throw SocketException(_("Failed to create Shadowsocks salt"));
+    }
+
+    const ByteVector masterKey = evpBytesToKey(password, keyLen);
+    shadowsocksSubkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
+    shadowsocksEncNonce.assign(SHADOWSOCKS_NONCE_LEN, 0);
+    shadowsocksDecNonce.assign(SHADOWSOCKS_NONCE_LEN, 0);
+    shadowsocksActive = true;
+
+    shadowsocksWriteAll(salt.data(), salt.size(), timeout);
+}
+
+void Socket::shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
+    const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
+    int pos = 0;
+
+    while(pos < aLen) {
+        int sent = rawWrite(buf + pos, aLen - pos);
+        if(sent == -1) {
+            if(wait(timeout, WAIT_WRITE) != WAIT_WRITE) {
+                throw SocketException(_("Connection timeout"));
+            }
+            continue;
+        }
+        pos += sent;
+    }
+}
+
+bool Socket::shadowsocksFlushPending() {
+    while(shadowsocksPendingOutPos < shadowsocksPendingOut.size()) {
+        int sent = rawWrite(shadowsocksPendingOut.data() + shadowsocksPendingOutPos,
+            static_cast<int>(shadowsocksPendingOut.size() - shadowsocksPendingOutPos));
+        if(sent == -1)
+            return false;
+
+        shadowsocksPendingOutPos += sent;
+    }
+
+    shadowsocksPendingOut.clear();
+    shadowsocksPendingOutPos = 0;
+    return true;
+}
+
+int Socket::shadowsocksWrite(const void* aBuffer, int aLen) {
+    if(aLen <= 0)
+        return 0;
+
+    if(!shadowsocksFlushPending())
+        return -1;
+
+    const size_t plainLen = min(static_cast<size_t>(aLen), SHADOWSOCKS_MAX_CHUNK);
+    const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
+
+    uint8_t lenBuf[2] = {
+        static_cast<uint8_t>((plainLen >> 8) & 0xff),
+        static_cast<uint8_t>(plainLen & 0xff)
+    };
+    ByteVector encryptedLen = shadowsocksAeadEncrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksEncNonce, lenBuf, sizeof(lenBuf));
+    ByteVector encryptedPayload = shadowsocksAeadEncrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksEncNonce, buf, plainLen);
+
+    shadowsocksPendingOut.reserve(encryptedLen.size() + encryptedPayload.size());
+    shadowsocksPendingOut.insert(shadowsocksPendingOut.end(), encryptedLen.begin(), encryptedLen.end());
+    shadowsocksPendingOut.insert(shadowsocksPendingOut.end(), encryptedPayload.begin(), encryptedPayload.end());
+
+    shadowsocksFlushPending();
+    return static_cast<int>(plainLen);
+}
+
+bool Socket::shadowsocksTryDecode() {
+    while(true) {
+        if(!shadowsocksReadingPayload) {
+            const size_t required = 2 + SHADOWSOCKS_TAG_LEN;
+            if(shadowsocksCipherIn.size() < required)
+                return false;
+
+            ByteVector plainLen;
+            if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksDecNonce,
+                    shadowsocksCipherIn.data(), required, plainLen) || plainLen.size() != 2) {
+                throw SocketException(_("Shadowsocks decryption failed"));
+            }
+
+            shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(), shadowsocksCipherIn.begin() + required);
+            shadowsocksExpectedPayload = (static_cast<size_t>(plainLen[0]) << 8) | plainLen[1];
+            if(shadowsocksExpectedPayload > SHADOWSOCKS_MAX_CHUNK) {
+                throw SocketException(_("Invalid Shadowsocks payload size"));
+            }
+            shadowsocksReadingPayload = true;
+        }
+
+        const size_t required = shadowsocksExpectedPayload + SHADOWSOCKS_TAG_LEN;
+        if(shadowsocksCipherIn.size() < required)
+            return false;
+
+        ByteVector plainPayload;
+        if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksDecNonce,
+                shadowsocksCipherIn.data(), required, plainPayload)) {
+            throw SocketException(_("Shadowsocks decryption failed"));
+        }
+
+        shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(), shadowsocksCipherIn.begin() + required);
+        shadowsocksPlainIn.insert(shadowsocksPlainIn.end(), plainPayload.begin(), plainPayload.end());
+        shadowsocksExpectedPayload = 0;
+        shadowsocksReadingPayload = false;
+
+        if(!shadowsocksPlainIn.empty())
+            return true;
+    }
+}
+
+int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
+    if(aBufLen <= 0)
+        return 0;
+
+    auto copyPlain = [&]() -> int {
+        if(shadowsocksPlainPos >= shadowsocksPlainIn.size())
+            return 0;
+
+        const size_t available = shadowsocksPlainIn.size() - shadowsocksPlainPos;
+        const size_t copyLen = min(static_cast<size_t>(aBufLen), available);
+        memcpy(aBuffer, shadowsocksPlainIn.data() + shadowsocksPlainPos, copyLen);
+        shadowsocksPlainPos += copyLen;
+        if(shadowsocksPlainPos >= shadowsocksPlainIn.size()) {
+            shadowsocksPlainIn.clear();
+            shadowsocksPlainPos = 0;
+        }
+        stats.totalDown += copyLen;
+        return static_cast<int>(copyLen);
+    };
+
+    if(int copied = copyPlain())
+        return copied;
+
+    uint8_t buf[8192];
+    while(true) {
+        int len = rawRead(buf, sizeof(buf));
+        if(len == 0)
+            return 0;
+        if(len == -1)
+            return -1;
+
+        shadowsocksCipherIn.insert(shadowsocksCipherIn.end(), buf, buf + len);
+        if(shadowsocksTryDecode()) {
+            return copyPlain();
+        }
+    }
 }
 
 /**
@@ -703,7 +1321,59 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
 
     const auto* buf = static_cast<const uint8_t*>(aBuffer);
     int sent = SOCKET_ERROR;
-    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 && proxy) {
+    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS && proxy) {
+        auto* sm = ctx().getSettingsManager();
+        const int method = shadowsocksMethodId(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
+        const size_t keyLen = shadowsocksKeyLen(method);
+        if(keyLen == 0 || sm->get(SettingsManager::SHADOWSOCKS_SERVER).empty() || sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+            throw SocketException(_("Shadowsocks UDP relay is not configured"));
+        }
+
+        ByteVector plain;
+        if(!appendSocksAddress(plain, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
+            throw SocketException(_("The Shadowsocks target address is invalid"));
+        }
+        plain.insert(plain.end(), buf, buf + aLen);
+
+        ByteVector salt(keyLen);
+        if(RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) {
+            throw SocketException(_("Failed to create Shadowsocks salt"));
+        }
+
+        const ByteVector masterKey = evpBytesToKey(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), keyLen);
+        const ByteVector subkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
+        ByteVector nonce(SHADOWSOCKS_NONCE_LEN, 0);
+        ByteVector packet = salt;
+        ByteVector encrypted = shadowsocksAeadEncrypt(method, subkey, nonce, plain.data(), plain.size());
+        packet.insert(packet.end(), encrypted.begin(), encrypted.end());
+
+        addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        hints.ai_family = family;
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        addrinfo* result = nullptr;
+        const string proxyPort = Util::toString(sm->get(SettingsManager::SHADOWSOCKS_PORT));
+        if(getaddrinfo(sm->get(SettingsManager::SHADOWSOCKS_SERVER).c_str(), proxyPort.c_str(), &hints, &result) != 0 || result == nullptr) {
+            throw SocketException(EADDRNOTAVAIL);
+        }
+
+        int savedError = EADDRNOTAVAIL;
+        for(addrinfo* ai = result; ai != nullptr; ai = ai->ai_next) {
+            do {
+                sent = ::sendto(sock, reinterpret_cast<const char*>(packet.data()), packet.size(), 0, ai->ai_addr, static_cast<socklen_t>(ai->ai_addrlen));
+            } while(sent < 0 && getLastError() == EINTR);
+
+            if(sent >= 0) {
+                break;
+            }
+            savedError = getLastError();
+        }
+
+        freeaddrinfo(result);
+        if(sent < 0) {
+            throw SocketException(savedError);
+        }
+    } else if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 && proxy) {
         sockaddr_in serv_addr;
         memset(&serv_addr, 0, sizeof(serv_addr));
 
@@ -1015,6 +1685,7 @@ void Socket::shutdown() {
 }
 
 void Socket::close() {
+    shadowsocksReset();
     if(sock != INVALID_SOCKET) {
 #ifdef _WIN32
         ::closesocket(sock);

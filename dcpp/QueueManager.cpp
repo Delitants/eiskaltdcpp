@@ -607,7 +607,10 @@ void QueueManager::on(TimerManagerListener::Minute, uint64_t aTick) {
         }
 
 #ifdef WITH_DHT
-        if(CTX_BOOLSETTING(USE_DHT) && CTX_SETTING(INCOMING_CONNECTIONS) != SettingsManager::INCOMING_FIREWALL_PASSIVE)
+        if(CTX_BOOLSETTING(USE_DHT) &&
+                CTX_SETTING(INCOMING_CONNECTIONS) != SettingsManager::INCOMING_FIREWALL_PASSIVE &&
+                !(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+                  CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)))
             tthPub = fileQueue.findPFSPubTTH();
 #endif
 
@@ -880,7 +883,10 @@ bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::Mask
 
     qi->addSource(aUser);
 
-    if(aUser.user->isSet(User::PASSIVE) && !ctx().getClientManager()->isActive() ) {
+    if(!ctx().getClientManager()->isActive() && !ctx().getClientManager()->isTcpActive(aUser)) {
+        if(wantConnection) {
+            ctx().getLogManager()->message(_("Cannot download from passive user while you are in passive mode"));
+        }
         qi->removeSource(aUser, QueueItem::Source::FLAG_PASSIVE);
         wantConnection = false;
     } else if(qi->isFinished()) {

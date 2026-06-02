@@ -26,10 +26,93 @@
 
 #include <openssl/err.h>
 #include <openssl/ssl.h>
+#include <openssl/bio.h>
 
 namespace dcpp {
 
 std::string SSLSocket::sniHostHint;
+
+namespace {
+
+int socketBioWrite(BIO* bio, const char* data, int len) {
+    if(len <= 0)
+        return 0;
+
+    auto* socket = static_cast<Socket*>(BIO_get_data(bio));
+    if(!socket)
+        return 0;
+
+    BIO_clear_retry_flags(bio);
+    const int ret = socket->Socket::write(data, len);
+    if(ret == -1) {
+        BIO_set_retry_write(bio);
+    }
+    return ret;
+}
+
+int socketBioRead(BIO* bio, char* data, int len) {
+    if(len <= 0)
+        return 0;
+
+    auto* socket = static_cast<Socket*>(BIO_get_data(bio));
+    if(!socket)
+        return 0;
+
+    BIO_clear_retry_flags(bio);
+    const int ret = socket->Socket::read(data, len);
+    if(ret == -1) {
+        BIO_set_retry_read(bio);
+    }
+    return ret;
+}
+
+long socketBioCtrl(BIO*, int cmd, long, void*) {
+    switch(cmd) {
+    case BIO_CTRL_FLUSH:
+        return 1;
+    default:
+        return 0;
+    }
+}
+
+int socketBioCreate(BIO* bio) {
+    BIO_set_init(bio, 1);
+    BIO_set_data(bio, nullptr);
+    return 1;
+}
+
+int socketBioDestroy(BIO* bio) {
+    if(!bio)
+        return 0;
+
+    BIO_set_data(bio, nullptr);
+    BIO_set_init(bio, 0);
+    return 1;
+}
+
+BIO_METHOD* socketBioMethod() {
+    static BIO_METHOD* method = []() {
+        BIO_METHOD* m = BIO_meth_new(BIO_TYPE_SOURCE_SINK, "eiskaltdcpp-socket");
+        BIO_meth_set_write(m, socketBioWrite);
+        BIO_meth_set_read(m, socketBioRead);
+        BIO_meth_set_ctrl(m, socketBioCtrl);
+        BIO_meth_set_create(m, socketBioCreate);
+        BIO_meth_set_destroy(m, socketBioDestroy);
+        return m;
+    }();
+    return method;
+}
+
+bool isUnexpectedEof(unsigned long err) {
+#ifdef SSL_R_UNEXPECTED_EOF_WHILE_READING
+    return err != 0 && ERR_GET_LIB(err) == ERR_LIB_SSL && ERR_GET_REASON(err) == SSL_R_UNEXPECTED_EOF_WHILE_READING;
+#else
+    (void)err;
+    return false;
+#endif
+}
+
+}
 
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
 static const unsigned char alpn_protos_nmdc[] = {
@@ -52,8 +135,12 @@ void SSLSocket::clearSNIHint() {
     sniHostHint.clear();
 }
 
+void SSLSocket::setServerName(const string& host) {
+    sniServerName = host;
+}
+
 void SSLSocket::connect(const string& aIp, const string& aPort) {
-    sniServerName = !sniHostHint.empty() ? sniHostHint : aIp;
+    setServerName(!sniHostHint.empty() ? sniHostHint : aIp);
     Socket::connect(aIp, aPort);
 
     waitConnected(0);
@@ -71,11 +158,24 @@ bool SSLSocket::waitConnected(uint32_t millis) {
         if(!Socket::waitConnected(millis)) {
             return false;
         }
+        if(sniServerName.empty() && !sniHostHint.empty()) {
+            setServerName(sniHostHint);
+        }
         ssl.reset(SSL_new(ctx));
         if(!ssl)
             checkSSL(-1);
 
-        checkSSL(SSL_set_fd(ssl, sock));
+        if(hasStreamProxy()) {
+            BIO* bio = BIO_new(socketBioMethod());
+            if(!bio)
+                checkSSL(-1);
+            BIO_set_data(bio, this);
+            BIO_set_init(bio, 1);
+            BIO_up_ref(bio);
+            SSL_set_bio(ssl, bio, bio);
+        } else {
+            checkSSL(SSL_set_fd(ssl, sock));
+        }
 #ifndef OPENSSL_NO_TLSEXT
         if(!sniServerName.empty()) {
             SSL_set_tlsext_host_name(ssl, sniServerName.c_str());
@@ -248,7 +348,14 @@ int SSLSocket::checkSSL(int ret) {
         default:
         {
             long verifyRes = SSL_get_verify_result(ssl);
-            unsigned long libErr = ERR_get_error();
+            unsigned long libErr = ERR_peek_error();
+            if(isUnexpectedEof(libErr)) {
+                ERR_clear_error();
+                ssl.reset();
+                throw SocketException(_("Connection closed"));
+            }
+
+            libErr = ERR_get_error();
             char errbuf[256] = {0};
             if(libErr) {
                 ERR_error_string_n(libErr, errbuf, sizeof(errbuf));

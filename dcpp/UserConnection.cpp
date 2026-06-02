@@ -172,7 +172,8 @@ void UserConnection::connect(const string& aServer, const string& aPort, const s
     port = aPort;
     socket = BufferedSocket::getSocket(0, ctx());
     socket->addListener(this);
-    socket->connect(aServer, aPort, localPort, natRole, isSet(FLAG_SECURE), ctx().getSettingsManager()->getBool(SettingsManager::ALLOW_UNTRUSTED_CLIENTS), true, Socket::PROTO_DEFAULT);
+    const bool proxyPeer = ctx().getSettingsManager()->getBool(SettingsManager::PROXY_P2P_CONNECTIONS);
+    socket->connect(aServer, aPort, localPort, natRole, isSet(FLAG_SECURE), ctx().getSettingsManager()->getBool(SettingsManager::ALLOW_UNTRUSTED_CLIENTS), proxyPeer, Socket::PROTO_DEFAULT);
 }
 
 void UserConnection::accept(const Socket& aServer) {

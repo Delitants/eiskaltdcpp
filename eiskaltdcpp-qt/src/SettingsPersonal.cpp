@@ -15,6 +15,7 @@
 #include "QtContext.h"
 
 #include <QComboBox>
+#include <QCoreApplication>
 #include <QLabel>
 
 #include "dcpp/stdinc.h"
@@ -26,6 +27,65 @@
 #include "WulforSettings.h"
 
 using namespace dcpp;
+
+namespace {
+
+const char *legacyDefaultAwayMessage()
+{
+    return "I'm away. State your business and I might answer later if you're lucky.";
+}
+
+QString defaultAwayMessage()
+{
+    return QCoreApplication::translate("SettingsPersonal", "I'm away. State your business and I might answer later if you're lucky.");
+}
+
+void populateSpeedCombo(QComboBox *combo, const string& currentSpeed) {
+    for (auto i = SettingsManager::connectionSpeeds.begin(); i != SettingsManager::connectionSpeeds.end(); ++i) {
+        combo->addItem((*i).c_str());
+
+        if (currentSpeed == *i)
+            combo->setCurrentIndex(i - SettingsManager::connectionSpeeds.begin());
+    }
+}
+
+string protocolSpeed(SettingsManager *settings, SettingsManager::StrSetting setting) {
+    if (!settings->isDefault(setting))
+        return settings->get(setting, false);
+
+    if (!settings->isDefault(SettingsManager::UPLOAD_SPEED))
+        return settings->get(SettingsManager::UPLOAD_SPEED, false);
+
+    return settings->get(setting, true);
+}
+
+bool selectedSpeed(QComboBox *combo, string& speed) {
+    const int index = combo->currentIndex();
+    if (index < 0 || index >= static_cast<int>(SettingsManager::connectionSpeeds.size()))
+        return false;
+
+    speed = SettingsManager::connectionSpeeds[index];
+    return true;
+}
+
+void populateNmdcSpeedCombo(QComboBox *combo, const string& currentSpeed) {
+    for (auto i = SettingsManager::nmdcConnectionSpeeds.begin(); i != SettingsManager::nmdcConnectionSpeeds.end(); ++i) {
+        combo->addItem((*i).c_str());
+
+        if (currentSpeed == *i)
+            combo->setCurrentIndex(i - SettingsManager::nmdcConnectionSpeeds.begin());
+    }
+}
+
+bool selectedNmdcSpeed(QComboBox *combo, string& speed) {
+    if (combo->currentIndex() < 0)
+        return false;
+
+    speed = combo->currentText().toStdString();
+    return !speed.empty();
+}
+
+}
 
 SettingsPersonal::SettingsPersonal(QWidget *parent):
         QWidget(parent)
@@ -45,8 +105,18 @@ void SettingsPersonal::ok(){
     SM->set(SettingsManager::NICK, lineEdit_NICK->text().toStdString());
     SM->set(SettingsManager::EMAIL, lineEdit_EMAIL->text().toStdString());
     SM->set(SettingsManager::DESCRIPTION, lineEdit_DESC->text().toStdString());
-    SM->set(SettingsManager::UPLOAD_SPEED, SettingsManager::connectionSpeeds[comboBox_SPEED->currentIndex()]);
-    SM->set(SettingsManager::DEFAULT_AWAY_MESSAGE, lineEdit_AWAYMSG->text().toStdString());
+    string adcSpeed;
+    if (selectedSpeed(comboBox_SPEED, adcSpeed)) {
+        SM->set(SettingsManager::UPLOAD_SPEED, adcSpeed);
+        SM->set(SettingsManager::ADC_UPLOAD_SPEED, adcSpeed);
+    }
+
+    string nmdcSpeed;
+    if (selectedNmdcSpeed(comboBox_NMDC_SPEED, nmdcSpeed))
+        SM->set(SettingsManager::NMDC_UPLOAD_SPEED, nmdcSpeed);
+
+    const QString awayMessage = lineEdit_AWAYMSG->text().trimmed();
+    SM->set(SettingsManager::DEFAULT_AWAY_MESSAGE, awayMessage.isEmpty() ? defaultAwayMessage().toStdString() : awayMessage.toStdString());
     SM->set(SettingsManager::CLIENT_ID_NMDC, comboBox_CLIENT_ID->currentData(Qt::UserRole).toString().toStdString());
     SM->set(SettingsManager::CLIENT_ID_ADC, comboBox_CLIENT_ID->currentData(Qt::UserRole + 1).toString().toStdString());
 
@@ -74,14 +144,14 @@ void SettingsPersonal::init(){
     lineEdit_NICK->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NICK, true).c_str());
     lineEdit_EMAIL->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::EMAIL, true).c_str());
     lineEdit_DESC->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DESCRIPTION, true).c_str());
-    lineEdit_AWAYMSG->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DEFAULT_AWAY_MESSAGE, true).c_str());
+    lineEdit_AWAYMSG->setPlaceholderText(defaultAwayMessage());
+    const QString awayMessage = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DEFAULT_AWAY_MESSAGE, true));
+    if (awayMessage != QString::fromLatin1(legacyDefaultAwayMessage()))
+        lineEdit_AWAYMSG->setText(awayMessage);
 
-    for (auto i = SettingsManager::connectionSpeeds.begin(); i != SettingsManager::connectionSpeeds.end(); ++i){
-        comboBox_SPEED->addItem((*i).c_str());
-
-        if (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UPLOAD_SPEED, true) == *i)
-            comboBox_SPEED->setCurrentIndex(i - SettingsManager::connectionSpeeds.begin());
-    }
+    SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
+    populateSpeedCombo(comboBox_SPEED, protocolSpeed(SM, SettingsManager::ADC_UPLOAD_SPEED));
+    populateNmdcSpeedCombo(comboBox_NMDC_SPEED, protocolSpeed(SM, SettingsManager::NMDC_UPLOAD_SPEED));
 
     QStringList encodings = qtCtx()->wulforUtil()->encodings();
 
@@ -125,6 +195,6 @@ void SettingsPersonal::initClientTagPresets(){
     QLabel *label = new QLabel(tr("Client tag"), frame_2);
     label->setWordWrap(true);
     comboBox_CLIENT_ID->setToolTip(tr("Optional client tag spoofing preset. Favorite hub settings can override this per hub."));
-    gridLayout->addWidget(label, 2, 0);
-    gridLayout->addWidget(comboBox_CLIENT_ID, 2, 1, 1, 2);
+    gridLayout->addWidget(label, 3, 0);
+    gridLayout->addWidget(comboBox_CLIENT_ID, 3, 1, 1, 2);
 }

@@ -822,3 +822,7 @@ msgstr "DHT tekrar etkinleştirildi"
 #: ../../dht/UDPSocket.cpp:258
 msgid "DHT disabled: "
 msgstr "DHT devre dışı:"
+
+#: ../ConnectionManager.cpp:185 ../QueueManager.cpp:887
+msgid "Cannot download from passive user while you are in passive mode"
+msgstr "Pasif moddayken pasif bir kullanıcıdan indirilemez"

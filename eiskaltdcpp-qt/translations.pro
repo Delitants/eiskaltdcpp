@@ -13,6 +13,7 @@ TRANSLATIONS = \
     translations/eu.ts \
     translations/fr.ts \
     translations/hu.ts \
+    translations/ie.ts \
     translations/it.ts \
     translations/ka.ts \
     translations/pl.ts \

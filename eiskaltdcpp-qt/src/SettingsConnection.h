@@ -47,9 +47,12 @@ private:
     bool validateIp4(QString&);
     bool validateIp6(QString&) const;
     void showMsg(QString, QWidget* = nullptr);
+    bool isProxyP2PMode() const;
+    bool isProxyHubStealthMode() const;
 
     bool dirty;
     QCheckBox* checkBox_USE_IPV6 = nullptr;
+    QCheckBox* checkBox_PROXY_P2P = nullptr;
     QLineEdit* lineEdit_WANIP6 = nullptr;
     QLineEdit* lineEdit_BIND_ADDRESS6 = nullptr;
     QLineEdit *lineEdit_COUNTRY_DB = nullptr;

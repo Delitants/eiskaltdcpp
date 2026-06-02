@@ -4,6 +4,16 @@
 * This delta includes all known changes in this fork compared to upstream
   origin/master, generated from git history.
 
+--- 2.5.5-pre.1 2026-06-01 ---
+*** common changes ***
+* Aligned the next pre-release version to 2.5.5-pre.1.
+*** eiskaltdcpp-qt ***
+* Made SOCKS5 and Shadowsocks settings visibly disable fields that do not apply
+  to the selected proxy type.
+*** dcpp ***
+* Fixed ADC proxy stealth mode to report the configured proxy endpoint address
+  instead of clearing the hub-visible IP fields.
+
 --- 2.5.4-v3-pre.4 2026-05-24 ---
 *** common changes ***
 * Bumped pre-release version to 2.5.4-v3-pre.4 for the next macOS ARM64 test build.

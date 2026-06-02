@@ -427,6 +427,18 @@ void ClientManager::connect(const HintedUser& user, const string& token) {
     }
 }
 
+bool ClientManager::isTcpActive(const HintedUser& user) {
+    const bool priv = ctx().getFavoriteManager()->isPrivate(user.hint);
+
+    Lock l(cs);
+    OnlineUser* u = findOnlineUser(user, priv);
+    if(u) {
+        return u->getIdentity().isTcpActive(&u->getClient());
+    }
+
+    return !user.user->isSet(User::PASSIVE);
+}
+
 void ClientManager::privateMessage(const HintedUser& user, const string& msg, bool thirdPerson) {
     bool priv = ctx().getFavoriteManager()->isPrivate(user.hint);
 
@@ -787,7 +799,20 @@ void ClientManager::on(HubUserCommand, Client* client, int aType, int ucCtx, con
         }
     }
 }
+bool ClientManager::isProxyHubStealth() const {
+    return CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+            CTX_BOOLSETTING(SOCKS_STEALTH);
+}
+
 int ClientManager::getMode(const string& aHubUrl) const {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+            CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)) {
+        return SettingsManager::INCOMING_FIREWALL_PASSIVE;
+    }
+
+    if(isProxyHubStealth()) {
+        return SettingsManager::INCOMING_FIREWALL_PASSIVE;
+    }
 
     if(aHubUrl.empty())
         return CTX_SETTING(INCOMING_CONNECTIONS);

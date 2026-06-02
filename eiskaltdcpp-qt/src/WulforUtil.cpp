@@ -251,6 +251,133 @@ bool showPassiveOverlayForApexIcon(const Identity &identity, const UserPtr &user
     return isPassiveForUserIcon(identity, user) && !identity.supports(AdcHub::NAT0_FEATURE);
 }
 
+int legacyConnectionIconColumn(const QString &connection)
+{
+    const QString conn = connection.trimmed().toUpper();
+
+    if (conn.isEmpty())
+        return -1;
+
+    if (conn == QStringLiteral("MODEM") ||
+        conn == QStringLiteral("28.8KBPS") ||
+        conn == QStringLiteral("33.6KBPS") ||
+        conn == QStringLiteral("56KBPS"))
+        return 0;
+
+    if (conn == QStringLiteral("ISDN") || conn.startsWith(QStringLiteral("ISDN ")))
+        return 1;
+
+    if (conn == QStringLiteral("DSL") ||
+        conn == QStringLiteral("ADSL") ||
+        conn == QStringLiteral("VDSL") ||
+        conn.endsWith(QStringLiteral(" DSL")) ||
+        conn.endsWith(QStringLiteral("DSL2")))
+        return 2;
+
+    if (conn == QStringLiteral("CABLE") || conn.endsWith(QStringLiteral(" CABLE")))
+        return 3;
+
+    if (conn.startsWith(QStringLiteral("LAN(T10")) || conn.startsWith(QStringLiteral("LAN T10")))
+        return 6;
+
+    if (conn.startsWith(QStringLiteral("LAN(T3")) || conn.startsWith(QStringLiteral("LAN T3")))
+        return 5;
+
+    if (conn.startsWith(QStringLiteral("LAN(T1")) || conn.startsWith(QStringLiteral("LAN T1")))
+        return 4;
+
+    if (conn == QStringLiteral("LAN") || conn.startsWith(QStringLiteral("LAN ")))
+        return 5;
+
+    if (conn == QStringLiteral("SATELLITE") ||
+        conn == QStringLiteral("MICROWAVE") ||
+        conn == QStringLiteral("WIRELESS") ||
+        conn.startsWith(QStringLiteral("WI-FI")) ||
+        conn.startsWith(QStringLiteral("WIFI")))
+        return 2;
+
+    return -1;
+}
+
+double connectionSpeedMbit(const QString &connection)
+{
+    const QString conn = connection.trimmed();
+
+    if (conn.isEmpty())
+        return 0;
+
+    const double value = Util::toDouble(_tq(conn));
+
+    if (value <= 0)
+        return 0;
+
+    const QString upper = conn.toUpper();
+
+    if (upper.contains(QStringLiteral("KIB/S")) ||
+        upper.contains(QStringLiteral("KB/S")) ||
+        upper.contains(QStringLiteral("KBYTE")))
+        return value * 8.0 / 1024.0;
+
+    if (upper.contains(QStringLiteral("MIB/S")) ||
+        upper.contains(QStringLiteral("MB/S")) ||
+        upper.contains(QStringLiteral("MBYTE")))
+        return value * 8.0;
+
+    if (upper.contains(QStringLiteral("GIB/S")) ||
+        upper.contains(QStringLiteral("GB/S")) ||
+        upper.contains(QStringLiteral("GBYTE")))
+        return value * 8192.0;
+
+    if (upper.contains(QStringLiteral("KBPS")) || upper.contains(QStringLiteral("KB/S")))
+        return value / 1000.0;
+
+    if (upper.contains(QStringLiteral("GBPS")) || upper.contains(QStringLiteral("GBIT")))
+        return value * 1000.0;
+
+    return value;
+}
+
+int speedIconColumnFromMbit(double speedMbit)
+{
+    if (speedMbit <= 0)
+        return 5;
+
+    if (speedMbit < 0.1)
+        return 0;
+
+    if (speedMbit < 0.5)
+        return 1;
+
+    if (speedMbit < 1)
+        return 2;
+
+    if (speedMbit < 2)
+        return 3;
+
+    if (speedMbit < 5)
+        return 4;
+
+    if (speedMbit < 1000)
+        return 5;
+
+    return 6;
+}
+
+int connectionIconColumn(const QString &connection, const QMap<QString, int> &exactSpeeds)
+{
+    const QString conn = connection.trimmed();
+
+    const auto exact = exactSpeeds.constFind(conn);
+    if (exact != exactSpeeds.constEnd())
+        return exact.value();
+
+    const int legacy = legacyConnectionIconColumn(conn);
+    if (legacy >= 0)
+        return legacy;
+
+    return speedIconColumnFromMbit(connectionSpeedMbit(conn));
+}
+
 int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const QString &connection)
 {
     constexpr int APEX_STATUS_AWAY = 0x02;
@@ -259,7 +386,8 @@ int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const Q
 
     int image = 12;
     const int status = static_cast<int>(identity.getStatus());
-    const std::string conn = _tq(connection.trimmed());
+    const QString conn = connection.trimmed();
+    const QString upperConn = conn.toUpper();
 
     if (isOp || identity.isOp()) {
         image = 0;
@@ -267,21 +395,31 @@ int apexUserImageIndex(const Identity &identity, bool isAway, bool isOp, const Q
         image = 1;
     } else if (status & APEX_STATUS_SERVER) {
         image = 2;
-    } else if (conn == "28.8Kbps" || conn == "33.6Kbps" ||
-               conn == "56Kbps" || conn == "Modem" || conn == "ISDN") {
+    } else if (upperConn == QStringLiteral("28.8KBPS") ||
+               upperConn == QStringLiteral("33.6KBPS") ||
+               upperConn == QStringLiteral("56KBPS") ||
+               upperConn == QStringLiteral("MODEM") ||
+               upperConn == QStringLiteral("ISDN")) {
         image = 6;
-    } else if (conn == "Satellite" || conn == "Microwave" || conn == "Wireless") {
+    } else if (upperConn == QStringLiteral("SATELLITE") ||
+               upperConn == QStringLiteral("MICROWAVE") ||
+               upperConn == QStringLiteral("WIRELESS") ||
+               upperConn.startsWith(QStringLiteral("WI-FI")) ||
+               upperConn.startsWith(QStringLiteral("WIFI"))) {
         image = 8;
-    } else if (conn == "DSL" || conn == "Cable") {
+    } else if (upperConn == QStringLiteral("DSL") ||
+               upperConn == QStringLiteral("ADSL") ||
+               upperConn == QStringLiteral("VDSL") ||
+               upperConn == QStringLiteral("CABLE")) {
         image = 9;
-    } else if (conn.compare(0, 3, "LAN") == 0) {
+    } else if (upperConn.startsWith(QStringLiteral("LAN"))) {
         image = 11;
-    } else if (conn.compare(0, 10, "NetLimiter") == 0) {
+    } else if (upperConn.startsWith(QStringLiteral("NETLIMITER"))) {
         image = 3;
     } else {
-        const double uploadSpeedMbit = conn.empty()
+        const double uploadSpeedMbit = conn.isEmpty()
             ? (8 * Util::toDouble(identity.get("US")) / 1024 / 1024)
-            : Util::toDouble(conn);
+            : connectionSpeedMbit(conn);
 
         if (uploadSpeedMbit >= 10) {
             image = 10;
@@ -707,7 +845,7 @@ QPixmap *WulforUtil::getUserIcon(const UserPtr &id, bool isAway, bool isOp, cons
 
     Identity iid = dcCtx().getClientManager()->getOnlineUserIdentity(id);
 
-    int x = connectionSpeeds.value(sp, 5);
+    int x = connectionIconColumn(sp, connectionSpeeds);
     int y = 0;
 
     if (apexUserIcons) {
@@ -854,6 +992,7 @@ bool WulforUtil::loadIcons(){
     m_PixmapMap[eiSETTINGS_DOWNLOADS]  = FROMTHEME("settings-downloads", resourceFound);
     m_PixmapMap[eiSETTINGS_GUI]        = FROMTHEME("settings-gui", resourceFound);
     m_PixmapMap[eiSETTINGS_MAIN]       = FROMTHEME("settings-main", resourceFound);
+    m_PixmapMap[eiSETTINGS_SHORTCUTS]  = FROMTHEME("settings-shortcuts", resourceFound);
     m_PixmapMap[eiSPAM]         = FROMTHEME("spam", resourceFound);
     m_PixmapMap[eiSPY]          = FROMTHEME("spy", resourceFound);
     m_PixmapMap[eiSPEED_LIMIT_OFF]  = FROMTHEME("slow_off", resourceFound);

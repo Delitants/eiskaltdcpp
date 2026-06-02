@@ -79,6 +79,13 @@ public:
         PROTO_ADC = 2
     };
 
+    enum {
+        SHADOWSOCKS_NONE = 0,
+        SHADOWSOCKS_AES_128_GCM,
+        SHADOWSOCKS_AES_256_GCM,
+        SHADOWSOCKS_CHACHA20_IETF_POLY1305
+    };
+
     Socket() : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { }
     Socket(const string& aIp, const string& aPort) : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { connect(aIp, aPort); }
     virtual ~Socket() { disconnect(); }
@@ -98,6 +105,14 @@ public:
      * Same as connect(), but through the SOCKS5 server
      */
     void socksConnect(const string& aIp, const string &aPort, uint32_t timeout = 0);
+    /**
+     * Connects through the configured outbound proxy type.
+     */
+    void proxyConnect(const string& aIp, const string &aPort, uint32_t timeout = 0);
+    /**
+     * Same as connect(), but through a Shadowsocks AEAD server.
+     */
+    void shadowsocksConnect(const string& aIp, const string &aPort, uint32_t timeout = 0);
 
     /**
      * Sends data, will block until all data has been sent or an exception occurs
@@ -171,6 +186,7 @@ public:
     virtual bool isTrusted() const { return false; }
     virtual string getCipherName() const { return Util::emptyString; }
     virtual ByteVector getKeyprint() const { return ByteVector(); }
+    bool hasStreamProxy() const { return shadowsocksActive; }
 
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
@@ -205,6 +221,31 @@ private:
     DCContext* ctx_;
 
     void socksAuth(uint32_t timeout);
+
+    void shadowsocksReset();
+    void shadowsocksStart(const string& method, const string& password, uint32_t timeout);
+    int shadowsocksRead(void* aBuffer, int aBufLen);
+    int shadowsocksWrite(const void* aBuffer, int aLen);
+    void shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
+    bool shadowsocksTryDecode();
+    bool shadowsocksFlushPending();
+    int streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout);
+    void streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
+    int rawRead(void* aBuffer, int aBufLen);
+    int rawWrite(const void* aBuffer, int aLen);
+
+    bool shadowsocksActive = false;
+    int shadowsocksMethod = SHADOWSOCKS_NONE;
+    ByteVector shadowsocksSubkey;
+    ByteVector shadowsocksEncNonce;
+    ByteVector shadowsocksDecNonce;
+    ByteVector shadowsocksPlainIn;
+    size_t shadowsocksPlainPos = 0;
+    ByteVector shadowsocksCipherIn;
+    ByteVector shadowsocksPendingOut;
+    size_t shadowsocksPendingOutPos = 0;
+    size_t shadowsocksExpectedPayload = 0;
+    bool shadowsocksReadingPayload = false;
 
     static int getLastError();
     static int checksocket(int ret);

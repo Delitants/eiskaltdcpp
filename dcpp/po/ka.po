@@ -793,3 +793,7 @@ msgstr "DHT ისევ ჩართულია"
 #: ../../dht/UDPSocket.cpp:258
 msgid "DHT disabled: "
 msgstr "DHT გამორთულია: "
+
+#: ../ConnectionManager.cpp:185 ../QueueManager.cpp:887
+msgid "Cannot download from passive user while you are in passive mode"
+msgstr "პასიურ რეჟიმში პასიური მომხმარებლისგან ჩამოტვირთვა შეუძლებელია"

@@ -738,10 +738,14 @@ int main(int argc, char *argv[])
 #if !defined(Q_OS_MAC)
     app.setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
 #else
-    const QString macDockIconPath = qtCtx()->wulforUtil()->getAppIconsPath()
-            + QDir::separator() + QStringLiteral("icon_appl_big.png");
-    app.setWindowIcon(QIcon(macDockIconPath));
-    setMacDockIcon(macDockIconPath);
+    const QString macDockIconPath = QDir(QCoreApplication::applicationDirPath())
+            .absoluteFilePath(QStringLiteral("../Resources/eiskaltdcpp-borderless.icns"));
+    if (QFileInfo::exists(macDockIconPath)) {
+        app.setWindowIcon(QIcon(macDockIconPath));
+        setMacDockIcon(macDockIconPath);
+    } else {
+        app.setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
+    }
 #endif
 
     ctx.createArenaWidgetManager();

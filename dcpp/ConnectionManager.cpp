@@ -181,7 +181,8 @@ void ConnectionManager::on(TimerManagerListener::Second, uint64_t aTick) {
                     continue;
                 }
 
-                if(cqi->getUser().user->isSet(User::PASSIVE) && !ctx().getClientManager()->isActive()) {
+                if(!ctx().getClientManager()->isActive() && !ctx().getClientManager()->isTcpActive(cqi->getUser())) {
+                    fire(ConnectionManagerListener::Failed(), cqi, _("Cannot download from passive user while you are in passive mode"));
                     passiveUsers.push_back(cqi->getUser());
                     removed.push_back(cqi);
                     continue;
