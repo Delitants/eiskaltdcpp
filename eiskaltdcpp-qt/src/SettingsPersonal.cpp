@@ -13,9 +13,9 @@
 #include "SettingsPersonal.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
+#include "LocalizedDefaults.h"
 
 #include <QComboBox>
-#include <QCoreApplication>
 #include <QLabel>
 
 #include "dcpp/stdinc.h"
@@ -29,16 +29,6 @@
 using namespace dcpp;
 
 namespace {
-
-const char *legacyDefaultAwayMessage()
-{
-    return "I'm away. State your business and I might answer later if you're lucky.";
-}
-
-QString defaultAwayMessage()
-{
-    return QCoreApplication::translate("SettingsPersonal", "I'm away. State your business and I might answer later if you're lucky.");
-}
 
 void populateSpeedCombo(QComboBox *combo, const string& currentSpeed) {
     for (auto i = SettingsManager::connectionSpeeds.begin(); i != SettingsManager::connectionSpeeds.end(); ++i) {
@@ -116,7 +106,12 @@ void SettingsPersonal::ok(){
         SM->set(SettingsManager::NMDC_UPLOAD_SPEED, nmdcSpeed);
 
     const QString awayMessage = lineEdit_AWAYMSG->text().trimmed();
-    SM->set(SettingsManager::DEFAULT_AWAY_MESSAGE, awayMessage.isEmpty() ? defaultAwayMessage().toStdString() : awayMessage.toStdString());
+    const QString translationsPath = qtCtx()->wulforUtil()->getTranslationsPath();
+    const QString storedAwayMessage = (awayMessage.isEmpty() ||
+            LocalizedDefaults::isAwayMessageDefault(awayMessage, translationsPath))
+            ? LocalizedDefaults::awayMessage()
+            : awayMessage;
+    SM->set(SettingsManager::DEFAULT_AWAY_MESSAGE, storedAwayMessage.toStdString());
     SM->set(SettingsManager::CLIENT_ID_NMDC, comboBox_CLIENT_ID->currentData(Qt::UserRole).toString().toStdString());
     SM->set(SettingsManager::CLIENT_ID_ADC, comboBox_CLIENT_ID->currentData(Qt::UserRole + 1).toString().toStdString());
 
@@ -144,10 +139,11 @@ void SettingsPersonal::init(){
     lineEdit_NICK->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NICK, true).c_str());
     lineEdit_EMAIL->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::EMAIL, true).c_str());
     lineEdit_DESC->setText(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DESCRIPTION, true).c_str());
-    lineEdit_AWAYMSG->setPlaceholderText(defaultAwayMessage());
+    lineEdit_AWAYMSG->setPlaceholderText(LocalizedDefaults::awayMessage());
     const QString awayMessage = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DEFAULT_AWAY_MESSAGE, true));
-    if (awayMessage != QString::fromLatin1(legacyDefaultAwayMessage()))
-        lineEdit_AWAYMSG->setText(awayMessage);
+    lineEdit_AWAYMSG->setText(LocalizedDefaults::isAwayMessageDefault(awayMessage, qtCtx()->wulforUtil()->getTranslationsPath())
+            ? LocalizedDefaults::awayMessage()
+            : awayMessage);
 
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
     populateSpeedCombo(comboBox_SPEED, protocolSpeed(SM, SettingsManager::ADC_UPLOAD_SPEED));

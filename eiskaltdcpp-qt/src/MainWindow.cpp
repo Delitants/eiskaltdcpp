@@ -1321,7 +1321,9 @@ void MainWindow::reloadIconTheme()
         action->setIcon(icon);
     };
 
+#if !defined(Q_OS_MAC)
     setWindowIcon(WU->getPixmap(WulforUtil::eiICON_APPL));
+#endif
 
     setActionIcon(d->fileOpenMagnet, WulforUtil::eiDOWNLOAD);
     setActionIcon(d->fileFileListBrowserLocal, WulforUtil::eiOWN_FILELIST);

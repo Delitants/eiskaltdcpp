@@ -82,6 +82,7 @@ private:
 
     BufferedSocket* socket;
     DCContext& ctx_;
+    bool usingHttpProxy;
 
     void prepareRequest(RequestType type);
     void abortRequest(bool disconnect);
@@ -97,4 +98,3 @@ private:
 };
 
 } // namespace dcpp
-

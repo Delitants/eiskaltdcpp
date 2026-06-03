@@ -36,6 +36,14 @@
 #include <QToolButton>
 #include <QHostAddress>
 #include <QAbstractSocket>
+#include <QCheckBox>
+#include <QColor>
+#include <QComboBox>
+#include <QStyle>
+#include <QAbstractSpinBox>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QUrl>
 
 #ifndef IPTOS_TOS_MASK
 #define	IPTOS_TOS_MASK		0x1E
@@ -60,6 +68,238 @@
 #endif
 
 using namespace dcpp;
+
+namespace {
+
+bool isDarkWidgetAppearance(QWidget *widget)
+{
+    if (!widget)
+        return false;
+
+    const QPalette palette = widget->palette();
+    return (palette.color(QPalette::Window).lightness() + palette.color(QPalette::Base).lightness()) / 2 < 128;
+}
+
+void refreshWidgetStyle(QWidget *widget)
+{
+    if (!widget)
+        return;
+
+    widget->style()->unpolish(widget);
+    widget->style()->polish(widget);
+    widget->update();
+}
+
+QString disabledLabelStyle(QWidget *widget)
+{
+    const QColor text = isDarkWidgetAppearance(widget) ? QColor(138, 138, 138)
+                                                       : QColor(78, 78, 78);
+    return QStringLiteral("QLabel { color: %1; }").arg(text.name());
+}
+
+QString disabledLineEditStyle(QWidget *widget)
+{
+    const bool dark = isDarkWidgetAppearance(widget);
+    const QColor background = dark ? QColor(46, 46, 46) : QColor(207, 207, 207);
+    const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
+    const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
+
+    return QStringLiteral(
+        "QLineEdit {"
+        " background-color: %1;"
+        " border: 1px solid %2;"
+        " border-radius: 7px;"
+        " color: %3;"
+        " padding: 1px 7px;"
+        " min-height: 24px;"
+        "}"
+    ).arg(background.name(), border.name(), text.name());
+}
+
+QString disabledSpinBoxStyle(QWidget *widget)
+{
+    const bool dark = isDarkWidgetAppearance(widget);
+    const QColor background = dark ? QColor(46, 46, 46) : QColor(207, 207, 207);
+    const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
+    const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
+    const QColor buttonBackground = dark ? QColor(40, 40, 40) : QColor(188, 188, 188);
+
+    return QStringLiteral(
+        "QAbstractSpinBox {"
+        " background-color: %1;"
+        " border: 1px solid %2;"
+        " border-radius: 7px;"
+        " color: %3;"
+        " padding: 1px 7px;"
+        " min-height: 24px;"
+        "}"
+        "QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {"
+        " background-color: %4;"
+        " border-left: 1px solid %2;"
+        " width: 16px;"
+        "}"
+    ).arg(background.name(), border.name(), text.name(), buttonBackground.name());
+}
+
+QString disabledComboStyle(QWidget *widget)
+{
+    const bool dark = isDarkWidgetAppearance(widget);
+    const QColor background = dark ? QColor(46, 46, 46) : QColor(207, 207, 207);
+    const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
+    const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
+    const QColor dropBackground = dark ? QColor(40, 40, 40) : QColor(188, 188, 188);
+
+    return QStringLiteral(
+        "QComboBox {"
+        " background-color: %1;"
+        " border: 1px solid %2;"
+        " border-radius: 7px;"
+        " color: %3;"
+        " padding: 3px 30px 3px 9px;"
+        " min-height: 26px;"
+        "}"
+        "QComboBox::drop-down {"
+        " subcontrol-origin: border;"
+        " subcontrol-position: top right;"
+        " width: 24px;"
+        " background-color: %4;"
+        " border-left: 1px solid %2;"
+        " border-top-right-radius: 7px;"
+        " border-bottom-right-radius: 7px;"
+        "}"
+        "QComboBox::down-arrow {"
+        " image: none;"
+        " width: 0px;"
+        " height: 0px;"
+        " border-left: 4px solid transparent;"
+        " border-right: 4px solid transparent;"
+        " border-top: 5px solid %3;"
+        " margin-right: 7px;"
+        "}"
+    ).arg(background.name(), border.name(), text.name(), dropBackground.name());
+}
+
+QString disabledCheckStyle(QWidget *widget)
+{
+    const QColor text = isDarkWidgetAppearance(widget) ? QColor(138, 138, 138)
+                                                       : QColor(78, 78, 78);
+    return QStringLiteral("QCheckBox { color: %1; }").arg(text.name());
+}
+
+QString disabledRadioStyle(QWidget *widget)
+{
+    const QColor text = isDarkWidgetAppearance(widget) ? QColor(138, 138, 138)
+                                                       : QColor(78, 78, 78);
+    return QStringLiteral("QRadioButton { color: %1; }").arg(text.name());
+}
+
+void setProxyFieldEnabled(QWidget *widget, bool enabled)
+{
+    if (!widget)
+        return;
+
+    widget->setEnabled(enabled);
+
+    if (enabled) {
+        widget->setStyleSheet(QString());
+    } else if (qobject_cast<QComboBox*>(widget)) {
+        widget->setStyleSheet(disabledComboStyle(widget));
+    } else if (qobject_cast<QAbstractSpinBox*>(widget)) {
+        widget->setStyleSheet(disabledSpinBoxStyle(widget));
+    } else if (qobject_cast<QLineEdit*>(widget)) {
+        widget->setStyleSheet(disabledLineEditStyle(widget));
+    } else if (qobject_cast<QLabel*>(widget)) {
+        widget->setStyleSheet(disabledLabelStyle(widget));
+    } else if (qobject_cast<QCheckBox*>(widget)) {
+        widget->setStyleSheet(disabledCheckStyle(widget));
+    } else if (qobject_cast<QRadioButton*>(widget)) {
+        widget->setStyleSheet(disabledRadioStyle(widget));
+    }
+
+    refreshWidgetStyle(widget);
+}
+
+QString proxyHostForDisplay(const QString& value)
+{
+    QString proxy = value.trimmed();
+    if (proxy.isEmpty())
+        return QString();
+
+    const QString urlText = proxy.contains(QStringLiteral("://"))
+        ? proxy
+        : QStringLiteral("http://") + proxy;
+    const QUrl url(urlText);
+    if (url.isValid() && !url.host().isEmpty())
+        return url.host();
+
+    const int colon = proxy.lastIndexOf(QLatin1Char(':'));
+    if (colon > 0) {
+        bool ok = false;
+        proxy.mid(colon + 1).toInt(&ok);
+        if (ok)
+            return proxy.left(colon);
+    }
+
+    return proxy;
+}
+
+QString proxyPortForDisplay(const QString& value)
+{
+    const QString proxy = value.trimmed();
+    if (proxy.isEmpty())
+        return QString();
+
+    const QString urlText = proxy.contains(QStringLiteral("://"))
+        ? proxy
+        : QStringLiteral("http://") + proxy;
+    const QUrl url(urlText);
+    if (url.isValid() && url.port() > 0)
+        return QString::number(url.port());
+
+    const int colon = proxy.lastIndexOf(QLatin1Char(':'));
+    if (colon > 0) {
+        bool ok = false;
+        const int port = proxy.mid(colon + 1).toInt(&ok);
+        if (ok && port > 0 && port <= 65535)
+            return QString::number(port);
+    }
+
+    return QString();
+}
+
+QString normalizedProxyHost(QString host)
+{
+    host = host.trimmed();
+    if (host.isEmpty())
+        return QString();
+
+    const QString urlText = host.contains(QStringLiteral("://"))
+        ? host
+        : QStringLiteral("http://") + host;
+    const QUrl url(urlText);
+    if (url.isValid() && !url.host().isEmpty())
+        host = url.host();
+
+    if (host.contains(QLatin1Char(':')) && !host.startsWith(QLatin1Char('[')))
+        return QStringLiteral("[%1]").arg(host);
+
+    return host;
+}
+
+QString buildHubListProxySetting(const QString& host, const QString& port)
+{
+    const QString cleanHost = normalizedProxyHost(host);
+    const QString cleanPort = port.trimmed();
+    if (cleanHost.isEmpty())
+        return QString();
+
+    if (cleanPort.isEmpty())
+        return QStringLiteral("http://%1").arg(cleanHost);
+
+    return QStringLiteral("http://%1:%2").arg(cleanHost, cleanPort);
+}
+
+}
 
 SettingsConnection::SettingsConnection( QWidget *parent):
         QWidget(parent),
@@ -124,21 +364,47 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     groupBox_4->layout()->setSpacing(6);
     groupBox_5->layout()->setSpacing(6);
 
+    label_AUTO_DETECT_STATUS = new QLabel(tab);
+    label_AUTO_DETECT_STATUS->setWordWrap(true);
+    label_AUTO_DETECT_STATUS->setVisible(false);
+    label_AUTO_DETECT_STATUS->setProperty("settingsMutedText", true);
+    verticalLayout->insertWidget(1, label_AUTO_DETECT_STATUS);
+
     checkBox_USE_IPV6 = new QCheckBox(tr("Enable IPv6"), tab);
     formLayout->addRow(checkBox_USE_IPV6);
 
-    auto* labelWanIp6 = new QLabel(tr("External/WAN IPv6:"), tab);
-    labelWanIp6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label_WANIP6 = new QLabel(tr("External/WAN IPv6:"), tab);
+    label_WANIP6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     lineEdit_WANIP6 = new QLineEdit(tab);
     lineEdit_WANIP6->setPlaceholderText(tr("e.g. 2001:db8::1234"));
-    formLayout->addRow(labelWanIp6, lineEdit_WANIP6);
+    formLayout->addRow(label_WANIP6, lineEdit_WANIP6);
 
-    auto* labelBind6 = new QLabel(tr("Bind IPv6 address"), groupBox_5);
-    labelBind6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label_BIND_ADDRESS6 = new QLabel(tr("Bind IPv6 address"), groupBox_5);
+    label_BIND_ADDRESS6->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     lineEdit_BIND_ADDRESS6 = new QLineEdit(groupBox_5);
     lineEdit_BIND_ADDRESS6->setPlaceholderText("::");
-    gridLayout_12->addWidget(labelBind6, 1, 0);
+    gridLayout_12->addWidget(label_BIND_ADDRESS6, 1, 0);
     gridLayout_12->addWidget(lineEdit_BIND_ADDRESS6, 1, 1, 1, 3);
+
+    groupBox_HUBLIST_PROXY = new QGroupBox(tr("Public hub list proxy"), tab);
+    groupBox_HUBLIST_PROXY->setProperty("settingsSectionHeader", true);
+    auto *hubListProxyLayout = new QHBoxLayout(groupBox_HUBLIST_PROXY);
+    hubListProxyLayout->setContentsMargins(12, 8, 12, 10);
+    hubListProxyLayout->setSpacing(8);
+
+    label_HUBLIST_PROXY_HOST = new QLabel(tr("Host"), groupBox_HUBLIST_PROXY);
+    label_HUBLIST_PROXY_PORT = new QLabel(tr("Port"), groupBox_HUBLIST_PROXY);
+    lineEdit_HUBLIST_PROXY_HOST = new QLineEdit(groupBox_HUBLIST_PROXY);
+    lineEdit_HUBLIST_PROXY_HOST->setPlaceholderText(tr("HTTP proxy host or IP"));
+    lineEdit_HUBLIST_PROXY_PORT = new QLineEdit(groupBox_HUBLIST_PROXY);
+    lineEdit_HUBLIST_PROXY_PORT->setPlaceholderText(tr("Port"));
+    lineEdit_HUBLIST_PROXY_PORT->setValidator(new QIntValidator(1, 65535, lineEdit_HUBLIST_PROXY_PORT));
+    lineEdit_HUBLIST_PROXY_PORT->setMaximumWidth(96);
+    hubListProxyLayout->addWidget(label_HUBLIST_PROXY_HOST);
+    hubListProxyLayout->addWidget(lineEdit_HUBLIST_PROXY_HOST, 1);
+    hubListProxyLayout->addWidget(label_HUBLIST_PROXY_PORT);
+    hubListProxyLayout->addWidget(lineEdit_HUBLIST_PROXY_PORT);
+    verticalLayout->insertWidget(4, groupBox_HUBLIST_PROXY);
 
     auto *labelCountryDb = new QLabel(tr("Country MMDB file"), tab_3);
     labelCountryDb->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -206,11 +472,13 @@ void SettingsConnection::ok(){
     const bool proxyP2P = use_proxy && checkBox_PROXY_P2P && checkBox_PROXY_P2P->isChecked();
     const bool hubStealth = use_proxy && checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked();
     const bool hubPassive = proxyP2P || hubStealth;
+    const bool autoDetect = checkBox_AUTO_DETECT_CONNECTION->isChecked() && !hubPassive;
     bool active = !radioButton_PASSIVE->isChecked() && !hubPassive;
 
     int old_mode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true);
-    SM->set(SettingsManager::AUTO_DETECT_CONNECTION, checkBox_AUTO_DETECT_CONNECTION->isChecked() && !hubPassive);
-    if (active){
+    const bool old_auto_detect = qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::AUTO_DETECT_CONNECTION, true);
+    SM->set(SettingsManager::AUTO_DETECT_CONNECTION, autoDetect);
+    if (!autoDetect && active){
         if (radioButton_ACTIVE->isChecked())
             SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_DIRECT);
         else if (radioButton_PORT->isChecked())
@@ -255,7 +523,7 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::BIND_ADDRESS6, bindIp6.toStdString());
         SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
-    else {
+    else if (!autoDetect) {
         SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
         QString bind_ip=lineEdit_BIND_ADDRESS->text();
         if (validateIp4(bind_ip))
@@ -289,6 +557,20 @@ void SettingsConnection::ok(){
 
     SM->set(SettingsManager::BIND_IFACE, radioButton_BIND_IFACE->isChecked());
     SM->set(SettingsManager::BIND_IFACE_NAME, _tq(comboBox_IFACES->currentText()));
+
+    if (lineEdit_HUBLIST_PROXY_HOST && lineEdit_HUBLIST_PROXY_PORT) {
+        const QString hubListProxyHost = lineEdit_HUBLIST_PROXY_HOST->text().trimmed();
+        const QString hubListProxyPort = lineEdit_HUBLIST_PROXY_PORT->text().trimmed();
+        if (!hubListProxyHost.isEmpty()) {
+            bool ok = false;
+            const int port = hubListProxyPort.toInt(&ok);
+            if (!ok || port <= 0 || port > 65535) {
+                showMsg(tr("No valid public hub list proxy port found!"), lineEdit_HUBLIST_PROXY_PORT);
+                return;
+            }
+        }
+        SM->set(SettingsManager::HTTP_PROXY, _tq(buildHubListProxySetting(hubListProxyHost, hubListProxyPort)));
+    }
 
     if (use_proxy){
         const QString server = lineEdit_SIP->text().trimmed();
@@ -363,7 +645,8 @@ void SettingsConnection::ok(){
     SM->set(SettingsManager::USE_TLS, (comboBox_TLS->currentIndex() == 1) || (comboBox_TLS->currentIndex() == 2));
     SM->set(SettingsManager::REQUIRE_TLS, (comboBox_TLS->currentIndex() == 2));
 
-    if (old_mode != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) || old_tcp != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TCP_PORT, true))
+    if (old_auto_detect != qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::AUTO_DETECT_CONNECTION, true) ||
+        old_mode != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) || old_tcp != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TCP_PORT, true))
         || old_udp != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true)) || old_tls != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TLS_PORT, true)))
     {
         if (!(old_tcp < 1024 || old_tls < 1024 || old_udp < 1024) &&
@@ -400,6 +683,11 @@ void SettingsConnection::init(){
     spinBox_RECONNECT_DELAY->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::RECONNECT_DELAY, true));
     if (lineEdit_COUNTRY_DB)
         lineEdit_COUNTRY_DB->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::COUNTRY_DB_PATH, true)));
+    if (lineEdit_HUBLIST_PROXY_HOST && lineEdit_HUBLIST_PROXY_PORT) {
+        const QString hubListProxy = _q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HTTP_PROXY, true));
+        lineEdit_HUBLIST_PROXY_HOST->setText(proxyHostForDisplay(hubListProxy));
+        lineEdit_HUBLIST_PROXY_PORT->setText(proxyPortForDisplay(hubListProxy));
+    }
     checkBox_DONTOVERRIDE->setCheckState( qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NO_IP_OVERRIDE, true)? Qt::Checked : Qt::Unchecked );
     checkBox_DYNDNS->setCheckState( qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::DYNDNS_ENABLE, true) ? Qt::Checked : Qt::Unchecked );
     lineEdit_DYNDNS_SERVER->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DYNDNS_SERVER, true)));
@@ -536,6 +824,7 @@ void SettingsConnection::init(){
     slotToggleIncomming();
     slotToggleOutgoing();
 
+    connect(checkBox_AUTO_DETECT_CONNECTION, &QCheckBox::toggled, this, &SettingsConnection::slotToggleIncomming);
     connect(radioButton_ACTIVE, &QRadioButton::toggled, this, &SettingsConnection::slotToggleIncomming);
     connect(radioButton_PORT, &QRadioButton::toggled, this, &SettingsConnection::slotToggleIncomming);
     connect(radioButton_PASSIVE, &QRadioButton::toggled, this, &SettingsConnection::slotToggleIncomming);
@@ -549,15 +838,8 @@ void SettingsConnection::init(){
         connect(checkBox_PROXY_P2P, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_SOCKS_STEALTH)
         connect(checkBox_SOCKS_STEALTH, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
-    if(checkBox_USE_IPV6 && lineEdit_WANIP6 && lineEdit_BIND_ADDRESS6) {
-        auto syncIpv6Fields = [this]() {
-            const bool enabled = checkBox_USE_IPV6->isChecked();
-            lineEdit_WANIP6->setEnabled(enabled);
-            lineEdit_BIND_ADDRESS6->setEnabled(enabled);
-        };
-        connect(checkBox_USE_IPV6, &QCheckBox::toggled, this, [syncIpv6Fields](bool) { syncIpv6Fields(); });
-        syncIpv6Fields();
-    }
+    if(checkBox_USE_IPV6)
+        connect(checkBox_USE_IPV6, &QCheckBox::toggled, this, &SettingsConnection::slotToggleIncomming);
 
     lineEdit_SIP->installEventFilter(this);
     lineEdit_SPORT->installEventFilter(this);
@@ -573,6 +855,10 @@ void SettingsConnection::init(){
         checkBox_USE_IPV6->installEventFilter(this);
     if (lineEdit_COUNTRY_DB)
         lineEdit_COUNTRY_DB->installEventFilter(this);
+    if (lineEdit_HUBLIST_PROXY_HOST)
+        lineEdit_HUBLIST_PROXY_HOST->installEventFilter(this);
+    if (lineEdit_HUBLIST_PROXY_PORT)
+        lineEdit_HUBLIST_PROXY_PORT->installEventFilter(this);
 
     spinBox_TCP->installEventFilter(this);
     spinBox_UDP->installEventFilter(this);
@@ -599,17 +885,46 @@ void SettingsConnection::slotToggleIncomming(){
     if(hubPassive && !radioButton_PASSIVE->isChecked())
         radioButton_PASSIVE->setChecked(true);
 
-    bool b = !radioButton_PASSIVE->isChecked() && !hubPassive;
+    const bool autoDetect = checkBox_AUTO_DETECT_CONNECTION && checkBox_AUTO_DETECT_CONNECTION->isChecked() && !hubPassive;
+    const bool manualIncoming = !hubPassive && !autoDetect;
+    const bool activeFields = manualIncoming && !radioButton_PASSIVE->isChecked();
+    const bool bindFields = !autoDetect;
+    const bool ipv6Checked = checkBox_USE_IPV6 && checkBox_USE_IPV6->isChecked();
 
-    frame->setEnabled(b);
+    frame->setEnabled(activeFields);
+    setProxyFieldEnabled(label, activeFields);
+    setProxyFieldEnabled(label_2, activeFields);
+    setProxyFieldEnabled(label_3, activeFields);
+    setProxyFieldEnabled(label_4, activeFields);
+    setProxyFieldEnabled(spinBox_TCP, activeFields);
+    setProxyFieldEnabled(spinBox_UDP, activeFields);
+    setProxyFieldEnabled(spinBox_TLS, activeFields);
+    setProxyFieldEnabled(lineEdit_WANIP, activeFields);
+    setProxyFieldEnabled(checkBox_DONTOVERRIDE, activeFields);
+    setProxyFieldEnabled(checkBox_USE_IPV6, activeFields);
+    setProxyFieldEnabled(label_WANIP6, activeFields && ipv6Checked);
+    setProxyFieldEnabled(lineEdit_WANIP6, activeFields && ipv6Checked);
+
     checkBox_AUTO_DETECT_CONNECTION->setEnabled(!hubPassive);
-    radioButton_ACTIVE->setEnabled(!hubPassive);
-    radioButton_PORT->setEnabled(!hubPassive);
-    radioButton_PASSIVE->setEnabled(!hubPassive);
+    radioButton_ACTIVE->setEnabled(manualIncoming);
+    radioButton_PORT->setEnabled(manualIncoming);
+    radioButton_PASSIVE->setEnabled(manualIncoming);
+    setProxyFieldEnabled(radioButton_ACTIVE, manualIncoming);
+    setProxyFieldEnabled(radioButton_PORT, manualIncoming);
+    setProxyFieldEnabled(radioButton_PASSIVE, manualIncoming);
 #if (defined USE_MINIUPNP)
-    radioButton_UPNP->setEnabled(!hubPassive);
+    radioButton_UPNP->setEnabled(manualIncoming);
+    setProxyFieldEnabled(radioButton_UPNP, manualIncoming);
 #endif
-    groupBox_5->setEnabled(true);
+    groupBox_5->setEnabled(bindFields);
+    setProxyFieldEnabled(radioButton_BIND_ADDR, bindFields);
+    setProxyFieldEnabled(radioButton_BIND_IFACE, bindFields);
+    setProxyFieldEnabled(lineEdit_BIND_ADDRESS, bindFields);
+    setProxyFieldEnabled(comboBox_IFACES, bindFields);
+    setProxyFieldEnabled(label_BIND_ADDRESS6, bindFields && ipv6Checked);
+    setProxyFieldEnabled(lineEdit_BIND_ADDRESS6, bindFields && ipv6Checked);
+
+    updateAutoDetectStatus();
 }
 
 void SettingsConnection::slotToggleOutgoing(){
@@ -618,32 +933,25 @@ void SettingsConnection::slotToggleOutgoing(){
     const bool shadowsocks = proxy && radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
 
     frame_2->setEnabled(true);
-    if(label_5)
-        label_5->setEnabled(proxy);
-    if(lineEdit_SIP)
-        lineEdit_SIP->setEnabled(proxy);
-    if(label_6)
-        label_6->setEnabled(proxy);
-    if(lineEdit_SPORT)
-        lineEdit_SPORT->setEnabled(proxy);
-    if(label_7)
-        label_7->setEnabled(socks);
-    if(lineEdit_SUSR)
-        lineEdit_SUSR->setEnabled(socks);
-    if(label_8)
-        label_8->setEnabled(proxy);
-    if(lineEdit_SPSWD)
-        lineEdit_SPSWD->setEnabled(proxy);
-    if(label_SHADOWSOCKS_METHOD)
-        label_SHADOWSOCKS_METHOD->setEnabled(shadowsocks);
-    if(comboBox_SHADOWSOCKS_METHOD)
-        comboBox_SHADOWSOCKS_METHOD->setEnabled(shadowsocks);
-    if(checkBox_RESOLVE)
-        checkBox_RESOLVE->setEnabled(proxy);
-    if(checkBox_SOCKS_STEALTH)
-        checkBox_SOCKS_STEALTH->setEnabled(proxy);
-    if(checkBox_PROXY_P2P)
-        checkBox_PROXY_P2P->setEnabled(proxy);
+    setProxyFieldEnabled(label_5, proxy);
+    setProxyFieldEnabled(lineEdit_SIP, proxy);
+    setProxyFieldEnabled(label_6, proxy);
+    setProxyFieldEnabled(lineEdit_SPORT, proxy);
+    setProxyFieldEnabled(label_7, socks);
+    setProxyFieldEnabled(lineEdit_SUSR, socks);
+    setProxyFieldEnabled(label_8, proxy);
+    setProxyFieldEnabled(lineEdit_SPSWD, proxy);
+    setProxyFieldEnabled(label_SHADOWSOCKS_METHOD, shadowsocks);
+    setProxyFieldEnabled(comboBox_SHADOWSOCKS_METHOD, shadowsocks);
+    setProxyFieldEnabled(checkBox_RESOLVE, proxy);
+    setProxyFieldEnabled(checkBox_SOCKS_STEALTH, proxy);
+    setProxyFieldEnabled(checkBox_PROXY_P2P, proxy);
+    if (groupBox_HUBLIST_PROXY)
+        groupBox_HUBLIST_PROXY->setEnabled(!proxy);
+    setProxyFieldEnabled(label_HUBLIST_PROXY_HOST, !proxy);
+    setProxyFieldEnabled(lineEdit_HUBLIST_PROXY_HOST, !proxy);
+    setProxyFieldEnabled(label_HUBLIST_PROXY_PORT, !proxy);
+    setProxyFieldEnabled(lineEdit_HUBLIST_PROXY_PORT, !proxy);
 
     slotToggleIncomming();
 }
@@ -656,6 +964,36 @@ bool SettingsConnection::isProxyP2PMode() const {
 bool SettingsConnection::isProxyHubStealthMode() const {
     return radioButton_DC && !radioButton_DC->isChecked() &&
            checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked();
+}
+
+QString SettingsConnection::connectionModeText(int mode) const
+{
+    switch (mode) {
+    case SettingsManager::INCOMING_DIRECT:
+        return tr("Direct connection");
+    case SettingsManager::INCOMING_FIREWALL_UPNP:
+        return tr("Firewall with UPnP");
+    case SettingsManager::INCOMING_FIREWALL_NAT:
+        return tr("Firewall with port forwarding");
+    case SettingsManager::INCOMING_FIREWALL_PASSIVE:
+        return tr("Passive mode");
+    default:
+        return tr("Unknown");
+    }
+}
+
+void SettingsConnection::updateAutoDetectStatus()
+{
+    if (!label_AUTO_DETECT_STATUS || !checkBox_AUTO_DETECT_CONNECTION)
+        return;
+
+    const bool showStatus = checkBox_AUTO_DETECT_CONNECTION->isChecked() && checkBox_AUTO_DETECT_CONNECTION->isEnabled();
+    label_AUTO_DETECT_STATUS->setVisible(showStatus);
+    if (!showStatus)
+        return;
+
+    const int mode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true);
+    label_AUTO_DETECT_STATUS->setText(tr("Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.").arg(connectionModeText(mode)));
 }
 
 void SettingsConnection::slotCfgDHTBootstrap(){

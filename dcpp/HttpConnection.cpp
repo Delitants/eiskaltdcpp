@@ -40,7 +40,8 @@ HttpConnection::HttpConnection(DCContext& ctx, const string& aUserAgent) :
     connState(CONN_UNKNOWN),
     connType(TYPE_POST),
     socket(0),
-    ctx_(ctx)
+    ctx_(ctx),
+    usingHttpProxy(false)
 {
 }
 
@@ -112,7 +113,10 @@ void HttpConnection::prepareRequest(RequestType type) {
     }
 
     string proto, query, fragment;
-    if(CTX_SETTING(HTTP_PROXY).empty()) {
+    usingHttpProxy = !CTX_SETTING(HTTP_PROXY).empty() &&
+        CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_DIRECT;
+
+    if(!usingHttpProxy) {
         Util::decodeUrl(url, proto, server, port, file, query, fragment);
         if(file.empty())
             file = "/";
@@ -177,7 +181,7 @@ void HttpConnection::on(BufferedSocketListener::Connected) {
     socket->write(method + " " + file + " HTTP/1.1\r\n");
 
     string sRemoteServer = server;
-    if(!CTX_SETTING(HTTP_PROXY).empty())
+    if(usingHttpProxy)
     {
         string tfile, tport, proto, query, fragment;
         Util::decodeUrl(file, proto, sRemoteServer, tport, tfile, query, fragment);

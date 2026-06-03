@@ -17,6 +17,9 @@
 #include <QMenu>
 #include <QList>
 #include <QApplication>
+#include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QIcon>
 #include <QImage>
 #include <QPainter>
@@ -372,12 +375,20 @@ void Notification::resetTrayIcon(){
 
 QIcon Notification::trayIcon() const
 {
+#if defined(Q_OS_MAC)
+    const QString macAppIconPath = QDir(QCoreApplication::applicationDirPath())
+            .absoluteFilePath(QStringLiteral("../Resources/eiskaltdcpp-borderless.icns"));
+    QPixmap pixmap = QFileInfo::exists(macAppIconPath)
+            ? QIcon(macAppIconPath).pixmap(22, 22)
+            : QPixmap();
+    if (pixmap.isNull())
+        pixmap = qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
+                .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+#else
     QPixmap pixmap = qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL)
             .scaled(22, 22, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+#endif
 
-#ifdef Q_OS_DARWIN
-    return QIcon(pixmap);
-#else
     if (!qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
         return QIcon(pixmap);
 
@@ -419,7 +430,6 @@ QIcon Notification::trayIcon() const
     painter.end();
 
     return QIcon(QPixmap::fromImage(image));
-#endif
 }
 
 void QtNotifyModule::showMessage(const QString &title, const QString &msg, QObject *obj) {

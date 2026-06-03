@@ -46,6 +46,7 @@ using namespace std;
 #include "HubManager.h"
 #include "Notification.h"
 #include "VersionGlobal.h"
+#include "LocalizedDefaults.h"
 #include "FinishedTransfers.h"
 #include "QueuedUsers.h"
 #include "ArenaWidgetManager.h"
@@ -717,6 +718,8 @@ int main(int argc, char *argv[])
 
     ctx.createWulforUtil();
     ctx.settings()->loadTranslation();
+    LocalizedDefaults::refreshAwayMessageSetting(dcContext->getSettingsManager(),
+                                                 qtCtx()->wulforUtil()->getTranslationsPath());
     // Create and load emoticon factory
     ctx.createEmoticonFactory();
     if (qtCtx()->emoticonFactory())

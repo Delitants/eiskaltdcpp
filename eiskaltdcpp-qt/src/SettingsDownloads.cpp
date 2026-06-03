@@ -71,7 +71,6 @@ void SettingsDownloads::ok(){
     SM->set(SettingsManager::TEMP_DOWNLOAD_DIRECTORY, _tq(udl_dir));
     SM->set(SettingsManager::DOWNLOAD_SLOTS, spinBox_MAXDL->value());
     SM->set(SettingsManager::MAX_DOWNLOAD_SPEED, spinBox_NONEWDL->value());
-    SM->set(SettingsManager::HTTP_PROXY, _tq(lineEdit_PROXY->text()));
 
     //Auto-priority
     SM->set(SettingsManager::PRIO_HIGHEST_SIZE, _tq(QString().setNum(spinBox_HTPMAX->value())));
@@ -99,8 +98,6 @@ void SettingsDownloads::init(){
     {//Downloads
         lineEdit_DLDIR->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DOWNLOAD_DIRECTORY, true)));
         lineEdit_UNF_DL_DIR->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TEMP_DOWNLOAD_DIRECTORY, true)));
-        lineEdit_PROXY->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HTTP_PROXY, true)));
-
         checkBox_NO_USE_TEMP_DIR->setChecked(!qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NO_USE_TEMP_DIR, true));
         spinBox_AUTO_SEARCH_TIME->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::AUTO_SEARCH_TIME, true));
         spinBox_SEGMENT_SIZE->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SEGMENT_SIZE, true));
@@ -109,7 +106,7 @@ void SettingsDownloads::init(){
 
         toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
         toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
-        groupBox_3->setTitle(tr("Public Hub list proxy"));
+        groupBox_3->hide();
         pushButton_CFGLISTS->hide();
 
         connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);

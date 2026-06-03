@@ -15,6 +15,7 @@
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "dcpp/DCPlusPlus.h"
+#include "LocalizedDefaults.h"
 #include "WulforSettings.h"
 #include "WulforUtil.h"
 #include "MainWindow.h"
@@ -447,7 +448,9 @@ void SettingsGUI::init(){
 void SettingsGUI::ok(){
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
     {//Basic tab
-        qtCtx()->settings()->setStr(WS_TRANSLATION_FILE, lineEdit_LANGFILE->text());
+        const QString translationFile = QDir::fromNativeSeparators(lineEdit_LANGFILE->text().trimmed());
+        LocalizedDefaults::refreshAwayMessageSetting(SM, qtCtx()->wulforUtil()->getTranslationsPath(), translationFile);
+        qtCtx()->settings()->setStr(WS_TRANSLATION_FILE, translationFile);
 
         qtCtx()->settings()->setBool(WB_MAINWINDOW_REMEMBER, radioButton_REMEMBER->isChecked());
         qtCtx()->settings()->setBool(WB_MAINWINDOW_HIDE, radioButton_HIDE->isChecked());
