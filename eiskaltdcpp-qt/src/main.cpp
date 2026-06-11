@@ -75,8 +75,6 @@ using namespace std;
 #include <QApplication>
 #if defined(Q_OS_MAC)
 #include <QAccessible>
-#include <objc/message.h>
-#include <objc/runtime.h>
 #endif
 #include <QIcon>
 #include <QByteArray>
@@ -137,41 +135,6 @@ QString bootstrapDiagnosticLogFileName()
 }
 
 void parseCmdLine(const QStringList &);
-
-#if defined(Q_OS_MAC)
-static void setMacDockIcon(const QString &path)
-{
-    const QByteArray utf8Path = QFile::encodeName(path);
-    Class nsStringClass = (Class)objc_getClass("NSString");
-    Class nsImageClass = (Class)objc_getClass("NSImage");
-    Class nsAppClass = (Class)objc_getClass("NSApplication");
-
-    if (!nsStringClass || !nsImageClass || !nsAppClass)
-        return;
-
-    SEL stringWithUTF8String = sel_registerName("stringWithUTF8String:");
-    SEL allocSel = sel_registerName("alloc");
-    SEL initWithContentsOfFileSel = sel_registerName("initWithContentsOfFile:");
-    SEL sharedApplicationSel = sel_registerName("sharedApplication");
-    SEL setApplicationIconImageSel = sel_registerName("setApplicationIconImage:");
-    SEL releaseSel = sel_registerName("release");
-
-    id nsPath = ((id (*)(Class, SEL, const char *))objc_msgSend)(nsStringClass, stringWithUTF8String, utf8Path.constData());
-    if (!nsPath)
-        return;
-
-    id nsImage = ((id (*)(Class, SEL))objc_msgSend)(nsImageClass, allocSel);
-    nsImage = ((id (*)(id, SEL, id))objc_msgSend)(nsImage, initWithContentsOfFileSel, nsPath);
-    if (!nsImage)
-        return;
-
-    id nsApp = ((id (*)(Class, SEL))objc_msgSend)(nsAppClass, sharedApplicationSel);
-    if (nsApp)
-        ((void (*)(id, SEL, id))objc_msgSend)(nsApp, setApplicationIconImageSel, nsImage);
-
-    ((void (*)(id, SEL))objc_msgSend)(nsImage, releaseSel);
-}
-#endif
 
 #if !defined(Q_OS_WIN)
 #include <unistd.h>
@@ -740,15 +703,6 @@ int main(int argc, char *argv[])
 
 #if !defined(Q_OS_MAC)
     app.setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
-#else
-    const QString macDockIconPath = QDir(QCoreApplication::applicationDirPath())
-            .absoluteFilePath(QStringLiteral("../Resources/eiskaltdcpp-borderless.icns"));
-    if (QFileInfo::exists(macDockIconPath)) {
-        app.setWindowIcon(QIcon(macDockIconPath));
-        setMacDockIcon(macDockIconPath);
-    } else {
-        app.setWindowIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiICON_APPL));
-    }
 #endif
 
     ctx.createArenaWidgetManager();

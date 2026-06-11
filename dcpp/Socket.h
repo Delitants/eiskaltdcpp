@@ -227,6 +227,7 @@ private:
     int shadowsocksRead(void* aBuffer, int aBufLen);
     int shadowsocksWrite(const void* aBuffer, int aLen);
     void shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
+    bool shadowsocksEnsureReceiveSubkey();
     bool shadowsocksTryDecode();
     bool shadowsocksFlushPending();
     int streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout);
@@ -236,7 +237,9 @@ private:
 
     bool shadowsocksActive = false;
     int shadowsocksMethod = SHADOWSOCKS_NONE;
+    ByteVector shadowsocksMasterKey;
     ByteVector shadowsocksSubkey;
+    ByteVector shadowsocksDecSubkey;
     ByteVector shadowsocksEncNonce;
     ByteVector shadowsocksDecNonce;
     ByteVector shadowsocksPlainIn;

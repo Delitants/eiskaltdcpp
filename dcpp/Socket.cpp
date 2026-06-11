@@ -1121,7 +1121,9 @@ int Socket::rawWrite(const void* aBuffer, int aLen) {
 void Socket::shadowsocksReset() {
     shadowsocksActive = false;
     shadowsocksMethod = SHADOWSOCKS_NONE;
+    shadowsocksMasterKey.clear();
     shadowsocksSubkey.clear();
+    shadowsocksDecSubkey.clear();
     shadowsocksEncNonce.clear();
     shadowsocksDecNonce.clear();
     shadowsocksPlainIn.clear();
@@ -1147,8 +1149,8 @@ void Socket::shadowsocksStart(const string& method, const string& password, uint
         throw SocketException(_("Failed to create Shadowsocks salt"));
     }
 
-    const ByteVector masterKey = evpBytesToKey(password, keyLen);
-    shadowsocksSubkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
+    shadowsocksMasterKey = evpBytesToKey(password, keyLen);
+    shadowsocksSubkey = hkdfSha1(shadowsocksMasterKey, salt, "ss-subkey", keyLen);
     shadowsocksEncNonce.assign(SHADOWSOCKS_NONCE_LEN, 0);
     shadowsocksDecNonce.assign(SHADOWSOCKS_NONCE_LEN, 0);
     shadowsocksActive = true;
@@ -1212,15 +1214,37 @@ int Socket::shadowsocksWrite(const void* aBuffer, int aLen) {
     return static_cast<int>(plainLen);
 }
 
+bool Socket::shadowsocksEnsureReceiveSubkey() {
+    if(!shadowsocksDecSubkey.empty())
+        return true;
+
+    const size_t keyLen = shadowsocksKeyLen(shadowsocksMethod);
+    if(keyLen == 0 || shadowsocksMasterKey.empty()) {
+        throw SocketException(_("Unsupported Shadowsocks cipher"));
+    }
+
+    if(shadowsocksCipherIn.size() < keyLen)
+        return false;
+
+    ByteVector salt(shadowsocksCipherIn.begin(), shadowsocksCipherIn.begin() + keyLen);
+    shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(), shadowsocksCipherIn.begin() + keyLen);
+    shadowsocksDecSubkey = hkdfSha1(shadowsocksMasterKey, salt, "ss-subkey", keyLen);
+    shadowsocksDecNonce.assign(SHADOWSOCKS_NONCE_LEN, 0);
+    return true;
+}
+
 bool Socket::shadowsocksTryDecode() {
     while(true) {
+        if(!shadowsocksEnsureReceiveSubkey())
+            return false;
+
         if(!shadowsocksReadingPayload) {
             const size_t required = 2 + SHADOWSOCKS_TAG_LEN;
             if(shadowsocksCipherIn.size() < required)
                 return false;
 
             ByteVector plainLen;
-            if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksDecNonce,
+            if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksDecSubkey, shadowsocksDecNonce,
                     shadowsocksCipherIn.data(), required, plainLen) || plainLen.size() != 2) {
                 throw SocketException(_("Shadowsocks decryption failed"));
             }
@@ -1238,7 +1262,7 @@ bool Socket::shadowsocksTryDecode() {
             return false;
 
         ByteVector plainPayload;
-        if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksSubkey, shadowsocksDecNonce,
+        if(!shadowsocksAeadDecrypt(shadowsocksMethod, shadowsocksDecSubkey, shadowsocksDecNonce,
                 shadowsocksCipherIn.data(), required, plainPayload)) {
             throw SocketException(_("Shadowsocks decryption failed"));
         }
