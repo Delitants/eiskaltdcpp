@@ -1037,9 +1037,18 @@ void AdcHub::info(bool /*alwaysSend*/) {
             proxyHost = CTX_SETTING(SOCKS_SERVER);
         }
 
+        StringList proxyIpCandidates;
+        if(!CTX_SETTING(INTERNETIP).empty())
+            proxyIpCandidates.push_back(CTX_SETTING(INTERNETIP));
+
         if(!proxyHost.empty()) {
-            proxyHubIp = Socket::resolve(proxyHost);
+            const string resolvedProxyHost = Socket::resolve(proxyHost);
+            proxyIpCandidates.push_back(resolvedProxyHost);
         }
+
+        // Prefer the IP observed by the external-IP check through the proxy.
+        // A local Shadowsocks server address (e.g. 192.168.x.x) must never be advertised.
+        proxyHubIp = Util::firstPublicIp(proxyIpCandidates);
     }
 
     string ipv4 = favIp4;

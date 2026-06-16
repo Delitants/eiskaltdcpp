@@ -53,3 +53,29 @@ TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][so
     const int read = socket.read(reply, sizeof(reply));
     REQUIRE(read > 0);
 }
+
+TEST_CASE("Shadowsocks proxy endpoint advertised to ADC hubs must be public", "[qt][socket][shadowsocks]")
+{
+    REQUIRE_FALSE(Util::isPublicIp("192.168.4.71"));
+    REQUIRE_FALSE(Util::isPublicIp("10.0.0.5"));
+    REQUIRE_FALSE(Util::isPublicIp("172.16.0.10"));
+    REQUIRE_FALSE(Util::isPublicIp("127.0.0.1"));
+    REQUIRE(Util::isPublicIp("8.8.8.8"));
+}
+
+TEST_CASE("Shadowsocks ADC advertisement prefers proxy observed public IP", "[qt][socket][shadowsocks]")
+{
+    REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "8.8.8.8" }) == "8.8.8.8");
+    REQUIRE(Util::firstPublicIp(StringList{ "203.0.113.10", "8.8.8.8" }) == "8.8.8.8");
+    REQUIRE(Util::firstPublicIp(StringList{ "147.81.150.184", "192.168.4.71" }) == "147.81.150.184");
+    REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "10.0.0.5" }).empty());
+}
+
+TEST_CASE("External IP responses can be parsed for proxy ADC advertisement", "[qt][socket][shadowsocks]")
+{
+    REQUIRE(Util::firstPublicIpFromText("<html><body>Current IP Address: 8.8.8.8</body></html>") == "8.8.8.8");
+    REQUIRE(Util::firstPublicIpFromText("1.1.1.1\n") == "1.1.1.1");
+    REQUIRE(Util::firstPublicIpFromText("local 192.168.4.71 public 9.9.9.9") == "9.9.9.9");
+    REQUIRE(Util::firstPublicIpFromText("version 2.5.4 public 8.8.4.4") == "8.8.4.4");
+    REQUIRE(Util::firstPublicIpFromText("local 192.168.4.71 only").empty());
+}

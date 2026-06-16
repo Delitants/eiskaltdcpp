@@ -30,6 +30,8 @@
 
 #endif
 
+#include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <array>
 #include <mutex>
@@ -1003,6 +1005,137 @@ bool Util::isPrivateIp(string const& ip) {
                 (haddr & 0xffff0000) == 0xc0a80000);  // 192.168.0.0/16
     }
     return false;
+}
+
+bool Util::isPublicIp(string const& ip) {
+    struct in_addr addr;
+
+    const auto isCanonicalIPv4 = [](const string& value) {
+        int parts = 0;
+        size_t start = 0;
+
+        while(start <= value.size()) {
+            const size_t end = value.find('.', start);
+            const string part = value.substr(start, end == string::npos ? string::npos : end - start);
+
+            if(part.empty() || part.size() > 3)
+                return false;
+
+            int number = 0;
+            for(const auto ch : part) {
+                if(!std::isdigit(static_cast<unsigned char>(ch)))
+                    return false;
+                number = number * 10 + (ch - '0');
+            }
+
+            if(number > 255)
+                return false;
+
+            ++parts;
+            if(end == string::npos)
+                break;
+
+            start = end + 1;
+        }
+
+        return parts == 4;
+    };
+
+    addr.s_addr = isCanonicalIPv4(ip) ? inet_addr(ip.c_str()) : INADDR_NONE;
+
+    if (addr.s_addr != INADDR_NONE) {
+        unsigned long haddr = ntohl(addr.s_addr);
+        return !(
+            (haddr & 0xff000000) == 0x00000000 || // 0.0.0.0/8
+            (haddr & 0xff000000) == 0x0a000000 || // 10.0.0.0/8
+            (haddr & 0xffc00000) == 0x64400000 || // 100.64.0.0/10
+            (haddr & 0xff000000) == 0x7f000000 || // 127.0.0.0/8
+            (haddr & 0xffff0000) == 0xa9fe0000 || // 169.254.0.0/16
+            (haddr & 0xfff00000) == 0xac100000 || // 172.16.0.0/12
+            (haddr & 0xffffff00) == 0xc0000200 || // 192.0.2.0/24
+            (haddr & 0xffff0000) == 0xc0a80000 || // 192.168.0.0/16
+            (haddr & 0xffffff00) == 0xc6336400 || // 198.51.100.0/24
+            (haddr & 0xffffff00) == 0xcb007100 || // 203.0.113.0/24
+            (haddr & 0xf0000000) == 0xe0000000 || // 224.0.0.0/4
+            (haddr & 0xf0000000) == 0xf0000000);  // 240.0.0.0/4
+    }
+
+    string lower = ip;
+    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+
+    if(lower.find(':') == string::npos)
+        return false;
+
+    return lower != "::" &&
+           lower != "::1" &&
+           lower.compare(0, 4, "fe80") != 0 &&
+           lower.compare(0, 2, "fc") != 0 &&
+           lower.compare(0, 2, "fd") != 0;
+}
+
+string Util::firstPublicIp(StringList const& ips) {
+    for(const auto& ip : ips) {
+        const string candidate = trimCopy(ip);
+        if(isPublicIp(candidate))
+            return candidate;
+    }
+
+    return Util::emptyString;
+}
+
+string Util::firstPublicIpFromText(string const& text) {
+    auto flushIPv4 = [](string candidate) -> string {
+        while(!candidate.empty() && candidate.front() == '.')
+            candidate.erase(candidate.begin());
+        while(!candidate.empty() && candidate.back() == '.')
+            candidate.pop_back();
+
+        if(candidate.find('.') != string::npos && Util::isPublicIp(candidate))
+            return candidate;
+
+        return Util::emptyString;
+    };
+
+    string candidate;
+    for(unsigned char ch : text) {
+        if(std::isdigit(ch) || ch == '.') {
+            candidate += static_cast<char>(ch);
+            continue;
+        }
+
+        const string ip = flushIPv4(candidate);
+        if(!ip.empty())
+            return ip;
+        candidate.clear();
+    }
+
+    string ip = flushIPv4(candidate);
+    if(!ip.empty())
+        return ip;
+
+    auto flushIPv6 = [](const string& value) -> string {
+        if(value.find(':') != string::npos && Util::isPublicIp(value))
+            return value;
+
+        return Util::emptyString;
+    };
+
+    candidate.clear();
+    for(unsigned char ch : text) {
+        if(std::isxdigit(ch) || ch == ':') {
+            candidate += static_cast<char>(ch);
+            continue;
+        }
+
+        ip = flushIPv6(candidate);
+        if(!ip.empty())
+            return ip;
+        candidate.clear();
+    }
+
+    return flushIPv6(candidate);
 }
 
 typedef const uint8_t* ccp;

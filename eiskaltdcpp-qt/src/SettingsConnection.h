@@ -70,14 +70,17 @@ private:
     bool dirty;
     QCheckBox* checkBox_USE_IPV6 = nullptr;
     QCheckBox* checkBox_PROXY_P2P = nullptr;
+    QCheckBox* checkBox_SOCKS_TLS = nullptr;
     QLabel* label_AUTO_DETECT_STATUS = nullptr;
     QLabel* label_WANIP6 = nullptr;
     QLabel* label_BIND_ADDRESS6 = nullptr;
+    QLabel* label_SHADOWSOCKS_TRANSPORT = nullptr;
     QLabel* label_HUBLIST_PROXY_HOST = nullptr;
     QLabel* label_HUBLIST_PROXY_PORT = nullptr;
     QGroupBox* groupBox_HUBLIST_PROXY = nullptr;
     QComboBox* comboBox_BIND_ADDRESS = nullptr;
     QComboBox* comboBox_BIND_ADDRESS6 = nullptr;
+    QComboBox* comboBox_SHADOWSOCKS_TRANSPORT = nullptr;
     QLineEdit* lineEdit_WANIP6 = nullptr;
     QLineEdit* lineEdit_BIND_ADDRESS6 = nullptr;
     QLineEdit* lineEdit_HUBLIST_PROXY_HOST = nullptr;

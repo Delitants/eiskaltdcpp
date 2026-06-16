@@ -56,9 +56,11 @@
 #endif
 
 #include <openssl/evp.h>
+#include <openssl/err.h>
 #include <openssl/hmac.h>
 #include <openssl/md5.h>
 #include <openssl/rand.h>
+#include <openssl/ssl.h>
 
 #include <cctype>
 
@@ -707,6 +709,10 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
+    if(sm->getBool(SettingsManager::SOCKS_TLS, true)) {
+        socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), timeLeft(start, timeout));
+    }
+
     socksAuth(timeLeft(start, timeout));
 
     ByteVector connStr;
@@ -871,6 +877,130 @@ void Socket::socksAuth(uint32_t timeout) {
     }
 }
 
+void Socket::socksTlsReset() {
+    socksTlsActive = false;
+    socksTlsWait = WAIT_NONE;
+    socksTls.reset();
+    socksTlsContext.reset();
+}
+
+void Socket::socksStartTls(const string& serverName, uint32_t timeout) {
+    socksTlsReset();
+
+    socksTlsContext.reset(SSL_CTX_new(TLS_client_method()));
+    if(!socksTlsContext) {
+        throw SocketException(_("Failed to initialize SOCKS TLS context"));
+    }
+
+    SSL_CTX_set_verify(socksTlsContext, SSL_VERIFY_NONE, nullptr);
+    SSL_CTX_set_options(socksTlsContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+
+    socksTls.reset(SSL_new(socksTlsContext));
+    if(!socksTls) {
+        throw SocketException(_("Failed to initialize SOCKS TLS session"));
+    }
+
+#ifndef OPENSSL_NO_TLSEXT
+    if(!serverName.empty()) {
+        SSL_set_tlsext_host_name(socksTls, serverName.c_str());
+    }
+#endif
+
+    if(SSL_set_fd(socksTls, sock) != 1) {
+        throw SocketException(_("Failed to attach SOCKS TLS session to socket"));
+    }
+
+    uint64_t start = GET_TICK();
+    while(true) {
+        const int ret = SSL_connect(socksTls);
+        if(ret == 1) {
+            socksTlsActive = true;
+            socksTlsWait = WAIT_NONE;
+            return;
+        }
+
+        const int err = SSL_get_error(socksTls, ret);
+        if(err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) {
+            const int waitFor = err == SSL_ERROR_WANT_READ ? WAIT_READ : WAIT_WRITE;
+            if((Socket::wait(timeLeft(start, timeout), waitFor) & waitFor) == waitFor) {
+                continue;
+            }
+            throw SocketException(_("SOCKS TLS handshake timed out"));
+        }
+
+        unsigned long sslError = ERR_get_error();
+        char errbuf[256] = { 0 };
+        if(sslError) {
+            ERR_error_string_n(sslError, errbuf, sizeof(errbuf));
+        }
+
+        socksTlsReset();
+        throw SocketException(str(F_("SOCKS TLS handshake failed: %1%") % (errbuf[0] ? errbuf : "unknown error")));
+    }
+}
+
+int Socket::socksTlsRead(void* aBuffer, int aBufLen) {
+    socksTlsWait = WAIT_NONE;
+    const int ret = SSL_read(socksTls, aBuffer, aBufLen);
+    if(ret > 0) {
+        stats.totalDown += ret;
+        return ret;
+    }
+
+    const int err = SSL_get_error(socksTls, ret);
+    if(err == SSL_ERROR_WANT_READ) {
+        socksTlsWait = WAIT_READ;
+        return -1;
+    }
+    if(err == SSL_ERROR_WANT_WRITE) {
+        socksTlsWait = WAIT_WRITE;
+        return -1;
+    }
+    if(err == SSL_ERROR_ZERO_RETURN) {
+        return 0;
+    }
+
+    unsigned long sslError = ERR_get_error();
+    char errbuf[256] = { 0 };
+    if(sslError) {
+        ERR_error_string_n(sslError, errbuf, sizeof(errbuf));
+    }
+    throw SocketException(str(F_("SOCKS TLS read failed: %1%") % (errbuf[0] ? errbuf : "unknown error")));
+}
+
+int Socket::socksTlsWrite(const void* aBuffer, int aLen) {
+    socksTlsWait = WAIT_NONE;
+    const int ret = SSL_write(socksTls, aBuffer, aLen);
+    if(ret > 0) {
+        stats.totalUp += ret;
+        return ret;
+    }
+
+    const int err = SSL_get_error(socksTls, ret);
+    if(err == SSL_ERROR_WANT_READ) {
+        socksTlsWait = WAIT_READ;
+        return -1;
+    }
+    if(err == SSL_ERROR_WANT_WRITE) {
+        socksTlsWait = WAIT_WRITE;
+        return -1;
+    }
+    if(err == SSL_ERROR_ZERO_RETURN) {
+        return 0;
+    }
+
+    unsigned long sslError = ERR_get_error();
+    char errbuf[256] = { 0 };
+    if(sslError) {
+        ERR_error_string_n(sslError, errbuf, sizeof(errbuf));
+    }
+    throw SocketException(str(F_("SOCKS TLS write failed: %1%") % (errbuf[0] ? errbuf : "unknown error")));
+}
+
+int Socket::tlsWaitTarget(int fallback) const {
+    return socksTlsActive && socksTlsWait != WAIT_NONE ? socksTlsWait : fallback;
+}
+
 #ifdef _WIN32
 int Socket::getLastError() {
     return ::WSAGetLastError();
@@ -936,6 +1066,10 @@ void Socket::setSocketOpt(int option, int val) {
 }
 
 int Socket::read(void* aBuffer, int aBufLen) {
+    if(socksTlsActive && type == TYPE_TCP) {
+        return socksTlsRead(aBuffer, aBufLen);
+    }
+
     if(shadowsocksActive && type == TYPE_TCP) {
         return shadowsocksRead(aBuffer, aBufLen);
     }
@@ -982,7 +1116,8 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
         stats.totalDown += len;
     }
 
-    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS && len > 0) {
+    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS &&
+            ctx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_TRANSPORT) == SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP && len > 0) {
         auto* sm = ctx().getSettingsManager();
         const int method = shadowsocksMethodId(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
         const size_t keyLen = shadowsocksKeyLen(method);
@@ -1023,7 +1158,8 @@ int Socket::readAll(void* aBuffer, int aBufLen, uint32_t timeout) {
         if(j == 0) {
             return i;
         } else if(j == -1) {
-            if(wait(timeout, WAIT_READ) != WAIT_READ) {
+            const int waitFor = tlsWaitTarget(WAIT_READ);
+            if((wait(timeout, waitFor) & waitFor) != waitFor) {
                 return i;
             }
             continue;
@@ -1042,7 +1178,8 @@ int Socket::streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout) {
         if(j == 0) {
             return i;
         } else if(j == -1) {
-            if(Socket::wait(timeout, WAIT_READ) != WAIT_READ) {
+            const int waitFor = tlsWaitTarget(WAIT_READ);
+            if((Socket::wait(timeout, waitFor) & waitFor) != waitFor) {
                 return i;
             }
             continue;
@@ -1062,7 +1199,8 @@ void Socket::writeAll(const void* aBuffer, int aLen, uint32_t timeout) {
     while(pos < aLen) {
         int i = write(buf+pos, (int)min(aLen-pos, sendSize));
         if(i == -1) {
-            if(wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+            const int waitFor = tlsWaitTarget(WAIT_WRITE);
+            if((wait(timeout, waitFor) & waitFor) != waitFor)
                 throw SocketException(_("Connection timeout"));
         } else {
             pos+=i;
@@ -1084,7 +1222,8 @@ void Socket::streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
     while(pos < aLen) {
         int i = Socket::write(buf + pos, static_cast<int>(min(aLen - pos, sendSize)));
         if(i == -1) {
-            if(Socket::wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+            const int waitFor = tlsWaitTarget(WAIT_WRITE);
+            if((Socket::wait(timeout, waitFor) & waitFor) != waitFor)
                 throw SocketException(_("Connection timeout"));
         } else {
             pos += i;
@@ -1098,6 +1237,10 @@ void Socket::streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
 }
 
 int Socket::write(const void* aBuffer, int aLen) {
+    if(socksTlsActive && type == TYPE_TCP) {
+        return socksTlsWrite(aBuffer, aLen);
+    }
+
     if(shadowsocksActive && type == TYPE_TCP) {
         return shadowsocksWrite(aBuffer, aLen);
     }
@@ -1347,6 +1490,10 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
     int sent = SOCKET_ERROR;
     if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS && proxy) {
         auto* sm = ctx().getSettingsManager();
+        if(sm->get(SettingsManager::SHADOWSOCKS_TRANSPORT) != SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP) {
+            throw SocketException(_("Shadowsocks UDP relay is disabled"));
+        }
+
         const int method = shadowsocksMethodId(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
         const size_t keyLen = shadowsocksKeyLen(method);
         if(keyLen == 0 || sm->get(SettingsManager::SHADOWSOCKS_SERVER).empty() || sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
@@ -1481,6 +1628,10 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
  * @throw SocketException Select or the connection attempt failed.
  */
 int Socket::wait(uint32_t millis, int waitFor) {
+    if(socksTlsActive && socksTls && (waitFor & WAIT_READ) && SSL_pending(socksTls) > 0) {
+        return WAIT_READ;
+    }
+
     timeval tv;
     fd_set rfd, wfd, efd;
     fd_set *rfdp = NULL, *wfdp = NULL;
@@ -1668,6 +1819,12 @@ void Socket::socksUpdated(DCContext& ctx) {
             s.setContext(&ctx);
             s.setBlocking(false);
             s.connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
+            if(s.wait(SOCKS_TIMEOUT, Socket::WAIT_CONNECT) != Socket::WAIT_CONNECT) {
+                return;
+            }
+            if(sm->getBool(SettingsManager::SOCKS_TLS, true)) {
+                s.socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), SOCKS_TIMEOUT);
+            }
             s.socksAuth(SOCKS_TIMEOUT);
 
             char connStr[10];
@@ -1704,12 +1861,16 @@ void Socket::socksUpdated(DCContext& ctx) {
 }
 
 void Socket::shutdown() {
+    if(socksTlsActive && socksTls) {
+        SSL_shutdown(socksTls);
+    }
     if(sock != INVALID_SOCKET)
         ::shutdown(sock, 2);
 }
 
 void Socket::close() {
     shadowsocksReset();
+    socksTlsReset();
     if(sock != INVALID_SOCKET) {
 #ifdef _WIN32
         ::closesocket(sock);

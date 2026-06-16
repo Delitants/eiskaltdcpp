@@ -44,4 +44,9 @@ ProxyUiState switchProxyUiState(ProxyUiState& socks,
     return visibleState;
 }
 
+bool shadowsocksUsesUdp(int transport)
+{
+    return transport == ShadowsocksTransportTcpAndUdp;
+}
+
 }

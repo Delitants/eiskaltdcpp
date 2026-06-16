@@ -11,12 +11,19 @@ enum ProxyUiMode {
     ProxyUiShadowsocks = 2
 };
 
+enum ShadowsocksTransport {
+    ShadowsocksTransportTcpOnly = 0,
+    ShadowsocksTransportTcpAndUdp = 1
+};
+
 struct ProxyUiState {
     QString server;
     QString port;
     QString user;
     QString password;
     QString method;
+    bool useTls = false;
+    int shadowsocksTransport = ShadowsocksTransportTcpOnly;
 };
 
 QStringList bindAddressOptions(const QString& defaultAddress,
@@ -28,5 +35,7 @@ ProxyUiState switchProxyUiState(ProxyUiState& socks,
                                 int& currentMode,
                                 int selectedMode,
                                 const ProxyUiState& visibleState);
+
+bool shadowsocksUsesUdp(int transport);
 
 }

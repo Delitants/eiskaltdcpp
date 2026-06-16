@@ -24,6 +24,7 @@
 #include "dcpp/SettingsManager.h"
 #include "dcpp/Socket.h"
 #include "dcpp/DCPlusPlus.h"
+#include "extra/dyndns.h"
 
 #include <QLineEdit>
 #include <QRadioButton>
@@ -187,16 +188,30 @@ QString disabledComboStyle(QWidget *widget)
 
 QString disabledCheckStyle(QWidget *widget)
 {
-    const QColor text = isDarkWidgetAppearance(widget) ? QColor(138, 138, 138)
-                                                       : QColor(78, 78, 78);
-    return QStringLiteral("QCheckBox { color: %1; }").arg(text.name());
+    const bool dark = isDarkWidgetAppearance(widget);
+    const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
+    const QColor background = dark ? QColor(46, 46, 46) : QColor(207, 207, 207);
+    const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
+    const QColor checked = dark ? QColor(82, 82, 82) : QColor(158, 158, 158);
+    return QStringLiteral(
+        "QCheckBox { color: %1; }"
+        "QCheckBox::indicator { width: 16px; height: 16px; background-color: %2; border: 1px solid %3; border-radius: 4px; }"
+        "QCheckBox::indicator:checked { background-color: %4; border: 1px solid %3; }"
+    ).arg(text.name(), background.name(), border.name(), checked.name());
 }
 
 QString disabledRadioStyle(QWidget *widget)
 {
-    const QColor text = isDarkWidgetAppearance(widget) ? QColor(138, 138, 138)
-                                                       : QColor(78, 78, 78);
-    return QStringLiteral("QRadioButton { color: %1; }").arg(text.name());
+    const bool dark = isDarkWidgetAppearance(widget);
+    const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
+    const QColor background = dark ? QColor(46, 46, 46) : QColor(207, 207, 207);
+    const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
+    const QColor checked = dark ? QColor(82, 82, 82) : QColor(158, 158, 158);
+    return QStringLiteral(
+        "QRadioButton { color: %1; }"
+        "QRadioButton::indicator { width: 16px; height: 16px; background-color: %2; border: 1px solid %3; border-radius: 8px; }"
+        "QRadioButton::indicator:checked { background-color: %4; border: 1px solid %3; }"
+    ).arg(text.name(), background.name(), border.name(), checked.name());
 }
 
 void setProxyFieldEnabled(QWidget *widget, bool enabled)
@@ -525,14 +540,27 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     gridLayout_11->addWidget(buttonEditHubLists, 3, 1);
     connect(buttonEditHubLists, &QPushButton::clicked, this, &SettingsConnection::slotCfgPublicHubs);
 
+    checkBox_SOCKS_TLS = new QCheckBox(tr("Use TLS to proxy server"), frame_2);
+    checkBox_SOCKS_TLS->setToolTip(tr("Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. "
+                                      "The proxy server must explicitly support SOCKS5 over TLS."));
+    gridLayout_8->addWidget(checkBox_SOCKS_TLS, 7, 0, 1, 4);
+
+    label_SHADOWSOCKS_TRANSPORT = new QLabel(tr("Transport"), frame_2);
+    comboBox_SHADOWSOCKS_TRANSPORT = new QComboBox(frame_2);
+    comboBox_SHADOWSOCKS_TRANSPORT->addItem(tr("TCP only"), SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_ONLY);
+    comboBox_SHADOWSOCKS_TRANSPORT->addItem(tr("TCP + UDP relay"), SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP);
+    comboBox_SHADOWSOCKS_TRANSPORT->setToolTip(tr("TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP."));
+    gridLayout_8->addWidget(label_SHADOWSOCKS_TRANSPORT, 8, 0);
+    gridLayout_8->addWidget(comboBox_SHADOWSOCKS_TRANSPORT, 8, 1, 1, 3);
+
     checkBox_PROXY_P2P = new QCheckBox(tr("Proxy downloads and uploads too (passive mode)"), frame_2);
     checkBox_PROXY_P2P->setToolTip(tr("When enabled, peer-to-peer transfers use the selected proxy. "
                                       "Incoming connection options are disabled and the client is advertised as passive."));
-    gridLayout_8->addWidget(checkBox_PROXY_P2P, 7, 0, 1, 4);
+    gridLayout_8->addWidget(checkBox_PROXY_P2P, 9, 0, 1, 4);
 
     button_TEST_PROXY = new QPushButton(tr("Test proxy"), frame_2);
     button_TEST_PROXY->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    gridLayout_8->addWidget(button_TEST_PROXY, 8, 1, 1, 1);
+    gridLayout_8->addWidget(button_TEST_PROXY, 10, 1, 1, 1);
 
     comboBox_TOS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     comboBox_TLS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -685,6 +713,7 @@ void SettingsConnection::ok(){
 
         SM->set(SettingsManager::SOCKS_RESOLVE, checkBox_RESOLVE->checkState() == Qt::Checked);
         SM->set(SettingsManager::SOCKS_STEALTH, checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked());
+        SM->set(SettingsManager::SOCKS_TLS, socksProxyState.useTls);
         SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, proxyP2P);
         SM->set(SettingsManager::SOCKS_SERVER, socksProxyState.server.trimmed().toStdString());
         SM->set(SettingsManager::SOCKS_USER, socksProxyState.user.toStdString());
@@ -698,6 +727,7 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::SHADOWSOCKS_METHOD, shadowsocksProxyState.method.isEmpty()
             ? std::string("aes-256-gcm")
             : shadowsocksProxyState.method.toStdString());
+        SM->set(SettingsManager::SHADOWSOCKS_TRANSPORT, shadowsocksProxyState.shadowsocksTransport);
         bool shadowsocksPortOk = false;
         const int shadowsocksPort = shadowsocksProxyState.port.trimmed().toInt(&shadowsocksPortOk);
         if (shadowsocksPortOk && shadowsocksPort > 0 && shadowsocksPort <= 65535)
@@ -734,6 +764,9 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::COUNTRY_DB_PATH, lineEdit_COUNTRY_DB->text().trimmed().toStdString());
     SM->set(SettingsManager::DYNDNS_SERVER, lineEdit_DYNDNS_SERVER->text().toStdString());
     SM->set(SettingsManager::DYNDNS_ENABLE, checkBox_DYNDNS->isChecked());
+    if (checkBox_DYNDNS->isChecked() && qtCtx()->dcCtx().getDynDNS()) {
+        qtCtx()->dcCtx().getDynDNS()->load();
+    }
 #ifdef WITH_DHT
     SM->set(SettingsManager::USE_DHT, groupBox_DHT->isChecked());
     if (spinBox_DHT->value() != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true))
@@ -878,10 +911,12 @@ void SettingsConnection::init(){
     socksProxyState.port = QString::number(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_PORT, true));
     socksProxyState.user = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_USER, true));
     socksProxyState.password = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_PASSWORD, true));
+    socksProxyState.useTls = qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::SOCKS_TLS, true);
     shadowsocksProxyState.server = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_SERVER, true));
     shadowsocksProxyState.port = QString::number(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_PORT, true));
     shadowsocksProxyState.password = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_PASSWORD, true));
     shadowsocksProxyState.method = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_METHOD, true));
+    shadowsocksProxyState.shadowsocksTransport = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_TRANSPORT, true);
     currentProxyFormMode = outgoingMode == SettingsManager::OUTGOING_SHADOWSOCKS
         ? settings_connection::ProxyUiShadowsocks
         : (outgoingMode == SettingsManager::OUTGOING_SOCKS5 ? settings_connection::ProxyUiSocks5 : settings_connection::ProxyUiDirect);
@@ -949,6 +984,10 @@ void SettingsConnection::init(){
         connect(checkBox_PROXY_P2P, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_SOCKS_STEALTH)
         connect(checkBox_SOCKS_STEALTH, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    if(checkBox_SOCKS_TLS)
+        connect(checkBox_SOCKS_TLS, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    if(comboBox_SHADOWSOCKS_TRANSPORT)
+        connect(comboBox_SHADOWSOCKS_TRANSPORT, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_USE_IPV6)
         connect(checkBox_USE_IPV6, &QCheckBox::toggled, this, &SettingsConnection::slotToggleIncomming);
     if(button_TEST_PROXY)
@@ -961,6 +1000,8 @@ void SettingsConnection::init(){
     lineEdit_SPSWD->installEventFilter(this);
     lineEdit_SUSR->installEventFilter(this);
     comboBox_SHADOWSOCKS_METHOD->installEventFilter(this);
+    if (comboBox_SHADOWSOCKS_TRANSPORT)
+        comboBox_SHADOWSOCKS_TRANSPORT->installEventFilter(this);
     lineEdit_WANIP->installEventFilter(this);
     if (lineEdit_WANIP6)
         lineEdit_WANIP6->installEventFilter(this);
@@ -993,6 +1034,8 @@ void SettingsConnection::init(){
     checkBox_DONTOVERRIDE->installEventFilter(this);
     checkBox_RESOLVE->installEventFilter(this);
     checkBox_SOCKS_STEALTH->installEventFilter(this);
+    if (checkBox_SOCKS_TLS)
+        checkBox_SOCKS_TLS->installEventFilter(this);
     if (checkBox_PROXY_P2P)
         checkBox_PROXY_P2P->installEventFilter(this);
 }
@@ -1064,6 +1107,9 @@ void SettingsConnection::slotToggleOutgoing(){
     setProxyFieldEnabled(lineEdit_SPSWD, proxy);
     setProxyFieldEnabled(label_SHADOWSOCKS_METHOD, shadowsocks);
     setProxyFieldEnabled(comboBox_SHADOWSOCKS_METHOD, shadowsocks);
+    setProxyFieldEnabled(checkBox_SOCKS_TLS, socks);
+    setProxyFieldEnabled(label_SHADOWSOCKS_TRANSPORT, shadowsocks);
+    setProxyFieldEnabled(comboBox_SHADOWSOCKS_TRANSPORT, shadowsocks);
     setProxyFieldEnabled(checkBox_RESOLVE, proxy);
     setProxyFieldEnabled(checkBox_SOCKS_STEALTH, proxy);
     setProxyFieldEnabled(checkBox_PROXY_P2P, proxy);
@@ -1175,6 +1221,9 @@ settings_connection::ProxyUiState SettingsConnection::visibleProxyFormState() co
         if (state.method.isEmpty())
             state.method = comboBox_SHADOWSOCKS_METHOD->currentText();
     }
+    state.useTls = checkBox_SOCKS_TLS && checkBox_SOCKS_TLS->isChecked();
+    if (comboBox_SHADOWSOCKS_TRANSPORT)
+        state.shadowsocksTransport = comboBox_SHADOWSOCKS_TRANSPORT->currentData().toInt();
     return state;
 }
 
@@ -1192,6 +1241,12 @@ void SettingsConnection::applyProxyFormState(const settings_connection::ProxyUiS
         const QString method = state.method.isEmpty() ? QStringLiteral("aes-256-gcm") : state.method;
         const int index = comboBox_SHADOWSOCKS_METHOD->findData(method);
         comboBox_SHADOWSOCKS_METHOD->setCurrentIndex(index >= 0 ? index : 0);
+    }
+    if (checkBox_SOCKS_TLS)
+        checkBox_SOCKS_TLS->setChecked(state.useTls);
+    if (comboBox_SHADOWSOCKS_TRANSPORT) {
+        const int index = comboBox_SHADOWSOCKS_TRANSPORT->findData(state.shadowsocksTransport);
+        comboBox_SHADOWSOCKS_TRANSPORT->setCurrentIndex(index >= 0 ? index : 0);
     }
 }
 
@@ -1254,7 +1309,9 @@ void SettingsConnection::slotTestProxy()
         int outgoing;
         int socksPort;
         int socksResolve;
+        int socksTls;
         int shadowPort;
+        int shadowTransport;
         std::string socksServer;
         std::string socksUser;
         std::string socksPassword;
@@ -1267,7 +1324,9 @@ void SettingsConnection::slotTestProxy()
             outgoing(sm->get(SettingsManager::OUTGOING_CONNECTIONS, true)),
             socksPort(sm->get(SettingsManager::SOCKS_PORT, true)),
             socksResolve(sm->get(SettingsManager::SOCKS_RESOLVE, true)),
+            socksTls(sm->get(SettingsManager::SOCKS_TLS, true)),
             shadowPort(sm->get(SettingsManager::SHADOWSOCKS_PORT, true)),
+            shadowTransport(sm->get(SettingsManager::SHADOWSOCKS_TRANSPORT, true)),
             socksServer(sm->get(SettingsManager::SOCKS_SERVER, true)),
             socksUser(sm->get(SettingsManager::SOCKS_USER, true)),
             socksPassword(sm->get(SettingsManager::SOCKS_PASSWORD, true)),
@@ -1282,7 +1341,9 @@ void SettingsConnection::slotTestProxy()
             settings->set(SettingsManager::OUTGOING_CONNECTIONS, outgoing);
             settings->set(SettingsManager::SOCKS_PORT, socksPort);
             settings->set(SettingsManager::SOCKS_RESOLVE, socksResolve);
+            settings->set(SettingsManager::SOCKS_TLS, socksTls);
             settings->set(SettingsManager::SHADOWSOCKS_PORT, shadowPort);
+            settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT, shadowTransport);
             settings->set(SettingsManager::SOCKS_SERVER, socksServer);
             settings->set(SettingsManager::SOCKS_USER, socksUser);
             settings->set(SettingsManager::SOCKS_PASSWORD, socksPassword);
@@ -1302,12 +1363,16 @@ void SettingsConnection::slotTestProxy()
             settings->set(SettingsManager::SHADOWSOCKS_PORT, port);
             settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
             settings->set(SettingsManager::SHADOWSOCKS_METHOD, comboBox_SHADOWSOCKS_METHOD->currentData().toString().toStdString());
+            settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT,
+                comboBox_SHADOWSOCKS_TRANSPORT ? comboBox_SHADOWSOCKS_TRANSPORT->currentData().toInt()
+                                                : SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_ONLY);
         } else {
             settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
             settings->set(SettingsManager::SOCKS_SERVER, server.toStdString());
             settings->set(SettingsManager::SOCKS_PORT, port);
             settings->set(SettingsManager::SOCKS_USER, lineEdit_SUSR->text().toStdString());
             settings->set(SettingsManager::SOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
+            settings->set(SettingsManager::SOCKS_TLS, checkBox_SOCKS_TLS && checkBox_SOCKS_TLS->isChecked());
         }
 
         Socket socket;

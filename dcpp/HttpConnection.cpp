@@ -143,7 +143,9 @@ void HttpConnection::prepareRequest(RequestType type) {
         if(proto == "https") {
             SSLSocket::setSNIHint(server);
         }
-        socket->connect(server, port, (proto == "https"), true, false, Socket::PROTO_DEFAULT);
+        const bool useOutgoingProxy = !usingHttpProxy &&
+            CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT;
+        socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT);
         // keep SNI hint alive until the async TLS connect actually uses it
 
     } catch(const Exception& e) {

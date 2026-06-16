@@ -19,6 +19,7 @@
 #include "dcpp/SettingsManager.h"
 #include "dcpp/ClientManager.h"
 #include "dcpp/DCPlusPlus.h"
+#include "dcpp/Util.h"
 
 namespace dcpp {
 
@@ -49,9 +50,14 @@ void DynDNS::stop()
 
 void DynDNS::Request() {
     if (CTX_BOOLSETTING(DYNDNS_ENABLE)) {
+        html.clear();
+        if(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT) {
+            ctx().getSettingsManager()->unset(SettingsManager::INTERNETIP);
+        }
+
         string tmps = CTX_SETTING(DYNDNS_SERVER);
-        if (!CTX_SETTING(DYNDNS_SERVER).compare(0,7,"http://") &&
-                !CTX_SETTING(DYNDNS_SERVER).compare(0,8,"https://")) {
+        if (tmps.compare(0, 7, "http://") != 0 &&
+                tmps.compare(0, 8, "https://") != 0) {
             tmps = "http://" + CTX_SETTING(DYNDNS_SERVER);
         }
         httpConnection.downloadFile(tmps);
@@ -78,20 +84,7 @@ void DynDNS::on(HttpConnectionListener::Data, HttpConnection*, const uint8_t* bu
 
 void DynDNS::on(HttpConnectionListener::Complete, HttpConnection*, string const&) noexcept {
     request = false;
-    string internetIP;
-    if (!html.empty()) {
-        int start = html.find(":")+2;
-        int end = html.find("</body>");
-
-        if ((start == -1) || (end < start)) {
-            internetIP = "";
-        } else {
-            internetIP = html.substr(start, end - start);
-        }
-    }
-    else {
-        internetIP = "";
-    }
+    string internetIP = Util::firstPublicIpFromText(html);
 
     if (!internetIP.empty()) {
         ctx().getSettingsManager()->set(SettingsManager::INTERNETIP, internetIP);

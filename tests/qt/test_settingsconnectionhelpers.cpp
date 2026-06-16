@@ -80,3 +80,50 @@ TEST_CASE("SettingsConnectionHelpers: proxy form values are remembered per proxy
     REQUIRE(restoredSocks.server == QStringLiteral("edited-socks.example.test"));
     REQUIRE(restoredSocks.password == QStringLiteral("edited-socks-secret"));
 }
+
+TEST_CASE("SettingsConnectionHelpers: proxy transport options are remembered per proxy type", "[qt][settingsconnection]")
+{
+    settings_connection::ProxyUiState socks;
+    socks.server = QStringLiteral("socks.example.test");
+    socks.port = QStringLiteral("1080");
+    socks.useTls = true;
+
+    settings_connection::ProxyUiState shadowsocks;
+    shadowsocks.server = QStringLiteral("shadow.example.test");
+    shadowsocks.port = QStringLiteral("8388");
+    shadowsocks.shadowsocksTransport = settings_connection::ShadowsocksTransportTcpAndUdp;
+
+    int currentMode = settings_connection::ProxyUiSocks5;
+
+    settings_connection::ProxyUiState editedSocks = socks;
+    editedSocks.useTls = false;
+
+    const settings_connection::ProxyUiState shownShadow = settings_connection::switchProxyUiState(
+        socks,
+        shadowsocks,
+        currentMode,
+        settings_connection::ProxyUiShadowsocks,
+        editedSocks);
+
+    REQUIRE(socks.useTls == false);
+    REQUIRE(shownShadow.shadowsocksTransport == settings_connection::ShadowsocksTransportTcpAndUdp);
+
+    settings_connection::ProxyUiState editedShadow = shownShadow;
+    editedShadow.shadowsocksTransport = settings_connection::ShadowsocksTransportTcpOnly;
+
+    const settings_connection::ProxyUiState restoredSocks = settings_connection::switchProxyUiState(
+        socks,
+        shadowsocks,
+        currentMode,
+        settings_connection::ProxyUiSocks5,
+        editedShadow);
+
+    REQUIRE(shadowsocks.shadowsocksTransport == settings_connection::ShadowsocksTransportTcpOnly);
+    REQUIRE(restoredSocks.useTls == false);
+}
+
+TEST_CASE("SettingsConnectionHelpers: Shadowsocks UDP relay is controlled by transport", "[qt][settingsconnection]")
+{
+    REQUIRE_FALSE(settings_connection::shadowsocksUsesUdp(settings_connection::ShadowsocksTransportTcpOnly));
+    REQUIRE(settings_connection::shadowsocksUsesUdp(settings_connection::ShadowsocksTransportTcpAndUdp));
+}

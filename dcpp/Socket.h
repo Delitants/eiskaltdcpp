@@ -38,6 +38,7 @@ const int INVALID_SOCKET = -1;
 #include "GetSet.h"
 #include "Util.h"
 #include "Exception.h"
+#include "SSL.h"
 
 namespace dcpp {
 
@@ -186,7 +187,7 @@ public:
     virtual bool isTrusted() const { return false; }
     virtual string getCipherName() const { return Util::emptyString; }
     virtual ByteVector getKeyprint() const { return ByteVector(); }
-    bool hasStreamProxy() const { return shadowsocksActive; }
+    bool hasStreamProxy() const { return shadowsocksActive || socksTlsActive; }
 
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
@@ -221,6 +222,11 @@ private:
     DCContext* ctx_;
 
     void socksAuth(uint32_t timeout);
+    void socksTlsReset();
+    void socksStartTls(const string& serverName, uint32_t timeout);
+    int socksTlsRead(void* aBuffer, int aBufLen);
+    int socksTlsWrite(const void* aBuffer, int aLen);
+    int tlsWaitTarget(int fallback) const;
 
     void shadowsocksReset();
     void shadowsocksStart(const string& method, const string& password, uint32_t timeout);
@@ -249,6 +255,11 @@ private:
     size_t shadowsocksPendingOutPos = 0;
     size_t shadowsocksExpectedPayload = 0;
     bool shadowsocksReadingPayload = false;
+
+    ssl::SSL_CTX socksTlsContext;
+    ssl::SSL socksTls;
+    bool socksTlsActive = false;
+    int socksTlsWait = WAIT_NONE;
 
     static int getLastError();
     static int checksocket(int ret);

@@ -111,7 +111,7 @@ const string SettingsManager::settingTags[] =
     "ListDuplicates", "BufferSize", "DownloadSlots", "MaxDownloadSpeed",
     "LogMainChat", "LogPrivateChat", "LogDownloads","LogFileFinishedDownload",
     "LogUploads", "MinUploadSpeed", "AutoAway",
-    "SocksPort", "SocksResolve", "SocksStealth", "ProxyP2PConnections", "ShadowsocksPort", "KeepLists", "AutoKick",
+    "SocksPort", "SocksResolve", "SocksStealth", "SocksTLS", "ProxyP2PConnections", "ShadowsocksPort", "ShadowsocksTransport", "KeepLists", "AutoKick",
     "CompressTransfers", "SFVCheck",
     "MaxCompression", "NoAwayMsgToBots", "SkipZeroByte", "AdlsBreakOnFirst",
     "HubUserCommands", "AutoSearchAutoMatch","LogSystem",
@@ -278,8 +278,10 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(SOCKS_PORT, 1080);
     setDefault(SOCKS_RESOLVE, 1);
     setDefault(SOCKS_STEALTH, false);
+    setDefault(SOCKS_TLS, false);
     setDefault(PROXY_P2P_CONNECTIONS, false);
     setDefault(SHADOWSOCKS_PORT, 8388);
+    setDefault(SHADOWSOCKS_TRANSPORT, SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_ONLY);
     setDefault(SHADOWSOCKS_SERVER, Util::emptyString);
     setDefault(SHADOWSOCKS_PASSWORD, Util::emptyString);
     setDefault(SHADOWSOCKS_METHOD, "aes-256-gcm");

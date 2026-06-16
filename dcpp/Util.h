@@ -394,6 +394,9 @@ public:
     static string getLocalIp(unsigned short sa_family = AF_UNSPEC);
     static std::vector<string> getLocalIPs(unsigned short sa_family = AF_UNSPEC);
     static bool isPrivateIp(string const& ip);
+    static bool isPublicIp(string const& ip);
+    static string firstPublicIp(StringList const& ips);
+    static string firstPublicIpFromText(string const& text);
     static string formatAdditionalInfo(const std::string& aIp, bool sIp, bool sCC);
     /**
      * Case insensitive substring search.
