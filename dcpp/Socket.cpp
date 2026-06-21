@@ -68,6 +68,8 @@ namespace dcpp {
 
 string Socket::udpServer;
 string Socket::udpPort;
+std::unique_ptr<Socket> Socket::udpControlSocket;
+std::mutex Socket::udpProxyMutex;
 
 #define checkconnected() if(!isConnected()) throw SocketException(ENOTCONN))
 
@@ -1116,6 +1118,27 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
         stats.totalDown += len;
     }
 
+    if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 && len > 0) {
+        string relayServer;
+        string relayPort;
+        {
+            std::lock_guard<std::mutex> lock(udpProxyMutex);
+            relayServer = udpServer;
+            relayPort = udpPort;
+        }
+
+        if(!relayServer.empty() && !relayPort.empty() && matchesUdpEndpoint(relayServer, relayPort, remote_addr)) {
+            size_t payloadOffset = 0;
+            if(!decodeSocks5UdpPacket(static_cast<const uint8_t*>(aBuffer), static_cast<size_t>(len), remote, payloadOffset)) {
+                throw SocketException(_("SOCKS5 UDP relay response is invalid"));
+            }
+
+            const size_t payloadLen = static_cast<size_t>(len) - payloadOffset;
+            memmove(aBuffer, static_cast<const uint8_t*>(aBuffer) + payloadOffset, payloadLen);
+            return static_cast<int>(payloadLen);
+        }
+    }
+
     if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS &&
             ctx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_TRANSPORT) == SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP && len > 0) {
         auto* sm = ctx().getSettingsManager();
@@ -1148,6 +1171,100 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
 
     remote = remote_addr;
     return len;
+}
+
+bool Socket::encodeSocks5UdpPacket(const string& address, const string& port,
+                                   const void* payload, size_t payloadLen,
+                                   bool remoteResolve, ByteVector& packet)
+{
+    packet.clear();
+    packet.push_back(0);
+    packet.push_back(0);
+    packet.push_back(0);
+
+    if(!appendSocksAddress(packet, address, port, remoteResolve) || (payloadLen > 0 && payload == nullptr)) {
+        packet.clear();
+        return false;
+    }
+
+    const auto* payloadBytes = static_cast<const uint8_t*>(payload);
+    packet.insert(packet.end(), payloadBytes, payloadBytes + payloadLen);
+    return true;
+}
+
+bool Socket::decodeSocks5UdpPacket(const uint8_t* packet, size_t packetLen,
+                                   sockaddr_storage& remote, size_t& payloadOffset)
+{
+    payloadOffset = 0;
+    if(packet == nullptr || packetLen < 4 || packet[0] != 0 || packet[1] != 0 || packet[2] != 0)
+        return false;
+
+    const ByteVector address(packet + 3, packet + packetLen);
+    size_t addressLength = 0;
+    if(!parseSocksAddress(address, remote, addressLength))
+        return false;
+
+    payloadOffset = 3 + addressLength;
+    return payloadOffset <= packetLen;
+}
+
+bool Socket::resolveUdpEndpoint(const string& host, const string& port, int requestedFamily,
+                                vector<sockaddr_storage>& endpoints)
+{
+    endpoints.clear();
+
+    addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    hints.ai_family = requestedFamily;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    hints.ai_flags = udpResolverFlags(requestedFamily);
+
+    addrinfo* result = nullptr;
+    if(getaddrinfo(host.c_str(), port.c_str(), &hints, &result) != 0 || result == nullptr)
+        return false;
+
+    for(addrinfo* ai = result; ai != nullptr; ai = ai->ai_next) {
+        if(ai->ai_addr == nullptr || ai->ai_addrlen > sizeof(sockaddr_storage))
+            continue;
+
+        sockaddr_storage endpoint = {};
+        memcpy(&endpoint, ai->ai_addr, static_cast<size_t>(ai->ai_addrlen));
+        endpoints.push_back(endpoint);
+    }
+
+    freeaddrinfo(result);
+    return !endpoints.empty();
+}
+
+int Socket::udpResolverFlags(int requestedFamily)
+{
+    int flags = 0;
+#ifdef AI_V4MAPPED
+    if(requestedFamily == AF_INET6)
+        flags |= AI_V4MAPPED;
+#endif
+    return flags;
+}
+
+bool Socket::matchesUdpEndpoint(const string& host, const string& port, const sockaddr_storage& endpoint)
+{
+    const auto* address = reinterpret_cast<const sockaddr*>(&endpoint);
+    if(sockaddrToPort(address) != port)
+        return false;
+
+    if(sockaddrToIp(address) == host)
+        return true;
+
+    if(endpoint.ss_family != AF_INET6)
+        return false;
+
+    const auto* address6 = reinterpret_cast<const sockaddr_in6*>(&endpoint);
+    if(!IN6_IS_ADDR_V4MAPPED(&address6->sin6_addr))
+        return false;
+
+    char mappedIp[INET_ADDRSTRLEN] = {};
+    const auto* mappedBytes = reinterpret_cast<const uint8_t*>(&address6->sin6_addr) + 12;
+    return inet_ntop(AF_INET, mappedBytes, mappedIp, sizeof(mappedIp)) != nullptr && host == mappedIp;
 }
 
 int Socket::readAll(void* aBuffer, int aBufLen, uint32_t timeout) {
@@ -1545,41 +1662,39 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
             throw SocketException(savedError);
         }
     } else if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 && proxy) {
-        sockaddr_in serv_addr;
-        memset(&serv_addr, 0, sizeof(serv_addr));
-
-        if(udpServer.empty() || udpPort.empty()) {
+        string relayServer;
+        string relayPort;
+        if(!getSocksUdpRelay(ctx(), relayServer, relayPort)) {
             throw SocketException(_("Failed to set up the socks server for UDP relay (check socks address and port)"));
         }
 
-        serv_addr.sin_port = htons(static_cast<uint16_t>(Util::toInt(udpPort)));
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = inet_addr(udpServer.c_str());
-
-        string s = ctx().getSettingsManager()->getBool(SettingsManager::SOCKS_RESOLVE, true) ? resolve(ip) : ip;
-
-        vector<uint8_t> connStr;
-
-        connStr.push_back(0);       // Reserved
-        connStr.push_back(0);       // Reserved
-        connStr.push_back(0);       // Fragment number, always 0 in our case...
-
-        if(ctx().getSettingsManager()->getBool(SettingsManager::SOCKS_RESOLVE, true)) {
-            connStr.push_back(3);
-            connStr.push_back((uint8_t)s.size());
-            connStr.insert(connStr.end(), aAddr.begin(), aAddr.end());
-        } else {
-            connStr.push_back(1);       // Address type: IPv4;
-            unsigned long addr = inet_addr(resolve(aAddr).c_str());
-            uint8_t* paddr = (uint8_t*)&addr;
-            connStr.insert(connStr.end(), paddr, paddr+4);
+        ByteVector packet;
+        if(!encodeSocks5UdpPacket(aAddr, aPort, aBuffer, static_cast<size_t>(aLen),
+                ctx().getSettingsManager()->getBool(SettingsManager::SOCKS_RESOLVE, true), packet)) {
+            throw SocketException(_("The SOCKS5 UDP target address is invalid"));
         }
 
-        connStr.insert(connStr.end(), buf, buf + aLen);
+        vector<sockaddr_storage> relayEndpoints;
+        if(!resolveUdpEndpoint(relayServer, relayPort, family, relayEndpoints)) {
+            throw SocketException(EADDRNOTAVAIL);
+        }
 
-        do {
-            sent = ::sendto(sock, (const char*)&connStr[0], connStr.size(), 0, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-        } while (sent < 0 && getLastError() == EINTR);
+        int savedError = EADDRNOTAVAIL;
+        for(const auto& endpoint : relayEndpoints) {
+            const socklen_t endpointLen = endpoint.ss_family == AF_INET6 ?
+                static_cast<socklen_t>(sizeof(sockaddr_in6)) : static_cast<socklen_t>(sizeof(sockaddr_in));
+            do {
+                sent = ::sendto(sock, reinterpret_cast<const char*>(packet.data()), packet.size(), 0,
+                    reinterpret_cast<const sockaddr*>(&endpoint), endpointLen);
+            } while(sent < 0 && getLastError() == EINTR);
+
+            if(sent >= 0)
+                break;
+            savedError = getLastError();
+        }
+
+        if(sent < 0)
+            throw SocketException(savedError);
     } else {
         addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
         hints.ai_family = family;
@@ -1809,55 +1924,106 @@ Socket::Protocol Socket::getNextProtocol() {
 }
 
 void Socket::socksUpdated(DCContext& ctx) {
+    std::lock_guard<std::mutex> lock(udpProxyMutex);
+    udpControlSocket.reset();
     udpServer.clear();
     udpPort.clear();
 
     auto* sm = ctx.getSettingsManager();
     if(sm->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5) {
         try {
-            Socket s;
-            s.setContext(&ctx);
-            s.setBlocking(false);
-            s.connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
-            if(s.wait(SOCKS_TIMEOUT, Socket::WAIT_CONNECT) != Socket::WAIT_CONNECT) {
+            auto control = std::make_unique<Socket>();
+            control->setContext(&ctx);
+            control->setBlocking(false);
+            control->connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
+            if(control->wait(SOCKS_TIMEOUT, Socket::WAIT_CONNECT) != Socket::WAIT_CONNECT) {
                 return;
             }
             if(sm->getBool(SettingsManager::SOCKS_TLS, true)) {
-                s.socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), SOCKS_TIMEOUT);
+                control->socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), SOCKS_TIMEOUT);
             }
-            s.socksAuth(SOCKS_TIMEOUT);
+            control->socksAuth(SOCKS_TIMEOUT);
 
-            char connStr[10];
-            connStr[0] = 5;         // SOCKSv5
-            connStr[1] = 3;         // UDP Associate
-            connStr[2] = 0;         // Reserved
-            connStr[3] = 1;         // Address type: IPv4;
-            *((uint32_t*)(&connStr[4])) = 0;    // No specific outgoing UDP address
-            *((uint16_t*)(&connStr[8])) = 0;    // No specific port...
+            const uint8_t request[10] = { 5, 3, 0, 1, 0, 0, 0, 0, 0, 0 };
+            control->writeAll(request, sizeof(request), SOCKS_TIMEOUT);
 
-            s.writeAll(connStr, 10, SOCKS_TIMEOUT);
-
-            // We assume we'll get a ipv4 address back...therefore, 10 bytes...if not, things
-            // will break, but hey...noone's perfect (and I'm tired...)...
-            if(s.readAll(connStr, 10, SOCKS_TIMEOUT) != 10) {
+            uint8_t header[4] = {};
+            if(control->readAll(header, sizeof(header), SOCKS_TIMEOUT) != static_cast<int>(sizeof(header)) ||
+                    header[0] != 5 || header[1] != 0 || header[2] != 0) {
                 return;
             }
 
-            if(connStr[0] != 5 || connStr[1] != 0) {
+            ByteVector address;
+            address.push_back(header[3]);
+            size_t addressBytes = 0;
+            if(header[3] == 1) {
+                addressBytes = 4 + 2;
+            } else if(header[3] == 4) {
+                addressBytes = 16 + 2;
+            } else if(header[3] == 3) {
+                uint8_t domainLength = 0;
+                if(control->readAll(&domainLength, 1, SOCKS_TIMEOUT) != 1)
+                    return;
+                address.push_back(domainLength);
+                addressBytes = static_cast<size_t>(domainLength) + 2;
+            } else {
                 return;
             }
 
-            udpPort = Util::toString(ntohs(*((uint16_t*)(&connStr[8]))));
+            const size_t oldSize = address.size();
+            address.resize(oldSize + addressBytes);
+            if(control->readAll(address.data() + oldSize, static_cast<int>(addressBytes), SOCKS_TIMEOUT) != static_cast<int>(addressBytes)) {
+                return;
+            }
 
-            in_addr serv_addr;
+            sockaddr_storage relay = {};
+            size_t ignoredOffset = 0;
+            if(!parseSocksAddress(address, relay, ignoredOffset))
+                return;
 
-            memset(&serv_addr, 0, sizeof(serv_addr));
-            serv_addr.s_addr = *((long*)(&connStr[4]));
-            udpServer = inet_ntoa(serv_addr);
+            udpServer = sockaddrToIp(reinterpret_cast<const sockaddr*>(&relay));
+            udpPort = sockaddrToPort(reinterpret_cast<const sockaddr*>(&relay));
+            if(udpServer == "0.0.0.0" || udpServer == "::")
+                udpServer = resolve(sm->get(SettingsManager::SOCKS_SERVER));
+            if(udpServer.empty() || udpPort.empty()) {
+                udpServer.clear();
+                udpPort.clear();
+                return;
+            }
+
+            udpControlSocket = std::move(control);
         } catch(const SocketException&) {
             dcdebug("Socket: Failed to register with socks server\n");
         }
     }
+}
+
+bool Socket::getSocksUdpRelay(DCContext& ctx, string& server, string& port) {
+    {
+        std::lock_guard<std::mutex> lock(udpProxyMutex);
+        if(!udpServer.empty() && !udpPort.empty() && udpControlSocket) {
+            server = udpServer;
+            port = udpPort;
+            return true;
+        }
+    }
+
+    socksUpdated(ctx);
+
+    std::lock_guard<std::mutex> lock(udpProxyMutex);
+    server = udpServer;
+    port = udpPort;
+    return !server.empty() && !port.empty() && udpControlSocket != nullptr;
+}
+
+bool Socket::getUdpProxyEndpoint(DCContext& ctx, string& server, string& port) {
+    server.clear();
+    port.clear();
+
+    if(ctx.getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_SOCKS5)
+        return false;
+
+    return getSocksUdpRelay(ctx, server, port);
 }
 
 void Socket::shutdown() {

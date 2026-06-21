@@ -37,34 +37,38 @@ namespace dht
         constexpr size_t MAX_BOOTSTRAP_COMPRESSED_BYTES = 1024 * 1024;
         constexpr uLongf MAX_BOOTSTRAP_DECOMPRESSED_BYTES = 4 * 1024 * 1024;
         constexpr size_t MAX_BOOTSTRAP_NODES = 4096;
-        constexpr auto DISABLED_DEFAULT_DHT_BOOTSTRAP_URL = "https://dht.hublist.eu/dcDHT.php";
+    }
+
+    vector<string> BootstrapManager::parseServers(const string& configured)
+    {
+        vector<string> parsed;
+        string::size_type start = 0;
+        while(start < configured.size())
+        {
+            const auto end = configured.find(';', start);
+            string url = configured.substr(start, end == string::npos ? string::npos : end - start);
+
+            const auto first = url.find_first_not_of(" \t\r\n");
+            const auto last = url.find_last_not_of(" \t\r\n");
+            if(first != string::npos && last != string::npos)
+            {
+                url = url.substr(first, last - first + 1);
+                if(std::find(parsed.begin(), parsed.end(), url) == parsed.end())
+                    parsed.push_back(url);
+            }
+
+            if(end == string::npos)
+                break;
+            start = end + 1;
+        }
+        return parsed;
     }
  
     BootstrapManager::BootstrapManager(DHT& dht) : dht_(dht), httpConnection(dht.ctx())
     {
         httpConnection.addListener(this);
 
-        const string configured = dht_.ctx().getSettingsManager()->get(SettingsManager::DHT_BOOTSTRAP_URLS, true);
-        if(!configured.empty()) {
-            string::size_type start = 0;
-            while(start < configured.size()) {
-                auto end = configured.find(';', start);
-                string url = configured.substr(start, end == string::npos ? string::npos : end - start);
-
-                auto first = url.find_first_not_of(" \t\r\n");
-                auto last  = url.find_last_not_of(" \t\r\n");
-                if(first != string::npos && last != string::npos) {
-                    url = url.substr(first, last - first + 1);
-
-                    if(url != DISABLED_DEFAULT_DHT_BOOTSTRAP_URL && std::find(servers.begin(), servers.end(), url) == servers.end())
-                        servers.push_back(url);
-                }
-
-                if(end == string::npos)
-                    break;
-                start = end + 1;
-            }
-        }
+        servers = parseServers(dht_.ctx().getSettingsManager()->get(SettingsManager::DHT_BOOTSTRAP_URLS, true));
     }
 
     BootstrapManager::~BootstrapManager(void)
@@ -91,7 +95,7 @@ namespace dht
         string url = dhturl  + "?cid=" + dht_.ctx().getClientManager()->getMe()->getCID().toBase32() + "&encryption=1";
 
         // store only active nodes to database
-        if(dht_.ctx().getClientManager()->isActive(Util::emptyString))
+        if(dht_.ctx().getClientManager()->isActive(Util::emptyString) || dht_.hasUdpProxyEndpoint())
         {
             url += "&u4=" + dht_.getPort();
         }

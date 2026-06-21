@@ -70,8 +70,11 @@ namespace dht
         /** Starts listening to UDP socket */
         void listen();
 
-        /** Returns port used to listening to UDP socket */
-        const std::string& getPort() const { return port; }
+        /** Returns the externally reachable port, including a SOCKS5 UDP relay. */
+        std::string getPort() const;
+
+        /** Returns true when DHT can register a public UDP proxy endpoint. */
+        bool hasUdpProxyEndpoint() const;
 
         /** Sends command to ip and port */
         void send(AdcCommand& cmd, const string& ip, const string &port, const CID& targetCID, const CID& udpKey);

@@ -46,6 +46,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_antispam.cpp
     test_settingsconnectionhelpers.cpp
     test_socket_shadowsocks.cpp
+    test_dht_bootstrap.cpp
     stubs_wulforutil.cpp
     ${QT_SRC_DIR}/SettingsConnectionHelpers.cpp
     ${QT_MODEL_SOURCES}

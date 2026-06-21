@@ -40,6 +40,9 @@ const int INVALID_SOCKET = -1;
 #include "Exception.h"
 #include "SSL.h"
 
+#include <memory>
+#include <mutex>
+
 namespace dcpp {
 
 class DCContext;
@@ -165,6 +168,16 @@ public:
     static uint64_t getTotalDown() { return stats.totalDown; }
     static uint64_t getTotalUp() { return stats.totalUp; }
 
+    static bool encodeSocks5UdpPacket(const string& address, const string& port,
+                                      const void* payload, size_t payloadLen,
+                                      bool remoteResolve, ByteVector& packet);
+    static bool decodeSocks5UdpPacket(const uint8_t* packet, size_t packetLen,
+                                      sockaddr_storage& remote, size_t& payloadOffset);
+    static bool resolveUdpEndpoint(const string& host, const string& port, int requestedFamily,
+                                   vector<sockaddr_storage>& endpoints);
+    static int udpResolverFlags(int requestedFamily);
+    static bool matchesUdpEndpoint(const string& host, const string& port, const sockaddr_storage& endpoint);
+
     void setBlocking(bool block);
 
     string getLocalIp();
@@ -191,6 +204,8 @@ public:
 
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
+    /** Returns the public UDP relay endpoint when the active proxy provides one. */
+    static bool getUdpProxyEndpoint(DCContext& ctx, string& server, string& port);
     string getIfaceI4 (const string &iface);
     string getIfaceI6 (const string &iface);
     int getFamily() const { return family; }
@@ -214,6 +229,8 @@ protected:
 
     static string udpServer;
     static string udpPort;
+    static std::unique_ptr<Socket> udpControlSocket;
+    static std::mutex udpProxyMutex;
 
 private:
     Socket(const Socket&);
@@ -240,6 +257,7 @@ private:
     void streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
     int rawRead(void* aBuffer, int aBufLen);
     int rawWrite(const void* aBuffer, int aLen);
+    static bool getSocksUdpRelay(DCContext& ctx, string& server, string& port);
 
     bool shadowsocksActive = false;
     int shadowsocksMethod = SHADOWSOCKS_NONE;

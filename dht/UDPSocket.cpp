@@ -114,6 +114,7 @@ namespace dht
         {
             socket.reset(new Socket);
             auto* sm = dht_->ctx().getSettingsManager();
+            socket->setContext(&dht_->ctx());
             const bool useIPv6 = sm->getBool(SettingsManager::USE_IPV6, true);
             socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
             socket->setSocketOpt(SO_REUSEADDR, 1);
@@ -132,6 +133,29 @@ namespace dht
             socket.reset();
             throw;
         }
+    }
+
+    std::string UDPSocket::getPort() const
+    {
+        if(dht_)
+        {
+            string relayServer;
+            string relayPort;
+            if(Socket::getUdpProxyEndpoint(dht_->ctx(), relayServer, relayPort))
+                return relayPort;
+        }
+
+        return port;
+    }
+
+    bool UDPSocket::hasUdpProxyEndpoint() const
+    {
+        if(!dht_)
+            return false;
+
+        string relayServer;
+        string relayPort;
+        return Socket::getUdpProxyEndpoint(dht_->ctx(), relayServer, relayPort);
     }
 
     void UDPSocket::checkIncoming()

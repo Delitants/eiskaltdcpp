@@ -20,6 +20,131 @@ const char* envOrNull(const char* name)
 
 }
 
+TEST_CASE("SOCKS5 UDP request includes the destination address and port", "[qt][socket][socks5][udp]")
+{
+    const uint8_t payload[] = { 0xde, 0xad, 0xbe, 0xef };
+    ByteVector packet;
+
+    REQUIRE(Socket::encodeSocks5UdpPacket("dht.example", "6250", payload, sizeof(payload), true, packet));
+
+    const ByteVector expected = {
+        0x00, 0x00, 0x00,
+        0x03, 0x0b,
+        'd', 'h', 't', '.', 'e', 'x', 'a', 'm', 'p', 'l', 'e',
+        0x18, 0x6a,
+        0xde, 0xad, 0xbe, 0xef
+    };
+    REQUIRE(packet == expected);
+}
+
+TEST_CASE("SOCKS5 UDP reply exposes the original sender and payload", "[qt][socket][socks5][udp]")
+{
+    const ByteVector packet = {
+        0x00, 0x00, 0x00,
+        0x01, 0xc0, 0x00, 0x02, 0x2a,
+        0x18, 0x6a,
+        'D', 'H', 'T'
+    };
+    sockaddr_storage remote = {};
+    size_t payloadOffset = 0;
+
+    REQUIRE(Socket::decodeSocks5UdpPacket(packet.data(), packet.size(), remote, payloadOffset));
+    REQUIRE(payloadOffset == 10);
+    REQUIRE(remote.ss_family == AF_INET);
+
+    const auto* remote4 = reinterpret_cast<const sockaddr_in*>(&remote);
+    REQUIRE(ntohl(remote4->sin_addr.s_addr) == 0xc000022a);
+    REQUIRE(ntohs(remote4->sin_port) == 6250);
+    REQUIRE(ByteVector(packet.begin() + payloadOffset, packet.end()) == ByteVector{ 'D', 'H', 'T' });
+}
+
+TEST_CASE("SOCKS5 UDP fragmented replies are rejected", "[qt][socket][socks5][udp]")
+{
+    const ByteVector packet = {
+        0x00, 0x00, 0x01,
+        0x01, 0xc0, 0x00, 0x02, 0x2a,
+        0x18, 0x6a,
+        'D', 'H', 'T'
+    };
+    sockaddr_storage remote = {};
+    size_t payloadOffset = 0;
+
+    REQUIRE_FALSE(Socket::decodeSocks5UdpPacket(packet.data(), packet.size(), remote, payloadOffset));
+}
+
+TEST_CASE("SOCKS5 UDP maps an IPv4 relay for an IPv6 socket", "[qt][socket][socks5][udp]")
+{
+    vector<sockaddr_storage> endpoints;
+
+    REQUIRE(Socket::resolveUdpEndpoint("127.0.0.1", "6250", AF_INET6, endpoints));
+    REQUIRE_FALSE(endpoints.empty());
+    REQUIRE(endpoints.front().ss_family == AF_INET6);
+
+    const auto* endpoint = reinterpret_cast<const sockaddr_in6*>(&endpoints.front());
+    REQUIRE(IN6_IS_ADDR_V4MAPPED(&endpoint->sin6_addr));
+    REQUIRE(ntohs(endpoint->sin6_port) == 6250);
+#ifdef AI_V4MAPPED
+    REQUIRE((Socket::udpResolverFlags(AF_INET6) & AI_V4MAPPED) != 0);
+#endif
+    REQUIRE(Socket::matchesUdpEndpoint("127.0.0.1", "6250", endpoints.front()));
+}
+
+TEST_CASE("Socket SOCKS5 UDP relay completes an opt-in DNS round trip", "[qt][socket][socks5][udp][integration]")
+{
+    const char* server = envOrNull("EISKALT_TEST_SOCKS5_SERVER");
+    const char* portText = envOrNull("EISKALT_TEST_SOCKS5_PORT");
+    const char* user = envOrNull("EISKALT_TEST_SOCKS5_USER");
+    const char* password = envOrNull("EISKALT_TEST_SOCKS5_PASSWORD");
+
+    if(!server || !portText) {
+        SKIP("Set EISKALT_TEST_SOCKS5_SERVER and PORT to run this integration test");
+    }
+
+    test::TestContext tc;
+    SettingsManager* settings = tc.ownedCtx->getSettingsManager();
+    settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
+    settings->set(SettingsManager::SOCKS_SERVER, std::string(server));
+    settings->set(SettingsManager::SOCKS_PORT, Util::toInt(portText));
+    settings->set(SettingsManager::SOCKS_USER, std::string(user ? user : ""));
+    settings->set(SettingsManager::SOCKS_PASSWORD, std::string(password ? password : ""));
+    settings->set(SettingsManager::SOCKS_RESOLVE, true);
+
+    Socket::socksUpdated(*tc.ownedCtx);
+
+    std::string relayHost;
+    std::string relayPort;
+    REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
+    REQUIRE_FALSE(relayHost.empty());
+    REQUIRE(Util::toInt(relayPort) > 0);
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "0.0.0.0");
+
+    const uint8_t query[] = {
+        0x51, 0x7a, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+        0x07, 'e', 'x', 'a', 'm', 'p', 'l', 'e',
+        0x03, 'c', 'o', 'm', 0x00,
+        0x00, 0x01, 0x00, 0x01
+    };
+    socket.writeTo("1.1.1.1", "53", query, sizeof(query), true);
+    REQUIRE(socket.wait(8000, Socket::WAIT_READ) == Socket::WAIT_READ);
+
+    uint8_t reply[512] = {};
+    sockaddr_storage remote = {};
+    const int len = socket.read(reply, sizeof(reply), remote);
+    REQUIRE(len >= 12);
+    REQUIRE(reply[0] == query[0]);
+    REQUIRE(reply[1] == query[1]);
+    REQUIRE(remote.ss_family == AF_INET);
+    REQUIRE(ntohs(reinterpret_cast<const sockaddr_in*>(&remote)->sin_port) == 53);
+
+    settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
+    Socket::socksUpdated(*tc.ownedCtx);
+}
+
 TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][socket][shadowsocks][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
