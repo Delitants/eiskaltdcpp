@@ -32,7 +32,9 @@ const char* envOrNull(const char* name)
 class LocalSocks5UdpServer
 {
 public:
-    explicit LocalSocks5UdpServer(bool wildcardReply = false) : wildcardReply(wildcardReply)
+    enum class RelayReply { IPv4, Wildcard, Domain };
+
+    explicit LocalSocks5UdpServer(RelayReply relayReply = RelayReply::IPv4) : relayReply(relayReply)
     {
         udpRelay.create(Socket::TYPE_UDP, AF_INET);
         udpRelay.bind("0", "127.0.0.1");
@@ -200,11 +202,22 @@ private:
 
         const uint16_t portValue = htons(static_cast<uint16_t>(Util::toInt(relayPort())));
         const uint8_t* portBytes = reinterpret_cast<const uint8_t*>(&portValue);
-        const ByteVector reply = {
-            5, 0, 0, 1,
-            static_cast<uint8_t>(wildcardReply ? 0 : 127), 0, 0, static_cast<uint8_t>(wildcardReply ? 0 : 1),
-            portBytes[0], portBytes[1]
-        };
+        ByteVector reply = { 5, 0, 0 };
+        if(relayReply == RelayReply::Domain) {
+            static const std::string relayHost = "localhost";
+            reply.push_back(3);
+            reply.push_back(static_cast<uint8_t>(relayHost.size()));
+            reply.insert(reply.end(), relayHost.begin(), relayHost.end());
+        } else {
+            const bool wildcardReply = relayReply == RelayReply::Wildcard;
+            reply.push_back(1);
+            reply.push_back(static_cast<uint8_t>(wildcardReply ? 0 : 127));
+            reply.push_back(0);
+            reply.push_back(0);
+            reply.push_back(static_cast<uint8_t>(wildcardReply ? 0 : 1));
+        }
+        reply.push_back(portBytes[0]);
+        reply.push_back(portBytes[1]);
         control.writeAll(reply.data(), static_cast<int>(reply.size()), 2000);
         return true;
     }
@@ -233,7 +246,7 @@ private:
         }
     }
 
-    const bool wildcardReply;
+    const RelayReply relayReply;
     Socket listener;
     Socket udpRelay;
     std::atomic<bool> stopping { false };
@@ -474,7 +487,7 @@ TEST_CASE("SOCKS5 UDP control closure triggers a new association", "[qt][socket]
 
 TEST_CASE("SOCKS5 UDP wildcard relay uses the established control peer", "[qt][socket][socks5][udp]")
 {
-    LocalSocks5UdpServer proxy(true);
+    LocalSocks5UdpServer proxy(LocalSocks5UdpServer::RelayReply::Wildcard);
     test::TestContext tc;
     SocksSettingsScope cleanup(*tc.ownedCtx);
     configureLocalSocks(*tc.ownedCtx, "localhost", proxy.port());
@@ -484,6 +497,59 @@ TEST_CASE("SOCKS5 UDP wildcard relay uses the established control peer", "[qt][s
     REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
     REQUIRE(relayHost == "127.0.0.1");
     REQUIRE(relayPort == proxy.relayPort());
+}
+
+TEST_CASE("SOCKS5 UDP domain relay remains a hostname and follows the UDP socket family", "[qt][socket][socks5][udp]")
+{
+    LocalSocks5UdpServer proxy(LocalSocks5UdpServer::RelayReply::Domain);
+    test::TestContext tc;
+    SocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+
+    std::string relayHost;
+    std::string relayPort;
+    REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
+    REQUIRE(relayHost == "localhost");
+    REQUIRE(relayPort == proxy.relayPort());
+
+    vector<sockaddr_storage> endpoints;
+    REQUIRE(Socket::resolveUdpEndpoint(relayHost, relayPort, AF_INET, endpoints));
+    REQUIRE_FALSE(endpoints.empty());
+    for(const auto& endpoint : endpoints) {
+        REQUIRE(endpoint.ss_family == AF_INET);
+    }
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "127.0.0.1");
+
+    const ByteVector reply = {
+        0, 0, 0,
+        1, 192, 0, 2, 42,
+        0x18, 0x6a,
+        'D', 'H', 'T'
+    };
+    proxy.sendUdp(socket.getLocalPort(), reply);
+    REQUIRE(socket.wait(2000, Socket::WAIT_READ) == Socket::WAIT_READ);
+
+    uint8_t buffer[16] = {};
+    sockaddr_storage remote = {};
+    REQUIRE(socket.read(buffer, sizeof(buffer), remote) == 3);
+    REQUIRE(ByteVector(buffer, buffer + 3) == ByteVector{ 'D', 'H', 'T' });
+}
+
+TEST_CASE("SOCKS TLS UDP control retry classification includes interrupted syscalls", "[qt][socket][socks5][udp]")
+{
+    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_WANT_READ, 0));
+    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_WANT_WRITE, 0));
+#ifdef _WIN32
+    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, WSAEINTR));
+#else
+    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, EINTR));
+#endif
+    REQUIRE_FALSE(Socket::isSocksTlsControlRetryable(SSL_ERROR_ZERO_RETURN, 0));
+    REQUIRE_FALSE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, 0));
 }
 
 TEST_CASE("SOCKS5 UDP malformed and fragmented replies are dropped without closing the socket", "[qt][socket][socks5][udp]")
@@ -689,6 +755,9 @@ TEST_CASE("SOCKS5 UDP maps an IPv4 relay for an IPv6 socket", "[qt][socket][sock
     REQUIRE(ntohs(endpoint->sin6_port) == 6250);
 #ifdef AI_V4MAPPED
     REQUIRE((Socket::udpResolverFlags(AF_INET6) & AI_V4MAPPED) != 0);
+#endif
+#ifdef AI_ALL
+    REQUIRE((Socket::udpResolverFlags(AF_INET6) & AI_ALL) != 0);
 #endif
     REQUIRE(Socket::matchesUdpEndpoint("127.0.0.1", "6250", endpoints.front()));
 }

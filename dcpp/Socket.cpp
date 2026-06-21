@@ -634,7 +634,7 @@ bool resolveSockaddr(const string& host, const string& port, sockaddr_storage& r
     return true;
 }
 
-bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& payloadOffset) {
+bool parseSocksEndpoint(const ByteVector& in, string& host, string& port, size_t& payloadOffset) {
     if(in.empty())
         return false;
 
@@ -645,30 +645,20 @@ bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& p
         if(in.size() < pos + 4 + 2)
             return false;
 
-        sockaddr_in addr;
-        memset(&addr, 0, sizeof(addr));
-        addr.sin_family = AF_INET;
-        memcpy(&addr.sin_addr, in.data() + pos, 4);
+        char address[INET_ADDRSTRLEN] = {};
+        if(inet_ntop(AF_INET, in.data() + pos, address, sizeof(address)) == nullptr)
+            return false;
+        host = address;
         pos += 4;
-        memcpy(&addr.sin_port, in.data() + pos, 2);
-        pos += 2;
-
-        memset(&remote, 0, sizeof(remote));
-        memcpy(&remote, &addr, sizeof(addr));
     } else if(atyp == 4) {
         if(in.size() < pos + 16 + 2)
             return false;
 
-        sockaddr_in6 addr;
-        memset(&addr, 0, sizeof(addr));
-        addr.sin6_family = AF_INET6;
-        memcpy(&addr.sin6_addr, in.data() + pos, 16);
+        char address[INET6_ADDRSTRLEN] = {};
+        if(inet_ntop(AF_INET6, in.data() + pos, address, sizeof(address)) == nullptr)
+            return false;
+        host = address;
         pos += 16;
-        memcpy(&addr.sin6_port, in.data() + pos, 2);
-        pos += 2;
-
-        memset(&remote, 0, sizeof(remote));
-        memcpy(&remote, &addr, sizeof(addr));
     } else if(atyp == 3) {
         if(in.size() < pos + 1)
             return false;
@@ -677,21 +667,24 @@ bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& p
         if(in.size() < pos + hostLen + 2)
             return false;
 
-        const string host(reinterpret_cast<const char*>(in.data() + pos), hostLen);
+        host.assign(reinterpret_cast<const char*>(in.data() + pos), hostLen);
         pos += hostLen;
-
-        uint16_t nport = 0;
-        memcpy(&nport, in.data() + pos, 2);
-        pos += 2;
-
-        if(!resolveSockaddr(host, Util::toString(ntohs(nport)), remote))
-            return false;
     } else {
         return false;
     }
 
+    uint16_t networkPort = 0;
+    memcpy(&networkPort, in.data() + pos, 2);
+    pos += 2;
+    port = Util::toString(ntohs(networkPort));
     payloadOffset = pos;
-    return true;
+    return !host.empty() && !port.empty();
+}
+
+bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& payloadOffset) {
+    string host;
+    string port;
+    return parseSocksEndpoint(in, host, port, payloadOffset) && resolveSockaddr(host, port, remote);
 }
 }
 
@@ -1242,6 +1235,10 @@ int Socket::udpResolverFlags(int requestedFamily)
     if(requestedFamily == AF_INET6)
         flags |= AI_V4MAPPED;
 #endif
+#ifdef AI_ALL
+    if(requestedFamily == AF_INET6)
+        flags |= AI_ALL;
+#endif
     return flags;
 }
 
@@ -1251,19 +1248,17 @@ bool Socket::matchesUdpEndpoint(const string& host, const string& port, const so
     if(sockaddrToPort(address) != port)
         return false;
 
-    if(sockaddrToIp(address) == host)
+    const string endpointIp = sockaddrToIp(address);
+    if(endpointIp == host)
         return true;
 
-    if(endpoint.ss_family != AF_INET6)
+    vector<sockaddr_storage> candidates;
+    if(!resolveUdpEndpoint(host, port, endpoint.ss_family, candidates))
         return false;
 
-    const auto* address6 = reinterpret_cast<const sockaddr_in6*>(&endpoint);
-    if(!IN6_IS_ADDR_V4MAPPED(&address6->sin6_addr))
-        return false;
-
-    char mappedIp[INET_ADDRSTRLEN] = {};
-    const auto* mappedBytes = reinterpret_cast<const uint8_t*>(&address6->sin6_addr) + 12;
-    return inet_ntop(AF_INET, mappedBytes, mappedIp, sizeof(mappedIp)) != nullptr && host == mappedIp;
+    return std::any_of(candidates.begin(), candidates.end(), [&endpointIp](const sockaddr_storage& candidate) {
+        return sockaddrToIp(reinterpret_cast<const sockaddr*>(&candidate)) == endpointIp;
+    });
 }
 
 int Socket::readAll(void* aBuffer, int aBufLen, uint32_t timeout) {
@@ -1967,13 +1962,12 @@ Socket::SocksUdpAssociationPtr Socket::buildSocksUdpAssociation(DCContext& ctx) 
         if(candidate->readAll(address.data() + oldSize, static_cast<int>(addressBytes), SOCKS_TIMEOUT) != static_cast<int>(addressBytes))
             return nullptr;
 
-        sockaddr_storage relay = {};
+        string server;
+        string port;
         size_t ignoredOffset = 0;
-        if(!parseSocksAddress(address, relay, ignoredOffset))
+        if(!parseSocksEndpoint(address, server, port, ignoredOffset))
             return nullptr;
 
-        string server = sockaddrToIp(reinterpret_cast<const sockaddr*>(&relay));
-        string port = sockaddrToPort(reinterpret_cast<const sockaddr*>(&relay));
         if(server == "0.0.0.0" || server == "::") {
             sockaddr_storage peer = {};
             socklen_t peerLength = sizeof(peer);
@@ -1991,6 +1985,18 @@ Socket::SocksUdpAssociationPtr Socket::buildSocksUdpAssociation(DCContext& ctx) 
     }
 }
 
+bool Socket::isSocksTlsControlRetryable(int sslError, int systemError) {
+    if(sslError == SSL_ERROR_WANT_READ || sslError == SSL_ERROR_WANT_WRITE)
+        return true;
+    if(sslError != SSL_ERROR_SYSCALL)
+        return false;
+#ifdef _WIN32
+    return systemError == WSAEINTR;
+#else
+    return systemError == EINTR;
+#endif
+}
+
 bool Socket::isSocksUdpControlAlive() {
     if(sock == INVALID_SOCKET)
         return false;
@@ -2004,15 +2010,11 @@ bool Socket::isSocksUdpControlAlive() {
 
             const int systemError = getLastError();
             const int error = SSL_get_error(socksTls, ret);
-            if(error == SSL_ERROR_WANT_READ || error == SSL_ERROR_WANT_WRITE)
+            if(!isSocksTlsControlRetryable(error, systemError))
+                return false;
+            if(error != SSL_ERROR_SYSCALL)
                 return true;
-#ifdef _WIN32
-            if(error == SSL_ERROR_SYSCALL && systemError == WSAEINTR)
-#else
-            if(error == SSL_ERROR_SYSCALL && systemError == EINTR)
-#endif
-                continue;
-            return false;
+            continue;
         }
     }
 

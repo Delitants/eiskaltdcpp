@@ -32,6 +32,29 @@ namespace dcpp { class DCContext; }
 
 namespace dht
 {
+    class FirewallCheckCycle
+    {
+    public:
+        struct Result
+        {
+            bool complete = false;
+            bool firewalled = true;
+            string externalIp;
+        };
+
+        void begin(const string& advertisedPort);
+        void stop();
+        void clearPendingRequests();
+        bool appendRequest(AdcCommand& command, const string& peerIp);
+        Result recordResponse(const string& peerIp, const string& externalIp, const string& externalPort);
+
+    private:
+        string port;
+        std::unordered_set<string> wanted;
+        std::unordered_map<string, std::pair<string, string>> checks;
+        bool active = false;
+    };
+
     class BootstrapManager;
     class SearchManager;
     class IndexManager;
@@ -111,7 +134,7 @@ namespace dht
         /** Returns our IP got from the last firewall check */
         string getLastExternalIP() const { return lastExternalIP; }
 
-        void setRequestFWCheck() { Lock l(cs); requestFWCheck = true; firewalledWanted.clear(); firewalledChecks.clear(); }
+        void setRequestFWCheck();
 
         /** Sub-manager accessors */
         BootstrapManager& getBootstrapManager() { return *bootstrapMgr_; }
@@ -155,11 +178,9 @@ namespace dht
         /** Time when last packet was received */
         uint64_t lastPacket;
 
-        /** IPs who we received firewalled status from */
-        std::unordered_set<string> firewalledWanted;
-        std::unordered_map< string, std::pair< string, string > > firewalledChecks;
+        /** Current firewall-check request and retained advertised port. */
+        FirewallCheckCycle firewallCheck;
         bool firewalled;
-        bool requestFWCheck;
 
         /** Should the network data be saved? */
         bool dirty;

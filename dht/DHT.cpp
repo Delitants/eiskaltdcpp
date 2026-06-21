@@ -43,13 +43,79 @@
 
 namespace dht
 {
+    void FirewallCheckCycle::begin(const string& advertisedPort)
+    {
+        port = advertisedPort;
+        wanted.clear();
+        checks.clear();
+        active = !port.empty();
+    }
+
+    void FirewallCheckCycle::stop()
+    {
+        port.clear();
+        wanted.clear();
+        checks.clear();
+        active = false;
+    }
+
+    void FirewallCheckCycle::clearPendingRequests()
+    {
+        wanted.clear();
+    }
+
+    bool FirewallCheckCycle::appendRequest(AdcCommand& command, const string& peerIp)
+    {
+        if(!active || wanted.size() + checks.size() >= FW_RESPONSES || wanted.count(peerIp) != 0)
+            return false;
+
+        command.addParam("FW", port);
+        wanted.insert(peerIp);
+        return true;
+    }
+
+    FirewallCheckCycle::Result FirewallCheckCycle::recordResponse(const string& peerIp,
+        const string& externalIp, const string& externalPort)
+    {
+        Result result;
+        if(!active || wanted.erase(peerIp) == 0 || checks.count(peerIp) != 0)
+            return result;
+
+        checks.emplace(peerIp, std::make_pair(externalIp, externalPort));
+        if(checks.size() != FW_RESPONSES)
+            return result;
+
+        int firewallVotes = 0;
+        string lastIp;
+        for(const auto& check : checks)
+        {
+            const string& observedIp = check.second.first;
+            const string& observedPort = check.second.second;
+            firewallVotes += observedPort == port ? -1 : 1;
+
+            if(lastIp.empty())
+            {
+                result.externalIp = observedIp;
+                lastIp = observedIp;
+            }
+
+            if(observedIp == lastIp)
+                result.externalIp = observedIp;
+            else
+                lastIp = observedIp;
+        }
+
+        result.complete = true;
+        result.firewalled = firewallVotes >= 0;
+        stop();
+        return result;
+    }
 
     DHT::DHT(dcpp::DCContext& ctx)
         : bucket(nullptr)
         , lastExternalIP(Util::getLocalIp()) // hack
         , lastPacket(0)
         , firewalled(true)
-        , requestFWCheck(true)
         , dirty(false)
         , ctx_(ctx)
     {
@@ -81,8 +147,6 @@ namespace dht
 
         // start with global firewalled status
         firewalled = !ctx_.getClientManager()->isActive(Util::emptyString);
-        requestFWCheck = true;
-
         if(!bucket)
         {
             if(!CTX_BOOLSETTING(NO_IP_OVERRIDE))
@@ -100,6 +164,7 @@ namespace dht
 
         socket.setDHT(*this);
         socket.listen();
+        setRequestFWCheck();
         getBootstrapManager().bootstrap();
     }
 
@@ -108,6 +173,10 @@ namespace dht
         if(!bucket)
             return;
 
+        {
+            Lock l(fwCheckCs);
+            firewallCheck.stop();
+        }
         socket.disconnect();
 
         if(!CTX_BOOLSETTING(USE_DHT) || exiting)
@@ -218,14 +287,7 @@ namespace dht
         {
             // FW check
             Lock l(fwCheckCs);
-            if(requestFWCheck && (firewalledWanted.size() + firewalledChecks.size() < FW_RESPONSES))
-            {
-                if(firewalledWanted.count(ip) == 0) // only when not requested from this node yet
-                {
-                    cmd.addParam("FW", getPort());
-                    firewalledWanted.insert(ip);
-                }
-            }
+            firewallCheck.appendRequest(cmd, ip);
         }
         socket.send(cmd, ip, port, targetCID, udpKey);
     }
@@ -289,8 +351,15 @@ namespace dht
 
         {
             Lock l(fwCheckCs);
-            firewalledWanted.clear();
+            firewallCheck.clearPendingRequests();
         }
+    }
+
+    void DHT::setRequestFWCheck()
+    {
+        const string advertisedPort = getAdvertisedPort();
+        Lock l(fwCheckCs);
+        firewallCheck.begin(advertisedPort);
     }
 
     /*
@@ -544,50 +613,16 @@ namespace dht
             else if(resTo == "FWCHECK")
             {
                 Lock l(fwCheckCs);
-                if(!firewalledWanted.count(fromIP))
-                    return; // we didn't requested firewall check from this node
-
-                firewalledWanted.erase(fromIP);
-                if(firewalledChecks.count(fromIP))
-                    return; // already received firewall check from this node
-
                 string externalIP;
                 string externalUdpPort;
                 if(!c.getParam("I4", 1, externalIP) || !c.getParam("U4", 1, externalUdpPort))
                     return; // no IP and port in response
 
-                firewalledChecks.insert(std::make_pair(fromIP, std::make_pair(externalIP, externalUdpPort)));
-
-                if(firewalledChecks.size() == FW_RESPONSES)
+                const auto result = firewallCheck.recordResponse(fromIP, externalIP, externalUdpPort);
+                if(result.complete)
                 {
-                    // when we received more firewalled statuses, we will be firewalled
-                    int fw = 0; string lastIP;
-                    for(const auto &i : firewalledChecks)
-                    {
-                        const string ip = i.second.first;
-                        const string udpPort = i.second.second;
-
-                        if(udpPort != getPort())
-                            fw++;
-                        else
-                            fw--;
-
-                        if(lastIP.empty())
-                        {
-                            externalIP = ip;
-                            lastIP = ip;
-                        }
-
-                        //If the last check matches this one, reset our current IP.
-                        //If the last check does not match, wait for our next incoming IP.
-                        //This happens for one reason.. a client responded with a bad IP.
-                        if(ip == lastIP)
-                            externalIP = ip;
-                        else
-                            lastIP = ip;
-                    }
-
-                    if(fw >= 0)
+                    externalIP = result.externalIp;
+                    if(result.firewalled)
                     {
                         // we are probably firewalled, so our internal UDP port is unaccessible
                         if(externalIP != lastExternalIP || !firewalled)
@@ -605,11 +640,7 @@ namespace dht
                     if(!CTX_BOOLSETTING(NO_IP_OVERRIDE))
                         ctx_.getSettingsManager()->set(SettingsManager::EXTERNAL_IP, externalIP);
 
-                    firewalledChecks.clear();
-                    firewalledWanted.clear();
-
                     lastExternalIP = externalIP;
-                    requestFWCheck = false;
                 }
             }
             return;
