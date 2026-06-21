@@ -59,7 +59,8 @@ namespace dht
         void start();
         void stop(bool exiting = false);
 
-        string getPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getPort() : Util::emptyString; }
+        const string& getPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getPort() : Util::emptyString; }
+        string getAdvertisedPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getAdvertisedPort() : Util::emptyString; }
         bool hasUdpProxyEndpoint() const { return CTX_BOOLSETTING(USE_DHT) && socket.hasUdpProxyEndpoint(); }
 
         /** Process incoming command */

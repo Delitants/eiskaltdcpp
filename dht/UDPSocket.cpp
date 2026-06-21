@@ -135,17 +135,21 @@ namespace dht
         }
     }
 
-    std::string UDPSocket::getPort() const
+    std::string UDPSocket::getAdvertisedPort() const
     {
+        string relayPort;
         if(dht_)
         {
             string relayServer;
-            string relayPort;
-            if(Socket::getUdpProxyEndpoint(dht_->ctx(), relayServer, relayPort))
-                return relayPort;
+            Socket::getUdpProxyEndpoint(dht_->ctx(), relayServer, relayPort);
         }
 
-        return port;
+        return selectPort(port, relayPort, true);
+    }
+
+    std::string UDPSocket::selectPort(const string& listenPort, const string& relayPort, bool advertiseRelay)
+    {
+        return advertiseRelay && !relayPort.empty() ? relayPort : listenPort;
     }
 
     bool UDPSocket::hasUdpProxyEndpoint() const

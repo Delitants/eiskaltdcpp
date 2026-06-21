@@ -97,7 +97,7 @@ namespace dht
         // store only active nodes to database
         if(dht_.ctx().getClientManager()->isActive(Util::emptyString) || dht_.hasUdpProxyEndpoint())
         {
-            url += "&u4=" + dht_.getPort();
+            url += "&u4=" + dht_.getAdvertisedPort();
         }
 
         httpConnection.downloadFile(url);

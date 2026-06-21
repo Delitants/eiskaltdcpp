@@ -70,8 +70,13 @@ namespace dht
         /** Starts listening to UDP socket */
         void listen();
 
+        /** Returns the local UDP listen port. */
+        const std::string& getPort() const { return port; }
+
         /** Returns the externally reachable port, including a SOCKS5 UDP relay. */
-        std::string getPort() const;
+        std::string getAdvertisedPort() const;
+
+        static std::string selectPort(const std::string& listenPort, const std::string& relayPort, bool advertiseRelay);
 
         /** Returns true when DHT can register a public UDP proxy endpoint. */
         bool hasUdpProxyEndpoint() const;
