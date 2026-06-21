@@ -5,14 +5,19 @@
 #include "dcpp/SettingsManager.h"
 #include "dcpp/Socket.h"
 
-#include <cstdlib>
 #include <atomic>
 #include <chrono>
+#include <cstdlib>
 #include <condition_variable>
 #include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
+
+#ifndef _WIN32
+#include <pthread.h>
+#include <signal.h>
+#endif
 
 using namespace dcpp;
 
@@ -52,6 +57,7 @@ public:
     std::string port() { return listener.getLocalPort(); }
     std::string relayPort() { return udpRelay.getLocalPort(); }
     size_t associationCount() const { return associations.load(); }
+    bool hasProtocolFailed() const { return protocolFailed.load(); }
 
     bool waitForAssociations(size_t count, std::chrono::milliseconds timeout)
     {
@@ -63,6 +69,60 @@ public:
     {
         std::lock_guard<std::mutex> lock(controlMutex);
         controls.clear();
+    }
+
+    size_t openControlCount()
+    {
+        std::lock_guard<std::mutex> lock(controlMutex);
+        for(auto i = controls.begin(); i != controls.end();) {
+            bool closed = false;
+            try {
+                if((*i)->wait(0, Socket::WAIT_READ) == Socket::WAIT_READ) {
+                    uint8_t byte = 0;
+                    const int read = (*i)->read(&byte, 1);
+                    closed = read == 0;
+                    if(read > 0) {
+                        protocolFailed = true;
+                    }
+                }
+            } catch(const SocketException&) {
+                closed = true;
+            }
+
+            if(closed) {
+                i = controls.erase(i);
+            } else {
+                ++i;
+            }
+        }
+        return controls.size();
+    }
+
+    bool waitForOpenControls(size_t count, std::chrono::milliseconds timeout)
+    {
+        const auto deadline = std::chrono::steady_clock::now() + timeout;
+        do {
+            if(openControlCount() == count) {
+                return true;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        } while(std::chrono::steady_clock::now() < deadline);
+        return openControlCount() == count;
+    }
+
+    bool sendControlByte(uint8_t byte)
+    {
+        std::lock_guard<std::mutex> lock(controlMutex);
+        if(controls.empty()) {
+            return false;
+        }
+
+        try {
+            controls.front()->writeAll(&byte, 1, 2000);
+            return true;
+        } catch(const SocketException&) {
+            return false;
+        }
     }
 
     void blockNextAssociation()
@@ -216,7 +276,176 @@ void configureLocalSocks(DCContext& context, const std::string& host, const std:
     settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
 }
 
+class SocksAssociationInspector : public Socket
+{
+public:
+    static std::shared_ptr<const void> retainAssociation()
+    {
+        std::lock_guard<std::mutex> lock(udpProxyMutex);
+        return udpAssociation;
+    }
+
+    static bool hasAssociation()
+    {
+        std::lock_guard<std::mutex> lock(udpProxyMutex);
+        return udpAssociation != nullptr;
+    }
+
+#ifndef _WIN32
+    static bool setControlBlocking(bool blocking)
+    {
+        std::lock_guard<std::mutex> lock(udpProxyMutex);
+        if(!udpAssociation) {
+            return false;
+        }
+        udpAssociation->control->setBlocking(blocking);
+        return true;
+    }
+
+    static bool stateMutexIsLocked()
+    {
+        if(udpProxyMutex.try_lock()) {
+            udpProxyMutex.unlock();
+            return false;
+        }
+        return true;
+    }
+#endif
+};
+
+#ifndef _WIN32
+volatile sig_atomic_t controlSignalHandled = 0;
+
+void handleControlSignal(int)
+{
+    controlSignalHandled = 1;
 }
+
+class SignalHandlerScope
+{
+public:
+    explicit SignalHandlerScope(int signal) : signal(signal)
+    {
+        struct sigaction action = {};
+        action.sa_handler = handleControlSignal;
+        sigemptyset(&action.sa_mask);
+        installed = sigaction(signal, &action, &previous) == 0;
+    }
+
+    ~SignalHandlerScope()
+    {
+        if(installed) {
+            sigaction(signal, &previous, nullptr);
+        }
+    }
+
+    bool isInstalled() const { return installed; }
+
+private:
+    int signal;
+    bool installed = false;
+    struct sigaction previous = {};
+};
+#endif
+
+}
+
+TEST_CASE("Retained SOCKS5 UDP association snapshot keeps its control channel alive", "[qt][socket][socks5][udp]")
+{
+    LocalSocks5UdpServer proxy;
+    test::TestContext tc;
+    SocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+
+    std::string relayHost;
+    std::string relayPort;
+    REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
+    REQUIRE(proxy.waitForOpenControls(1, std::chrono::seconds(2)));
+
+    std::shared_ptr<const void> retained = SocksAssociationInspector::retainAssociation();
+    REQUIRE(retained != nullptr);
+
+    tc.ownedCtx->getSettingsManager()->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
+    Socket::socksUpdated(*tc.ownedCtx);
+
+    REQUIRE_FALSE(SocksAssociationInspector::hasAssociation());
+    REQUIRE(proxy.openControlCount() == 1);
+
+    retained.reset();
+    REQUIRE(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+    REQUIRE_FALSE(proxy.hasProtocolFailed());
+}
+
+TEST_CASE("SOCKS5 settings scope clears the association and closes its control channel", "[qt][socket][socks5][udp]")
+{
+    LocalSocks5UdpServer proxy;
+    test::TestContext tc;
+    {
+        SocksSettingsScope cleanup(*tc.ownedCtx);
+        configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+
+        std::string relayHost;
+        std::string relayPort;
+        REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
+        REQUIRE(proxy.waitForOpenControls(1, std::chrono::seconds(2)));
+        REQUIRE(SocksAssociationInspector::hasAssociation());
+    }
+
+    REQUIRE_FALSE(SocksAssociationInspector::hasAssociation());
+    REQUIRE(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+    REQUIRE_FALSE(proxy.hasProtocolFailed());
+}
+
+#ifndef _WIN32
+TEST_CASE("SOCKS5 UDP control liveness retries an interrupted peek", "[qt][socket][socks5][udp]")
+{
+    LocalSocks5UdpServer proxy;
+    test::TestContext tc;
+    SocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+
+    std::string initialHost;
+    std::string initialPort;
+    REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, initialHost, initialPort));
+    REQUIRE(proxy.waitForOpenControls(1, std::chrono::seconds(2)));
+    REQUIRE(SocksAssociationInspector::setControlBlocking(true));
+
+    SignalHandlerScope signalHandler(SIGUSR1);
+    REQUIRE(signalHandler.isInstalled());
+    controlSignalHandled = 0;
+
+    bool lookupSucceeded = false;
+    std::thread lookup([&] {
+        std::string relayHost;
+        std::string relayPort;
+        lookupSucceeded = Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort) &&
+            relayHost == initialHost && relayPort == initialPort;
+    });
+
+    const auto lockDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    while(!SocksAssociationInspector::stateMutexIsLocked() && std::chrono::steady_clock::now() < lockDeadline) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    const bool livenessCheckStarted = SocksAssociationInspector::stateMutexIsLocked();
+    const int signalResult = pthread_kill(lookup.native_handle(), SIGUSR1);
+
+    const auto signalDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    while(!controlSignalHandled && std::chrono::steady_clock::now() < signalDeadline) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+    const bool sentControlByte = proxy.sendControlByte(0);
+    lookup.join();
+    SocksAssociationInspector::setControlBlocking(false);
+
+    REQUIRE(livenessCheckStarted);
+    REQUIRE(signalResult == 0);
+    REQUIRE(controlSignalHandled == 1);
+    REQUIRE(sentControlByte);
+    REQUIRE(lookupSucceeded);
+    REQUIRE(proxy.associationCount() == 1);
+    REQUIRE_FALSE(proxy.hasProtocolFailed());
+}
+#endif
 
 TEST_CASE("SOCKS5 UDP control closure triggers a new association", "[qt][socket][socks5][udp]")
 {
@@ -229,6 +458,7 @@ TEST_CASE("SOCKS5 UDP control closure triggers a new association", "[qt][socket]
     std::string relayPort;
     REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, relayHost, relayPort));
     REQUIRE(proxy.waitForAssociations(1, std::chrono::seconds(2)));
+    REQUIRE(proxy.waitForOpenControls(1, std::chrono::seconds(2)));
 
     proxy.closeControls();
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
@@ -356,20 +586,24 @@ TEST_CASE("SOCKS5 UDP relay lookup remains responsive during association refresh
     std::thread refresh([&] { Socket::socksUpdated(*tc.ownedCtx); });
     const bool refreshBlocked = proxy.waitUntilAssociationBlocked(std::chrono::seconds(2));
 
-    std::atomic<bool> lookupComplete { false };
+    std::mutex lookupMutex;
+    std::condition_variable lookupChanged;
+    bool lookupComplete = false;
     bool lookupSucceeded = false;
     std::string lookupHost;
     std::string lookupPort;
     std::thread lookup([&] {
         lookupSucceeded = Socket::getUdpProxyEndpoint(*tc.ownedCtx, lookupHost, lookupPort);
-        lookupComplete = true;
+        {
+            std::lock_guard<std::mutex> lock(lookupMutex);
+            lookupComplete = true;
+        }
+        lookupChanged.notify_all();
     });
 
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(250);
-    while(!lookupComplete && std::chrono::steady_clock::now() < deadline) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
-    }
-    const bool lookupWasPrompt = lookupComplete.load();
+    std::unique_lock<std::mutex> lookupLock(lookupMutex);
+    const bool lookupWasPrompt = lookupChanged.wait_for(lookupLock, std::chrono::seconds(1), [&] { return lookupComplete; });
+    lookupLock.unlock();
 
     proxy.releaseBlockedAssociation();
     refresh.join();

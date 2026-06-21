@@ -42,6 +42,7 @@ const int INVALID_SOCKET = -1;
 
 #include <memory>
 #include <mutex>
+#include <utility>
 
 namespace dcpp {
 
@@ -227,9 +228,17 @@ protected:
     };
     static Stats stats;
 
-    static string udpServer;
-    static string udpPort;
-    static std::unique_ptr<Socket> udpControlSocket;
+    struct SocksUdpAssociation {
+        SocksUdpAssociation(std::shared_ptr<Socket> aControl, string aServer, string aPort) :
+            control(std::move(aControl)), server(std::move(aServer)), port(std::move(aPort)) { }
+
+        std::shared_ptr<Socket> control;
+        const string server;
+        const string port;
+    };
+    using SocksUdpAssociationPtr = std::shared_ptr<const SocksUdpAssociation>;
+
+    static SocksUdpAssociationPtr udpAssociation;
     static std::mutex udpProxyMutex;
     static std::mutex udpProxySetupMutex;
 
@@ -259,10 +268,10 @@ private:
     int rawRead(void* aBuffer, int aBufLen);
     int rawWrite(const void* aBuffer, int aLen);
     bool isSocksUdpControlAlive();
-    static bool buildSocksUdpAssociation(DCContext& ctx, std::unique_ptr<Socket>& control,
-                                         string& server, string& port);
-    static bool getActiveSocksUdpRelay(string& server, string& port);
-    static void publishSocksUdpAssociation(std::unique_ptr<Socket> control, string server, string port);
+    static SocksUdpAssociationPtr buildSocksUdpAssociation(DCContext& ctx);
+    static SocksUdpAssociationPtr getActiveSocksUdpAssociation();
+    static void publishSocksUdpAssociation(SocksUdpAssociationPtr association);
+    static SocksUdpAssociationPtr getSocksUdpAssociation(DCContext& ctx);
     static bool getSocksUdpRelay(DCContext& ctx, string& server, string& port);
 
     bool shadowsocksActive = false;
