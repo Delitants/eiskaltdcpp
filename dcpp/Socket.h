@@ -231,6 +231,7 @@ protected:
     static string udpPort;
     static std::unique_ptr<Socket> udpControlSocket;
     static std::mutex udpProxyMutex;
+    static std::mutex udpProxySetupMutex;
 
 private:
     Socket(const Socket&);
@@ -257,6 +258,11 @@ private:
     void streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
     int rawRead(void* aBuffer, int aBufLen);
     int rawWrite(const void* aBuffer, int aLen);
+    bool isSocksUdpControlAlive();
+    static bool buildSocksUdpAssociation(DCContext& ctx, std::unique_ptr<Socket>& control,
+                                         string& server, string& port);
+    static bool getActiveSocksUdpRelay(string& server, string& port);
+    static void publishSocksUdpAssociation(std::unique_ptr<Socket> control, string server, string port);
     static bool getSocksUdpRelay(DCContext& ctx, string& server, string& port);
 
     bool shadowsocksActive = false;

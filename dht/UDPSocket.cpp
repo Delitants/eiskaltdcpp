@@ -304,10 +304,17 @@ namespace dht
                     try
                     {
                         socket->disconnect();
-                        socket->create(Socket::TYPE_UDP);
+                        auto* sm = dht_->ctx().getSettingsManager();
+                        const bool useIPv6 = sm->getBool(SettingsManager::USE_IPV6, true);
+                        socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
                         socket->setSocketOpt(SO_RCVBUF, dht_->ctx().getSettingsManager()->get(SettingsManager::SOCKET_IN_BUFFER, true));
                         socket->setSocketOpt(SO_REUSEADDR, 1);
-                        socket->bind(port, dht_->ctx().getSettingsManager()->get(SettingsManager::BIND_ADDRESS, true));
+                        const string bindIp = sm->getBool(SettingsManager::BIND_IFACE, true)
+                            ? (useIPv6 ? socket->getIfaceI6(sm->get(SettingsManager::BIND_IFACE_NAME, true))
+                                       : socket->getIfaceI4(sm->get(SettingsManager::BIND_IFACE_NAME, true)))
+                            : (useIPv6 ? sm->get(SettingsManager::BIND_ADDRESS6, true)
+                                       : sm->get(SettingsManager::BIND_ADDRESS, true));
+                        socket->bind(port, bindIp);
                         if(failed)
                         {
                             dht_->ctx().getLogManager()->message(_("DHT enabled again"));

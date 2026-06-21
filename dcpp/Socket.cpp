@@ -70,6 +70,7 @@ string Socket::udpServer;
 string Socket::udpPort;
 std::unique_ptr<Socket> Socket::udpControlSocket;
 std::mutex Socket::udpProxyMutex;
+std::mutex Socket::udpProxySetupMutex;
 
 #define checkconnected() if(!isConnected()) throw SocketException(ENOTCONN))
 
@@ -1130,7 +1131,7 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
         if(!relayServer.empty() && !relayPort.empty() && matchesUdpEndpoint(relayServer, relayPort, remote_addr)) {
             size_t payloadOffset = 0;
             if(!decodeSocks5UdpPacket(static_cast<const uint8_t*>(aBuffer), static_cast<size_t>(len), remote, payloadOffset)) {
-                throw SocketException(_("SOCKS5 UDP relay response is invalid"));
+                return 0;
             }
 
             const size_t payloadLen = static_cast<size_t>(len) - payloadOffset;
@@ -1187,8 +1188,10 @@ bool Socket::encodeSocks5UdpPacket(const string& address, const string& port,
         return false;
     }
 
-    const auto* payloadBytes = static_cast<const uint8_t*>(payload);
-    packet.insert(packet.end(), payloadBytes, payloadBytes + payloadLen);
+    if(payloadLen > 0) {
+        const auto* payloadBytes = static_cast<const uint8_t*>(payload);
+        packet.insert(packet.end(), payloadBytes, payloadBytes + payloadLen);
+    }
     return true;
 }
 
@@ -1923,97 +1926,161 @@ Socket::Protocol Socket::getNextProtocol() {
     return proto;
 }
 
-void Socket::socksUpdated(DCContext& ctx) {
-    std::lock_guard<std::mutex> lock(udpProxyMutex);
-    udpControlSocket.reset();
-    udpServer.clear();
-    udpPort.clear();
-
+bool Socket::buildSocksUdpAssociation(DCContext& ctx, std::unique_ptr<Socket>& control,
+                                      string& server, string& port) {
     auto* sm = ctx.getSettingsManager();
-    if(sm->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5) {
-        try {
-            auto control = std::make_unique<Socket>();
-            control->setContext(&ctx);
-            control->setBlocking(false);
-            control->connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
-            if(control->wait(SOCKS_TIMEOUT, Socket::WAIT_CONNECT) != Socket::WAIT_CONNECT) {
-                return;
-            }
-            if(sm->getBool(SettingsManager::SOCKS_TLS, true)) {
-                control->socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), SOCKS_TIMEOUT);
-            }
-            control->socksAuth(SOCKS_TIMEOUT);
+    if(sm->get(SettingsManager::OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_SOCKS5)
+        return false;
 
-            const uint8_t request[10] = { 5, 3, 0, 1, 0, 0, 0, 0, 0, 0 };
-            control->writeAll(request, sizeof(request), SOCKS_TIMEOUT);
+    try {
+        auto candidate = std::make_unique<Socket>();
+        candidate->setContext(&ctx);
+        candidate->setBlocking(false);
+        candidate->connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
+        if(candidate->wait(SOCKS_TIMEOUT, Socket::WAIT_CONNECT) != Socket::WAIT_CONNECT)
+            return false;
+        if(sm->getBool(SettingsManager::SOCKS_TLS, true))
+            candidate->socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), SOCKS_TIMEOUT);
+        candidate->socksAuth(SOCKS_TIMEOUT);
 
-            uint8_t header[4] = {};
-            if(control->readAll(header, sizeof(header), SOCKS_TIMEOUT) != static_cast<int>(sizeof(header)) ||
-                    header[0] != 5 || header[1] != 0 || header[2] != 0) {
-                return;
-            }
+        const uint8_t request[10] = { 5, 3, 0, 1, 0, 0, 0, 0, 0, 0 };
+        candidate->writeAll(request, sizeof(request), SOCKS_TIMEOUT);
 
-            ByteVector address;
-            address.push_back(header[3]);
-            size_t addressBytes = 0;
-            if(header[3] == 1) {
-                addressBytes = 4 + 2;
-            } else if(header[3] == 4) {
-                addressBytes = 16 + 2;
-            } else if(header[3] == 3) {
-                uint8_t domainLength = 0;
-                if(control->readAll(&domainLength, 1, SOCKS_TIMEOUT) != 1)
-                    return;
-                address.push_back(domainLength);
-                addressBytes = static_cast<size_t>(domainLength) + 2;
-            } else {
-                return;
-            }
+        uint8_t header[4] = {};
+        if(candidate->readAll(header, sizeof(header), SOCKS_TIMEOUT) != static_cast<int>(sizeof(header)) ||
+                header[0] != 5 || header[1] != 0 || header[2] != 0)
+            return false;
 
-            const size_t oldSize = address.size();
-            address.resize(oldSize + addressBytes);
-            if(control->readAll(address.data() + oldSize, static_cast<int>(addressBytes), SOCKS_TIMEOUT) != static_cast<int>(addressBytes)) {
-                return;
-            }
-
-            sockaddr_storage relay = {};
-            size_t ignoredOffset = 0;
-            if(!parseSocksAddress(address, relay, ignoredOffset))
-                return;
-
-            udpServer = sockaddrToIp(reinterpret_cast<const sockaddr*>(&relay));
-            udpPort = sockaddrToPort(reinterpret_cast<const sockaddr*>(&relay));
-            if(udpServer == "0.0.0.0" || udpServer == "::")
-                udpServer = resolve(sm->get(SettingsManager::SOCKS_SERVER));
-            if(udpServer.empty() || udpPort.empty()) {
-                udpServer.clear();
-                udpPort.clear();
-                return;
-            }
-
-            udpControlSocket = std::move(control);
-        } catch(const SocketException&) {
-            dcdebug("Socket: Failed to register with socks server\n");
+        ByteVector address;
+        address.push_back(header[3]);
+        size_t addressBytes = 0;
+        if(header[3] == 1) {
+            addressBytes = 4 + 2;
+        } else if(header[3] == 4) {
+            addressBytes = 16 + 2;
+        } else if(header[3] == 3) {
+            uint8_t domainLength = 0;
+            if(candidate->readAll(&domainLength, 1, SOCKS_TIMEOUT) != 1)
+                return false;
+            address.push_back(domainLength);
+            addressBytes = static_cast<size_t>(domainLength) + 2;
+        } else {
+            return false;
         }
+
+        const size_t oldSize = address.size();
+        address.resize(oldSize + addressBytes);
+        if(candidate->readAll(address.data() + oldSize, static_cast<int>(addressBytes), SOCKS_TIMEOUT) != static_cast<int>(addressBytes))
+            return false;
+
+        sockaddr_storage relay = {};
+        size_t ignoredOffset = 0;
+        if(!parseSocksAddress(address, relay, ignoredOffset))
+            return false;
+
+        server = sockaddrToIp(reinterpret_cast<const sockaddr*>(&relay));
+        port = sockaddrToPort(reinterpret_cast<const sockaddr*>(&relay));
+        if(server == "0.0.0.0" || server == "::") {
+            sockaddr_storage peer = {};
+            socklen_t peerLength = sizeof(peer);
+            if(::getpeername(candidate->sock, reinterpret_cast<sockaddr*>(&peer), &peerLength) != 0)
+                return false;
+            server = sockaddrToIp(reinterpret_cast<const sockaddr*>(&peer));
+        }
+        if(server.empty() || port.empty())
+            return false;
+
+        control = std::move(candidate);
+        return true;
+    } catch(const SocketException&) {
+        dcdebug("Socket: Failed to register with socks server\n");
+        return false;
     }
 }
 
-bool Socket::getSocksUdpRelay(DCContext& ctx, string& server, string& port) {
+bool Socket::isSocksUdpControlAlive() {
+    if(sock == INVALID_SOCKET)
+        return false;
+
+    if(socksTlsActive && socksTls) {
+        uint8_t byte = 0;
+        const int ret = SSL_peek(socksTls, &byte, 1);
+        if(ret > 0)
+            return true;
+
+        const int error = SSL_get_error(socksTls, ret);
+        return error == SSL_ERROR_WANT_READ || error == SSL_ERROR_WANT_WRITE;
+    }
+
+    uint8_t byte = 0;
+    const int ret = ::recv(sock, reinterpret_cast<char*>(&byte), 1, MSG_PEEK);
+    if(ret > 0)
+        return true;
+    if(ret == 0)
+        return false;
+
+    const int error = getLastError();
+#ifdef _WIN32
+    return error == WSAEWOULDBLOCK;
+#else
+    return error == EWOULDBLOCK || error == EAGAIN;
+#endif
+}
+
+bool Socket::getActiveSocksUdpRelay(string& server, string& port) {
+    std::unique_ptr<Socket> staleControl;
     {
         std::lock_guard<std::mutex> lock(udpProxyMutex);
-        if(!udpServer.empty() && !udpPort.empty() && udpControlSocket) {
+        if(!udpServer.empty() && !udpPort.empty() && udpControlSocket && udpControlSocket->isSocksUdpControlAlive()) {
             server = udpServer;
             port = udpPort;
             return true;
         }
+
+        staleControl = std::move(udpControlSocket);
+        udpServer.clear();
+        udpPort.clear();
+    }
+    return false;
+}
+
+void Socket::publishSocksUdpAssociation(std::unique_ptr<Socket> control, string server, string port) {
+    std::lock_guard<std::mutex> lock(udpProxyMutex);
+    udpControlSocket.swap(control);
+    udpServer.swap(server);
+    udpPort.swap(port);
+}
+
+void Socket::socksUpdated(DCContext& ctx) {
+    std::lock_guard<std::mutex> setupLock(udpProxySetupMutex);
+
+    std::unique_ptr<Socket> control;
+    string server;
+    string port;
+    buildSocksUdpAssociation(ctx, control, server, port);
+    publishSocksUdpAssociation(std::move(control), std::move(server), std::move(port));
+}
+
+bool Socket::getSocksUdpRelay(DCContext& ctx, string& server, string& port) {
+    if(getActiveSocksUdpRelay(server, port))
+        return true;
+
+    std::lock_guard<std::mutex> setupLock(udpProxySetupMutex);
+    if(getActiveSocksUdpRelay(server, port))
+        return true;
+
+    std::unique_ptr<Socket> control;
+    string candidateServer;
+    string candidatePort;
+    if(!buildSocksUdpAssociation(ctx, control, candidateServer, candidatePort)) {
+        publishSocksUdpAssociation(nullptr, Util::emptyString, Util::emptyString);
+        return false;
     }
 
-    socksUpdated(ctx);
-
-    std::lock_guard<std::mutex> lock(udpProxyMutex);
-    server = udpServer;
-    port = udpPort;
-    return !server.empty() && !port.empty() && udpControlSocket != nullptr;
+    publishSocksUdpAssociation(std::move(control), candidateServer, candidatePort);
+    server = std::move(candidateServer);
+    port = std::move(candidatePort);
+    return true;
 }
 
 bool Socket::getUdpProxyEndpoint(DCContext& ctx, string& server, string& port) {
