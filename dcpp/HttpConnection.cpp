@@ -29,7 +29,7 @@
 
 namespace dcpp {
 
-HttpConnection::HttpConnection(DCContext& ctx, const string& aUserAgent) :
+HttpConnection::HttpConnection(DCContext& ctx, const string& aUserAgent, Connector aConnector) :
     userAgent(aUserAgent),
     port("80"),
     size(-1),
@@ -41,7 +41,8 @@ HttpConnection::HttpConnection(DCContext& ctx, const string& aUserAgent) :
     connType(TYPE_POST),
     socket(0),
     ctx_(ctx),
-    usingHttpProxy(false)
+    usingHttpProxy(false),
+    connector(aConnector)
 {
 }
 
@@ -149,7 +150,11 @@ void HttpConnection::prepareRequest(RequestType type) {
         }
         const bool useOutgoingProxy = shouldUseOutgoingProxy(
             usingHttpProxy, CTX_SETTING(OUTGOING_CONNECTIONS));
-        socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT);
+        if(connector) {
+            connector(*socket, server, port, proto == "https", useOutgoingProxy);
+        } else {
+            socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT);
+        }
         // keep SNI hint alive until the async TLS connect actually uses it
 
     } catch(const Exception& e) {

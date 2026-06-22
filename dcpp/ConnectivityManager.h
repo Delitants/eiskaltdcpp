@@ -24,6 +24,7 @@
 #include "Speaker.h"
 #include "Util.h"
 
+#include <functional>
 #include <string>
 #include <unordered_map>
 
@@ -52,7 +53,9 @@ public:
     bool isRunning() const { return running; }
     void updateLast();
 
-    static bool shouldStartDht(bool useDht, int outgoingMode, bool hasUdpRelay);
+    static bool shouldStartDht(bool useDht, bool incomingActive, int outgoingMode, bool hasUdpRelay);
+    static void runIncomingListenerProbe(const std::function<void()>& listenTcp,
+        const std::function<void()>& listenUdp, const std::function<void()>& rollback);
 
 public:
     explicit ConnectivityManager(DCContext& ctx);
@@ -66,7 +69,7 @@ private:
 
     void startSocket();
     void listenIncoming();
-    void startDht();
+    void startDht(bool incomingActive);
     void disconnect();
 
     bool autoDetected;

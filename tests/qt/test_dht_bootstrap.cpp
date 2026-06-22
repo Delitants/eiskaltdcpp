@@ -5,6 +5,9 @@
 #include "dht/DHT.h"
 #include "dht/UDPSocket.h"
 #include "dcpp/ConnectivityManager.h"
+#include "dcpp/BufferedSocket.h"
+#include "dcpp/DCContext.h"
+#include "dcpp/Exception.h"
 #include "dcpp/HttpConnection.h"
 #include "dcpp/SettingsManager.h"
 
@@ -15,13 +18,40 @@ TEST_CASE("DHT startup policy separates incoming mode from proxy UDP capability"
     using dcpp::ConnectivityManager;
     using dcpp::SettingsManager;
 
-    REQUIRE(ConnectivityManager::shouldStartDht(true, SettingsManager::OUTGOING_DIRECT, false));
-    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(false, SettingsManager::OUTGOING_DIRECT, false));
-    REQUIRE(ConnectivityManager::shouldStartDht(true, SettingsManager::OUTGOING_SOCKS5, true));
-    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, SettingsManager::OUTGOING_SOCKS5, false));
-    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(false, SettingsManager::OUTGOING_SOCKS5, true));
-    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, SettingsManager::OUTGOING_SHADOWSOCKS, false));
-    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, SettingsManager::OUTGOING_SHADOWSOCKS, true));
+    REQUIRE(ConnectivityManager::shouldStartDht(true, true, SettingsManager::OUTGOING_DIRECT, false));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, false, SettingsManager::OUTGOING_DIRECT, false));
+    REQUIRE(ConnectivityManager::shouldStartDht(true, true, SettingsManager::OUTGOING_SOCKS5, true));
+    REQUIRE(ConnectivityManager::shouldStartDht(true, false, SettingsManager::OUTGOING_SOCKS5, true));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, true, SettingsManager::OUTGOING_SOCKS5, false));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, false, SettingsManager::OUTGOING_SOCKS5, false));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, true, SettingsManager::OUTGOING_SHADOWSOCKS, true));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(true, false, SettingsManager::OUTGOING_SHADOWSOCKS, true));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(false, true, SettingsManager::OUTGOING_DIRECT, false));
+    REQUIRE_FALSE(ConnectivityManager::shouldStartDht(false, true, SettingsManager::OUTGOING_SOCKS5, true));
+}
+
+TEST_CASE("Incoming listener probing rolls back partial success", "[qt][dht][connectivity]")
+{
+    std::vector<string> events;
+
+    REQUIRE_THROWS_AS(
+        dcpp::ConnectivityManager::runIncomingListenerProbe(
+            [&events] { events.push_back("tcp"); },
+            [&events] {
+                events.push_back("udp");
+                throw dcpp::Exception("UDP failed");
+            },
+            [&events] { events.push_back("rollback"); }),
+        dcpp::Exception);
+
+    REQUIRE(events == std::vector<string>{ "tcp", "udp", "rollback" });
+
+    events.clear();
+    dcpp::ConnectivityManager::runIncomingListenerProbe(
+        [&events] { events.push_back("tcp"); },
+        [&events] { events.push_back("udp"); },
+        [&events] { events.push_back("rollback"); });
+    REQUIRE(events == std::vector<string>{ "tcp", "udp" });
 }
 
 TEST_CASE("DHT bootstrap HTTP transport follows the configured outgoing proxy", "[qt][dht][bootstrap][proxy]")
@@ -33,6 +63,40 @@ TEST_CASE("DHT bootstrap HTTP transport follows the configured outgoing proxy", 
     REQUIRE(HttpConnection::shouldUseOutgoingProxy(false, SettingsManager::OUTGOING_SOCKS5));
     REQUIRE(HttpConnection::shouldUseOutgoingProxy(false, SettingsManager::OUTGOING_SHADOWSOCKS));
     REQUIRE_FALSE(HttpConnection::shouldUseOutgoingProxy(true, SettingsManager::OUTGOING_DIRECT));
+}
+
+TEST_CASE("DHT bootstrap request preparation invokes SOCKS5 routing", "[qt][dht][bootstrap][proxy]")
+{
+    dcpp::DCContext context;
+    context.startupMinimal();
+    context.getSettingsManager()->set(
+        dcpp::SettingsManager::OUTGOING_CONNECTIONS, dcpp::SettingsManager::OUTGOING_SOCKS5);
+
+    bool connectorInvoked = false;
+    bool proxy = false;
+    {
+        dcpp::HttpConnection connection(context, dcpp::Util::emptyString,
+            [&connectorInvoked, &proxy](dcpp::BufferedSocket&, const string&, const string&, bool, bool useProxy) {
+                connectorInvoked = true;
+                proxy = useProxy;
+            });
+        connection.downloadFile("http://bootstrap.example/dht");
+    }
+    dcpp::BufferedSocket::waitShutdown();
+
+    REQUIRE(connectorInvoked);
+    REQUIRE(proxy);
+    context.shutdown();
+}
+
+TEST_CASE("Proxied DHT bootstrap URL advertises the UDP relay port", "[qt][dht][bootstrap][proxy]")
+{
+    REQUIRE(BootstrapManager::buildBootstrapUrl(
+        "https://bootstrap.example/dht", "TESTCID", "49152", true) ==
+        "https://bootstrap.example/dht?cid=TESTCID&encryption=1&u4=49152");
+    REQUIRE(BootstrapManager::buildBootstrapUrl(
+        "https://bootstrap.example/dht", "TESTCID", "49152", false) ==
+        "https://bootstrap.example/dht?cid=TESTCID&encryption=1");
 }
 
 TEST_CASE("Explicit DHT bootstrap URLs are trimmed and preserved", "[qt][dht][bootstrap]")

@@ -63,6 +63,15 @@ namespace dht
         }
         return parsed;
     }
+
+    string BootstrapManager::buildBootstrapUrl(const string& server, const string& cid,
+        const string& advertisedPort, bool advertisePort)
+    {
+        string url = server + "?cid=" + cid + "&encryption=1";
+        if(advertisePort)
+            url += "&u4=" + advertisedPort;
+        return url;
+    }
  
     BootstrapManager::BootstrapManager(DHT& dht) : dht_(dht), httpConnection(dht.ctx())
     {
@@ -92,13 +101,11 @@ namespace dht
 
         dht_.ctx().getLogManager()->message(_("DHT bootstrapping started"));
         string dhturl = servers[Util::rand(servers.size())];
-        string url = dhturl  + "?cid=" + dht_.ctx().getClientManager()->getMe()->getCID().toBase32() + "&encryption=1";
-
-        // store only active nodes to database
-        if(dht_.ctx().getClientManager()->isActive(Util::emptyString) || dht_.hasUdpProxyEndpoint())
-        {
-            url += "&u4=" + dht_.getAdvertisedPort();
-        }
+        const bool advertisePort = dht_.ctx().getClientManager()->isActive(Util::emptyString) ||
+            dht_.hasUdpProxyEndpoint();
+        string url = buildBootstrapUrl(dhturl,
+            dht_.ctx().getClientManager()->getMe()->getCID().toBase32(),
+            dht_.getAdvertisedPort(), advertisePort);
 
         httpConnection.downloadFile(url);
     }

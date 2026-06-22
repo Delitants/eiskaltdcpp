@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 
 #include "BufferedSocketListener.h"
@@ -36,7 +37,10 @@ class DCContext;
 class HttpConnection : BufferedSocketListener, public Speaker<HttpConnectionListener>, private NonCopyable
 {
 public:
-    HttpConnection(DCContext& ctx, const string& aUserAgent = Util::emptyString);
+    using Connector = std::function<void(BufferedSocket&, const string&, const string&, bool, bool)>;
+
+    HttpConnection(DCContext& ctx, const string& aUserAgent = Util::emptyString,
+        Connector aConnector = Connector());
     virtual ~HttpConnection();
 
     DCContext& ctx() const { return ctx_; }
@@ -85,6 +89,7 @@ private:
     BufferedSocket* socket;
     DCContext& ctx_;
     bool usingHttpProxy;
+    Connector connector;
 
     void prepareRequest(RequestType type);
     void abortRequest(bool disconnect);

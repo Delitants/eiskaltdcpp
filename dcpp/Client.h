@@ -24,6 +24,7 @@
 #include "Atomic.h"
 #include "BufferedSocketListener.h"
 #include "ClientListener.h"
+#include "CriticalSection.h"
 #include "forward.h"
 #include "OnlineUser.h"
 #include "SearchQueue.h"
@@ -41,8 +42,37 @@
 namespace dcpp {
 
 struct ReconnectPolicy {
-    static bool due(bool disconnected, bool autoReconnect, bool attemptActive,
-        uint64_t now, uint64_t lastAttempt, uint32_t delaySeconds);
+    static bool due(bool disconnected, bool autoReconnect, uint64_t now,
+        uint64_t lastAttempt, uint32_t delaySeconds);
+};
+
+class ReconnectAttemptGate {
+public:
+    ReconnectAttemptGate();
+
+    bool tryBegin();
+    bool tryBeginScheduled(bool disconnected, bool autoReconnect, uint64_t now,
+        uint64_t lastAttempt, uint32_t delaySeconds);
+    bool requestManual();
+    void complete();
+    void reset();
+
+private:
+    CriticalSection cs;
+    bool active;
+    bool manualPending;
+};
+
+class ReconnectAttemptRollback : private NonCopyable {
+public:
+    explicit ReconnectAttemptRollback(ReconnectAttemptGate& gate);
+    ~ReconnectAttemptRollback();
+
+    void dismiss();
+
+private:
+    ReconnectAttemptGate& gate;
+    bool active;
 };
 
 #ifdef LUA_SCRIPT
@@ -201,7 +231,7 @@ protected:
     } state;
     SearchQueue searchQueue;
     BufferedSocket* sock;
-    bool connectAttemptActive;
+    ReconnectAttemptGate reconnectAttempt;
 
     static Counts counts;
     Counts lastCounts;
@@ -234,6 +264,8 @@ private:
 
     Client(const Client&);
     Client& operator=(const Client&);
+
+    void startConnect();
 
     string hubUrl;
     string address;

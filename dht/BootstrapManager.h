@@ -43,6 +43,8 @@ namespace dht
         void addBootstrapNode(const string& ip, const std::string &udpPort, const CID& targetCID, const UDPKey& udpKey);
 
         static vector<string> parseServers(const string& configured);
+        static string buildBootstrapUrl(const string& server, const string& cid,
+            const string& advertisedPort, bool advertisePort);
 
     private:
         DHT& dht_;
