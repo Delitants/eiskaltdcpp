@@ -1985,15 +1985,18 @@ Socket::SocksUdpAssociationPtr Socket::buildSocksUdpAssociation(DCContext& ctx) 
     }
 }
 
-bool Socket::isSocksTlsControlRetryable(int sslError, int systemError) {
+Socket::SocksTlsControlProbeDecision Socket::classifySocksTlsControlProbe(
+    int result, int sslError, int systemError) {
+    if(result > 0)
+        return SocksTlsControlProbeDecision::Alive;
     if(sslError == SSL_ERROR_WANT_READ || sslError == SSL_ERROR_WANT_WRITE)
-        return true;
+        return SocksTlsControlProbeDecision::Alive;
     if(sslError != SSL_ERROR_SYSCALL)
-        return false;
+        return SocksTlsControlProbeDecision::Dead;
 #ifdef _WIN32
-    return systemError == WSAEINTR;
+    return systemError == WSAEINTR ? SocksTlsControlProbeDecision::Retry : SocksTlsControlProbeDecision::Dead;
 #else
-    return systemError == EINTR;
+    return systemError == EINTR ? SocksTlsControlProbeDecision::Retry : SocksTlsControlProbeDecision::Dead;
 #endif
 }
 
@@ -2005,16 +2008,13 @@ bool Socket::isSocksUdpControlAlive() {
         while(true) {
             uint8_t byte = 0;
             const int ret = SSL_peek(socksTls, &byte, 1);
-            if(ret > 0)
-                return true;
-
             const int systemError = getLastError();
             const int error = SSL_get_error(socksTls, ret);
-            if(!isSocksTlsControlRetryable(error, systemError))
-                return false;
-            if(error != SSL_ERROR_SYSCALL)
+            const auto decision = classifySocksTlsControlProbe(ret, error, systemError);
+            if(decision == SocksTlsControlProbeDecision::Alive)
                 return true;
-            continue;
+            if(decision == SocksTlsControlProbeDecision::Dead)
+                return false;
         }
     }
 

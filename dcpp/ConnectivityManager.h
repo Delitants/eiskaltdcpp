@@ -52,6 +52,8 @@ public:
     bool isRunning() const { return running; }
     void updateLast();
 
+    static bool shouldStartDht(bool useDht, int outgoingMode, bool hasUdpRelay);
+
 public:
     explicit ConnectivityManager(DCContext& ctx);
     virtual ~ConnectivityManager() { }
@@ -63,7 +65,8 @@ private:
     void log(const string& msg);
 
     void startSocket();
-    void listen();
+    void listenIncoming();
+    void startDht();
     void disconnect();
 
     bool autoDetected;

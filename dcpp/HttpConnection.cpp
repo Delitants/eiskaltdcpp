@@ -49,6 +49,10 @@ HttpConnection::~HttpConnection() {
     abort();
 }
 
+bool HttpConnection::shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMode) {
+    return !usingHttpProxy && outgoingMode != SettingsManager::OUTGOING_DIRECT;
+}
+
 /**
  * Downloads a file and returns it as a string
  * @todo Report exceptions
@@ -143,8 +147,8 @@ void HttpConnection::prepareRequest(RequestType type) {
         if(proto == "https") {
             SSLSocket::setSNIHint(server);
         }
-        const bool useOutgoingProxy = !usingHttpProxy &&
-            CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT;
+        const bool useOutgoingProxy = shouldUseOutgoingProxy(
+            usingHttpProxy, CTX_SETTING(OUTGOING_CONNECTIONS));
         socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT);
         // keep SNI hint alive until the async TLS connect actually uses it
 

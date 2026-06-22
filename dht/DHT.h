@@ -42,7 +42,7 @@ namespace dht
             string externalIp;
         };
 
-        void begin(const string& advertisedPort);
+        void begin(const string& localPort, const string& advertisedPort);
         void stop();
         void clearPendingRequests();
         bool appendRequest(AdcCommand& command, const string& peerIp);

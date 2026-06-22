@@ -178,7 +178,9 @@ public:
                                    vector<sockaddr_storage>& endpoints);
     static int udpResolverFlags(int requestedFamily);
     static bool matchesUdpEndpoint(const string& host, const string& port, const sockaddr_storage& endpoint);
-    static bool isSocksTlsControlRetryable(int sslError, int systemError);
+
+    enum class SocksTlsControlProbeDecision { Alive, Retry, Dead };
+    static SocksTlsControlProbeDecision classifySocksTlsControlProbe(int result, int sslError, int systemError);
 
     void setBlocking(bool block);
 

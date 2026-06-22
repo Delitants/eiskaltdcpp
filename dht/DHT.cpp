@@ -43,9 +43,9 @@
 
 namespace dht
 {
-    void FirewallCheckCycle::begin(const string& advertisedPort)
+    void FirewallCheckCycle::begin(const string& localPort, const string& advertisedPort)
     {
-        port = advertisedPort;
+        port = advertisedPort.empty() ? localPort : advertisedPort;
         wanted.clear();
         checks.clear();
         active = !port.empty();
@@ -357,9 +357,10 @@ namespace dht
 
     void DHT::setRequestFWCheck()
     {
+        const string localPort = getPort();
         const string advertisedPort = getAdvertisedPort();
         Lock l(fwCheckCs);
-        firewallCheck.begin(advertisedPort);
+        firewallCheck.begin(localPort, advertisedPort);
     }
 
     /*

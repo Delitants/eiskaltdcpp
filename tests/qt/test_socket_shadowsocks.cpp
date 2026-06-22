@@ -539,17 +539,21 @@ TEST_CASE("SOCKS5 UDP domain relay remains a hostname and follows the UDP socket
     REQUIRE(ByteVector(buffer, buffer + 3) == ByteVector{ 'D', 'H', 'T' });
 }
 
-TEST_CASE("SOCKS TLS UDP control retry classification includes interrupted syscalls", "[qt][socket][socks5][udp]")
+TEST_CASE("SOCKS TLS UDP control probe distinguishes alive retry and dead states", "[qt][socket][socks5][udp]")
 {
-    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_WANT_READ, 0));
-    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_WANT_WRITE, 0));
+    using Decision = Socket::SocksTlsControlProbeDecision;
+
+    REQUIRE(Socket::classifySocksTlsControlProbe(1, SSL_ERROR_NONE, 0) == Decision::Alive);
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_WANT_READ, 0) == Decision::Alive);
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_WANT_WRITE, 0) == Decision::Alive);
 #ifdef _WIN32
-    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, WSAEINTR));
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_SYSCALL, WSAEINTR) == Decision::Retry);
 #else
-    REQUIRE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, EINTR));
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_SYSCALL, EINTR) == Decision::Retry);
 #endif
-    REQUIRE_FALSE(Socket::isSocksTlsControlRetryable(SSL_ERROR_ZERO_RETURN, 0));
-    REQUIRE_FALSE(Socket::isSocksTlsControlRetryable(SSL_ERROR_SYSCALL, 0));
+    REQUIRE(Socket::classifySocksTlsControlProbe(0, SSL_ERROR_ZERO_RETURN, 0) == Decision::Dead);
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_SYSCALL, 0) == Decision::Dead);
+    REQUIRE(Socket::classifySocksTlsControlProbe(-1, SSL_ERROR_SSL, 0) == Decision::Dead);
 }
 
 TEST_CASE("SOCKS5 UDP malformed and fragmented replies are dropped without closing the socket", "[qt][socket][socks5][udp]")

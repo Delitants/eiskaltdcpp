@@ -30,10 +30,21 @@
 #include "SettingsManager.h"
 #include "version.h"
 #ifdef WITH_DHT
+#include "Socket.h"
 #include "dht/DHT.h"
 #endif
 
 namespace dcpp {
+
+bool ConnectivityManager::shouldStartDht(bool useDht, int outgoingMode, bool hasUdpRelay) {
+    if(!useDht)
+        return false;
+
+    if(outgoingMode == SettingsManager::OUTGOING_DIRECT)
+        return true;
+
+    return outgoingMode == SettingsManager::OUTGOING_SOCKS5 && hasUdpRelay;
+}
 
 ConnectivityManager::ConnectivityManager(DCContext& ctx) :
     ContextAware(ctx),
@@ -48,9 +59,14 @@ void ConnectivityManager::startSocket() {
 
     disconnect();
 
-    if(ctx().getClientManager()->isActive()) {
-        listen();
+    const bool active = ctx().getClientManager()->isActive();
+    if(active) {
+        listenIncoming();
+    }
 
+    startDht();
+
+    if(active) {
         // must be done after listen calls; otherwise ports won't be set
         if(CTX_SETTING(INCOMING_CONNECTIONS) == SettingsManager::INCOMING_FIREWALL_UPNP)
             ctx().getMappingManager()->open();
@@ -85,9 +101,10 @@ void ConnectivityManager::detectConnection() {
 
     log(_("Determining the best connectivity settings..."));
     try {
-        listen();
+        listenIncoming();
     } catch(const Exception& e) {
         ctx().getSettingsManager()->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
+        startDht();
         log(str(F_("Unable to open %1% port(s); connectivity settings must be configured manually") % e.getError()));
         fire(ConnectivityManagerListener::Finished());
         running = false;
@@ -98,6 +115,7 @@ void ConnectivityManager::detectConnection() {
 
     if (!Util::isPrivateIp(Util::getLocalIp(AF_INET))) {
         ctx().getSettingsManager()->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_DIRECT);
+        startDht();
         log(_("Public IP address detected, selecting active mode with direct connection"));
         fire(ConnectivityManagerListener::Finished());
         running = false;
@@ -105,6 +123,7 @@ void ConnectivityManager::detectConnection() {
     }
 
     ctx().getSettingsManager()->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_UPNP);
+    startDht();
     log(_("Local network with possible NAT detected, trying to map the ports using UPnP..."));
 
     if (!ctx().getMappingManager()->open()) {
@@ -135,6 +154,7 @@ void ConnectivityManager::mappingFinished(bool success) {
         if (!success) {
             disconnect();
             ctx().getSettingsManager()->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
+            startDht();
             log(_("Automatic setup of active mode has failed. You may want to set up your connection manually for better connectivity"));
         }
         fire(ConnectivityManagerListener::Finished());
@@ -143,7 +163,7 @@ void ConnectivityManager::mappingFinished(bool success) {
     running = false;
 }
 
-void ConnectivityManager::listen() {
+void ConnectivityManager::listenIncoming() {
     try {
         ctx().getConnectionManager()->listen();
     } catch(const Exception&) {
@@ -155,11 +175,25 @@ void ConnectivityManager::listen() {
     } catch(const Exception&) {
         throw Exception(_("Search (UDP)"));
     }
+}
+
+void ConnectivityManager::startDht() {
 #ifdef WITH_DHT
+    const int outgoingMode = CTX_SETTING(OUTGOING_CONNECTIONS);
+    bool hasUdpRelay = false;
+    if(outgoingMode == SettingsManager::OUTGOING_SOCKS5) {
+        string relayServer;
+        string relayPort;
+        hasUdpRelay = Socket::getUdpProxyEndpoint(ctx(), relayServer, relayPort);
+    }
+
+    if(!shouldStartDht(CTX_BOOLSETTING(USE_DHT), outgoingMode, hasUdpRelay))
+        return;
+
     try {
         ctx().getDHT()->start();
-    } catch (const Exception&) {
-        throw Exception(_("DHT (UDP)"));
+    } catch(const Exception& e) {
+        log(string(_("DHT (UDP)")) + ": " + e.getError());
     }
 #endif
 }

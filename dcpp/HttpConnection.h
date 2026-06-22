@@ -46,6 +46,8 @@ public:
 
     void abort();
 
+    static bool shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMode);
+
     const string& getMimeType() const { return mimeType; }
     const string& getStatus() const { return statusLine; }
 
