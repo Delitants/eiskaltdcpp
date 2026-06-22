@@ -32,6 +32,14 @@
 
 namespace dcpp {
 
+bool ReconnectPolicy::due(bool disconnected, bool autoReconnect, bool attemptActive,
+    uint64_t now, uint64_t lastAttempt, uint32_t delaySeconds) {
+    if(!disconnected || !autoReconnect || attemptActive || now < lastAttempt)
+        return false;
+
+    return now - lastAttempt >= static_cast<uint64_t>(delaySeconds) * 1000;
+}
+
 Client::Counts Client::counts;
 
 uint32_t idCounter = 0;
@@ -41,6 +49,7 @@ Client::Client(DCContext& ctx, const string& hubURL, char separator_, bool secur
     myIdentity(this->ctx().getClientManager()->getMe(), 0), uniqueId(++idCounter),
     reconnDelay(120), lastActivity(GET_TICK()), registered(false), autoReconnect(false),
     encoding(Text::hubDefaultCharset), state(STATE_DISCONNECTED), sock(0),
+    connectAttemptActive(false),
     hubUrl(hubURL), separator(separator_), proto(proto_),
     secure(secure_), countType(COUNT_UNCOUNTED)
 {
@@ -62,12 +71,17 @@ Client::~Client() {
 }
 
 void Client::reconnect() {
+    if(connectAttemptActive || state == STATE_CONNECTING)
+        return;
+
     disconnect(true);
     setAutoReconnect(true);
     setReconnDelay(0);
+    updateActivity();
 }
 
 void Client::shutdown() {
+    connectAttemptActive = false;
     if(sock) {
         BufferedSocket::putSocket(sock);
         sock = 0;
@@ -130,6 +144,9 @@ bool Client::isActive() const {
 }
 
 void Client::connect() {
+    if(connectAttemptActive || state == STATE_CONNECTING)
+        return;
+
     if(sock) {
         BufferedSocket::putSocket(sock);
         sock = 0;
@@ -143,17 +160,20 @@ void Client::connect() {
     setHubIdentity(Identity());
 
     state = STATE_CONNECTING;
+    connectAttemptActive = true;
+    updateActivity();
 
     try {
         sock = BufferedSocket::getSocket(separator, ctx());
         sock->addListener(this);
         sock->connect(address, port, secure, CTX_BOOLSETTING(ALLOW_UNTRUSTED_HUBS), true, proto);
     } catch(const Exception& e) {
+        connectAttemptActive = false;
+        state = STATE_DISCONNECTED;
         shutdown();
         /// @todo at this point, this hub instance is completely useless
         fire(ClientListener::Failed(), this, e.getError());
     }
-    updateActivity();
 }
 
 void Client::send(const char* aMessage, size_t aLen) {
@@ -167,6 +187,7 @@ void Client::send(const char* aMessage, size_t aLen) {
 }
 
 void Client::on(Connected) {
+    connectAttemptActive = false;
     updateActivity();
     ip = sock->getIp();
     localIp = sock->getLocalIp();
@@ -188,7 +209,9 @@ void Client::on(Connected) {
 }
 
 void Client::on(Failed, const string& aLine) {
+    connectAttemptActive = false;
     state = STATE_DISCONNECTED;
+    updateActivity();
     ctx().getFavoriteManager()->removeUserCommand(getHubUrl());
     sock->removeListener(this);
     fire(ClientListener::Failed(), this, aLine);
@@ -303,7 +326,8 @@ void Client::on(Line, const string& aLine) {
 }
 
 void Client::on(Second, uint64_t aTick) {
-    if(state == STATE_DISCONNECTED && getAutoReconnect() && (aTick > (getLastActivity() + getReconnDelay() * 1000)) ) {
+    if(ReconnectPolicy::due(state == STATE_DISCONNECTED, getAutoReconnect(), connectAttemptActive,
+            aTick, getLastActivity(), getReconnDelay())) {
         // Try to reconnect...
         connect();
     }

@@ -39,6 +39,12 @@
 #include "NonCopyable.h"
 
 namespace dcpp {
+
+struct ReconnectPolicy {
+    static bool due(bool disconnected, bool autoReconnect, bool attemptActive,
+        uint64_t now, uint64_t lastAttempt, uint32_t delaySeconds);
+};
+
 #ifdef LUA_SCRIPT
 struct ClientScriptInstance : public ScriptInstance {
     bool onHubFrameEnter(Client* aClient, const string& aLine);
@@ -195,6 +201,7 @@ protected:
     } state;
     SearchQueue searchQueue;
     BufferedSocket* sock;
+    bool connectAttemptActive;
 
     static Counts counts;
     Counts lastCounts;
