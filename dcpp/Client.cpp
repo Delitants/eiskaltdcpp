@@ -143,6 +143,7 @@ void Client::shutdown() {
         BufferedSocket::putSocket(sock);
         sock = 0;
     }
+    reconnectAttempt.reset();
     state = STATE_DISCONNECTED;
 }
 
