@@ -6,6 +6,7 @@
 #include "dcpp/Socket.h"
 
 #include <atomic>
+#include <array>
 #include <chrono>
 #include <cstdlib>
 #include <condition_variable>
@@ -13,6 +14,10 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
+#include <openssl/rand.h>
 
 #ifndef _WIN32
 #include <pthread.h>
@@ -289,6 +294,334 @@ void configureLocalSocks(DCContext& context, const std::string& host, const std:
     settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
 }
 
+ByteVector legacyMasterKey(const std::string& password)
+{
+    ByteVector key;
+    ByteVector previous;
+    while(key.size() < 32) {
+        ByteVector input(previous);
+        input.insert(input.end(), password.begin(), password.end());
+
+        std::array<uint8_t, EVP_MAX_MD_SIZE> digest {};
+        unsigned int digestLength = 0;
+        if(EVP_Digest(input.data(), input.size(), digest.data(), &digestLength, EVP_md5(), nullptr) != 1) {
+            return {};
+        }
+        previous.assign(digest.begin(), digest.begin() + digestLength);
+        key.insert(key.end(), previous.begin(), previous.end());
+    }
+    key.resize(32);
+    return key;
+}
+
+ByteVector legacySubkey(const ByteVector& masterKey, const ByteVector& salt)
+{
+    std::array<uint8_t, EVP_MAX_MD_SIZE> prk {};
+    unsigned int prkLength = 0;
+    if(!HMAC(EVP_sha1(), salt.data(), static_cast<int>(salt.size()), masterKey.data(),
+            masterKey.size(), prk.data(), &prkLength)) {
+        return {};
+    }
+
+    ByteVector result;
+    ByteVector previous;
+    const std::string info = "ss-subkey";
+    uint8_t counter = 1;
+    while(result.size() < 32) {
+        ByteVector input(previous);
+        input.insert(input.end(), info.begin(), info.end());
+        input.push_back(counter++);
+
+        std::array<uint8_t, EVP_MAX_MD_SIZE> digest {};
+        unsigned int digestLength = 0;
+        if(!HMAC(EVP_sha1(), prk.data(), static_cast<int>(prkLength), input.data(),
+                input.size(), digest.data(), &digestLength)) {
+            return {};
+        }
+        previous.assign(digest.begin(), digest.begin() + digestLength);
+        result.insert(result.end(), previous.begin(), previous.end());
+    }
+    result.resize(32);
+    return result;
+}
+
+void incrementLegacyNonce(ByteVector& nonce)
+{
+    for(auto& byte : nonce) {
+        if(++byte != 0) {
+            break;
+        }
+    }
+}
+
+ByteVector encryptLegacyFramePart(const ByteVector& key, ByteVector& nonce,
+    const uint8_t* plaintext, size_t plaintextLength)
+{
+    constexpr size_t tagLength = 16;
+    ByteVector encrypted(plaintextLength + tagLength);
+    EVP_CIPHER_CTX* context = EVP_CIPHER_CTX_new();
+    if(!context) {
+        return {};
+    }
+
+    int encryptedLength = 0;
+    int finalLength = 0;
+    const bool ok = EVP_EncryptInit_ex(context, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_IVLEN, 12, nullptr) == 1 &&
+        EVP_EncryptInit_ex(context, nullptr, nullptr, key.data(), nonce.data()) == 1 &&
+        EVP_EncryptUpdate(context, encrypted.data(), &encryptedLength, plaintext,
+            static_cast<int>(plaintextLength)) == 1 &&
+        EVP_EncryptFinal_ex(context, encrypted.data() + encryptedLength, &finalLength) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_GET_TAG, tagLength,
+            encrypted.data() + encryptedLength + finalLength) == 1;
+    EVP_CIPHER_CTX_free(context);
+    if(!ok) {
+        return {};
+    }
+
+    encrypted.resize(encryptedLength + finalLength + tagLength);
+    incrementLegacyNonce(nonce);
+    return encrypted;
+}
+
+bool decryptLegacyFramePart(const ByteVector& key, ByteVector& nonce,
+    const ByteVector& encrypted, ByteVector& plaintext)
+{
+    constexpr size_t tagLength = 16;
+    if(encrypted.size() < tagLength) {
+        return false;
+    }
+
+    const size_t cipherLength = encrypted.size() - tagLength;
+    plaintext.assign(cipherLength, 0);
+    EVP_CIPHER_CTX* context = EVP_CIPHER_CTX_new();
+    if(!context) {
+        return false;
+    }
+
+    int plaintextLength = 0;
+    int finalLength = 0;
+    const bool ok = EVP_DecryptInit_ex(context, EVP_aes_256_gcm(), nullptr, nullptr, nullptr) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_IVLEN, 12, nullptr) == 1 &&
+        EVP_DecryptInit_ex(context, nullptr, nullptr, key.data(), nonce.data()) == 1 &&
+        EVP_DecryptUpdate(context, plaintext.data(), &plaintextLength, encrypted.data(),
+            static_cast<int>(cipherLength)) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_TAG, tagLength,
+            const_cast<uint8_t*>(encrypted.data() + cipherLength)) == 1 &&
+        EVP_DecryptFinal_ex(context, plaintext.data() + plaintextLength, &finalLength) == 1;
+    EVP_CIPHER_CTX_free(context);
+    if(!ok) {
+        return false;
+    }
+
+    plaintext.resize(plaintextLength + finalLength);
+    incrementLegacyNonce(nonce);
+    return true;
+}
+
+ByteVector makeLegacyFrame(const ByteVector& key, ByteVector& nonce, const std::string& plaintext)
+{
+    const uint8_t length[2] = {
+        static_cast<uint8_t>((plaintext.size() >> 8) & 0xff),
+        static_cast<uint8_t>(plaintext.size() & 0xff)
+    };
+    ByteVector frame = encryptLegacyFramePart(key, nonce, length, sizeof(length));
+    ByteVector payload = encryptLegacyFramePart(key, nonce,
+        reinterpret_cast<const uint8_t*>(plaintext.data()), plaintext.size());
+    frame.insert(frame.end(), payload.begin(), payload.end());
+    return frame;
+}
+
+class LegacyShadowsocksServer
+{
+public:
+    enum class ReplyMode { CoalescedFrames, TruncatedPayload };
+
+    LegacyShadowsocksServer(std::string password, ReplyMode replyMode) :
+        password(std::move(password)), replyMode(replyMode)
+    {
+        listener.create(Socket::TYPE_TCP, AF_INET);
+        listener.setSocketOpt(SO_REUSEADDR, 1);
+        listener.bind("0", "127.0.0.1");
+        listener.listen();
+        worker = std::thread([this] { run(); });
+    }
+
+    ~LegacyShadowsocksServer()
+    {
+        stopping = true;
+        listener.disconnect();
+        holdOpen.notify_all();
+        if(worker.joinable()) {
+            worker.join();
+        }
+    }
+
+    std::string port() { return listener.getLocalPort(); }
+    bool hasProtocolFailed() const { return protocolFailed.load(); }
+
+private:
+    static bool readExact(Socket& socket, ByteVector& bytes, size_t length)
+    {
+        bytes.assign(length, 0);
+        size_t offset = 0;
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+        while(offset < length && std::chrono::steady_clock::now() < deadline) {
+            if(socket.wait(50, Socket::WAIT_READ) != Socket::WAIT_READ) {
+                continue;
+            }
+            const int received = socket.read(bytes.data() + offset, static_cast<int>(length - offset));
+            if(received <= 0) {
+                return false;
+            }
+            offset += static_cast<size_t>(received);
+        }
+        return offset == length;
+    }
+
+    bool consumeDestination(Socket& client)
+    {
+        ByteVector requestSalt;
+        if(!readExact(client, requestSalt, 32)) {
+            return false;
+        }
+
+        const ByteVector masterKey = legacyMasterKey(password);
+        const ByteVector subkey = legacySubkey(masterKey, requestSalt);
+        ByteVector nonce(12, 0);
+        ByteVector encryptedLength;
+        ByteVector plaintextLength;
+        if(subkey.size() != 32 || !readExact(client, encryptedLength, 18) ||
+                !decryptLegacyFramePart(subkey, nonce, encryptedLength, plaintextLength) ||
+                plaintextLength.size() != 2) {
+            return false;
+        }
+
+        const size_t payloadLength = (static_cast<size_t>(plaintextLength[0]) << 8) | plaintextLength[1];
+        ByteVector encryptedPayload;
+        ByteVector destination;
+        return readExact(client, encryptedPayload, payloadLength + 16) &&
+            decryptLegacyFramePart(subkey, nonce, encryptedPayload, destination) &&
+            !destination.empty();
+    }
+
+    bool sendOnce(Socket& client, const ByteVector& bytes)
+    {
+        const int sent = ::send(client.sock, reinterpret_cast<const char*>(bytes.data()),
+            static_cast<int>(bytes.size()), 0);
+        return sent == static_cast<int>(bytes.size());
+    }
+
+    void run()
+    {
+        try {
+            if(listener.wait(2000, Socket::WAIT_READ) != Socket::WAIT_READ) {
+                protocolFailed = true;
+                return;
+            }
+
+            Socket client;
+            client.accept(listener);
+            if(!consumeDestination(client)) {
+                protocolFailed = true;
+                return;
+            }
+
+            ByteVector responseSalt(32, 0x5a);
+            const ByteVector subkey = legacySubkey(legacyMasterKey(password), responseSalt);
+            ByteVector nonce(12, 0);
+            ByteVector response(responseSalt);
+
+            if(replyMode == ReplyMode::CoalescedFrames) {
+                const ByteVector first = makeLegacyFrame(subkey, nonce, "first");
+                const ByteVector second = makeLegacyFrame(subkey, nonce, "second");
+                response.insert(response.end(), first.begin(), first.end());
+                response.insert(response.end(), second.begin(), second.end());
+                if(!sendOnce(client, response)) {
+                    protocolFailed = true;
+                    return;
+                }
+
+                std::unique_lock<std::mutex> lock(holdMutex);
+                holdOpen.wait_for(lock, std::chrono::milliseconds(600), [this] { return stopping.load(); });
+            } else {
+                const std::string payload = "truncated";
+                const uint8_t length[2] = { 0, static_cast<uint8_t>(payload.size()) };
+                const ByteVector encryptedLength = encryptLegacyFramePart(subkey, nonce, length, sizeof(length));
+                ByteVector encryptedPayload = encryptLegacyFramePart(subkey, nonce,
+                    reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+                encryptedPayload.resize(encryptedPayload.size() / 2);
+                response.insert(response.end(), encryptedLength.begin(), encryptedLength.end());
+                response.insert(response.end(), encryptedPayload.begin(), encryptedPayload.end());
+                if(!sendOnce(client, response)) {
+                    protocolFailed = true;
+                }
+            }
+        } catch(const SocketException&) {
+            if(!stopping) {
+                protocolFailed = true;
+            }
+        }
+    }
+
+    const std::string password;
+    const ReplyMode replyMode;
+    Socket listener;
+    std::atomic<bool> stopping { false };
+    std::atomic<bool> protocolFailed { false };
+    std::thread worker;
+    std::mutex holdMutex;
+    std::condition_variable holdOpen;
+};
+
+class ShadowsocksSettingsScope
+{
+public:
+    explicit ShadowsocksSettingsScope(DCContext& context) : context(context) { }
+    ~ShadowsocksSettingsScope()
+    {
+        context.getSettingsManager()->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
+    }
+
+private:
+    DCContext& context;
+};
+
+void configureLocalShadowsocks(DCContext& context, const std::string& port, const std::string& password)
+{
+    auto* settings = context.getSettingsManager();
+    settings->set(SettingsManager::SHADOWSOCKS_SERVER, std::string("127.0.0.1"));
+    settings->set(SettingsManager::SHADOWSOCKS_PORT, Util::toInt(port));
+    settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, password);
+    settings->set(SettingsManager::SHADOWSOCKS_METHOD, std::string("aes-256-gcm"));
+    settings->set(SettingsManager::SOCKS_RESOLVE, true);
+    settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
+}
+
+std::string readPlainExactly(Socket& socket, size_t length, uint32_t timeout)
+{
+    std::string result(length, '\0');
+    size_t offset = 0;
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
+    while(offset < length) {
+        const int received = socket.read(result.data() + offset, static_cast<int>(length - offset));
+        if(received > 0) {
+            offset += static_cast<size_t>(received);
+            continue;
+        }
+        if(received == 0 || std::chrono::steady_clock::now() >= deadline) {
+            break;
+        }
+        const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+            deadline - std::chrono::steady_clock::now()).count();
+        if(remaining <= 0 || socket.wait(static_cast<uint32_t>(remaining), Socket::WAIT_READ) != Socket::WAIT_READ) {
+            break;
+        }
+    }
+    result.resize(offset);
+    return result;
+}
+
 class SocksAssociationInspector : public Socket
 {
 public:
@@ -361,6 +694,43 @@ private:
 };
 #endif
 
+}
+
+TEST_CASE("Shadowsocks reader drains every complete buffered frame", "[qt][socket][shadowsocks]")
+{
+    LegacyShadowsocksServer server("test-password", LegacyShadowsocksServer::ReplyMode::CoalescedFrames);
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalShadowsocks(*tc.ownedCtx, server.port(), "test-password");
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.proxyConnect("example.test", "443", 3000);
+
+    REQUIRE(readPlainExactly(socket, 5, 3000) == "first");
+    REQUIRE(readPlainExactly(socket, 6, 100) == "second");
+    REQUIRE_FALSE(server.hasProtocolFailed());
+}
+
+TEST_CASE("Shadowsocks reader reports a truncated encrypted frame", "[qt][socket][shadowsocks]")
+{
+    LegacyShadowsocksServer server("test-password", LegacyShadowsocksServer::ReplyMode::TruncatedPayload);
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalShadowsocks(*tc.ownedCtx, server.port(), "test-password");
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.proxyConnect("example.test", "443", 3000);
+
+    std::string error;
+    try {
+        readPlainExactly(socket, 9, 3000);
+    } catch(const SocketException& e) {
+        error = e.getError();
+    }
+    REQUIRE(error == "Shadowsocks stream ended with an incomplete frame");
+    REQUIRE_FALSE(server.hasProtocolFailed());
 }
 
 TEST_CASE("Retained SOCKS5 UDP association snapshot keeps its control channel alive", "[qt][socket][socks5][udp]")

@@ -1554,11 +1554,20 @@ int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
     if(int copied = copyPlain())
         return copied;
 
+    if(shadowsocksTryDecode()) {
+        if(int copied = copyPlain())
+            return copied;
+    }
+
     uint8_t buf[8192];
     while(true) {
         int len = rawRead(buf, sizeof(buf));
-        if(len == 0)
+        if(len == 0) {
+            if(!shadowsocksCipherIn.empty() || shadowsocksReadingPayload) {
+                throw SocketException(_("Shadowsocks stream ended with an incomplete frame"));
+            }
             return 0;
+        }
         if(len == -1)
             return -1;
 
