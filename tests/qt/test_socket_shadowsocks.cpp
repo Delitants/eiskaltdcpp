@@ -3,6 +3,8 @@
 #include "tests/TestContext.h"
 
 #include "dcpp/SettingsManager.h"
+#include "dcpp/CryptoManager.h"
+#include "dcpp/SSLSocket.h"
 #include "dcpp/Socket.h"
 
 #include <atomic>
@@ -596,6 +598,32 @@ void configureLocalShadowsocks(DCContext& context, const std::string& port, cons
     settings->set(SettingsManager::SHADOWSOCKS_METHOD, std::string("aes-256-gcm"));
     settings->set(SettingsManager::SOCKS_RESOLVE, true);
     settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
+}
+
+void configureIntegrationShadowsocks(DCContext& context, const char* server, const char* port,
+    const char* password, const char* method)
+{
+    auto* settings = context.getSettingsManager();
+    settings->set(SettingsManager::SHADOWSOCKS_SERVER, std::string(server));
+    settings->set(SettingsManager::SHADOWSOCKS_PORT, Util::toInt(port));
+    settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, std::string(password));
+    settings->set(SettingsManager::SHADOWSOCKS_METHOD, std::string(method ? method : "aes-256-gcm"));
+    settings->set(SettingsManager::SOCKS_RESOLVE, true);
+    settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
+}
+
+std::unique_ptr<SSLSocket> connectTlsThroughProxy(test::TestContext& testContext,
+    const std::string& host, const std::string& port, Socket::Protocol protocol)
+{
+    std::unique_ptr<SSLSocket> socket(
+        testContext.ownedCtx->getCryptoManager()->getClientSocket(true, protocol));
+    socket->setContext(testContext.ownedCtx.get());
+    socket->setServerName(host);
+    socket->proxyConnect(host, port, 10000);
+    if(!socket->waitConnected(10000)) {
+        return {};
+    }
+    return socket;
 }
 
 std::string readPlainExactly(Socket& socket, size_t length, uint32_t timeout)
@@ -1224,6 +1252,80 @@ TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][so
     char reply[16] = {};
     const int read = socket.read(reply, sizeof(reply));
     REQUIRE(read > 0);
+}
+
+TEST_CASE("Secure NMDC handshakes remain reliable through Shadowsocks", "[qt][socket][shadowsocks][integration]")
+{
+    const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
+    const char* proxyPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
+    const char* password = envOrNull("EISKALT_TEST_SHADOWSOCKS_PASSWORD");
+    const char* method = envOrNull("EISKALT_TEST_SHADOWSOCKS_METHOD");
+    const char* host = envOrNull("EISKALT_TEST_NMDCS_HOST");
+    const char* port = envOrNull("EISKALT_TEST_NMDCS_PORT");
+    if(!server || !proxyPort || !password || !host || !port) {
+        SKIP("Set Shadowsocks and EISKALT_TEST_NMDCS_HOST/PORT variables to run this integration test");
+    }
+
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureIntegrationShadowsocks(*tc.ownedCtx, server, proxyPort, password, method);
+
+    for(int attempt = 0; attempt < 5; ++attempt) {
+        CAPTURE(attempt);
+        const auto started = std::chrono::steady_clock::now();
+        auto socket = connectTlsThroughProxy(tc, host, port, Socket::PROTO_NMDC);
+        REQUIRE(socket != nullptr);
+        REQUIRE(std::chrono::steady_clock::now() - started < std::chrono::seconds(10));
+    }
+}
+
+TEST_CASE("HTTPS responses remain reliable through Shadowsocks", "[qt][socket][shadowsocks][integration]")
+{
+    const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
+    const char* proxyPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
+    const char* password = envOrNull("EISKALT_TEST_SHADOWSOCKS_PASSWORD");
+    const char* method = envOrNull("EISKALT_TEST_SHADOWSOCKS_METHOD");
+    const char* url = envOrNull("EISKALT_TEST_HTTPS_URL");
+    if(!server || !proxyPort || !password || !url) {
+        SKIP("Set Shadowsocks and EISKALT_TEST_HTTPS_URL variables to run this integration test");
+    }
+
+    std::string protocol;
+    std::string host;
+    std::string port;
+    std::string path;
+    std::string query;
+    std::string fragment;
+    Util::decodeUrl(url, protocol, host, port, path, query, fragment);
+    REQUIRE(protocol == "https");
+    REQUIRE_FALSE(host.empty());
+    if(port.empty()) {
+        port = "443";
+    }
+    if(path.empty()) {
+        path = "/";
+    }
+    if(!query.empty()) {
+        path += "?" + query;
+    }
+
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureIntegrationShadowsocks(*tc.ownedCtx, server, proxyPort, password, method);
+
+    for(int attempt = 0; attempt < 5; ++attempt) {
+        CAPTURE(attempt);
+        auto socket = connectTlsThroughProxy(tc, host, port, Socket::PROTO_DEFAULT);
+        REQUIRE(socket != nullptr);
+
+        const std::string request = "GET " + path + " HTTP/1.1\r\nHost: " + host +
+            "\r\nConnection: close\r\n\r\n";
+        socket->writeAll(request.data(), static_cast<int>(request.size()), 10000);
+        REQUIRE(socket->wait(10000, Socket::WAIT_READ) == Socket::WAIT_READ);
+
+        std::array<char, 1024> response {};
+        REQUIRE(socket->read(response.data(), response.size()) > 0);
+    }
 }
 
 TEST_CASE("Shadowsocks proxy endpoint advertised to ADC hubs must be public", "[qt][socket][shadowsocks]")
