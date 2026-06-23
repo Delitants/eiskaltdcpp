@@ -188,6 +188,10 @@ TEST_CASE("Shadowsocks 2022 derives deterministic session subkeys", "[shadowsock
         Shadowsocks2022::Method::Blake3ChaCha20Poly1305,
         sequence(0x20, 32), sequence(0x40, 32)) ==
         fromHex("f890938fdf83eaa57635296d037dbfced63cf082e5857c2104a175e8284a1b7e"));
+
+    REQUIRE(Shadowsocks2022::deriveSessionSubkey(
+        Shadowsocks2022::Method::Blake3Aes128Gcm,
+        sequence(0x00, 16), sequence(0xA0, 8)).size() == 16);
 }
 
 TEST_CASE("Shadowsocks 2022 increments u96 little-endian nonces safely", "[shadowsocks2022][tcp]")
@@ -373,6 +377,133 @@ TEST_CASE("Shadowsocks 2022 rejects invalid response headers", "[shadowsocks2022
     oversized.push_back(0);
     REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(oversized, 1700000000),
         "Oversized Shadowsocks 2022 response header");
+}
+
+TEST_CASE("Shadowsocks 2022 replay windows accept bounded reordering", "[shadowsocks2022][udp]")
+{
+    Shadowsocks2022ReplayWindow window(8);
+    REQUIRE(window.accept(100));
+    REQUIRE(window.accept(98));
+    REQUIRE(window.accept(99));
+    REQUIRE_FALSE(window.accept(98));
+    REQUIRE(window.accept(107));
+    REQUIRE_FALSE(window.accept(99));
+    REQUIRE(window.accept(106));
+}
+
+TEST_CASE("Shadowsocks 2022 UDP round trips every method", "[shadowsocks2022][udp]")
+{
+    const std::vector<Shadowsocks2022::Method> methods = {
+        Shadowsocks2022::Method::Blake3Aes128Gcm,
+        Shadowsocks2022::Method::Blake3Aes256Gcm,
+        Shadowsocks2022::Method::Blake3ChaCha20Poly1305
+    };
+    const ByteVector clientSessionId = sequence(0x10, 8);
+    const ByteVector serverSessionId = sequence(0x30, 8);
+    const ByteVector target = fromHex("030b6578616d706c652e636f6d0035");
+
+    for(const auto method : methods) {
+        CAPTURE(static_cast<int>(method));
+        Shadowsocks2022::PskChain chain;
+        chain.userPsk = sequence(0x40, Shadowsocks2022::keySize(method));
+        Shadowsocks2022UdpSession session(method, std::move(chain), clientSessionId);
+        const ByteVector nonce = method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305 ?
+            sequence(0x80, 24) : ByteVector{};
+
+        const ByteVector request = session.encodeRequest(7, 1700000000,
+            fromHex("aabb"), target, fromHex("010203"), nonce);
+        const auto decodedRequest = session.decodeRequest(request, 1700000000);
+        REQUIRE(decodedRequest.sessionId == clientSessionId);
+        REQUIRE(decodedRequest.packetId == 7);
+        REQUIRE(decodedRequest.socksAddress == target);
+        REQUIRE(decodedRequest.payload == fromHex("010203"));
+
+        ByteVector responseNonce = nonce;
+        if(!responseNonce.empty()) {
+            responseNonce.back() ^= 0x01;
+        }
+        const ByteVector response = session.encodeResponse(serverSessionId, 9,
+            1700000000, {}, target, fromHex("a0a1"), responseNonce);
+        const auto decodedResponse = session.decodeResponse(response, 1700000000);
+        REQUIRE(decodedResponse.sessionId == serverSessionId);
+        REQUIRE(decodedResponse.packetId == 9);
+        REQUIRE(decodedResponse.socksAddress == target);
+        REQUIRE(decodedResponse.payload == fromHex("a0a1"));
+    }
+}
+
+TEST_CASE("Shadowsocks 2022 UDP verifies EIH chains", "[shadowsocks2022][udp]")
+{
+    const std::vector<Shadowsocks2022::Method> methods = {
+        Shadowsocks2022::Method::Blake3Aes128Gcm,
+        Shadowsocks2022::Method::Blake3Aes256Gcm,
+        Shadowsocks2022::Method::Blake3ChaCha20Poly1305
+    };
+
+    for(const auto method : methods) {
+        CAPTURE(static_cast<int>(method));
+        const size_t keySize = Shadowsocks2022::keySize(method);
+        Shadowsocks2022::PskChain chain;
+        chain.identityPsks = { sequence(0x20, keySize), sequence(0x40, keySize) };
+        chain.userPsk = sequence(0x60, keySize);
+        Shadowsocks2022UdpSession session(method, std::move(chain), sequence(0x10, 8));
+        const ByteVector nonce = method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305 ?
+            sequence(0x90, 24) : ByteVector{};
+        const ByteVector packet = session.encodeRequest(1, 1700000000, {},
+            fromHex("017f00000101bb"), fromHex("55"), nonce);
+        const auto decoded = session.decodeRequest(packet, 1700000000);
+        REQUIRE(decoded.payload == fromHex("55"));
+    }
+}
+
+TEST_CASE("Shadowsocks 2022 UDP updates replay state only after validation", "[shadowsocks2022][udp]")
+{
+    Shadowsocks2022::PskChain chain;
+    chain.userPsk = sequence(0x00, 16);
+    Shadowsocks2022UdpSession session(Shadowsocks2022::Method::Blake3Aes128Gcm,
+        std::move(chain), sequence(0x10, 8));
+    const ByteVector packet = session.encodeRequest(22, 1700000000, {},
+        fromHex("017f00000101bb"), fromHex("0102"));
+
+    ByteVector tampered = packet;
+    tampered.back() ^= 0x01;
+    REQUIRE_THROWS_WITH(session.decodeRequest(tampered, 1700000000),
+        "Shadowsocks 2022 authentication failed");
+    REQUIRE(session.decodeRequest(packet, 1700000000).packetId == 22);
+    REQUIRE_THROWS_WITH(session.decodeRequest(packet, 1700000000),
+        "Replayed Shadowsocks 2022 UDP packet");
+
+    const ByteVector stale = session.encodeRequest(23, 1699999969, {},
+        fromHex("017f00000101bb"), fromHex("03"));
+    REQUIRE_THROWS_WITH(session.decodeRequest(stale, 1700000000),
+        "Stale Shadowsocks 2022 UDP timestamp");
+}
+
+TEST_CASE("Shadowsocks 2022 UDP responses require the client session ID", "[shadowsocks2022][udp]")
+{
+    Shadowsocks2022::PskChain encoderChain;
+    encoderChain.userPsk = sequence(0x00, 16);
+    Shadowsocks2022UdpSession encoder(Shadowsocks2022::Method::Blake3Aes128Gcm,
+        encoderChain, sequence(0x10, 8));
+    Shadowsocks2022UdpSession decoder(Shadowsocks2022::Method::Blake3Aes128Gcm,
+        std::move(encoderChain), sequence(0x20, 8));
+    const ByteVector response = encoder.encodeResponse(sequence(0x30, 8), 1,
+        1700000000, {}, fromHex("017f00000101bb"), fromHex("01"));
+
+    REQUIRE_THROWS_WITH(decoder.decodeResponse(response, 1700000000),
+        "Shadowsocks 2022 UDP client session mismatch");
+}
+
+TEST_CASE("Shadowsocks 2022 UDP rejects malformed address boundaries", "[shadowsocks2022][udp]")
+{
+    Shadowsocks2022::PskChain chain;
+    chain.userPsk = sequence(0x00, 16);
+    Shadowsocks2022UdpSession session(Shadowsocks2022::Method::Blake3Aes128Gcm,
+        std::move(chain), sequence(0x10, 8));
+    ByteVector addressWithTrailingData = fromHex("017f00000101bbff");
+
+    REQUIRE_THROWS_WITH(session.encodeRequest(1, 1700000000, {},
+        addressWithTrailingData, {}), "Invalid Shadowsocks 2022 UDP address");
 }
 
 #else

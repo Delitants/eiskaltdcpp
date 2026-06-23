@@ -14,6 +14,7 @@
 
 #include "stdinc.h"
 #include "Shadowsocks2022.h"
+#include "XChaCha20Poly1305.h"
 
 #include <blake3.h>
 #include <openssl/evp.h>
@@ -215,6 +216,30 @@ ByteVector aesBlockEncrypt(const ByteVector& key, const ByteVector& plaintext)
     return output;
 }
 
+ByteVector aesBlockDecrypt(const ByteVector& key, const ByteVector& ciphertext)
+{
+    if((key.size() != 16 && key.size() != 32) || ciphertext.size() != 16) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 block input");
+    }
+
+    CipherContext context(EVP_CIPHER_CTX_new(), EVP_CIPHER_CTX_free);
+    ByteVector output(32);
+    int outputLength = 0;
+    int finalLength = 0;
+    const EVP_CIPHER* cipher = key.size() == 16 ? EVP_aes_128_ecb() : EVP_aes_256_ecb();
+    const bool ok = context &&
+        EVP_DecryptInit_ex(context.get(), cipher, nullptr, key.data(), nullptr) == 1 &&
+        EVP_CIPHER_CTX_set_padding(context.get(), 0) == 1 &&
+        EVP_DecryptUpdate(context.get(), output.data(), &outputLength,
+            ciphertext.data(), static_cast<int>(ciphertext.size())) == 1 &&
+        EVP_DecryptFinal_ex(context.get(), output.data() + outputLength, &finalLength) == 1;
+    if(!ok || outputLength + finalLength != 16) {
+        throw std::runtime_error("Shadowsocks 2022 block decryption failed");
+    }
+    output.resize(16);
+    return output;
+}
+
 ByteVector tcpIdentityHeaders(Shadowsocks2022::Method method,
     const Shadowsocks2022::PskChain& chain, const ByteVector& salt)
 {
@@ -229,6 +254,39 @@ ByteVector tcpIdentityHeaders(Shadowsocks2022::Method method,
         result.insert(result.end(), header.begin(), header.end());
     }
     return result;
+}
+
+const ByteVector& udpSeparateHeaderKey(const Shadowsocks2022::PskChain& chain)
+{
+    return chain.identityPsks.empty() ? chain.userPsk : chain.identityPsks.front();
+}
+
+ByteVector udpIdentityHeaders(const Shadowsocks2022::PskChain& chain,
+    const ByteVector& separateHeader)
+{
+    ByteVector result;
+    result.reserve(chain.identityPsks.size() * 16);
+    for(size_t i = 0; i < chain.identityPsks.size(); ++i) {
+        const ByteVector& currentPsk = chain.identityPsks[i];
+        const ByteVector& nextPsk = i + 1 < chain.identityPsks.size() ?
+            chain.identityPsks[i + 1] : chain.userPsk;
+        ByteVector plaintext = pskHash16(nextPsk);
+        for(size_t j = 0; j < plaintext.size(); ++j) {
+            plaintext[j] ^= separateHeader[j];
+        }
+        const ByteVector header = aesBlockEncrypt(currentPsk, plaintext);
+        result.insert(result.end(), header.begin(), header.end());
+    }
+    return result;
+}
+
+void verifyUdpIdentityHeaders(const Shadowsocks2022::PskChain& chain,
+    const ByteVector& separateHeader, const uint8_t* encryptedHeaders)
+{
+    const ByteVector expected = udpIdentityHeaders(chain, separateHeader);
+    if(!std::equal(expected.begin(), expected.end(), encryptedHeaders)) {
+        throw std::runtime_error("Shadowsocks 2022 UDP identity mismatch");
+    }
 }
 
 void appendU16(ByteVector& output, uint16_t value)
@@ -256,6 +314,121 @@ uint64_t readU64(const uint8_t* input)
         value = (value << 8) | input[i];
     }
     return value;
+}
+
+size_t socksAddressEnd(const ByteVector& data, size_t offset)
+{
+    if(offset >= data.size()) {
+        throw std::runtime_error("Invalid Shadowsocks 2022 UDP address");
+    }
+    size_t addressLength = 0;
+    switch(data[offset]) {
+    case 0x01:
+        addressLength = 1 + 4 + 2;
+        break;
+    case 0x04:
+        addressLength = 1 + 16 + 2;
+        break;
+    case 0x03:
+        if(offset + 2 > data.size()) {
+            throw std::runtime_error("Invalid Shadowsocks 2022 UDP address");
+        }
+        addressLength = 1 + 1 + data[offset + 1] + 2;
+        break;
+    default:
+        throw std::runtime_error("Invalid Shadowsocks 2022 UDP address");
+    }
+    if(addressLength > data.size() - offset) {
+        throw std::runtime_error("Invalid Shadowsocks 2022 UDP address");
+    }
+    return offset + addressLength;
+}
+
+void validateTimestamp(uint64_t timestamp, uint64_t now)
+{
+    const uint64_t difference = timestamp > now ? timestamp - now : now - timestamp;
+    if(difference > 30) {
+        throw std::runtime_error("Stale Shadowsocks 2022 UDP timestamp");
+    }
+}
+
+ByteVector xSeal(const ByteVector& key, const ByteVector& nonce, const ByteVector& plaintext)
+{
+    ByteVector ciphertext;
+    ByteVector tag;
+    if(!XChaCha20Poly1305::encrypt(key, nonce, plaintext, {}, ciphertext, tag)) {
+        throw std::runtime_error("Shadowsocks 2022 encryption failed");
+    }
+    ciphertext.insert(ciphertext.end(), tag.begin(), tag.end());
+    return ciphertext;
+}
+
+ByteVector xOpen(const ByteVector& key, const ByteVector& nonce, const ByteVector& ciphertext)
+{
+    if(ciphertext.size() < XChaCha20Poly1305::TAG_SIZE) {
+        throw std::runtime_error("Shadowsocks 2022 authentication failed");
+    }
+    const auto tagBegin = ciphertext.end() - XChaCha20Poly1305::TAG_SIZE;
+    const ByteVector encrypted(ciphertext.begin(), tagBegin);
+    const ByteVector tag(tagBegin, ciphertext.end());
+    ByteVector plaintext;
+    if(!XChaCha20Poly1305::decrypt(key, nonce, encrypted, {}, tag, plaintext)) {
+        throw std::runtime_error("Shadowsocks 2022 authentication failed");
+    }
+    return plaintext;
+}
+
+Shadowsocks2022UdpMessage parseUdpMessage(const ByteVector& plaintext, size_t offset,
+    const ByteVector& sessionId, uint64_t packetId, uint8_t expectedType,
+    uint64_t now, const ByteVector* expectedClientSessionId)
+{
+    const size_t required = offset + 1 + 8 + (expectedClientSessionId ? 8 : 0) + 2;
+    if(plaintext.size() < required) {
+        throw std::runtime_error("Truncated Shadowsocks 2022 UDP header");
+    }
+    if(plaintext[offset++] != expectedType) {
+        throw std::runtime_error("Unexpected Shadowsocks 2022 UDP packet type");
+    }
+    validateTimestamp(readU64(plaintext.data() + offset), now);
+    offset += 8;
+    if(expectedClientSessionId) {
+        if(!std::equal(expectedClientSessionId->begin(), expectedClientSessionId->end(),
+                plaintext.begin() + static_cast<ptrdiff_t>(offset))) {
+            throw std::runtime_error("Shadowsocks 2022 UDP client session mismatch");
+        }
+        offset += 8;
+    }
+    const uint16_t paddingLength = readU16(plaintext.data() + offset);
+    offset += 2;
+    if(paddingLength > plaintext.size() - offset) {
+        throw std::runtime_error("Invalid Shadowsocks 2022 UDP padding");
+    }
+    offset += paddingLength;
+    const size_t addressEnd = socksAddressEnd(plaintext, offset);
+
+    Shadowsocks2022UdpMessage message;
+    message.sessionId = sessionId;
+    message.packetId = packetId;
+    message.socksAddress.assign(plaintext.begin() + static_cast<ptrdiff_t>(offset),
+        plaintext.begin() + static_cast<ptrdiff_t>(addressEnd));
+    message.payload.assign(plaintext.begin() + static_cast<ptrdiff_t>(addressEnd), plaintext.end());
+    return message;
+}
+
+void appendUdpPayload(ByteVector& body, uint64_t timestamp, const ByteVector& padding,
+    const ByteVector& socksAddress, const ByteVector& payload)
+{
+    if(padding.size() > std::numeric_limits<uint16_t>::max()) {
+        throw std::invalid_argument("Oversized Shadowsocks 2022 UDP padding");
+    }
+    if(socksAddressEnd(socksAddress, 0) != socksAddress.size()) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 UDP address");
+    }
+    appendU64(body, timestamp);
+    appendU16(body, static_cast<uint16_t>(padding.size()));
+    body.insert(body.end(), padding.begin(), padding.end());
+    body.insert(body.end(), socksAddress.begin(), socksAddress.end());
+    body.insert(body.end(), payload.begin(), payload.end());
 }
 
 void advanceNonce(ByteVector& nonce, bool& exhausted)
@@ -325,7 +498,7 @@ ByteVector Shadowsocks2022::deriveSessionSubkey(
     Method method, const ByteVector& psk, const ByteVector& salt)
 {
     const std::size_t expectedSize = keySize(method);
-    if(psk.size() != expectedSize || salt.size() != expectedSize) {
+    if(psk.size() != expectedSize || salt.empty()) {
         throw std::invalid_argument("Wrong Shadowsocks 2022 key material size");
     }
 
@@ -529,6 +702,245 @@ ByteVector Shadowsocks2022TcpClient::openResponse(const ByteVector& ciphertext)
     ByteVector output = open(method, responseSubkey, responseNonce, ciphertext);
     advanceNonce(responseNonce, responseNonceExhausted);
     return output;
+}
+
+Shadowsocks2022ReplayWindow::Shadowsocks2022ReplayWindow(uint64_t windowSize) :
+    windowSize(windowSize)
+{
+    if(windowSize == 0) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 replay window size");
+    }
+}
+
+bool Shadowsocks2022ReplayWindow::accept(uint64_t packetId)
+{
+    if(!initialized) {
+        initialized = true;
+        highest = packetId;
+        seen.insert(packetId);
+        return true;
+    }
+    if(packetId <= highest && highest - packetId >= windowSize) {
+        return false;
+    }
+    if(seen.find(packetId) != seen.end()) {
+        return false;
+    }
+    if(packetId > highest) {
+        highest = packetId;
+        for(auto i = seen.begin(); i != seen.end();) {
+            if(highest - *i >= windowSize) {
+                i = seen.erase(i);
+            } else {
+                ++i;
+            }
+        }
+    }
+    seen.insert(packetId);
+    return true;
+}
+
+Shadowsocks2022UdpSession::Shadowsocks2022UdpSession(Shadowsocks2022::Method method,
+    Shadowsocks2022::PskChain pskChain, ByteVector clientSessionId) :
+    method(method), pskChain(std::move(pskChain)), clientSessionId(std::move(clientSessionId))
+{
+    const size_t expectedSize = Shadowsocks2022::keySize(method);
+    if(this->clientSessionId.size() != 8 || this->pskChain.userPsk.size() != expectedSize ||
+            std::any_of(this->pskChain.identityPsks.begin(), this->pskChain.identityPsks.end(),
+                [expectedSize](const ByteVector& psk) { return psk.size() != expectedSize; })) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 UDP session");
+    }
+}
+
+ByteVector Shadowsocks2022UdpSession::encodeRequest(uint64_t packetId, uint64_t timestamp,
+    const ByteVector& padding, const ByteVector& socksAddress,
+    const ByteVector& payload, const ByteVector& nonce)
+{
+    ByteVector separateHeader = clientSessionId;
+    appendU64(separateHeader, packetId);
+    ByteVector body;
+
+    if(method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305) {
+        if(nonce.size() != XChaCha20Poly1305::NONCE_SIZE) {
+            throw std::invalid_argument("Invalid Shadowsocks 2022 UDP nonce");
+        }
+        body = separateHeader;
+        body.push_back(0x00);
+        appendUdpPayload(body, timestamp, padding, socksAddress, payload);
+        ByteVector output = nonce;
+        const ByteVector identityHeaders = udpIdentityHeaders(pskChain, separateHeader);
+        output.insert(output.end(), identityHeaders.begin(), identityHeaders.end());
+        const ByteVector encryptedBody = xSeal(pskChain.userPsk, nonce, body);
+        output.insert(output.end(), encryptedBody.begin(), encryptedBody.end());
+        return output;
+    }
+
+    if(!nonce.empty()) {
+        throw std::invalid_argument("Unexpected Shadowsocks 2022 UDP nonce");
+    }
+    body.push_back(0x00);
+    appendUdpPayload(body, timestamp, padding, socksAddress, payload);
+    ByteVector output = aesBlockEncrypt(udpSeparateHeaderKey(pskChain), separateHeader);
+    const ByteVector identityHeaders = udpIdentityHeaders(pskChain, separateHeader);
+    output.insert(output.end(), identityHeaders.begin(), identityHeaders.end());
+    const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+        method, pskChain.userPsk, clientSessionId);
+    const ByteVector bodyNonce(separateHeader.begin() + 4, separateHeader.end());
+    const ByteVector encryptedBody = seal(method, subkey, bodyNonce, body);
+    output.insert(output.end(), encryptedBody.begin(), encryptedBody.end());
+    return output;
+}
+
+Shadowsocks2022UdpMessage Shadowsocks2022UdpSession::decodeRequest(
+    const ByteVector& packet, uint64_t now)
+{
+    const size_t identitySize = pskChain.identityPsks.size() * 16;
+    ByteVector separateHeader;
+    ByteVector plaintext;
+    size_t bodyOffset = 0;
+
+    if(method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305) {
+        bodyOffset = XChaCha20Poly1305::NONCE_SIZE + identitySize;
+        if(packet.size() < bodyOffset + XChaCha20Poly1305::TAG_SIZE) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP packet");
+        }
+        const ByteVector nonce(packet.begin(), packet.begin() + XChaCha20Poly1305::NONCE_SIZE);
+        plaintext = xOpen(pskChain.userPsk, nonce,
+            ByteVector(packet.begin() + static_cast<ptrdiff_t>(bodyOffset), packet.end()));
+        if(plaintext.size() < 16) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP header");
+        }
+        separateHeader.assign(plaintext.begin(), plaintext.begin() + 16);
+        verifyUdpIdentityHeaders(pskChain, separateHeader,
+            packet.data() + XChaCha20Poly1305::NONCE_SIZE);
+    } else {
+        bodyOffset = 16 + identitySize;
+        if(packet.size() < bodyOffset + AEAD_TAG_SIZE) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP packet");
+        }
+        separateHeader = aesBlockDecrypt(udpSeparateHeaderKey(pskChain),
+            ByteVector(packet.begin(), packet.begin() + 16));
+        verifyUdpIdentityHeaders(pskChain, separateHeader, packet.data() + 16);
+        const ByteVector sessionId(separateHeader.begin(), separateHeader.begin() + 8);
+        const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+            method, pskChain.userPsk, sessionId);
+        const ByteVector bodyNonce(separateHeader.begin() + 4, separateHeader.end());
+        plaintext = open(method, subkey, bodyNonce,
+            ByteVector(packet.begin() + static_cast<ptrdiff_t>(bodyOffset), packet.end()));
+    }
+
+    const ByteVector sessionId(separateHeader.begin(), separateHeader.begin() + 8);
+    const uint64_t packetId = readU64(separateHeader.data() + 8);
+    const size_t headerOffset = method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305 ? 16 : 0;
+    Shadowsocks2022UdpMessage message = parseUdpMessage(
+        plaintext, headerOffset, sessionId, packetId, 0x00, now, nullptr);
+    if(!requestReplayWindows[sessionId].accept(packetId)) {
+        throw std::runtime_error("Replayed Shadowsocks 2022 UDP packet");
+    }
+    return message;
+}
+
+ByteVector Shadowsocks2022UdpSession::encodeResponse(const ByteVector& serverSessionId,
+    uint64_t packetId, uint64_t timestamp, const ByteVector& padding,
+    const ByteVector& socksAddress, const ByteVector& payload, const ByteVector& nonce)
+{
+    if(serverSessionId.size() != 8) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 UDP server session");
+    }
+    ByteVector separateHeader = serverSessionId;
+    appendU64(separateHeader, packetId);
+    ByteVector body;
+
+    if(method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305) {
+        if(nonce.size() != XChaCha20Poly1305::NONCE_SIZE) {
+            throw std::invalid_argument("Invalid Shadowsocks 2022 UDP nonce");
+        }
+        if(padding.size() > std::numeric_limits<uint16_t>::max()) {
+            throw std::invalid_argument("Oversized Shadowsocks 2022 UDP padding");
+        }
+        if(socksAddressEnd(socksAddress, 0) != socksAddress.size()) {
+            throw std::invalid_argument("Invalid Shadowsocks 2022 UDP address");
+        }
+        body = separateHeader;
+        body.push_back(0x01);
+        appendU64(body, timestamp);
+        body.insert(body.end(), clientSessionId.begin(), clientSessionId.end());
+        appendU16(body, static_cast<uint16_t>(padding.size()));
+        body.insert(body.end(), padding.begin(), padding.end());
+        body.insert(body.end(), socksAddress.begin(), socksAddress.end());
+        body.insert(body.end(), payload.begin(), payload.end());
+        ByteVector output = nonce;
+        const ByteVector encryptedBody = xSeal(pskChain.userPsk, nonce, body);
+        output.insert(output.end(), encryptedBody.begin(), encryptedBody.end());
+        return output;
+    }
+
+    if(!nonce.empty()) {
+        throw std::invalid_argument("Unexpected Shadowsocks 2022 UDP nonce");
+    }
+    if(padding.size() > std::numeric_limits<uint16_t>::max()) {
+        throw std::invalid_argument("Oversized Shadowsocks 2022 UDP padding");
+    }
+    if(socksAddressEnd(socksAddress, 0) != socksAddress.size()) {
+        throw std::invalid_argument("Invalid Shadowsocks 2022 UDP address");
+    }
+    body.push_back(0x01);
+    appendU64(body, timestamp);
+    body.insert(body.end(), clientSessionId.begin(), clientSessionId.end());
+    appendU16(body, static_cast<uint16_t>(padding.size()));
+    body.insert(body.end(), padding.begin(), padding.end());
+    body.insert(body.end(), socksAddress.begin(), socksAddress.end());
+    body.insert(body.end(), payload.begin(), payload.end());
+
+    ByteVector output = aesBlockEncrypt(pskChain.userPsk, separateHeader);
+    const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+        method, pskChain.userPsk, serverSessionId);
+    const ByteVector bodyNonce(separateHeader.begin() + 4, separateHeader.end());
+    const ByteVector encryptedBody = seal(method, subkey, bodyNonce, body);
+    output.insert(output.end(), encryptedBody.begin(), encryptedBody.end());
+    return output;
+}
+
+Shadowsocks2022UdpMessage Shadowsocks2022UdpSession::decodeResponse(
+    const ByteVector& packet, uint64_t now)
+{
+    ByteVector separateHeader;
+    ByteVector plaintext;
+
+    if(method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305) {
+        if(packet.size() < XChaCha20Poly1305::NONCE_SIZE + XChaCha20Poly1305::TAG_SIZE) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP packet");
+        }
+        const ByteVector nonce(packet.begin(), packet.begin() + XChaCha20Poly1305::NONCE_SIZE);
+        plaintext = xOpen(pskChain.userPsk, nonce,
+            ByteVector(packet.begin() + XChaCha20Poly1305::NONCE_SIZE, packet.end()));
+        if(plaintext.size() < 16) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP header");
+        }
+        separateHeader.assign(plaintext.begin(), plaintext.begin() + 16);
+    } else {
+        if(packet.size() < 16 + AEAD_TAG_SIZE) {
+            throw std::runtime_error("Truncated Shadowsocks 2022 UDP packet");
+        }
+        separateHeader = aesBlockDecrypt(pskChain.userPsk,
+            ByteVector(packet.begin(), packet.begin() + 16));
+        const ByteVector serverSessionId(separateHeader.begin(), separateHeader.begin() + 8);
+        const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+            method, pskChain.userPsk, serverSessionId);
+        const ByteVector bodyNonce(separateHeader.begin() + 4, separateHeader.end());
+        plaintext = open(method, subkey, bodyNonce,
+            ByteVector(packet.begin() + 16, packet.end()));
+    }
+
+    const ByteVector serverSessionId(separateHeader.begin(), separateHeader.begin() + 8);
+    const uint64_t packetId = readU64(separateHeader.data() + 8);
+    const size_t headerOffset = method == Shadowsocks2022::Method::Blake3ChaCha20Poly1305 ? 16 : 0;
+    Shadowsocks2022UdpMessage message = parseUdpMessage(
+        plaintext, headerOffset, serverSessionId, packetId, 0x01, now, &clientSessionId);
+    if(!responseReplayWindows[serverSessionId].accept(packetId)) {
+        throw std::runtime_error("Replayed Shadowsocks 2022 UDP packet");
+    }
+    return message;
 }
 
 } // namespace dcpp

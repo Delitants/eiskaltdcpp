@@ -17,6 +17,8 @@
 #include "typedefs.h"
 
 #include <cstddef>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -77,6 +79,51 @@ private:
     ByteVector responseNonce;
     bool requestNonceExhausted = false;
     bool responseNonceExhausted = false;
+};
+
+class Shadowsocks2022ReplayWindow
+{
+public:
+    explicit Shadowsocks2022ReplayWindow(uint64_t windowSize = 1024);
+    bool accept(uint64_t packetId);
+
+private:
+    uint64_t windowSize;
+    uint64_t highest = 0;
+    bool initialized = false;
+    std::set<uint64_t> seen;
+};
+
+struct Shadowsocks2022UdpMessage {
+    ByteVector sessionId;
+    uint64_t packetId = 0;
+    ByteVector socksAddress;
+    ByteVector payload;
+};
+
+class Shadowsocks2022UdpSession
+{
+public:
+    Shadowsocks2022UdpSession(Shadowsocks2022::Method method,
+        Shadowsocks2022::PskChain pskChain, ByteVector clientSessionId);
+
+    ByteVector encodeRequest(uint64_t packetId, uint64_t timestamp,
+        const ByteVector& padding, const ByteVector& socksAddress,
+        const ByteVector& payload, const ByteVector& nonce = {});
+    Shadowsocks2022UdpMessage decodeRequest(const ByteVector& packet, uint64_t now);
+
+    ByteVector encodeResponse(const ByteVector& serverSessionId, uint64_t packetId,
+        uint64_t timestamp, const ByteVector& padding,
+        const ByteVector& socksAddress, const ByteVector& payload,
+        const ByteVector& nonce = {});
+    Shadowsocks2022UdpMessage decodeResponse(const ByteVector& packet, uint64_t now);
+
+private:
+    Shadowsocks2022::Method method;
+    Shadowsocks2022::PskChain pskChain;
+    ByteVector clientSessionId;
+    std::map<ByteVector, Shadowsocks2022ReplayWindow> requestReplayWindows;
+    std::map<ByteVector, Shadowsocks2022ReplayWindow> responseReplayWindows;
 };
 
 } // namespace dcpp
