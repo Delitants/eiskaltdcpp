@@ -48,6 +48,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_settingsconnectionhelpers.cpp
     test_socket_shadowsocks.cpp
     test_shadowsocks2022.cpp
+    test_xchacha20poly1305.cpp
     test_dht_bootstrap.cpp
     test_client_reconnect_policy.cpp
     stubs_wulforutil.cpp
