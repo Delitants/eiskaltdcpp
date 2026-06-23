@@ -11,6 +11,7 @@
  */
 
 #include "SettingsDownloads.h"
+#include "DownloadToSettings.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforUtil.h"
@@ -23,6 +24,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMenu>
+#include <QMessageBox>
 #include <QDir>
 
 using namespace dcpp;
@@ -106,6 +108,8 @@ void SettingsDownloads::init(){
 
         toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
         toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+        pushButton_DOWNLOADTO_ADD->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITADD));
+        pushButton_DOWNLOADTO_REMOVE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
         groupBox_3->hide();
         pushButton_CFGLISTS->hide();
 
@@ -113,25 +117,24 @@ void SettingsDownloads::init(){
         connect(toolButton_BROWSE1, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);
     }
     {//Download to
-        QString aliases, paths;
+        const QList<DownloadToEntry> entries = decodeDownloadTo(
+            qtCtx()->settings()->getStr(WS_DOWNLOADTO_PATHS),
+            qtCtx()->settings()->getStr(WS_DOWNLOADTO_ALIASES)
+        );
 
-        aliases = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_ALIASES).toUtf8());
-        paths   = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_PATHS).toUtf8());
+        for (const DownloadToEntry& entry : entries) {
+            QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget);
 
-        QStringList a = aliases.split("\n", Qt::SkipEmptyParts);
-        QStringList p = paths.split("\n", Qt::SkipEmptyParts);
-
-        if (a.size() == p.size() && !a.isEmpty()){
-            for (int i = 0; i < a.size(); i++){
-                QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget);
-
-                item->setText(0, p.at(i));
-                item->setText(1, a.at(i));
-            }
+            item->setText(0, entry.path);
+            item->setText(1, entry.alias);
         }
 
         treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(treeWidget, &QWidget::customContextMenuRequested, this, &SettingsDownloads::slotDownloadTo);
+        connect(treeWidget, &QWidget::customContextMenuRequested, this, &SettingsDownloads::slotDownloadToMenu);
+        connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &SettingsDownloads::slotDownloadToSelectionChanged);
+        connect(pushButton_DOWNLOADTO_ADD, &QPushButton::clicked, this, &SettingsDownloads::slotAddDownloadTo);
+        connect(pushButton_DOWNLOADTO_REMOVE, &QPushButton::clicked, this, &SettingsDownloads::slotRemoveDownloadTo);
+        slotDownloadToSelectionChanged();
     }
     {//Queue
         //Auto-priority
@@ -172,69 +175,101 @@ void SettingsDownloads::slotBrowse(){
         lineEdit_UNF_DL_DIR->setText(dir);
 }
 
-void SettingsDownloads::slotDownloadTo(){
-    QList<QTreeWidgetItem*> selected = treeWidget->selectedItems();
+void SettingsDownloads::slotAddDownloadTo()
+{
+    bool accepted = false;
+    const QString alias = QInputDialog::getText(
+        this,
+        tr("Enter alias for directory"),
+        tr("Alias"),
+        QLineEdit::Normal,
+        QString(),
+        &accepted
+    );
 
-    QMenu *m = new QMenu(this);
-    QAction *new_alias = new QAction(tr("New"), m);
-    new_alias->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITADD));
-
-    m->addAction(new_alias);
-
-    if (!selected.isEmpty())
-        m->addAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE), tr("Delete"));
-
-    QAction *ret = m->exec(QCursor::pos());
-
-    delete m;
-
-    if (ret == new_alias){
-        QString alias = QInputDialog::getText(this, tr("Enter alias for directory"), tr("Alias"));
-
-        if (alias.isEmpty())
-            return;
-
-        QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory"), QDir::homePath());
-
-        if (dir.isEmpty())
-            return;
-
-        dir = QDir::toNativeSeparators(dir);
-
-        QString aliases, paths;
-
-        aliases = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_ALIASES).toUtf8());
-        paths   = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_PATHS).toUtf8());
-
-        aliases += alias + "\n";
-        paths   += dir + "\n";
-
-        qtCtx()->settings()->setStr(WS_DOWNLOADTO_ALIASES, aliases.toUtf8().toBase64());
-        qtCtx()->settings()->setStr(WS_DOWNLOADTO_PATHS, paths.toUtf8().toBase64());
-
-        QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget);
-
-        item->setText(0, dir);
-        item->setText(1, alias);
+    if (!accepted || alias.isEmpty()) {
+        return;
     }
-    else if (ret){
-        QString aliases, paths;
-        aliases = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_ALIASES).toUtf8());
-        paths   = QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_DOWNLOADTO_PATHS).toUtf8());
 
-        for (const auto &i : selected){
-            QString alias = i->text(1);
-            QString path  = i->text(0);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Select directory"), QDir::homePath());
 
-            aliases.replace(alias+"\n", "");
-            paths.replace(path+"\n", "");
-
-            delete i;
-        }
-
-        qtCtx()->settings()->setStr(WS_DOWNLOADTO_ALIASES, aliases.toUtf8().toBase64());
-        qtCtx()->settings()->setStr(WS_DOWNLOADTO_PATHS, paths.toUtf8().toBase64());
+    if (dir.isEmpty()) {
+        return;
     }
+
+    dir = QDir::toNativeSeparators(dir);
+
+    QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget);
+    item->setText(0, dir);
+    item->setText(1, alias);
+
+    saveDownloadToEntries();
+    slotDownloadToSelectionChanged();
+}
+
+void SettingsDownloads::slotRemoveDownloadTo()
+{
+    const QList<QTreeWidgetItem*> selected = treeWidget->selectedItems();
+
+    if (selected.isEmpty()) {
+        return;
+    }
+
+    const QMessageBox::StandardButton ret = QMessageBox::question(
+        this,
+        tr("Action confirm"),
+        tr("Remove selected entries?"),
+        QMessageBox::Yes | QMessageBox::No,
+        QMessageBox::No
+    );
+
+    if (ret != QMessageBox::Yes) {
+        return;
+    }
+
+    qDeleteAll(selected);
+    saveDownloadToEntries();
+    slotDownloadToSelectionChanged();
+}
+
+void SettingsDownloads::slotDownloadToMenu(const QPoint&)
+{
+    QMenu menu(this);
+    QAction *addAction = new QAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITADD), tr("Add"), &menu);
+    QAction *removeAction = new QAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE), tr("Remove"), &menu);
+
+    removeAction->setEnabled(!treeWidget->selectedItems().isEmpty());
+
+    menu.addAction(addAction);
+    menu.addAction(removeAction);
+
+    QAction *result = menu.exec(QCursor::pos());
+
+    if (result == addAction) {
+        slotAddDownloadTo();
+    } else if (result == removeAction) {
+        slotRemoveDownloadTo();
+    }
+}
+
+void SettingsDownloads::slotDownloadToSelectionChanged()
+{
+    pushButton_DOWNLOADTO_REMOVE->setEnabled(!treeWidget->selectedItems().isEmpty());
+}
+
+void SettingsDownloads::saveDownloadToEntries()
+{
+    QList<DownloadToEntry> entries;
+    entries.reserve(treeWidget->topLevelItemCount());
+
+    for (int index = 0; index < treeWidget->topLevelItemCount(); ++index) {
+        QTreeWidgetItem *item = treeWidget->topLevelItem(index);
+        entries.append({ item->text(0), item->text(1) });
+    }
+
+    const auto encoded = encodeDownloadTo(entries);
+    qtCtx()->settings()->setStr(WS_DOWNLOADTO_PATHS, encoded.first);
+    qtCtx()->settings()->setStr(WS_DOWNLOADTO_ALIASES, encoded.second);
 }
 
 void SettingsDownloads::slotCfgPublic(){

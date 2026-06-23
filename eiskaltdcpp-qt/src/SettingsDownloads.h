@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <QPoint>
 #include <QWidget>
 
 #include "ui_UISettingsDownloads.h"
@@ -30,11 +31,15 @@ public slots:
 
 private slots:
     void slotBrowse();
-    void slotDownloadTo();
+    void slotAddDownloadTo();
+    void slotRemoveDownloadTo();
+    void slotDownloadToMenu(const QPoint&);
+    void slotDownloadToSelectionChanged();
     void slotCfgPublic();
 
 private:
     void init();
+    void saveDownloadToEntries();
 
     QMap< dcpp::SettingsManager::IntSetting, int > other_settings;
 };
