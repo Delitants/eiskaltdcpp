@@ -22,6 +22,7 @@
 #include "format.h"
 #include "SettingsManager.h"
 #include "TimerManager.h"
+#include "XChaCha20Poly1305.h"
 
 #ifdef __MINGW32__
 #ifndef EADDRNOTAVAIL
@@ -446,7 +447,32 @@ int shadowsocksMethodId(const string& method) {
         return Socket::SHADOWSOCKS_AES_256_GCM;
     if(normalized == "chacha20-ietf-poly1305")
         return Socket::SHADOWSOCKS_CHACHA20_IETF_POLY1305;
+    if(normalized == "2022-blake3-aes-128-gcm")
+        return Socket::SHADOWSOCKS_2022_BLAKE3_AES_128_GCM;
+    if(normalized == "2022-blake3-aes-256-gcm")
+        return Socket::SHADOWSOCKS_2022_BLAKE3_AES_256_GCM;
+    if(normalized == "2022-blake3-chacha20-poly1305")
+        return Socket::SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305;
     return Socket::SHADOWSOCKS_NONE;
+}
+
+bool isShadowsocks2022Method(int method) {
+    return method == Socket::SHADOWSOCKS_2022_BLAKE3_AES_128_GCM ||
+        method == Socket::SHADOWSOCKS_2022_BLAKE3_AES_256_GCM ||
+        method == Socket::SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305;
+}
+
+Shadowsocks2022::Method shadowsocks2022Method(int method) {
+    switch(method) {
+    case Socket::SHADOWSOCKS_2022_BLAKE3_AES_128_GCM:
+        return Shadowsocks2022::Method::Blake3Aes128Gcm;
+    case Socket::SHADOWSOCKS_2022_BLAKE3_AES_256_GCM:
+        return Shadowsocks2022::Method::Blake3Aes256Gcm;
+    case Socket::SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305:
+        return Shadowsocks2022::Method::Blake3ChaCha20Poly1305;
+    default:
+        throw SocketException(_("Unsupported Shadowsocks cipher"));
+    }
 }
 
 const EVP_CIPHER* shadowsocksCipher(int method) {
@@ -468,6 +494,11 @@ size_t shadowsocksKeyLen(int method) {
         return 16;
     case Socket::SHADOWSOCKS_AES_256_GCM:
     case Socket::SHADOWSOCKS_CHACHA20_IETF_POLY1305:
+        return 32;
+    case Socket::SHADOWSOCKS_2022_BLAKE3_AES_128_GCM:
+        return 16;
+    case Socket::SHADOWSOCKS_2022_BLAKE3_AES_256_GCM:
+    case Socket::SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305:
         return 32;
     default:
         return 0;
@@ -818,15 +849,16 @@ void Socket::shadowsocksConnect(const string& aAddr, const string& aPort, uint32
         throw SocketException(_("The Shadowsocks server failed to establish a connection"));
     }
 
-    shadowsocksStart(sm->get(SettingsManager::SHADOWSOCKS_METHOD),
-        sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), timeLeft(start, timeout));
-
     ByteVector target;
     if(!appendSocksAddress(target, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
         throw SocketException(_("The Shadowsocks target address is invalid"));
     }
 
-    streamWriteAll(target.data(), target.size(), timeLeft(start, timeout));
+    const bool targetIncluded = shadowsocksStart(sm->get(SettingsManager::SHADOWSOCKS_METHOD),
+        sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), target, timeLeft(start, timeout));
+    if(!targetIncluded) {
+        streamWriteAll(target.data(), target.size(), timeLeft(start, timeout));
+    }
     setIp(aAddr);
 }
 
@@ -1111,13 +1143,30 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
     if(aBufLen <= 0)
         return 0;
 
+    bool proxyDatagram = false;
+    if(ctx_) {
+        const auto* settings = ctx().getSettingsManager();
+        proxyDatagram = settings->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 ||
+            (settings->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS &&
+                settings->get(SettingsManager::SHADOWSOCKS_TRANSPORT) == SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP);
+    }
+    ByteVector proxyBuffer;
+    void* receiveBuffer = aBuffer;
+    int receiveLength = aBufLen;
+    if(proxyDatagram) {
+        proxyBuffer.resize(65535);
+        receiveBuffer = proxyBuffer.data();
+        receiveLength = static_cast<int>(proxyBuffer.size());
+    }
+
     sockaddr_storage remote_addr;
     memset(&remote_addr, 0, sizeof(remote_addr));
     socklen_t addr_length = sizeof(remote_addr);
 
     int len;
     do {
-        len = ::recvfrom(sock, (char*)aBuffer, aBufLen, 0, (sockaddr*)&remote_addr, &addr_length);
+        len = ::recvfrom(sock, static_cast<char*>(receiveBuffer), receiveLength, 0,
+            reinterpret_cast<sockaddr*>(&remote_addr), &addr_length);
     } while (len < 0 && getLastError() == EINTR);
 
     check(len, true);
@@ -1134,13 +1183,15 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
 
         if(association && matchesUdpEndpoint(association->server, association->port, remote_addr)) {
             size_t payloadOffset = 0;
-            if(!decodeSocks5UdpPacket(static_cast<const uint8_t*>(aBuffer), static_cast<size_t>(len), remote, payloadOffset)) {
+            const auto* received = static_cast<const uint8_t*>(receiveBuffer);
+            if(!decodeSocks5UdpPacket(received, static_cast<size_t>(len), remote, payloadOffset)) {
                 return 0;
             }
 
             const size_t payloadLen = static_cast<size_t>(len) - payloadOffset;
-            memmove(aBuffer, static_cast<const uint8_t*>(aBuffer) + payloadOffset, payloadLen);
-            return static_cast<int>(payloadLen);
+            const size_t copyLen = min(payloadLen, static_cast<size_t>(aBufLen));
+            memcpy(aBuffer, received + payloadOffset, copyLen);
+            return static_cast<int>(copyLen);
         }
     }
 
@@ -1149,8 +1200,31 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
         auto* sm = ctx().getSettingsManager();
         const int method = shadowsocksMethodId(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
         const size_t keyLen = shadowsocksKeyLen(method);
-        const auto* buf = static_cast<const uint8_t*>(aBuffer);
-        if(keyLen == 0 || static_cast<size_t>(len) <= keyLen + SHADOWSOCKS_TAG_LEN || sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+        const auto* buf = static_cast<const uint8_t*>(receiveBuffer);
+        if(keyLen == 0 || sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+            throw SocketException(_("Shadowsocks UDP relay response is invalid"));
+        }
+
+        if(isShadowsocks2022Method(method)) {
+            try {
+                const Shadowsocks2022UdpMessage message = shadowsocks2022UdpSessionForSettings().decodeResponse(
+                    ByteVector(buf, buf + len), static_cast<uint64_t>(time(nullptr)));
+                size_t addressLength = 0;
+                if(!parseSocksAddress(message.socksAddress, remote, addressLength) ||
+                        addressLength != message.socksAddress.size()) {
+                    throw SocketException(_("Shadowsocks UDP relay response address is invalid"));
+                }
+                const size_t copyLen = min(message.payload.size(), static_cast<size_t>(aBufLen));
+                memcpy(aBuffer, message.payload.data(), copyLen);
+                return static_cast<int>(copyLen);
+            } catch(const SocketException&) {
+                throw;
+            } catch(const std::exception& e) {
+                throw SocketException(e.what());
+            }
+        }
+
+        if(static_cast<size_t>(len) <= keyLen + SHADOWSOCKS_TAG_LEN) {
             throw SocketException(_("Shadowsocks UDP relay response is invalid"));
         }
 
@@ -1174,6 +1248,11 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
         return static_cast<int>(copyLen);
     }
 
+    if(receiveBuffer != aBuffer && len > 0) {
+        const size_t copyLen = min(static_cast<size_t>(len), static_cast<size_t>(aBufLen));
+        memcpy(aBuffer, receiveBuffer, copyLen);
+        len = static_cast<int>(copyLen);
+    }
     remote = remote_addr;
     return len;
 }
@@ -1402,15 +1481,56 @@ void Socket::shadowsocksReset() {
     shadowsocksPendingOutPos = 0;
     shadowsocksExpectedPayload = 0;
     shadowsocksReadingPayload = false;
+    shadowsocks2022Stream.reset();
+    shadowsocks2022ResponseStarted = false;
+    shadowsocks2022ResponseHeaderRead = false;
+    shadowsocks2022UdpSession.reset();
+    shadowsocks2022UdpConfig.clear();
+    shadowsocks2022UdpPacketId = 0;
 }
 
-void Socket::shadowsocksStart(const string& method, const string& password, uint32_t timeout) {
+bool Socket::shadowsocksStart(const string& method, const string& password,
+    const ByteVector& target, uint32_t timeout) {
     shadowsocksReset();
 
     shadowsocksMethod = shadowsocksMethodId(method);
     const size_t keyLen = shadowsocksKeyLen(shadowsocksMethod);
     if(keyLen == 0) {
         throw SocketException(_("Unsupported Shadowsocks cipher"));
+    }
+
+    if(isShadowsocks2022Method(shadowsocksMethod)) {
+        try {
+            const Shadowsocks2022::Method parsedMethod = shadowsocks2022Method(shadowsocksMethod);
+            Shadowsocks2022::PskChain chain = Shadowsocks2022::parsePskChain(
+                parsedMethod, password);
+            shadowsocks2022Stream = std::make_unique<Shadowsocks2022TcpClient>(
+                parsedMethod, std::move(chain));
+
+            ByteVector salt(keyLen);
+            uint16_t randomPadding = 0;
+            if(RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1 ||
+                    RAND_bytes(reinterpret_cast<uint8_t*>(&randomPadding), sizeof(randomPadding)) != 1) {
+                throw SocketException(_("Failed to create Shadowsocks salt"));
+            }
+            const size_t paddingLength = static_cast<size_t>(randomPadding % 900) + 1;
+            ByteVector padding(paddingLength);
+            if(RAND_bytes(padding.data(), static_cast<int>(padding.size())) != 1) {
+                throw SocketException(_("Failed to create Shadowsocks padding"));
+            }
+
+            const ByteVector request = shadowsocks2022Stream->encodeRequestHeader(
+                salt, static_cast<uint64_t>(time(nullptr)), target, padding, {});
+            shadowsocksActive = true;
+            shadowsocksWriteAll(request.data(), static_cast<int>(request.size()), timeout);
+            return true;
+        } catch(const SocketException&) {
+            shadowsocksReset();
+            throw;
+        } catch(const std::exception& e) {
+            shadowsocksReset();
+            throw SocketException(e.what());
+        }
     }
 
     ByteVector salt(keyLen);
@@ -1425,6 +1545,7 @@ void Socket::shadowsocksStart(const string& method, const string& password, uint
     shadowsocksActive = true;
 
     shadowsocksWriteAll(salt.data(), salt.size(), timeout);
+    return false;
 }
 
 void Socket::shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
@@ -1465,8 +1586,21 @@ int Socket::shadowsocksWrite(const void* aBuffer, int aLen) {
     if(!shadowsocksFlushPending())
         return -1;
 
-    const size_t plainLen = min(static_cast<size_t>(aLen), SHADOWSOCKS_MAX_CHUNK);
+    const size_t maxChunk = shadowsocks2022Stream ?
+        static_cast<size_t>(std::numeric_limits<uint16_t>::max()) : SHADOWSOCKS_MAX_CHUNK;
+    const size_t plainLen = min(static_cast<size_t>(aLen), maxChunk);
     const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
+
+    if(shadowsocks2022Stream) {
+        try {
+            shadowsocksPendingOut = shadowsocks2022Stream->encodeRequestChunk(
+                ByteVector(buf, buf + plainLen));
+        } catch(const std::exception& e) {
+            throw SocketException(e.what());
+        }
+        shadowsocksFlushPending();
+        return static_cast<int>(plainLen);
+    }
 
     uint8_t lenBuf[2] = {
         static_cast<uint8_t>((plainLen >> 8) & 0xff),
@@ -1503,6 +1637,10 @@ bool Socket::shadowsocksEnsureReceiveSubkey() {
 }
 
 bool Socket::shadowsocksTryDecode() {
+    if(shadowsocks2022Stream) {
+        return shadowsocksTryDecode2022();
+    }
+
     while(true) {
         if(!shadowsocksEnsureReceiveSubkey())
             return false;
@@ -1546,6 +1684,66 @@ bool Socket::shadowsocksTryDecode() {
     }
 }
 
+bool Socket::shadowsocksTryDecode2022() {
+    try {
+        while(true) {
+            if(!shadowsocks2022ResponseStarted) {
+                const size_t saltSize = shadowsocksKeyLen(shadowsocksMethod);
+                if(shadowsocksCipherIn.size() < saltSize)
+                    return false;
+                const ByteVector salt(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(saltSize));
+                shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(saltSize));
+                shadowsocks2022Stream->beginResponse(salt);
+                shadowsocks2022ResponseStarted = true;
+            }
+
+            if(!shadowsocks2022ResponseHeaderRead) {
+                const size_t required = shadowsocks2022Stream->responseHeaderCiphertextSize();
+                if(shadowsocksCipherIn.size() < required)
+                    return false;
+                const ByteVector header(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(required));
+                shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(required));
+                shadowsocksExpectedPayload = shadowsocks2022Stream->decodeResponseHeader(
+                    header, static_cast<uint64_t>(time(nullptr)));
+                shadowsocks2022ResponseHeaderRead = true;
+                shadowsocksReadingPayload = true;
+            } else if(!shadowsocksReadingPayload) {
+                constexpr size_t required = 2 + SHADOWSOCKS_TAG_LEN;
+                if(shadowsocksCipherIn.size() < required)
+                    return false;
+                const ByteVector length(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + required);
+                shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(),
+                    shadowsocksCipherIn.begin() + required);
+                shadowsocksExpectedPayload = shadowsocks2022Stream->decodeResponseLength(length);
+                shadowsocksReadingPayload = true;
+            }
+
+            const size_t required = shadowsocksExpectedPayload + SHADOWSOCKS_TAG_LEN;
+            if(shadowsocksCipherIn.size() < required)
+                return false;
+            const ByteVector payload(shadowsocksCipherIn.begin(),
+                shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(required));
+            shadowsocksCipherIn.erase(shadowsocksCipherIn.begin(),
+                shadowsocksCipherIn.begin() + static_cast<ptrdiff_t>(required));
+            const ByteVector plaintext = shadowsocks2022Stream->decodeResponsePayload(
+                payload, static_cast<uint16_t>(shadowsocksExpectedPayload));
+            shadowsocksPlainIn.insert(shadowsocksPlainIn.end(), plaintext.begin(), plaintext.end());
+            shadowsocksExpectedPayload = 0;
+            shadowsocksReadingPayload = false;
+
+            if(!shadowsocksPlainIn.empty())
+                return true;
+        }
+    } catch(const std::exception& e) {
+        throw SocketException(e.what());
+    }
+}
+
 int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
     if(aBufLen <= 0)
         return 0;
@@ -1578,7 +1776,9 @@ int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
     while(true) {
         int len = rawRead(buf, sizeof(buf));
         if(len == 0) {
-            if(!shadowsocksCipherIn.empty() || shadowsocksReadingPayload) {
+            const bool incomplete2022Header = shadowsocks2022Stream &&
+                shadowsocks2022ResponseStarted && !shadowsocks2022ResponseHeaderRead;
+            if(!shadowsocksCipherIn.empty() || shadowsocksReadingPayload || incomplete2022Header) {
                 throw SocketException(_("Shadowsocks stream ended with an incomplete frame"));
             }
             return 0;
@@ -1590,6 +1790,35 @@ int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
         if(shadowsocksTryDecode()) {
             return copyPlain();
         }
+    }
+}
+
+Shadowsocks2022UdpSession& Socket::shadowsocks2022UdpSessionForSettings() {
+    auto* sm = ctx().getSettingsManager();
+    const string methodName = normalizeCipherName(sm->get(SettingsManager::SHADOWSOCKS_METHOD));
+    const string password = sm->get(SettingsManager::SHADOWSOCKS_PASSWORD);
+    const string config = methodName + '\n' + password;
+    if(shadowsocks2022UdpSession && shadowsocks2022UdpConfig == config) {
+        return *shadowsocks2022UdpSession;
+    }
+
+    try {
+        const int methodId = shadowsocksMethodId(methodName);
+        const Shadowsocks2022::Method method = shadowsocks2022Method(methodId);
+        Shadowsocks2022::PskChain chain = Shadowsocks2022::parsePskChain(method, password);
+        ByteVector clientSessionId(8);
+        if(RAND_bytes(clientSessionId.data(), static_cast<int>(clientSessionId.size())) != 1) {
+            throw SocketException(_("Failed to create Shadowsocks UDP session"));
+        }
+        shadowsocks2022UdpSession = std::make_unique<Shadowsocks2022UdpSession>(
+            method, std::move(chain), std::move(clientSessionId));
+        shadowsocks2022UdpConfig = config;
+        shadowsocks2022UdpPacketId = 0;
+        return *shadowsocks2022UdpSession;
+    } catch(const SocketException&) {
+        throw;
+    } catch(const std::exception& e) {
+        throw SocketException(e.what());
     }
 }
 
@@ -1639,23 +1868,48 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
             throw SocketException(_("Shadowsocks UDP relay is not configured"));
         }
 
-        ByteVector plain;
-        if(!appendSocksAddress(plain, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
+        ByteVector target;
+        if(!appendSocksAddress(target, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
             throw SocketException(_("The Shadowsocks target address is invalid"));
         }
-        plain.insert(plain.end(), buf, buf + aLen);
 
-        ByteVector salt(keyLen);
-        if(RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) {
-            throw SocketException(_("Failed to create Shadowsocks salt"));
+        ByteVector packet;
+        if(isShadowsocks2022Method(method)) {
+            ByteVector nonce;
+            if(method == SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305) {
+                nonce.resize(XChaCha20Poly1305::NONCE_SIZE);
+                if(RAND_bytes(nonce.data(), static_cast<int>(nonce.size())) != 1) {
+                    throw SocketException(_("Failed to create Shadowsocks UDP nonce"));
+                }
+            }
+            if(shadowsocks2022UdpPacketId == std::numeric_limits<uint64_t>::max()) {
+                throw SocketException(_("Shadowsocks UDP packet counter exhausted"));
+            }
+            try {
+                packet = shadowsocks2022UdpSessionForSettings().encodeRequest(
+                    shadowsocks2022UdpPacketId++, static_cast<uint64_t>(time(nullptr)), {},
+                    target, ByteVector(buf, buf + aLen), nonce);
+            } catch(const SocketException&) {
+                throw;
+            } catch(const std::exception& e) {
+                throw SocketException(e.what());
+            }
+        } else {
+            ByteVector plain = target;
+            plain.insert(plain.end(), buf, buf + aLen);
+
+            ByteVector salt(keyLen);
+            if(RAND_bytes(salt.data(), static_cast<int>(salt.size())) != 1) {
+                throw SocketException(_("Failed to create Shadowsocks salt"));
+            }
+
+            const ByteVector masterKey = evpBytesToKey(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), keyLen);
+            const ByteVector subkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
+            ByteVector nonce(SHADOWSOCKS_NONCE_LEN, 0);
+            packet = salt;
+            ByteVector encrypted = shadowsocksAeadEncrypt(method, subkey, nonce, plain.data(), plain.size());
+            packet.insert(packet.end(), encrypted.begin(), encrypted.end());
         }
-
-        const ByteVector masterKey = evpBytesToKey(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), keyLen);
-        const ByteVector subkey = hkdfSha1(masterKey, salt, "ss-subkey", keyLen);
-        ByteVector nonce(SHADOWSOCKS_NONCE_LEN, 0);
-        ByteVector packet = salt;
-        ByteVector encrypted = shadowsocksAeadEncrypt(method, subkey, nonce, plain.data(), plain.size());
-        packet.insert(packet.end(), encrypted.begin(), encrypted.end());
 
         addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
         hints.ai_family = family;

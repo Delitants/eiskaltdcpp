@@ -298,17 +298,31 @@ public:
 
     ByteVector readPacket()
     {
-        sockaddr_storage remote = {};
+        memset(&lastRemote, 0, sizeof(lastRemote));
         std::array<uint8_t, 1024> buffer {};
-        const int received = socket.read(buffer.data(), static_cast<int>(buffer.size()), remote);
+        const int received = socket.read(buffer.data(), static_cast<int>(buffer.size()), lastRemote);
         if(received <= 0) {
             return {};
         }
+        hasRemote = true;
         return ByteVector(buffer.begin(), buffer.begin() + received);
+    }
+
+    bool sendReply(const ByteVector& packet)
+    {
+        if(!hasRemote) {
+            return false;
+        }
+        const socklen_t length = lastRemote.ss_family == AF_INET6 ?
+            static_cast<socklen_t>(sizeof(sockaddr_in6)) : static_cast<socklen_t>(sizeof(sockaddr_in));
+        return ::sendto(socket.sock, reinterpret_cast<const char*>(packet.data()), packet.size(), 0,
+            reinterpret_cast<const sockaddr*>(&lastRemote), length) == static_cast<int>(packet.size());
     }
 
 private:
     Socket socket;
+    sockaddr_storage lastRemote = {};
+    bool hasRemote = false;
 };
 
 class SocksSettingsScope
@@ -619,6 +633,245 @@ private:
     std::condition_variable holdOpen;
 };
 
+ByteVector encrypt2022Part(Shadowsocks2022::Method method,
+    const ByteVector& key, ByteVector& nonce,
+    const ByteVector& plaintext)
+{
+    ByteVector output(plaintext.size() + 16);
+    EVP_CIPHER_CTX* context = EVP_CIPHER_CTX_new();
+    if(!context) {
+        return {};
+    }
+    int outputLength = 0;
+    int finalLength = 0;
+    const EVP_CIPHER* cipher = method == Shadowsocks2022::Method::Blake3Aes128Gcm ?
+        EVP_aes_128_gcm() : method == Shadowsocks2022::Method::Blake3Aes256Gcm ?
+        EVP_aes_256_gcm() : EVP_chacha20_poly1305();
+    const bool ok = EVP_EncryptInit_ex(context, cipher, nullptr, nullptr, nullptr) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_IVLEN, 12, nullptr) == 1 &&
+        EVP_EncryptInit_ex(context, nullptr, nullptr, key.data(), nonce.data()) == 1 &&
+        EVP_EncryptUpdate(context, output.data(), &outputLength, plaintext.data(),
+            static_cast<int>(plaintext.size())) == 1 &&
+        EVP_EncryptFinal_ex(context, output.data() + outputLength, &finalLength) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_GET_TAG, 16,
+            output.data() + outputLength + finalLength) == 1;
+    EVP_CIPHER_CTX_free(context);
+    if(!ok) {
+        return {};
+    }
+    output.resize(static_cast<size_t>(outputLength + finalLength) + 16);
+    Shadowsocks2022::incrementNonce(nonce);
+    return output;
+}
+
+bool decrypt2022Part(Shadowsocks2022::Method method,
+    const ByteVector& key, ByteVector& nonce,
+    const ByteVector& encrypted, ByteVector& plaintext)
+{
+    if(encrypted.size() < 16) {
+        return false;
+    }
+    const size_t cipherLength = encrypted.size() - 16;
+    plaintext.assign(cipherLength + 16, 0);
+    EVP_CIPHER_CTX* context = EVP_CIPHER_CTX_new();
+    if(!context) {
+        return false;
+    }
+    int outputLength = 0;
+    int finalLength = 0;
+    const EVP_CIPHER* cipher = method == Shadowsocks2022::Method::Blake3Aes128Gcm ?
+        EVP_aes_128_gcm() : method == Shadowsocks2022::Method::Blake3Aes256Gcm ?
+        EVP_aes_256_gcm() : EVP_chacha20_poly1305();
+    const bool ok = EVP_DecryptInit_ex(context, cipher, nullptr, nullptr, nullptr) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_IVLEN, 12, nullptr) == 1 &&
+        EVP_DecryptInit_ex(context, nullptr, nullptr, key.data(), nonce.data()) == 1 &&
+        EVP_DecryptUpdate(context, plaintext.data(), &outputLength, encrypted.data(),
+            static_cast<int>(cipherLength)) == 1 &&
+        EVP_CIPHER_CTX_ctrl(context, EVP_CTRL_AEAD_SET_TAG, 16,
+            const_cast<uint8_t*>(encrypted.data() + cipherLength)) == 1 &&
+        EVP_DecryptFinal_ex(context, plaintext.data() + outputLength, &finalLength) == 1;
+    EVP_CIPHER_CTX_free(context);
+    if(!ok) {
+        plaintext.clear();
+        return false;
+    }
+    plaintext.resize(static_cast<size_t>(outputLength + finalLength));
+    Shadowsocks2022::incrementNonce(nonce);
+    return true;
+}
+
+void appendTestU16(ByteVector& output, uint16_t value)
+{
+    output.push_back(static_cast<uint8_t>(value >> 8));
+    output.push_back(static_cast<uint8_t>(value));
+}
+
+void appendTestU64(ByteVector& output, uint64_t value)
+{
+    for(int shift = 56; shift >= 0; shift -= 8) {
+        output.push_back(static_cast<uint8_t>(value >> shift));
+    }
+}
+
+class Shadowsocks2022TcpServer
+{
+public:
+    Shadowsocks2022TcpServer(Shadowsocks2022::Method method, ByteVector psk) :
+        method(method), psk(std::move(psk))
+    {
+        listener.create(Socket::TYPE_TCP, AF_INET);
+        listener.setSocketOpt(SO_REUSEADDR, 1);
+        listener.bind("0", "127.0.0.1");
+        listener.listen();
+        worker = std::thread([this] { run(); });
+    }
+
+    ~Shadowsocks2022TcpServer()
+    {
+        stopping = true;
+        listener.disconnect();
+        if(worker.joinable()) {
+            worker.join();
+        }
+    }
+
+    std::string port() { return listener.getLocalPort(); }
+    bool hasProtocolFailed() const { return protocolFailed.load(); }
+    std::string receivedPayload() const { return payload; }
+
+private:
+    static bool readExact(Socket& socket, ByteVector& bytes, size_t length)
+    {
+        bytes.assign(length, 0);
+        size_t offset = 0;
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+        while(offset < length && std::chrono::steady_clock::now() < deadline) {
+            if(socket.wait(50, Socket::WAIT_READ) != Socket::WAIT_READ) {
+                continue;
+            }
+            const int received = socket.read(bytes.data() + offset,
+                static_cast<int>(length - offset));
+            if(received <= 0) {
+                return false;
+            }
+            offset += static_cast<size_t>(received);
+        }
+        return offset == length;
+    }
+
+    bool consumeRequest(Socket& client, ByteVector& requestSalt)
+    {
+        if(!readExact(client, requestSalt, psk.size())) {
+            return false;
+        }
+        const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+            method, psk, requestSalt);
+        ByteVector nonce(12, 0);
+        ByteVector encryptedFixed;
+        ByteVector fixed;
+        if(!readExact(client, encryptedFixed, 11 + 16) ||
+                !decrypt2022Part(method, subkey, nonce, encryptedFixed, fixed) ||
+                fixed.size() != 11 || fixed[0] != 0) {
+            return false;
+        }
+        const size_t variableLength = (static_cast<size_t>(fixed[9]) << 8) | fixed[10];
+        ByteVector encryptedVariable;
+        ByteVector variable;
+        if(!readExact(client, encryptedVariable, variableLength + 16) ||
+                !decrypt2022Part(method, subkey, nonce, encryptedVariable, variable) || variable.empty()) {
+            return false;
+        }
+        size_t targetLength = 0;
+        if(variable[0] == 3 && variable.size() >= 2) {
+            targetLength = 1 + 1 + variable[1] + 2;
+        } else if(variable[0] == 1) {
+            targetLength = 7;
+        } else if(variable[0] == 4) {
+            targetLength = 19;
+        }
+        if(targetLength + 2 > variable.size()) {
+            return false;
+        }
+        const size_t paddingLength = (static_cast<size_t>(variable[targetLength]) << 8) |
+            variable[targetLength + 1];
+        if(targetLength + 2 + paddingLength != variable.size()) {
+            return false;
+        }
+
+        ByteVector encryptedLength;
+        ByteVector plainLength;
+        if(!readExact(client, encryptedLength, 2 + 16) ||
+                !decrypt2022Part(method, subkey, nonce, encryptedLength, plainLength) ||
+                plainLength.size() != 2) {
+            return false;
+        }
+        const size_t payloadLength = (static_cast<size_t>(plainLength[0]) << 8) | plainLength[1];
+        ByteVector encryptedPayload;
+        ByteVector plainPayload;
+        if(!readExact(client, encryptedPayload, payloadLength + 16) ||
+                !decrypt2022Part(method, subkey, nonce, encryptedPayload, plainPayload)) {
+            return false;
+        }
+        payload.assign(plainPayload.begin(), plainPayload.end());
+        return true;
+    }
+
+    bool sendResponse(Socket& client, const ByteVector& requestSalt)
+    {
+        const ByteVector responseSalt(psk.size(), 0x5A);
+        const ByteVector subkey = Shadowsocks2022::deriveSessionSubkey(
+            method, psk, responseSalt);
+        ByteVector nonce(12, 0);
+        ByteVector fixed = { 0x01 };
+        appendTestU64(fixed, static_cast<uint64_t>(time(nullptr)));
+        fixed.insert(fixed.end(), requestSalt.begin(), requestSalt.end());
+        appendTestU16(fixed, 5);
+
+        ByteVector response = responseSalt;
+        ByteVector part = encrypt2022Part(method, subkey, nonce, fixed);
+        response.insert(response.end(), part.begin(), part.end());
+        part = encrypt2022Part(method, subkey, nonce, ByteVector{ 'f', 'i', 'r', 's', 't' });
+        response.insert(response.end(), part.begin(), part.end());
+        ByteVector length;
+        appendTestU16(length, 6);
+        part = encrypt2022Part(method, subkey, nonce, length);
+        response.insert(response.end(), part.begin(), part.end());
+        part = encrypt2022Part(method, subkey, nonce,
+            ByteVector{ 's', 'e', 'c', 'o', 'n', 'd' });
+        response.insert(response.end(), part.begin(), part.end());
+        client.writeAll(response.data(), static_cast<int>(response.size()), 2000);
+        return true;
+    }
+
+    void run()
+    {
+        try {
+            if(listener.wait(3000, Socket::WAIT_READ) != Socket::WAIT_READ) {
+                protocolFailed = true;
+                return;
+            }
+            Socket client;
+            client.accept(listener);
+            ByteVector requestSalt;
+            if(!consumeRequest(client, requestSalt) || !sendResponse(client, requestSalt)) {
+                protocolFailed = true;
+            }
+        } catch(...) {
+            if(!stopping) {
+                protocolFailed = true;
+            }
+        }
+    }
+
+    const Shadowsocks2022::Method method;
+    const ByteVector psk;
+    Socket listener;
+    std::atomic<bool> stopping { false };
+    std::atomic<bool> protocolFailed { false };
+    std::thread worker;
+    std::string payload;
+};
+
 class ShadowsocksSettingsScope
 {
 public:
@@ -632,13 +885,14 @@ private:
     DCContext& context;
 };
 
-void configureLocalShadowsocks(DCContext& context, const std::string& port, const std::string& password)
+void configureLocalShadowsocks(DCContext& context, const std::string& port,
+    const std::string& password, const std::string& method = "aes-256-gcm")
 {
     auto* settings = context.getSettingsManager();
     settings->set(SettingsManager::SHADOWSOCKS_SERVER, std::string("127.0.0.1"));
     settings->set(SettingsManager::SHADOWSOCKS_PORT, Util::toInt(port));
     settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, password);
-    settings->set(SettingsManager::SHADOWSOCKS_METHOD, std::string("aes-256-gcm"));
+    settings->set(SettingsManager::SHADOWSOCKS_METHOD, method);
     settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT, SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP);
     settings->set(SettingsManager::SOCKS_RESOLVE, true);
     settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
@@ -803,6 +1057,47 @@ TEST_CASE("Shadowsocks reader reports a truncated encrypted frame", "[qt][socket
     }
     REQUIRE(error == "Shadowsocks stream ended with an incomplete frame");
     REQUIRE_FALSE(server.hasProtocolFailed());
+}
+
+TEST_CASE("Socket exchanges TCP through Shadowsocks 2022", "[qt][socket][shadowsocks2022][tcp]")
+{
+    struct MethodCase {
+        Shadowsocks2022::Method method;
+        const char* name;
+        const char* password;
+    };
+    const std::vector<MethodCase> methods = {
+        { Shadowsocks2022::Method::Blake3Aes128Gcm,
+            "2022-blake3-aes-128-gcm", "AAECAwQFBgcICQoLDA0ODw==" },
+        { Shadowsocks2022::Method::Blake3Aes256Gcm,
+            "2022-blake3-aes-256-gcm", "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=" },
+        { Shadowsocks2022::Method::Blake3ChaCha20Poly1305,
+            "2022-blake3-chacha20-poly1305", "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=" }
+    };
+
+    for(const auto& methodCase : methods) {
+        CAPTURE(methodCase.name);
+        ByteVector psk(Shadowsocks2022::keySize(methodCase.method));
+        for(size_t i = 0; i < psk.size(); ++i) {
+            psk[i] = static_cast<uint8_t>(i);
+        }
+        Shadowsocks2022TcpServer server(methodCase.method, psk);
+        test::TestContext tc;
+        ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+        configureLocalShadowsocks(*tc.ownedCtx, server.port(),
+            methodCase.password, methodCase.name);
+
+        Socket socket;
+        socket.setContext(tc.ownedCtx.get());
+        socket.proxyConnect("example.test", "443", 3000);
+        const std::string request = "ping";
+        socket.writeAll(request.data(), static_cast<int>(request.size()), 3000);
+
+        REQUIRE(readPlainExactly(socket, 5, 3000) == "first");
+        REQUIRE(readPlainExactly(socket, 6, 100) == "second");
+        REQUIRE(server.receivedPayload() == request);
+        REQUIRE_FALSE(server.hasProtocolFailed());
+    }
 }
 
 TEST_CASE("Retained SOCKS5 UDP association snapshot keeps its control channel alive", "[qt][socket][socks5][udp]")
@@ -1223,6 +1518,49 @@ TEST_CASE("Socket UDP send info records the Shadowsocks relay endpoint", "[qt][s
     REQUIRE(sendInfo.bytesSent > sizeof(payload));
     REQUIRE(sendInfo.logicalIp != sendInfo.physicalIp);
     REQUIRE(sendInfo.logicalPort != sendInfo.physicalPort);
+}
+
+TEST_CASE("Socket exchanges UDP through Shadowsocks 2022", "[qt][socket][shadowsocks2022][udp]")
+{
+    UdpDatagramSink relay;
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    const std::string password = "AAECAwQFBgcICQoLDA0ODw==";
+    configureLocalShadowsocks(*tc.ownedCtx, relay.port(), password,
+        "2022-blake3-aes-128-gcm");
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "127.0.0.1");
+
+    const ByteVector payload = { 0xaa, 0xbb, 0xcc };
+    socket.writeTo("203.0.113.77", "6250", payload.data(),
+        static_cast<int>(payload.size()), true);
+    REQUIRE(relay.waitForPacket(std::chrono::seconds(2)));
+    const ByteVector request = relay.readPacket();
+
+    const auto method = Shadowsocks2022::Method::Blake3Aes128Gcm;
+    const auto chain = Shadowsocks2022::parsePskChain(method, password);
+    Shadowsocks2022UdpSession serverDecoder(method, chain, ByteVector(8, 0));
+    const auto decodedRequest = serverDecoder.decodeRequest(
+        request, static_cast<uint64_t>(time(nullptr)));
+    REQUIRE(decodedRequest.payload == payload);
+
+    Shadowsocks2022UdpSession serverEncoder(method, chain, decodedRequest.sessionId);
+    const ByteVector replyPayload = { 0x10, 0x20, 0x30, 0x40 };
+    const ByteVector response = serverEncoder.encodeResponse(ByteVector(8, 0x55), 1,
+        static_cast<uint64_t>(time(nullptr)), {}, decodedRequest.socksAddress, replyPayload);
+    REQUIRE(relay.sendReply(response));
+    REQUIRE(socket.wait(2000, Socket::WAIT_READ) == Socket::WAIT_READ);
+
+    uint8_t reply[32] = {};
+    sockaddr_storage remote = {};
+    const int received = socket.read(reply, sizeof(reply), remote);
+    REQUIRE(received == static_cast<int>(replyPayload.size()));
+    REQUIRE(ByteVector(reply, reply + received) == replyPayload);
+    REQUIRE(remote.ss_family == AF_INET);
+    REQUIRE(ntohs(reinterpret_cast<const sockaddr_in*>(&remote)->sin_port) == 6250);
 }
 
 TEST_CASE("SOCKS5 UDP request accepts a null zero-length payload", "[qt][socket][socks5][udp]")

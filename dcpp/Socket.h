@@ -39,6 +39,7 @@ const int INVALID_SOCKET = -1;
 #include "Util.h"
 #include "Exception.h"
 #include "SSL.h"
+#include "Shadowsocks2022.h"
 
 #include <memory>
 #include <mutex>
@@ -97,7 +98,10 @@ public:
         SHADOWSOCKS_NONE = 0,
         SHADOWSOCKS_AES_128_GCM,
         SHADOWSOCKS_AES_256_GCM,
-        SHADOWSOCKS_CHACHA20_IETF_POLY1305
+        SHADOWSOCKS_CHACHA20_IETF_POLY1305,
+        SHADOWSOCKS_2022_BLAKE3_AES_128_GCM,
+        SHADOWSOCKS_2022_BLAKE3_AES_256_GCM,
+        SHADOWSOCKS_2022_BLAKE3_CHACHA20_POLY1305
     };
 
     Socket() : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { }
@@ -269,13 +273,16 @@ private:
     int tlsWaitTarget(int fallback) const;
 
     void shadowsocksReset();
-    void shadowsocksStart(const string& method, const string& password, uint32_t timeout);
+    bool shadowsocksStart(const string& method, const string& password,
+        const ByteVector& target, uint32_t timeout);
     int shadowsocksRead(void* aBuffer, int aBufLen);
     int shadowsocksWrite(const void* aBuffer, int aLen);
     void shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
     bool shadowsocksEnsureReceiveSubkey();
     bool shadowsocksTryDecode();
+    bool shadowsocksTryDecode2022();
     bool shadowsocksFlushPending();
+    Shadowsocks2022UdpSession& shadowsocks2022UdpSessionForSettings();
     int streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout);
     void streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout);
     int rawRead(void* aBuffer, int aBufLen);
@@ -301,6 +308,12 @@ private:
     size_t shadowsocksPendingOutPos = 0;
     size_t shadowsocksExpectedPayload = 0;
     bool shadowsocksReadingPayload = false;
+    std::unique_ptr<Shadowsocks2022TcpClient> shadowsocks2022Stream;
+    bool shadowsocks2022ResponseStarted = false;
+    bool shadowsocks2022ResponseHeaderRead = false;
+    std::unique_ptr<Shadowsocks2022UdpSession> shadowsocks2022UdpSession;
+    string shadowsocks2022UdpConfig;
+    uint64_t shadowsocks2022UdpPacketId = 0;
 
     ssl::SSL_CTX socksTlsContext;
     ssl::SSL socksTls;
