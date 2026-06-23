@@ -41,6 +41,42 @@ public:
     static PskChain parsePskChain(Method method, const std::string& encodedChain);
     static ByteVector deriveSessionSubkey(Method method, const ByteVector& psk,
         const ByteVector& salt);
+    static bool incrementNonce(ByteVector& nonce);
+};
+
+class Shadowsocks2022TcpClient
+{
+public:
+    Shadowsocks2022TcpClient(Shadowsocks2022::Method method,
+        Shadowsocks2022::PskChain pskChain);
+
+    ByteVector encodeRequestHeader(const ByteVector& salt, uint64_t timestamp,
+        const ByteVector& socksAddress, const ByteVector& padding,
+        const ByteVector& initialPayload);
+    ByteVector encodeRequestChunk(const ByteVector& payload);
+
+    void beginResponse(const ByteVector& salt);
+    uint16_t decodeResponseHeader(const ByteVector& encryptedHeader, uint64_t now);
+    uint16_t decodeResponseLength(const ByteVector& encryptedLength);
+    ByteVector decodeResponsePayload(const ByteVector& encryptedPayload,
+        uint16_t expectedLength);
+
+    size_t responseHeaderCiphertextSize() const;
+    const ByteVector& requestSalt() const noexcept;
+
+private:
+    ByteVector sealRequest(const ByteVector& plaintext);
+    ByteVector openResponse(const ByteVector& ciphertext);
+
+    Shadowsocks2022::Method method;
+    Shadowsocks2022::PskChain pskChain;
+    ByteVector currentRequestSalt;
+    ByteVector requestSubkey;
+    ByteVector requestNonce;
+    ByteVector responseSubkey;
+    ByteVector responseNonce;
+    bool requestNonceExhausted = false;
+    bool responseNonceExhausted = false;
 };
 
 } // namespace dcpp

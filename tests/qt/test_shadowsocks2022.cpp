@@ -1,11 +1,15 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers.hpp>
 
 #if __has_include("dcpp/Shadowsocks2022.h")
 #include "dcpp/Shadowsocks2022.h"
 #define EISKALTDCPP_HAS_SHADOWSOCKS2022 1
 #endif
 
+#include <openssl/evp.h>
+
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -33,6 +37,52 @@ ByteVector fromHex(const std::string& hex)
         result.push_back(static_cast<uint8_t>(std::stoul(hex.substr(i, 2), nullptr, 16)));
     }
     return result;
+}
+
+void appendU16(ByteVector& output, uint16_t value)
+{
+    output.push_back(static_cast<uint8_t>(value >> 8));
+    output.push_back(static_cast<uint8_t>(value));
+}
+
+void appendU64(ByteVector& output, uint64_t value)
+{
+    for(int shift = 56; shift >= 0; shift -= 8) {
+        output.push_back(static_cast<uint8_t>(value >> shift));
+    }
+}
+
+ByteVector referenceSeal(Shadowsocks2022::Method method, const ByteVector& key,
+    const ByteVector& nonce, const ByteVector& plaintext)
+{
+    const EVP_CIPHER* cipher = method == Shadowsocks2022::Method::Blake3Aes128Gcm ?
+        EVP_aes_128_gcm() : method == Shadowsocks2022::Method::Blake3Aes256Gcm ?
+        EVP_aes_256_gcm() : EVP_chacha20_poly1305();
+    using Context = std::unique_ptr<EVP_CIPHER_CTX, decltype(&EVP_CIPHER_CTX_free)>;
+    Context context(EVP_CIPHER_CTX_new(), EVP_CIPHER_CTX_free);
+    REQUIRE(context);
+
+    ByteVector output(plaintext.size() + 16);
+    int outputLength = 0;
+    int finalLength = 0;
+    REQUIRE(EVP_EncryptInit_ex(context.get(), cipher, nullptr, nullptr, nullptr) == 1);
+    REQUIRE(EVP_CIPHER_CTX_ctrl(context.get(), EVP_CTRL_AEAD_SET_IVLEN, 12, nullptr) == 1);
+    REQUIRE(EVP_EncryptInit_ex(context.get(), nullptr, nullptr, key.data(), nonce.data()) == 1);
+    REQUIRE(EVP_EncryptUpdate(context.get(), output.data(), &outputLength,
+        plaintext.data(), static_cast<int>(plaintext.size())) == 1);
+    REQUIRE(EVP_EncryptFinal_ex(context.get(), output.data() + outputLength, &finalLength) == 1);
+    REQUIRE(EVP_CIPHER_CTX_ctrl(context.get(), EVP_CTRL_AEAD_GET_TAG, 16,
+        output.data() + outputLength + finalLength) == 1);
+    output.resize(static_cast<size_t>(outputLength + finalLength + 16));
+    return output;
+}
+
+Shadowsocks2022TcpClient makeTcpClient(const ByteVector& userPsk,
+    Shadowsocks2022::Method method = Shadowsocks2022::Method::Blake3Aes128Gcm)
+{
+    Shadowsocks2022::PskChain chain;
+    chain.userPsk = userPsk;
+    return { method, std::move(chain) };
 }
 
 } // namespace
@@ -138,6 +188,191 @@ TEST_CASE("Shadowsocks 2022 derives deterministic session subkeys", "[shadowsock
         Shadowsocks2022::Method::Blake3ChaCha20Poly1305,
         sequence(0x20, 32), sequence(0x40, 32)) ==
         fromHex("f890938fdf83eaa57635296d037dbfced63cf082e5857c2104a175e8284a1b7e"));
+}
+
+TEST_CASE("Shadowsocks 2022 increments u96 little-endian nonces safely", "[shadowsocks2022][tcp]")
+{
+    ByteVector nonce(12, 0);
+    REQUIRE(Shadowsocks2022::incrementNonce(nonce));
+    REQUIRE(nonce.front() == 1);
+
+    nonce.assign(12, 0);
+    nonce[0] = 0xFF;
+    REQUIRE(Shadowsocks2022::incrementNonce(nonce));
+    REQUIRE(nonce[0] == 0);
+    REQUIRE(nonce[1] == 1);
+
+    nonce.assign(12, 0xFF);
+    const ByteVector maximum = nonce;
+    REQUIRE_FALSE(Shadowsocks2022::incrementNonce(nonce));
+    REQUIRE(nonce == maximum);
+    ByteVector invalidNonce(11, 0);
+    REQUIRE_THROWS_AS(Shadowsocks2022::incrementNonce(invalidNonce), std::invalid_argument);
+}
+
+TEST_CASE("Shadowsocks 2022 encodes request headers and chunks", "[shadowsocks2022][tcp]")
+{
+    const ByteVector userPsk = sequence(0x00, 16);
+    auto client = makeTcpClient(userPsk);
+    const ByteVector salt = sequence(0xA0, 16);
+    const ByteVector target = fromHex("030b6578616d706c652e636f6d01bb");
+    const ByteVector padding = fromHex("dead");
+    const ByteVector initialPayload = fromHex("beef");
+
+    const ByteVector header = client.encodeRequestHeader(
+        salt, 1700000000, target, padding, initialPayload);
+    REQUIRE(std::equal(salt.begin(), salt.end(), header.begin()));
+    REQUIRE(header.size() == salt.size() + 11 + 16 +
+        target.size() + 2 + padding.size() + initialPayload.size() + 16);
+    REQUIRE(client.requestSalt() == salt);
+
+    const ByteVector payload = sequence(0x30, 65535);
+    const ByteVector chunk = client.encodeRequestChunk(payload);
+    REQUIRE(chunk.size() == 2 + 16 + payload.size() + 16);
+    REQUIRE_THROWS_AS(client.encodeRequestChunk(ByteVector(65536, 0)), std::invalid_argument);
+
+    auto invalid = makeTcpClient(userPsk);
+    REQUIRE_THROWS_AS(invalid.encodeRequestHeader(salt, 1700000000,
+        target, {}, {}), std::invalid_argument);
+    REQUIRE_THROWS_AS(invalid.encodeRequestHeader(salt, 1700000000,
+        target, ByteVector(901, 0), {}), std::invalid_argument);
+}
+
+TEST_CASE("Shadowsocks 2022 inserts one TCP identity header per identity PSK", "[shadowsocks2022][tcp]")
+{
+    Shadowsocks2022::PskChain chain;
+    chain.identityPsks = { sequence(0x20, 16), sequence(0x40, 16) };
+    chain.userPsk = sequence(0x60, 16);
+    Shadowsocks2022TcpClient client(Shadowsocks2022::Method::Blake3Aes128Gcm,
+        std::move(chain));
+    const ByteVector salt = sequence(0x80, 16);
+    const ByteVector target = fromHex("017f00000101bb");
+
+    const ByteVector header = client.encodeRequestHeader(
+        salt, 1700000000, target, { 0x01 }, {});
+    REQUIRE(header.size() == salt.size() + 2 * 16 + 11 + 16 +
+        target.size() + 2 + 1 + 16);
+}
+
+TEST_CASE("Shadowsocks 2022 TCP framing supports every method", "[shadowsocks2022][tcp]")
+{
+    const std::vector<Shadowsocks2022::Method> methods = {
+        Shadowsocks2022::Method::Blake3Aes128Gcm,
+        Shadowsocks2022::Method::Blake3Aes256Gcm,
+        Shadowsocks2022::Method::Blake3ChaCha20Poly1305
+    };
+
+    for(const auto method : methods) {
+        CAPTURE(static_cast<int>(method));
+        const size_t keySize = Shadowsocks2022::keySize(method);
+        const ByteVector userPsk = sequence(0x00, keySize);
+        const ByteVector requestSalt = sequence(0x40, keySize);
+        const ByteVector responseSalt = sequence(0x80, keySize);
+        auto client = makeTcpClient(userPsk, method);
+        const ByteVector request = client.encodeRequestHeader(requestSalt, 1700000000,
+            fromHex("017f00000101bb"), { 0x01 }, {});
+        REQUIRE(request.size() == requestSalt.size() + 11 + 16 + 7 + 2 + 1 + 16);
+
+        client.beginResponse(responseSalt);
+        const ByteVector responseKey = Shadowsocks2022::deriveSessionSubkey(
+            method, userPsk, responseSalt);
+        ByteVector fixedHeader = { 0x01 };
+        appendU64(fixedHeader, 1700000000);
+        fixedHeader.insert(fixedHeader.end(), requestSalt.begin(), requestSalt.end());
+        appendU16(fixedHeader, 1);
+        REQUIRE(client.decodeResponseHeader(referenceSeal(
+            method, responseKey, ByteVector(12, 0), fixedHeader), 1700000000) == 1);
+    }
+}
+
+TEST_CASE("Shadowsocks 2022 decodes validated response chunks", "[shadowsocks2022][tcp]")
+{
+    const ByteVector userPsk = sequence(0x00, 16);
+    const ByteVector requestSalt = sequence(0xA0, 16);
+    const ByteVector responseSalt = sequence(0xC0, 16);
+    auto client = makeTcpClient(userPsk);
+    client.encodeRequestHeader(requestSalt, 1700000000,
+        fromHex("017f00000101bb"), { 0x01 }, {});
+    client.beginResponse(responseSalt);
+
+    const ByteVector responseKey = Shadowsocks2022::deriveSessionSubkey(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, userPsk, responseSalt);
+    ByteVector nonce(12, 0);
+    ByteVector fixedHeader = { 0x01 };
+    appendU64(fixedHeader, 1700000000);
+    fixedHeader.insert(fixedHeader.end(), requestSalt.begin(), requestSalt.end());
+    appendU16(fixedHeader, 3);
+
+    REQUIRE(client.responseHeaderCiphertextSize() == fixedHeader.size() + 16);
+    REQUIRE(client.decodeResponseHeader(referenceSeal(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, responseKey, nonce, fixedHeader),
+        1700000000) == 3);
+
+    REQUIRE(Shadowsocks2022::incrementNonce(nonce));
+    REQUIRE(client.decodeResponsePayload(referenceSeal(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, responseKey, nonce,
+        fromHex("010203")), 3) == fromHex("010203"));
+
+    REQUIRE(Shadowsocks2022::incrementNonce(nonce));
+    ByteVector length;
+    appendU16(length, 2);
+    REQUIRE(client.decodeResponseLength(referenceSeal(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, responseKey, nonce, length)) == 2);
+
+    REQUIRE(Shadowsocks2022::incrementNonce(nonce));
+    REQUIRE(client.decodeResponsePayload(referenceSeal(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, responseKey, nonce,
+        fromHex("aabb")), 2) == fromHex("aabb"));
+}
+
+TEST_CASE("Shadowsocks 2022 rejects invalid response headers", "[shadowsocks2022][tcp]")
+{
+    const ByteVector userPsk = sequence(0x00, 16);
+    const ByteVector requestSalt = sequence(0xA0, 16);
+    const ByteVector responseSalt = sequence(0xC0, 16);
+    const ByteVector responseKey = Shadowsocks2022::deriveSessionSubkey(
+        Shadowsocks2022::Method::Blake3Aes128Gcm, userPsk, responseSalt);
+    const ByteVector nonce(12, 0);
+
+    auto makeHeader = [&](uint8_t type, uint64_t timestamp, const ByteVector& salt) {
+        ByteVector header = { type };
+        appendU64(header, timestamp);
+        header.insert(header.end(), salt.begin(), salt.end());
+        appendU16(header, 1);
+        return referenceSeal(Shadowsocks2022::Method::Blake3Aes128Gcm,
+            responseKey, nonce, header);
+    };
+    auto initialize = [&] {
+        auto client = makeTcpClient(userPsk);
+        client.encodeRequestHeader(requestSalt, 1700000000,
+            fromHex("017f00000101bb"), { 0x01 }, {});
+        client.beginResponse(responseSalt);
+        return client;
+    };
+
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(
+        makeHeader(0, 1700000000, requestSalt), 1700000000),
+        "Unexpected Shadowsocks 2022 response type");
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(
+        makeHeader(1, 1699999969, requestSalt), 1700000000),
+        "Stale Shadowsocks 2022 response timestamp");
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(
+        makeHeader(1, 1700000000, sequence(0xB0, 16)), 1700000000),
+        "Shadowsocks 2022 response salt mismatch");
+
+    ByteVector tampered = makeHeader(1, 1700000000, requestSalt);
+    tampered.back() ^= 0x01;
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(tampered, 1700000000),
+        "Shadowsocks 2022 authentication failed");
+
+    const ByteVector complete = makeHeader(1, 1700000000, requestSalt);
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(
+        ByteVector(complete.begin(), complete.end() - 1), 1700000000),
+        "Truncated Shadowsocks 2022 response header");
+    ByteVector oversized = complete;
+    oversized.push_back(0);
+    REQUIRE_THROWS_WITH(initialize().decodeResponseHeader(oversized, 1700000000),
+        "Oversized Shadowsocks 2022 response header");
 }
 
 #else
