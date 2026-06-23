@@ -1716,6 +1716,86 @@ TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][so
     REQUIRE(read > 0);
 }
 
+TEST_CASE("Socket Shadowsocks UDP relay completes an opt-in echo round trip", "[qt][socket][shadowsocks][udp][integration]")
+{
+    const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
+    const char* portText = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
+    const char* password = envOrNull("EISKALT_TEST_SHADOWSOCKS_PASSWORD");
+    const char* method = envOrNull("EISKALT_TEST_SHADOWSOCKS_METHOD");
+    const char* target = envOrNull("EISKALT_TEST_SHADOWSOCKS_UDP_TARGET");
+    const char* targetPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_UDP_TARGET_PORT");
+
+    if(!server || !portText || !password || !target || !targetPort) {
+        SKIP("Set Shadowsocks and EISKALT_TEST_SHADOWSOCKS_UDP_TARGET/PORT variables to run this integration test");
+    }
+
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureIntegrationShadowsocks(*tc.ownedCtx, server, portText, password, method);
+    tc.ownedCtx->getSettingsManager()->set(SettingsManager::SHADOWSOCKS_TRANSPORT,
+        SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP);
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "0.0.0.0");
+
+    const ByteVector request = {
+        'e', 'i', 's', 'k', 'a', 'l', 't', '-', 's', 's', '2', '0', '2', '2', '-', 'u', 'd', 'p'
+    };
+    socket.writeTo(target, targetPort, request.data(), static_cast<int>(request.size()), true);
+    REQUIRE(socket.wait(8000, Socket::WAIT_READ) == Socket::WAIT_READ);
+
+    std::array<uint8_t, 128> reply {};
+    sockaddr_storage remote = {};
+    const int received = socket.read(reply.data(), static_cast<int>(reply.size()), remote);
+    REQUIRE(received == static_cast<int>(request.size()));
+    REQUIRE(ByteVector(reply.begin(), reply.begin() + received) == request);
+    REQUIRE(remote.ss_family == AF_INET);
+    REQUIRE(ntohs(reinterpret_cast<const sockaddr_in*>(&remote)->sin_port) == Util::toInt(targetPort));
+}
+
+TEST_CASE("Socket Shadowsocks bulk transfer completes through an opt-in byte source", "[qt][socket][shadowsocks][performance][integration]")
+{
+    const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
+    const char* portText = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
+    const char* password = envOrNull("EISKALT_TEST_SHADOWSOCKS_PASSWORD");
+    const char* method = envOrNull("EISKALT_TEST_SHADOWSOCKS_METHOD");
+    const char* target = envOrNull("EISKALT_TEST_SHADOWSOCKS_BENCH_TARGET");
+    const char* targetPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_BENCH_PORT");
+    const char* byteCount = envOrNull("EISKALT_TEST_SHADOWSOCKS_BENCH_BYTES");
+
+    if(!server || !portText || !password || !target || !targetPort || !byteCount) {
+        SKIP("Set Shadowsocks and EISKALT_TEST_SHADOWSOCKS_BENCH_TARGET/PORT/BYTES variables to run this integration test");
+    }
+
+    const int64_t expected = Util::toInt64(byteCount);
+    REQUIRE(expected > 0);
+
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureIntegrationShadowsocks(*tc.ownedCtx, server, portText, password, method);
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.proxyConnect(target, targetPort, 8000);
+
+    std::array<uint8_t, 256 * 1024> buffer {};
+    int64_t received = 0;
+    while(received < expected) {
+        if(socket.wait(10000, Socket::WAIT_READ) != Socket::WAIT_READ)
+            FAIL("Timed out while reading the Shadowsocks bulk transfer");
+        const int bytes = socket.read(buffer.data(), static_cast<int>(buffer.size()));
+        if(bytes == -1)
+            continue;
+        if(bytes == 0)
+            break;
+        received += bytes;
+    }
+
+    REQUIRE(received == expected);
+}
+
 TEST_CASE("Secure NMDC handshakes remain reliable through Shadowsocks", "[qt][socket][shadowsocks][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
