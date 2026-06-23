@@ -562,6 +562,12 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     button_TEST_PROXY->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     gridLayout_8->addWidget(button_TEST_PROXY, 10, 1, 1, 1);
 
+    const QString shadowsocksPskHelp = tr(
+        "Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. "
+        "For identity chains, enter identityPSK:userPSK in that order.");
+    lineEdit_SPSWD->setToolTip(shadowsocksPskHelp);
+    comboBox_SHADOWSOCKS_METHOD->setToolTip(shadowsocksPskHelp);
+
     comboBox_TOS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     comboBox_TLS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
 
@@ -580,6 +586,11 @@ void SettingsConnection::ok(){
 
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
     saveCurrentProxyFormState();
+
+    const bool use_shadowsocks = radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
+    if (use_shadowsocks && !validateShadowsocksPasswordForUi(
+            shadowsocksProxyState.method, shadowsocksProxyState.password))
+        return;
 
     const bool use_proxy = !radioButton_DC->isChecked();
     const bool proxyP2P = use_proxy && checkBox_PROXY_P2P && checkBox_PROXY_P2P->isChecked();
@@ -673,7 +684,6 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
 
-    const bool use_shadowsocks = radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
     int type = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true);
 
     SM->set(SettingsManager::BIND_IFACE, radioButton_BIND_IFACE->isChecked());
@@ -904,6 +914,9 @@ void SettingsConnection::init(){
         comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("aes-256-gcm"), QStringLiteral("aes-256-gcm"));
         comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("aes-128-gcm"), QStringLiteral("aes-128-gcm"));
         comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("chacha20-ietf-poly1305"), QStringLiteral("chacha20-ietf-poly1305"));
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("2022-blake3-aes-128-gcm"), QStringLiteral("2022-blake3-aes-128-gcm"));
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("2022-blake3-aes-256-gcm"), QStringLiteral("2022-blake3-aes-256-gcm"));
+        comboBox_SHADOWSOCKS_METHOD->addItem(QStringLiteral("2022-blake3-chacha20-poly1305"), QStringLiteral("2022-blake3-chacha20-poly1305"));
     }
 
     const int outgoingMode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true);
@@ -1277,6 +1290,33 @@ void SettingsConnection::saveCurrentProxyFormState()
     }
 }
 
+bool SettingsConnection::validateShadowsocksPasswordForUi(const QString& method,
+                                                          const QString& password)
+{
+    const settings_connection::ShadowsocksPasswordValidation validation =
+        settings_connection::validateShadowsocksPassword(method, password);
+    if (validation.isValid())
+        return true;
+
+    switch (validation.error) {
+    case settings_connection::ShadowsocksPasswordEmpty:
+        showMsg(tr("Shadowsocks 2022 PSK segment %1 is empty.").arg(validation.segment), lineEdit_SPSWD);
+        break;
+    case settings_connection::ShadowsocksPasswordInvalidBase64:
+        showMsg(tr("Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.").arg(validation.segment), lineEdit_SPSWD);
+        break;
+    case settings_connection::ShadowsocksPasswordWrongLength:
+        showMsg(tr("Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.")
+                    .arg(validation.segment)
+                    .arg(validation.expectedBytes),
+                lineEdit_SPSWD);
+        break;
+    case settings_connection::ShadowsocksPasswordValid:
+        return true;
+    }
+    return false;
+}
+
 void SettingsConnection::slotTestProxy()
 {
     if (radioButton_DC->isChecked()) {
@@ -1302,6 +1342,9 @@ void SettingsConnection::slotTestProxy()
         showMsg(tr("No Shadowsocks password configured."), lineEdit_SPSWD);
         return;
     }
+    if (shadowsocks && !validateShadowsocksPasswordForUi(
+            comboBox_SHADOWSOCKS_METHOD->currentData().toString(), lineEdit_SPSWD->text()))
+        return;
 
     auto *settings = qtCtx()->dcCtx().getSettingsManager();
     struct SavedProxySettings {

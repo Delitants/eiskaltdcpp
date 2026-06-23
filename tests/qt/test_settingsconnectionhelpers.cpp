@@ -127,3 +127,94 @@ TEST_CASE("SettingsConnectionHelpers: Shadowsocks UDP relay is controlled by tra
     REQUIRE_FALSE(settings_connection::shadowsocksUsesUdp(settings_connection::ShadowsocksTransportTcpOnly));
     REQUIRE(settings_connection::shadowsocksUsesUdp(settings_connection::ShadowsocksTransportTcpAndUdp));
 }
+
+TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 methods are identified exactly", "[qt][settingsconnection][shadowsocks2022]")
+{
+    REQUIRE(settings_connection::isShadowsocks2022Method(QStringLiteral("2022-blake3-aes-128-gcm")));
+    REQUIRE(settings_connection::isShadowsocks2022Method(QStringLiteral("2022-blake3-aes-256-gcm")));
+    REQUIRE(settings_connection::isShadowsocks2022Method(QStringLiteral("2022-blake3-chacha20-poly1305")));
+    REQUIRE_FALSE(settings_connection::isShadowsocks2022Method(QStringLiteral("aes-256-gcm")));
+    REQUIRE_FALSE(settings_connection::isShadowsocks2022Method(QStringLiteral("2022-blake3-aes-128-gcm-extra")));
+}
+
+TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 validates canonical PSK chains", "[qt][settingsconnection][shadowsocks2022]")
+{
+    using namespace settings_connection;
+
+    const auto aes128 = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-128-gcm"),
+        QStringLiteral("AAECAwQFBgcICQoLDA0ODw=="));
+    REQUIRE(aes128.isValid());
+    REQUIRE(aes128.expectedBytes == 16);
+
+    const auto aes256Chain = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-256-gcm"),
+        QStringLiteral("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=:Hh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAA="));
+    REQUIRE(aes256Chain.isValid());
+    REQUIRE(aes256Chain.expectedBytes == 32);
+
+    const auto legacy = validateShadowsocksPassword(
+        QStringLiteral("aes-256-gcm"), QStringLiteral("ordinary password"));
+    REQUIRE(legacy.isValid());
+    REQUIRE(legacy.expectedBytes == 0);
+}
+
+TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 reports precise PSK failures", "[qt][settingsconnection][shadowsocks2022]")
+{
+    using namespace settings_connection;
+
+    const auto empty = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-128-gcm"), QString());
+    REQUIRE(empty.error == ShadowsocksPasswordEmpty);
+    REQUIRE(empty.segment == 1);
+
+    const auto malformed = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-128-gcm"), QStringLiteral("not base64!"));
+    REQUIRE(malformed.error == ShadowsocksPasswordInvalidBase64);
+    REQUIRE(malformed.segment == 1);
+
+    const auto nonCanonical = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-128-gcm"), QStringLiteral("AAECAwQFBgcICQoLDA0ODw"));
+    REQUIRE(nonCanonical.error == ShadowsocksPasswordInvalidBase64);
+
+    const auto wrongLength = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-aes-256-gcm"),
+        QStringLiteral("AAECAwQFBgcICQoLDA0ODw=="));
+    REQUIRE(wrongLength.error == ShadowsocksPasswordWrongLength);
+    REQUIRE(wrongLength.expectedBytes == 32);
+    REQUIRE(wrongLength.segment == 1);
+
+    const auto emptyIdentity = validateShadowsocksPassword(
+        QStringLiteral("2022-blake3-chacha20-poly1305"),
+        QStringLiteral(":AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="));
+    REQUIRE(emptyIdentity.error == ShadowsocksPasswordEmpty);
+    REQUIRE(emptyIdentity.segment == 1);
+}
+
+TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 method and transport survive proxy switching", "[qt][settingsconnection][shadowsocks2022]")
+{
+    using namespace settings_connection;
+
+    ProxyUiState socks;
+    socks.server = QStringLiteral("socks.example.test");
+    socks.port = QStringLiteral("1080");
+
+    ProxyUiState shadowsocks;
+    shadowsocks.server = QStringLiteral("shadow.example.test");
+    shadowsocks.port = QStringLiteral("8388");
+    shadowsocks.password = QStringLiteral("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=");
+    shadowsocks.method = QStringLiteral("2022-blake3-chacha20-poly1305");
+    shadowsocks.shadowsocksTransport = ShadowsocksTransportTcpAndUdp;
+
+    int currentMode = ProxyUiShadowsocks;
+    const ProxyUiState visibleShadow = shadowsocks;
+    const ProxyUiState shownSocks = switchProxyUiState(
+        socks, shadowsocks, currentMode, ProxyUiSocks5, visibleShadow);
+    REQUIRE(shownSocks.server == socks.server);
+
+    const ProxyUiState restored = switchProxyUiState(
+        socks, shadowsocks, currentMode, ProxyUiShadowsocks, shownSocks);
+    REQUIRE(restored.method == QStringLiteral("2022-blake3-chacha20-poly1305"));
+    REQUIRE(restored.password == shadowsocks.password);
+    REQUIRE(restored.shadowsocksTransport == ShadowsocksTransportTcpAndUdp);
+}

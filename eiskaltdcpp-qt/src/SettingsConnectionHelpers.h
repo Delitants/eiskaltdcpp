@@ -16,6 +16,21 @@ enum ShadowsocksTransport {
     ShadowsocksTransportTcpAndUdp = 1
 };
 
+enum ShadowsocksPasswordError {
+    ShadowsocksPasswordValid = 0,
+    ShadowsocksPasswordEmpty,
+    ShadowsocksPasswordInvalidBase64,
+    ShadowsocksPasswordWrongLength
+};
+
+struct ShadowsocksPasswordValidation {
+    ShadowsocksPasswordError error = ShadowsocksPasswordValid;
+    int expectedBytes = 0;
+    int segment = 0;
+
+    bool isValid() const { return error == ShadowsocksPasswordValid; }
+};
+
 struct ProxyUiState {
     QString server;
     QString port;
@@ -37,5 +52,8 @@ ProxyUiState switchProxyUiState(ProxyUiState& socks,
                                 const ProxyUiState& visibleState);
 
 bool shadowsocksUsesUdp(int transport);
+bool isShadowsocks2022Method(const QString& method);
+ShadowsocksPasswordValidation validateShadowsocksPassword(const QString& method,
+                                                          const QString& password);
 
 }

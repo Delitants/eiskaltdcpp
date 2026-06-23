@@ -66,6 +66,7 @@ private:
     void applyProxyFormState(const settings_connection::ProxyUiState& state);
     void syncProxyFormStateWithSelection();
     void saveCurrentProxyFormState();
+    bool validateShadowsocksPasswordForUi(const QString& method, const QString& password);
 
     bool dirty;
     QCheckBox* checkBox_USE_IPV6 = nullptr;
