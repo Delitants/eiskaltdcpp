@@ -24,6 +24,10 @@
 #include "dcpp/Socket.h"
 #include "dcpp/Thread.h"
 
+#include <atomic>
+#include <memory>
+#include <mutex>
+
 namespace dht
 {
     class DHT;
@@ -58,6 +62,23 @@ namespace dht
         private Thread
     {
     public:
+        struct SendObservation
+        {
+            string logicalIp;
+            string logicalPort;
+            string physicalIp;
+            string physicalPort;
+            bool proxied = false;
+            size_t payloadBytes = 0;
+        };
+
+        class TransportObserver
+        {
+        public:
+            virtual ~TransportObserver() = default;
+            virtual void onSend(const SendObservation& observation) = 0;
+        };
+
         UDPSocket(void);
         ~UDPSocket(void);
 
@@ -80,6 +101,9 @@ namespace dht
 
         /** Returns true when DHT can register a public UDP proxy endpoint. */
         bool hasUdpProxyEndpoint() const;
+
+        /** Installs an optional observer for successfully sent UDP packets. */
+        void setTransportObserver(std::shared_ptr<TransportObserver> observer);
 
         /** Sends command to ip and port */
         void send(AdcCommand& cmd, const string& ip, const string &port, const CID& targetCID, const CID& udpKey);
@@ -122,9 +146,14 @@ namespace dht
 
         void compressPacket(const string& data, uint8_t* destBuf, unsigned long& destSize);
         void encryptPacket(const CID& targetCID, const CID& udpKey, uint8_t* destBuf, unsigned long& destSize);
+        void notifyTransportObserver(const SendObservation& observation) const;
 
         bool decompressPacket(uint8_t* destBuf, unsigned long& destLen, const uint8_t* buf, size_t len);
         bool decryptPacket(uint8_t* buf, int& len, const string& remoteIp, bool& isUdpKeyValid);
+
+        mutable std::mutex observerMutex;
+        std::atomic<bool> observerEnabled { false };
+        std::shared_ptr<TransportObserver> transportObserver;
     };
 
 }

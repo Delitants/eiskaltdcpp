@@ -122,6 +122,21 @@ string sockaddrToPort(const sockaddr* sa) {
 
     return port > 0 ? Util::toString(port) : Util::emptyString;
 }
+
+void populateUdpSendInfo(Socket::UdpSendInfo* sendInfo, const string& logicalIp, const string& logicalPort,
+    const sockaddr* physical, int sentBytes, bool proxied)
+{
+    if(!sendInfo) {
+        return;
+    }
+
+    sendInfo->logicalIp = logicalIp;
+    sendInfo->logicalPort = logicalPort;
+    sendInfo->physicalIp = sockaddrToIp(physical);
+    sendInfo->physicalPort = sockaddrToPort(physical);
+    sendInfo->proxied = proxied;
+    sendInfo->bytesSent = sentBytes > 0 ? static_cast<size_t>(sentBytes) : 0;
+}
 }
 
 #ifdef _DEBUG
@@ -1584,7 +1599,7 @@ int Socket::shadowsocksRead(void* aBuffer, int aBufLen) {
 * @param aLen Data length
 * @throw SocketExcpetion Send failed.
 */
-void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuffer, int aLen, bool proxy) {
+void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuffer, int aLen, bool proxy, UdpSendInfo* sendInfo) {
     if(aLen <= 0)
         return;
 
@@ -1608,7 +1623,11 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
 
     const auto* buf = static_cast<const uint8_t*>(aBuffer);
     int sent = SOCKET_ERROR;
+    sockaddr_storage sentAddress = {};
+    bool hasSentAddress = false;
+    bool usedProxy = false;
     if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SHADOWSOCKS && proxy) {
+        usedProxy = true;
         auto* sm = ctx().getSettingsManager();
         if(sm->get(SettingsManager::SHADOWSOCKS_TRANSPORT) != SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP) {
             throw SocketException(_("Shadowsocks UDP relay is disabled"));
@@ -1655,6 +1674,8 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
             } while(sent < 0 && getLastError() == EINTR);
 
             if(sent >= 0) {
+                memcpy(&sentAddress, ai->ai_addr, std::min(sizeof(sentAddress), static_cast<size_t>(ai->ai_addrlen)));
+                hasSentAddress = true;
                 break;
             }
             savedError = getLastError();
@@ -1665,6 +1686,7 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
             throw SocketException(savedError);
         }
     } else if(ctx_ && ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_SOCKS5 && proxy) {
+        usedProxy = true;
         const auto association = getSocksUdpAssociation(ctx());
         if(!association) {
             throw SocketException(_("Failed to set up the socks server for UDP relay (check socks address and port)"));
@@ -1690,8 +1712,11 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
                     reinterpret_cast<const sockaddr*>(&endpoint), endpointLen);
             } while(sent < 0 && getLastError() == EINTR);
 
-            if(sent >= 0)
+            if(sent >= 0) {
+                sentAddress = endpoint;
+                hasSentAddress = true;
                 break;
+            }
             savedError = getLastError();
         }
 
@@ -1720,6 +1745,8 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
             } while(sent < 0 && getLastError() == EINTR);
 
             if(sent >= 0) {
+                memcpy(&sentAddress, ai->ai_addr, std::min(sizeof(sentAddress), static_cast<size_t>(ai->ai_addrlen)));
+                hasSentAddress = true;
                 break;
             }
 
@@ -1733,6 +1760,7 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
     }
 
     check(sent);
+    populateUdpSendInfo(sendInfo, aAddr, aPort, hasSentAddress ? reinterpret_cast<const sockaddr*>(&sentAddress) : nullptr, sent, usedProxy);
     stats.totalUp += sent;
 }
 

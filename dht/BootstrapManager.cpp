@@ -85,28 +85,44 @@ namespace dht
         httpConnection.removeListener(this);
     }
 
+    string BootstrapManager::getLastBootstrapRequestUrl() const
+    {
+        Lock l(cs);
+        return lastRequestUrl;
+    }
+
     void BootstrapManager::bootstrap()
     {
-        if(servers.empty())
-            return;
+        vector<string> activeServers;
 
         {
             Lock l(cs);
+            servers = parseServers(dht_.ctx().getSettingsManager()->get(SettingsManager::DHT_BOOTSTRAP_URLS, true));
+
+            if(servers.empty())
+                return;
+
             if(requestActive || !bootstrapNodes.empty())
                 return;
 
+            activeServers = servers;
             nodesXML.clear();
+            lastRequestUrl.clear();
             requestActive = true;
         }
 
         dht_.ctx().getLogManager()->message(_("DHT bootstrapping started"));
-        string dhturl = servers[Util::rand(servers.size())];
+        string dhturl = activeServers[Util::rand(activeServers.size())];
         const bool advertisePort = dht_.ctx().getClientManager()->isActive(Util::emptyString) ||
             dht_.hasUdpProxyEndpoint();
         string url = buildBootstrapUrl(dhturl,
             dht_.ctx().getClientManager()->getMe()->getCID().toBase32(),
             dht_.getAdvertisedPort(), advertisePort);
 
+        {
+            Lock l(cs);
+            lastRequestUrl = url;
+        }
         httpConnection.downloadFile(url);
     }
 

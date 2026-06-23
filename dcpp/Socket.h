@@ -84,6 +84,15 @@ public:
         PROTO_ADC = 2
     };
 
+    struct UdpSendInfo {
+        string logicalIp;
+        string logicalPort;
+        string physicalIp;
+        string physicalPort;
+        bool proxied = false;
+        size_t bytesSent = 0;
+    };
+
     enum {
         SHADOWSOCKS_NONE = 0,
         SHADOWSOCKS_AES_128_GCM,
@@ -128,7 +137,8 @@ public:
     void writeAll(const void* aBuffer, int aLen, uint32_t timeout = 0);
     virtual int write(const void* aBuffer, int aLen);
     int write(const string& aData) { return write(aData.data(), (int)aData.length()); }
-    virtual void writeTo(const string& aIp, const std::string &aPort, const void* aBuffer, int aLen, bool proxy = true);
+    virtual void writeTo(const string& aIp, const std::string &aPort, const void* aBuffer, int aLen,
+        bool proxy = true, UdpSendInfo* sendInfo = nullptr);
     void writeTo(const string& aIp, const string& aPort, const string& aData) { writeTo(aIp, aPort, aData.data(), (int)aData.length()); }
     virtual void shutdown();
     virtual void close();

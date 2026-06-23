@@ -162,6 +162,28 @@ namespace dht
         return Socket::getUdpProxyEndpoint(dht_->ctx(), relayServer, relayPort);
     }
 
+    void UDPSocket::setTransportObserver(std::shared_ptr<TransportObserver> observer)
+    {
+        std::lock_guard<std::mutex> lock(observerMutex);
+        transportObserver = std::move(observer);
+        observerEnabled.store(static_cast<bool>(transportObserver), std::memory_order_release);
+    }
+
+    void UDPSocket::notifyTransportObserver(const SendObservation& observation) const
+    {
+        if(!observerEnabled.load(std::memory_order_acquire))
+            return;
+
+        std::shared_ptr<TransportObserver> observer;
+        {
+            std::lock_guard<std::mutex> lock(observerMutex);
+            observer = transportObserver;
+        }
+
+        if(observer)
+            observer->onSend(observation);
+    }
+
     void UDPSocket::checkIncoming()
     {
         if(socket->wait(delay, Socket::WAIT_READ) == Socket::WAIT_READ)
@@ -253,7 +275,22 @@ namespace dht
 
                 dcdrun(sentBytes += packet->data.length());
                 dcdrun(sentPackets++);
-                socket->writeTo(packet->ip, packet->port, data.get(), length);
+
+                if(observerEnabled.load(std::memory_order_acquire)) {
+                    Socket::UdpSendInfo sendInfo;
+                    socket->writeTo(packet->ip, packet->port, data.get(), length, true, &sendInfo);
+
+                    SendObservation observation;
+                    observation.logicalIp = sendInfo.logicalIp;
+                    observation.logicalPort = sendInfo.logicalPort;
+                    observation.physicalIp = sendInfo.physicalIp;
+                    observation.physicalPort = sendInfo.physicalPort;
+                    observation.proxied = sendInfo.proxied;
+                    observation.payloadBytes = static_cast<size_t>(length);
+                    notifyTransportObserver(observation);
+                } else {
+                    socket->writeTo(packet->ip, packet->port, data.get(), length);
+                }
             }
             catch(SocketException& e)
             {

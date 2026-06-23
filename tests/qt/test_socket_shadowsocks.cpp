@@ -36,6 +36,13 @@ const char* envOrNull(const char* name)
     return value && *value ? value : nullptr;
 }
 
+bool envFlag(const char* name)
+{
+    const char* value = envOrNull(name);
+    return value && (value[0] == '1' || value[0] == 't' || value[0] == 'T' ||
+        value[0] == 'y' || value[0] == 'Y');
+}
+
 class LocalSocks5UdpServer
 {
 public:
@@ -72,6 +79,11 @@ public:
     {
         std::unique_lock<std::mutex> lock(eventMutex);
         return eventChanged.wait_for(lock, timeout, [this, count] { return associations.load() >= count; });
+    }
+
+    bool waitForUdpPacket(std::chrono::milliseconds timeout)
+    {
+        return udpRelay.wait(static_cast<uint32_t>(timeout.count()), Socket::WAIT_READ) == Socket::WAIT_READ;
     }
 
     void closeControls()
@@ -266,6 +278,37 @@ private:
     std::condition_variable eventChanged;
     size_t blockAssociation = 0;
     bool associationBlocked = false;
+};
+
+class UdpDatagramSink
+{
+public:
+    UdpDatagramSink()
+    {
+        socket.create(Socket::TYPE_UDP, AF_INET);
+        socket.bind("0", "127.0.0.1");
+    }
+
+    std::string port() { return socket.getLocalPort(); }
+
+    bool waitForPacket(std::chrono::milliseconds timeout)
+    {
+        return socket.wait(static_cast<uint32_t>(timeout.count()), Socket::WAIT_READ) == Socket::WAIT_READ;
+    }
+
+    ByteVector readPacket()
+    {
+        sockaddr_storage remote = {};
+        std::array<uint8_t, 1024> buffer {};
+        const int received = socket.read(buffer.data(), static_cast<int>(buffer.size()), remote);
+        if(received <= 0) {
+            return {};
+        }
+        return ByteVector(buffer.begin(), buffer.begin() + received);
+    }
+
+private:
+    Socket socket;
 };
 
 class SocksSettingsScope
@@ -596,6 +639,7 @@ void configureLocalShadowsocks(DCContext& context, const std::string& port, cons
     settings->set(SettingsManager::SHADOWSOCKS_PORT, Util::toInt(port));
     settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, password);
     settings->set(SettingsManager::SHADOWSOCKS_METHOD, std::string("aes-256-gcm"));
+    settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT, SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_AND_UDP);
     settings->set(SettingsManager::SOCKS_RESOLVE, true);
     settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
 }
@@ -1102,6 +1146,85 @@ TEST_CASE("SOCKS5 UDP request includes the destination address and port", "[qt][
     REQUIRE(packet == expected);
 }
 
+TEST_CASE("Socket UDP send info records the successful direct endpoint", "[qt][socket][socks5][udp]")
+{
+    UdpDatagramSink sink;
+    test::TestContext tc;
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "127.0.0.1");
+
+    const uint8_t payload[] = { 0xde, 0xad, 0xbe, 0xef };
+    Socket::UdpSendInfo sendInfo;
+    socket.writeTo("127.0.0.1", sink.port(), payload, sizeof(payload), false, &sendInfo);
+
+    REQUIRE(sendInfo.logicalIp == "127.0.0.1");
+    REQUIRE(sendInfo.logicalPort == sink.port());
+    REQUIRE(sendInfo.physicalIp == "127.0.0.1");
+    REQUIRE(sendInfo.physicalPort == sink.port());
+    REQUIRE_FALSE(sendInfo.proxied);
+    REQUIRE(sendInfo.bytesSent == sizeof(payload));
+    REQUIRE(sink.waitForPacket(std::chrono::seconds(2)));
+    REQUIRE(sink.readPacket() == ByteVector(payload, payload + sizeof(payload)));
+}
+
+TEST_CASE("Socket UDP send info records the SOCKS5 relay endpoint", "[qt][socket][socks5][udp]")
+{
+    LocalSocks5UdpServer proxy;
+    test::TestContext tc;
+    SocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "127.0.0.1");
+
+    const uint8_t payload[] = { 0x01, 0x02, 0x03, 0x04 };
+    Socket::UdpSendInfo sendInfo;
+    socket.writeTo("198.51.100.24", "6250", payload, sizeof(payload), true, &sendInfo);
+
+    REQUIRE(proxy.waitForAssociations(1, std::chrono::seconds(2)));
+    REQUIRE(proxy.waitForUdpPacket(std::chrono::seconds(2)));
+    REQUIRE(sendInfo.logicalIp == "198.51.100.24");
+    REQUIRE(sendInfo.logicalPort == "6250");
+    REQUIRE(sendInfo.physicalIp == "127.0.0.1");
+    REQUIRE(sendInfo.physicalPort == proxy.relayPort());
+    REQUIRE(sendInfo.proxied);
+    REQUIRE(sendInfo.bytesSent > sizeof(payload));
+    REQUIRE(sendInfo.logicalIp != sendInfo.physicalIp);
+    REQUIRE(sendInfo.logicalPort != sendInfo.physicalPort);
+}
+
+TEST_CASE("Socket UDP send info records the Shadowsocks relay endpoint", "[qt][socket][shadowsocks]")
+{
+    UdpDatagramSink relay;
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalShadowsocks(*tc.ownedCtx, relay.port(), "test-password");
+
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.create(Socket::TYPE_UDP, AF_INET);
+    socket.bind("0", "127.0.0.1");
+
+    const uint8_t payload[] = { 0xaa, 0xbb, 0xcc, 0xdd };
+    Socket::UdpSendInfo sendInfo;
+    socket.writeTo("203.0.113.77", "6250", payload, sizeof(payload), true, &sendInfo);
+
+    REQUIRE(relay.waitForPacket(std::chrono::seconds(2)));
+    REQUIRE(sendInfo.logicalIp == "203.0.113.77");
+    REQUIRE(sendInfo.logicalPort == "6250");
+    REQUIRE(sendInfo.physicalIp == "127.0.0.1");
+    REQUIRE(sendInfo.physicalPort == relay.port());
+    REQUIRE(sendInfo.proxied);
+    REQUIRE(sendInfo.bytesSent > sizeof(payload));
+    REQUIRE(sendInfo.logicalIp != sendInfo.physicalIp);
+    REQUIRE(sendInfo.logicalPort != sendInfo.physicalPort);
+}
+
 TEST_CASE("SOCKS5 UDP request accepts a null zero-length payload", "[qt][socket][socks5][udp]")
 {
     ByteVector packet;
@@ -1182,6 +1305,7 @@ TEST_CASE("Socket SOCKS5 UDP relay completes an opt-in DNS round trip", "[qt][so
     settings->set(SettingsManager::SOCKS_PORT, Util::toInt(portText));
     settings->set(SettingsManager::SOCKS_USER, std::string(user ? user : ""));
     settings->set(SettingsManager::SOCKS_PASSWORD, std::string(password ? password : ""));
+    settings->set(SettingsManager::SOCKS_TLS, envFlag("EISKALT_TEST_SOCKS5_TLS"));
     settings->set(SettingsManager::SOCKS_RESOLVE, true);
 
     Socket::socksUpdated(*tc.ownedCtx);

@@ -85,6 +85,7 @@ namespace dht
         const string& getPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getPort() : Util::emptyString; }
         string getAdvertisedPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getAdvertisedPort() : Util::emptyString; }
         bool hasUdpProxyEndpoint() const { return CTX_BOOLSETTING(USE_DHT) && socket.hasUdpProxyEndpoint(); }
+        void setTransportObserver(std::shared_ptr<UDPSocket::TransportObserver> observer) { socket.setTransportObserver(std::move(observer)); }
 
         /** Process incoming command */
         void dispatch(const string& aLine, const string& ip, const string &port, bool isUdpKeyValid);

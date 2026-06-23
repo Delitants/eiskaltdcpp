@@ -37,6 +37,7 @@ namespace dht
         BootstrapManager& operator=(const BootstrapManager&) = delete;
 
         void bootstrap();
+        string getLastBootstrapRequestUrl() const;
 
         void process();
 
@@ -49,7 +50,7 @@ namespace dht
     private:
         DHT& dht_;
 
-        CriticalSection cs;
+        mutable CriticalSection cs;
 
         struct BootstrapNode
         {
@@ -68,9 +69,11 @@ namespace dht
         /** Downloaded node list */
         string nodesXML;
 
+        /** Last URL handed to HttpConnection::downloadFile() */
+        string lastRequestUrl;
+
         /** Per-instance bootstrap servers */
         vector<string> servers;
-
         /** True while an HTTP bootstrap request is in flight */
         bool requestActive = false;
 
