@@ -51,7 +51,12 @@ add_executable(eiskaltdcpp-qt-tests
     test_xchacha20poly1305.cpp
     test_dht_bootstrap.cpp
     test_client_reconnect_policy.cpp
+    test_logmanager_live.cpp
+    test_livelogmodel.cpp
+    test_menuiconhelper.cpp
     stubs_wulforutil.cpp
+    ${QT_SRC_DIR}/MenuIconHelper.cpp
+    ${QT_SRC_DIR}/LiveLogModel.cpp
     ${QT_SRC_DIR}/DownloadToSettings.cpp
     ${QT_SRC_DIR}/SettingsConnectionHelpers.cpp
     ${QT_MODEL_SOURCES}

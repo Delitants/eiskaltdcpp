@@ -64,7 +64,7 @@ private:
     void fileNotAvailable(UserConnection* aSource);
     void noSlots(UserConnection* aSource);
 
-    void logDownload(UserConnection* aSource, Download* d);
+    void logDownload(UserConnection* aSource, Download* d, bool writeToFile);
     int64_t getResumePos(const string& file, const TigerTree& tt, int64_t startPos);
 
     void failDownload(UserConnection* aSource, const string& reason);

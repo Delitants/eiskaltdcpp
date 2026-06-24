@@ -19,10 +19,13 @@
 #define DCPLUSPLUS_DCPP_LOG_MANAGER_LISTENER_H
 
 #include <string>
+#include <ctime>
 
 namespace dcpp {
 
 using std::string;
+
+struct LogEntry;
 
 class LogManagerListener {
 public:
@@ -30,7 +33,9 @@ public:
 	template<int I>	struct X { enum { TYPE = I }; };
 
 	typedef X<0> Message;
+	typedef X<1> EntryAdded;
 	virtual void on(Message, time_t, const string&) noexcept { }
+	virtual void on(EntryAdded, const LogEntry&) noexcept { }
 };
 
 } // namespace dcpp

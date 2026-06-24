@@ -1684,6 +1684,87 @@ Favorite user</source>
     </message>
 </context>
 <context>
+    <name>LiveLog</name>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="91"/>
+        <source>All categories</source>
+        <translation>所有类别</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="92"/>
+        <source>No categories</source>
+        <translation>无类别</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.h" line="34"/>
+        <source>Live Log</source>
+        <translation>实时日志</translation>
+    </message>
+</context>
+<context>
+    <name>LiveLogModel</name>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="50"/>
+        <source>Time</source>
+        <translation>用时</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="52"/>
+        <source>Category</source>
+        <translation>类别</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="54"/>
+        <source>Message</source>
+        <translation>消息</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="177"/>
+        <source>Chat</source>
+        <translation>聊天</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="179"/>
+        <source>Private messages</source>
+        <translation>私信</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="181"/>
+        <source>Downloads</source>
+        <translation>下载</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="183"/>
+        <source>Finished downloads</source>
+        <translation>已完成的下载</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="185"/>
+        <source>Uploads</source>
+        <translation>上传</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="187"/>
+        <source>System</source>
+        <translation>系统</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="189"/>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="191"/>
+        <source>Search spy</source>
+        <translation>搜索监视</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="193"/>
+        <source>Command debug</source>
+        <translation>命令调试</translation>
+    </message>
+</context>
+<context>
     <name>Magnet</name>
     <message>
         <location filename="../src/Magnet.cpp" line="61"/>
@@ -2591,6 +2672,16 @@ Favorite user</source>
         <source>All downloads complete</source>
         <translation>已完成所有下载</translation>
     </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1640"/>
+        <source>Live Log</source>
+        <translation>实时日志</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <source>Show live application log</source>
+        <translation>显示实时应用程序日志</translation>
+    </message>
 </context>
 <context>
     <name>MultiLineToolBar</name>
@@ -2961,8 +3052,9 @@ Safe settings such as hubs, account details, sharing, downloads and history were
 <context>
     <name>ScriptConsole</name>
     <message>
+        <location filename="../scriptengine/ScriptConsole.cpp" line="38"/>
         <source>Script Console</source>
-        <translation type="vanished">脚本控制台</translation>
+        <translation>脚本控制台</translation>
     </message>
 </context>
 <context>
@@ -3555,6 +3647,205 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="480"/>
+        <source>Public hub list proxy</source>
+        <translation>公共中枢列表代理</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="486"/>
+        <source>Host</source>
+        <translation>主机</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="487"/>
+        <location filename="../src/SettingsConnection.cpp" line="491"/>
+        <source>Port</source>
+        <translation>端口</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="489"/>
+        <source>HTTP proxy host or IP</source>
+        <translation>HTTP 代理主机或 IP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="494"/>
+        <source>Test</source>
+        <translation>测试</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="543"/>
+        <source>Use TLS to proxy server</source>
+        <translation>使用 TLS 连接代理服务器</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="544"/>
+        <source>Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. The proxy server must explicitly support SOCKS5 over TLS.</source>
+        <translation>在发送 SOCKS 握手之前，使用 TLS 封装 SOCKS5 TCP 连接。代理服务器必须明确支持基于 TLS 的 SOCKS5。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="548"/>
+        <source>Transport</source>
+        <translation>传输</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="550"/>
+        <source>TCP only</source>
+        <translation>仅 TCP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="551"/>
+        <source>TCP + UDP relay</source>
+        <translation>TCP + UDP 中继</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="552"/>
+        <source>TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP.</source>
+        <translation>TCP 用于 Hub 和传输连接。仅当 Shadowsocks 服务器支持 UDP 时才启用 UDP 中继。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="556"/>
+        <source>Proxy downloads and uploads too (passive mode)</source>
+        <translation>下载和上传也使用代理（被动模式）</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="557"/>
+        <source>When enabled, peer-to-peer transfers use the selected proxy. Incoming connection options are disabled and the client is advertised as passive.</source>
+        <translation>启用后，点对点传输将使用所选代理。入站连接选项会被禁用，并且客户端将以被动模式公布。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="561"/>
+        <source>Test proxy</source>
+        <translation>测试代理</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="565"/>
+        <source>Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. For identity chains, enter identityPSK:userPSK in that order.</source>
+        <translation>旧版方法接受密码。Shadowsocks 2022 方法要求使用规范的 Base64 PSK。对于身份链，请按 identityPSK:userPSK 的顺序输入。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="629"/>
+        <location filename="../src/SettingsConnection.cpp" line="662"/>
+        <source>No valid bind IPv4 address found!</source>
+        <translation>未找到有效的绑定 IPv4 地址！</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="699"/>
+        <location filename="../src/SettingsConnection.cpp" line="1463"/>
+        <source>No valid public hub list proxy port found!</source>
+        <translation>未找到有效的公共中枢列表代理端口！</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1155"/>
+        <source>Direct connection</source>
+        <translation>直接连接</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1157"/>
+        <source>Firewall with UPnP</source>
+        <translation>带 UPnP 的防火墙</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1159"/>
+        <source>Firewall with port forwarding</source>
+        <translation>带端口转发的防火墙</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1161"/>
+        <source>Passive mode</source>
+        <translation>被动模式</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1163"/>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1178"/>
+        <source>Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.</source>
+        <translation>检测到的入站模式：%1。优先级：直接连接、带 UPnP 的防火墙、被动模式。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1303"/>
+        <source>Shadowsocks 2022 PSK segment %1 is empty.</source>
+        <translation>Shadowsocks 2022 PSK 片段 %1 为空。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1306"/>
+        <source>Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.</source>
+        <translation>Shadowsocks 2022 PSK 片段 %1 不是有效的规范 Base64。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1309"/>
+        <source>Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.</source>
+        <translation>Shadowsocks 2022 PSK 片段 %1 解码后必须恰好为 %2 字节。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1323"/>
+        <source>Select SOCKS5 or Shadowsocks before testing a proxy.</source>
+        <translation>测试代理前，请选择 SOCKS5 或 Shadowsocks。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>Shadowsocks</source>
+        <translation>Shadowsocks</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>SOCKS5</source>
+        <translation>SOCKS5</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1334"/>
+        <source>No %1 server found!</source>
+        <translation>未找到 %1 服务器！</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1342"/>
+        <source>No Shadowsocks password configured.</source>
+        <translation>未配置 Shadowsocks 密码。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1434"/>
+        <location filename="../src/SettingsConnection.cpp" line="1437"/>
+        <source>%1 proxy test failed:
+%2</source>
+        <translation>%1 代理测试失败：
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1442"/>
+        <location filename="../src/SettingsConnection.cpp" line="1489"/>
+        <source>Proxy test</source>
+        <translation>代理测试</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1443"/>
+        <source>%1 proxy test succeeded through %2:%3.</source>
+        <translation>%1 代理测试通过 %2:%3 成功。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1459"/>
+        <source>No public hub list proxy host found!</source>
+        <translation>未找到公共中枢列表代理主机！</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1482"/>
+        <source>The server responded, but not like an HTTP proxy.</source>
+        <translation>服务器已响应，但响应不像 HTTP 代理。</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1484"/>
+        <source>Public hub list proxy test failed:
+%1</source>
+        <translation>公共中枢列表代理测试失败：
+%1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1490"/>
+        <source>Public hub list proxy test succeeded through %1:%2.</source>
+        <translation>公共中枢列表代理测试通过 %1:%2 成功。</translation>
+    </message>
 </context>
 <context>
     <name>SettingsDownloads</name>
@@ -3588,6 +3879,26 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="220"/>
+        <source>Action confirm</source>
+        <translation>操作确认</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="221"/>
+        <source>Remove selected entries?</source>
+        <translation>移除所选条目？</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="238"/>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="239"/>
+        <source>Remove</source>
+        <translation>移除</translation>
     </message>
 </context>
 <context>
@@ -4249,6 +4560,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
+        <source>Live Log</source>
+        <translation>实时日志</translation>
     </message>
 </context>
 <context>
@@ -5376,6 +5693,29 @@ Do you want to stop it?
         <location filename="../ui/UIIPFilter.ui" line="156"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UILiveLog</name>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="34"/>
+        <source>Categories</source>
+        <translation>类别</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="47"/>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="57"/>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="64"/>
+        <source>Auto-scroll</source>
+        <translation>自动滚动</translation>
     </message>
 </context>
 <context>
@@ -6523,6 +6863,16 @@ from the queue either, you must do that manually.</source>
         <location filename="../ui/UISettingsDownloads.ui" line="977"/>
         <source>Allow simultaneous uploads by one IP</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="319"/>
+        <source>Add</source>
+        <translation>添加</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="326"/>
+        <source>Remove</source>
+        <translation>移除</translation>
     </message>
 </context>
 <context>

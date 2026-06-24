@@ -1347,9 +1347,9 @@ void QueueManager::putDownload(Download* aDownload, bool finished) {
                             if( d->getType() == Transfer::TYPE_FILE && !d->getTempTarget().empty() && (Util::stricmp(d->getPath().c_str(), d->getTempTarget().c_str()) != 0) ) {
                                 moveFile(d->getTempTarget(), d->getPath());
                             }
-                            if (CTX_BOOLSETTING(LOG_FINISHED_DOWNLOADS) && d->getType() == Transfer::TYPE_FILE) {
-                                logFinishedDownload(q, d.get(), crcError);
-                            }
+                            logFinishedDownload(q, d.get(), crcError,
+                                CTX_BOOLSETTING(LOG_FINISHED_DOWNLOADS) &&
+                                    d->getType() == Transfer::TYPE_FILE);
 
                             fire(QueueManagerListener::Finished(), q, dir, d->getAverageSpeed());
 
@@ -2146,7 +2146,7 @@ TTHValue* QueueManager::FileQueue::findPFSPubTTH()
 }
 #endif
 
-void QueueManager::logFinishedDownload(QueueItem* qi, Download*, bool crcChecked)
+void QueueManager::logFinishedDownload(QueueItem* qi, Download*, bool crcChecked, bool writeToFile)
 {
     StringMap params;
     params["target"] = qi->getTarget();
@@ -2211,7 +2211,7 @@ void QueueManager::logFinishedDownload(QueueItem* qi, Download*, bool crcChecked
         }
     }
 
-    CTX_LOG(LogManager::FINISHED_DOWNLOAD, params);
+    CTX_LOG(LogManager::FINISHED_DOWNLOAD, params, writeToFile);
 }
 
 class ListMatcher : public dcpp::Thread

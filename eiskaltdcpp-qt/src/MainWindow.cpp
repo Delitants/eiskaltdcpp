@@ -69,6 +69,7 @@
 #include "ADLS.h"
 #include "CmdDebug.h"
 #include "Secretary.h"
+#include "LiveLog.h"
 #include "Settings.h"
 #include "FavoriteHubs.h"
 #include "PublicHubs.h"
@@ -195,6 +196,7 @@ public:
         QAction *toolsFinishedDownloads = nullptr;
         QAction *toolsFinishedUploads = nullptr;
         QAction *toolsSecretary = nullptr;
+        QAction *toolsLiveLog = nullptr;
         QAction *toolsSearchSpy = nullptr;
         QAction *toolsAntiSpam = nullptr;
         QAction *toolsIPFilter = nullptr;
@@ -538,7 +540,8 @@ void MainWindow::showEvent(QShowEvent *e){
                             role == ArenaWidget::PublicHubs ||
                             role == ArenaWidget::Search;
 
-    d->chatClear->setEnabled(role == ArenaWidget::Hub || role == ArenaWidget::PrivateMessage);
+    d->chatClear->setEnabled(role == ArenaWidget::Hub ||
+        role == ArenaWidget::PrivateMessage || role == ArenaWidget::LiveLog);
     d->findInWidget->setEnabled(widgetWithFilter);
     d->chatDisable->setEnabled(role == ArenaWidget::Hub);
 
@@ -942,6 +945,11 @@ void MainWindow::initActions(){
         d->toolsSecretary->setIcon(WU->getPixmap(WulforUtil::eiMAGNET));
         connect(d->toolsSecretary, &QAction::triggered, this, &MainWindow::slotToolsSecretary);
 
+        d->toolsLiveLog = new QAction("", this);
+        d->toolsLiveLog->setObjectName("toolsLiveLog");
+        d->toolsLiveLog->setIcon(WU->getPixmap(WulforUtil::eiOPEN_LOG_FILE));
+        connect(d->toolsLiveLog, &QAction::triggered, this, &MainWindow::slotToolsLiveLog);
+
         d->toolsTransfers = new QAction("", this);
         d->toolsTransfers->setObjectName("toolsTransfers");
         SM->registerShortcut(d->toolsTransfers, QString("Ctrl+T"));
@@ -1149,6 +1157,7 @@ void MainWindow::initActions(){
                 << d->toolsAntiSpam
                 << d->toolsIPFilter
                 << d->toolsCmdDebug
+                << d->toolsLiveLog
                 << separator2
                 << d->menuAwayAction
                 << separator3
@@ -1192,6 +1201,7 @@ void MainWindow::initActions(){
                 << d->toolsADLS
                 << d->toolsSecretary
                 << d->toolsSearchSpy
+                << d->toolsLiveLog
                 << d->toolsAntiSpam
                 << d->toolsIPFilter
                 << separator6
@@ -1346,6 +1356,7 @@ void MainWindow::reloadIconTheme()
     setActionIcon(d->toolsADLS, WulforUtil::eiADLS);
     setActionIcon(d->toolsCmdDebug, WulforUtil::eiCONSOLE);
     setActionIcon(d->toolsSecretary, WulforUtil::eiMAGNET);
+    setActionIcon(d->toolsLiveLog, WulforUtil::eiOPEN_LOG_FILE);
     setHighlightedActionIcon(d->toolsTransfers, WulforUtil::eiTRANSFER, WulforUtil::eiTRANSFER_HIGHLIGHT);
     setActionIcon(d->toolsDownloadQueue, WulforUtil::eiDOWNLOAD);
     setHighlightedActionIcon(d->toolsQueuedUsers, WulforUtil::eiQUEUED_USERS, WulforUtil::eiQUEUED_USERS_HIGHLIGHT);
@@ -1626,6 +1637,9 @@ void MainWindow::retranslateUi(){
         d->toolsCmdDebug->setText(tr("Debug Console"));
 
         d->toolsSecretary->setText(tr("Secretary"));
+
+        d->toolsLiveLog->setText(tr("Live Log"));
+        d->toolsLiveLog->setStatusTip(tr("Show live application log"));
 
         d->toolsSwitchSpeedLimit->setText(tr("Speed limit On/Off"));
 
@@ -1914,6 +1928,17 @@ ArenaWidget *MainWindow::widgetForRole(ArenaWidget::Role r) const{
         }
         awgt = qtCtx()->secretary();
         awgt->setToolButton(d->toolsSecretary);
+
+        break;
+    }
+    case ArenaWidget::LiveLog:
+    {
+        if (!qtCtx()->liveLog()) {
+            ctx->createLiveLog();
+            qtCtx()->arenaWidgetManager()->add(qtCtx()->liveLog());
+        }
+        awgt = qtCtx()->liveLog();
+        awgt->setToolButton(d->toolsLiveLog);
 
         break;
     }
@@ -2285,7 +2310,8 @@ void MainWindow::mapWidgetOnArena(ArenaWidget *awgt){
                 role == ArenaWidget::Hub ||
                 role == ArenaWidget::PrivateMessage ||
                 role == ArenaWidget::SearchSpy ||
-                role == ArenaWidget::Secretary
+                role == ArenaWidget::Secretary ||
+                role == ArenaWidget::LiveLog
                 );
 
     d->chatClear->setEnabled(widgetWithCleanup);
@@ -2546,6 +2572,11 @@ void MainWindow::slotToolsCmdDebug()
 void MainWindow::slotToolsSecretary()
 {
     toggleSingletonWidget(widgetForRole(ArenaWidget::Secretary));
+}
+
+void MainWindow::slotToolsLiveLog()
+{
+    toggleSingletonWidget(widgetForRole(ArenaWidget::LiveLog));
 }
 
 void MainWindow::slotToolsSearch() {

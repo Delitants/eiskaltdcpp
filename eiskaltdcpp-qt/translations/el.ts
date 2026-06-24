@@ -1681,6 +1681,87 @@ Favorite user</source>
     </message>
 </context>
 <context>
+    <name>LiveLog</name>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="91"/>
+        <source>All categories</source>
+        <translation>Όλες οι κατηγορίες</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="92"/>
+        <source>No categories</source>
+        <translation>Καμία κατηγορία</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.h" line="34"/>
+        <source>Live Log</source>
+        <translation>Ζωντανό αρχείο καταγραφής</translation>
+    </message>
+</context>
+<context>
+    <name>LiveLogModel</name>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="50"/>
+        <source>Time</source>
+        <translation>Χρόνος</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="52"/>
+        <source>Category</source>
+        <translation>Κατηγορία</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="54"/>
+        <source>Message</source>
+        <translation>Μήνυμα</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="177"/>
+        <source>Chat</source>
+        <translation>Συνομιλία</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="179"/>
+        <source>Private messages</source>
+        <translation>Ιδιωτικά μηνύματα</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="181"/>
+        <source>Downloads</source>
+        <translation>Λήψεις</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="183"/>
+        <source>Finished downloads</source>
+        <translation>Ολοκληρωμένες λήψεις</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="185"/>
+        <source>Uploads</source>
+        <translation>Αποστολές</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="187"/>
+        <source>System</source>
+        <translation>Σύστημα</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="189"/>
+        <source>Status</source>
+        <translation>Κατάσταση</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="191"/>
+        <source>Search spy</source>
+        <translation>Κατάσκοπος αναζητήσεων</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="193"/>
+        <source>Command debug</source>
+        <translation>Αποσφαλμάτωση εντολών</translation>
+    </message>
+</context>
+<context>
     <name>Magnet</name>
     <message>
         <location filename="../src/Magnet.cpp" line="61"/>
@@ -2048,6 +2129,16 @@ Favorite user</source>
         <location filename="../src/MainWindow.cpp" line="1626"/>
         <source>Secretary</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1640"/>
+        <source>Live Log</source>
+        <translation>Ζωντανό αρχείο καταγραφής</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <source>Show live application log</source>
+        <translation>Εμφάνιση ζωντανού αρχείου καταγραφής εφαρμογής</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1628"/>
@@ -2958,8 +3049,9 @@ Safe settings such as hubs, account details, sharing, downloads and history were
 <context>
     <name>ScriptConsole</name>
     <message>
+        <location filename="../scriptengine/ScriptConsole.cpp" line="38"/>
         <source>Script Console</source>
-        <translation type="vanished">Κονσόλα Σεναρίων</translation>
+        <translation>Κονσόλα Σεναρίων</translation>
     </message>
 </context>
 <context>
@@ -3484,6 +3576,32 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="480"/>
+        <source>Public hub list proxy</source>
+        <translation>Proxy λίστας δημόσιων κόμβων</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="486"/>
+        <source>Host</source>
+        <translation>Υπολογιστής</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="487"/>
+        <location filename="../src/SettingsConnection.cpp" line="491"/>
+        <source>Port</source>
+        <translation>Θύρα</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="489"/>
+        <source>HTTP proxy host or IP</source>
+        <translation>Υπολογιστής ή διεύθυνση IP του proxy HTTP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="494"/>
+        <source>Test</source>
+        <translation>Δοκιμή</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="143"/>
         <source>Country MMDB file</source>
         <translation type="unfinished"></translation>
@@ -3509,6 +3627,62 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="543"/>
+        <source>Use TLS to proxy server</source>
+        <translation>Χρήση TLS για τον διακομιστή proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="544"/>
+        <source>Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. The proxy server must explicitly support SOCKS5 over TLS.</source>
+        <translation>Ενθυλάκωση της σύνδεσης TCP SOCKS5 σε TLS πριν από την αποστολή της χειραψίας SOCKS. Ο διακομιστής proxy πρέπει να υποστηρίζει ρητά SOCKS5 μέσω TLS.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="548"/>
+        <source>Transport</source>
+        <translation>Μεταφορά</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="550"/>
+        <source>TCP only</source>
+        <translation>Μόνο TCP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="551"/>
+        <source>TCP + UDP relay</source>
+        <translation>TCP + αναμετάδοση UDP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="552"/>
+        <source>TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP.</source>
+        <translation>Το TCP χρησιμοποιείται για συνδέσεις hub και μεταφορές. Ενεργοποιήστε την αναμετάδοση UDP μόνο αν ο διακομιστής Shadowsocks υποστηρίζει UDP.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="556"/>
+        <source>Proxy downloads and uploads too (passive mode)</source>
+        <translation>Χρήση proxy και για λήψεις και αποστολές (παθητική λειτουργία)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="557"/>
+        <source>When enabled, peer-to-peer transfers use the selected proxy. Incoming connection options are disabled and the client is advertised as passive.</source>
+        <translation>Όταν είναι ενεργοποιημένο, οι μεταφορές μεταξύ ομότιμων χρησιμοποιούν το επιλεγμένο proxy. Οι επιλογές εισερχόμενης σύνδεσης απενεργοποιούνται και ο πελάτης αναγγέλλεται ως παθητικός.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="561"/>
+        <source>Test proxy</source>
+        <translation>Δοκιμή proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="565"/>
+        <source>Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. For identity chains, enter identityPSK:userPSK in that order.</source>
+        <translation>Οι παλαιότερες μέθοδοι δέχονται κωδικό πρόσβασης. Οι μέθοδοι Shadowsocks 2022 απαιτούν PSK σε κανονική μορφή Base64. Για αλυσίδες ταυτοτήτων, εισαγάγετε identityPSK:userPSK με αυτή τη σειρά.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="629"/>
+        <location filename="../src/SettingsConnection.cpp" line="662"/>
+        <source>No valid bind IPv4 address found!</source>
+        <translation>Δεν βρέθηκε έγκυρη διεύθυνση IPv4 για δέσμευση!</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="235"/>
         <location filename="../src/SettingsConnection.cpp" line="259"/>
         <source>No valid external IPv6 address found!</source>
@@ -3519,6 +3693,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="263"/>
         <source>No valid bind IPv6 address found!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="699"/>
+        <location filename="../src/SettingsConnection.cpp" line="1463"/>
+        <source>No valid public hub list proxy port found!</source>
+        <translation>Δεν βρέθηκε έγκυρη θύρα proxy λίστας δημόσιων κόμβων!</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="284"/>
@@ -3544,6 +3724,117 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="356"/>
         <source>Program need root privileges to open ports less than 1024</source>
         <translation>Απαιτούνται δικαιώματα υπερχρήστη για να ανοίξειτο πρόγραμμα θύρες μικρότερες του 1024</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1155"/>
+        <source>Direct connection</source>
+        <translation>Κατευθείαν σύνδεση</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1157"/>
+        <source>Firewall with UPnP</source>
+        <translation>Τείχος προστασίας με UPnP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1159"/>
+        <source>Firewall with port forwarding</source>
+        <translation>Τείχος προστασίας με προώθηση θυρών</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1161"/>
+        <source>Passive mode</source>
+        <translation>Παθητική Λειτουργία</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1163"/>
+        <source>Unknown</source>
+        <translation>Άγνωστο</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1178"/>
+        <source>Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.</source>
+        <translation>Εντοπίστηκε λειτουργία εισερχόμενων συνδέσεων: %1. Προτεραιότητα: Κατευθείαν σύνδεση, Τείχος προστασίας με UPnP, Παθητική Λειτουργία.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1303"/>
+        <source>Shadowsocks 2022 PSK segment %1 is empty.</source>
+        <translation>Το τμήμα %1 του PSK Shadowsocks 2022 είναι κενό.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1306"/>
+        <source>Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.</source>
+        <translation>Το τμήμα %1 του PSK Shadowsocks 2022 δεν είναι έγκυρη κανονική συμβολοσειρά Base64.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1309"/>
+        <source>Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.</source>
+        <translation>Το τμήμα %1 του PSK Shadowsocks 2022 πρέπει να αποκωδικοποιείται σε ακριβώς %2 byte.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1323"/>
+        <source>Select SOCKS5 or Shadowsocks before testing a proxy.</source>
+        <translation>Επιλέξτε SOCKS5 ή Shadowsocks πριν από τη δοκιμή proxy.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>Shadowsocks</source>
+        <translation>Shadowsocks</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>SOCKS5</source>
+        <translation>SOCKS5</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1334"/>
+        <source>No %1 server found!</source>
+        <translation>Δεν βρέθηκε διακομιστής %1!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1342"/>
+        <source>No Shadowsocks password configured.</source>
+        <translation>Δεν έχει ρυθμιστεί κωδικός πρόσβασης Shadowsocks.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1434"/>
+        <location filename="../src/SettingsConnection.cpp" line="1437"/>
+        <source>%1 proxy test failed:
+%2</source>
+        <translation>Η δοκιμή proxy %1 απέτυχε:
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1442"/>
+        <location filename="../src/SettingsConnection.cpp" line="1489"/>
+        <source>Proxy test</source>
+        <translation>Δοκιμή proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1443"/>
+        <source>%1 proxy test succeeded through %2:%3.</source>
+        <translation>Η δοκιμή proxy %1 πέτυχε μέσω %2:%3.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1459"/>
+        <source>No public hub list proxy host found!</source>
+        <translation>Δεν βρέθηκε υπολογιστής proxy λίστας δημόσιων κόμβων!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1482"/>
+        <source>The server responded, but not like an HTTP proxy.</source>
+        <translation>Ο διακομιστής αποκρίθηκε, αλλά όχι ως proxy HTTP.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1484"/>
+        <source>Public hub list proxy test failed:
+%1</source>
+        <translation>Η δοκιμή proxy λίστας δημόσιων κόμβων απέτυχε:
+%1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1490"/>
+        <source>Public hub list proxy test succeeded through %1:%2.</source>
+        <translation>Η δοκιμή proxy λίστας δημόσιων κόμβων πέτυχε μέσω %1:%2.</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="611"/>
@@ -3593,6 +3884,26 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation>Ψευδώνυμο</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="220"/>
+        <source>Action confirm</source>
+        <translation>Επιβεβαίωση ενέργειας</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="221"/>
+        <source>Remove selected entries?</source>
+        <translation>Να αφαιρεθούν οι επιλεγμένες καταχωρίσεις;</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="238"/>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="239"/>
+        <source>Remove</source>
+        <translation>Αφαίρεση</translation>
     </message>
 </context>
 <context>
@@ -4262,6 +4573,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation>Συστατικά</translation>
+    </message>
+    <message>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
+        <source>Live Log</source>
+        <translation>Ζωντανό αρχείο καταγραφής</translation>
     </message>
 </context>
 <context>
@@ -5398,6 +5715,29 @@ Do you want to stop it?
     </message>
 </context>
 <context>
+    <name>UILiveLog</name>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="34"/>
+        <source>Categories</source>
+        <translation>Κατηγορίες</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="47"/>
+        <source>Pause</source>
+        <translation>Παύση</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="57"/>
+        <source>Clear</source>
+        <translation>Καθαρισμός</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="64"/>
+        <source>Auto-scroll</source>
+        <translation>Αυτόματη κύλιση</translation>
+    </message>
+</context>
+<context>
     <name>UIMagnet</name>
     <message>
         <location filename="../ui/UIMagnet.ui" line="20"/>
@@ -6245,6 +6585,16 @@ It&apos;s not used for uploads, downloads, or connecting to a hub.</source>
         <location filename="../ui/UISettingsDownloads.ui" line="296"/>
         <source>Alias</source>
         <translation>Ψευδώνυμο</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="319"/>
+        <source>Add</source>
+        <translation>Προσθήκη</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="326"/>
+        <source>Remove</source>
+        <translation>Αφαίρεση</translation>
     </message>
     <message>
         <location filename="../ui/UISettingsDownloads.ui" line="305"/>

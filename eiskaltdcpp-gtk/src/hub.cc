@@ -3700,15 +3700,13 @@ void Hub::on(ClientListener::Message, Client*, const ChatMessage& message) noexc
             }
         }
 
-        if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true))
-        {
-            StringMap params;
-            params["message"] = line;
-            client->getHubIdentity().getParams(params, "hub", false);
-            params["hubURL"] = client->getHubUrl();
-            client->getMyIdentity().getParams(params, "my", true);
-            dcCtx_.getLogManager()->log(LogManager::CHAT, params);
-        }
+        StringMap params;
+        params["message"] = line;
+        client->getHubIdentity().getParams(params, "hub", false);
+        params["hubURL"] = client->getHubUrl();
+        client->getMyIdentity().getParams(params, "my", true);
+        dcCtx_.getLogManager()->log(LogManager::CHAT, params,
+            dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true));
 
         typedef Func3<Hub, string, string, Msg::TypeMsg> F3;
         F3 *func = new F3(this, &Hub::addMessage_gui, cid, line, typemsg);
@@ -3743,15 +3741,13 @@ void Hub::on(ClientListener::StatusMessage, Client *, const string &message, int
             }
         }
 
-        if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_STATUS_MESSAGES, true))
-        {
-            StringMap params;
-            client->getHubIdentity().getParams(params, "hub", false);
-            params["hubURL"] = client->getHubUrl();
-            client->getMyIdentity().getParams(params, "my", true);
-            params["message"] = message;
-            dcCtx_.getLogManager()->log(LogManager::STATUS, params);
-        }
+        StringMap params;
+        client->getHubIdentity().getParams(params, "hub", false);
+        params["hubURL"] = client->getHubUrl();
+        client->getMyIdentity().getParams(params, "my", true);
+        params["message"] = message;
+        dcCtx_.getLogManager()->log(LogManager::STATUS, params,
+            dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_STATUS_MESSAGES, true));
 
         typedef Func3<Hub, string, string, Msg::TypeMsg> F3;
         F3 *func = new F3(this, &Hub::addMessage_gui, "", message, Msg::STATUS);

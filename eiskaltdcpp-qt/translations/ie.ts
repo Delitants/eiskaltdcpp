@@ -1652,6 +1652,87 @@ Favorite user</source>
     </message>
 </context>
 <context>
+    <name>LiveLog</name>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="91"/>
+        <source>All categories</source>
+        <translation>Omni categories</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="92"/>
+        <source>No categories</source>
+        <translation>Null categories</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.h" line="34"/>
+        <source>Live Log</source>
+        <translation>Diarium in témpor real</translation>
+    </message>
+</context>
+<context>
+    <name>LiveLogModel</name>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="50"/>
+        <source>Time</source>
+        <translation>Témpor</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="52"/>
+        <source>Category</source>
+        <translation>Categorie</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="54"/>
+        <source>Message</source>
+        <translation>Missage</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="177"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="179"/>
+        <source>Private messages</source>
+        <translation>Missages privat</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="181"/>
+        <source>Downloads</source>
+        <translation>Descargamentes</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="183"/>
+        <source>Finished downloads</source>
+        <translation>Descargamentes finit</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="185"/>
+        <source>Uploads</source>
+        <translation>Cargamentes</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="187"/>
+        <source>System</source>
+        <translation>Sistema</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="189"/>
+        <source>Status</source>
+        <translation>Stato</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="191"/>
+        <source>Search spy</source>
+        <translation>Spion de sercha</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="193"/>
+        <source>Command debug</source>
+        <translation>Depuration de comandes</translation>
+    </message>
+</context>
+<context>
     <name>Magnet</name>
     <message>
         <location filename="../src/Magnet.cpp" line="61"/>
@@ -2014,6 +2095,16 @@ Favorite user</source>
         <location filename="../src/MainWindow.cpp" line="1626"/>
         <source>Secretary</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1640"/>
+        <source>Live Log</source>
+        <translation>Diarium in témpor real</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <source>Show live application log</source>
+        <translation>Monstrar li diarium in témpor real del application</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1628"/>
@@ -2891,6 +2982,14 @@ Safe settings such as hubs, account details, sharing, downloads and history were
     </message>
 </context>
 <context>
+    <name>ScriptConsole</name>
+    <message>
+        <location filename="../scriptengine/ScriptConsole.cpp" line="38"/>
+        <source>Script Console</source>
+        <translation>Console de script</translation>
+    </message>
+</context>
+<context>
     <name>ScriptManagerDialog</name>
     <message>
         <location filename="../src/ScriptManagerDialog.cpp" line="46"/>
@@ -3408,6 +3507,32 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="480"/>
+        <source>Public hub list proxy</source>
+        <translation>Proxy por liste public de hubs</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="486"/>
+        <source>Host</source>
+        <translation>Host</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="487"/>
+        <location filename="../src/SettingsConnection.cpp" line="491"/>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="489"/>
+        <source>HTTP proxy host or IP</source>
+        <translation>Host o IP del proxy HTTP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="494"/>
+        <source>Test</source>
+        <translation>Testar</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="143"/>
         <source>Country MMDB file</source>
         <translation type="unfinished"></translation>
@@ -3433,6 +3558,62 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="543"/>
+        <source>Use TLS to proxy server</source>
+        <translation>Usar TLS al servitor proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="544"/>
+        <source>Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. The proxy server must explicitly support SOCKS5 over TLS.</source>
+        <translation>Invelopar li conexion TCP SOCKS5 in TLS ante inviar li handshake SOCKS. Li servitor proxy deve explicitmen supportar SOCKS5 per TLS.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="548"/>
+        <source>Transport</source>
+        <translation>Transport</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="550"/>
+        <source>TCP only</source>
+        <translation>Solmen TCP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="551"/>
+        <source>TCP + UDP relay</source>
+        <translation>TCP + relé UDP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="552"/>
+        <source>TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP.</source>
+        <translation>TCP es usat por connexiones a hubs e por transferimentes. Activa li relé UDP solmen si li servitor Shadowsocks supporta UDP.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="556"/>
+        <source>Proxy downloads and uploads too (passive mode)</source>
+        <translation>Usar li proxy anc por descargamentes e cargamentes (mode passiv)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="557"/>
+        <source>When enabled, peer-to-peer transfers use the selected proxy. Incoming connection options are disabled and the client is advertised as passive.</source>
+        <translation>Si activ, transferimentes inter pares usa li proxy selectet. Optiones de connexiones entrant es desactivat e li client es anunciat quam passiv.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="561"/>
+        <source>Test proxy</source>
+        <translation>Testar proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="565"/>
+        <source>Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. For identity chains, enter identityPSK:userPSK in that order.</source>
+        <translation>Metodes heredat accepta un contrasigne. Metodes Shadowsocks 2022 require PSK canonic in Base64. Por catenes de identitá, intra identityPSK:userPSK in ti órdine.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="629"/>
+        <location filename="../src/SettingsConnection.cpp" line="662"/>
+        <source>No valid bind IPv4 address found!</source>
+        <translation>Null valid adresse IPv4 por bind trovat!</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="235"/>
         <location filename="../src/SettingsConnection.cpp" line="259"/>
         <source>No valid external IPv6 address found!</source>
@@ -3443,6 +3624,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="263"/>
         <source>No valid bind IPv6 address found!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="699"/>
+        <location filename="../src/SettingsConnection.cpp" line="1463"/>
+        <source>No valid public hub list proxy port found!</source>
+        <translation>Null valid port proxy por li liste public de hubs trovat!</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="284"/>
@@ -3464,6 +3651,117 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="356"/>
         <source>Program need root privileges to open ports less than 1024</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1155"/>
+        <source>Direct connection</source>
+        <translation>Conexion direct</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1157"/>
+        <source>Firewall with UPnP</source>
+        <translation>Firewall con UPnP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1159"/>
+        <source>Firewall with port forwarding</source>
+        <translation>Firewall con redirection de ports</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1161"/>
+        <source>Passive mode</source>
+        <translation>Mode passiv</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1163"/>
+        <source>Unknown</source>
+        <translation>Ínconosset</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1178"/>
+        <source>Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.</source>
+        <translation>Mode de intrada detectet: %1. Prioritá: Direct, firewall con UPnP, passiv.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1303"/>
+        <source>Shadowsocks 2022 PSK segment %1 is empty.</source>
+        <translation>Li segment PSK %1 de Shadowsocks 2022 es vacui.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1306"/>
+        <source>Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.</source>
+        <translation>Li segment PSK %1 de Shadowsocks 2022 ne es valid Base64 canonic.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1309"/>
+        <source>Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.</source>
+        <translation>Li segment PSK %1 de Shadowsocks 2022 deve esser decodificat a exactmen %2 bytes.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1323"/>
+        <source>Select SOCKS5 or Shadowsocks before testing a proxy.</source>
+        <translation>Selecte SOCKS5 o Shadowsocks ante testar un proxy.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>Shadowsocks</source>
+        <translation>Shadowsocks</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>SOCKS5</source>
+        <translation>SOCKS5</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1334"/>
+        <source>No %1 server found!</source>
+        <translation>Null servitor %1 trovat!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1342"/>
+        <source>No Shadowsocks password configured.</source>
+        <translation>Null contrasigne Shadowsocks configurat.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1434"/>
+        <location filename="../src/SettingsConnection.cpp" line="1437"/>
+        <source>%1 proxy test failed:
+%2</source>
+        <translation>Li test del proxy %1 fallit:
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1442"/>
+        <location filename="../src/SettingsConnection.cpp" line="1489"/>
+        <source>Proxy test</source>
+        <translation>Test del proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1443"/>
+        <source>%1 proxy test succeeded through %2:%3.</source>
+        <translation>Test del proxy %1 successat per %2:%3.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1459"/>
+        <source>No public hub list proxy host found!</source>
+        <translation>Null host proxy por li liste public de hubs trovat!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1482"/>
+        <source>The server responded, but not like an HTTP proxy.</source>
+        <translation>Li servitor respondet, ma ne quam un proxy HTTP.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1484"/>
+        <source>Public hub list proxy test failed:
+%1</source>
+        <translation>Li test del proxy por li liste public de hubs fallit:
+%1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1490"/>
+        <source>Public hub list proxy test succeeded through %1:%2.</source>
+        <translation>Test del proxy por li liste public de hubs successat per %1:%2.</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="611"/>
@@ -3513,6 +3811,26 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="220"/>
+        <source>Action confirm</source>
+        <translation>Confirmation del action</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="221"/>
+        <source>Remove selected entries?</source>
+        <translation>Remover li elementes selectet?</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="238"/>
+        <source>Add</source>
+        <translation>Adjunter</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="239"/>
+        <source>Remove</source>
+        <translation>Remover</translation>
     </message>
 </context>
 <context>
@@ -4174,6 +4492,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
+        <source>Live Log</source>
+        <translation>Diarium in témpor real</translation>
     </message>
 </context>
 <context>
@@ -5300,6 +5624,29 @@ Do you want to stop it?
     </message>
 </context>
 <context>
+    <name>UILiveLog</name>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="34"/>
+        <source>Categories</source>
+        <translation>Categories</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="47"/>
+        <source>Pause</source>
+        <translation>Pausar</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="57"/>
+        <source>Clear</source>
+        <translation>Vacuar</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="64"/>
+        <source>Auto-scroll</source>
+        <translation>Rulament automatic</translation>
+    </message>
+</context>
+<context>
     <name>UIMagnet</name>
     <message>
         <location filename="../ui/UIMagnet.ui" line="20"/>
@@ -6116,6 +6463,16 @@ It&apos;s not used for uploads, downloads, or connecting to a hub.</source>
         <location filename="../ui/UISettingsDownloads.ui" line="296"/>
         <source>Alias</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="319"/>
+        <source>Add</source>
+        <translation>Adjunter</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="326"/>
+        <source>Remove</source>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../ui/UISettingsDownloads.ui" line="305"/>

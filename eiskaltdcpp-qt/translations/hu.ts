@@ -1690,6 +1690,87 @@ Kedvenc felhasználó</translation>
     </message>
 </context>
 <context>
+    <name>LiveLog</name>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="91"/>
+        <source>All categories</source>
+        <translation>Minden kategória</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="92"/>
+        <source>No categories</source>
+        <translation>Nincsenek kategóriák</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.h" line="34"/>
+        <source>Live Log</source>
+        <translation>Élő napló</translation>
+    </message>
+</context>
+<context>
+    <name>LiveLogModel</name>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="50"/>
+        <source>Time</source>
+        <translation>Idő</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="52"/>
+        <source>Category</source>
+        <translation>Kategória</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="54"/>
+        <source>Message</source>
+        <translation>Üzenet</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="177"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="179"/>
+        <source>Private messages</source>
+        <translation>Privát üzenetek</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="181"/>
+        <source>Downloads</source>
+        <translation>Letöltések</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="183"/>
+        <source>Finished downloads</source>
+        <translation>Befejezett letöltések</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="185"/>
+        <source>Uploads</source>
+        <translation>Feltöltések</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="187"/>
+        <source>System</source>
+        <translation>Rendszer</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="189"/>
+        <source>Status</source>
+        <translation>Állapot</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="191"/>
+        <source>Search spy</source>
+        <translation>Keresések megfigyelése</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="193"/>
+        <source>Command debug</source>
+        <translation>Parancsok hibakeresése</translation>
+    </message>
+</context>
+<context>
     <name>Magnet</name>
     <message>
         <location filename="../src/Magnet.cpp" line="61"/>
@@ -2057,6 +2138,16 @@ Kedvenc felhasználó</translation>
         <location filename="../src/MainWindow.cpp" line="1626"/>
         <source>Secretary</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1640"/>
+        <source>Live Log</source>
+        <translation>Élő napló</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <source>Show live application log</source>
+        <translation>Élő alkalmazásnapló megjelenítése</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1628"/>
@@ -2967,8 +3058,9 @@ Safe settings such as hubs, account details, sharing, downloads and history were
 <context>
     <name>ScriptConsole</name>
     <message>
+        <location filename="../scriptengine/ScriptConsole.cpp" line="38"/>
         <source>Script Console</source>
-        <translation type="vanished">Szkript konzol</translation>
+        <translation>Szkript konzol</translation>
     </message>
 </context>
 <context>
@@ -3493,6 +3585,32 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="480"/>
+        <source>Public hub list proxy</source>
+        <translation>Publikus hublista proxyja</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="486"/>
+        <source>Host</source>
+        <translation>Host</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="487"/>
+        <location filename="../src/SettingsConnection.cpp" line="491"/>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="489"/>
+        <source>HTTP proxy host or IP</source>
+        <translation>HTTP proxy állomásneve vagy IP-címe</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="494"/>
+        <source>Test</source>
+        <translation>Teszt</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="143"/>
         <source>Country MMDB file</source>
         <translation type="unfinished"></translation>
@@ -3518,6 +3636,62 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="543"/>
+        <source>Use TLS to proxy server</source>
+        <translation>TLS használata a proxykiszolgálóhoz</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="544"/>
+        <source>Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. The proxy server must explicitly support SOCKS5 over TLS.</source>
+        <translation>A SOCKS-kézfogás elküldése előtt ágyazza a SOCKS5 TCP-kapcsolatot TLS-be. A proxykiszolgálónak kifejezetten támogatnia kell a TLS-en keresztüli SOCKS5-öt.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="548"/>
+        <source>Transport</source>
+        <translation>Átvitel</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="550"/>
+        <source>TCP only</source>
+        <translation>Csak TCP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="551"/>
+        <source>TCP + UDP relay</source>
+        <translation>TCP + UDP-továbbítás</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="552"/>
+        <source>TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP.</source>
+        <translation>A hubkapcsolatok és az adatátvitelek TCP-t használnak. Csak akkor engedélyezze az UDP-továbbítást, ha a Shadowsocks-kiszolgáló támogatja az UDP-t.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="556"/>
+        <source>Proxy downloads and uploads too (passive mode)</source>
+        <translation>A letöltések és feltöltések is használják a proxyt (passzív mód)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="557"/>
+        <source>When enabled, peer-to-peer transfers use the selected proxy. Incoming connection options are disabled and the client is advertised as passive.</source>
+        <translation>Ha engedélyezve van, a partnerek közötti adatátvitelek a kiválasztott proxyt használják. A bejövő kapcsolatok beállításai le vannak tiltva, a kliens pedig passzívként jelenik meg.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="561"/>
+        <source>Test proxy</source>
+        <translation>Proxy tesztelése</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="565"/>
+        <source>Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. For identity chains, enter identityPSK:userPSK in that order.</source>
+        <translation>A régebbi módszerek jelszót fogadnak el. A Shadowsocks 2022 módszerei kanonikus Base64-formátumú PSK-kat igényelnek. Identitásláncok esetén az identityPSK:userPSK értéket ebben a sorrendben adja meg.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="629"/>
+        <location filename="../src/SettingsConnection.cpp" line="662"/>
+        <source>No valid bind IPv4 address found!</source>
+        <translation>Nem található érvényes kötési IPv4-cím!</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="235"/>
         <location filename="../src/SettingsConnection.cpp" line="259"/>
         <source>No valid external IPv6 address found!</source>
@@ -3528,6 +3702,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="263"/>
         <source>No valid bind IPv6 address found!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="699"/>
+        <location filename="../src/SettingsConnection.cpp" line="1463"/>
+        <source>No valid public hub list proxy port found!</source>
+        <translation>Nem található érvényes port a publikus hublista proxyjához!</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="284"/>
@@ -3553,6 +3733,117 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="356"/>
         <source>Program need root privileges to open ports less than 1024</source>
         <translation>A programnak root privilégiumra van szüksége az 1024 alatti portok megnyitásához</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1155"/>
+        <source>Direct connection</source>
+        <translation>Közvetlen kapcsolat</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1157"/>
+        <source>Firewall with UPnP</source>
+        <translation>Tűzfal UPnP-vel</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1159"/>
+        <source>Firewall with port forwarding</source>
+        <translation>Tűzfal kézi port-továbbítással (magam állítom be a routerem)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1161"/>
+        <source>Passive mode</source>
+        <translation>Passzív mód</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1163"/>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1178"/>
+        <source>Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.</source>
+        <translation>Észlelt bejövő mód: %1. Prioritás: Közvetlen kapcsolat, Tűzfal UPnP-vel, Passzív mód.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1303"/>
+        <source>Shadowsocks 2022 PSK segment %1 is empty.</source>
+        <translation>A Shadowsocks 2022 PSK %1. szegmense üres.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1306"/>
+        <source>Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.</source>
+        <translation>A Shadowsocks 2022 PSK %1. szegmense nem érvényes kanonikus Base64-karakterlánc.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1309"/>
+        <source>Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.</source>
+        <translation>A Shadowsocks 2022 PSK %1. szegmense dekódolt hosszának pontosan %2 bájtnak kell lennie.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1323"/>
+        <source>Select SOCKS5 or Shadowsocks before testing a proxy.</source>
+        <translation>A proxy tesztelése előtt válassza a SOCKS5 vagy a Shadowsocks lehetőséget.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>Shadowsocks</source>
+        <translation>Shadowsocks</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>SOCKS5</source>
+        <translation>SOCKS5</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1334"/>
+        <source>No %1 server found!</source>
+        <translation>Nem található %1-kiszolgáló!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1342"/>
+        <source>No Shadowsocks password configured.</source>
+        <translation>Nincs Shadowsocks-jelszó beállítva.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1434"/>
+        <location filename="../src/SettingsConnection.cpp" line="1437"/>
+        <source>%1 proxy test failed:
+%2</source>
+        <translation>A(z) %1 proxyteszt sikertelen:
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1442"/>
+        <location filename="../src/SettingsConnection.cpp" line="1489"/>
+        <source>Proxy test</source>
+        <translation>Proxyteszt</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1443"/>
+        <source>%1 proxy test succeeded through %2:%3.</source>
+        <translation>A(z) %1 proxyteszt sikeres a(z) %2:%3 címen keresztül.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1459"/>
+        <source>No public hub list proxy host found!</source>
+        <translation>Nem található a publikus hublista proxyjának állomásneve!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1482"/>
+        <source>The server responded, but not like an HTTP proxy.</source>
+        <translation>A kiszolgáló válaszolt, de nem HTTP proxyként.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1484"/>
+        <source>Public hub list proxy test failed:
+%1</source>
+        <translation>A publikus hublista proxytesztje sikertelen:
+%1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1490"/>
+        <source>Public hub list proxy test succeeded through %1:%2.</source>
+        <translation>A publikus hublista proxytesztje sikeres a(z) %1:%2 címen keresztül.</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="611"/>
@@ -3602,6 +3893,26 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation>Álnév</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="220"/>
+        <source>Action confirm</source>
+        <translation>Művelet megerősítése</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="221"/>
+        <source>Remove selected entries?</source>
+        <translation>Eltávolítja a kijelölt bejegyzéseket?</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="238"/>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="239"/>
+        <source>Remove</source>
+        <translation>Törlés</translation>
     </message>
 </context>
 <context>
@@ -4271,6 +4582,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation>Ablakok</translation>
+    </message>
+    <message>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
+        <source>Live Log</source>
+        <translation>Élő napló</translation>
     </message>
 </context>
 <context>
@@ -5408,6 +5725,29 @@ Biztosan le akarod állítani?
     </message>
 </context>
 <context>
+    <name>UILiveLog</name>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="34"/>
+        <source>Categories</source>
+        <translation>Kategóriák</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="47"/>
+        <source>Pause</source>
+        <translation>Szünet</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="57"/>
+        <source>Clear</source>
+        <translation>Törlés</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="64"/>
+        <source>Auto-scroll</source>
+        <translation>Automatikus görgetés</translation>
+    </message>
+</context>
+<context>
     <name>UIMagnet</name>
     <message>
         <location filename="../ui/UIMagnet.ui" line="20"/>
@@ -6270,6 +6610,16 @@ Nem használható le, vagy feltöltéshez, vagy hubhoz való kapcsolódáshoz.</
         <location filename="../ui/UISettingsDownloads.ui" line="296"/>
         <source>Alias</source>
         <translation>Álnév</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="319"/>
+        <source>Add</source>
+        <translation>Hozzáadás</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="326"/>
+        <source>Remove</source>
+        <translation>Törlés</translation>
     </message>
     <message>
         <location filename="../ui/UISettingsDownloads.ui" line="305"/>

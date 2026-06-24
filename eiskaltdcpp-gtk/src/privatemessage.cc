@@ -203,17 +203,15 @@ void PrivateMessage::addMessage_gui(string message, Msg::TypeMsg typemsg)
 {
     addLine_gui(typemsg, message);
 
-    if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_PRIVATE_CHAT, true))
-    {
-        StringMap params;
-        params["message"] = message;
-        params["hubNI"] = WulforUtil::getHubNames(dcCtx_, cid, hubUrl);
-        params["hubURL"] = hubUrl;
-        params["userCID"] = cid;
-        params["userNI"] = dcCtx_.getClientManager()->getNicks(CID(cid), hubUrl)[0];
-        params["myCID"] = dcCtx_.getClientManager()->getMe()->getCID().toBase32();
-        dcCtx_.getLogManager()->log(LogManager::PM, params);
-    }
+    StringMap params;
+    params["message"] = message;
+    params["hubNI"] = WulforUtil::getHubNames(dcCtx_, cid, hubUrl);
+    params["hubURL"] = hubUrl;
+    params["userCID"] = cid;
+    params["userNI"] = dcCtx_.getClientManager()->getNicks(CID(cid), hubUrl)[0];
+    params["myCID"] = dcCtx_.getClientManager()->getMe()->getCID().toBase32();
+    dcCtx_.getLogManager()->log(LogManager::PM, params,
+        dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_PRIVATE_CHAT, true));
 
     if (WGETB("bold-pm"))
         setUrgent_gui();

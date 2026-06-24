@@ -1683,6 +1683,87 @@ Favorite user</source>
     </message>
 </context>
 <context>
+    <name>LiveLog</name>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="91"/>
+        <source>All categories</source>
+        <translation>Všetky kategórie</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.cpp" line="92"/>
+        <source>No categories</source>
+        <translation>Žiadne kategórie</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLog.h" line="34"/>
+        <source>Live Log</source>
+        <translation>Živý protokol</translation>
+    </message>
+</context>
+<context>
+    <name>LiveLogModel</name>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="50"/>
+        <source>Time</source>
+        <translation>čas</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="52"/>
+        <source>Category</source>
+        <translation>Kategória</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="54"/>
+        <source>Message</source>
+        <translation>Správa</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="177"/>
+        <source>Chat</source>
+        <translation>Chat</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="179"/>
+        <source>Private messages</source>
+        <translation>Súkromná správa</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="181"/>
+        <source>Downloads</source>
+        <translation>Sťahovanie</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="183"/>
+        <source>Finished downloads</source>
+        <translation>Ukončené sťahovania</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="185"/>
+        <source>Uploads</source>
+        <translation>Uploady</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="187"/>
+        <source>System</source>
+        <translation>Systém</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="189"/>
+        <source>Status</source>
+        <translation>Stav</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="191"/>
+        <source>Search spy</source>
+        <translation>Sledovanie vyhľadávania</translation>
+    </message>
+    <message>
+        <location filename="../src/LiveLogModel.cpp" line="193"/>
+        <source>Command debug</source>
+        <translation>Ladenie príkazov</translation>
+    </message>
+</context>
+<context>
     <name>Magnet</name>
     <message>
         <location filename="../src/Magnet.cpp" line="61"/>
@@ -2050,6 +2131,16 @@ Favorite user</source>
         <location filename="../src/MainWindow.cpp" line="1626"/>
         <source>Secretary</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1640"/>
+        <source>Live Log</source>
+        <translation>Živý protokol</translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="1641"/>
+        <source>Show live application log</source>
+        <translation>Zobraziť živý protokol aplikácie</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="1628"/>
@@ -2948,8 +3039,9 @@ Safe settings such as hubs, account details, sharing, downloads and history were
 <context>
     <name>ScriptConsole</name>
     <message>
+        <location filename="../scriptengine/ScriptConsole.cpp" line="38"/>
         <source>Script Console</source>
-        <translation type="vanished">Skript konzola</translation>
+        <translation>Skript konzola</translation>
     </message>
 </context>
 <context>
@@ -3474,6 +3566,32 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="480"/>
+        <source>Public hub list proxy</source>
+        <translation>Proxy zoznamu verejných hubov</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="486"/>
+        <source>Host</source>
+        <translation>Hostiteľ</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="487"/>
+        <location filename="../src/SettingsConnection.cpp" line="491"/>
+        <source>Port</source>
+        <translation>Port</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="489"/>
+        <source>HTTP proxy host or IP</source>
+        <translation>Hostiteľ alebo IP adresa HTTP proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="494"/>
+        <source>Test</source>
+        <translation>Test</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="143"/>
         <source>Country MMDB file</source>
         <translation type="unfinished"></translation>
@@ -3499,6 +3617,62 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/SettingsConnection.cpp" line="543"/>
+        <source>Use TLS to proxy server</source>
+        <translation>Použiť TLS pre proxy server</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="544"/>
+        <source>Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. The proxy server must explicitly support SOCKS5 over TLS.</source>
+        <translation>Pred odoslaním handshake SOCKS zabaliť TCP spojenie SOCKS5 do TLS. Proxy server musí výslovne podporovať SOCKS5 cez TLS.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="548"/>
+        <source>Transport</source>
+        <translation>Prenos</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="550"/>
+        <source>TCP only</source>
+        <translation>Iba TCP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="551"/>
+        <source>TCP + UDP relay</source>
+        <translation>TCP + preposielanie UDP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="552"/>
+        <source>TCP is used for hub and transfer connections. Enable UDP relay only if the Shadowsocks server supports UDP.</source>
+        <translation>TCP sa používa na pripojenia k hubom a prenosy. Preposielanie UDP povoľte iba vtedy, ak server Shadowsocks podporuje UDP.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="556"/>
+        <source>Proxy downloads and uploads too (passive mode)</source>
+        <translation>Používať proxy aj na sťahovanie a nahrávanie (pasívny režim)</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="557"/>
+        <source>When enabled, peer-to-peer transfers use the selected proxy. Incoming connection options are disabled and the client is advertised as passive.</source>
+        <translation>Ak je táto možnosť povolená, prenosy medzi klientmi používajú vybraný proxy server. Možnosti prichádzajúceho pripojenia sú zakázané a klient sa oznamuje ako pasívny.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="561"/>
+        <source>Test proxy</source>
+        <translation>Otestovať proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="565"/>
+        <source>Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. For identity chains, enter identityPSK:userPSK in that order.</source>
+        <translation>Staršie metódy prijímajú heslo. Metódy Shadowsocks 2022 vyžadujú PSK v kanonickom formáte Base64. Pri reťazcoch identít zadajte identityPSK:userPSK v tomto poradí.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="629"/>
+        <location filename="../src/SettingsConnection.cpp" line="662"/>
+        <source>No valid bind IPv4 address found!</source>
+        <translation>Nenašla sa platná IPv4 adresa na naviazanie!</translation>
+    </message>
+    <message>
         <location filename="../src/SettingsConnection.cpp" line="235"/>
         <location filename="../src/SettingsConnection.cpp" line="259"/>
         <source>No valid external IPv6 address found!</source>
@@ -3509,6 +3683,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="263"/>
         <source>No valid bind IPv6 address found!</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="699"/>
+        <location filename="../src/SettingsConnection.cpp" line="1463"/>
+        <source>No valid public hub list proxy port found!</source>
+        <translation>Nenašiel sa platný port proxy zoznamu verejných hubov!</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="284"/>
@@ -3530,6 +3710,117 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsConnection.cpp" line="356"/>
         <source>Program need root privileges to open ports less than 1024</source>
         <translation>Program potrebuje nastaviť práva root(a) na otvorenie portu nižšieho ako 1024</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1155"/>
+        <source>Direct connection</source>
+        <translation>Priame spojenie</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1157"/>
+        <source>Firewall with UPnP</source>
+        <translation>Firewall s UPnP</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1159"/>
+        <source>Firewall with port forwarding</source>
+        <translation>Firewall s port forwarding</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1161"/>
+        <source>Passive mode</source>
+        <translation>Pasívny mód</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1163"/>
+        <source>Unknown</source>
+        <translation>Neznáme</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1178"/>
+        <source>Detected incoming mode: %1. Priority: Direct, Firewall with UPnP, Passive.</source>
+        <translation>Zistený režim prichádzajúceho pripojenia: %1. Priorita: Priame spojenie, Firewall s UPnP, Pasívny mód.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1303"/>
+        <source>Shadowsocks 2022 PSK segment %1 is empty.</source>
+        <translation>Segment %1 PSK Shadowsocks 2022 je prázdny.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1306"/>
+        <source>Shadowsocks 2022 PSK segment %1 is not valid canonical Base64.</source>
+        <translation>Segment %1 PSK Shadowsocks 2022 nie je platný kanonický reťazec Base64.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1309"/>
+        <source>Shadowsocks 2022 PSK segment %1 must decode to exactly %2 bytes.</source>
+        <translation>Segment %1 PSK Shadowsocks 2022 sa musí dekódovať presne na %2 bajtov.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1323"/>
+        <source>Select SOCKS5 or Shadowsocks before testing a proxy.</source>
+        <translation>Pred testovaním proxy vyberte SOCKS5 alebo Shadowsocks.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>Shadowsocks</source>
+        <translation>Shadowsocks</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1328"/>
+        <source>SOCKS5</source>
+        <translation>SOCKS5</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1334"/>
+        <source>No %1 server found!</source>
+        <translation>Nenašiel sa server %1!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1342"/>
+        <source>No Shadowsocks password configured.</source>
+        <translation>Nie je nastavené heslo pre Shadowsocks.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1434"/>
+        <location filename="../src/SettingsConnection.cpp" line="1437"/>
+        <source>%1 proxy test failed:
+%2</source>
+        <translation>Test proxy %1 zlyhal:
+%2</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1442"/>
+        <location filename="../src/SettingsConnection.cpp" line="1489"/>
+        <source>Proxy test</source>
+        <translation>Test proxy</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1443"/>
+        <source>%1 proxy test succeeded through %2:%3.</source>
+        <translation>Test proxy %1 uspel prostredníctvom %2:%3.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1459"/>
+        <source>No public hub list proxy host found!</source>
+        <translation>Nenašiel sa hostiteľ proxy zoznamu verejných hubov!</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1482"/>
+        <source>The server responded, but not like an HTTP proxy.</source>
+        <translation>Server odpovedal, ale nie ako HTTP proxy.</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1484"/>
+        <source>Public hub list proxy test failed:
+%1</source>
+        <translation>Test proxy zoznamu verejných hubov zlyhal:
+%1</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsConnection.cpp" line="1490"/>
+        <source>Public hub list proxy test succeeded through %1:%2.</source>
+        <translation>Test proxy zoznamu verejných hubov uspel prostredníctvom %1:%2.</translation>
     </message>
     <message>
         <location filename="../src/SettingsConnection.cpp" line="611"/>
@@ -3579,6 +3870,26 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SettingsDownloads.cpp" line="195"/>
         <source>Alias</source>
         <translation>Alias</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="220"/>
+        <source>Action confirm</source>
+        <translation>Potvrdenie akcie</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="221"/>
+        <source>Remove selected entries?</source>
+        <translation>Odstrániť vybrané položky?</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="238"/>
+        <source>Add</source>
+        <translation>Pridať</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsDownloads.cpp" line="239"/>
+        <source>Remove</source>
+        <translation>Odstrániť</translation>
     </message>
 </context>
 <context>
@@ -4248,6 +4559,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <location filename="../src/SideBar.cpp" line="159"/>
         <source>Widgets</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SideBar.cpp" line="87"/>
+        <location filename="../src/SideBar.cpp" line="441"/>
+        <source>Live Log</source>
+        <translation>Živý protokol</translation>
     </message>
 </context>
 <context>
@@ -5381,6 +5698,29 @@ Prajete si hľadanie zastaviť?
     </message>
 </context>
 <context>
+    <name>UILiveLog</name>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="34"/>
+        <source>Categories</source>
+        <translation>Kategórie</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="47"/>
+        <source>Pause</source>
+        <translation>Prestávka</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="57"/>
+        <source>Clear</source>
+        <translation>Vyčistiť</translation>
+    </message>
+    <message>
+        <location filename="../ui/UILiveLog.ui" line="64"/>
+        <source>Auto-scroll</source>
+        <translation>Automatické posúvanie</translation>
+    </message>
+</context>
+<context>
     <name>UIMagnet</name>
     <message>
         <location filename="../ui/UIMagnet.ui" line="20"/>
@@ -6223,6 +6563,16 @@ It&apos;s not used for uploads, downloads, or connecting to a hub.</source>
         <location filename="../ui/UISettingsDownloads.ui" line="296"/>
         <source>Alias</source>
         <translation>Alias</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="319"/>
+        <source>Add</source>
+        <translation>Pridať</translation>
+    </message>
+    <message>
+        <location filename="../ui/UISettingsDownloads.ui" line="326"/>
+        <source>Remove</source>
+        <translation>Odstrániť</translation>
     </message>
     <message>
         <location filename="../ui/UISettingsDownloads.ui" line="305"/>

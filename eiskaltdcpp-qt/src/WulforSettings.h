@@ -63,6 +63,7 @@ static const QString & WS_FAVUSERS_STATE          = "favoriteusers-state";
 static const QString & WS_SHAREHEADER_STATE       = "shareheader-state";
 static const QString & WS_DOWNLOADTO_ALIASES      = "downloadto-aliases";
 static const QString & WS_DOWNLOADTO_PATHS        = "downloadto-paths";
+static const QString & WS_LIVE_LOG_CATEGORIES     = "live-log/categories";
 static const QString & WS_APP_ICONTHEME           = "app-theme-icons";
 static const QString & WS_APP_USERTHEME           = "app-theme-users";
 static const QString & WS_APP_ASPELL_LANG         = "app-aspell-lang";

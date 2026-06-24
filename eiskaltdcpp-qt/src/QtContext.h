@@ -44,6 +44,7 @@ class SpyFrame;
 class ADLS;
 class CmdDebug;
 class Secretary;
+class LiveLog;
 class QueuedUsers;
 template <bool isUpload> class FinishedTransfers;
 using FinishedUploads   = FinishedTransfers<true>;
@@ -124,6 +125,7 @@ public:
     void createADLS();
     void createCmdDebug();
     void createSecretary();
+    void createLiveLog();
     void createQueuedUsers();
     void createFinishedUploads();
     void createFinishedDownloads();
@@ -165,6 +167,7 @@ public:
     [[nodiscard]] ADLS*               adls()               const noexcept { return adls_.get(); }
     [[nodiscard]] CmdDebug*           cmdDebug()           const noexcept { return cmdDebug_.get(); }
     [[nodiscard]] Secretary*          secretary()           const noexcept { return secretary_.get(); }
+    [[nodiscard]] LiveLog*            liveLog()             const noexcept { return liveLog_.get(); }
     [[nodiscard]] QueuedUsers*        queuedUsers()        const noexcept { return queuedUsers_.get(); }
     [[nodiscard]] FinishedUploads*    finishedUploads()    const noexcept;
     [[nodiscard]] FinishedDownloads*  finishedDownloads()  const noexcept;
@@ -206,6 +209,7 @@ private:
     std::unique_ptr<ADLS>               adls_;
     std::unique_ptr<CmdDebug>           cmdDebug_;
     std::unique_ptr<Secretary>          secretary_;
+    std::unique_ptr<LiveLog>            liveLog_;
     std::unique_ptr<QueuedUsers>        queuedUsers_;
     std::unique_ptr<FinishedUploads>    finishedUploads_;
     std::unique_ptr<FinishedDownloads>  finishedDownloads_;

@@ -204,6 +204,7 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
         void slotToolsADLS();
         void slotToolsCmdDebug();
         void slotToolsSecretary();
+        void slotToolsLiveLog();
         void slotToolsCopyWindowTitle();
         void slotToolsSettings();
         void slotToolsJS();

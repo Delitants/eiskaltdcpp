@@ -26,29 +26,68 @@
 #include "LogManagerListener.h"
 #include "DCPlusPlus.h"
 
+#include <cstdint>
+#include <ctime>
+#include <deque>
+
 namespace dcpp {
+
+enum class LogArea : uint8_t {
+    CHAT,
+    PM,
+    DOWNLOAD,
+    FINISHED_DOWNLOAD,
+    UPLOAD,
+    SYSTEM,
+    STATUS,
+    SPY,
+    CMD_DEBUG,
+    LAST
+};
+
+struct LogEntry {
+    uint64_t sequence;
+    time_t timestamp;
+    LogArea area;
+    string message;
+};
 
 class LogManager : public Speaker<LogManagerListener>, public ContextAware
 {
 public:
     typedef pair<time_t, string> Pair;
-    typedef deque<Pair> List;
+    typedef std::deque<Pair> List;
+    typedef std::deque<LogEntry> EntryList;
 
-    enum Area { CHAT, PM, DOWNLOAD, FINISHED_DOWNLOAD, UPLOAD, SYSTEM, STATUS, SPY, CMD_DEBUG, LAST };
+    using Area = LogArea;
+    static constexpr Area CHAT = Area::CHAT;
+    static constexpr Area PM = Area::PM;
+    static constexpr Area DOWNLOAD = Area::DOWNLOAD;
+    static constexpr Area FINISHED_DOWNLOAD = Area::FINISHED_DOWNLOAD;
+    static constexpr Area UPLOAD = Area::UPLOAD;
+    static constexpr Area SYSTEM = Area::SYSTEM;
+    static constexpr Area STATUS = Area::STATUS;
+    static constexpr Area SPY = Area::SPY;
+    static constexpr Area CMD_DEBUG = Area::CMD_DEBUG;
+    static constexpr size_t LAST = static_cast<size_t>(Area::LAST);
     enum { FILE, FORMAT };
 
-    void log(Area area, ParamMap& params);
+    void log(Area area, ParamMap& params, bool writeToFile);
     void message(const string& msg);
 
     List getLastLogs();
+    EntryList getLiveEntries() const;
+    uint64_t clearLiveEntries();
     string getPath(Area area, ParamMap& params) const;
     string getPath(Area area) const;
 
     const string& getSetting(int area, int sel) const;
+    const string& getSetting(Area area, int sel) const;
     void saveSetting(int area, int sel, const string& setting);
+    void saveSetting(Area area, int sel, const string& setting);
 
 private:
-    void log(const string& area, const string& msg);
+    void write(const string& path, const string& message);
 
 
 public:
@@ -56,12 +95,16 @@ public:
     virtual ~LogManager();
 
 private:
-    CriticalSection cs;
+    static constexpr size_t MAX_LIVE_ENTRIES = 5000;
+
+    mutable CriticalSection cs;
     List lastLogs;
+    EntryList liveEntries;
+    uint64_t nextSequence = 0;
 
     int options[LAST][2];
 };
 
-#define CTX_LOG(area, msg) this->ctx().getLogManager()->log(area, msg)
+#define CTX_LOG(area, msg, writeToFile) this->ctx().getLogManager()->log(area, msg, writeToFile)
 
 } // namespace dcpp

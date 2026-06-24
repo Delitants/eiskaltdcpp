@@ -84,6 +84,7 @@ SideBarModel::SideBarModel(QObject *parent) :
     CREATE_ROOT_EL(rootItem, eiFAVUSERS,    tr("Favorite Users"),   roots,  FavoriteUsers);
     CREATE_ROOT_EL(rootItem, eiSERVER,      tr("Public Hubs"),      roots,  PublicHubs);
     CREATE_ROOT_EL(rootItem, eiMAGNET,      tr("Secretary"),        roots,  Secretary);
+    CREATE_ROOT_EL(rootItem, eiOPEN_LOG_FILE,tr("Live Log"),        roots,  LiveLog);
     CREATE_ROOT_EL(rootItem, eiSPY,         tr("Search Spy"),       roots,  SearchSpy);
     CREATE_ROOT_EL(rootItem, eiCONSOLE,     tr("Debug Console"),    roots,  CmdDebug);
     //CREATE_ROOT_EL(rootItem, eiSERVER,    tr("Hub Manager"),      roots,  HubManager);
@@ -437,6 +438,7 @@ void SideBarModel::slotSettingsChanged(const QString &key, const QString &value)
         RETRANSLATE_ROOT_EL(tr("Favorite Users"),   roots,  FavoriteUsers);
         RETRANSLATE_ROOT_EL(tr("Public Hubs"),      roots,  PublicHubs);
         RETRANSLATE_ROOT_EL(tr("Secretary"),        roots,  Secretary);
+        RETRANSLATE_ROOT_EL(tr("Live Log"),         roots,  LiveLog);
         RETRANSLATE_ROOT_EL(tr("Search Spy"),       roots,  SearchSpy);
         RETRANSLATE_ROOT_EL(tr("Other Widgets"),    roots,  CustomWidget);
         RETRANSLATE_ROOT_EL(tr("Queued Users"),     roots,  QueuedUsers);
@@ -711,4 +713,3 @@ void SideBarView::slotUpdateHeaderSize()
         header()->resizeSection(0, header()->width());
     }
 }
-

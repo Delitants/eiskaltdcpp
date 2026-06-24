@@ -44,6 +44,7 @@ public:
         QueuedUsers,
         CmdDebug,
         Secretary,
+        LiveLog,
         NoRole  //Not valid for widgets
     };
 

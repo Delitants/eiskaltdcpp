@@ -300,7 +300,7 @@ private:
     bool checkSfv(QueueItem* qi, Download* d);
     uint32_t calcCrc32(const string& file);
 
-    void logFinishedDownload(QueueItem* qi, Download* d, bool crcChecked);
+    void logFinishedDownload(QueueItem* qi, Download* d, bool crcChecked, bool writeToFile);
 
     // TimerManagerListener
     virtual void on(TimerManagerListener::Second, uint64_t aTick);

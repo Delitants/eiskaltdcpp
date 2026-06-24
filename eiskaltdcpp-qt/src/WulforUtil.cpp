@@ -12,6 +12,7 @@
 
 #include "MainWindow.h"
 #include "Magnet.h"
+#include "MenuIconHelper.h"
 #include "WulforUtil.h"
 #include "ArenaWidgetFactory.h"
 #include "QtContext.h"
@@ -1735,6 +1736,9 @@ QMenu *WulforUtil::buildUserCmdMenu(const StringList& hub_list, int ctx, QWidget
         return nullptr;
 
     QMenu *ucMenu = new QMenu(tr("User commands"), parent);
+    const QPixmap commandIcon = getPixmap(eiCONSOLE);
+    ucMenu->setIcon(commandIcon);
+    MenuIconHelper::enableFor(ucMenu);
 
     QMenu *menuPtr = ucMenu;
     for (size_t n = 0; n < userCommands.size(); ++n) {
@@ -1753,7 +1757,9 @@ QMenu *WulforUtil::buildUserCmdMenu(const StringList& hub_list, int ctx, QWidget
             for(; _begin != _end; ++_begin) {
                 const QString name = _q(*_begin);
                 if (_begin + 1 == _end) {
-                    menuPtr->addAction(name)->setData(uc->getId());
+                    QAction* action = menuPtr->addAction(commandIcon, name);
+                    action->setData(uc->getId());
+                    MenuIconHelper::enableFor(action);
                 } else {
                     bool found = false;
                     QListIterator<QAction*> iter(menuPtr->actions());
@@ -1768,6 +1774,8 @@ QMenu *WulforUtil::buildUserCmdMenu(const StringList& hub_list, int ctx, QWidget
 
                     if (!found) {
                         menuPtr = menuPtr->addMenu(name);
+                        menuPtr->setIcon(commandIcon);
+                        MenuIconHelper::enableFor(menuPtr);
                     }
                 }
             }

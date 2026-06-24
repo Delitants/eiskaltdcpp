@@ -39,6 +39,7 @@
 #include "ADLS.h"
 #include "CmdDebug.h"
 #include "Secretary.h"
+#include "LiveLog.h"
 #include "QueuedUsers.h"
 #include "FinishedTransfers.h"
 #ifdef USE_ASPELL
@@ -90,6 +91,7 @@ QtContext::~QtContext() {
     (void)adls_.release();
     (void)cmdDebug_.release();
     (void)secretary_.release();
+    (void)liveLog_.release();
     (void)queuedUsers_.release();
     (void)finishedUploads_.release();
     (void)finishedDownloads_.release();
@@ -129,6 +131,7 @@ void QtContext::createSpyFrame()           { spyFrame_           = std::make_uni
 void QtContext::createADLS()               { adls_               = std::make_unique<ADLS>(dcCtx_); adls_->setQtContext(this); }
 void QtContext::createCmdDebug()           { cmdDebug_           = std::make_unique<CmdDebug>(dcCtx_); cmdDebug_->setQtContext(this); }
 void QtContext::createSecretary()          { secretary_          = std::make_unique<Secretary>(dcCtx_); secretary_->setQtContext(this); }
+void QtContext::createLiveLog()            { liveLog_            = std::make_unique<LiveLog>(dcCtx_); liveLog_->setQtContext(this); }
 void QtContext::createQueuedUsers()        { queuedUsers_        = std::make_unique<QueuedUsers>(dcCtx_); queuedUsers_->setQtContext(this); }
 void QtContext::createFinishedUploads()    { finishedUploads_    = std::make_unique<FinishedUploads>(dcCtx_); finishedUploads_->setQtContext(this); }
 void QtContext::createFinishedDownloads()  { finishedDownloads_  = std::make_unique<FinishedDownloads>(dcCtx_); finishedDownloads_->setQtContext(this); }

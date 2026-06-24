@@ -494,11 +494,12 @@ void UploadManager::on(UserConnectionListener::TransmitDone, UserConnection* aSo
 
     aSource->setState(UserConnection::STATE_GET);
 
-    if(CTX_BOOLSETTING(LOG_UPLOADS) && u->getType() != Transfer::TYPE_TREE && (CTX_BOOLSETTING(LOG_FILELIST_TRANSFERS) || u->getType() != Transfer::TYPE_FULL_LIST)) {
-        StringMap params;
-        u->getParams(*aSource, params);
-        CTX_LOG(LogManager::UPLOAD, params);
-    }
+    const bool writeToFile = CTX_BOOLSETTING(LOG_UPLOADS) &&
+        u->getType() != Transfer::TYPE_TREE &&
+        (CTX_BOOLSETTING(LOG_FILELIST_TRANSFERS) || u->getType() != Transfer::TYPE_FULL_LIST);
+    StringMap params;
+    u->getParams(*aSource, params);
+    CTX_LOG(LogManager::UPLOAD, params, writeToFile);
 
     fire(UploadManagerListener::Complete(), u);
     removeUpload(u);

@@ -41,13 +41,11 @@ class DebugManager : public Speaker<DebugManagerListener>, public ContextAware {
 public:
     void SendCommandMessage(const string& mess, int typeDir, const string& ip) {
         fire(DebugManagerListener::DebugCommand(), mess, typeDir, ip);
-        if (CTX_BOOLSETTING(LOG_CMD_DEBUG)) {
-            dcpp::StringMap params;
-            params["cmd"] = mess;
-            params["ip"] = ip;
-            params["type"] = typeDirToString(typeDir);
-            CTX_LOG(LogManager::CMD_DEBUG, params);
-        }
+        dcpp::StringMap params;
+        params["cmd"] = mess;
+        params["ip"] = ip;
+        params["type"] = typeDirToString(typeDir);
+        CTX_LOG(LogManager::CMD_DEBUG, params, CTX_BOOLSETTING(LOG_CMD_DEBUG));
     }
     void SendDetectionMessage(const string& mess) {
         fire(DebugManagerListener::DebugDetection(), mess);

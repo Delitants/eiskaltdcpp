@@ -26,16 +26,32 @@
 
 namespace dcpp {
 
-void LogManager::log(Area area, ParamMap& params) {
-    log(getPath(area, params), Util::formatParams(getSetting(area, FORMAT), params));
+void LogManager::log(Area area, ParamMap& params, bool writeToFile) {
+    const auto formattedMessage = Util::formatParams(getSetting(area, FORMAT), params);
+    const auto timestamp = GET_TIME();
+    LogEntry entry;
+
+    {
+        Lock l(cs);
+        entry = { ++nextSequence, timestamp, area, formattedMessage };
+        liveEntries.push_back(entry);
+        while(liveEntries.size() > MAX_LIVE_ENTRIES) {
+            liveEntries.pop_front();
+        }
+
+        if(writeToFile) {
+            write(getPath(area, params), formattedMessage);
+        }
+    }
+
+    fire(LogManagerListener::EntryAdded(), entry);
 }
 
 void LogManager::message(const string& msg) {
-    if(CTX_BOOLSETTING(LOG_SYSTEM)) {
-        ParamMap params;
-        params["message"] = msg;
-        log(SYSTEM, params);
-    }
+    ParamMap params;
+    params["message"] = msg;
+    log(SYSTEM, params, CTX_BOOLSETTING(LOG_SYSTEM));
+
     time_t t = GET_TIME();
     {
         Lock l(cs);
@@ -52,6 +68,17 @@ LogManager::List LogManager::getLastLogs() {
     return lastLogs;
 }
 
+LogManager::EntryList LogManager::getLiveEntries() const {
+    Lock l(cs);
+    return liveEntries;
+}
+
+uint64_t LogManager::clearLiveEntries() {
+    Lock l(cs);
+    liveEntries.clear();
+    return nextSequence;
+}
+
 string LogManager::getPath(Area area, ParamMap& params) const {
     return CTX_SETTING(LOG_DIRECTORY) + Util::formatParams(getSetting(area, FILE), params, true);
 }
@@ -65,42 +92,50 @@ const string& LogManager::getSetting(int area, int sel) const {
     return ctx().getSettingsManager()->get(static_cast<SettingsManager::StrSetting>(options[area][sel]), true);
 }
 
+const string& LogManager::getSetting(Area area, int sel) const {
+    return getSetting(static_cast<int>(area), sel);
+}
+
 void LogManager::saveSetting(int area, int sel, const string& setting) {
     ctx().getSettingsManager()->set(static_cast<SettingsManager::StrSetting>(options[area][sel]), setting);
 }
 
-void LogManager::log(const string& area, const string& msg) {
-    Lock l(cs);
+void LogManager::saveSetting(Area area, int sel, const string& setting) {
+    saveSetting(static_cast<int>(area), sel, setting);
+}
+
+void LogManager::write(const string& path, const string& message) {
     try {
-        string aArea = Util::validateFileName(area);
+        string aArea = Util::validateFileName(path);
         File::ensureDirectory(aArea);
         File f(aArea, File::WRITE, File::OPEN | File::CREATE);
         f.setEndPos(0);
-        f.write(msg + "\r\n");
+        f.write(message + "\r\n");
     } catch (const FileException&) {
         // ...
     }
 }
 
 LogManager::LogManager(DCContext& ctx) : ContextAware(ctx) {
-    options[UPLOAD][FILE]              = SettingsManager::LOG_FILE_UPLOAD;
-    options[UPLOAD][FORMAT]            = SettingsManager::LOG_FORMAT_POST_UPLOAD;
-    options[DOWNLOAD][FILE]            = SettingsManager::LOG_FILE_DOWNLOAD;
-    options[DOWNLOAD][FORMAT]          = SettingsManager::LOG_FORMAT_POST_DOWNLOAD;
-    options[FINISHED_DOWNLOAD][FILE]   = SettingsManager::LOG_FILE_FINISHED_DOWNLOAD;
-    options[FINISHED_DOWNLOAD][FORMAT] = SettingsManager::LOG_FORMAT_POST_FINISHED_DOWNLOAD;
-    options[CHAT][FILE]                = SettingsManager::LOG_FILE_MAIN_CHAT;
-    options[CHAT][FORMAT]              = SettingsManager::LOG_FORMAT_MAIN_CHAT;
-    options[PM][FILE]                  = SettingsManager::LOG_FILE_PRIVATE_CHAT;
-    options[PM][FORMAT]                = SettingsManager::LOG_FORMAT_PRIVATE_CHAT;
-    options[SYSTEM][FILE]              = SettingsManager::LOG_FILE_SYSTEM;
-    options[SYSTEM][FORMAT]            = SettingsManager::LOG_FORMAT_SYSTEM;
-    options[STATUS][FILE]              = SettingsManager::LOG_FILE_STATUS;
-    options[STATUS][FORMAT]            = SettingsManager::LOG_FORMAT_STATUS;
-    options[SPY][FILE]                 = SettingsManager::LOG_FILE_SPY;
-    options[SPY][FORMAT]               = SettingsManager::LOG_FORMAT_SPY;
-    options[CMD_DEBUG][FILE]           = SettingsManager::LOG_FILE_CMD_DEBUG;
-    options[CMD_DEBUG][FORMAT]         = SettingsManager::LOG_FORMAT_CMD_DEBUG;
+    const auto index = [](Area area) { return static_cast<size_t>(area); };
+    options[index(UPLOAD)][FILE]              = SettingsManager::LOG_FILE_UPLOAD;
+    options[index(UPLOAD)][FORMAT]            = SettingsManager::LOG_FORMAT_POST_UPLOAD;
+    options[index(DOWNLOAD)][FILE]            = SettingsManager::LOG_FILE_DOWNLOAD;
+    options[index(DOWNLOAD)][FORMAT]          = SettingsManager::LOG_FORMAT_POST_DOWNLOAD;
+    options[index(FINISHED_DOWNLOAD)][FILE]   = SettingsManager::LOG_FILE_FINISHED_DOWNLOAD;
+    options[index(FINISHED_DOWNLOAD)][FORMAT] = SettingsManager::LOG_FORMAT_POST_FINISHED_DOWNLOAD;
+    options[index(CHAT)][FILE]                = SettingsManager::LOG_FILE_MAIN_CHAT;
+    options[index(CHAT)][FORMAT]              = SettingsManager::LOG_FORMAT_MAIN_CHAT;
+    options[index(PM)][FILE]                  = SettingsManager::LOG_FILE_PRIVATE_CHAT;
+    options[index(PM)][FORMAT]                = SettingsManager::LOG_FORMAT_PRIVATE_CHAT;
+    options[index(SYSTEM)][FILE]              = SettingsManager::LOG_FILE_SYSTEM;
+    options[index(SYSTEM)][FORMAT]            = SettingsManager::LOG_FORMAT_SYSTEM;
+    options[index(STATUS)][FILE]              = SettingsManager::LOG_FILE_STATUS;
+    options[index(STATUS)][FORMAT]            = SettingsManager::LOG_FORMAT_STATUS;
+    options[index(SPY)][FILE]                 = SettingsManager::LOG_FILE_SPY;
+    options[index(SPY)][FORMAT]               = SettingsManager::LOG_FORMAT_SPY;
+    options[index(CMD_DEBUG)][FILE]           = SettingsManager::LOG_FILE_CMD_DEBUG;
+    options[index(CMD_DEBUG)][FORMAT]         = SettingsManager::LOG_FORMAT_CMD_DEBUG;
 }
 
 LogManager::~LogManager() {

@@ -349,9 +349,9 @@ void DownloadManager::endData(UserConnection* aSource) {
         dcdebug("Download finished: %s, size " I64_FMT ", downloaded " I64_FMT "\n", d->getPath().c_str(),
                 static_cast<long long int>(d->getSize()), static_cast<long long int>(d->getPos()));
 
-        if(CTX_BOOLSETTING(LOG_DOWNLOADS) && (CTX_BOOLSETTING(LOG_FILELIST_TRANSFERS) || d->getType() == Transfer::TYPE_FILE)) {
-            logDownload(aSource, d);
-        }
+        const bool writeToFile = CTX_BOOLSETTING(LOG_DOWNLOADS) &&
+            (CTX_BOOLSETTING(LOG_FILELIST_TRANSFERS) || d->getType() == Transfer::TYPE_FILE);
+        logDownload(aSource, d, writeToFile);
     }
 
     removeDownload(d);
@@ -370,10 +370,10 @@ int64_t DownloadManager::getRunningAverage() {
     return avg;
 }
 
-void DownloadManager::logDownload(UserConnection* aSource, Download* d) {
+void DownloadManager::logDownload(UserConnection* aSource, Download* d, bool writeToFile) {
     StringMap params;
     d->getParams(*aSource, params);
-    CTX_LOG(LogManager::DOWNLOAD, params);
+    CTX_LOG(LogManager::DOWNLOAD, params, writeToFile);
 }
 
 void DownloadManager::on(UserConnectionListener::MaxedOut, UserConnection* aSource) {

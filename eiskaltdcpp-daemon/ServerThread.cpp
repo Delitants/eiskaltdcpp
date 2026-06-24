@@ -436,18 +436,17 @@ void ServerThread::on(ClientListener::Message, Client *cl, const ChatMessage& me
     bool privatemsg = message.to && message.replyTo;
     string priv = privatemsg ? " Private from " + message.from->getIdentity().getNick() : " Public";
     if (privatemsg) {
-        if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_PRIVATE_CHAT, true)) {
-            const string& hint = cl->getHubUrl();
-            const CID& cid = message.replyTo->getUser()->getCID();
-            bool priv = dcCtx_.getFavoriteManager()->isPrivate(hint);
-            params["message"] = Text::fromUtf8(msg);
-            params["hubNI"] = Util::toString(dcCtx_.getClientManager()->getHubNames(cid, hint, priv));
-            params["hubURL"] = Util::toString(dcCtx_.getClientManager()->getHubs(cid, hint, priv));
-            params["userCID"] = cid.toBase32();
-            params["userNI"] = dcCtx_.getClientManager()->getNicks(cid, hint, priv)[0];
-            params["myCID"] = dcCtx_.getClientManager()->getMe()->getCID().toBase32();
-            dcCtx_.getLogManager()->log(LogManager::PM, params);
-        }
+        const string& hint = cl->getHubUrl();
+        const CID& cid = message.replyTo->getUser()->getCID();
+        bool isPrivate = dcCtx_.getFavoriteManager()->isPrivate(hint);
+        params["message"] = Text::fromUtf8(msg);
+        params["hubNI"] = Util::toString(dcCtx_.getClientManager()->getHubNames(cid, hint, isPrivate));
+        params["hubURL"] = Util::toString(dcCtx_.getClientManager()->getHubs(cid, hint, isPrivate));
+        params["userCID"] = cid.toBase32();
+        params["userNI"] = dcCtx_.getClientManager()->getNicks(cid, hint, isPrivate)[0];
+        params["myCID"] = dcCtx_.getClientManager()->getMe()->getCID().toBase32();
+        dcCtx_.getLogManager()->log(LogManager::PM, params,
+            dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_PRIVATE_CHAT, true));
     } else {
         ClientIter it = clientsMap.find(cl->getHubUrl());
         if (it != clientsMap.end()) {
@@ -456,13 +455,12 @@ void ServerThread::on(ClientListener::Message, Client *cl, const ChatMessage& me
             string tmp = "[" + Util::getTimeString() + "] " + msg;
             clientsMap[cl->getHubUrl()].curchat.push_back(tmp);
         }
-        if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true)) {
-            params["message"] = Text::fromUtf8(msg);
-            cl->getHubIdentity().getParams(params, "hub", false);
-            params["hubURL"] = cl->getHubUrl();
-            cl->getMyIdentity().getParams(params, "my", true);
-            dcCtx_.getLogManager()->log(LogManager::CHAT, params);
-        }
+        params["message"] = Text::fromUtf8(msg);
+        cl->getHubIdentity().getParams(params, "hub", false);
+        params["hubURL"] = cl->getHubUrl();
+        cl->getMyIdentity().getParams(params, "my", true);
+        dcCtx_.getLogManager()->log(LogManager::CHAT, params,
+            dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true));
     }
 
     if (config().verbose)
@@ -474,14 +472,13 @@ void ServerThread::on(StatusMessage, Client *cl, const string& line, int statusF
 
     string msg = line;
 
-    if (dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_STATUS_MESSAGES, true)) {
-        StringMap params;
-        cl->getHubIdentity().getParams(params, "hub", false);
-        params["hubURL"] = cl->getHubUrl();
-        cl->getMyIdentity().getParams(params, "my", true);
-        params["message"] = Text::fromUtf8(msg);
-        dcCtx_.getLogManager()->log(LogManager::STATUS, params);
-    }
+    StringMap params;
+    cl->getHubIdentity().getParams(params, "hub", false);
+    params["hubURL"] = cl->getHubUrl();
+    cl->getMyIdentity().getParams(params, "my", true);
+    params["message"] = Text::fromUtf8(msg);
+    dcCtx_.getLogManager()->log(LogManager::STATUS, params,
+        dcCtx_.getSettingsManager()->getBool(SettingsManager::LOG_STATUS_MESSAGES, true));
 
     if (config().verbose)
         cout << cl->getHubUrl() << " [" << Util::getTimeString() << "] *" << msg << endl;

@@ -30,6 +30,7 @@
 #endif
 #include "ArenaWidgetManager.h"
 #include "MainWindow.h"
+#include "MenuIconHelper.h"
 #include "GlobalTimer.h"
 
 #include "UserListModel.h"
@@ -667,15 +668,15 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
     QAction *zoom_out    = new QAction(WU->getPixmap(WulforUtil::eiZOOM_OUT), tr("Zoom Out"), nullptr);
 
     // submenu copy_data for user list
-    QAction *copy_data_nick  = new QAction(tr("Nick"), nullptr);
-    QAction *copy_data_cmnt  = new QAction(tr("Comment"), nullptr);
-    QAction *copy_data_ip    = new QAction(tr("IP"), nullptr);
-    QAction *copy_data_ip6   = new QAction(tr("IPv6"), nullptr);
-    QAction *copy_data_share = new QAction(tr("Share"), nullptr);
-    QAction *copy_data_tag   = new QAction(tr("Tag"), nullptr);
-    QAction *copy_data_email = new QAction(tr("E-mail"), nullptr);
+    QAction *copy_data_nick  = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("Nick"), nullptr);
+    QAction *copy_data_cmnt  = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("Comment"), nullptr);
+    QAction *copy_data_ip    = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("IP"), nullptr);
+    QAction *copy_data_ip6   = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("IPv6"), nullptr);
+    QAction *copy_data_share = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("Share"), nullptr);
+    QAction *copy_data_tag   = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("Tag"), nullptr);
+    QAction *copy_data_email = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("E-mail"), nullptr);
     QAction *sep4            = new QAction(nullptr);
-    QAction *copy_data_all   = new QAction(tr("All"), nullptr);
+    QAction *copy_data_all   = new QAction(WU->getPixmap(WulforUtil::eiEDITCOPY), tr("All"), nullptr);
 
     QMenu *menuCopyData = new QMenu(nullptr);
     menuCopyData->addActions(QList<QAction*>() << copy_data_nick << copy_data_cmnt << copy_data_ip << copy_data_ip6 << copy_data_share << copy_data_tag << copy_data_email << sep4 << copy_data_all);
@@ -716,6 +717,13 @@ HubFrame::Menu::Menu() : menu(new QMenu(nullptr))
             << copy_data
             << match_queue
             << rem_queue;
+
+    for (QAction* action : ul_actions) {
+        MenuIconHelper::enableFor(action);
+    }
+    for (QAction* action : menuCopyData->actions()) {
+        MenuIconHelper::enableFor(action);
+    }
 
     chat_actions << sep1
                  << clear_chat
@@ -775,8 +783,21 @@ HubFrame::Menu::Action HubFrame::Menu::execUserMenu(Client *client, const QStrin
         return None;
 
     menu->clear();
-    menu->setProperty("iconVisibleInMenu", true);
-
+    WulforUtil* WU = qtCtx()->wulforUtil();
+    const QList<WulforUtil::Icons> icons = {
+        WulforUtil::eiFOLDER_BLUE,
+        WulforUtil::eiMESSAGE,
+        WulforUtil::eiFAVADD,
+        WulforUtil::eiFAVREM,
+        WulforUtil::eiEDITADD,
+        WulforUtil::eiEDITCOPY,
+        WulforUtil::eiDOWN,
+        WulforUtil::eiEDITDELETE
+    };
+    for(int index = 0; index < ul_actions.size(); ++index) {
+        ul_actions[index]->setIcon(WU->getPixmap(icons[index]));
+        MenuIconHelper::enableFor(ul_actions[index]);
+    }
     menu->setTitle(qtCtx()->wulforUtil()->getNickViaOnlineUser(cid, _q(client->getHubUrl())));
 
     if (menu->title().isEmpty())
@@ -789,8 +810,10 @@ HubFrame::Menu::Action HubFrame::Menu::execUserMenu(Client *client, const QStrin
     if (!cid.isEmpty()){
         user_menu = qtCtx()->wulforUtil()->buildUserCmdMenu(client->getHubUrl(), UserCommand::CONTEXT_USER);
 
-        if (user_menu && !user_menu->actions().empty())
+        if (user_menu && !user_menu->actions().empty()) {
+            MenuIconHelper::enableFor(user_menu);
             menu->addMenu(user_menu);
+        }
     }
 
     QMenu *antispam_menu = nullptr;
@@ -798,11 +821,16 @@ HubFrame::Menu::Action HubFrame::Menu::execUserMenu(Client *client, const QStrin
     if (qtCtx()->antiSpam()){
         antispam_menu = new QMenu(nullptr);
         antispam_menu->setTitle(tr("AntiSpam"));
-        antispam_menu->menuAction()->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiSPAM));
-        antispam_menu->setProperty("iconVisibleInMenu", true);
+        const auto spamIcon = WU->getPixmap(WulforUtil::eiSPAM);
+        antispam_menu->menuAction()->setIcon(spamIcon);
+        MenuIconHelper::enableFor(antispam_menu);
 
-        antispam_menu->addAction(tr("Add to Black"))->setData(static_cast<int>(AntiSpamBlack));
-        antispam_menu->addAction(tr("Add to White"))->setData(static_cast<int>(AntiSpamWhite));
+        auto* addBlack = antispam_menu->addAction(spamIcon, tr("Add to Black"));
+        addBlack->setData(static_cast<int>(AntiSpamBlack));
+        MenuIconHelper::enableFor(addBlack);
+        auto* addWhite = antispam_menu->addAction(spamIcon, tr("Add to White"));
+        addWhite->setData(static_cast<int>(AntiSpamWhite));
+        MenuIconHelper::enableFor(addWhite);
 
         menu->addMenu(antispam_menu);
     }
@@ -887,9 +915,16 @@ HubFrame::Menu::Action HubFrame::Menu::execChatMenu(Client *client, const QStrin
     if (qtCtx()->antiSpam()){
         antispam_menu = new QMenu(nullptr);
         antispam_menu->setTitle(tr("AntiSpam"));
+        const auto spamIcon = qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiSPAM);
+        antispam_menu->setIcon(spamIcon);
+        MenuIconHelper::enableFor(antispam_menu);
 
-        antispam_menu->addAction(tr("Add to Black"))->setData(static_cast<int>(AntiSpamBlack));
-        antispam_menu->addAction(tr("Add to White"))->setData(static_cast<int>(AntiSpamWhite));
+        auto* addBlack = antispam_menu->addAction(spamIcon, tr("Add to Black"));
+        addBlack->setData(static_cast<int>(AntiSpamBlack));
+        MenuIconHelper::enableFor(addBlack);
+        auto* addWhite = antispam_menu->addAction(spamIcon, tr("Add to White"));
+        addWhite->setData(static_cast<int>(AntiSpamWhite));
+        MenuIconHelper::enableFor(addWhite);
 
         menu->addMenu(antispam_menu);
     }
@@ -4601,20 +4636,22 @@ void HubFrame::on(ClientListener::Message, Client*, const ChatMessage &message) 
         if (!(isBot || isHub) && (message.from->getUser() != qtCtx()->dcCtx().getClientManager()->getMe()) && Util::getAway() && !hasPMWindow)
             qtCtx()->dcCtx().getClientManager()->privateMessage(HintedUser(user->getUser(), d->client->getHubUrl()), Util::getAwayMessage(), false);
 
-        if (qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_PRIVATE_CHAT, true)){
-            string info = Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
-            QString qinfo = !info.empty() ? _q(info) : "";
+        const auto logPrivateChat = qtCtx()->dcCtx().getSettingsManager()->getBool(
+            SettingsManager::LOG_PRIVATE_CHAT, true);
+        string info = Util::formatAdditionalInfo(map["I4"].toString().toStdString(),
+            qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),
+            qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
+        QString qinfo = !info.empty() ? _q(info) : "";
 
-            StringMap params;
-            params["message"] = _tq(qinfo + "<" + nick + "> " + msg);
-            params["hubNI"] = _tq(qtCtx()->wulforUtil()->getHubNames(id));
-            params["hubURL"] = d->client->getHubUrl();
-            params["userCID"] = id.toBase32();
-            params["userNI"] = user->getIdentity().getNick();
-            params["myCID"] = qtCtx()->dcCtx().getClientManager()->getMe()->getCID().toBase32();
-            params["userI4"] = message.from->getIdentity().getIp();
-            qtCtx()->dcCtx().getLogManager()->log(LogManager::PM, params);
-        }
+        StringMap params;
+        params["message"] = _tq(qinfo + "<" + nick + "> " + msg);
+        params["hubNI"] = _tq(qtCtx()->wulforUtil()->getHubNames(id));
+        params["hubURL"] = d->client->getHubUrl();
+        params["userCID"] = id.toBase32();
+        params["userNI"] = user->getIdentity().getNick();
+        params["myCID"] = qtCtx()->dcCtx().getClientManager()->getMe()->getCID().toBase32();
+        params["userI4"] = message.from->getIdentity().getIp();
+        qtCtx()->dcCtx().getLogManager()->log(LogManager::PM, params, logPrivateChat);
     }
     else
     {
@@ -4652,20 +4689,22 @@ void HubFrame::on(ClientListener::Message, Client*, const ChatMessage &message) 
 
         emit coreMessage(map);
 
-        if (qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_MAIN_CHAT, true)){
-            string info = Util::formatAdditionalInfo(map["I4"].toString().toStdString(),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
-            QString qinfo = !info.empty() ? _q(info) : "";
-            QString nick  =  _q(user->getIdentity().getNick());
+        const auto logMainChat = qtCtx()->dcCtx().getSettingsManager()->getBool(
+            SettingsManager::LOG_MAIN_CHAT, true);
+        string info = Util::formatAdditionalInfo(map["I4"].toString().toStdString(),
+            qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_IP, true),
+            qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::GET_USER_COUNTRY, true));
+        QString qinfo = !info.empty() ? _q(info) : "";
+        QString nick  =  _q(user->getIdentity().getNick());
 
-            StringMap params;
-            params["message"] = _tq(qinfo + "<" + nick + "> " + msg);
-            d->client->getHubIdentity().getParams(params, "hub", false);
-            params["hubURL"] = d->client->getHubUrl();
-            params["userNI"] = _tq(nick);
-            params["userI4"] = user->getIdentity().getIp();
-            d->client->getMyIdentity().getParams(params, "my", true);
-            qtCtx()->dcCtx().getLogManager()->log(LogManager::CHAT, params);
-        }
+        StringMap params;
+        params["message"] = _tq(qinfo + "<" + nick + "> " + msg);
+        d->client->getHubIdentity().getParams(params, "hub", false);
+        params["hubURL"] = d->client->getHubUrl();
+        params["userNI"] = _tq(nick);
+        params["userI4"] = user->getIdentity().getIp();
+        d->client->getMyIdentity().getParams(params, "my", true);
+        qtCtx()->dcCtx().getLogManager()->log(LogManager::CHAT, params, logMainChat);
     }
 }
 
@@ -4676,14 +4715,14 @@ void HubFrame::on(ClientListener::StatusMessage, Client*, const string &msg, int
 
     Q_D(HubFrame);
 
-    if (qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_STATUS_MESSAGES, true)){
-        StringMap params;
-        d->client->getHubIdentity().getParams(params, "hub", false);
-        params["hubURL"] = d->client->getHubUrl();
-        d->client->getMyIdentity().getParams(params, "my", true);
-        params["message"] = msg;
-        qtCtx()->dcCtx().getLogManager()->log(LogManager::STATUS, params);
-    }
+    StringMap params;
+    d->client->getHubIdentity().getParams(params, "hub", false);
+    params["hubURL"] = d->client->getHubUrl();
+    d->client->getMyIdentity().getParams(params, "my", true);
+    params["message"] = msg;
+    qtCtx()->dcCtx().getLogManager()->log(LogManager::STATUS, params,
+        qtCtx()->dcCtx().getSettingsManager()->getBool(
+            SettingsManager::LOG_STATUS_MESSAGES, true));
 }
 
 void HubFrame::on(ClientListener::NickTaken, Client*) noexcept{
