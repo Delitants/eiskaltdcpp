@@ -8,6 +8,7 @@
 ***************************************************************************/
 
 #include "DiagnosticLog.h"
+#include "DiagnosticSignalPolicy.h"
 
 #include "VersionGlobal.h"
 
@@ -310,6 +311,9 @@ void DiagnosticLog::installSignalHandlers()
     pipeAction.sa_handler = SIG_IGN;
     sigemptyset(&pipeAction.sa_mask);
     sigaction(SIGPIPE, &pipeAction, nullptr);
+
+    if(!diagnostic_log::shouldInstallFatalSignalHandlers())
+        return;
 
     struct sigaction action;
     memset(&action, 0, sizeof(action));

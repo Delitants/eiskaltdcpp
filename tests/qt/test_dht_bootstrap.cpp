@@ -301,6 +301,27 @@ TEST_CASE("DHT bootstrap request preparation invokes SOCKS5 routing", "[qt][dht]
     context.shutdown();
 }
 
+TEST_CASE("Repeated HTTP requests replace an active buffered socket", "[qt][http][regression]")
+{
+    dcpp::DCContext context;
+    context.startupMinimal();
+
+    std::vector<dcpp::BufferedSocket*> sockets;
+    {
+        dcpp::HttpConnection connection(context, dcpp::Util::emptyString,
+            [&sockets](dcpp::BufferedSocket& socket, const string&, const string&, bool, bool) {
+                sockets.push_back(&socket);
+            });
+        connection.downloadFile("http://first.example/ip");
+        connection.downloadFile("http://second.example/ip");
+    }
+    dcpp::BufferedSocket::waitShutdown();
+
+    REQUIRE(sockets.size() == 2);
+    REQUIRE(sockets[0] != sockets[1]);
+    context.shutdown();
+}
+
 TEST_CASE("Proxied DHT bootstrap URL advertises the UDP relay port", "[qt][dht][bootstrap][proxy]")
 {
     REQUIRE(BootstrapManager::buildBootstrapUrl(

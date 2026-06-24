@@ -54,6 +54,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_logmanager_live.cpp
     test_livelogmodel.cpp
     test_menuiconhelper.cpp
+    test_diagnosticsignalpolicy.cpp
     stubs_wulforutil.cpp
     ${QT_SRC_DIR}/MenuIconHelper.cpp
     ${QT_SRC_DIR}/LiveLogModel.cpp

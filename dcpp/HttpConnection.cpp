@@ -92,6 +92,14 @@ void HttpConnection::prepareRequest(RequestType type) {
     dcassert(Util::findSubString(url, "http://") == 0 || Util::findSubString(url, "https://") == 0);
     Util::sanitizeUrl(url);
 
+    std::unique_ptr<BufferedSocket, void (*)(BufferedSocket*)> retiredSocket(
+        socket, &BufferedSocket::putSocket);
+    if(retiredSocket) {
+        retiredSocket->removeListener(this);
+        retiredSocket->disconnect(true);
+        socket = nullptr;
+    }
+
     // Reset the connection states
     if(connState == CONN_OK || connState == CONN_FAILED)
         userAgent.clear();
