@@ -913,8 +913,10 @@ void configureIntegrationShadowsocks(DCContext& context, const char* server, con
 std::unique_ptr<SSLSocket> connectTlsThroughProxy(test::TestContext& testContext,
     const std::string& host, const std::string& port, Socket::Protocol protocol)
 {
-    std::unique_ptr<SSLSocket> socket(
-        testContext.ownedCtx->getCryptoManager()->getClientSocket(true, protocol));
+    // TestContext starts only the minimal managers, so provide the TLS context
+    // explicitly instead of dereferencing its intentionally absent CryptoManager.
+    CryptoManager crypto(*testContext.ownedCtx);
+    std::unique_ptr<SSLSocket> socket(crypto.getClientSocket(true, protocol));
     socket->setContext(testContext.ownedCtx.get());
     socket->setServerName(host);
     socket->proxyConnect(host, port, 10000);
