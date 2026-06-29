@@ -18,18 +18,17 @@
 #ifndef DCPLUSPLUS_DCPP_FINISHED_ITEM_H
 #define DCPLUSPLUS_DCPP_FINISHED_ITEM_H
 
-#include <boost/core/noncopyable.hpp>
-
 #include "forward.h"
 #include "typedefs.h"
 #include "HintedUser.h"
 
+#include "NonCopyable.h"
 #include "Pointer.h"
 #include "GetSet.h"
 
 namespace dcpp {
 
-class FinishedItemBase : boost::noncopyable {
+class FinishedItemBase : private NonCopyable {
 public:
 	explicit FinishedItemBase(
 		int64_t transferred_,

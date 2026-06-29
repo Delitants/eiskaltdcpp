@@ -20,11 +20,10 @@
 
 #include <algorithm>
 
-#include <boost/core/noncopyable.hpp>
-
 #include "typedefs.h"
 #include "format.h"
 
+#include "NonCopyable.h"
 #include "SettingsManager.h"
 #include "Exception.h"
 
@@ -37,7 +36,7 @@ STANDARD_EXCEPTION(FileException);
 /**
  * A simple output stream. Intended to be used for nesting streams one inside the other.
  */
-class OutputStream : boost::noncopyable {
+class OutputStream : private NonCopyable {
 public:
 	OutputStream() { }
 	virtual ~OutputStream() { }
@@ -64,7 +63,7 @@ public:
 	size_t write(const string& str) { return write(str.c_str(), str.size()); }
 };
 
-class InputStream : boost::noncopyable {
+class InputStream : private NonCopyable {
 public:
 	InputStream() { }
 	virtual ~InputStream() { }

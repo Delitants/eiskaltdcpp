@@ -223,8 +223,7 @@ jobs:
       run: |
         vcpkg install --triplet x64-windows `
           openssl bzip2 zlib miniupnpc pcre2 lua `
-          libiconv libidn2 gettext `
-          boost-core boost-smart-ptr
+          libiconv libidn2 gettext
 
     - name: Install gettext tools (MSYS2)
       shell: pwsh
@@ -496,7 +495,6 @@ jobs:
           mingw-w64-ucrt-x86_64-openssl
           mingw-w64-ucrt-x86_64-bzip2
           mingw-w64-ucrt-x86_64-zlib
-          mingw-w64-ucrt-x86_64-boost
           mingw-w64-ucrt-x86_64-miniupnpc
           mingw-w64-ucrt-x86_64-pcre2
           mingw-w64-ucrt-x86_64-lua

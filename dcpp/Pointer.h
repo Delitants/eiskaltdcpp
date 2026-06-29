@@ -18,10 +18,10 @@
 #ifndef DCPLUSPLUS_DCPP_POINTER_H
 #define DCPLUSPLUS_DCPP_POINTER_H
 
-#include <boost/smart_ptr/intrusive_ptr.hpp>
-
 #include <atomic>
 #include <memory>
+
+#include "intrusive_ptr.h"
 
 namespace dcpp {
 
