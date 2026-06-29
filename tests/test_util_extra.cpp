@@ -182,10 +182,9 @@ TEST_CASE("Util: parseIpPort no port", "[util]") {
 }
 
 TEST_CASE("Util: parseIpPort IPv6-like with multiple colons", "[util]") {
-    // Uses rfind(':'), so last colon is the split point
     std::string ip, port;
     Util::parseIpPort("[::1]:8080", ip, port);
-    REQUIRE(ip == "[::1]");
+    REQUIRE(ip == "::1");
     REQUIRE(port == "8080");
 }
 

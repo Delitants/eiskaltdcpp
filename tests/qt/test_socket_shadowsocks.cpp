@@ -1627,7 +1627,7 @@ TEST_CASE("SOCKS5 UDP maps an IPv4 relay for an IPv6 socket", "[qt][socket][sock
     REQUIRE(Socket::matchesUdpEndpoint("127.0.0.1", "6250", endpoints.front()));
 }
 
-TEST_CASE("Socket SOCKS5 UDP relay completes an opt-in DNS round trip", "[qt][socket][socks5][udp][integration]")
+TEST_CASE("Socket SOCKS5 UDP relay completes an opt-in DNS round trip", "[.][qt][socket][socks5][udp][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SOCKS5_SERVER");
     const char* portText = envOrNull("EISKALT_TEST_SOCKS5_PORT");
@@ -1684,7 +1684,7 @@ TEST_CASE("Socket SOCKS5 UDP relay completes an opt-in DNS round trip", "[qt][so
     Socket::socksUpdated(*tc.ownedCtx);
 }
 
-TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][socket][shadowsocks][integration]")
+TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[.][qt][socket][shadowsocks][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
     const char* portText = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
@@ -1718,7 +1718,7 @@ TEST_CASE("Socket Shadowsocks proxy connects to an opt-in test server", "[qt][so
     REQUIRE(read > 0);
 }
 
-TEST_CASE("Socket Shadowsocks UDP relay completes an opt-in echo round trip", "[qt][socket][shadowsocks][udp][integration]")
+TEST_CASE("Socket Shadowsocks UDP relay completes an opt-in echo round trip", "[.][qt][socket][shadowsocks][udp][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
     const char* portText = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
@@ -1757,7 +1757,7 @@ TEST_CASE("Socket Shadowsocks UDP relay completes an opt-in echo round trip", "[
     REQUIRE(ntohs(reinterpret_cast<const sockaddr_in*>(&remote)->sin_port) == Util::toInt(targetPort));
 }
 
-TEST_CASE("Socket Shadowsocks bulk transfer completes through an opt-in byte source", "[qt][socket][shadowsocks][performance][integration]")
+TEST_CASE("Socket Shadowsocks bulk transfer completes through an opt-in byte source", "[.][qt][socket][shadowsocks][performance][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
     const char* portText = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
@@ -1798,7 +1798,7 @@ TEST_CASE("Socket Shadowsocks bulk transfer completes through an opt-in byte sou
     REQUIRE(received == expected);
 }
 
-TEST_CASE("Secure NMDC handshakes remain reliable through Shadowsocks", "[qt][socket][shadowsocks][integration]")
+TEST_CASE("Secure NMDC handshakes remain reliable through Shadowsocks", "[.][qt][socket][shadowsocks][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
     const char* proxyPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");
@@ -1823,7 +1823,7 @@ TEST_CASE("Secure NMDC handshakes remain reliable through Shadowsocks", "[qt][so
     }
 }
 
-TEST_CASE("HTTPS responses remain reliable through Shadowsocks", "[qt][socket][shadowsocks][integration]")
+TEST_CASE("HTTPS responses remain reliable through Shadowsocks", "[.][qt][socket][shadowsocks][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SHADOWSOCKS_SERVER");
     const char* proxyPort = envOrNull("EISKALT_TEST_SHADOWSOCKS_PORT");

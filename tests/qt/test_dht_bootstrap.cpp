@@ -411,7 +411,7 @@ TEST_CASE("DHT firewall check falls back to the local port without a relay", "[q
     REQUIRE(commandPort == "6250");
 }
 
-TEST_CASE("Passive SOCKS5 DHT startup sends UDP via the relay only", "[qt][dht][socks5][integration]")
+TEST_CASE("Passive SOCKS5 DHT startup sends UDP via the relay only", "[.][qt][dht][socks5][integration]")
 {
     const char* server = envOrNull("EISKALT_TEST_SOCKS5_SERVER");
     const char* portText = envOrNull("EISKALT_TEST_SOCKS5_PORT");
