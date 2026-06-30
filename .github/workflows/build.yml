@@ -184,6 +184,10 @@ jobs:
 
     strategy:
       fail-fast: false
+      # vcpkg dependency builds are identical for Debug and Release. Running
+      # both MSVC matrix legs at once causes duplicate cold-cache source builds
+      # and can leave the workflow sitting in the install step for a long time.
+      max-parallel: 1
       matrix:
         build_type: [Debug, Release]
 
@@ -221,8 +225,10 @@ jobs:
         cache: true
 
     - name: Install vcpkg dependencies
+      timeout-minutes: 45
       run: |
         vcpkg install --triplet x64-windows `
+          --binarysource="clear;x-gha,readwrite" `
           openssl bzip2 zlib miniupnpc pcre2 lua `
           libiconv libidn2 gettext
 
