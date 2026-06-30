@@ -181,6 +181,57 @@ static LONG WINAPI earlyExceptionHandler(EXCEPTION_POINTERS *ep)
 }
 #endif
 
+#if !defined(Q_OS_WIN) && !defined(Q_OS_HAIKU) && defined(__GLIBC__)
+void catchSIG(int sigNum)
+{
+    psignal(sigNum, "Catching signal ");
+
+#ifdef ENABLE_STACKTRACE
+    printBacktrace(sigNum);
+#endif
+
+    if (EiskaltApp *eapp = dynamic_cast<EiskaltApp*>(qApp)) {
+        eapp->getSharedMemory().unlock();
+        eapp->getSharedMemory().detach();
+    }
+
+    raise(SIGINT);
+    std::abort();
+}
+
+template <int sigNum = 0, int ... Params>
+void catchSignals()
+{
+    if (!sigNum)
+        return;
+
+    psignal(sigNum, "Installing handler for");
+    signal(sigNum, catchSIG);
+
+    catchSignals<Params ... >();
+}
+
+void installHandlers()
+{
+    struct sigaction sa;
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = SIG_IGN;
+
+    if (sigaction(SIGPIPE, &sa, nullptr) == -1) {
+        printf("Cannot handle SIGPIPE\n");
+    } else {
+        sigset_t set;
+        sigemptyset(&set);
+        sigaddset(&set, SIGPIPE);
+        pthread_sigmask(SIG_BLOCK, &set, nullptr);
+    }
+
+    catchSignals<SIGSEGV, SIGABRT, SIGBUS, SIGTERM>();
+
+    printf("Signal handlers installed.\n");
+}
+#endif
+
 #if defined(Q_OS_MAC)
 // Dock click handling is done via EiskaltEventFilter in EiskaltApp_mac.h
 // using QApplicationStateChangeEvent
