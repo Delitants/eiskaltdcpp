@@ -194,17 +194,20 @@ jobs:
     env:
       AP: ${{ needs.prepare.outputs.artifact_prefix }}
       VCPKG_DEFAULT_TRIPLET: x64-windows
-      VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
+      VCPKG_DEFAULT_BINARY_CACHE: C:\vcpkg-bincache
+      VCPKG_BINARY_SOURCES: 'clear;files,C:\vcpkg-bincache,readwrite'
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Export GitHub Actions cache variables
-      uses: actions/github-script@v7
+    - name: Cache vcpkg binary packages
+      uses: actions/cache@v4
       with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+        path: |
+          C:/vcpkg-bincache
+          C:/vcpkg/downloads
+        key: vcpkg-msvc-x64-${{ hashFiles('.github/workflows/build.yml') }}
+        restore-keys: vcpkg-msvc-x64-
 
     - name: Set up MSVC
       uses: ilammy/msvc-dev-cmd@v1
@@ -225,10 +228,10 @@ jobs:
         cache: true
 
     - name: Install vcpkg dependencies
-      timeout-minutes: 45
+      timeout-minutes: 90
       run: |
         vcpkg install --triplet x64-windows `
-          --binarysource="clear;x-gha,readwrite" `
+          --binarysource="clear;files,C:\vcpkg-bincache,readwrite" `
           openssl bzip2 zlib miniupnpc pcre2 lua `
           libiconv libidn2 gettext
 
@@ -927,11 +930,20 @@ jobs:
           export QMAKE=/usr/lib/qt6/bin/qmake6
         fi
         export VERSION="$APP_VERSION"
+        export LD_LIBRARY_PATH="$APPDIR/usr/lib:$APPDIR/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH:-}"
+        DCPP_LIB="$(find "$APPDIR/usr/lib" "$APPDIR/usr/lib/x86_64-linux-gnu" -name 'libeiskaltdcpp.so*' -type f 2>/dev/null | sort -V | tail -1)"
+        if [ -z "$DCPP_LIB" ]; then
+          find "$APPDIR" -name 'libeiskaltdcpp.so*' -print
+          echo "Could not find bundled libeiskaltdcpp for AppImage deployment"
+          exit 1
+        fi
+
         /tmp/linuxdeploy-x86_64.AppImage \
           --appdir "$APPDIR" \
           --desktop-file "$APPDIR/usr/share/applications/eiskaltdcpp-qt.desktop" \
           --icon-file data/icons/icon_256x256.png \
           --executable "$APPDIR/usr/bin/eiskaltdcpp-qt" \
+          --library "$DCPP_LIB" \
           --plugin qt \
           --output appimage
 
