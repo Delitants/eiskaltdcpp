@@ -903,6 +903,53 @@ jobs:
         name: ${{ env.AP }}-linux-x64-qt6-deb
         path: "*.deb"
 
+    - name: Build Ubuntu AppImage
+      env:
+        APPIMAGE_EXTRACT_AND_RUN: 1
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          file patchelf desktop-file-utils libglib2.0-bin curl
+
+        APP_VERSION=$(grep 'set (APP_VERSION' CMakeLists.txt | head -1 | sed 's/.*"\(.*\)".*/\1/')
+        APPDIR="$PWD/AppDir"
+        rm -rf "$APPDIR"
+        cp -a pkg "$APPDIR"
+        rm -rf "$APPDIR/DEBIAN"
+
+        curl -L -o /tmp/linuxdeploy-x86_64.AppImage \
+          https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        curl -L -o /tmp/linuxdeploy-plugin-qt-x86_64.AppImage \
+          https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod +x /tmp/linuxdeploy-x86_64.AppImage /tmp/linuxdeploy-plugin-qt-x86_64.AppImage
+
+        if [ -x /usr/lib/qt6/bin/qmake6 ]; then
+          export QMAKE=/usr/lib/qt6/bin/qmake6
+        fi
+        export VERSION="$APP_VERSION"
+        /tmp/linuxdeploy-x86_64.AppImage \
+          --appdir "$APPDIR" \
+          --desktop-file "$APPDIR/usr/share/applications/eiskaltdcpp-qt.desktop" \
+          --icon-file data/icons/icon_256x256.png \
+          --executable "$APPDIR/usr/bin/eiskaltdcpp-qt" \
+          --plugin qt \
+          --output appimage
+
+        shopt -s nullglob
+        appimages=(*.AppImage)
+        if [ "${#appimages[@]}" -ne 1 ]; then
+          ls -la
+          echo "Expected exactly one AppImage, got ${#appimages[@]}"
+          exit 1
+        fi
+        mv "${appimages[0]}" "EiskaltDC++-${APP_VERSION}-Ubuntu-24.04-x86_64.AppImage"
+
+    - name: Upload AppImage
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.AP }}-linux-x64-qt6-appimage
+        path: "*.AppImage"
+
   package-linux-gtk3:
     name: Package Linux GTK3
     runs-on: ubuntu-24.04
