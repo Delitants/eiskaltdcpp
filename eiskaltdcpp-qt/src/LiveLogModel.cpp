@@ -156,7 +156,7 @@ quint32 LiveLogModel::categoryMask() const
 
 quint64 LiveLogModel::lastSequence() const
 {
-    return entries.empty() ? sequenceFloor : std::max(sequenceFloor, entries.back().sequence);
+    return entries.empty() ? sequenceFloor : std::max(sequenceFloor, static_cast<quint64>(entries.back().sequence));
 }
 
 quint32 LiveLogModel::categoryBit(dcpp::LogManager::Area area)
