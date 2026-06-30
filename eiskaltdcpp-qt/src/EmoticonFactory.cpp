@@ -85,11 +85,8 @@ void EmoticonFactory::load(){
     QString err_msg = "";
     int err_line = 0, err_col = 0;
 
-    auto parseResult = dom.setContent(&f);
-    err_msg = parseResult.errorMessage;
-    err_line = parseResult.errorLine;
-    err_col = parseResult.errorColumn;
-    if (parseResult)
+    const bool parsed = dom.setContent(&f, false, &err_msg, &err_line, &err_col);
+    if (parsed)
         createEmoticonMap(dom);
     else{
         qDebug() << err_line << ":" << err_col << " " << err_msg;
