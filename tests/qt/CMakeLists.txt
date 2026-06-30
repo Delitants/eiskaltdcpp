@@ -67,6 +67,7 @@ target_include_directories(eiskaltdcpp-qt-tests PRIVATE
     ${QT_SRC_DIR}
     ${CMAKE_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/dcpp
+    ${OPENSSL_INCLUDE_DIR}
     ${GETTEXT_INCLUDE_DIR}
 )
 target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE QT_CONTEXT_MINIMAL)

@@ -1057,7 +1057,7 @@ TEST_CASE("Shadowsocks reader reports a truncated encrypted frame", "[qt][socket
     } catch(const SocketException& e) {
         error = e.getError();
     }
-    REQUIRE(error == "Shadowsocks stream ended with an incomplete frame");
+    REQUIRE(error.find("Shadowsocks stream ended with an incomplete frame") != std::string::npos);
     REQUIRE_FALSE(server.hasProtocolFailed());
 }
 

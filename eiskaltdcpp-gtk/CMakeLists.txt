@@ -157,8 +157,10 @@ else (APPLE)
 endif (APPLE)
 
 foreach(LANG ${LANGUAGES})
-    install(FILES
-        ${PROJECT_BINARY_DIR}/${LANG}_${PROJECT_NAME}.mo
-            DESTINATION ${LOCALE_DIR}/${LANG}/LC_MESSAGES
-        RENAME ${PROJECT_NAME}.mo)
+    if (EXISTS "${PROJECT_SOURCE_DIR}/po/${LANG}.po")
+        install(FILES
+            ${PROJECT_BINARY_DIR}/${LANG}_${PROJECT_NAME}.mo
+                DESTINATION ${LOCALE_DIR}/${LANG}/LC_MESSAGES
+            RENAME ${PROJECT_NAME}.mo)
+    endif ()
 endforeach(LANG ${LANGUAGES})

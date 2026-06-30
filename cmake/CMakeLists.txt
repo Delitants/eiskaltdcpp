@@ -201,7 +201,7 @@ if(CREATE_MO)
 					${dcpp_SOURCE_DIR}/po/${LANG}.po
 				COMMENT "Creating mo file ${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo"
 			)
-			if (USE_GTK OR USE_GTK3)
+			if ((USE_GTK OR USE_GTK3) AND EXISTS "${eiskaltdcpp-gtk_SOURCE_DIR}/po/${LANG}.po")
 
 			add_custom_command(
 				OUTPUT ${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo
@@ -220,7 +220,7 @@ if(CREATE_MO)
 			list(APPEND mo-update-LANG-SRC
 				${eiskaltdcpp-gtk_BINARY_DIR}/${LANG}_eiskaltdcpp-gtk.mo
 			)
-			endif (USE_GTK OR USE_GTK3)
+			endif ()
 
 			list(APPEND mo-update-SRC
 				${dcpp_BINARY_DIR}/${LANG}_libeiskaltdcpp.mo

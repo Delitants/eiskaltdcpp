@@ -326,7 +326,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL GNU OR CMAKE_CXX_COMPILER_ID STREQUAL Clang)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -pipe -Wformat =format-security")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -pipe -Wformat -Wformat-security")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -D_FORTIFY_SOURCE=2")
     # GCC 15+ on MSYS2/MinGW: libstdc++ <semaphore> tries to use POSIX sem_t
     # but the functions are unavailable on Windows/UCRT.  Force-include a shim
