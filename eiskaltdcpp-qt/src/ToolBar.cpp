@@ -41,6 +41,7 @@ QString chromeTabStyleSheet(const QWidget *widget)
     const QColor window = palette.color(QPalette::Window);
     const QColor text = palette.color(QPalette::Text);
     bool dark = window.lightness() < 128;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     if (const QStyleHints *styleHints = QGuiApplication::styleHints()) {
         const Qt::ColorScheme colorScheme = styleHints->colorScheme();
         if (colorScheme == Qt::ColorScheme::Dark)
@@ -48,6 +49,7 @@ QString chromeTabStyleSheet(const QWidget *widget)
         else if (colorScheme == Qt::ColorScheme::Light)
             dark = false;
     }
+#endif
 
     const auto blend = [](const QColor &foreground, const QColor &background, double amount) {
         const auto channel = [amount](int fg, int bg) {
@@ -188,9 +190,13 @@ void ToolBar::initTabs(){
 
     tabbar->installEventFilter(this);
 
-    connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, this, [this]() {
-        QTimer::singleShot(0, this, &ToolBar::refreshTabStyle);
-    });
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    if (QStyleHints *styleHints = QGuiApplication::styleHints()) {
+        connect(styleHints, &QStyleHints::colorSchemeChanged, this, [this]() {
+            QTimer::singleShot(0, this, &ToolBar::refreshTabStyle);
+        });
+    }
+#endif
 
     shortcuts << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_1)), parentWidget()))
               << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_2)), parentWidget()))
