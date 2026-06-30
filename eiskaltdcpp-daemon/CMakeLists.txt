@@ -5,6 +5,7 @@ add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 # ######### General setup ##########
 include_directories(${PROJECT_SOURCE_DIR}
                     ${PROJECT_SOURCE_DIR}/..
+                    ${OPENSSL_INCLUDE_DIR}
                     ${GETTEXT_INCLUDE_DIR})
 
 aux_source_directory(${PROJECT_SOURCE_DIR} nasdc_SRCS)
@@ -107,4 +108,3 @@ endif ()
 if (INSTALL_METAINFO)
     install (FILES ${PROJECT_NAME}.appdata.xml DESTINATION ${SHARE_DIR}/metainfo)
 endif ()
-
