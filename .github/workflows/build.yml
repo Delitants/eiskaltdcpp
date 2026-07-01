@@ -227,6 +227,12 @@ jobs:
         modules: 'qtmultimedia'
         cache: true
 
+    - name: Create vcpkg cache directories
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force -Path "C:\vcpkg-bincache" | Out-Null
+        New-Item -ItemType Directory -Force -Path "C:\vcpkg\downloads" | Out-Null
+
     - name: Install vcpkg dependencies
       timeout-minutes: 90
       run: |
