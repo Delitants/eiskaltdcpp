@@ -76,17 +76,17 @@ public:
     static bool isSupportedChatImageFile(const QString &fileName);
     static QString picturePathForMagnet(const QString &displayName, const QString &tth);
 
-    QSize minimumSizeHint() const;
-    QSize sizeHint() const;
+    QSize minimumSizeHint() const override;
+    QSize sizeHint() const override;
 
 protected:
-    void keyPressEvent(QKeyEvent *);
-    void keyReleaseEvent(QKeyEvent *);
+    void keyPressEvent(QKeyEvent *) override;
+    void keyReleaseEvent(QKeyEvent *) override;
     void changeEvent(QEvent *) override;
-    void focusInEvent(QFocusEvent *);
-    void dropEvent(QDropEvent *);
-    void dragEnterEvent(QDragEnterEvent *e);
-    void dragMoveEvent(QDragMoveEvent *event); // Required to accept drops on win32
+    void focusInEvent(QFocusEvent *) override;
+    void dropEvent(QDropEvent *) override;
+    void dragEnterEvent(QDragEnterEvent *e) override;
+    void dragMoveEvent(QDragMoveEvent *event) override; // Required to accept drops on win32
 
 private Q_SLOTS:
     void insertCompletion(const QModelIndex &);

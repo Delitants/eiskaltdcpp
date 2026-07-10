@@ -323,6 +323,25 @@ void persistChatUserListLayout(QTreeView *userList, QWidget *chat)
     qtCtx()->settings()->setInt(WI_CHAT_WIDTH, chat->width());
     qtCtx()->settings()->setInt(WI_CHAT_USERLIST_WIDTH, userList->width());
 }
+
+void applyDefaultUserListHeaderLayout(QTreeView *userList)
+{
+    if (!userList || !userList->header())
+        return;
+
+    QHeaderView *header = userList->header();
+    header->setStretchLastSection(false);
+    header->setSectionResizeMode(QHeaderView::Interactive);
+    header->resizeSection(COLUMN_NICK, 220);
+    header->resizeSection(COLUMN_SHARE, 95);
+    header->resizeSection(COLUMN_COMMENT, 180);
+    header->resizeSection(COLUMN_TAG, 220);
+    header->resizeSection(COLUMN_CONN, 95);
+    header->resizeSection(COLUMN_IP, 115);
+    header->resizeSection(COLUMN_IPV6, 120);
+    header->resizeSection(COLUMN_EMAIL, 180);
+    header->hideSection(COLUMN_EXACT_SHARE);
+}
 }
 
 class HubFramePrivate {
@@ -1824,6 +1843,7 @@ void HubFrame::init(){
     treeView_USERS->setSortingEnabled(true);
     treeView_USERS->setItemsExpandable(false);
     treeView_USERS->setUniformRowHeights(true);
+    treeView_USERS->setTextElideMode(Qt::ElideRight);
     treeView_USERS->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView_USERS->header()->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView_USERS->header()->hideSection(COLUMN_EXACT_SHARE);
@@ -2077,6 +2097,8 @@ void HubFrame::load(){
 
     if (!ustate.isEmpty())
         treeView_USERS->header()->restoreState(QByteArray::fromBase64(ustate.toUtf8()));
+    else
+        applyDefaultUserListHeaderLayout(treeView_USERS);
 
     if (w_chat >= 0 && w_ulist >= 0){
         QList<int> frames;

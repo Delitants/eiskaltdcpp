@@ -167,15 +167,15 @@ void migrateConfig();
  */
 static LONG WINAPI earlyExceptionHandler(EXCEPTION_POINTERS *ep)
 {
-    char buf[512];
-    snprintf(buf, sizeof(buf),
-             "EiskaltDC++ crashed during startup.\n\n"
-             "Exception code: 0x%08lX\nAddress: %p\n\n"
-             "This may indicate a missing DLL or incompatible library.\n"
-             "Please report this to the developers.",
-             ep->ExceptionRecord->ExceptionCode,
+    wchar_t buf[512];
+    swprintf(buf, sizeof(buf) / sizeof(buf[0]),
+             L"EiskaltDC++ crashed during startup.\n\n"
+             L"Exception code: 0x%08lX\nAddress: %p\n\n"
+             L"This may indicate a missing DLL or incompatible library.\n"
+             L"Please report this to the developers.",
+             static_cast<unsigned long>(ep->ExceptionRecord->ExceptionCode),
              ep->ExceptionRecord->ExceptionAddress);
-    MessageBoxA(nullptr, buf, "EiskaltDC++ — Fatal Error",
+    MessageBoxW(nullptr, buf, L"EiskaltDC++ - Fatal Error",
                 MB_OK | MB_ICONERROR);
     return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -800,11 +800,25 @@ int main(int argc, char *argv[])
     ctx.createQueuedUsers();
     qtCtx()->arenaWidgetManager()->add(ctx.queuedUsers());
 
-    qtCtx()->mainWindow()->autoconnect();
-    qtCtx()->mainWindow()->parseCmdLine(app.arguments());
+    const QStringList startupArguments = app.arguments();
+    const bool showMainWindow = !qtCtx()->settings()->getBool(WB_MAINWINDOW_HIDE) ||
+                                !qtCtx()->settings()->getBool(WB_TRAY_ENABLED);
 
-    if (!qtCtx()->settings()->getBool(WB_MAINWINDOW_HIDE) || !qtCtx()->settings()->getBool(WB_TRAY_ENABLED))
-        qtCtx()->mainWindow()->show();    ret = app.exec();
+    if (showMainWindow)
+        qtCtx()->mainWindow()->show();
+
+    QTimer::singleShot(0, qtCtx()->mainWindow(), [startupArguments]() {
+        if (!qtCtx() || !qtCtx()->mainWindow())
+            return;
+
+        if (!qtCtx()->mainWindow()->ensureNickConfigured())
+            return;
+
+        qtCtx()->mainWindow()->autoconnect();
+        qtCtx()->mainWindow()->parseCmdLine(startupArguments);
+    });
+
+    ret = app.exec();
 
 #if defined(Q_OS_MAC)
     // macOS emergency exit path:

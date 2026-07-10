@@ -125,6 +125,7 @@ friend class QtContext;
 
         /** */
         void reloadSomeSettings();
+        bool ensureNickConfigured();
 
         /** */
         void setUnload(bool b);

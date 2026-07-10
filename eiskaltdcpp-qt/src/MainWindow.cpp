@@ -134,6 +134,7 @@ public:
 
         bool isUnload = false;
         bool exitBegin = false;
+        bool nickPreferencesPromptActive = false;
 
         // position and geometry
         bool showMax = false;
@@ -545,24 +546,38 @@ void MainWindow::showEvent(QShowEvent *e){
     d->findInWidget->setEnabled(widgetWithFilter);
     d->chatDisable->setEnabled(role == ArenaWidget::Hub);
 
-    if (_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::NICK, true)).isEmpty()){
+    e->accept();
+}
+
+bool MainWindow::ensureNickConfigured()
+{
+    Q_D(MainWindow);
+
+    if (d->nickPreferencesPromptActive)
+        return !_q(dcCtx().getSettingsManager()->get(SettingsManager::NICK, true)).trimmed().isEmpty();
+
+    d->nickPreferencesPromptActive = true;
+
+    while (_q(dcCtx().getSettingsManager()->get(SettingsManager::NICK, true)).trimmed().isEmpty()) {
+        if (!isVisible())
+            show();
         activateWindow();
         raise();
 
-        bool ok = false;
-        QString new_nick = QInputDialog::getText(this, tr("Enter user nick"), tr("Nick"), QLineEdit::Normal, tr("User"), &ok);
+        Settings settings;
+        settings.navigate(Settings::Page::Personal);
+        settings.exec();
+        reloadSomeSettings();
 
-        if (ok && !new_nick.isEmpty()){
-            dcCtx().getSettingsManager()->set(SettingsManager::NICK, _tq(new_nick));
-
-            ok = (QMessageBox::question(this, "EiskaltDC++", tr("Would you like to change other settings?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::No);
+        if (_q(dcCtx().getSettingsManager()->get(SettingsManager::NICK, true)).trimmed().isEmpty()) {
+            QMessageBox::warning(this,
+                                 tr("Nickname required"),
+                                 tr("Enter a nickname in Preferences before connecting to hubs."));
         }
-
-        if (!ok)
-            slotToolsSettings();
     }
 
-    e->accept();
+    d->nickPreferencesPromptActive = false;
+    return true;
 }
 
 void MainWindow::getWindowGeometry(){
@@ -737,9 +752,12 @@ void MainWindow::loadSettings(){
         this->resize(sz);
 
     QString dockwidgetsState = qtCtx()->settings()->getStr(WS_MAINWINDOW_STATE);
+    const bool hasSavedMainWindowState = !dockwidgetsState.isEmpty();
 
-    if (!dockwidgetsState.isEmpty())
+    if (hasSavedMainWindowState)
         this->restoreState(QByteArray::fromBase64(dockwidgetsState.toUtf8()));
+    else
+        d->transfer_dock->setVisible(true);
 
     d->fBar->setVisible(qtCtx()->settings()->getBool(WB_TOOLS_PANEL_VISIBLE));
     d->panelsTools->setChecked(qtCtx()->settings()->getBool(WB_TOOLS_PANEL_VISIBLE));

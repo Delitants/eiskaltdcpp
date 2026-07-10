@@ -92,7 +92,7 @@ SettingsPersonal::~SettingsPersonal(){
 void SettingsPersonal::ok(){
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
 
-    SM->set(SettingsManager::NICK, lineEdit_NICK->text().toStdString());
+    SM->set(SettingsManager::NICK, lineEdit_NICK->text().trimmed().toStdString());
     SM->set(SettingsManager::EMAIL, lineEdit_EMAIL->text().toStdString());
     SM->set(SettingsManager::DESCRIPTION, lineEdit_DESC->text().toStdString());
     string adcSpeed;
