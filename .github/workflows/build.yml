@@ -283,9 +283,13 @@ jobs:
     - name: Configure
       run: |
         $vcpkgBase = "$env:VCPKG_INSTALLATION_ROOT/installed/x64-windows"
+        $cl = Join-Path $env:VCToolsInstallDir "bin/Hostx64/x64/cl.exe"
+        if (-not (Test-Path $cl)) { throw "MSVC compiler was not found at $cl" }
         cmake -B build -G Ninja `
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
           -DCMAKE_INSTALL_PREFIX="$PWD/dist" `
+          -DCMAKE_C_COMPILER="$cl" `
+          -DCMAKE_CXX_COMPILER="$cl" `
           -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
           -DGETTEXT_SEARCH_PATH="$vcpkgBase" `
           -DUSE_QT6=ON `
