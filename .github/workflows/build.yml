@@ -257,7 +257,7 @@ jobs:
     - name: Install vcpkg dependencies
       timeout-minutes: 90
       run: |
-        vcpkg install --triplet x64-windows `
+        & "C:\vcpkg\vcpkg.exe" install --triplet x64-windows `
           --binarysource="clear;files,C:\vcpkg-bincache,readwrite" `
           openssl bzip2 zlib miniupnpc pcre2 lua `
           libiconv libidn2 gettext
