@@ -37,6 +37,14 @@
 #endif
 #include <openssl/rc4.h>
 
+#if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace dht
 {
     namespace {
@@ -60,8 +68,14 @@ namespace dht
                 port = ntohs(reinterpret_cast<const sockaddr_in6*>(&remoteAddr)->sin6_port);
             }
             return Util::toString(port);
-        }
     }
+}
+
+#if defined(__clang__)
+#  pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#  pragma GCC diagnostic pop
+#endif
 
     #define BUFSIZE                 16384
     #define MAGICVALUE_UDP          0x5b

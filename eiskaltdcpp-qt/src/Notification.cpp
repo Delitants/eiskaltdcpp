@@ -445,7 +445,7 @@ void DBusNotifyModule::showMessage(const QString &title, const QString &msg, QOb
 
     QVariantList args;
     args << QString("EiskaltDC++");
-    args << QVariant(QVariant::UInt);
+    args << QVariant::fromValue(uint(0));
     args << QVariant(qtCtx()->wulforUtil()->getAppIconsPath() + "/" + "icon_appl_big.png");
     args << QString(title);
     args << QString(msg);

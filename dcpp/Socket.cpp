@@ -541,19 +541,16 @@ ByteVector hkdfSha1(const ByteVector& key, const ByteVector& salt, const string&
     ByteVector previous;
     uint8_t counter = 1;
     while(out.size() < outLen) {
-        HMAC_CTX* ctx = HMAC_CTX_new();
-        if(!ctx)
-            throw SocketException(_("Failed to initialize Shadowsocks subkey derivation"));
+        ByteVector input;
+        input.reserve(previous.size() + info.size() + 1);
+        input.insert(input.end(), previous.begin(), previous.end());
+        input.insert(input.end(), info.begin(), info.end());
+        input.push_back(counter);
 
         unsigned char digest[EVP_MAX_MD_SIZE];
         unsigned int digestLen = 0;
-        HMAC_Init_ex(ctx, prk, prkLen, EVP_sha1(), nullptr);
-        if(!previous.empty())
-            HMAC_Update(ctx, previous.data(), previous.size());
-        HMAC_Update(ctx, reinterpret_cast<const unsigned char*>(info.data()), info.size());
-        HMAC_Update(ctx, &counter, 1);
-        HMAC_Final(ctx, digest, &digestLen);
-        HMAC_CTX_free(ctx);
+        if(!HMAC(EVP_sha1(), prk, prkLen, input.data(), input.size(), digest, &digestLen))
+            throw SocketException(_("Failed to derive Shadowsocks subkey"));
 
         previous.assign(digest, digest + digestLen);
         out.insert(out.end(), previous.begin(), previous.end());

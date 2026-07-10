@@ -476,7 +476,11 @@ void WulforSettings::loadQtTranslation(const QString &lcName){
 #if defined (Q_OS_WIN) || defined (Q_OS_MAC)
     const QString translationsPath = qtCtx()->wulforUtil()->getTranslationsPath();
 #else // Other OS
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const QString translationsPath = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
+#else
     const QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#endif
 #endif
 
     installTranslator(qtTranslator, "qt_" + lcName, "qt_en", translationsPath);

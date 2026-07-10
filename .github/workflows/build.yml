@@ -260,7 +260,7 @@ jobs:
         & "C:\vcpkg\vcpkg.exe" install --triplet x64-windows `
           --binarysource="clear;files,C:\vcpkg-bincache,readwrite" `
           openssl bzip2 zlib miniupnpc pcre2 lua `
-          libiconv libidn2 gettext
+          libiconv libidn2 gettext vulkan-headers
 
     - name: Install gettext tools (MSYS2)
       shell: pwsh
@@ -291,6 +291,7 @@ jobs:
           -DCMAKE_C_COMPILER="$cl" `
           -DCMAKE_CXX_COMPILER="$cl" `
           -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+          -DVulkan_INCLUDE_DIR="$vcpkgBase/include" `
           -DGETTEXT_SEARCH_PATH="$vcpkgBase" `
           -DUSE_QT6=ON `
           -DUSE_GTK3=OFF `
@@ -663,7 +664,7 @@ jobs:
           qt6-base-dev qt6-tools-dev qt6-tools-dev-tools \
           qt6-multimedia-dev qt6-declarative-dev \
           qt6-l10n-tools libqt6svg6-dev \
-          libgl-dev libdbus-1-dev libsqlite3-dev
+          libgl-dev libdbus-1-dev libsqlite3-dev libxkbcommon-dev
 
     - name: Configure with coverage
       run: |
