@@ -17,6 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// DHT encrypted UDP packets use RC4 for protocol compatibility. OpenSSL 3 marks
+// RC4 as deprecated; keep the warning local to this legacy protocol boundary.
+#ifndef OPENSSL_SUPPRESS_DEPRECATED
+#define OPENSSL_SUPPRESS_DEPRECATED
+#endif
+
 #include "stdafx.h"
 #include "UDPSocket.h"
 #include "Constants.h"
@@ -36,11 +42,6 @@
 #include <netdb.h>
 #endif
 
-// DHT encrypted UDP packets use RC4 for protocol compatibility. OpenSSL 3 marks
-// RC4 as deprecated; keep the warning local to this legacy protocol boundary.
-#ifndef OPENSSL_SUPPRESS_DEPRECATED
-#define OPENSSL_SUPPRESS_DEPRECATED
-#endif
 #include <openssl/rc4.h>
 
 namespace dht
