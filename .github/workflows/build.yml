@@ -669,8 +669,8 @@ jobs:
       run: |
         cmake -B build -G Ninja \
           -DCMAKE_BUILD_TYPE=Debug \
-          -DCMAKE_C_FLAGS="--coverage" \
-          -DCMAKE_CXX_FLAGS="--coverage" \
+          -DCMAKE_C_FLAGS="--coverage -fprofile-update=atomic" \
+          -DCMAKE_CXX_FLAGS="--coverage -fprofile-update=atomic" \
           -DCMAKE_EXE_LINKER_FLAGS="--coverage" \
           -DUSE_QT6=ON \
           -DUSE_GTK3=OFF \
@@ -697,8 +697,9 @@ jobs:
       run: |
         # Capture coverage data (ignore gcov quirks with system headers)
         lcov --capture --directory build --output-file coverage.info \
+          --no-external \
           --rc lcov_branch_coverage=1 \
-          --ignore-errors mismatch,gcov,inconsistent,source
+          --ignore-errors mismatch,mismatch,negative,negative,gcov,gcov,inconsistent,inconsistent,source,source
 
         # Remove external/system headers, Catch2 sources, and test code from report
         lcov --remove coverage.info \
@@ -708,17 +709,19 @@ jobs:
           '*/tests/*' \
           --output-file coverage.info \
           --rc lcov_branch_coverage=1 \
-          --ignore-errors unused
+          --ignore-errors unused,unused
 
         # Summary
-        lcov --list coverage.info --rc lcov_branch_coverage=1
+        lcov --list coverage.info \
+          --rc lcov_branch_coverage=1 \
+          --ignore-errors source,source
 
     - name: Generate HTML report
       run: |
         genhtml coverage.info \
           --output-directory coverage-report \
           --rc lcov_branch_coverage=1 \
-          --ignore-errors unmapped,source \
+          --ignore-errors unmapped,unmapped,source,source \
           --title "EiskaltDC++ Test Coverage" \
           --legend
 
