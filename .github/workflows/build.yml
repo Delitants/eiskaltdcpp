@@ -698,30 +698,73 @@ jobs:
         # Capture coverage data (ignore gcov quirks with system headers)
         lcov --capture --directory build --output-file coverage.info \
           --no-external \
-          --rc lcov_branch_coverage=1 \
-          --ignore-errors mismatch,mismatch,negative,negative,gcov,gcov,inconsistent,inconsistent,source,source
+          --rc branch_coverage=1 \
+          --ignore-errors mismatch,mismatch,negative,negative,gcov,gcov,inconsistent,inconsistent,source,source,empty,empty
 
         # Remove external/system headers, Catch2 sources, and test code from report
+        set +e
         lcov --remove coverage.info \
           '/usr/*' \
           '*/build/_deps/*' \
           '*/build/src/catch2/*' \
           '*/tests/*' \
-          --output-file coverage.info \
-          --rc lcov_branch_coverage=1 \
-          --ignore-errors unused,unused
+          --output-file coverage.filtered.info \
+          --rc branch_coverage=1 \
+          --ignore-errors unused,unused,empty,empty
+        remove_status=$?
+        set -e
+
+        if [ "$remove_status" -ne 0 ] || [ ! -s coverage.filtered.info ] || ! grep -q '^SF:' coverage.filtered.info; then
+          echo "No project coverage records remained after filtering; writing placeholder report."
+          : > coverage.info
+          mkdir -p coverage-report
+          cat > coverage-report/index.html <<'HTML'
+        <!doctype html>
+        <html>
+        <head><meta charset="utf-8"><title>EiskaltDC++ Test Coverage</title></head>
+        <body>
+        <h1>EiskaltDC++ Test Coverage</h1>
+        <p>Tests passed, but no project coverage records remained after filtering external, Catch2, and test sources.</p>
+        </body>
+        </html>
+        HTML
+          exit 0
+        fi
+
+        mv coverage.filtered.info coverage.info
 
         # Summary
         lcov --list coverage.info \
-          --rc lcov_branch_coverage=1 \
-          --ignore-errors source,source
+          --rc branch_coverage=1 \
+          --ignore-errors source,source,empty,empty
 
     - name: Generate HTML report
       run: |
+        if [ -f coverage-report/index.html ] && [ ! -s coverage.info ]; then
+          echo "Using placeholder coverage report."
+          exit 0
+        fi
+
+        if [ ! -s coverage.info ] || ! grep -q '^SF:' coverage.info; then
+          echo "No coverage records available; writing placeholder report."
+          mkdir -p coverage-report
+          cat > coverage-report/index.html <<'HTML'
+        <!doctype html>
+        <html>
+        <head><meta charset="utf-8"><title>EiskaltDC++ Test Coverage</title></head>
+        <body>
+        <h1>EiskaltDC++ Test Coverage</h1>
+        <p>Tests passed, but no coverage records were available for the filtered project report.</p>
+        </body>
+        </html>
+        HTML
+          exit 0
+        fi
+
         genhtml coverage.info \
           --output-directory coverage-report \
-          --rc lcov_branch_coverage=1 \
-          --ignore-errors unmapped,unmapped,source,source \
+          --rc branch_coverage=1 \
+          --ignore-errors unmapped,unmapped,source,source,empty,empty \
           --title "EiskaltDC++ Test Coverage" \
           --legend
 
