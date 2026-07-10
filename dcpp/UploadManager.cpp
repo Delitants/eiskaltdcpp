@@ -526,7 +526,7 @@ void UploadManager::notifyQueuedUsers() {
 void UploadManager::addFailedUpload(const UserConnection& source, string filename) {
     {
         Lock l(cs);
-        auto it = find_if(waitingUsers.begin(), waitingUsers.end(), CompareFirst<UserPtr, uint32_t>(source.getUser()));
+        auto it = find_if(waitingUsers.begin(), waitingUsers.end(), CompareFirst<UserPtr, uint64_t>(source.getUser()));
         if (it==waitingUsers.end()) {
             waitingUsers.emplace_back(source.getHintedUser(), GET_TICK());
         } else {
@@ -541,7 +541,7 @@ void UploadManager::addFailedUpload(const UserConnection& source, string filenam
 void UploadManager::clearUserFiles(const UserPtr& source) {
     Lock l(cs);
     //run this when a user's got a slot or goes offline.
-    auto sit = find_if(waitingUsers.begin(), waitingUsers.end(), CompareFirst<UserPtr, uint32_t>(source));
+    auto sit = find_if(waitingUsers.begin(), waitingUsers.end(), CompareFirst<UserPtr, uint64_t>(source));
     if (sit == waitingUsers.end()) return;
 
     FilesMap::iterator fit = waitingFiles.find(sit->first);

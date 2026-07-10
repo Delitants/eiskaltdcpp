@@ -18,7 +18,7 @@ jobs:
       short_sha: ${{ steps.info.outputs.short_sha }}
       artifact_prefix: ${{ steps.info.outputs.artifact_prefix }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         sparse-checkout: CMakeLists.txt
         sparse-checkout-cone-mode: false
@@ -49,7 +49,7 @@ jobs:
         build_type: [Debug, Release]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -95,7 +95,7 @@ jobs:
       run: DESTDIR="$PWD/dist" cmake --install build
 
     - name: Upload build tree
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-qt6-${{ matrix.build_type }}-buildtree
         path: build/
@@ -103,7 +103,7 @@ jobs:
 
     - name: Upload distribution (Debug)
       if: matrix.build_type == 'Debug'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-qt6-Debug
         path: dist/
@@ -120,7 +120,7 @@ jobs:
         build_type: [Debug, Release]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -163,7 +163,7 @@ jobs:
       run: DESTDIR="$PWD/dist" cmake --install build
 
     - name: Upload build tree
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-gtk3-${{ matrix.build_type }}-buildtree
         path: build/
@@ -171,7 +171,7 @@ jobs:
 
     - name: Upload distribution (Debug)
       if: matrix.build_type == 'Debug'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-gtk3-Debug
         path: dist/
@@ -194,14 +194,16 @@ jobs:
     env:
       AP: ${{ needs.prepare.outputs.artifact_prefix }}
       VCPKG_DEFAULT_TRIPLET: x64-windows
+      VCPKG_ROOT: C:\vcpkg
+      VCPKG_INSTALLATION_ROOT: C:\vcpkg
       VCPKG_DEFAULT_BINARY_CACHE: C:\vcpkg-bincache
       VCPKG_BINARY_SOURCES: 'clear;files,C:\vcpkg-bincache,readwrite'
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Cache vcpkg binary packages
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           C:/vcpkg-bincache
@@ -210,12 +212,31 @@ jobs:
         restore-keys: vcpkg-msvc-x64-
 
     - name: Set up MSVC
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
+      shell: pwsh
+      run: |
+        $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+        $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        if (-not $vsPath) { throw "Visual Studio with VC tools was not found" }
+
+        $vcvars = Join-Path $vsPath "VC\Auxiliary\Build\vcvars64.bat"
+        if (-not (Test-Path $vcvars)) { throw "vcvars64.bat was not found at $vcvars" }
+
+        cmd /c "`"$vcvars`" >nul && set" | ForEach-Object {
+          if ($_ -match '^([^=]+)=(.*)$') {
+            $name = $matches[1]
+            $value = $matches[2]
+            if ($name -ieq 'Path') {
+              $value.Split(';') | Where-Object { $_ } | ForEach-Object { $_ >> $env:GITHUB_PATH }
+            } else {
+              "$name=$value" >> $env:GITHUB_ENV
+            }
+          }
+        }
+        "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
+        "VCPKG_INSTALLATION_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
 
@@ -236,7 +257,7 @@ jobs:
     - name: Install vcpkg dependencies
       timeout-minutes: 90
       run: |
-        vcpkg install --triplet x64-windows `
+        vcpkg --vcpkg-root C:\vcpkg install --triplet x64-windows `
           --binarysource="clear;files,C:\vcpkg-bincache,readwrite" `
           openssl bzip2 zlib miniupnpc pcre2 lua `
           libiconv libidn2 gettext
@@ -246,7 +267,7 @@ jobs:
       run: |
         # vcpkg provides libintl for linking; MSYS2 provides the CLI tools
         # (xgettext, msgfmt, msgmerge, etc.) needed for i18n processing
-        C:\msys64\usr\bin\pacman.exe -S --noconfirm --needed gettext
+        C:\msys64\usr\bin\bash.exe -lc "pacman -Q gettext >/dev/null 2>&1 || pacman -S --noconfirm gettext"
 
     - name: Add vcpkg tools to PATH
       shell: pwsh
@@ -468,14 +489,14 @@ jobs:
         Write-Host "`nCollected $found PDB file(s)"
 
     - name: Upload distribution
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-windows-x64-qt6-${{ matrix.build_type }}
         path: dist/
 
     - name: Upload NSIS installer
       if: matrix.build_type == 'Release'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-windows-x64-qt6-nsis-installer
         path: install-nsis/*.exe
@@ -495,7 +516,7 @@ jobs:
             runner: macos-14
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -537,14 +558,14 @@ jobs:
       run: cmake --install build
 
     - name: Upload build tree
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-qt6-${{ matrix.build_type }}-buildtree
         path: build/
         retention-days: 1
 
     - name: Upload distribution
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-qt6-${{ matrix.build_type }}
         path: dist/
@@ -565,7 +586,7 @@ jobs:
             runner: macos-14
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -607,14 +628,14 @@ jobs:
       run: cmake --install build
 
     - name: Upload build tree
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-gtk3-${{ matrix.build_type }}-buildtree
         path: build/
         retention-days: 1
 
     - name: Upload distribution
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-gtk3-${{ matrix.build_type }}
         path: dist/
@@ -625,7 +646,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -698,7 +719,7 @@ jobs:
           --legend
 
     - name: Upload coverage report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage-report
         path: coverage-report/
@@ -713,7 +734,7 @@ jobs:
       AP: ${{ needs.prepare.outputs.artifact_prefix }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -776,7 +797,7 @@ jobs:
         dpkg-deb --root-owner-group --build pkg "${PKG_NAME}.deb"
 
     - name: Upload .deb
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-qt6-deb
         path: "*.deb"
@@ -832,7 +853,7 @@ jobs:
         mv "${appimages[0]}" "EiskaltDC++-${APP_VERSION}-Ubuntu-24.04-x86_64.AppImage"
 
     - name: Upload AppImage
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-qt6-appimage
         path: "*.AppImage"
@@ -845,7 +866,7 @@ jobs:
       AP: ${{ needs.prepare.outputs.artifact_prefix }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -905,7 +926,7 @@ jobs:
         dpkg-deb --root-owner-group --build pkg "${PKG_NAME}.deb"
 
     - name: Upload .deb
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-gtk3-deb
         path: "*.deb"
@@ -925,7 +946,7 @@ jobs:
             arch: arm64
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -977,7 +998,7 @@ jobs:
         ls -la *.dmg
 
     - name: Upload DMG
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-qt6-dmg
         path: build/*.dmg
@@ -995,7 +1016,7 @@ jobs:
             arch: arm64
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install dependencies
       run: |
@@ -1096,7 +1117,7 @@ jobs:
         ls -la *.dmg
 
     - name: Upload DMG
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-gtk3-dmg
         path: build/*.dmg

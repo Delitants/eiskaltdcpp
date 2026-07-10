@@ -111,24 +111,25 @@ int utf8ToWc(const char* str, wchar_t& c) {
 
 void wcToUtf8(wchar_t c, string& str) {
     // https://tools.ietf.org/html/rfc3629#section-3
-    if(c > 0x10ffff || (c >= 0xd800 && c <= 0xdfff)) {
+    const auto cp = static_cast<uint32_t>(c);
+    if(cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff)) {
         // Invalid UTF-8 code point
         // REPLACEMENT CHARACTER: https://www.fileformat.info/info/unicode/char/0fffd/index.htm
         wcToUtf8(0xfffd, str);
-    } else if(c >= 0x10000) {
-        str += (char)(0x80 | 0x40 | 0x20 | 0x10 | (c >> 18));
-        str += (char)(0x80 | ((c >> 12) & 0x3f));
-        str += (char)(0x80 | ((c >> 6) & 0x3f));
-        str += (char)(0x80 | (c & 0x3f));
-    } else if(c >= 0x0800) {
-        str += (char)(0x80 | 0x40 | 0x20 | (c >> 12));
-        str += (char)(0x80 | ((c >> 6) & 0x3f));
-        str += (char)(0x80 | (c & 0x3f));
-    } else if(c >= 0x0080) {
-        str += (char)(0x80 | 0x40 | (c >> 6));
-        str += (char)(0x80 | (c & 0x3f));
+    } else if(cp >= 0x10000) {
+        str += (char)(0x80 | 0x40 | 0x20 | 0x10 | (cp >> 18));
+        str += (char)(0x80 | ((cp >> 12) & 0x3f));
+        str += (char)(0x80 | ((cp >> 6) & 0x3f));
+        str += (char)(0x80 | (cp & 0x3f));
+    } else if(cp >= 0x0800) {
+        str += (char)(0x80 | 0x40 | 0x20 | (cp >> 12));
+        str += (char)(0x80 | ((cp >> 6) & 0x3f));
+        str += (char)(0x80 | (cp & 0x3f));
+    } else if(cp >= 0x0080) {
+        str += (char)(0x80 | 0x40 | (cp >> 6));
+        str += (char)(0x80 | (cp & 0x3f));
     } else {
-        str += (char)c;
+        str += (char)cp;
     }
 }
 

@@ -171,7 +171,7 @@ namespace system_util
     GetExitCodeThread(m_id, &val);
     CloseHandle(m_id);
     m_id = NULL;
-    *ret = (void*)val;
+    *ret = reinterpret_cast<void*>(static_cast<ULONG_PTR>(val));
     return true;
   }
 
@@ -224,4 +224,3 @@ namespace system_util
   }
 #endif
 } /* namespace system */
-

@@ -32,7 +32,7 @@ bool FreeSpace::FreeDiscSpace (const std::string &path,  unsigned long long * re
 
         if ( GetDiskFreeSpaceExW( (const WCHAR*)dcpp::Text::utf8ToWide(path).c_str(), &lpFreeBytesAvailableToCaller,
                                 &lpTotalNumberOfBytes,
-                                &lpTotalNumberOfFreeBytes ) == true ) {
+                                &lpTotalNumberOfFreeBytes ) != FALSE ) {
                 *res = lpTotalNumberOfFreeBytes.QuadPart;
                 *res2 = lpTotalNumberOfBytes.QuadPart;
                 return true;

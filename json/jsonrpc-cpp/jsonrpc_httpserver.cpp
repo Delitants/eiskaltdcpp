@@ -129,9 +129,7 @@ namespace Json
     {
         struct mg_connection* conn = (struct mg_connection*)addInfo;
         std::string tmp = "HTTP/1.1 200 OK\r\nServer: eidcppd server\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Headers: Content-Type\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: ";
-        char v[16];
-        snprintf(v, sizeof(v), "%lu", response.size());
-        tmp += v;
+        tmp += std::to_string(response.size());
         tmp += "\r\n\r\n";
         tmp += response;
         if(mg_write(conn, tmp.c_str(), tmp.size()) > 0) {
