@@ -35,15 +35,13 @@
 #ifndef _WIN32
 #include <netdb.h>
 #endif
-#include <openssl/rc4.h>
 
-#if defined(__clang__)
-#  pragma clang diagnostic push
-#  pragma clang diagnostic ignored "-Wdeprecated-declarations"
-#elif defined(__GNUC__)
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+// DHT encrypted UDP packets use RC4 for protocol compatibility. OpenSSL 3 marks
+// RC4 as deprecated; keep the warning local to this legacy protocol boundary.
+#ifndef OPENSSL_SUPPRESS_DEPRECATED
+#define OPENSSL_SUPPRESS_DEPRECATED
 #endif
+#include <openssl/rc4.h>
 
 namespace dht
 {
@@ -70,12 +68,6 @@ namespace dht
             return Util::toString(port);
     }
 }
-
-#if defined(__clang__)
-#  pragma clang diagnostic pop
-#elif defined(__GNUC__)
-#  pragma GCC diagnostic pop
-#endif
 
     #define BUFSIZE                 16384
     #define MAGICVALUE_UDP          0x5b
