@@ -39,6 +39,8 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 
     treeView->setModel(model);
     treeView->setItemDelegate(new AutoToolTipDelegate(treeView));
+    treeView->setCursor(Qt::ArrowCursor);
+    treeView->viewport()->setCursor(Qt::ArrowCursor);
     treeView->header()->restoreState(qtCtx()->settings()->getVar(WS_PUBLICHUBS_STATE, QByteArray()).toByteArray());
     treeView->header()->setSectionResizeMode(COLUMN_PHUB_COUNTRY, QHeaderView::ResizeToContents);
 

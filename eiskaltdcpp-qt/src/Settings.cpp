@@ -62,7 +62,7 @@ namespace {
 int settingsSidebarWidth(QListWidget *listWidget)
 {
     if (!listWidget)
-        return 180;
+        return 210;
 
     const QFontMetrics metrics(listWidget->font());
     int textWidth = 0;
@@ -75,7 +75,7 @@ int settingsSidebarWidth(QListWidget *listWidget)
     listWidget->doItemsLayout();
     const int delegateWidth = listWidget->sizeHintForColumn(0);
     const int iconWidth = listWidget->iconSize().isValid() ? listWidget->iconSize().width() : 0;
-    return qBound(180, qMax(delegateWidth + 24, textWidth + iconWidth + 76), 360);
+    return qBound(210, qMax(delegateWidth + 34, textWidth + iconWidth + 92), 420);
 }
 
 #ifdef Q_OS_MAC
@@ -734,11 +734,15 @@ void Settings::init(){
     }
 #endif
 
-    listWidget->setIconSize(QSize(18, 18));
-    listWidget->setSpacing(2);
+    listWidget->setIconSize(QSize(22, 22));
+    listWidget->setSpacing(3);
     const int sidebarWidth = settingsSidebarWidth(listWidget);
     listWidget->setMinimumWidth(sidebarWidth);
     listWidget->setMaximumWidth(sidebarWidth);
+    for (int row = 0; row < listWidget->count(); ++row) {
+        if (auto *navItem = listWidget->item(row))
+            navItem->setSizeHint(QSize(sidebarWidth - 12, 32));
+    }
 #ifdef Q_OS_MAC
     applyMacSettingsSidebarStyle(listWidget);
 #endif
@@ -765,7 +769,7 @@ void Settings::init(){
 
     stackedWidget->setCurrentIndex(0);
 
-    setMinimumSize(900, 640);
+    setMinimumSize(980, 700);
     if (qtCtx()->settings()->getVar("settings/dialog-size").isValid())
         resize(qtCtx()->settings()->getVar("settings/dialog-size").toSize().expandedTo(minimumSize()));
     else

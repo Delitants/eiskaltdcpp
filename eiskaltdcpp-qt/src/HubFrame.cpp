@@ -101,6 +101,8 @@ QPixmap loadDefaultHubTabPixmap(const QString &fileName, const WulforUtil::Icons
 {
     const QString appDir = QApplication::applicationDirPath();
     const QStringList roots = {
+        appDir + QStringLiteral("/resources/icons/appl/default"),
+        appDir + QStringLiteral("/../resources/icons/appl/default"),
         appDir + QStringLiteral("/../Resources/icons/appl/default"),
         appDir + QStringLiteral("/icons/appl/default"),
         appDir + QStringLiteral("/../icons/appl/default"),
@@ -117,10 +119,39 @@ QPixmap loadDefaultHubTabPixmap(const QString &fileName, const WulforUtil::Icons
     return qtCtx()->wulforUtil()->getPixmap(fallbackIcon);
 }
 
+QPixmap composeUnreadHubTabPixmap(const QPixmap &hubPixmap, const QPixmap &mailPixmap)
+{
+    if (hubPixmap.isNull())
+        return mailPixmap;
+    if (mailPixmap.isNull())
+        return hubPixmap;
+
+    QPixmap composed = hubPixmap;
+    composed.setDevicePixelRatio(hubPixmap.devicePixelRatio());
+
+    const qreal scale = composed.devicePixelRatio();
+    const QSize logicalSize(qMax(1, static_cast<int>(composed.width() / scale)),
+                            qMax(1, static_cast<int>(composed.height() / scale)));
+    const int overlaySide = qMax(10, qMin(logicalSize.width(), logicalSize.height()) * 3 / 5);
+    const QPixmap overlay = mailPixmap.scaled(QSize(qRound(overlaySide * scale), qRound(overlaySide * scale)),
+                                              Qt::KeepAspectRatio,
+                                              Qt::SmoothTransformation);
+
+    QPainter painter(&composed);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    const QPoint target(composed.width() - overlay.width(), composed.height() - overlay.height());
+    painter.drawPixmap(target, overlay);
+
+    return composed;
+}
+
 const QPixmap &hubTabPixmap(const bool hasUnreadMainChat)
 {
     static const QPixmap readPixmap = loadDefaultHubTabPixmap(QStringLiteral("server"), WulforUtil::eiSERVER);
-    static const QPixmap unreadPixmap = loadDefaultHubTabPixmap(QStringLiteral("hubmsg"), WulforUtil::eiHUBMSG);
+    static const QPixmap unreadPixmap = composeUnreadHubTabPixmap(
+        readPixmap,
+        loadDefaultHubTabPixmap(QStringLiteral("hubmsg"), WulforUtil::eiHUBMSG)
+    );
 
     return hasUnreadMainChat ? unreadPixmap : readPixmap;
 }
@@ -1847,6 +1878,8 @@ void HubFrame::init(){
     treeView_USERS->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView_USERS->header()->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView_USERS->header()->hideSection(COLUMN_EXACT_SHARE);
+    treeView_USERS->setCursor(Qt::ArrowCursor);
+    treeView_USERS->viewport()->setCursor(Qt::ArrowCursor);
     treeView_USERS->viewport()->installEventFilter(this);
 
     installEventFilter(this);
@@ -1870,12 +1903,19 @@ void HubFrame::init(){
     toolButton_SMILE->setVisible(true);
     toolButton_SMILE->setContextMenuPolicy(Qt::CustomContextMenu);
     toolButton_SMILE->setIcon(QIcon());
+    toolButton_SMILE->setToolButtonStyle(Qt::ToolButtonTextOnly);
     toolButton_SMILE->setText(QString::fromUtf8("😊"));
     toolButton_SMILE->setToolTip(tr("Emoji"));
     toolButton_SMILE->setAutoRaise(true);
-    toolButton_SMILE->setIconSize(QSize(18, 18));
-    toolButton_SMILE->setFixedSize(QSize(28, 28));
-    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { font-size: 18px; }"));
+    QFont emojiFont = toolButton_SMILE->font();
+#ifdef Q_OS_WIN
+    emojiFont.setFamily(QStringLiteral("Segoe UI Emoji"));
+#endif
+    emojiFont.setPointSize(qMax(emojiFont.pointSize(), 14));
+    toolButton_SMILE->setFont(emojiFont);
+    toolButton_SMILE->setIconSize(QSize(0, 0));
+    toolButton_SMILE->setFixedSize(QSize(30, 28));
+    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; font-size: 18px; }"));
 
     toolButton_HIDE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
     setupChatInputSplitter();

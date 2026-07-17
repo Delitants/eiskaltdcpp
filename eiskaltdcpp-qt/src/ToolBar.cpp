@@ -431,7 +431,7 @@ void ToolBar::redraw(){
 QWidget *ToolBar::makeCloseButton(int index)
 {
     auto *holder = new QWidget(tabbar);
-    holder->setFixedSize(QSize(30, 16));
+    holder->setFixedSize(QSize(32, 18));
 
     auto *layout = new QHBoxLayout(holder);
     layout->setContentsMargins(0, 0, 12, 0);
@@ -440,9 +440,10 @@ QWidget *ToolBar::makeCloseButton(int index)
     auto *button = new QToolButton(holder);
     button->setAutoRaise(true);
     button->setCursor(Qt::ArrowCursor);
-    button->setFixedSize(QSize(16, 16));
+    button->setFixedSize(QSize(18, 18));
     button->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILECLOSE));
-    button->setIconSize(QSize(14, 14));
+    button->setIconSize(QSize(16, 16));
+    button->setToolTip(tr("Close"));
     button->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; }"));
     connect(button, &QToolButton::clicked, this, [this, index]() { slotClose(index); });
     layout->addWidget(button, 0, Qt::AlignVCenter | Qt::AlignRight);

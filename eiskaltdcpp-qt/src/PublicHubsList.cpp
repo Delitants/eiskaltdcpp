@@ -28,6 +28,8 @@ PublicHubsList::PublicHubsList(QWidget *parent): QDialog(parent)
 {
     setupUi(this);
     setWindowTitle(tr("Public hub list URLs"));
+    listWidget->setCursor(Qt::ArrowCursor);
+    listWidget->viewport()->setCursor(Qt::ArrowCursor);
 
     listWidget->addItems(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS))
                          .split(";", Qt::SkipEmptyParts));

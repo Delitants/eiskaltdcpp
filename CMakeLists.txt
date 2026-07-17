@@ -498,8 +498,20 @@ if (WIN32)
     set (CPACK_NSIS_DISPLAY_NAME "${PROJECT_NAME_GLOBAL}")
     set (CPACK_NSIS_PACKAGE_NAME "${PROJECT_NAME_GLOBAL}")
     set (CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    set (CPACK_PACKAGE_INSTALL_DIRECTORY "Eiskalt DC++")
     set (CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
     set (CPACK_NSIS_URL_INFO_ABOUT "https://github.com/eiskaltdcpp/eiskaltdcpp")
+    set (CPACK_PACKAGE_EXECUTABLES "EiskaltDC++" "${PROJECT_NAME_GLOBAL}")
+    set (CPACK_CREATE_DESKTOP_LINKS "EiskaltDC++")
+    set (CPACK_NSIS_MUI_FINISHPAGE_RUN "EiskaltDC++.exe")
+    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS [=[
+MessageBox MB_YESNO|MB_DEFBUTTON1 "Add Eiskalt DC++ to Windows Firewall exceptions?" IDNO noFirewallException
+  ExecWait 'netsh advfirewall firewall add rule name="Eiskalt DC++" dir=in action=allow program="$INSTDIR\EiskaltDC++.exe" enable=yes'
+noFirewallException:
+]=])
+    set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS [=[
+ExecWait 'netsh advfirewall firewall delete rule name="Eiskalt DC++" program="$INSTDIR\EiskaltDC++.exe"'
+]=])
     # Start-menu shortcuts
     set (CPACK_NSIS_CREATE_ICONS_EXTRA
         "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME_GLOBAL}.lnk' '$INSTDIR\\\\EiskaltDC++.exe'")

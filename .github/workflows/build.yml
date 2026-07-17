@@ -441,6 +441,16 @@ jobs:
         New-Item -ItemType Directory -Force -Path install-nsis
         $version = (Select-String -Path CMakeLists.txt -Pattern 'set \(APP_VERSION "([^"]+)"' |
                     ForEach-Object { $_.Matches.Groups[1].Value }) | Select-Object -First 1
+        $firewallInstall = @'
+        MessageBox MB_YESNO|MB_DEFBUTTON1 "Add Eiskalt DC++ to Windows Firewall exceptions?" IDNO noFirewallException
+          ExecWait 'netsh advfirewall firewall add rule name="Eiskalt DC++" dir=in action=allow program="$INSTDIR\EiskaltDC++.exe" enable=yes'
+        noFirewallException:
+        '@
+        $firewallInstall = $firewallInstall -replace '^\s+',''
+        $firewallUninstall = @'
+        ExecWait 'netsh advfirewall firewall delete rule name="Eiskalt DC++" program="$INSTDIR\EiskaltDC++.exe"'
+        '@
+        $firewallUninstall = $firewallUninstall -replace '^\s+',''
         cpack -G NSIS `
           -D "CPACK_PACKAGE_NAME=EiskaltDC++" `
           -D "CPACK_PACKAGE_VERSION=$version" `
@@ -452,6 +462,12 @@ jobs:
           -D "CPACK_NSIS_DISPLAY_NAME=EiskaltDC++" `
           -D "CPACK_NSIS_PACKAGE_NAME=EiskaltDC++" `
           -D "CPACK_NSIS_INSTALL_ROOT=`$PROGRAMFILES64" `
+          -D "CPACK_PACKAGE_INSTALL_DIRECTORY=Eiskalt DC++" `
+          -D "CPACK_PACKAGE_EXECUTABLES=EiskaltDC++;EiskaltDC++" `
+          -D "CPACK_CREATE_DESKTOP_LINKS=EiskaltDC++" `
+          -D "CPACK_NSIS_MUI_FINISHPAGE_RUN=EiskaltDC++.exe" `
+          -D "CPACK_NSIS_EXTRA_INSTALL_COMMANDS=$firewallInstall" `
+          -D "CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS=$firewallUninstall" `
           -D "CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL=ON" `
           -D "CPACK_INSTALLED_DIRECTORIES=$PWD/dist;." `
           -D "CPACK_PACKAGE_DIRECTORY=$PWD/install-nsis" `
