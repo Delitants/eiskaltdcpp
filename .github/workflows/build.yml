@@ -189,7 +189,7 @@ jobs:
       # and can leave the workflow sitting in the install step for a long time.
       max-parallel: 1
       matrix:
-        build_type: [Debug, Release]
+        build_type: [Release, Debug]
 
     env:
       AP: ${{ needs.prepare.outputs.artifact_prefix }}
