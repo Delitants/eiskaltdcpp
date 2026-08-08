@@ -51,6 +51,7 @@ public:
     void abort();
 
     static bool shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMode);
+    static bool responseBodyWouldExceedSize(int64_t declaredSize, int64_t bytesDone, size_t nextLen);
 
     const string& getMimeType() const { return mimeType; }
     const string& getStatus() const { return statusLine; }

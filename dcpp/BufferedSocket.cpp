@@ -274,12 +274,16 @@ void BufferedSocket::threadRead() {
             while(left > 0) {
                 if(dataBytes == -1) {
                     fire(BufferedSocketListener::Data(), &inbuf[bufpos], left);
+                    if(disconnecting || state != RUNNING)
+                        return;
                     bufpos += (left - rollback);
                     left = rollback;
                     rollback = 0;
                 } else {
                     int high = (int)min(dataBytes, (int64_t)left);
                     fire(BufferedSocketListener::Data(), &inbuf[bufpos], high);
+                    if(disconnecting || state != RUNNING)
+                        return;
                     bufpos += high;
                     left -= high;
 
@@ -287,6 +291,8 @@ void BufferedSocket::threadRead() {
                     if(dataBytes == 0) {
                         mode = MODE_LINE;
                         fire(BufferedSocketListener::ModeChange());
+                        if(disconnecting || state != RUNNING)
+                            return;
                     }
                 }
             }

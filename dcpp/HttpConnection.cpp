@@ -54,6 +54,18 @@ bool HttpConnection::shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMod
     return !usingHttpProxy && outgoingMode != SettingsManager::OUTGOING_DIRECT;
 }
 
+bool HttpConnection::responseBodyWouldExceedSize(int64_t declaredSize, int64_t bytesDone, size_t nextLen) {
+    if(declaredSize < 0) {
+        return false;
+    }
+
+    if(bytesDone < 0 || bytesDone > declaredSize) {
+        return true;
+    }
+
+    return static_cast<uint64_t>(nextLen) > static_cast<uint64_t>(declaredSize - bytesDone);
+}
+
 /**
  * Downloads a file and returns it as a string
  * @todo Report exceptions
@@ -324,7 +336,7 @@ void HttpConnection::on(BufferedSocketListener::ModeChange) {
     }
 }
 void HttpConnection::on(BufferedSocketListener::Data, uint8_t* aBuf, size_t aLen) {
-    if(size != -1 && static_cast<size_t>(size - done)  < aLen) {
+    if(responseBodyWouldExceedSize(size, done, aLen)) {
         abortRequest(true);
 
         connState = CONN_FAILED;
