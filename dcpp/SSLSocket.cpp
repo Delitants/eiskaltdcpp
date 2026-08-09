@@ -114,6 +114,21 @@ bool isUnexpectedEof(unsigned long err) {
 
 }
 
+bool SSLSocket::tlsReadResultMeansClosed(int ret, int sslError, unsigned long opensslError) {
+    if(ret > 0) {
+        return false;
+    }
+
+    if(sslError == SSL_ERROR_ZERO_RETURN) {
+        return true;
+    }
+
+    // OpenSSL may report a TCP EOF without close_notify as SSL_ERROR_SYSCALL
+    // with an empty error queue, or as SSL_ERROR_SSL with "unexpected eof".
+    return (sslError == SSL_ERROR_SYSCALL && opensslError == 0) ||
+        isUnexpectedEof(opensslError);
+}
+
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
 static const unsigned char alpn_protos_nmdc[] = {
 	4, 'n', 'm', 'd', 'c',
@@ -309,7 +324,18 @@ int SSLSocket::read(void* aBuffer, int aBufLen) {
     if(!ssl) {
         return -1;
     }
-    int len = checkSSL(SSL_read(ssl, aBuffer, aBufLen));
+    const int ret = SSL_read(ssl, aBuffer, aBufLen);
+    if(ret <= 0) {
+        const int sslErr = SSL_get_error(ssl, ret);
+        const unsigned long libErr = ERR_peek_error();
+        if(tlsReadResultMeansClosed(ret, sslErr, libErr)) {
+            ERR_clear_error();
+            ssl.reset();
+            throw SocketException(_("Connection closed"));
+        }
+    }
+
+    int len = checkSSL(ret);
 
     if(len > 0) {
         stats.totalDown += len;
@@ -338,6 +364,13 @@ int SSLSocket::checkSSL(int ret) {
         /* inspired by boost.asio (asio/ssl/detail/impl/engine.ipp, function engine::perform) and
            the SSL_get_error doc at <https://www.openssl.org/docs/ssl/SSL_get_error.html>. */
         auto err = SSL_get_error(ssl, ret);
+        const unsigned long peekedErr = ERR_peek_error();
+        if(tlsReadResultMeansClosed(ret, err, peekedErr)) {
+            ERR_clear_error();
+            ssl.reset();
+            throw SocketException(_("Connection closed"));
+        }
+
         switch(err) {
         case SSL_ERROR_NONE:        // Fallthrough - YaSSL doesn't for example return an openssl compatible error on recv fail
         case SSL_ERROR_WANT_READ:   // Fallthrough
@@ -348,14 +381,7 @@ int SSLSocket::checkSSL(int ret) {
         default:
         {
             long verifyRes = SSL_get_verify_result(ssl);
-            unsigned long libErr = ERR_peek_error();
-            if(isUnexpectedEof(libErr)) {
-                ERR_clear_error();
-                ssl.reset();
-                throw SocketException(_("Connection closed"));
-            }
-
-            libErr = ERR_get_error();
+            unsigned long libErr = ERR_get_error();
             char errbuf[256] = {0};
             if(libErr) {
                 ERR_error_string_n(libErr, errbuf, sizeof(errbuf));

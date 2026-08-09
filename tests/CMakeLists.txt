@@ -50,6 +50,8 @@ add_executable(eiskaltdcpp-tests
     test_searchresult.cpp
     test_favoritemanager.cpp
     test_httpconnection.cpp
+    test_bufferedsocket.cpp
+    test_sslsocket.cpp
     test_merkletree.cpp
     test_nmdc_escape.cpp
     test_file_utils.cpp

@@ -57,6 +57,10 @@ BufferedSocket::~BufferedSocket() {
     sockets.dec();
 }
 
+bool BufferedSocket::dataModeCanConsumeMore(int64_t bytesLeftInBlock, int bufferedBytesLeft) {
+    return bufferedBytesLeft > 0 && (bytesLeftInBlock == -1 || bytesLeftInBlock > 0);
+}
+
 void BufferedSocket::setMode (Modes aMode, size_t aRollback) {
     if (mode == aMode) {
         dcdebug ("WARNING: Re-entering mode %d\n", mode);
@@ -271,7 +275,7 @@ void BufferedSocket::threadRead() {
             line = l;
             break;
         case MODE_DATA:
-            while(left > 0) {
+            while(dataModeCanConsumeMore(dataBytes, left)) {
                 if(dataBytes == -1) {
                     fire(BufferedSocketListener::Data(), &inbuf[bufpos], left);
                     if(disconnecting || state != RUNNING)
@@ -293,6 +297,7 @@ void BufferedSocket::threadRead() {
                         fire(BufferedSocketListener::ModeChange());
                         if(disconnecting || state != RUNNING)
                             return;
+                        break;
                     }
                 }
             }
