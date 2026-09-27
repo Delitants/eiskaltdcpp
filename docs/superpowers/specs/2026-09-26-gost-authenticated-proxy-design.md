@@ -1,7 +1,7 @@
 # Authenticated GOST Proxy Support
 
 Date: 2026-09-26
-Status: Design for review; implementation and deployment have not started.
+Status: Approved by the user; implementation and deployment have not started.
 
 ## Intent And Approved Connection Policy
 
