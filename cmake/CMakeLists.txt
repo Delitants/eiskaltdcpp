@@ -74,7 +74,7 @@ if(UPDATE_PO)
 				--keyword=N_
 				--keyword=F_
 				--keyword=F_:2 --flag=F_:2:pass-c-format
-				--keyword=FN_
+				--keyword=FN_:1,2
 				--output=${dcpp_SOURCE_DIR}/po/libeiskaltdcpp.pot
 			# replace the chartype
 			COMMAND sed -i

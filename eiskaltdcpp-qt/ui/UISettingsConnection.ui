@@ -389,7 +389,11 @@ a Shadowsocks AEAD server.</string>
               <widget class="LineEdit" name="lineEdit_SUSR"/>
              </item>
              <item row="3" column="1" colspan="3">
-              <widget class="LineEdit" name="lineEdit_SPSWD"/>
+              <widget class="QLineEdit" name="lineEdit_SPSWD">
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_5">
@@ -968,10 +972,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QGroupBox" name="groupBox_DHT">
          <property name="title">
-          <string>Enable DHT</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
+          <string notr="true">DHT</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -989,14 +990,31 @@ p, li { white-space: pre-wrap; }
           </item>
           <item>
            <layout class="QGridLayout" name="gridLayout_13">
-            <item row="0" column="0">
+            <item row="0" column="0" colspan="3">
+             <widget class="QCheckBox" name="checkBox_DHT">
+              <property name="text">
+               <string>Enable DHT</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="3">
+             <widget class="QCheckBox" name="checkBox_HIDE_DHT">
+              <property name="text">
+               <string>Do not advertise DHT to hubs</string>
+              </property>
+              <property name="toolTip">
+               <string>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
              <widget class="QLabel" name="label_23">
               <property name="text">
                <string>DHT port</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="2" column="1">
              <widget class="QSpinBox" name="spinBox_DHT">
               <property name="minimum">
                <number>1</number>
@@ -1009,14 +1027,14 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="3" column="0">
              <widget class="QLabel" name="label_DHT_BOOTSTRAP_URLS">
               <property name="text">
                <string>DHT bootstrap URLs</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="3" column="1">
              <widget class="QLineEdit" name="lineEdit_DHT_BOOTSTRAP_URLS">
               <property name="placeholderText">
                <string>Separate multiple URLs with semicolons</string>

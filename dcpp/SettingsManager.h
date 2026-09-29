@@ -81,6 +81,7 @@ public:
                       LOG_FILE_DIAGNOSTIC,
                       EXTERNAL_IP6, BIND_ADDRESS6,
                       CLIENT_ID_NMDC, CLIENT_ID_ADC,
+                      GOST_SERVER, GOST_USER, GOST_PASSWORD, GOST_CA_FILE,
                       STR_LAST };
 
     enum IntSetting { INT_FIRST = STR_LAST + 1,
@@ -136,6 +137,8 @@ public:
                       LOG_DIAGNOSTIC,
                       NMDC_GETINFO_LIMIT,
                       USE_IPV6,
+                      GOST_PORT,
+                      HIDE_DHT_FROM_HUBS,
                       INT_LAST };
 
     enum Int64Setting { INT64_FIRST = INT_LAST + 1,
@@ -152,7 +155,7 @@ public:
         INCOMING_FIREWALL_PASSIVE
     };
 
-    enum {  OUTGOING_DIRECT, OUTGOING_SOCKS5, OUTGOING_SHADOWSOCKS };
+    enum {  OUTGOING_DIRECT, OUTGOING_SOCKS5, OUTGOING_SHADOWSOCKS, OUTGOING_GOST };
 
     enum {  SHADOWSOCKS_TRANSPORT_TCP_ONLY, SHADOWSOCKS_TRANSPORT_TCP_AND_UDP };
 

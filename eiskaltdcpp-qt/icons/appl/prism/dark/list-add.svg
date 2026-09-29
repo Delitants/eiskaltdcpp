@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Add item</title>
+  <desc>Prism dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ddf9aa" stop-opacity="1"/><stop offset="0.22" stop-color="#b7f34b" stop-opacity="1"/><stop offset="0.5" stop-color="#a0ef12" stop-opacity="1"/><stop offset="0.76" stop-color="#93dc11" stop-opacity="1"/><stop offset="1" stop-color="#63940b" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#406007" stop-opacity="1"/><stop offset="0.5" stop-color="#283c05" stop-opacity="1"/><stop offset="1" stop-color="#1b2903" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z" fill="url(#p0-body)" stroke="url(#p0-rim)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z" fill="url(#p0-shine)"/>
+  </g>
+</svg>

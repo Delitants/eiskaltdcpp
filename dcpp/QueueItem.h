@@ -241,7 +241,10 @@ public:
     GETSET(int64_t, size, Size);
     GETSET(Priority, priority, Priority);
     GETSET(time_t, added, Added);
-    GETSET(TTHValue, tthRoot, TTH);
+private:
+    const TTHValue tthRoot;
+public:
+    const TTHValue& getTTH() const { return tthRoot; }
     GETSET(uint64_t, nextPublishingTime, NextPublishingTime);
 private:
     QueueItem& operator=(const QueueItem&);

@@ -702,6 +702,7 @@ void FavoriteManager::refresh(bool forceDownload /* = false */) {
         fire(FavoriteManagerListener::DownloadStarting(), publicListServer);
         if(c == NULL)
             c = new HttpConnection(ctx());
+        c->setPublicHubListProxy(true);
         c->addListener(this);
         c->downloadFile(publicListServer);
         running = true;

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Download queue</title>
+  <desc>Slate light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <g transform="matrix(0.75 0 0 0.75 0 0)">
+    <path d="M76,64A12,12,0,0,1,88,52H216a12,12,0,0,1,0,24H88A12,12,0,0,1,76,64Zm140,52H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm0,64H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24ZM44,112a16,16,0,1,0,16,16A16,16,0,0,0,44,112Zm0-64A16,16,0,1,0,60,64,16,16,0,0,0,44,48Zm0,128a16,16,0,1,0,16,16A16,16,0,0,0,44,176Z" fill="#20344b"/>
+  </g>
+  <g transform="matrix(0.4375 0 0 0.4375 140 136)">
+    <path d="M229.66,141.66l-96,96a8,8,0,0,1-11.32,0l-96-96A8,8,0,0,1,32,128H72V48A16,16,0,0,1,88,32h80a16,16,0,0,1,16,16v80h40a8,8,0,0,1,5.66,13.66Z" fill="#4d9278"/>
+  </g>
+</svg>

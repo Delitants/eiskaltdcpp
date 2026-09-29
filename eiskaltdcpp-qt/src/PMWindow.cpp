@@ -11,6 +11,7 @@
  */
 
 #include "PMWindow.h"
+#include "ChatFormatBar.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforSettings.h"
@@ -297,57 +298,20 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     toolButton_SMILE->setText(QString::fromUtf8("😊"));
     toolButton_SMILE->setToolTip(tr("Emoji"));
     toolButton_SMILE->setContextMenuPolicy(Qt::CustomContextMenu);
-    toolButton_SMILE->setAutoRaise(true);
-    toolButton_SMILE->setIconSize(QSize(18, 18));
-    toolButton_SMILE->setFixedSize(QSize(28, 28));
-    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { font-size: 18px; }"));
     auto *toolButton_IMAGE = new QToolButton(this);
-    toolButton_IMAGE->setAutoRaise(true);
-    toolButton_IMAGE->setMinimumHeight(24);
+    toolButton_IMAGE->setObjectName(QStringLiteral("toolButton_IMAGE"));
     toolButton_IMAGE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILETYPE_PICTURE));
     toolButton_IMAGE->setToolTip(tr("Image"));
-    horizontalLayout_BBCODE->setSpacing(3);
-    horizontalLayout_BBCODE->setContentsMargins(0, 0, 0, 0);
-    const int smileButtonIndex = horizontalLayout_BBCODE->indexOf(toolButton_SMILE);
-    if (smileButtonIndex >= 0)
-        horizontalLayout_BBCODE->insertWidget(smileButtonIndex, toolButton_IMAGE);
-    else
-        horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->count() - 1, toolButton_IMAGE);
-    const QList<QToolButton*> formatButtons = {
-        toolButton_BOLD, toolButton_ITALIC, toolButton_UNDERLINE, toolButton_STRIKE,
-        toolButton_COLOR, toolButton_LINK, toolButton_CODE, toolButton_IMAGE
-    };
-    for (auto *button : formatButtons) {
-        button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        button->setAutoRaise(true);
-        button->setMinimumHeight(24);
-        button->setMaximumHeight(28);
-    }
-    QFont boldFont = toolButton_BOLD->font();
-    boldFont.setBold(true);
-    toolButton_BOLD->setFont(boldFont);
-    QFont italicFont = toolButton_ITALIC->font();
-    italicFont.setItalic(true);
-    toolButton_ITALIC->setFont(italicFont);
-    QFont underlineFont = toolButton_UNDERLINE->font();
-    underlineFont.setUnderline(true);
-    toolButton_UNDERLINE->setFont(underlineFont);
-    QFont strikeFont = toolButton_STRIKE->font();
-    strikeFont.setStrikeOut(true);
-    toolButton_STRIKE->setFont(strikeFont);
-
-    for (int i = 0; i < horizontalLayout_BBCODE->count(); ++i)
-        horizontalLayout_BBCODE->setStretch(i, 0);
-    horizontalLayout_BBCODE->addStretch(1);
-    horizontalLayout_BBCODE->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    connect(toolButton_BOLD, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
-    connect(toolButton_ITALIC, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
-    connect(toolButton_UNDERLINE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
-    connect(toolButton_STRIKE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
-    connect(toolButton_COLOR, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertColorTag(); });
-    connect(toolButton_LINK, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
-    connect(toolButton_CODE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
-    connect(toolButton_IMAGE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
+    horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->indexOf(toolButton_SMILE), toolButton_IMAGE);
+    auto *formatBar = new ChatFormatBar(horizontalLayout_BBCODE, plainTextEdit_INPUT);
+    formatBar->bindEditorAction(toolButton_BOLD, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
+    formatBar->bindEditorAction(toolButton_ITALIC, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
+    formatBar->bindEditorAction(toolButton_UNDERLINE, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
+    formatBar->bindEditorAction(toolButton_STRIKE, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
+    formatBar->bindEditorAction(toolButton_COLOR, [this]() { plainTextEdit_INPUT->insertColorTag(); });
+    formatBar->bindEditorAction(toolButton_LINK, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
+    formatBar->bindEditorAction(toolButton_CODE, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
+    formatBar->bindEditorAction(toolButton_IMAGE, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
 
     toolButton_ALL->setCheckable(true);
 
@@ -362,7 +326,7 @@ PMWindow::PMWindow(const QString &cid_, const QString &hubUrl_):
     connect(close_wnd, &QAction::triggered, this, &PMWindow::slotClose);
     connect(pushButton_HUB, &QPushButton::clicked, this, &PMWindow::slotHub);
     connect(pushButton_SHARE, &QPushButton::clicked, this, &PMWindow::slotShare);
-    connect(toolButton_SMILE, &QToolButton::clicked, this, &PMWindow::slotSmile);
+    formatBar->bindEditorAction(toolButton_SMILE, [this]() { slotSmile(); });
     connect(toolButton_SMILE, &QToolButton::customContextMenuRequested, this, &PMWindow::slotSmileContextMenu);
     connect(plainTextEdit_INPUT, &QTextEdit::textChanged, this, &PMWindow::inputTextChanged);
     connect(plainTextEdit_INPUT, &QWidget::customContextMenuRequested, this, &PMWindow::inputTextMenu);

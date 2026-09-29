@@ -1,14 +1,17 @@
 #pragma once
 
+#include "dcpp/stdinc.h"
 #include <QString>
 #include <QStringList>
+#include "dcpp/Socket.h"
 
 namespace settings_connection {
 
 enum ProxyUiMode {
     ProxyUiDirect = 0,
     ProxyUiSocks5 = 1,
-    ProxyUiShadowsocks = 2
+    ProxyUiShadowsocks = 2,
+    ProxyUiGost = 3
 };
 
 enum ShadowsocksTransport {
@@ -39,6 +42,7 @@ struct ProxyUiState {
     QString method;
     bool useTls = false;
     int shadowsocksTransport = ShadowsocksTransportTcpOnly;
+    QString caFile;
 };
 
 QStringList bindAddressOptions(const QString& defaultAddress,
@@ -47,9 +51,12 @@ QStringList bindAddressOptions(const QString& defaultAddress,
 
 ProxyUiState switchProxyUiState(ProxyUiState& socks,
                                 ProxyUiState& shadowsocks,
+                                ProxyUiState& gost,
                                 int& currentMode,
                                 int selectedMode,
                                 const ProxyUiState& visibleState);
+
+QString gostProxyConfig(const ProxyUiState& state, dcpp::Socket::StreamProxyConfig& config);
 
 bool shadowsocksUsesUdp(int transport);
 bool isShadowsocks2022Method(const QString& method);

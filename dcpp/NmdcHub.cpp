@@ -20,6 +20,8 @@
 #include "stdinc.h"
 
 #include "NmdcHub.h"
+#include "ProtocolNumber.h"
+#include <limits>
 
 #include "ChatMessage.h"
 #include "ClientManager.h"
@@ -310,7 +312,9 @@ void NmdcHub::updateFromTag(Identity& id, const string& tag) {
             }
         } else if((j = i.find("L:")) != string::npos) {
             i.erase(i.begin() + j, i.begin() + j + 2);
-            id.set("US", Util::toString(Util::toInt(i) * 1024));
+            int64_t limit;
+            if(parseProtocolNumber(i, int64_t(0), std::numeric_limits<int64_t>::max() / 1024, limit))
+                id.set("US", Util::toString(limit * 1024));
         }
     }
     /// @todo Think about this
@@ -443,6 +447,10 @@ void NmdcHub::onLine(const string& aLine) {
             }
         }
 
+        if(param.size() - i < 4 || (param[i] != 'T' && param[i] != 'F') ||
+                param[i+1] != '?' || (param[i+2] != 'T' && param[i+2] != 'F') || param[i+3] != '?')
+            return;
+
         int a;
         if(param[i] == 'F') {
             a = SearchManager::SIZE_DONTCARE;
@@ -455,12 +463,19 @@ void NmdcHub::onLine(const string& aLine) {
         j = param.find('?', i);
         if(j == string::npos || i == j)
             return;
-        string size = param.substr(i, j-i);
+        int64_t size;
+        if(!parseProtocolNumber(std::string_view(param).substr(i, j-i), int64_t(0),
+                std::numeric_limits<int64_t>::max(), size))
+            return;
         i = j + 1;
         j = param.find('?', i);
         if(j == string::npos || i == j)
             return;
-        int type = Util::toInt(param.substr(i, j-i)) - 1;
+        int type;
+        // Keep Eiskalt's CD-image wire type alongside the base NMDC categories.
+        if(!parseProtocolNumber(std::string_view(param).substr(i, j-i), 1, int(SearchManager::TYPE_CD_IMAGE) + 1, type))
+            return;
+        --type;
         i = j + 1;
         string terms = unescape(param.substr(i));
 
@@ -479,7 +494,7 @@ void NmdcHub::onLine(const string& aLine) {
                 }
             }
 
-            fire(ClientListener::NmdcSearch(), this, seeker, a, Util::toInt64(size), type, terms);
+            fire(ClientListener::NmdcSearch(), this, seeker, a, size, type, terms);
         }
     } else if(cmd == "$MyINFO") {
         string::size_type i, j;
@@ -735,16 +750,22 @@ void NmdcHub::onLine(const string& aLine) {
         if(j == string::npos)
             return;
 
-        int type = Util::toInt(param.substr(0, j));
+        int type;
+        if(!parseProtocolNumber(std::string_view(param).substr(0, j), 0, 255, type))
+            return;
         i = j+1;
         if(type == UserCommand::TYPE_SEPARATOR || type == UserCommand::TYPE_CLEAR) {
-            int ctx = Util::toInt(param.substr(i));
+            int ctx;
+            if(!parseProtocolNumber(std::string_view(param).substr(i), 0, std::numeric_limits<int>::max(), ctx))
+                return;
             fire(ClientListener::HubUserCommand(), this, type, ctx, Util::emptyString, Util::emptyString);
         } else if(type == UserCommand::TYPE_RAW || type == UserCommand::TYPE_RAW_ONCE) {
             j = param.find(' ', i);
             if(j == string::npos)
                 return;
-            int ctx = Util::toInt(param.substr(i));
+            int ctx;
+            if(!parseProtocolNumber(std::string_view(param).substr(i, j-i), 0, std::numeric_limits<int>::max(), ctx))
+                return;
             i = j+1;
             j = param.find('$');
             if(j == string::npos)
@@ -795,7 +816,7 @@ void NmdcHub::onLine(const string& aLine) {
                     feat.push_back("TLS");
 
 #ifdef WITH_DHT
-                if(CTX_BOOLSETTING(USE_DHT))
+                if(CTX_BOOLSETTING(USE_DHT) && !CTX_BOOLSETTING(HIDE_DHT_FROM_HUBS))
                     feat.push_back("DHT0");
 #endif
 

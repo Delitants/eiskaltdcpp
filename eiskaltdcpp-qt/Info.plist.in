@@ -24,6 +24,23 @@
     <string>????</string>
     <key>CFBundleVersion</key>
     <string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.github.eiskaltdcpp.hub</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>dchub</string>
+                <string>adc</string>
+                <string>nmdcs</string>
+                <string>adcs</string>
+            </array>
+        </dict>
+    </array>
+${MACOSX_BUNDLE_TORRENT_TYPES}
     <key>LSMinimumSystemVersion</key>
     <string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
     <key>CSResourcesFileMapped</key>

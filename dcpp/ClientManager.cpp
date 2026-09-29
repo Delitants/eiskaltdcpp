@@ -42,6 +42,7 @@
 namespace dcpp {
 
 ClientManager::ClientManager(DCContext& ctx) : ContextAware(ctx) {
+    udp.setContext(&ctx);
     this->ctx().getTimerManager()->addListener(this);
 }
 
@@ -439,6 +440,35 @@ bool ClientManager::isTcpActive(const HintedUser& user) {
     return !user.user->isSet(User::PASSIVE);
 }
 
+bool ClientManager::isPassiveDownloadBlocked(const HintedUser& user, string* nick) {
+    const bool priv = ctx().getFavoriteManager()->isPrivate(user.hint);
+
+    Lock l(cs);
+    OnlineUser* u = findOnlineUser(user, priv);
+    // Unknown/offline users may become reachable later. DHT has no hub identity.
+    if(!u || u->getClientBase().getType() == ClientBase::DHT)
+        return false;
+
+    const auto& client = u->getClient();
+    const auto& identity = u->getIdentity();
+    if(client.isActive() || identity.isTcpActive(&client))
+        return false;
+
+    const bool directNat = CTX_BOOLSETTING(ALLOW_NATT) &&
+        CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_GOST &&
+        !isProxyHubStealth() &&
+        !(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
+          CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS));
+    const bool peerNat = user.user->isSet(User::NMDC) ?
+        (identity.getStatus() & Identity::NAT) != 0 : identity.supports(AdcHub::NAT0_FEATURE);
+    if(directNat && peerNat)
+        return false;
+
+    if(nick)
+        *nick = identity.getNick();
+    return true;
+}
+
 void ClientManager::privateMessage(const HintedUser& user, const string& msg, bool thirdPerson) {
     bool priv = ctx().getFavoriteManager()->isPrivate(user.hint);
 
@@ -472,6 +502,11 @@ void ClientManager::userCommand(const HintedUser& user, const UserCommand& uc, P
     ou->getClient().sendUserCmd(uc, params);
 }
 
+void ClientManager::sendUdp(const string& ip, const string& port, const string& data) {
+    Lock lock(udpMutex);
+    udp.writeTo(ip, port, data);
+}
+
 void ClientManager::send(AdcCommand& cmd, const CID& cid) {
     Lock l(cs);
     auto i = onlineUsers.find(cid);
@@ -493,7 +528,7 @@ void ClientManager::send(AdcCommand& cmd, const CID& cid) {
                 const string ip = u.getIdentity().getConnectIp(preferIPv6);
                 const string port = u.getIdentity().getConnectUdpPort(preferIPv6);
                 if(!ip.empty() && !port.empty()) {
-                    udp.writeTo(ip, port, cmd.toString(getMe()->getCID()));
+                    sendUdp(ip, port, cmd.toString(getMe()->getCID()));
                 }
             } catch(const SocketException&) {
                 dcdebug("Socket exception sending ADC UDP command\n");
@@ -550,7 +585,7 @@ void ClientManager::on(NmdcSearch, Client* aClient, const string& aSeeker, int a
                 if(port.empty())
                     port = "412";
                 for(const SearchResultPtr& sr : l) {
-                    udp.writeTo(ip, port, sr->toSR(*aClient));
+                    sendUdp(ip, port, sr->toSR(*aClient));
                 }
             } catch(const SocketException& /* e */) {
                 dcdebug("Search caught error\n");
@@ -575,8 +610,7 @@ void ClientManager::on(NmdcSearch, Client* aClient, const string& aSeeker, int a
 
         try {
             AdcCommand cmd = ctx().getSearchManager()->toPSR(true, aClient->getMyNick(), aClient->getIpPort(), aTTH.toBase32(), partialInfo);
-            Socket s;
-            s.writeTo(ip, port, cmd.toString(ctx().getClientManager()->getMe()->getCID()));
+            sendUdp(ip, port, cmd.toString(getMe()->getCID()));
         } catch(...) {
             dcdebug("Partial search caught error\n");
         }
@@ -805,6 +839,8 @@ bool ClientManager::isProxyHubStealth() const {
 }
 
 int ClientManager::getMode(const string& aHubUrl) const {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+        return SettingsManager::INCOMING_FIREWALL_PASSIVE;
     if(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT &&
             CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS)) {
         return SettingsManager::INCOMING_FIREWALL_PASSIVE;

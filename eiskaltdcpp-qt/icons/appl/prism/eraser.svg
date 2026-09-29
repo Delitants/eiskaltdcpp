@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Erase</title>
+  <desc>Prism light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#fcb8b4" stop-opacity="1"/><stop offset="0.22" stop-color="#f86962" stop-opacity="1"/><stop offset="0.5" stop-color="#f63a30" stop-opacity="1"/><stop offset="0.76" stop-color="#e2352c" stop-opacity="1"/><stop offset="1" stop-color="#99241e" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#621713" stop-opacity="1"/><stop offset="0.5" stop-color="#3e0f0c" stop-opacity="1"/><stop offset="1" stop-color="#2a0a08" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M160,168l-48,48H66.75L36.69,185.94a16,16,0,0,1,0-22.63L96,104Z" fill="url(#p0-body)"/>
+    <path d="M160,168l-48,48H66.75L36.69,185.94a16,16,0,0,1,0-22.63L96,104Z" fill="url(#p0-shine)"/>
+    <path d="M225,80.4,183.6,39a24,24,0,0,0-33.94,0L31,157.66a24,24,0,0,0,0,33.94l30.06,30.06A8,8,0,0,0,66.74,224H216a8,8,0,0,0,0-16h-84.7L225,114.34A24,24,0,0,0,225,80.4ZM108.68,208H70.05L42.33,180.28a8,8,0,0,1,0-11.31L96,115.31,148.69,168Zm105-105L160,156.69,107.31,104,161,50.34a8,8,0,0,1,11.32,0l41.38,41.38a8,8,0,0,1,0,11.31Z" fill="url(#p0-rim)"/>
+  </g>
+</svg>

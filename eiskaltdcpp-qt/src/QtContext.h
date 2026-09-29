@@ -25,10 +25,10 @@ namespace dcpp { class DCContext; }
 class WulforSettings;
 class SearchBlacklist;
 class AntiSpam;
+class WulforUtil;
 
 #ifndef QT_CONTEXT_MINIMAL
 class GlobalTimer;
-class WulforUtil;
 class ArenaWidgetManager;
 class MainWindow;
 class HubManager;
@@ -149,6 +149,10 @@ public:
     [[nodiscard]] SearchBlacklist*    searchBlacklist()    const noexcept { return searchBlacklist_.get(); }
     [[nodiscard]] AntiSpam*           antiSpam()           const noexcept { return antiSpam_.get(); }
 
+#ifdef QT_CONTEXT_MINIMAL
+    // Headless model tests do not create the application's icon/theme service.
+    [[nodiscard]] WulforUtil*         wulforUtil()         const noexcept { return nullptr; }
+#endif
 #ifndef QT_CONTEXT_MINIMAL
     [[nodiscard]] GlobalTimer*        globalTimer()        const noexcept { return globalTimer_.get(); }
     [[nodiscard]] WulforUtil*         wulforUtil()         const noexcept { return wulforUtil_.get(); }

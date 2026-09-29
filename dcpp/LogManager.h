@@ -74,6 +74,7 @@ public:
 
     void log(Area area, ParamMap& params, bool writeToFile);
     void message(const string& msg);
+    void warning(const string& msg);
 
     List getLastLogs();
     EntryList getLiveEntries() const;

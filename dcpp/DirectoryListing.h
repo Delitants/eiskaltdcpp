@@ -52,14 +52,14 @@ public:
         File(Directory* aDir, const string& aName, int64_t aSize, const TTHValue& aTTH) :
             NonCopyable(),
             name(aName), size(aSize), parent(aDir), tthRoot(aTTH), adls(false),
-            ts(0), hit(0)
+            ts(0), remoteDate(0), hit(0)
         {
         }
 
         File(const File& rhs, bool _adls = false) :
             NonCopyable(),
             name(rhs.name), size(rhs.size), parent(rhs.parent), tthRoot(rhs.tthRoot), adls(_adls),
-            ts(rhs.ts), hit(rhs.hit)
+            ts(rhs.ts), remoteDate(rhs.remoteDate), hit(rhs.hit), hitPresent(rhs.hitPresent), mediaInfo(rhs.mediaInfo)
         {
         }
 
@@ -69,7 +69,19 @@ public:
         GETSET(TTHValue, tthRoot, TTH);
         GETSET(bool, adls, Adls);
         GETSET(uint64_t, ts, TS);
-        GETSET(uint64_t, hit, Hit);
+        GETSET(uint64_t, remoteDate, RemoteDate);
+    private:
+        uint64_t hit;
+        bool hitPresent = false;
+    public:
+        TypeTraits<uint64_t>::ParameterType getHit() const { return hit; }
+        void setHit(TypeTraits<uint64_t>::ParameterType value) { hit = value; hitPresent = true; }
+        bool hasHit() const { return hitPresent; }
+        void clearMetadata() {
+            ts = remoteDate = hit = 0;
+            hitPresent = false;
+            mediaInfo = {};
+        }
         MediaInfo mediaInfo;
     };
 
@@ -88,7 +100,7 @@ public:
 
         Directory(Directory* aParent, const string& aName, bool _adls, bool aComplete):
             NonCopyable(),
-            name(aName), parent(aParent), adls(_adls), complete(aComplete) { }
+            name(aName), parent(aParent), adls(_adls), complete(aComplete), remoteDate(0) { }
 
         virtual ~Directory();
 
@@ -112,6 +124,7 @@ public:
         GETSET(Directory*, parent, Parent);
         GETSET(bool, adls, Adls);
         GETSET(bool, complete, Complete);
+        GETSET(uint64_t, remoteDate, RemoteDate);
 
     };
 

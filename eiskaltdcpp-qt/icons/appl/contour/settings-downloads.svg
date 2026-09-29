@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Download settings</title>
+  <desc>Contour light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-color" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#268969" stop-opacity="1"/><stop offset="0.66" stop-color="#268969" stop-opacity="1"/><stop offset="0.66" stop-color="#344653" stop-opacity="1"/><stop offset="1" stop-color="#344653" stop-opacity="1"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M222,144v64a6,6,0,0,1-6,6H40a6,6,0,0,1-6-6V144a6,6,0,0,1,12,0v58H210V144a6,6,0,0,1,12,0Zm-98.24,4.24a6,6,0,0,0,8.48,0l40-40a6,6,0,0,0-8.48-8.48L134,129.51V32a6,6,0,0,0-12,0v97.51L92.24,99.76a6,6,0,0,0-8.48,8.48Z" fill="url(#p0-color)"/>
+  </g>
+</svg>

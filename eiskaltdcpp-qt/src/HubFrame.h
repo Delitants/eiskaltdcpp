@@ -170,6 +170,7 @@ public:
     void requestClear() override { clearChat(); }
     void requestFilter() override { slotShowSearchBar(); }
     void requestFocus() override { plainTextEdit_INPUT->setFocus(); }
+    QWidget *inputWidget() const { return plainTextEdit_INPUT; }
     ArenaWidget::Role role() const override { return ArenaWidget::Hub; }
 
     QString getCIDforNick(QString nick);

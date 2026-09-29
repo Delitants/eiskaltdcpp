@@ -27,7 +27,9 @@ add_executable(eiskaltdcpp-tests
     test_util.cpp
     test_util_extended.cpp
     test_util_formatting.cpp
+    test_certificate_lifecycle.cpp
     test_dccontext.cpp
+    test_directorylisting_metadata.cpp
     test_encoder.cpp
     test_string_tokenizer.cpp
     test_text.cpp
@@ -40,18 +42,31 @@ add_executable(eiskaltdcpp-tests
     test_simplexmlreader.cpp
     test_adlsearch.cpp
     test_queueitem.cpp
+    test_queueindex.cpp
     test_usercommand.cpp
     test_util_extra.cpp
     test_settingsmanager.cpp
+    test_proxyroute.cpp
+    test_globalproxy_routing.cpp
+    test_gostudprelay.cpp
+    test_proxyresolver.cpp
     test_user.cpp
     test_searchqueue.cpp
+    test_searchmanager_shutdown.cpp
+    test_protocolnumbers.cpp
+    test_adcresources.cpp
     test_finisheditem.cpp
     test_logmanager.cpp
     test_searchresult.cpp
     test_favoritemanager.cpp
     test_httpconnection.cpp
     test_bufferedsocket.cpp
+    test_socketwake.cpp
     test_sslsocket.cpp
+    test_upnp.cpp
+    test_streamproxy.cpp
+    test_gostprotocol.cpp
+    test_managedshare.cpp
     test_merkletree.cpp
     test_nmdc_escape.cpp
     test_file_utils.cpp
@@ -90,6 +105,16 @@ target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain )
 
 # Auto-discover test cases
 catch_discover_tests(eiskaltdcpp-tests)
+
+if (APPLE)
+    add_test(NAME eiskalt-macos-bundle-dylib-ids
+        COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/tests/macos/bundle/dylib-ids.sh"
+                "${CMAKE_SOURCE_DIR}")
+endif ()
+
+if (USE_TORRENT)
+    add_subdirectory(torrent)
+endif ()
 
 # Qt-based tests (separate binary)
 if (USE_QT6)

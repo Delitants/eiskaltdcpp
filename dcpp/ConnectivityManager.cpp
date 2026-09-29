@@ -28,6 +28,7 @@
 #include "MappingManager.h"
 #include "SearchManager.h"
 #include "SettingsManager.h"
+#include "ProxyRoute.h"
 #include "version.h"
 #ifdef WITH_DHT
 #include "Socket.h"
@@ -43,7 +44,7 @@ bool ConnectivityManager::shouldStartDht(bool useDht, bool incomingActive, int o
     if(outgoingMode == SettingsManager::OUTGOING_DIRECT)
         return incomingActive;
 
-    return outgoingMode == SettingsManager::OUTGOING_SOCKS5 && hasUdpRelay;
+    return (outgoingMode == SettingsManager::OUTGOING_SOCKS5 || outgoingMode == SettingsManager::OUTGOING_GOST) && hasUdpRelay;
 }
 
 void ConnectivityManager::runIncomingListenerProbe(const std::function<void()>& listenTcp,
@@ -87,6 +88,11 @@ void ConnectivityManager::startSocket() {
 }
 
 void ConnectivityManager::detectConnection() {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST) {
+        ctx().getMappingManager()->close();
+        startSocket();
+        return;
+    }
     if (running)
         return;
 
@@ -143,6 +149,15 @@ void ConnectivityManager::detectConnection() {
 }
 
 void ConnectivityManager::setup(bool settingsChanged) {
+    ctx().getProxyRoute()->reload(*ctx().getSettingsManager());
+    const bool gost = CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST;
+    if(gost || lastGost) {
+        if(gost != lastGost || ctx().getProxyRoute()->snapshot()->generation != lastRouteGeneration) {
+            ctx().getMappingManager()->close();
+            startSocket();
+        }
+        if(gost) return;
+    }
     if(CTX_BOOLSETTING(AUTO_DETECT_CONNECTION)) {
         if (!autoDetected) detectConnection();
     } else {
@@ -204,6 +219,8 @@ void ConnectivityManager::startDht(bool incomingActive) {
         string relayServer;
         string relayPort;
         hasUdpRelay = Socket::getUdpProxyEndpoint(ctx(), relayServer, relayPort);
+    } else if(outgoingMode == SettingsManager::OUTGOING_GOST) {
+        hasUdpRelay = ctx().getProxyRoute()->supportsUdp();
     }
 
     if(!shouldStartDht(CTX_BOOLSETTING(USE_DHT), incomingActive, outgoingMode, hasUdpRelay))
@@ -235,6 +252,8 @@ void ConnectivityManager::log(const string& message) {
 }
 
 void ConnectivityManager::updateLast() {
+    lastRouteGeneration = ctx().getProxyRoute()->snapshot()->generation;
+    lastGost = CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST;
     lastBind = CTX_SETTING(BIND_ADDRESS);
     lastBind6 = CTX_SETTING(BIND_ADDRESS6);
     lastUseIPv6 = CTX_BOOLSETTING(USE_IPV6);

@@ -87,10 +87,10 @@ void SettingsNotification::init(){
         checkBox_ACTIVEPM->setChecked(qtCtx()->settings()->getBool("notification/play-sound-with-active-pm", true));
     }
 
-    toolButton_BRWNICK->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
-    toolButton_BRWPM->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
-    toolButton_BRWTR->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
-    toolButton_BRWFAV->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BRWNICK->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BRWPM->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BRWTR->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BRWFAV->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
 
     connect(toolButton_BRWNICK, &QToolButton::clicked, this, &SettingsNotification::slotBrowseFile);
     connect(toolButton_BRWPM,   &QToolButton::clicked, this, &SettingsNotification::slotBrowseFile);

@@ -11,6 +11,7 @@
  */
 
 #include "TabFrame.h"
+#include "ArenaTabInfo.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 
@@ -25,7 +26,6 @@
 
 #include <QPushButton>
 #include <QWheelEvent>
-#include <functional>
 
 TabFrame::TabFrame(QWidget *parent) :
     QFrame(parent)
@@ -34,11 +34,66 @@ TabFrame::TabFrame(QWidget *parent) :
     
     setAcceptDrops(true);
 
-    fr_layout = new FlowLayout(this);
+    tabContents = new QWidget(this);
+    fr_layout = new FlowLayout(tabContents, 0, 2, 2);
     fr_layout->setContentsMargins(0, 0, 0, 0);
 
-    setMinimumHeight(28);
-    setMaximumHeight(32);
+    auto *layout = new QHBoxLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(2);
+    scrollArea = new QScrollArea(this);
+    scrollArea->setObjectName(QStringLiteral("tabScrollArea"));
+    scrollArea->setFrameShape(QFrame::NoFrame);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setWidget(tabContents);
+    scrollArea->viewport()->installEventFilter(this);
+    layout->addWidget(scrollArea, 1);
+    auto *controls = new QVBoxLayout();
+    controls->setSpacing(0);
+    allTabs = new tab_navigation::AllTabsMenu(this);
+    controls->addWidget(tab_navigation::makeAllTabsButton(allTabs, this));
+    previousRow = tab_navigation::makeScrollButton(Qt::UpArrow, this);
+    previousRow->setObjectName(QStringLiteral("previousTabRow"));
+    previousRow->setArrowType(Qt::UpArrow);
+    previousRow->setToolTip(tr("Previous tab row"));
+    nextRow = tab_navigation::makeScrollButton(Qt::DownArrow, this);
+    nextRow->setObjectName(QStringLiteral("nextTabRow"));
+    nextRow->setArrowType(Qt::DownArrow);
+    nextRow->setToolTip(tr("Next tab row"));
+    for (auto *button : {previousRow, nextRow}) {
+        button->setAccessibleName(button->toolTip());
+        button->setFixedSize(30, 24);
+        button->setAutoRaise(true);
+        button->hide();
+        controls->addWidget(button);
+    }
+    controls->addStretch();
+    layout->addLayout(controls);
+    connect(previousRow, &QToolButton::clicked, this, [this]() {
+        auto *bar = scrollArea->verticalScrollBar();
+        bar->setValue(bar->value() - bar->singleStep());
+    });
+    connect(nextRow, &QToolButton::clicked, this, [this]() {
+        auto *bar = scrollArea->verticalScrollBar();
+        bar->setValue(bar->value() + bar->singleStep());
+    });
+    const auto updateArrows = [this]() {
+        auto *bar = scrollArea->verticalScrollBar();
+        previousRow->setEnabled(bar->value() > bar->minimum());
+        nextRow->setEnabled(bar->value() < bar->maximum());
+    };
+    connect(scrollArea->verticalScrollBar(), &QScrollBar::valueChanged, this, updateArrows);
+    connect(scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged, this, updateArrows);
+    connect(allTabs, &QMenu::aboutToShow, this, &TabFrame::refreshTabList);
+    connect(allTabs, &tab_navigation::AllTabsMenu::selected, this, [this](quint64 id) {
+        if (auto *widget = registry.resolve(id)) {
+            if (awgt_map.contains(widget))
+                qtCtx()->arenaWidgetManager()->activate(widget);
+        }
+    });
+    setMinimumHeight(30);
+    setMaximumHeight(100);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     shortcuts << (new QShortcut(QKeySequence(int(Qt::ALT) | int(Qt::Key_1)), this))
@@ -73,26 +128,45 @@ TabFrame::~TabFrame(){
 }
 
 void TabFrame::resizeEvent(QResizeEvent *e){
-    e->accept();
-
-    QFrame::updateGeometry();
+    QFrame::resizeEvent(e);
+    scheduleLayout();
 }
 
 bool TabFrame::eventFilter(QObject *obj, QEvent *e){
+    if (obj == scrollArea->viewport() && e->type() == QEvent::Resize)
+        scheduleLayout();
     TabButton *btn = qobject_cast<TabButton*>(obj);
-    QWheelEvent *w_e = reinterpret_cast<QWheelEvent*>(e);
-
-    if (btn && (e->type() == QEvent::Wheel) && w_e){
-        int numDegrees = (w_e->angleDelta().y() < 0)? (-1*w_e->angleDelta().y()/8) : (w_e->angleDelta().y()/8);
-        int numSteps = numDegrees/15;
-        std::function<void()> f = [this]() { this->nextTab(); };
-
-        if (w_e->angleDelta().y() < 0)
-            f = [this]() { this->prevTab(); };
-
-        for (int i = 0; i < numSteps; i++)
-            f();
-
+    if (btn && e->type() == QEvent::Wheel) {
+        auto *wheel = static_cast<QWheelEvent*>(e);
+        if (wheel->phase() == Qt::ScrollBegin) {
+            tabWheelRemainder = 0;
+            rowWheelRemainder = 0;
+        }
+        auto *bar = scrollArea->verticalScrollBar();
+        if (bar->maximum() > bar->minimum()) {
+            tabWheelRemainder = 0;
+            if (wheel->pixelDelta().y()) {
+                rowWheelRemainder = 0;
+                bar->setValue(bar->value() - wheel->pixelDelta().y());
+            } else if (wheel->angleDelta().y()) {
+                rowWheelRemainder += wheel->angleDelta().y() * bar->singleStep() * QApplication::wheelScrollLines();
+                bar->setValue(bar->value() - rowWheelRemainder / 120);
+                rowWheelRemainder %= 120;
+            } else {
+                return QFrame::eventFilter(obj, e);
+            }
+        } else {
+            rowWheelRemainder = 0;
+            if (!wheel->pixelDelta().isNull() || !wheel->angleDelta().y())
+                return QFrame::eventFilter(obj, e);
+            tabWheelRemainder += wheel->angleDelta().y();
+            while (qAbs(tabWheelRemainder) >= 120) {
+                const bool forward = tabWheelRemainder > 0;
+                tabWheelRemainder += forward ? -120 : 120;
+                if (forward) nextTab(); else prevTab();
+            }
+        }
+        wheel->accept();
         return true;
     }
 
@@ -100,12 +174,11 @@ bool TabFrame::eventFilter(QObject *obj, QEvent *e){
 }
 
 QSize TabFrame::sizeHint() const {
-    QSize s(fr_layout->sizeHint().width() , fr_layout->heightForWidth(width()));
-    return s;
+    return QSize(320, minimumHeight());
 }
 
 QSize TabFrame::minimumSizeHint() const{
-    return sizeHint();
+    return QSize(112, minimumHeight());
 }
 
 void TabFrame::removeWidget(ArenaWidget *awgt){
@@ -115,18 +188,24 @@ void TabFrame::removeWidget(ArenaWidget *awgt){
         return;
 
     TabButton *btn = const_cast<TabButton*>(awgt_map.value(awgt));
+    const bool wasActive = btn->isChecked();
 
     fr_layout->removeWidget(btn);
     tbtn_map.remove(btn);
     awgt_map.remove(awgt);
+    registry.remove(awgt);
 
+    btn->hide();
     btn->deleteLater();
 
     historyPurge(awgt);
-    historyPop();
+    if (wasActive)
+        historyPop();
     
      if (awgt->toolButton())
         awgt->toolButton()->setChecked(false);
+    refreshTabList();
+    scheduleLayout();
 }
 
 void TabFrame::insertWidget(ArenaWidget *awgt){
@@ -135,10 +214,13 @@ void TabFrame::insertWidget(ArenaWidget *awgt){
     if (awgt_map.contains(awgt) || (awgt && (awgt->state() & ArenaWidget::Hidden)) || !awgt)
         return;
 
-    TabButton *btn = new TabButton();
-    btn->setText(awgt->getArenaShortTitle());
-    btn->setToolTip(qtCtx()->wulforUtil()->compactToolTipText(awgt->getArenaTitle(), 60, "\n"));
-    btn->setWidgetIcon(awgt->getPixmap());
+    if (!awgt->getWidget())
+        return;
+    TabButton *btn = new TabButton(tabContents);
+    btn->setProperty("arenaTabId", QVariant::fromValue(registry.add(awgt)));
+    btn->setText(tab_navigation::title(awgt));
+    btn->setToolTip(tab_navigation::toolTip(awgt));
+    btn->setWidgetIcon(awgt->getIcon());
     btn->setContextMenuPolicy(Qt::CustomContextMenu);
     btn->installEventFilter(this);
 
@@ -154,6 +236,8 @@ void TabFrame::insertWidget(ArenaWidget *awgt){
     connect(btn, &TabButton::clicked, this, &TabFrame::buttonClicked);
     connect(btn, &TabButton::closeRequest, this, &TabFrame::closeRequsted);
     connect(btn, &TabButton::dropped, this, &TabFrame::slotDropped);
+    refreshTabList();
+    scheduleLayout();
 }
 
 bool TabFrame::hasWidget(ArenaWidget *awgt) const{
@@ -174,11 +258,16 @@ void TabFrame::mapped(ArenaWidget *awgt){
     btn->setFocus();
 
     historyPush(awgt);
+    revealActive();
+    if (allTabs->isVisible())
+        refreshTabList();
 }
 
 void TabFrame::updated ( ArenaWidget* awgt ) {
     DEBUG_BLOCK
     
+    if (!awgt)
+        return;
     if (awgt->state() & ArenaWidget::Hidden){
         removeWidget(awgt);
     }
@@ -192,16 +281,95 @@ void TabFrame::redraw() {
     
     for (auto it = tbtn_map.begin(); it != tbtn_map.end(); ++it){
         TabButton *btn = const_cast<TabButton*>(it.key());
-        ArenaWidget *awgt = const_cast<ArenaWidget*>(it.value());
+        ArenaWidget *awgt = registry.resolve(btn->property("arenaTabId").toULongLong());
+        if (!awgt)
+            continue;
 
-        btn->setText(awgt->getArenaShortTitle());
-        btn->setToolTip(qtCtx()->wulforUtil()->compactToolTipText(awgt->getArenaTitle(), 60, "\n"));
-        btn->setWidgetIcon(awgt->getPixmap());
+        btn->setText(tab_navigation::title(awgt));
+        btn->setToolTip(tab_navigation::toolTip(awgt));
+        btn->setWidgetIcon(awgt->getIcon());
 
         if (awgt->state() & ArenaWidget::Hidden)
             continue;
         else
             btn->resetGeometry();
+    }
+    if (allTabs->isVisible())
+        refreshTabList();
+    scheduleLayout();
+}
+
+void TabFrame::refreshTabList()
+{
+    QList<tab_navigation::Entry> entries;
+    for (int i = 0; i < fr_layout->count(); ++i) {
+        auto *button = qobject_cast<TabButton*>(fr_layout->itemAt(i)->widget());
+        if (!button)
+            continue;
+        const auto id = button->property("arenaTabId").toULongLong();
+        if (auto *widget = registry.resolve(id))
+            entries.append({id, tab_navigation::title(widget), tab_navigation::details(widget),
+                            widget->getIcon(), button->isChecked()});
+    }
+    allTabs->setEntries(entries);
+}
+
+void TabFrame::scheduleLayout()
+{
+    if (layoutPending)
+        return;
+    layoutPending = true;
+    QTimer::singleShot(0, this, [this]() {
+        layoutPending = false;
+        layoutTabs();
+    });
+}
+
+void TabFrame::layoutTabs()
+{
+    const int available = qMax(80, scrollArea->viewport()->width());
+    int rowHeight = 30;
+    for (auto *button : tbtn_map.keys()) {
+        button->setMaximumWidth(qMin(tab_navigation::MaximumWidth, available));
+        rowHeight = qMax(rowHeight, button->normalHeight());
+    }
+    const int contentHeight = fr_layout->heightForWidth(available);
+    const bool geometryChanged = tabContents->size() != QSize(available, contentHeight);
+    tabContents->resize(available, contentHeight);
+    fr_layout->setGeometry(tabContents->rect());
+    const int visibleHeight = qBound(rowHeight, contentHeight, rowHeight * 3 + 4);
+    if (minimumHeight() != visibleHeight)
+        setFixedHeight(visibleHeight);
+    const bool overflow = contentHeight > visibleHeight;
+    previousRow->setVisible(overflow);
+    nextRow->setVisible(overflow);
+    scrollArea->verticalScrollBar()->setSingleStep(rowHeight + 2);
+    TabButton *active = nullptr;
+    for (auto *button : tbtn_map.keys())
+        if (button->isChecked()) {
+            active = button;
+            break;
+        }
+    const bool activeMoved = active &&
+        (lastActiveButton != active || lastActiveGeometry != active->geometry());
+    if (!active) {
+        lastActiveButton.clear();
+        lastActiveGeometry = QRect();
+    }
+    if (geometryChanged || activeMoved)
+        revealActive();
+}
+
+void TabFrame::revealActive()
+{
+    for (auto *button : tbtn_map.keys()) {
+        if (button->isChecked()) {
+            scrollArea->ensureWidgetVisible(button, 0, 0);
+            // Content coordinates do not change when the user scrolls the viewport.
+            lastActiveButton = button;
+            lastActiveGeometry = button->geometry();
+            break;
+        }
     }
 }
 
@@ -257,7 +425,8 @@ void TabFrame::buttonClicked(){
 
     btn->setFocus();
 
-    qtCtx()->arenaWidgetManager()->activate(tbtn_map[btn]);
+    if (auto *widget = registry.resolve(btn->property("arenaTabId").toULongLong()))
+        qtCtx()->arenaWidgetManager()->activate(widget);
 }
 
 void TabFrame::closeRequsted() {
@@ -268,8 +437,8 @@ void TabFrame::closeRequsted() {
     if (!(btn && tbtn_map.contains(btn)))
         return;
 
-    ArenaWidget *awgt = const_cast<ArenaWidget*>(tbtn_map[btn]);
-    qtCtx()->arenaWidgetManager()->rem(awgt);
+    if (auto *widget = registry.resolve(btn->property("arenaTabId").toULongLong()))
+        qtCtx()->arenaWidgetManager()->rem(widget);
 }
 
 void TabFrame::nextTab(){
@@ -360,8 +529,11 @@ void TabFrame::slotContextMenu() {
             widget_menu = new QMenu(this);
             widget_menu->addAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE), tr("Close"));
 
-            if (widget_menu->exec(QCursor::pos()))
-                qtCtx()->arenaWidgetManager()->rem(awgt);
+            const auto id = btn->property("arenaTabId").toULongLong();
+            if (widget_menu->exec(QCursor::pos())) {
+                if (auto *widget = registry.resolve(id))
+                    qtCtx()->arenaWidgetManager()->rem(widget);
+            }
 
             delete widget_menu;
         }
@@ -407,6 +579,8 @@ void TabFrame::slotDropped(TabButton *source, TabButton *target){
     fr_layout->invalidate();
     updateGeometry();
     update();
+    refreshTabList();
+    scheduleLayout();
 
     qtCtx()->arenaWidgetManager()->activate(tbtn_map[source]);
 }
@@ -420,6 +594,8 @@ void TabFrame::moveLeft(){
 
         if (t && t->isChecked()){
             fr_layout->moveLeft(item);
+            refreshTabList();
+            revealActive();
 
             break;
         }
@@ -435,6 +611,8 @@ void TabFrame::moveRight(){
 
         if (t && t->isChecked()){
             fr_layout->moveRight(item);
+            refreshTabList();
+            revealActive();
 
             break;
         }

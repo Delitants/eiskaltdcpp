@@ -106,10 +106,10 @@ void SettingsDownloads::init(){
         spinBox_MAXDL->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DOWNLOAD_SLOTS, true));
         spinBox_NONEWDL->setValue(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::MAX_DOWNLOAD_SPEED, true));
 
-        toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
-        toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
-        pushButton_DOWNLOADTO_ADD->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITADD));
-        pushButton_DOWNLOADTO_REMOVE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
+        toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
+        toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
+        pushButton_DOWNLOADTO_ADD->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITADD));
+        pushButton_DOWNLOADTO_REMOVE->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITDELETE));
         groupBox_3->hide();
         pushButton_CFGLISTS->hide();
 
@@ -235,8 +235,8 @@ void SettingsDownloads::slotRemoveDownloadTo()
 void SettingsDownloads::slotDownloadToMenu(const QPoint&)
 {
     QMenu menu(this);
-    QAction *addAction = new QAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITADD), tr("Add"), &menu);
-    QAction *removeAction = new QAction(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE), tr("Remove"), &menu);
+    QAction *addAction = new QAction(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITADD), tr("Add"), &menu);
+    QAction *removeAction = new QAction(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITDELETE), tr("Remove"), &menu);
 
     removeAction->setEnabled(!treeWidget->selectedItems().isEmpty());
 

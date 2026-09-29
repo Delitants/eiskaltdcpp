@@ -39,6 +39,8 @@ void MappingManager::addImplementation(UPnP* impl) {
 }
 
 bool MappingManager::open() {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+        return false;
     if(opened)
         return false;
 
@@ -58,16 +60,32 @@ bool MappingManager::open() {
         return false;
     }
 
-    start();
+    {
+        std::lock_guard<std::mutex> lock(renewalMutex);
+        stopping = false;
+    }
+    try {
+        start();
+    } catch(...) {
+        portMapping = false;
+        throw;
+    }
 
     return true;
 }
 
 void MappingManager::close() {
+    {
+        std::lock_guard<std::mutex> lock(renewalMutex);
+        stopping = true;
+    }
+    renewalWake.notify_all();
+    join(); // Never delete mappings while the worker is adding or renewing them.
     for(auto &i : impls) {
         close(*i);
     }
     opened = false;
+    portMapping = false;
 }
 
 int MappingManager::run() {
@@ -83,6 +101,9 @@ int MappingManager::run() {
     for(auto &i : impls) {
         UPnP& impl = *i;
 
+        if(isStopping())
+            break;
+
         close(impl);
 
         if(!impl.init()){
@@ -90,27 +111,41 @@ int MappingManager::run() {
             continue;
         }
 
+        if(isStopping())
+            break;
         if(!conn_port.empty() && !impl.open(conn_port, UPnP::PROTOCOL_TCP, str(F_(APPNAME " Transfer Port (%1% TCP)") % conn_port))){
             log(str(F_("The %1% interface has failed to map the %2% %3% port") % impl.getName() % "TCP" % conn_port));
+            close(impl);
             continue;
         }
 
+        if(isStopping())
+            break;
         if(!secure_port.empty() && !impl.open(secure_port, UPnP::PROTOCOL_TCP, str(F_(APPNAME " Encrypted Transfer Port (%1% TCP)") % secure_port))){
             log(str(F_("The %1% interface has failed to map the %2% %3% port") % impl.getName() % "TLS" % secure_port));
+            close(impl);
             continue;
         }
 
+        if(isStopping())
+            break;
         if(!search_port.empty() && !impl.open(search_port, UPnP::PROTOCOL_UDP, str(F_(APPNAME " Search Port (%1% UDP)") % search_port))){
             log(str(F_("The %1% interface has failed to map the %2% %3% port") % impl.getName() % "UDP" % search_port));
+            close(impl);
             continue;
         }
 #ifdef WITH_DHT
+        if(isStopping())
+            break;
         if(!dht_port.empty() && !impl.open(dht_port, UPnP::PROTOCOL_UDP, str(F_(APPNAME " DHT Port (%1% UDP)") % dht_port))){
             log(str(F_("The %1% interface has failed to map the %2% %3% port") % impl.getName() % "UDP" % dht_port));
+            close(impl);
             continue;
         }
 #endif
 
+        if(isStopping())
+            break;
         opened = true;
 
 #ifdef WITH_DHT
@@ -135,17 +170,52 @@ int MappingManager::run() {
             }
         }
 
+        if(isStopping())
+            break;
         ctx().getConnectivityManager()->mappingFinished(true);
+
+        maintainMappings(impl);
 
         break;
     }
 
-    if(!opened) {
+    if(!opened && !isStopping()) {
         log(_("Failed to create port mappings"));
         ctx().getConnectivityManager()->mappingFinished(false);
     }
     portMapping = false;
     return 0;
+}
+
+bool MappingManager::isStopping() {
+    std::lock_guard<std::mutex> lock(renewalMutex);
+    return stopping;
+}
+
+void MappingManager::maintainMappings(UPnP& impl) {
+    bool healthy = true;
+    std::unique_lock<std::mutex> lock(renewalMutex);
+    while(!renewalWake.wait_for(lock, std::chrono::seconds(healthy ? 300 : 60),
+                              [this] { return stopping; })) {
+        lock.unlock();
+        // AddPortMapping refreshes existing leases and recreates lost ones;
+        // deleting them first would interrupt otherwise healthy connections.
+        const auto cancelled = [this] { return isStopping(); };
+        bool renewed = impl.renew(cancelled);
+        if(!renewed && !cancelled())
+            renewed = impl.init() && impl.renew(cancelled);
+        if(cancelled()) {
+            lock.lock();
+            break;
+        }
+        if(renewed) {
+            log(healthy ? _("Port mappings renewed") : _("Port mappings restored"));
+        } else {
+            log(_("Port mapping renewal failed; retrying in 60 seconds"));
+        }
+        healthy = renewed;
+        lock.lock();
+    }
 }
 
 void MappingManager::close(UPnP& impl) {

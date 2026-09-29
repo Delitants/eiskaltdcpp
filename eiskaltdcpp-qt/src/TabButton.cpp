@@ -10,286 +10,207 @@
  * Copyright (C) 2026 Joe Rivera <transfix@sublevels.net>
  */
 
+
 #include "TabButton.h"
+#include "TabNavigation.h"
+#include "AppIconTheme.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
-
-#include <QResizeEvent>
-#include <QLabel>
-#include <QEvent>
-#include <QMouseEvent>
-#include <QStyleOptionButton>
-#include <QApplication>
-#include <QPaintEvent>
-#include <QPainter>
-#include <QStyleOption>
-#include <QLinearGradient>
-#include <QBrush>
-#include <QPen>
-#include <QPointF>
-#include <QMimeData>
-#include <QDrag>
-#include <QPalette>
-
-#include "WulforUtil.h"
 #include "WulforSettings.h"
 
-#include <QDataStream>
+#include <QApplication>
+#include <QDrag>
+#include <QLabel>
+#include <QMimeData>
+#include <QPainter>
+#include <QStyle>
+#include <QToolButton>
 
-static const int margin         = 5;
-static const int LABELWIDTH     = 18;
-static const int CLOSEPXWIDTH   = 14;
-static const int PXWIDTH        = 16;
-static const int CLOSE_RIGHT_MARGIN = 58;
+static const int PXWIDTH = 16;
+QPointer<TabButton> TabButton::dragSourceButton;
 
-TabButton *TabButton::dragSourceButton = nullptr;
-
-TabButton::TabButton(QWidget *parent) :
-    QPushButton(parent), isLeftBtnHold(false)
+TabButton::TabButton(QWidget *parent) : QPushButton(parent), isLeftBtnHold(false)
 {
     setFlat(true);
     setCheckable(true);
     setAutoExclusive(true);
     setAutoDefault(false);
     setAcceptDrops(true);
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setContentsMargins(0, 0, 0, 0);
-    setFixedHeight(26);
-    setContentsMargins(0, 0, 0, 0);
-
-    parentHeight = QPushButton::sizeHint().height();
-
-    label = new QLabel(this);
-    label->setPixmap(style()->standardIcon(QStyle::SP_TitleBarCloseButton).pixmap(CLOSEPXWIDTH, CLOSEPXWIDTH));
-    label->setFixedSize(QSize(CLOSEPXWIDTH, CLOSEPXWIDTH));
-    label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-
+    setMouseTracking(true);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    setMinimumWidth(80);
+    setMaximumWidth(tab_navigation::MaximumWidth);
+    closeButton = tab_navigation::makeCloseButton(this, tr("Close"));
+    closeButton->setCursor(Qt::ArrowCursor);
+    connect(closeButton, &QToolButton::clicked, this, &TabButton::closeRequest);
     px_label = new QLabel(this);
-    px_label->setFixedSize(QSize(PXWIDTH, PXWIDTH));
-    px_label->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-
-    installEventFilter(this);
-    label->installEventFilter(this);
-
-    updateGeometry();
+    px_label->setObjectName(QStringLiteral("tabWidgetIcon"));
+    px_label->setFixedSize(PXWIDTH, PXWIDTH);
+    px_label->setAlignment(Qt::AlignCenter);
+    px_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    resetGeometry();
 }
 
-void TabButton::resizeEvent(QResizeEvent *e){
-    e->accept();
-
-    updateGeometry();
+void TabButton::resizeEvent(QResizeEvent *event)
+{
+    QPushButton::resizeEvent(event);
+    positionChildren();
 }
 
-bool TabButton::eventFilter(QObject *obj, QEvent *e){
-    bool ret = QPushButton::eventFilter(obj, e);
-
-    if (e->type() == QEvent::MouseButtonRelease){
-        QMouseEvent *m_e = reinterpret_cast<QMouseEvent*>(e);
-
-        if ((m_e->button() == Qt::MiddleButton) || (childAt(m_e->pos()) == static_cast<QWidget*>(label)))
-            emit closeRequest();
-    }
-
-    return ret;
-}
-
-void TabButton::dragEnterEvent(QDragEnterEvent *event){
-    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") &&
-        dragSourceButton &&
-        dragSourceButton != this) {
+void TabButton::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") && dragSourceButton && dragSourceButton != this)
         event->acceptProposedAction();
-        return;
-    }
-
-    event->ignore();
+    else
+        event->ignore();
 }
 
-void TabButton::dragMoveEvent(QDragMoveEvent *event){
-    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") &&
-        dragSourceButton &&
-        dragSourceButton != this) {
+void TabButton::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") && dragSourceButton && dragSourceButton != this)
         event->acceptProposedAction();
-        return;
-    }
-
-    event->ignore();
+    else
+        event->ignore();
 }
 
-void TabButton::dropEvent(QDropEvent *e){
-    if (e->mimeData()->hasFormat("application/x-eiskalt-tab") &&
-        dragSourceButton &&
-        dragSourceButton != this) {
+void TabButton::dropEvent(QDropEvent *event)
+{
+    if (event->mimeData()->hasFormat("application/x-eiskalt-tab") && dragSourceButton && dragSourceButton != this) {
         emit dropped(dragSourceButton, this);
-        e->acceptProposedAction();
-        return;
+        event->acceptProposedAction();
+    } else {
+        event->ignore();
     }
-
-    e->ignore();
 }
 
-void TabButton::mousePressEvent(QMouseEvent *e){
-    QPushButton::mousePressEvent(e);
-
-    if (e->button() == Qt::LeftButton){
-        dragStartPos = e->pos();
-        emit clicked();
+void TabButton::mousePressEvent(QMouseEvent *event)
+{
+    QPushButton::mousePressEvent(event);
+    if (event->button() == Qt::LeftButton) {
+        dragStartPos = event->pos();
         isLeftBtnHold = true;
     }
 }
 
-void TabButton::mouseMoveEvent(QMouseEvent *e){
-    QPushButton::mouseMoveEvent(e);
-
-    if (!isLeftBtnHold)
+void TabButton::mouseMoveEvent(QMouseEvent *event)
+{
+    QPushButton::mouseMoveEvent(event);
+    if (!isLeftBtnHold || !(event->buttons() & Qt::LeftButton) ||
+        (event->pos() - dragStartPos).manhattanLength() < QApplication::startDragDistance())
         return;
-
-    if (!(e->buttons() & Qt::LeftButton))
+    isLeftBtnHold = false;
+    setDown(false);
+    const QPointer<TabButton> alive(this);
+    click();
+    if (!alive)
         return;
-
-    if ((e->pos() - dragStartPos).manhattanLength() < QApplication::startDragDistance())
-        return;
-
     auto *mime = new QMimeData();
     mime->setData("application/x-eiskalt-tab", QByteArray("tab"));
-
-    auto *drag = new QDrag(this);
+    QPointer<QDrag> drag = new QDrag(this);
     drag->setMimeData(mime);
-
     dragSourceButton = this;
     drag->exec(Qt::MoveAction);
-    dragSourceButton = nullptr;
+    dragSourceButton.clear();
+    // A tab can be removed while the native drag loop is running.
+    if (drag)
+        drag->deleteLater();
 }
 
-void TabButton::mouseReleaseEvent(QMouseEvent *e){
-    QPushButton::mouseReleaseEvent(e);
-
+void TabButton::mouseReleaseEvent(QMouseEvent *event)
+{
     isLeftBtnHold = false;
-}
-
-void TabButton::paintEvent(QPaintEvent *e){
-    QPushButton::paintEvent(e);
-}
-
-QSize TabButton::sizeHint() const {
-    ensurePolished();
-    return QSize(normalWidth(), 26);
-}
-
-QSize TabButton::minimumSizeHint() const {
-    return sizeHint();
-}
-
-int TabButton::normalWidth() const {
-    QFontMetricsF metrics(qApp->font());
-    const bool showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
-    const int closeWidth = showClose ? (CLOSEPXWIDTH + CLOSE_RIGHT_MARGIN + 4) : 10;
-    return PXWIDTH + closeWidth + qRound(metrics.horizontalAdvance(text())) + margin * 5 + 18;
-}
-
-int TabButton::normalHeight() const {
-    return 26;
-}
-
-void TabButton::setWidgetIcon(const QPixmap &px){
-    px_label->setPixmap(px.scaled(PXWIDTH, PXWIDTH, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-
-void TabButton::updateStyles() {
-    label->setStyleSheet(QStringLiteral("QLabel { margin: 0px; padding: 0px; background: transparent; }"));
-    px_label->setStyleSheet(QString("QLabel { margin-right: %1; background: transparent; }").arg(margin * 2));
-
-    const bool showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
-    const QPalette pal = palette();
-    const QColor textColor = pal.color(QPalette::ButtonText);
-    const QColor borderColor = pal.color(QPalette::Mid);
-    const QColor baseButton = pal.color(QPalette::Button);
-    const QColor checkedBg = pal.color(QPalette::Window);
-    const bool darkAppearance = checkedBg.lightness() < 128;
-    const QColor hoverBg = darkAppearance ? baseButton.lighter(114) : baseButton.darker(102);
-    const QColor pressedBg = darkAppearance ? baseButton.darker(118) : baseButton.darker(108);
-
-    QString style = QString(R"(
-QPushButton {
-    margin: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    border: 1px solid %1;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    background: %2;
-    color: %3;
-    text-align: center;
-    min-height: 26px;
-    max-height: 26px;
-}
-
-QPushButton:hover {
-    background: %4;
-    border-color: %1;
-}
-
-QPushButton:checked {
-    background: %5;
-    border-color: %1;
-    border-bottom-color: %5;
-}
-
-QPushButton:pressed {
-    background: %6;
-}
-)").arg(borderColor.name(), baseButton.name(), textColor.name(), hoverBg.name(), checkedBg.name(), pressedBg.name());
-
-    if (showClose) {
-        style += QString(R"(
-QPushButton {
-    padding-left: %1px;
-    padding-right: %2px;
-}
-QPushButton:checked {
-    padding-left: %1px;
-    padding-right: %2px;
-}
-)").arg(PXWIDTH + 10).arg(CLOSEPXWIDTH + CLOSE_RIGHT_MARGIN + 2);
-    } else {
-        style += QString(R"(
-QPushButton {
-    padding-left: %1px;
-    padding-right: %2px;
-}
-QPushButton:checked {
-    padding-left: %1px;
-    padding-right: %2px;
-}
-)").arg(PXWIDTH + 10).arg(10);
+    if (event->button() == Qt::MiddleButton) {
+        emit closeRequest();
+        event->accept();
+        return;
     }
-
-    setStyleSheet(style);
+    QPushButton::mouseReleaseEvent(event);
 }
 
-void TabButton::updateGeometry() {
-    setMinimumWidth(normalWidth());
-    setMaximumWidth(normalWidth());
-    setMinimumHeight(normalHeight());
-    setMaximumHeight(normalHeight());
+QRect TabButton::titleRect() const
+{
+    const int left = tab_navigation::EndInset + PXWIDTH + tab_navigation::ContentGap;
+    const int right = tab_navigation::EndInset +
+        (showClose ? tab_navigation::CloseSize + tab_navigation::ContentGap : 0);
+    return rect().adjusted(left, 3, -right, -3);
+}
 
-    if (qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS)) {
-        if (!label->isVisible())
-            label->show();
+QString TabButton::elidedTitle() const
+{
+    QFont titleFont = font();
+    titleFont.setBold(isChecked());
+    return QFontMetrics(titleFont).elidedText(text(), Qt::ElideRight, qMax(0, titleRect().width()));
+}
 
-        // Position close button at the right edge with proper vertical centering
-        const int x = width() - CLOSEPXWIDTH - CLOSE_RIGHT_MARGIN;
-        const int y = qMax(0, (height() - CLOSEPXWIDTH) / 2);
-        label->setGeometry(x, y, CLOSEPXWIDTH, CLOSEPXWIDTH);
-    } else {
-        label->hide();
-    }
+void TabButton::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    const auto pal = palette();
+    QColor background = pal.color(isChecked() ? QPalette::Base : QPalette::Button);
+    if (underMouse() && !isChecked())
+        background = background.lightness() < 128 ? background.lighter(115) : background.darker(105);
+    painter.setBrush(background);
+    painter.setPen(pal.color(QPalette::Mid));
+    painter.drawRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), 5, 5);
+    if (isChecked())
+        painter.fillRect(QRect(6, height() - 3, qMax(0, width() - 12), 3), pal.color(QPalette::Highlight));
+    if (hasFocus())
+        tab_navigation::drawFocusRing(painter, rect(), pal);
+    QFont titleFont = font();
+    titleFont.setBold(isChecked());
+    painter.setFont(titleFont);
+    painter.setPen(pal.color(QPalette::ButtonText));
+    painter.setClipRect(titleRect());
+    painter.drawText(titleRect(), Qt::AlignVCenter | Qt::AlignLeft | Qt::TextSingleLine, elidedTitle());
+}
 
-    px_label->setGeometry(8,
-                          (height() - PXWIDTH) / 2,
-                          PXWIDTH,
-                          PXWIDTH);
+QSize TabButton::sizeHint() const
+{
+    return QSize(qMin(maximumWidth(), normalWidth()), normalHeight());
+}
 
-    updateStyles();
+QSize TabButton::minimumSizeHint() const
+{
+    return QSize(qMin(maximumWidth(), tab_navigation::MinimumWidth), normalHeight());
+}
+
+int TabButton::normalWidth() const
+{
+    QFont titleFont = font();
+    titleFont.setBold(true);
+    const int content = QFontMetrics(titleFont).horizontalAdvance(text()) +
+        2 * tab_navigation::EndInset + PXWIDTH + tab_navigation::ContentGap +
+        (showClose ? tab_navigation::CloseSize + tab_navigation::ContentGap : 0);
+    return qBound(tab_navigation::MinimumWidth, content, tab_navigation::MaximumWidth);
+}
+
+int TabButton::normalHeight() const
+{
+    return qMax(30, fontMetrics().height() + 10);
+}
+
+void TabButton::setWidgetIcon(const QIcon &icon)
+{
+    px_label->setPixmap(icon.pixmap(QSize(PXWIDTH, PXWIDTH), devicePixelRatioF()));
+}
+
+void TabButton::resetGeometry()
+{
+    if (qtCtx() && qtCtx()->settings())
+        showClose = qtCtx()->settings()->getBool(WB_APP_TBAR_SHOW_CL_BTNS);
+    closeButton->setVisible(showClose);
+    closeButton->setIcon(app_icon_theme::icon(app_icon_theme::activePath(), QStringLiteral("dialog-close"),
+        palette(), style()->standardIcon(QStyle::SP_TitleBarCloseButton)));
+    setFixedHeight(normalHeight());
+    positionChildren();
+    QWidget::updateGeometry();
+    update();
+}
+
+void TabButton::positionChildren()
+{
+    closeButton->move(width() - tab_navigation::CloseSize - tab_navigation::EndInset,
+                      (height() - tab_navigation::CloseSize) / 2);
+    px_label->move(tab_navigation::EndInset, (height() - PXWIDTH) / 2);
 }

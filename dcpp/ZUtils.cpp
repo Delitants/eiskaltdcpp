@@ -139,6 +139,7 @@ bool UnZFilter::operator()(const void* in, size_t& insize, void* out, size_t& ou
 
     outsize = outsize - zs.avail_out;
     insize = insize - zs.avail_in;
+    streamEnded = err == Z_STREAM_END;
     return err == Z_OK;
 }
 

@@ -2,6 +2,45 @@
 
 #include "SettingsConnectionHelpers.h"
 
+TEST_CASE("Global GOST form keeps three independent unsaved profiles", "[gost-global][ui]")
+{
+    using namespace settings_connection;
+    ProxyUiState socks, shadow, gost;
+    socks.server = "socks.invalid"; shadow.server = "shadow.invalid";
+    gost.server = "gost.invalid"; gost.password = "fixture-secret"; gost.caFile = "fixture-ca.pem";
+    int mode = ProxyUiSocks5;
+    auto shown = switchProxyUiState(socks, shadow, gost, mode, ProxyUiGost, socks);
+    REQUIRE(mode == ProxyUiGost);
+    CHECK(shown.caFile == gost.caFile);
+    shown.password = "edited-secret";
+    auto next = switchProxyUiState(socks, shadow, gost, mode, ProxyUiShadowsocks, shown);
+    CHECK(next.server == shadow.server);
+    CHECK(gost.password == "edited-secret");
+    next = switchProxyUiState(socks, shadow, gost, mode, ProxyUiDirect, next);
+    next = switchProxyUiState(socks, shadow, gost, mode, ProxyUiGost, next);
+    CHECK(next.password == "edited-secret");
+    CHECK(socks.server == "socks.invalid");
+}
+
+TEST_CASE("Global GOST diagnostics validate an immutable authenticated TLS form", "[gost-global][diagnostics]")
+{
+    using namespace settings_connection;
+    ProxyUiState form;
+    form.server = "proxy.invalid"; form.port = "5541";
+    form.user = "fixture-user"; form.password = "fixture-secret";
+    dcpp::Socket::StreamProxyConfig snapshot;
+    REQUIRE(gostProxyConfig(form, snapshot).isEmpty());
+    CHECK(snapshot.type == dcpp::Socket::StreamProxyConfig::Gost);
+    CHECK(snapshot.tls); CHECK(snapshot.verifyTls); CHECK(snapshot.remoteDns);
+    form.password = "changed";
+    CHECK(snapshot.password == "fixture-secret");
+    form.user.clear();
+    CHECK_FALSE(gostProxyConfig(form, snapshot).isEmpty());
+    form.user = "fixture-user"; form.caFile = "/nonexistent/disposable-ca.pem";
+    CHECK_FALSE(gostProxyConfig(form, snapshot).isEmpty());
+    CHECK(snapshot.caPem.empty());
+}
+
 TEST_CASE("SettingsConnectionHelpers: bind address options keep default, discovered, and current addresses once", "[qt][settingsconnection]")
 {
     const QStringList options = settings_connection::bindAddressOptions(
@@ -40,7 +79,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy form values are remembered per proxy
     socks.user = QStringLiteral("alice");
     socks.password = QStringLiteral("socks-secret");
 
-    settings_connection::ProxyUiState shadowsocks;
+    settings_connection::ProxyUiState shadowsocks, gost;
     shadowsocks.server = QStringLiteral("shadow.example.test");
     shadowsocks.port = QStringLiteral("8388");
     shadowsocks.password = QStringLiteral("shadow-secret");
@@ -55,6 +94,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy form values are remembered per proxy
     const settings_connection::ProxyUiState shownShadow = settings_connection::switchProxyUiState(
         socks,
         shadowsocks,
+        gost,
         currentMode,
         settings_connection::ProxyUiShadowsocks,
         editedSocks);
@@ -71,6 +111,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy form values are remembered per proxy
     const settings_connection::ProxyUiState restoredSocks = settings_connection::switchProxyUiState(
         socks,
         shadowsocks,
+        gost,
         currentMode,
         settings_connection::ProxyUiSocks5,
         editedShadow);
@@ -88,7 +129,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy transport options are remembered per
     socks.port = QStringLiteral("1080");
     socks.useTls = true;
 
-    settings_connection::ProxyUiState shadowsocks;
+    settings_connection::ProxyUiState shadowsocks, gost;
     shadowsocks.server = QStringLiteral("shadow.example.test");
     shadowsocks.port = QStringLiteral("8388");
     shadowsocks.shadowsocksTransport = settings_connection::ShadowsocksTransportTcpAndUdp;
@@ -101,6 +142,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy transport options are remembered per
     const settings_connection::ProxyUiState shownShadow = settings_connection::switchProxyUiState(
         socks,
         shadowsocks,
+        gost,
         currentMode,
         settings_connection::ProxyUiShadowsocks,
         editedSocks);
@@ -114,6 +156,7 @@ TEST_CASE("SettingsConnectionHelpers: proxy transport options are remembered per
     const settings_connection::ProxyUiState restoredSocks = settings_connection::switchProxyUiState(
         socks,
         shadowsocks,
+        gost,
         currentMode,
         settings_connection::ProxyUiSocks5,
         editedShadow);
@@ -199,7 +242,7 @@ TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 method and transport surv
     socks.server = QStringLiteral("socks.example.test");
     socks.port = QStringLiteral("1080");
 
-    ProxyUiState shadowsocks;
+    ProxyUiState shadowsocks, gost;
     shadowsocks.server = QStringLiteral("shadow.example.test");
     shadowsocks.port = QStringLiteral("8388");
     shadowsocks.password = QStringLiteral("AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=");
@@ -209,12 +252,39 @@ TEST_CASE("SettingsConnectionHelpers: Shadowsocks 2022 method and transport surv
     int currentMode = ProxyUiShadowsocks;
     const ProxyUiState visibleShadow = shadowsocks;
     const ProxyUiState shownSocks = switchProxyUiState(
-        socks, shadowsocks, currentMode, ProxyUiSocks5, visibleShadow);
+        socks, shadowsocks, gost, currentMode, ProxyUiSocks5, visibleShadow);
     REQUIRE(shownSocks.server == socks.server);
 
     const ProxyUiState restored = switchProxyUiState(
-        socks, shadowsocks, currentMode, ProxyUiShadowsocks, shownSocks);
+        socks, shadowsocks, gost, currentMode, ProxyUiShadowsocks, shownSocks);
     REQUIRE(restored.method == QStringLiteral("2022-blake3-chacha20-poly1305"));
     REQUIRE(restored.password == shadowsocks.password);
     REQUIRE(restored.shadowsocksTransport == ShadowsocksTransportTcpAndUdp);
+}
+
+#include "dcpp/stdinc.h"
+#include "dcpp/Util.h"
+#include <QFileInfo>
+#include <thread>
+
+TEST_CASE("Background country lookup accepts an explicit database snapshot", "[qt][country-snapshot]")
+{
+    REQUIRE(dcpp::Util::getIpCountry("2001:db8::1", "/nonexistent/eiskalt-country.mmdb").empty());
+    const auto path = qEnvironmentVariable("EISKALT_TEST_COUNTRY_DB");
+    if (path.isEmpty()) return;
+    REQUIRE(QFileInfo::exists(path));
+    const auto snapshot = path.toStdString();
+    const auto expected = dcpp::Util::getIpCountry("8.8.8.8", snapshot);
+    REQUIRE(expected.size() == 2);
+    std::string ipv4, ipv6;
+    std::thread lookup([&] {
+        ipv4 = dcpp::Util::getIpCountry("8.8.8.8", snapshot);
+        ipv6 = dcpp::Util::getIpCountry("2001:4860:4860::8888", snapshot);
+    });
+    lookup.join();
+    CHECK(ipv4 == expected);
+    CHECK(ipv6.size() == 2);
+    // Switching the explicit database must not reuse a previously mapped MMDB.
+    CHECK(dcpp::Util::getIpCountry("2001:4860:4860::8888", "").empty());
+    CHECK(dcpp::Util::getIpCountry("2001:4860:4860::8888", snapshot) == ipv6);
 }

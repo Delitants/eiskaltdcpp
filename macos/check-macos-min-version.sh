@@ -40,6 +40,7 @@ extract_minos() {
 FAILED=0
 
 while IFS= read -r file; do
+    case "$(file -b "$file")" in *Mach-O*) ;; *) continue ;; esac
     minos="$(extract_minos "${file}")"
     [ -z "${minos}" ] && continue
 
@@ -49,7 +50,7 @@ while IFS= read -r file; do
         FAILED=1
     fi
 done <<EOF
-$(find "${APP_PATH}/Contents" \( -type f -perm -111 -o -name '*.dylib' \) -print | sort)
+$(find "${APP_PATH}/Contents" -type f -print | sort)
 EOF
 
 if [ "${FAILED}" -ne 0 ]; then

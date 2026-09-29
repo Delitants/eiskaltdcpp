@@ -16,6 +16,7 @@
  */
 
 #include "stdinc.h"
+#include "TimerManager.h"
 #include <openssl/x509v3.h>
 #include "SSLSocket.h"
 
@@ -43,7 +44,9 @@ int socketBioWrite(BIO* bio, const char* data, int len) {
         return 0;
 
     BIO_clear_retry_flags(bio);
-    const int ret = socket->Socket::write(data, len);
+    int ret;
+    try { ret = socket->Socket::write(data, len); }
+    catch(...) { return -1; } // Exceptions must not cross OpenSSL's C callbacks.
     if(ret == -1) {
         BIO_set_retry_write(bio);
     }
@@ -59,7 +62,9 @@ int socketBioRead(BIO* bio, char* data, int len) {
         return 0;
 
     BIO_clear_retry_flags(bio);
-    const int ret = socket->Socket::read(data, len);
+    int ret;
+    try { ret = socket->Socket::read(data, len); }
+    catch(...) { return -1; }
     if(ret == -1) {
         BIO_set_retry_read(bio);
     }
@@ -169,6 +174,8 @@ static inline int SSL_is_server(SSL *s)
 #endif
 
 bool SSLSocket::waitConnected(uint32_t millis) {
+    const uint64_t deadline = GET_TICK() + millis;
+    checkProxyCancellation();
     if(!ssl) {
         if(!Socket::waitConnected(millis)) {
             return false;
@@ -255,7 +262,8 @@ bool SSLSocket::waitConnected(uint32_t millis) {
                     errBuf[0] ? errBuf : "<none>");
         }
 
-        if(!waitWant(ret, millis)) {
+        const auto now = GET_TICK();
+        if(!waitWant(ret, static_cast<uint32_t>(now < deadline ? deadline - now : 0))) {
             int sslErr = SSL_get_error(ssl, ret);
             unsigned long e = ERR_peek_error();
             char errBuf[256] = {0};
@@ -278,6 +286,8 @@ void SSLSocket::accept(const Socket& listeningSocket) {
 }
 
 bool SSLSocket::waitAccepted(uint32_t millis) {
+    const uint64_t deadline = GET_TICK() + millis;
+    checkProxyCancellation();
     if(!ssl) {
         if(!Socket::waitAccepted(millis)) {
             return false;
@@ -299,7 +309,8 @@ bool SSLSocket::waitAccepted(uint32_t millis) {
             dcdebug("Connected to SSL client using %s\n", SSL_get_cipher(ssl));
             return true;
         }
-        if(!waitWant(ret, millis)) {
+        const auto now = GET_TICK();
+        if(!waitWant(ret, static_cast<uint32_t>(now < deadline ? deadline - now : 0))) {
             return false;
         }
     }
@@ -321,6 +332,7 @@ bool SSLSocket::waitWant(int ret, uint32_t millis) {
 }
 
 int SSLSocket::read(void* aBuffer, int aBufLen) {
+    checkProxyCancellation();
     if(!ssl) {
         return -1;
     }
@@ -345,6 +357,7 @@ int SSLSocket::read(void* aBuffer, int aBufLen) {
 }
 
 int SSLSocket::write(const void* aBuffer, int aLen) {
+    checkProxyCancellation();
     if(!ssl) {
         return -1;
     }
@@ -408,6 +421,7 @@ int SSLSocket::checkSSL(int ret) {
 }
 
 int SSLSocket::wait(uint32_t millis, int waitFor) {
+    checkProxyCancellation();
     if(ssl && (waitFor & Socket::WAIT_READ)) {
         /** @todo Take writing into account as well if reading is possible? */
         char c;
@@ -452,8 +466,14 @@ ByteVector SSLSocket::getKeyprint() const {
 }
 
 void SSLSocket::shutdown() {
-    if(ssl)
-        SSL_shutdown(ssl);
+    if(ssl) {
+        try {
+            checkProxyCancellation();
+            SSL_shutdown(ssl);
+        } catch(const SocketException&) {
+            // A revoked route must close without sending further TLS payload.
+        }
+    }
 }
 
 void SSLSocket::close() {

@@ -37,6 +37,7 @@
 #include "ResourceManager.h"
 #include "SearchManager.h"
 #include "SettingsManager.h"
+#include "ProxyRoute.h"
 #ifdef LUA_SCRIPT
 #include "ScriptManager.h"
 #endif
@@ -87,6 +88,7 @@ void DCContext::startupMinimal() {
     // Create only the essential managers needed for SETTING() and logging
     resourceManager_  = makeManager<ResourceManager>(*this);
     settingsManager_  = makeManager<SettingsManager>(*this);
+    proxyRoute_       = std::make_unique<ProxyRoute>();
     logManager_       = makeManager<LogManager>(*this);
 
     minimalMode_ = true;
@@ -118,6 +120,7 @@ void DCContext::startup(ProgressFn progress) {
     fprintf(stderr, "[DCContext::startup] Creating managers ...\n"); fflush(stderr);
     resourceManager_     = makeManager<ResourceManager>(*this);
     settingsManager_     = makeManager<SettingsManager>(*this);
+    proxyRoute_          = std::make_unique<ProxyRoute>();
     logManager_          = makeManager<LogManager>(*this);
     timerManager_        = makeManager<TimerManager>(*this);
     hashManager_         = makeManager<HashManager>(*this);
@@ -205,6 +208,11 @@ void DCContext::startup(ProgressFn progress) {
 void DCContext::shutdown() {
     if (!running_) return;
     running_ = false;
+    if (proxyRoute_) proxyRoute_->stop();
+
+    // The mapping worker reads listener ports and reports to ConnectivityManager.
+    // Stop it before tearing down those managers (including DHT).
+    if (mappingManager_) mappingManager_->close();
 
     // ── Phase 1: tear down debug & conditional singletons ───────────────
     debugManager_.reset();
@@ -221,7 +229,6 @@ void DCContext::shutdown() {
     if (timerManager_) timerManager_->shutdown();
     if (hashManager_) hashManager_->shutdown();
     if (connectionManager_) connectionManager_->shutdown();
-    if (mappingManager_) mappingManager_->close();
 
     if (connectionManager_) // only wait if sockets were started
         BufferedSocket::waitShutdown();
@@ -261,6 +268,7 @@ void DCContext::shutdown() {
     hashManager_.reset();
     logManager_.reset();
     settingsManager_.reset();
+    proxyRoute_.reset();
     timerManager_.reset();
     resourceManager_.reset();
 

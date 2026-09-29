@@ -1,0 +1,7 @@
+if(NOT TARGET eiskalt-proxy-trust)
+    find_package(OpenSSL REQUIRED)
+    add_library(eiskalt-proxy-trust STATIC "${CMAKE_CURRENT_LIST_DIR}/../dcpp/ProxyTrust.cpp")
+    set_target_properties(eiskalt-proxy-trust PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    target_compile_features(eiskalt-proxy-trust PUBLIC cxx_std_17)
+    target_link_libraries(eiskalt-proxy-trust PUBLIC OpenSSL::Crypto)
+endif()

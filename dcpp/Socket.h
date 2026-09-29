@@ -42,15 +42,22 @@ const int INVALID_SOCKET = -1;
 #include "Shadowsocks2022.h"
 
 #include <memory>
+#include <functional>
+#include <optional>
 #include <mutex>
 #include <utility>
+#include <atomic>
 
 namespace dcpp {
 
 class DCContext;
+class SocketWake;
+class WakeNotifier;
+struct ProxyRouteSnapshot;
 
 class SocketException : public Exception {
 public:
+    enum class ProxyStage { None, Negotiation, Certificate, Authentication, Tunnel };
 #ifdef _DEBUG
     SocketException(const string& aError) : Exception("SocketException: " + aError) { }
 #else //_DEBUG
@@ -58,9 +65,17 @@ public:
 #endif // _DEBUG
 
     SocketException(int aError);
+    SocketException(const string& aError, uint8_t aSocksReplyCode) : SocketException(aError) {
+        socksReplyCode = aSocksReplyCode;
+    }
+    std::optional<uint8_t> getSocksReplyCode() const noexcept { return socksReplyCode; }
+    ProxyStage getProxyStage() const noexcept { return proxyStage; }
+    void setProxyStage(ProxyStage stage) noexcept { proxyStage = stage; }
     virtual ~SocketException() throw() { }
 
 private:
+    std::optional<uint8_t> socksReplyCode;
+    ProxyStage proxyStage = ProxyStage::None;
     static string errorToString(int aError);
 };
 
@@ -71,8 +86,10 @@ public:
         WAIT_NONE = 0x00,
         WAIT_CONNECT = 0x01,
         WAIT_READ = 0x02,
-        WAIT_WRITE = 0x04
+        WAIT_WRITE = 0x04,
+        WAIT_WAKE = 0x08
     };
+    static constexpr uint32_t WAIT_FOREVER = UINT32_MAX;
 
     enum {
         TYPE_TCP,
@@ -108,7 +125,12 @@ public:
     Socket(const string& aIp, const string& aPort) : sock(INVALID_SOCKET), type(TYPE_TCP), connected(false), proto(PROTO_DEFAULT), family(AF_INET), ctx_(nullptr) { connect(aIp, aPort); }
     virtual ~Socket() { disconnect(); }
 
-    void setContext(DCContext* ctx) { ctx_ = ctx; }
+    void setContext(DCContext* ctx);
+    // Configure before handing the socket to its I/O owner.
+    void setWaitWake(std::shared_ptr<SocketWake> wake, std::function<bool()> cancelled = {});
+    uint64_t getNativeWaitCount() const { return nativeWaitCount.load(std::memory_order_relaxed); }
+    // Only the explicitly configured public HTTP proxy uses this exception.
+    void setGlobalProxyExempt(bool value) { globalProxyExempt = value; }
     DCContext& ctx() const { return *ctx_; }
 
     /**
@@ -127,6 +149,27 @@ public:
      * Connects through the configured outbound proxy type.
      */
     void proxyConnect(const string& aIp, const string &aPort, uint32_t timeout = 0);
+    struct StreamProxyConfig {
+        enum Type { None, Socks5, Shadowsocks, Gost } type = None;
+        string host, user, password, cipher;
+        // Optional numeric dial address; host remains the TLS peer identity.
+        string connectHost;
+        std::function<bool()> cancelled;
+        // Set only when every cause in cancelled signals this one-shot notifier.
+        // Reset when composing it with a callback-only cancellation source.
+        std::shared_ptr<WakeNotifier> cancellationNotifier;
+        int port = 0;
+        bool tls = false;
+        bool remoteDns = true;
+        bool verifyTls = true;
+        // Immutable profile-specific PEM roots; empty selects system roots.
+        std::string caPem;
+    };
+    // A per-connection snapshot avoids changing shared application settings.
+    void proxyConnect(const string& aIp, const string& aPort,
+                      const StreamProxyConfig& config, uint32_t timeout);
+    // Opens authenticated UDP-TUN (0xF3); use GostProtocol with stream read/write.
+    void gostOpenUdpTunnel(const StreamProxyConfig& config, uint32_t timeout);
     /**
      * Same as connect(), but through a Shadowsocks AEAD server.
      */
@@ -219,6 +262,11 @@ public:
     virtual string getCipherName() const { return Util::emptyString; }
     virtual ByteVector getKeyprint() const { return ByteVector(); }
     bool hasStreamProxy() const { return shadowsocksActive || socksTlsActive; }
+    bool hasGostUdpTransport() const;
+    bool hasPendingProxyOutput() const;
+    bool flushProxyOutput();
+    // Nonblocking, including a TLS close-notify retry. Reads remain usable.
+    bool shutdownWrite();
 
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
@@ -233,6 +281,7 @@ public:
     socket_t sock;
 
 protected:
+    void checkProxyCancellation() const;
     int type;
     bool connected;
     Protocol proto;
@@ -264,8 +313,26 @@ private:
     Socket& operator=(const Socket&);
 
     DCContext* ctx_;
+    bool globalProxyExempt = false;
+    std::shared_ptr<std::atomic_bool> globalRouteRevoked;
+    std::shared_ptr<SocketWake> waitWake;
+    std::atomic<uint64_t> nativeWaitCount{0};
+    std::function<bool()> waitCancelled;
+    std::shared_ptr<WakeNotifier> globalRouteNotifier, overrideNotifier;
+    std::shared_ptr<void> globalRouteSubscription, overrideSubscription;
+    void bindGlobalRoute(const std::shared_ptr<const ProxyRouteSnapshot>& route);
+    void prepareWaitWake();
+    struct GostUdpState;
+    std::shared_ptr<GostUdpState> gostUdp;
+    std::optional<std::pair<string, string>> gostUdpOriginalBind;
+    mutable std::mutex gostUdpMutex;
+    std::atomic_bool udpClosing{false};
+    void writeGostUdp(const string& address, const string& port, const void* buffer, int length, UdpSendInfo* info);
+    int readGostUdp(void* buffer, int length, sockaddr_storage& remote);
 
     void socksAuth(uint32_t timeout);
+    void gostHandshake(const StreamProxyConfig& config, uint32_t timeout);
+    void gostCommand(const ByteVector& request, uint32_t timeout);
     void socksTlsReset();
     void socksStartTls(const string& serverName, uint32_t timeout);
     int socksTlsRead(void* aBuffer, int aBufLen);
@@ -295,6 +362,9 @@ private:
     static bool getSocksUdpRelay(DCContext& ctx, string& server, string& port);
 
     bool shadowsocksActive = false;
+    std::optional<StreamProxyConfig> streamProxyOverride;
+    StreamProxyConfig streamProxyConfig(StreamProxyConfig::Type proxyType) const;
+    int nativeWait(uint32_t millis, int waitFor);
     int shadowsocksMethod = SHADOWSOCKS_NONE;
     ByteVector shadowsocksMasterKey;
     ByteVector shadowsocksSubkey;

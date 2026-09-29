@@ -1,0 +1,11 @@
+{
+  "package": "@phosphor-icons/core",
+  "version": "2.1.1",
+  "repository": "https://github.com/phosphor-icons/core",
+  "packageRepositoryAtRelease": "https://github.com/phosphor-icons/phosphor-core",
+  "registryMetadata": "https://registry.npmjs.org/@phosphor-icons/core/2.1.1",
+  "archive": "https://registry.npmjs.org/@phosphor-icons/core/-/core-2.1.1.tgz",
+  "integrity": "sha512-v4ARvrip4qBCImOE5rmPUylOEK4iiED9ZyKjcvzuezqMaiRASCHKcRIuvvxL/twvLpkfnEODCOJp5dM4eZilxQ==",
+  "archiveSha256": "313332be6190b724da24107addd781799b48bf76b13963f24501112ffe1baadd",
+  "license": "MIT"
+}

@@ -100,13 +100,18 @@ private:
 
         int run();
         void shutdown() {
-            stop = true;
+            {
+                Lock l(csudp);
+                stop = true;
+            }
             s.signal();
             join();
         }
         void addResult(const string& buf, const string& ip) {
             {
                 Lock l(csudp);
+                if (stop)
+                    return;
                 resultList.emplace_back(buf, ip);
             }
             s.signal();

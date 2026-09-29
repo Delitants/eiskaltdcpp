@@ -55,7 +55,7 @@ void SettingsAdvanced::init() {
     connect(checkBox_CUSTOM_MIME, &QCheckBox::toggled, this, updateMimeControls);
     updateMimeControls(checkBox_CUSTOM_MIME->isChecked());
 
-    toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
 
     connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsAdvanced::slotBrowse);
 }

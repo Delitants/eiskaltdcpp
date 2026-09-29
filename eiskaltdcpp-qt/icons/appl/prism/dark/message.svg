@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Message</title>
+  <desc>Prism dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#aff3ec" stop-opacity="1"/><stop offset="0.22" stop-color="#56e7d7" stop-opacity="1"/><stop offset="0.5" stop-color="#21dfca" stop-opacity="1"/><stop offset="0.76" stop-color="#1ecdba" stop-opacity="1"/><stop offset="1" stop-color="#148a7d" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#0d5951" stop-opacity="1"/><stop offset="0.5" stop-color="#083833" stop-opacity="1"/><stop offset="1" stop-color="#062622" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M224,56l-96,88L32,56Z" fill="url(#p0-body)"/>
+    <path d="M224,56l-96,88L32,56Z" fill="url(#p0-shine)"/>
+    <path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z" fill="url(#p0-ink)"/>
+  </g>
+</svg>

@@ -157,6 +157,7 @@ public:
     }
 
 private:
+    void remapPersistentIndexes(const QModelIndexList& previous);
     UserListItem *rootItem;
 
     typedef QHash<UserPtr, UserListItem*> USRMap;

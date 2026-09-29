@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Torrent options</title>
+  <desc>Contour light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-color" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#344653" stop-opacity="1"/><stop offset="0.5" stop-color="#344653" stop-opacity="1"/><stop offset="0.5" stop-color="#148590" stop-opacity="1"/><stop offset="1" stop-color="#148590" stop-opacity="1"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M40,86H74.6a30,30,0,0,0,58.8,0H216a6,6,0,0,0,0-12H133.4a30,30,0,0,0-58.8,0H40a6,6,0,0,0,0,12Zm64-24A18,18,0,1,1,86,80,18,18,0,0,1,104,62ZM216,170H197.4a30,30,0,0,0-58.8,0H40a6,6,0,0,0,0,12h98.6a30,30,0,0,0,58.8,0H216a6,6,0,0,0,0-12Zm-48,24a18,18,0,1,1,18-18A18,18,0,0,1,168,194Z" fill="url(#p0-color)"/>
+  </g>
+</svg>

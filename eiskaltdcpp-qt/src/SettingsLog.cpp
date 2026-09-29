@@ -86,7 +86,7 @@ void SettingsLog::init(){
     groupBox_DIAGNOSTIC->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::LOG_DIAGNOSTIC, true));
     lineEdit_FILE_DIAGNOSTIC->setText(_q(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::LOG_FILE_DIAGNOSTIC, true)));
 
-    toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_BROWSE->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
 
     connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsLog::slotBrowse);
 }

@@ -1,0 +1,12 @@
+set(args "${APP_BUNDLE}" -no-codesign)
+foreach(path IN LISTS LIBRARY_PATHS)
+    if(IS_DIRECTORY "${path}")
+        list(APPEND args "-libpath=${path}")
+    endif()
+endforeach()
+execute_process(COMMAND "${MACDEPLOYQT}" ${args}
+    RESULT_VARIABLE result OUTPUT_VARIABLE output ERROR_VARIABLE errors)
+if(NOT "${result}" STREQUAL "0" OR "${output}\n${errors}" MATCHES "(^|\n)ERROR:")
+    message(FATAL_ERROR "macdeployqt failed (${result}):\n${output}\n${errors}")
+endif()
+message(STATUS "${output}${errors}")

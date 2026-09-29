@@ -33,6 +33,9 @@
 #include "version.h"
 #include "DCContext.h"
 
+#include <charconv>
+#include <limits>
+
 namespace dcpp {
 
 DirectoryListing::DirectoryListing(DCContext& ctx, const HintedUser& aUser) :
@@ -106,9 +109,7 @@ public:
         cur(root),
         base("/"),
         inListing(false),
-        updating(aUpdating),
-        m_is_mediainfo_list(false),
-        m_is_first_check_mediainfo_list(false)
+        updating(aUpdating)
     {
     }
 
@@ -121,14 +122,14 @@ public:
     const string& getBase() const { return base; }
 
 private:
+    void updateMetadata(DirectoryListing::File& file, StringPairList& attribs);
+
     DirectoryListing::Directory* cur;
 
     StringMap params;
     string base;
     bool inListing;
     bool updating;
-    bool m_is_mediainfo_list;
-    bool m_is_first_check_mediainfo_list;
 };
 
 string DirectoryListing::updateXML(const string& xml) {
@@ -158,6 +159,47 @@ static const string sMVideo = "MV";
 static const string sMAudio = "MA";
 static const string sTS = "TS";
 static const string sHIT = "HIT";
+static const string sDate = "Date";
+static const string sBaseDate = "BaseDate";
+
+static bool parseMetadataNumber(const string& text, uint64_t& value) {
+    if(text.empty())
+        return false;
+    const auto end = text.data() + text.size();
+    const auto result = std::from_chars(text.data(), end, value);
+    return result.ec == std::errc() && result.ptr == end;
+}
+
+template<class Entry>
+static void updateRemoteDate(Entry& entry, const string& text) {
+    uint64_t value;
+    if(parseMetadataNumber(text, value) && value > 0 &&
+       value <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()))
+        entry.setRemoteDate(value);
+}
+
+void ListLoader::updateMetadata(DirectoryListing::File& file, StringPairList& attribs) {
+    // Partial lists may omit any field; invalid replacements must not erase known data.
+    updateRemoteDate(file, getAttrib(attribs, sDate, 3));
+    uint64_t value;
+    if(parseMetadataNumber(getAttrib(attribs, sTS, 3), value))
+        file.setTS(value);
+    if(parseMetadataNumber(getAttrib(attribs, sHIT, 3), value))
+        file.setHit(value);
+    if(parseMetadataNumber(getAttrib(attribs, sBR, 3), value) &&
+       value <= std::numeric_limits<uint16_t>::max())
+        file.mediaInfo.bitrate = static_cast<uint16_t>(value);
+
+    const auto& video = getAttrib(attribs, sMVideo, 3);
+    if(!video.empty())
+        file.mediaInfo.video_info = video;
+    const auto& audio = getAttrib(attribs, sMAudio, 3);
+    if(!audio.empty())
+        file.mediaInfo.audio_info = audio;
+    const auto& resolution = getAttrib(attribs, sWH, 3);
+    if(!resolution.empty())
+        file.mediaInfo.resolution = resolution;
+}
 
 void ListLoader::startTag(const string& name, StringPairList& attribs, bool simple) {
     if(inListing) {
@@ -180,35 +222,19 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
                     auto& file = *i;
                     /// @todo comparisons should be case-insensitive but it takes too long - add a cache
                     if(file.getTTH() == tth || file.getName() == n) {
+                        if(file.getTTH() != tth)
+                            file.clearMetadata();
                         file.setName(n);
                         file.setSize(size);
                         file.setTTH(tth);
+                        updateMetadata(file, attribs);
                         return;
                     }
                 }
             }
 
             DirectoryListing::File* f = new DirectoryListing::File(cur, n, size, tth);
-
-            string l_ts = "";
-
-            if (!m_is_first_check_mediainfo_list){
-                m_is_first_check_mediainfo_list = true;
-                l_ts = getAttrib(attribs, sTS, 3);
-                m_is_mediainfo_list = !l_ts.empty();
-            }
-            else if (m_is_mediainfo_list) {
-                l_ts = getAttrib(attribs, sTS, 3);
-            }
-
-            if (!l_ts.empty()){
-                f->setTS(atol(l_ts.c_str()));
-                f->setHit(atol(getAttrib(attribs, sHIT, 3).c_str()));
-                f->mediaInfo.video_info = getAttrib(attribs, sMVideo, 3);
-                f->mediaInfo.audio_info = getAttrib(attribs, sMAudio, 3);
-                f->mediaInfo.resolution = getAttrib(attribs, sWH, 3);
-                f->mediaInfo.bitrate    = atoi(getAttrib(attribs, sBR, 4).c_str());
-            }
+            updateMetadata(*f, attribs);
 
             cur->files.insert(f);
         } else if(name == sDirectory) {
@@ -233,6 +259,7 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
                 d = new DirectoryListing::Directory(cur, n, false, !incomp);
                 cur->directories.insert(d);
             }
+            updateRemoteDate(*d, getAttrib(attribs, sDate, 2));
             cur = d;
 
             if(simple) {
@@ -260,6 +287,7 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
             }
             cur = d;
         }
+        updateRemoteDate(*cur, getAttrib(attribs, sBaseDate, 3));
         cur->setComplete(true);
         inListing = true;
 

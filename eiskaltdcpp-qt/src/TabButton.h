@@ -14,11 +14,13 @@
 #include <QDropEvent>
 #include <QDragMoveEvent>
 #include <QMouseEvent>
+#include <QPointer>
 
 class QResizeEvent;
 class QPaintEvent;
 class QLabel;
 class QEvent;
+class QToolButton;
 
 class TabButton : public QPushButton
 {
@@ -28,14 +30,15 @@ public:
 
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
-    void setWidgetIcon(const QPixmap &px);
-    void resetGeometry() { updateGeometry(); }
+    void setWidgetIcon(const QIcon &icon);
+    void resetGeometry();
+    QRect titleRect() const;
+    QString elidedTitle() const;
     int normalWidth() const;
     int normalHeight() const;
 
 protected:
     virtual void resizeEvent(QResizeEvent *);
-    virtual bool eventFilter(QObject *, QEvent *);
     virtual void dragEnterEvent(QDragEnterEvent *);
     virtual void dragMoveEvent(QDragMoveEvent *);
     virtual void dropEvent(QDropEvent *);
@@ -51,12 +54,11 @@ signals:
 private:
     QPoint dragStartPos;
 
-    static TabButton *dragSourceButton;
-    void updateStyles();
-    void updateGeometry();
+    static QPointer<TabButton> dragSourceButton;
+    void positionChildren();
 
-    QLabel *label;
+    QToolButton *closeButton;
     QLabel *px_label;
-    int parentHeight;
+    bool showClose = true;
     bool isLeftBtnHold;
 };

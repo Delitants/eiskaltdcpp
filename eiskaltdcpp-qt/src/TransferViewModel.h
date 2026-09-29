@@ -15,6 +15,11 @@
 #include <QPainter>
 #include <QMultiHash>
 #include <QSize>
+#ifdef USE_TORRENT
+#include <QPointer>
+#include "torrent/TorrentTypes.h"
+namespace eiskalt::torrent { class TorrentEngine; }
+#endif
 
 static const int COLUMN_TRANSFER_USERS       = 0;
 static const int COLUMN_TRANSFER_SPEED       = 1;
@@ -26,6 +31,12 @@ static const int COLUMN_TRANSFER_FNAME       = 6;
 static const int COLUMN_TRANSFER_HOST        = 7;
 static const int COLUMN_TRANSFER_IP          = 8;
 static const int COLUMN_TRANSFER_ENCRYPTION  = 9;
+#ifdef USE_TORRENT
+static const int COLUMN_TRANSFER_PROTOCOL    = 10;
+static const int COLUMN_TRANSFER_COUNT       = 11;
+#else
+static const int COLUMN_TRANSFER_COUNT       = 10;
+#endif
 
 class TransferViewDelegate:
         public QStyledItemDelegate
@@ -75,8 +86,28 @@ public:
     QString tth;
     QString target;
     qlonglong dpos;
+    qlonglong completedBytes = 0;
+    qlonglong segmentBytes = 0;
     double percent;
     QList<QVariant> itemData;
+
+    bool isTorrent() const {
+#ifdef USE_TORRENT
+        return !torrentId.isEmpty();
+#else
+        return false;
+#endif
+    }
+#ifdef USE_TORRENT
+    QString torrentId;
+    bool torrentPaused = false;
+    qint64 torrentDownloadRate = 0;
+    qint64 torrentUploadRate = 0;
+    int torrentDownloadingPeers = 0;
+    int torrentUploadingPeers = 0;
+    int torrentConnectedPeers = 0;
+    QString torrentFlagsTooltip;
+#endif
 
 private:
 
@@ -132,6 +163,14 @@ public:
     /** */
     void clear();
 
+    // Reject the entire selection, including mixed selections, before DC dispatch.
+    bool dcActionsAllowed(const QModelIndexList &selection) const;
+#ifdef USE_TORRENT
+    // Both objects must live on the GUI thread. Snapshots never depend on a tab.
+    void setTorrentEngine(eiskalt::torrent::TorrentEngine *engine);
+    void setTorrentJobs(const QList<eiskalt::torrent::Job> &jobs);
+#endif
+
 public Q_SLOTS:
     void repaint();
 
@@ -165,6 +204,8 @@ private:
 
     /** */
     void updateParent(TransferViewItem*);
+    void notifyRootRows(QList<int> rows);
+    void notifyTransferRow(TransferViewItem* item);
     /** */
     void moveTransfer(TransferViewItem*, TransferViewItem*, TransferViewItem*);
     /** */
@@ -183,4 +224,11 @@ private:
     QSize iconsSize;
 
     bool showTranferedFilesOnly;
+#ifdef USE_TORRENT
+    QHash<QString, TransferViewItem *> torrentRows;
+    QPointer<eiskalt::torrent::TorrentEngine> torrentEngine;
+    QMetaObject::Connection torrentChangedConnection;
+    QMetaObject::Connection torrentDestroyedConnection;
+    quint64 torrentAttachment = 0;
+#endif
 };

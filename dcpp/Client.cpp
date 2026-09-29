@@ -345,6 +345,8 @@ void Client::updated(OnlineUserList& users) {
 }
 
 string Client::getLocalIp() const {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+        return Util::firstPublicIp({getMyIdentity().getIp()});
     if (!externalIP.empty())
         return Socket::resolve(externalIP);
 

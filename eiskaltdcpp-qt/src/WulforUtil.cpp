@@ -14,6 +14,8 @@
 #include "Magnet.h"
 #include "MenuIconHelper.h"
 #include "WulforUtil.h"
+#include "AppIconTheme.h"
+#include "CountryNames.h"
 #include "ArenaWidgetFactory.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
@@ -526,7 +528,10 @@ bool WulforUtil::loadUserIcons(){
 QString WulforUtil::findAppIconsPath() const
 {
     // Try to find application icons directory
-    const QString icon_theme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME);
+    const QString icon_theme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
+
+    if (app_icon_theme::isModern(icon_theme) && QDir(app_icon_theme::resourcePath(icon_theme)).exists())
+        return app_icon_theme::resourcePath(icon_theme);
 
     const QStringList roots = {
         QDir::currentPath() + "/icons/appl",
@@ -785,7 +790,7 @@ QString WulforUtil::flaggedCountryLabel(const QString &countryText, const QStrin
     return flag + QStringLiteral(" ") + label;
 }
 
-QString WulforUtil::flaggedIpLabel(const QString &ip)
+QString WulforUtil::flaggedIpLabel(const QString &ip, bool includeCountryName)
 {
     if (ip.trimmed().isEmpty())
         return ip;
@@ -796,12 +801,15 @@ QString WulforUtil::flaggedIpLabel(const QString &ip)
     if (flag.isEmpty())
         return ip;
 
-    return flag + QStringLiteral(" ") + ip;
+    const QString name = includeCountryName ? country_names::fromCode(countryCode) : QString();
+    return flag + QStringLiteral(" ") + (name.isEmpty() ? QString() : name + QStringLiteral(" ")) + ip;
 }
 
 QString WulforUtil::getClientResourcesPath() const
 {
-    const QString icon_theme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME);
+    const QString icon_theme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
+    if (app_icon_theme::isModern(icon_theme))
+        return QString();
 
 #if defined(Q_OS_WIN) || defined(Q_OS_HAIKU)
     const QString client_res_path = bin_path + CLIENT_RES_DIR "/" + icon_theme + ".rcc";
@@ -891,28 +899,27 @@ QPixmap *WulforUtil::getUserIcon(const UserPtr &id, bool isAway, bool isOp, cons
     return userIconCache[x][y];
 }
 
-static const int PXMTHEMESIDE = 22;
-QPixmap WulforUtil::FROMTHEME(const QString &name, bool resource){
-    if (resource){
-        return QIcon(":/"+name+".png").pixmap(PXMTHEMESIDE, PXMTHEMESIDE);
+void WulforUtil::cacheIcon(Icons id, const QString &name, bool resource, int side)
+{
+    const QString path = resource ? QStringLiteral(":/") + name + QStringLiteral(".png")
+        : app_icon_theme::assetPath(app_icons_path, name, qApp->palette());
+    QIcon icon(path);
+    if (path.isEmpty() || icon.isNull()) {
+        m_bError = true;
+        m_PixmapMap[id] = QPixmap(gv_xpm);
+        m_IconMap[id] = {QString(), QIcon(m_PixmapMap[id])};
+        return;
     }
-    else{
-        return loadPixmap(name+".png");
-    }
-}
-
-QPixmap WulforUtil::FROMTHEME_SIDE(const QString &name, bool resource, const int side){
-    if (resource)
-        return QIcon(":/"+name+".png").pixmap(side, side);
-    else{
-        return loadPixmap(name+".png").scaled(side, side);
-    }
+    m_IconMap[id] = {path, icon};
+    // Pixmap-only models retain a cache, while actions use the vector icon.
+    m_PixmapMap[id] = icon.pixmap(QSize(side, side), qApp->devicePixelRatio());
 }
 
 bool WulforUtil::loadIcons(){
     m_bError = false;
 
     app_icons_path = findAppIconsPath() + "/";
+    app_icon_theme::setActivePath(app_icons_path);
 
     const QString fname = getClientResourcesPath();
     bool resourceFound = false;
@@ -920,118 +927,115 @@ bool WulforUtil::loadIcons(){
         resourceFound = QResource::registerResource(fname);
 
     m_PixmapMap.clear();
+    m_IconMap.clear();
 
-    m_PixmapMap[eiAWAY]         = FROMTHEME("im-user-away", resourceFound);
-    m_PixmapMap[eiBOOKMARK_ADD] = FROMTHEME("bookmark-new", resourceFound);
-    m_PixmapMap[eiCLEAR]        = FROMTHEME("edit-clear",   resourceFound);
-    m_PixmapMap[eiCONFIGURE]    = FROMTHEME("configure",    resourceFound);
-    m_PixmapMap[eiCONNECT]      = FROMTHEME("network-connect", resourceFound);
-    m_PixmapMap[eiCONNECT_NO]   = FROMTHEME("network-disconnect", resourceFound);
-    m_PixmapMap[eiDOWN]         = FROMTHEME("go-down", resourceFound);
-    m_PixmapMap[eiDOWNLIST]     = FROMTHEME("go-down-search", resourceFound);
-    m_PixmapMap[eiDOWNLOAD]     = FROMTHEME("download", resourceFound);
-    m_PixmapMap[eiDOWNLOAD_AS]  = FROMTHEME("download", resourceFound);
-    m_PixmapMap[eiEDIT]         = FROMTHEME("document-edit", resourceFound);
-    m_PixmapMap[eiEDITADD]      = FROMTHEME("list-add", resourceFound);
-    m_PixmapMap[eiEDITCOPY]     = FROMTHEME("edit-copy", resourceFound);
-    m_PixmapMap[eiEDITDELETE]   = FROMTHEME("edit-delete", resourceFound);
-    m_PixmapMap[eiEDITCLEAR]    = FROMTHEME_SIDE("edit-clear-locationbar-rtl", resourceFound, 16);
-    m_PixmapMap[eiEMOTICON]     = FROMTHEME("face-smile", resourceFound);
-    m_PixmapMap[eiEXIT]         = FROMTHEME("application-exit", resourceFound);
-    m_PixmapMap[eiFILECLOSE]    = FROMTHEME("dialog-close", resourceFound);
-    m_PixmapMap[eiFILEFIND]     = FROMTHEME("edit-find", resourceFound);
-    m_PixmapMap[eiFILTER]       = FROMTHEME("view-filter", resourceFound);
-    m_PixmapMap[eiFOLDER_BLUE]  = FROMTHEME("folder-blue", resourceFound);
-    m_PixmapMap[eiHIDEWINDOW]   = FROMTHEME("view-close", resourceFound);
-    m_PixmapMap[eiUP]           = FROMTHEME("go-up", resourceFound);
-    m_PixmapMap[eiUPLIST]       = FROMTHEME("go-up-search", resourceFound);
-    m_PixmapMap[eiZOOM_IN]      = FROMTHEME("zoom-in", resourceFound);
-    m_PixmapMap[eiZOOM_OUT]     = FROMTHEME("zoom-out", resourceFound);
-    m_PixmapMap[eiTOP]          = FROMTHEME("go-top", resourceFound);
-    m_PixmapMap[eiNEXT]         = FROMTHEME("go-next", resourceFound);
-    m_PixmapMap[eiPREVIOUS]     = FROMTHEME("go-previous", resourceFound);
+    cacheIcon(eiAWAY, "im-user-away", resourceFound);
+    cacheIcon(eiBOOKMARK_ADD, "bookmark-new", resourceFound);
+    cacheIcon(eiCLEAR, "edit-clear",   resourceFound);
+    cacheIcon(eiCONFIGURE, "configure",    resourceFound);
+    cacheIcon(eiCONNECT, "network-connect", resourceFound);
+    cacheIcon(eiCONNECT_NO, "network-disconnect", resourceFound);
+    cacheIcon(eiDOWN, "go-down", resourceFound);
+    cacheIcon(eiDOWNLIST, "go-down-search", resourceFound);
+    cacheIcon(eiDOWNLOAD, "download", resourceFound);
+    cacheIcon(eiDOWNLOAD_AS, "download", resourceFound);
+    cacheIcon(eiEDIT, "document-edit", resourceFound);
+    cacheIcon(eiEDITADD, "list-add", resourceFound);
+    cacheIcon(eiEDITCOPY, "edit-copy", resourceFound);
+    cacheIcon(eiEDITDELETE, "edit-delete", resourceFound);
+    cacheIcon(eiEDITCLEAR, "edit-clear-locationbar-rtl", resourceFound, 16);
+    cacheIcon(eiEMOTICON, "face-smile", resourceFound);
+    cacheIcon(eiEXIT, "application-exit", resourceFound);
+    cacheIcon(eiFILECLOSE, "dialog-close", resourceFound);
+    cacheIcon(eiFILEFIND, "edit-find", resourceFound);
+    cacheIcon(eiFILTER, "view-filter", resourceFound);
+    cacheIcon(eiFOLDER_BLUE, "folder-blue", resourceFound);
+    cacheIcon(eiHIDEWINDOW, "view-close", resourceFound);
+    cacheIcon(eiUP, "go-up", resourceFound);
+    cacheIcon(eiUPLIST, "go-up-search", resourceFound);
+    cacheIcon(eiZOOM_IN, "zoom-in", resourceFound);
+    cacheIcon(eiZOOM_OUT, "zoom-out", resourceFound);
+    cacheIcon(eiTOP, "go-top", resourceFound);
+    cacheIcon(eiNEXT, "go-next", resourceFound);
+    cacheIcon(eiPREVIOUS, "go-previous", resourceFound);
 
-    m_PixmapMap[eiFILETYPE_APPLICATION] = FROMTHEME("application-x-executable", resourceFound);
-    m_PixmapMap[eiFILETYPE_ARCHIVE]     = FROMTHEME("application-x-archive", resourceFound);
-    m_PixmapMap[eiFILETYPE_DOCUMENT]    = FROMTHEME("text-x-generic", resourceFound);
-    m_PixmapMap[eiFILETYPE_MP3]         = FROMTHEME("audio-x-generic", resourceFound);
-    m_PixmapMap[eiFILETYPE_PICTURE]     = FROMTHEME("image-x-generic", resourceFound);
-    m_PixmapMap[eiFILETYPE_UNKNOWN]     = FROMTHEME("unknown", resourceFound);
-    m_PixmapMap[eiFILETYPE_VIDEO]       = FROMTHEME("video-x-generic", resourceFound);
+    cacheIcon(eiFILETYPE_APPLICATION, "application-x-executable", resourceFound);
+    cacheIcon(eiFILETYPE_ARCHIVE, "application-x-archive", resourceFound);
+    cacheIcon(eiFILETYPE_DOCUMENT, "text-x-generic", resourceFound);
+    cacheIcon(eiFILETYPE_MP3, "audio-x-generic", resourceFound);
+    cacheIcon(eiFILETYPE_PICTURE, "image-x-generic", resourceFound);
+    cacheIcon(eiFILETYPE_UNKNOWN, "unknown", resourceFound);
+    cacheIcon(eiFILETYPE_VIDEO, "video-x-generic", resourceFound);
 
-    m_PixmapMap[eiADLS]         = FROMTHEME("adls", resourceFound);
-    m_PixmapMap[eiBALL_GREEN]   = FROMTHEME("ball_green", resourceFound);
-    m_PixmapMap[eiCHAT]         = FROMTHEME("chat", resourceFound);
-    m_PixmapMap[eiCONSOLE]      = FROMTHEME("console", resourceFound);
-    m_PixmapMap[eiERASER]       = FROMTHEME("eraser", resourceFound);
-    m_PixmapMap[eiFAV]          = FROMTHEME("fav", resourceFound);
-    m_PixmapMap[eiFAVADD]       = FROMTHEME("favadd", resourceFound);
-    m_PixmapMap[eiFAVREM]       = FROMTHEME("favrem", resourceFound);
-    m_PixmapMap[eiFAVSERVER]    = FROMTHEME("favserver", resourceFound);
-    m_PixmapMap[eiFAVUSERS]     = FROMTHEME("favusers", resourceFound);
-    m_PixmapMap[eiFIND]         = FROMTHEME("find", resourceFound);
-    m_PixmapMap[eiFREESPACE]    = FROMTHEME("freespace", resourceFound);
-    m_PixmapMap[eiGUI]          = FROMTHEME("gui", resourceFound);
+    cacheIcon(eiADLS, "adls", resourceFound);
+    cacheIcon(eiBALL_GREEN, "ball_green", resourceFound);
+    cacheIcon(eiCHAT, "chat", resourceFound);
+    cacheIcon(eiCONSOLE, "console", resourceFound);
+    cacheIcon(eiERASER, "eraser", resourceFound);
+    cacheIcon(eiFAV, "fav", resourceFound);
+    cacheIcon(eiFAVADD, "favadd", resourceFound);
+    cacheIcon(eiFAVREM, "favrem", resourceFound);
+    cacheIcon(eiFAVSERVER, "favserver", resourceFound);
+    cacheIcon(eiFAVUSERS, "favusers", resourceFound);
+    cacheIcon(eiFIND, "find", resourceFound);
+    cacheIcon(eiFREESPACE, "freespace", resourceFound);
+    cacheIcon(eiGUI, "gui", resourceFound);
     m_PixmapMap[eiGV]           = QPixmap(gv_xpm);
-    m_PixmapMap[eiHASHING]      = FROMTHEME("hashing", resourceFound);
-    m_PixmapMap[eiHISTORY]      = FROMTHEME("history", resourceFound);
-    m_PixmapMap[eiHUBMSG]       = FROMTHEME("hubmsg", resourceFound);
-    m_PixmapMap[eiICON_APPL]    = FROMTHEME_SIDE("icon_appl_big", resourceFound, 128);
-    m_PixmapMap[eiMAGNET]       = FROMTHEME("magnet", resourceFound);
-    m_PixmapMap[eiMESSAGE]      = FROMTHEME("message", resourceFound);
-    m_PixmapMap[eiMESSAGE_TRAY_ICON] = FROMTHEME_SIDE("icon_msg_big", resourceFound, 128);
-    m_PixmapMap[eiOWN_FILELIST] = FROMTHEME("own_filelist", resourceFound);
-    m_PixmapMap[eiOPENLIST]     = FROMTHEME("openlist", resourceFound);
-    m_PixmapMap[eiOPEN_LOG_FILE]= FROMTHEME("log_file", resourceFound);
-    m_PixmapMap[eiPLUGIN]       = FROMTHEME("plugin", resourceFound);
-    m_PixmapMap[eiPMMSG]        = FROMTHEME("pmmsg", resourceFound);
-    m_PixmapMap[eiRECONNECT]    = FROMTHEME("reconnect", resourceFound);
-    m_PixmapMap[eiREFRLIST]     = FROMTHEME("refrlist", resourceFound);
-    m_PixmapMap[eiRELOAD]       = FROMTHEME("reload", resourceFound);
-    m_PixmapMap[eiSERVER]       = FROMTHEME("server", resourceFound);
-    m_PixmapMap[eiSETTINGS_CONNECTION] = FROMTHEME("settings-connection", resourceFound);
-    m_PixmapMap[eiSETTINGS_DOWNLOADS]  = FROMTHEME("settings-downloads", resourceFound);
-    m_PixmapMap[eiSETTINGS_GUI]        = FROMTHEME("settings-gui", resourceFound);
-    m_PixmapMap[eiSETTINGS_MAIN]       = FROMTHEME("settings-main", resourceFound);
-    m_PixmapMap[eiSETTINGS_SHORTCUTS]  = FROMTHEME("settings-shortcuts", resourceFound);
-    m_PixmapMap[eiSPAM]         = FROMTHEME("spam", resourceFound);
-    m_PixmapMap[eiSPY]          = FROMTHEME("spy", resourceFound);
-    m_PixmapMap[eiSPEED_LIMIT_OFF]  = FROMTHEME("slow_off", resourceFound);
-    m_PixmapMap[eiSPEED_LIMIT_ON]   = FROMTHEME("slow", resourceFound);
+    cacheIcon(eiHASHING, "hashing", resourceFound);
+    cacheIcon(eiHISTORY, "history", resourceFound);
+    cacheIcon(eiHUBMSG, "hubmsg", resourceFound);
+    cacheIcon(eiICON_APPL, "icon_appl_big", resourceFound, 128);
+    cacheIcon(eiMAGNET, "magnet", resourceFound);
+    cacheIcon(eiMESSAGE, "message", resourceFound);
+    cacheIcon(eiMESSAGE_TRAY_ICON, "icon_msg_big", resourceFound, 128);
+    cacheIcon(eiOWN_FILELIST, "own_filelist", resourceFound);
+    cacheIcon(eiOPENLIST, "openlist", resourceFound);
+    cacheIcon(eiOPEN_LOG_FILE, "log_file", resourceFound);
+    cacheIcon(eiPLUGIN, "plugin", resourceFound);
+    cacheIcon(eiPMMSG, "pmmsg", resourceFound);
+    cacheIcon(eiRECONNECT, "reconnect", resourceFound);
+    cacheIcon(eiREFRLIST, "refrlist", resourceFound);
+    cacheIcon(eiRELOAD, "reload", resourceFound);
+    cacheIcon(eiSERVER, "server", resourceFound);
+    cacheIcon(eiSETTINGS_CONNECTION, "settings-connection", resourceFound);
+    cacheIcon(eiSETTINGS_DOWNLOADS, "settings-downloads", resourceFound);
+    cacheIcon(eiSETTINGS_GUI, "settings-gui", resourceFound);
+    cacheIcon(eiSETTINGS_MAIN, "settings-main", resourceFound);
+    cacheIcon(eiSETTINGS_SHORTCUTS, "settings-shortcuts", resourceFound);
+    cacheIcon(eiSPAM, "spam", resourceFound);
+    cacheIcon(eiSPY, "spy", resourceFound);
+    cacheIcon(eiSPEED_LIMIT_OFF, "slow_off", resourceFound);
+    cacheIcon(eiSPEED_LIMIT_ON, "slow", resourceFound);
 
     m_PixmapMap[eiSPLASH]       = QPixmap();
-    m_PixmapMap[eiSTATUS]       = FROMTHEME("status", resourceFound);
-    m_PixmapMap[eiTRANSFER]     = FROMTHEME("transfer", resourceFound);
-    m_PixmapMap[eiTRANSFER_HIGHLIGHT] = FROMTHEME("transfer-highlight", resourceFound);
-    m_PixmapMap[eiUSERS]        = FROMTHEME("users", resourceFound);
-    m_PixmapMap[eiQUEUED_USERS] = FROMTHEME("queued-users", resourceFound);
-    m_PixmapMap[eiQUEUED_USERS_HIGHLIGHT] = FROMTHEME("queued-users-highlight", resourceFound);
-    m_PixmapMap[eiQT_LOGO]      = FROMTHEME("qt-logo", resourceFound);
+    cacheIcon(eiSTATUS, "status", resourceFound);
+    cacheIcon(eiTRANSFER, "transfer", resourceFound);
+    cacheIcon(eiTRANSFER_HIGHLIGHT, "transfer-highlight", resourceFound);
+    cacheIcon(eiUSERS, "users", resourceFound);
+    cacheIcon(eiQUEUED_USERS, "queued-users", resourceFound);
+    cacheIcon(eiQUEUED_USERS_HIGHLIGHT, "queued-users-highlight", resourceFound);
+    cacheIcon(eiQT_LOGO, "qt-logo", resourceFound);
 
+    emit iconsReloaded();
     return !m_bError;
-}
-
-QPixmap WulforUtil::loadPixmap(const QString &file){
-    QString f;
-    QPixmap p;
-
-    f = app_icons_path + file;
-    f = QDir::toNativeSeparators(f);
-
-    if (p.load(f))
-        return p;
-
-    printf("loadPixmap: Can't load '%s'\n", f.toUtf8().constData());
-
-    m_bError = true;
-
-    p = QPixmap(gv_xpm);
-
-    return p;
 }
 
 const QPixmap &WulforUtil::getPixmap(enum WulforUtil::Icons e){
     return m_PixmapMap[static_cast<qulonglong>(e)];
+}
+
+QIcon WulforUtil::getIcon(Icons id) const
+{
+    const auto it = m_IconMap.constFind(id);
+    return it == m_IconMap.cend() ? QIcon(m_PixmapMap.value(id)) : it->icon;
+}
+
+QIcon WulforUtil::getHighlightedIcon(Icons normal, Icons active) const
+{
+    const auto normalPath = m_IconMap.value(normal).path;
+    const auto activePath = m_IconMap.value(active).path;
+    return normalPath.isEmpty() ? getIcon(normal)
+        : app_icon_theme::highlightedIcon(normalPath, activePath);
 }
 
 QString WulforUtil::getNicks(const QString &cid, const QString &hintUrl){
@@ -1325,6 +1329,10 @@ QStringList WulforUtil::encodings(){
 }
 
 bool WulforUtil::openUrl(const QString &url){
+#ifdef USE_TORRENT
+    if (qtCtx()->mainWindow() && qtCtx()->mainWindow()->openTorrentSource(url))
+        return true;
+#endif
     const QUrl parsedUrl = QUrl::fromUserInput(url);
     if (parsedUrl.isLocalFile()) {
         const QString localPath = parsedUrl.toLocalFile();
@@ -1673,7 +1681,7 @@ QString WulforUtil::compactToolTipText(QString text, int maxlen, QString sep)
     return text;
 }
 
-void WulforUtil::headerMenu(QTreeView *tree){
+void WulforUtil::headerMenu(QTreeView *tree, const QList<QAction *> &extraActions){
     if (!tree || !tree->model() || !tree->header())
         return;
 
@@ -1702,9 +1710,13 @@ void WulforUtil::headerMenu(QTreeView *tree){
             column->setEnabled(false);
     }
 
+    if (!extraActions.isEmpty()) {
+        mcols->addSeparator();
+        mcols->addActions(extraActions);
+    }
     QAction * chosen = mcols->exec(QCursor::pos());
 
-    if (chosen) {
+    if (chosen && !extraActions.contains(chosen)) {
         index = chosen->data().toInt();
 
         if (tree->header()->isSectionHidden(index)) {

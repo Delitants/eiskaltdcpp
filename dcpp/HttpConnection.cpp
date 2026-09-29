@@ -139,7 +139,7 @@ void HttpConnection::prepareRequest(RequestType type) {
 
     string proto, query, fragment;
     usingHttpProxy = !CTX_SETTING(HTTP_PROXY).empty() &&
-        CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_DIRECT;
+        (publicHubListProxy || CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_DIRECT);
 
     if(!usingHttpProxy) {
         Util::decodeUrl(url, proto, server, port, file, query, fragment);
@@ -173,7 +173,8 @@ void HttpConnection::prepareRequest(RequestType type) {
         if(connector) {
             connector(*socket, server, port, proto == "https", useOutgoingProxy);
         } else {
-            socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT);
+            socket->connect(server, port, (proto == "https"), true, useOutgoingProxy, Socket::PROTO_DEFAULT,
+                Util::emptyString, publicHubListProxy && usingHttpProxy);
         }
         // keep SNI hint alive until the async TLS connect actually uses it
 

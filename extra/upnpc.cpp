@@ -34,8 +34,15 @@
 #include <miniupnpc/upnperrors.h>
 #include "dcpp/DCContext.h"
 
-static UPNPUrls urls;
-static IGDdatas data;
+struct UPnPc::Gateway {
+    UPNPUrls urls{};
+    IGDdatas data{};
+    char lanAddress[64]{};
+    ~Gateway() { FreeUPNPUrls(&urls); }
+};
+
+UPnPc::UPnPc(dcpp::DCContext& ctx) : ctx_(ctx), gateway(new Gateway) {}
+UPnPc::~UPnPc() = default;
 const std::string UPnPc::name = "MiniUPnP";
 
 using namespace std;
@@ -43,9 +50,10 @@ using namespace dcpp;
 
 bool UPnPc::init()
 {
+    auto discovered = std::make_unique<Gateway>();
     auto* sm = ctx_.getSettingsManager();
     const string bind_address = sm->get(SettingsManager::BIND_ADDRESS, true);
-    const char *multicast_interface = sm->isDefault(SettingsManager::BIND_ADDRESS) ? nullptr : bind_address.c_str();
+    const char *multicast_interface = (bind_address.empty() || bind_address == "0.0.0.0") ? nullptr : bind_address.c_str();
 
 #if (MINIUPNPC_API_VERSION >= 14)
     UPNPDev *devices = upnpDiscover(5000, multicast_interface, nullptr, 0, 0, 2, nullptr);
@@ -57,32 +65,54 @@ bool UPnPc::init()
         return false;
 
 #if (MINIUPNPC_API_VERSION >= 18)
-    bool ret = UPNP_GetValidIGD(devices, &urls, &::data, nullptr, 0, nullptr, 0);
+    const int ret = UPNP_GetValidIGD(devices, &discovered->urls, &discovered->data,
+        discovered->lanAddress, sizeof(discovered->lanAddress), nullptr, 0);
 #else
-    bool ret = UPNP_GetValidIGD(devices, &urls, &::data, nullptr, 0);
+    const int ret = UPNP_GetValidIGD(devices, &discovered->urls, &discovered->data,
+        discovered->lanAddress, sizeof(discovered->lanAddress));
 #endif
 
     freeUPNPDevlist(devices);
 
-    return ret;
+#if (MINIUPNPC_API_VERSION >= 18)
+    // API 18 introduced the private-WAN result before naming the constants.
+    const bool connected = ret == 1 || ret == 2;
+#else
+    const bool connected = ret == 1;
+#endif
+    if(!connected || !discovered->urls.controlURL || !discovered->lanAddress[0])
+        return false;
+    gateway = std::move(discovered);
+    return true;
 }
 
 bool UPnPc::add(const string& port, const UPnP::Protocol protocol, const string& description)
 {
-    return UPNP_AddPortMapping(urls.controlURL, ::data.first.servicetype, port.c_str(), port.c_str(),
-        Util::getLocalIp(AF_INET).c_str(), description.c_str(), protocols[protocol], nullptr, nullptr) == UPNPCOMMAND_SUCCESS;
+    if(!gateway->urls.controlURL)
+        return false;
+    auto addWithLease = [&](const char* lease) {
+        return UPNP_AddPortMapping(gateway->urls.controlURL, gateway->data.first.servicetype,
+            port.c_str(), port.c_str(), gateway->lanAddress, description.c_str(),
+            protocols[protocol], nullptr, lease);
+    };
+    int result = addWithLease("3600");
+    if(result == 725) // Older routers accept only permanent mappings.
+        result = addWithLease("0");
+    return result == UPNPCOMMAND_SUCCESS;
 }
 
 bool UPnPc::remove(const string& port, const UPnP::Protocol protocol)
 {
-    return UPNP_DeletePortMapping(urls.controlURL, ::data.first.servicetype, port.c_str(),
+    if(!gateway->urls.controlURL)
+        return false;
+    return UPNP_DeletePortMapping(gateway->urls.controlURL, gateway->data.first.servicetype, port.c_str(),
         protocols[protocol], nullptr) == UPNPCOMMAND_SUCCESS;
 }
 
 string UPnPc::getExternalIP()
 {
     char buf[16] = { 0 };
-    if (UPNP_GetExternalIPAddress(urls.controlURL, ::data.first.servicetype, buf) == UPNPCOMMAND_SUCCESS)
+    if (gateway->urls.controlURL && UPNP_GetExternalIPAddress(gateway->urls.controlURL, gateway->data.first.servicetype, buf) == UPNPCOMMAND_SUCCESS)
         return string(buf);
     return Util::emptyString;
 }

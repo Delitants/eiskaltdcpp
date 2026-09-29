@@ -25,6 +25,7 @@
 #include <QShortcut>
 
 #include "DownloadQueueModel.h"
+#include "AutoFitColumns.h"
 #include "ArenaWidgetFactory.h"
 #include "SearchFrame.h"
 #include "HubFrame.h"
@@ -52,6 +53,8 @@ public:
     DownloadQueueModel *queue_model;
     DownloadQueueModel *file_model;
     DownloadQueueDelegate *delegate;
+    AutoFitColumns *columns;
+    QAction *fitColumns;
 
     DownloadQueue::Menu *menu;
 
@@ -292,6 +295,12 @@ void DownloadQueue::init(){
     treeView_TARGET->setModel(d->queue_model);
     treeView_TARGET->setItemsExpandable(true);
     treeView_TARGET->setRootIsDecorated(true);
+    treeView_TARGET->setIndentation(16);
+    treeView_TARGET->setUniformRowHeights(true);
+    treeView_TARGET->setAlternatingRowColors(true);
+    treeView_TARGET->setSelectionBehavior(QAbstractItemView::SelectRows);
+    treeView_TARGET->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    treeView_TARGET->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     treeView_TARGET->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView_TARGET->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -320,7 +329,15 @@ void DownloadQueue::init(){
 
     setAttribute(Qt::WA_DeleteOnClose);
 
+    d->columns = new AutoFitColumns(treeView_TARGET);
+    d->fitColumns = new QAction(QCoreApplication::translate("TransferView", "Fit to content"), this);
+    d->fitColumns->setObjectName(QStringLiteral("fitQueueColumns"));
+    connect(d->fitColumns, &QAction::triggered, this, [this] {
+        Q_D(DownloadQueue);
+        d->columns->fitToContents();
+    });
     load();
+    connect(d->columns, &AutoFitColumns::layoutChanged, this, &DownloadQueue::save);
 
     loadList();
 
@@ -330,12 +347,22 @@ void DownloadQueue::init(){
 }
 
 void DownloadQueue::load(){
-    treeView_TARGET->header()->restoreState(qtCtx()->settings()->getVar(WS_DQUEUE_STATE, QByteArray()).toByteArray());
+    Q_D(DownloadQueue);
+    const bool restored = d->columns->restoreState(
+        qtCtx()->settings()->getVar(QStringLiteral("downloadqueue/column-layout-v1")).toMap(),
+        qtCtx()->settings()->getVar(WS_DQUEUE_STATE, QByteArray()).toByteArray());
+    if (!restored) {
+        for (const int column : {COLUMN_DOWNLOADQUEUE_PATH, COLUMN_DOWNLOADQUEUE_ESIZE,
+                                COLUMN_DOWNLOADQUEUE_ADDED, COLUMN_DOWNLOADQUEUE_TTH})
+            treeView_TARGET->hideColumn(column);
+    }
     treeView_TARGET->setSortingEnabled(true);
 }
 
 void DownloadQueue::save(){
+    Q_D(DownloadQueue);
     qtCtx()->settings()->setVar(WS_DQUEUE_STATE, treeView_TARGET->header()->saveState());
+    qtCtx()->settings()->setVar(QStringLiteral("downloadqueue/column-layout-v1"), d->columns->saveState());
 }
 
 void DownloadQueue::getParams(DownloadQueue::VarMap &params, const QueueItem *item){
@@ -427,7 +454,8 @@ void DownloadQueue::getParams(DownloadQueue::VarMap &params, const QueueItem *it
     d->badSources[_q(item->getTarget())] = source;
 
     params["ADDED"] = _q(Util::formatTime("%Y-%m-%d %H:%M", item->getAdded()));
-    params["TTH"] = _q(item->getTTH().toBase32());
+    params["TTH"] = item->isSet(QueueItem::FLAG_USER_LIST) || item->getTTH() == TTHValue()
+        ? QString() : _q(item->getTTH().toBase32());
 
 }
 
@@ -785,7 +813,9 @@ void DownloadQueue::slotCollapseRow(const QModelIndex &row){
 }
 
 void DownloadQueue::slotHeaderMenu(const QPoint&){
-    WulforUtil::headerMenu(treeView_TARGET);
+    Q_D(DownloadQueue);
+    WulforUtil::headerMenu(treeView_TARGET, {d->fitColumns});
+    save();
 }
 
 void DownloadQueue::slotUpdateStats(quint64 files, quint64 size){

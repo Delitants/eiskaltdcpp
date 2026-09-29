@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Torrent options</title>
+  <desc>Prism light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-color" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#009cf0" stop-opacity="1"/><stop offset="0.5" stop-color="#009cf0" stop-opacity="1"/><stop offset="0.5" stop-color="#00c2b3" stop-opacity="1"/><stop offset="1" stop-color="#00c2b3" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#003e60" stop-opacity="1"/><stop offset="0.5" stop-color="#00273c" stop-opacity="1"/><stop offset="1" stop-color="#001b29" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M128,80a24,24,0,1,1-24-24A24,24,0,0,1,128,80Zm40,72a24,24,0,1,0,24,24A24,24,0,0,0,168,152Z" fill="url(#p0-color)"/>
+    <path d="M128,80a24,24,0,1,1-24-24A24,24,0,0,1,128,80Zm40,72a24,24,0,1,0,24,24A24,24,0,0,0,168,152Z" fill="url(#p0-shine)"/>
+    <path d="M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16h97a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z" fill="url(#p0-rim)"/>
+  </g>
+</svg>

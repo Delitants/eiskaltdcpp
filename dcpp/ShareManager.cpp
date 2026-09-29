@@ -51,6 +51,11 @@
 #endif
 
 #include <limits>
+#include <charconv>
+#include <array>
+#include <filesystem>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
 #include "DCPlusPlus.h"
 
 namespace dcpp {
@@ -58,6 +63,627 @@ namespace dcpp {
 using std::numeric_limits;
 
 bool ShareManager::caseSensitiveFilelist_ = false;
+
+namespace {
+uint64_t shareDate(const string& text) {
+    uint64_t value = 0;
+    const auto end = text.data() + text.size();
+    const auto parsed = std::from_chars(text.data(), end, value);
+    return parsed.ec == std::errc() && parsed.ptr == end && value > 0 &&
+        value <= static_cast<uint64_t>(numeric_limits<int64_t>::max()) ? value : 0;
+}
+
+struct ShareObservation {
+    string identity;
+    int64_t size = 0;
+    uint64_t modified = 0;
+};
+
+#ifdef _WIN32
+ShareObservation observeShareHandle(HANDLE handle, bool directory) {
+    BY_HANDLE_FILE_INFORMATION st;
+    FILE_BASIC_INFO basic;
+    if(!GetFileInformationByHandle(handle, &st) ||
+       !GetFileInformationByHandleEx(handle, FileBasicInfo, &basic, sizeof(basic)) ||
+       ((st.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) != directory)
+        return {};
+    ShareObservation result;
+    result.size = (static_cast<int64_t>(st.nFileSizeHigh) << 32) | st.nFileSizeLow;
+    constexpr int64_t epoch = 116444736000000000LL;
+    if(basic.LastWriteTime.QuadPart > epoch)
+        result.modified = (basic.LastWriteTime.QuadPart - epoch) / 10000000;
+    result.identity = Util::toString(st.dwVolumeSerialNumber) + ":" + Util::toString(st.nFileIndexHigh) + ":" +
+        Util::toString(st.nFileIndexLow) + ":" + Util::toString(result.size) + ":" +
+        Util::toString(basic.LastWriteTime.QuadPart) + ":" + Util::toString(basic.ChangeTime.QuadPart);
+    return result;
+}
+#else
+ShareObservation observeShareStat(const struct stat& st, bool directory) {
+    if(directory ? !S_ISDIR(st.st_mode) : !S_ISREG(st.st_mode)) return {};
+#ifdef __APPLE__
+    const auto mt = st.st_mtimespec, ct = st.st_ctimespec;
+#else
+    const auto mt = st.st_mtim, ct = st.st_ctim;
+#endif
+    ShareObservation result;
+    result.size = st.st_size;
+    if(mt.tv_sec > 0 && static_cast<uint64_t>(mt.tv_sec) <= static_cast<uint64_t>(numeric_limits<int64_t>::max()))
+        result.modified = static_cast<uint64_t>(mt.tv_sec);
+    result.identity = Util::toString(st.st_dev) + ":" + Util::toString(st.st_ino) + ":" + Util::toString(result.size) + ":" +
+        Util::toString(mt.tv_sec) + ":" + Util::toString(mt.tv_nsec) + ":" +
+        Util::toString(ct.tv_sec) + ":" + Util::toString(ct.tv_nsec);
+    return result;
+}
+#endif
+
+ShareObservation observeSharePath(const string& path, bool directory) {
+#ifdef _WIN32
+    auto native = std::filesystem::u8path(path);
+    if(!native.has_filename()) native = native.parent_path();
+    HANDLE handle = CreateFileW(native.c_str(), FILE_READ_ATTRIBUTES,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
+        FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+    if(handle == INVALID_HANDLE_VALUE) return {};
+    const auto result = observeShareHandle(handle, directory);
+    CloseHandle(handle);
+    return result;
+#else
+    struct stat st;
+    return ::stat(Text::fromUtf8(path).c_str(), &st) == 0 ? observeShareStat(st, directory) : ShareObservation{};
+#endif
+}
+
+constexpr size_t managedCacheLimit = 64 * 1024 * 1024;
+const string managedCacheMagic = "EISKALT-MANAGED-HASHES-1\n";
+
+void cacheNumber(string& out, uint64_t value) {
+    for(int i = 0; i < 8; ++i) out.push_back(static_cast<char>(value >> (i * 8)));
+}
+void cacheString(string& out, const string& value) {
+    cacheNumber(out, value.size());
+    out.append(value);
+}
+struct ManagedCacheReader {
+    const string& data;
+    size_t pos = 0;
+    uint64_t number() {
+        if(data.size() - pos < 8) throw ShareException("Truncated managed hash cache");
+        uint64_t value = 0;
+        for(int i = 0; i < 8; ++i) value |= uint64_t(static_cast<uint8_t>(data[pos++])) << (i * 8);
+        return value;
+    }
+    string bytes(size_t limit) {
+        const auto count = number();
+        if(count > limit || count > data.size() - pos) throw ShareException("Invalid managed hash cache length");
+        auto value = data.substr(pos, static_cast<size_t>(count));
+        pos += static_cast<size_t>(count);
+        return value;
+    }
+};
+string cacheDigest(const string& data) {
+    unsigned char bytes[EVP_MAX_MD_SIZE];
+    unsigned int size = 0;
+    if(EVP_Digest(data.data(), data.size(), bytes, &size, EVP_sha256(), nullptr) != 1)
+        throw ShareException("Cannot checksum managed hash cache");
+    return string(reinterpret_cast<char*>(bytes), size);
+}
+string managedCachePath() {
+    return Util::getPath(Util::PATH_USER_CONFIG) + "ManagedHashes-v1.bin";
+}
+
+bool managedNameSafe(const string& name) {
+    if(name.empty() || name == "." || name == ".." || name.back() == '.' || name.back() == ' ' ||
+       !Text::validateUtf8(name))
+        return false;
+    for(unsigned char c : name) {
+        if(c < 32 || c == 127 || string("<>:\"/\\|?*").find(c) != string::npos)
+            return false;
+    }
+    const string stem = Text::toLower(name.substr(0, name.find('.')));
+    if(stem == "con" || stem == "prn" || stem == "aux" || stem == "nul" ||
+       (stem.size() == 4 && (stem.substr(0, 3) == "com" || stem.substr(0, 3) == "lpt") &&
+        stem[3] >= '1' && stem[3] <= '9'))
+        return false;
+    return true;
+}
+
+bool managedPayloadNameSafe(const string& name) {
+    if(!managedNameSafe(name)) return false;
+    const auto ext = Text::toLower(Util::getFileExt(name));
+    for(const auto* excluded : {".torrent", ".resume", ".fastresume", ".part", ".partial", ".parts",
+                              ".dctmp", ".tmp", ".!ut", ".!qb", ".crdownload"}) {
+        if(ext == excluded) return false;
+    }
+    return true;
+}
+
+string managedLeafName(const string& path) {
+    const auto leaf = std::filesystem::path(std::u8string(path.begin(), path.end())).filename().u8string();
+    return string(leaf.begin(), leaf.end());
+}
+
+// Keep the opened regular file pinned while hashing. On POSIX each path component
+// is opened relative to the preceding no-follow directory descriptor.
+class ManagedInput : private NonCopyable {
+public:
+    explicit ManagedInput(const string& name) {
+        namespace fs = std::filesystem;
+        if(name.find('\0') != string::npos) throw ShareException("Unsafe managed path");
+        const fs::path path(std::u8string(name.begin(), name.end()));
+        if(!path.is_absolute() || path.filename().empty()) throw ShareException("Managed path must be absolute");
+        for(const auto& part : path.relative_path()) {
+            const auto utf8 = part.u8string();
+            if(!managedNameSafe(string(utf8.begin(), utf8.end()))) throw ShareException("Unsafe managed path component");
+        }
+        if(!managedPayloadNameSafe(managedLeafName(name))) throw ShareException("Not a managed payload file");
+#ifdef _WIN32
+        // Reject UNC/device namespaces. Pin ancestors against rename/delete and
+        // reject all reparse points (including junctions, not just symlinks).
+        const auto drive = path.root_name().wstring();
+        if(drive.size() != 2 || drive[1] != L':') throw ShareException("Unsupported managed path root");
+        fs::path current = path.root_path();
+        try {
+            for(const auto& part : path.relative_path()) {
+                current /= part;
+                const bool leaf = current == path;
+                HANDLE h = CreateFileW(current.c_str(), leaf ? GENERIC_READ : FILE_READ_ATTRIBUTES,
+                    leaf ? FILE_SHARE_READ : FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, OPEN_EXISTING,
+                    FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, nullptr);
+                if(h == INVALID_HANDLE_VALUE) throw ShareException("Cannot open managed file");
+                handles.push_back(h);
+                BY_HANDLE_FILE_INFORMATION info;
+                if(!GetFileInformationByHandle(h, &info) || (info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) ||
+                   (leaf == !!(info.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) || GetFileType(h) != FILE_TYPE_DISK)
+                    throw ShareException("Not a regular managed path");
+            }
+        } catch(...) {
+            for(auto h : handles) CloseHandle(h);
+            throw;
+        }
+#else
+        int current = ::open("/", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+        if(current == -1) throw ShareException("Cannot open managed root");
+        for(auto it = path.begin(); it != path.end(); ++it) {
+            if(*it == path.root_path()) continue;
+            auto next = it; ++next;
+            const bool leaf = next == path.end();
+            const int flags = O_RDONLY | O_CLOEXEC | O_NOFOLLOW | (leaf ? O_NONBLOCK : O_DIRECTORY);
+            int opened = ::openat(current, it->c_str(), flags);
+            ::close(current);
+            if(opened == -1) throw ShareException("Cannot open managed path without links");
+            current = opened;
+        }
+        struct stat st;
+        if(::fstat(current, &st) || !S_ISREG(st.st_mode)) {
+            ::close(current);
+            throw ShareException("Not a regular managed file");
+        }
+        fd = current;
+#endif
+    }
+
+    ~ManagedInput() {
+#ifdef _WIN32
+        for(auto h : handles) CloseHandle(h);
+#else
+        ::close(fd);
+#endif
+    }
+
+    string state(int64_t& size, uint64_t* modified = nullptr) const {
+#ifdef _WIN32
+        const auto observed = observeShareHandle(handles.back(), false);
+#else
+        struct stat st;
+        if(::fstat(fd, &st)) throw ShareException("Cannot inspect managed file");
+        const auto observed = observeShareStat(st, false);
+#endif
+        if(observed.identity.empty()) throw ShareException("Cannot inspect managed file");
+        size = observed.size;
+        if(modified) *modified = observed.modified;
+        return observed.identity;
+    }
+
+    size_t read(void* buffer, size_t size) {
+#ifdef _WIN32
+        DWORD count;
+        if(!ReadFile(handles.back(), buffer, static_cast<DWORD>(size), &count, nullptr))
+            throw ShareException("Cannot read managed file");
+        return count;
+#else
+        ssize_t count;
+        do { count = ::read(fd, buffer, size); } while(count < 0 && errno == EINTR);
+        if(count < 0) throw ShareException("Cannot read managed file");
+        return static_cast<size_t>(count);
+#endif
+    }
+private:
+#ifdef _WIN32
+    vector<HANDLE> handles;
+#else
+    int fd = -1;
+#endif
+};
+}
+
+bool ShareManager::ManagedFile::available() const {
+    try {
+        ManagedInput input(realPath);
+        int64_t currentSize;
+        return input.state(currentSize) == identity && currentSize == size;
+    } catch(const Exception&) {
+        return false;
+    } catch(const std::filesystem::filesystem_error&) {
+        return false;
+    }
+}
+
+string ShareManager::Directory::File::getRealPath() const {
+    if(managed) {
+        if(!managed->available()) throw ShareException(UserConnection::FILE_NOT_AVAILABLE);
+        return managed->realPath;
+    }
+    return parent->getRealPath(name);
+}
+
+bool ShareManager::managedConflicts(const string& owner, const ManagedShare& candidate) const {
+    const auto root = getByVirtual(candidate.virtualName);
+    if(root != directories.end() && !(*root)->managedRoot) return true;
+    for(const auto& manual : shares) {
+        if(Util::stricmp(manual.second, candidate.virtualName) == 0) return true;
+    }
+    map<string, string> names;
+    const auto addFiles = [&names](const ManagedShare& snapshot) {
+        for(const auto& file : snapshot.files) {
+            const auto name = Text::toLower(managedLeafName(file->realPath));
+            const auto added = names.emplace(name, file->realPath);
+            if(!added.second && added.first->second != file->realPath) return false;
+        }
+        return true;
+    };
+    if(!addFiles(candidate)) return true;
+    for(const auto& entry : managedShares) {
+        if(entry.first != owner && Util::stricmp(entry.second.virtualName, candidate.virtualName) == 0 &&
+           !addFiles(entry.second)) return true;
+    }
+    return false;
+}
+
+bool ShareManager::replaceManagedFiles(const string& owner, const string& virtualName, const StringList& absoluteFiles,
+                                      std::function<bool()> externalCancelled, std::function<void()> hashingStarted) {
+    if(externalCancelled && externalCancelled()) return false;
+    if(owner.empty() || !managedNameSafe(virtualName)) return false;
+    auto token = std::make_shared<int>(0);
+    {
+        Lock l(cs);
+        if(externalCancelled && externalCancelled()) return false;
+        if(absoluteFiles.empty()) {
+            removeManagedFiles(owner);
+            return true;
+        }
+        managedReplacements[owner] = token;
+    }
+    const auto cancelled = [&] {
+        if(externalCancelled && externalCancelled()) return true;
+        Lock l(cs);
+        const auto i = managedReplacements.find(owner);
+        return i == managedReplacements.end() || i->second != token;
+    };
+    const auto cleanup = [&] {
+        Lock l(cs);
+        const auto i = managedReplacements.find(owner);
+        if(i != managedReplacements.end() && i->second == token) managedReplacements.erase(i);
+    };
+    ScopedFunctor(cleanup);
+    try {
+        ManagedShare snapshot;
+        snapshot.virtualName = virtualName;
+        set<string> seen;
+        map<string, ManagedFilePtr> verified;
+        {
+            Lock l(cs);
+            const auto cached = managedVerifiedFiles.find(owner);
+            if(cached != managedVerifiedFiles.end())
+                for(const auto& file : cached->second) verified.emplace(file->realPath, file);
+        }
+        set<const ManagedFile*> reused;
+        // Validate the complete whitelist before doing potentially expensive reads.
+        for(const auto& path : absoluteFiles) {
+            if(cancelled()) return false;
+            if(!seen.insert(path).second) continue;
+            ManagedInput input(path);
+            auto file = std::make_shared<ManagedFile>();
+            file->realPath = path;
+            file->identity = input.state(file->size, &file->modified);
+            const auto cached = verified.find(path);
+            if(cached != verified.end() && cached->second->identity == file->identity &&
+               cached->second->size == file->size) {
+                ManagedFilePtr reusedFile = cached->second;
+                if(reusedFile->modified != file->modified) {
+                    // The v1 cache stores hash evidence, not dates. Attach the
+                    // fresh observation without reading/hashing the payload.
+                    auto dated = std::make_shared<ManagedFile>(*reusedFile);
+                    dated->modified = file->modified;
+                    reusedFile = std::move(dated);
+                }
+                snapshot.files.push_back(reusedFile);
+                reused.insert(reusedFile.get());
+            } else {
+                snapshot.files.push_back(file);
+            }
+        }
+        {
+            Lock l(cs);
+            if(managedConflicts(owner, snapshot)) return false;
+        }
+        std::array<uint8_t, 256 * 1024> buffer;
+        bool notifiedHashing = false;
+        for(auto& entry : snapshot.files) {
+            if(cancelled()) return false;
+            if(reused.count(entry.get())) continue;
+            if(!notifiedHashing && hashingStarted) hashingStarted();
+            notifiedHashing = true;
+            auto file = std::make_shared<ManagedFile>(*entry);
+            ManagedInput input(file->realPath);
+            int64_t size;
+            if(input.state(size) != file->identity) return false;
+            TigerTree tree(max(TigerTree::calcBlockSize(size, 10), HashManager::MIN_BLOCK_SIZE));
+            int64_t total = 0;
+            for(;;) {
+                if(cancelled()) return false;
+                const auto count = input.read(buffer.data(), buffer.size());
+                if(!count) break;
+                if(count > static_cast<uint64_t>(size - total)) return false;
+                total += count;
+                tree.update(buffer.data(), count);
+            }
+            if(total != size || input.state(size) != file->identity || !file->available()) return false;
+            tree.finalize();
+            file->tth = tree.getRoot();
+            // Store leaves without the seconds-only filename cache or TTHDone
+            // callbacks. Never take HashManager's lock while holding cs here.
+            ctx().getHashManager()->addTree(tree);
+            TigerTree stored;
+            if(!ctx().getHashManager()->getTree(file->tth, stored)) return false;
+            // Hash-store rebuild only retains filename-indexed trees. Keep the
+            // exact leaves alive with the owned snapshot, independent of that cache.
+            file->leaves = tree.getLeafData();
+            entry = file;
+        }
+        {
+            Lock l(cs);
+            if(cancelled() || managedConflicts(owner, snapshot)) return false;
+            for(const auto& file : snapshot.files) {
+                if(!file->available()) return false;
+            }
+            if(cancelled()) return false;
+            rememberManagedFiles(owner, snapshot);
+            managedShares[owner] = std::move(snapshot);
+            rebuildManagedDirectories();
+        }
+        saveManagedHashCache();
+        return true;
+    } catch(const Exception&) {
+        return false;
+    } catch(const std::filesystem::filesystem_error&) {
+        return false;
+    }
+}
+
+void ShareManager::removeManagedFiles(const string& owner) {
+    Lock l(cs);
+    managedReplacements.erase(owner);
+    if(managedShares.erase(owner)) rebuildManagedDirectories();
+}
+
+void ShareManager::forgetManagedFileHashes(const string& owner) {
+    {
+        Lock l(cs);
+        // Also fence an in-flight replacement that captured the old cache.
+        managedReplacements.erase(owner);
+        const auto cached = managedVerifiedFiles.find(owner);
+        if(cached == managedVerifiedFiles.end()) return;
+        for(const auto& file : cached->second)
+            managedVerifiedBytes -= file->leaves.size() + file->realPath.size() + file->identity.size();
+        managedVerifiedCount -= cached->second.size();
+        managedVerifiedFiles.erase(cached);
+    }
+    saveManagedHashCache(true);
+}
+
+void ShareManager::rememberManagedFiles(const string& owner, const ManagedShare& snapshot) {
+    size_t bytes = 0;
+    for(const auto& file : snapshot.files)
+        bytes += file->leaves.size() + file->realPath.size() + file->identity.size();
+    // Eviction affects performance only, never publication or upload authorization.
+    const auto previous = managedVerifiedFiles.find(owner);
+    if(previous != managedVerifiedFiles.end()) {
+        for(const auto& file : previous->second)
+            managedVerifiedBytes -= file->leaves.size() + file->realPath.size() + file->identity.size();
+        managedVerifiedCount -= previous->second.size();
+        managedVerifiedFiles.erase(previous);
+    }
+    if(bytes > managedVerifiedByteLimit || snapshot.files.size() > managedVerifiedFileLimit) return;
+    while(!managedVerifiedFiles.empty() &&
+          (managedVerifiedBytes + bytes > managedVerifiedByteLimit ||
+           managedVerifiedCount + snapshot.files.size() > managedVerifiedFileLimit)) {
+        const auto victim = managedVerifiedFiles.begin();
+        for(const auto& file : victim->second)
+            managedVerifiedBytes -= file->leaves.size() + file->realPath.size() + file->identity.size();
+        managedVerifiedCount -= victim->second.size();
+        managedVerifiedFiles.erase(victim);
+    }
+    managedVerifiedFiles[owner] = snapshot.files;
+    managedVerifiedBytes += bytes;
+    managedVerifiedCount += snapshot.files.size();
+}
+
+void ShareManager::loadManagedHashCache() {
+    // This restores only hash evidence, never a share root or an upload whitelist.
+    try {
+        ManagedInput input(managedCachePath());
+        int64_t size;
+        const auto identity = input.state(size);
+        if(size < 0 || size > static_cast<int64_t>(managedCacheLimit)) return;
+        string encoded(static_cast<size_t>(size), '\0');
+        size_t offset = 0;
+        while(offset < encoded.size()) {
+            const auto count = input.read(encoded.data() + offset, encoded.size() - offset);
+            if(!count) return;
+            offset += count;
+        }
+        if(input.state(size) != identity || encoded.size() < managedCacheMagic.size() + 32 ||
+           encoded.compare(0, managedCacheMagic.size(), managedCacheMagic) != 0) return;
+        const auto body = encoded.substr(managedCacheMagic.size() + 32);
+        if(cacheDigest(body) != encoded.substr(managedCacheMagic.size(), 32)) return;
+        ManagedCacheReader reader{body};
+        const auto count = reader.number();
+        if(count > managedVerifiedFileLimit) return;
+        map<string, vector<ManagedFilePtr>> restored;
+        size_t bytes = 0;
+        for(uint64_t i = 0; i < count; ++i) {
+            const auto owner = reader.bytes(1024);
+            auto file = std::make_shared<ManagedFile>();
+            file->realPath = reader.bytes(65536);
+            file->identity = reader.bytes(1024);
+            const auto fileSize = reader.number();
+            if(owner.empty() || file->realPath.empty() || file->identity.empty() ||
+               owner.find('\0') != string::npos || file->realPath.find('\0') != string::npos ||
+               fileSize > (uint64_t(1) << 50)) return;
+            file->size = static_cast<int64_t>(fileSize);
+            const auto root = reader.bytes(TigerTree::BYTES);
+            const auto leaves = reader.bytes(managedVerifiedByteLimit);
+            const auto block = max(TigerTree::calcBlockSize(file->size, 10), HashManager::MIN_BLOCK_SIZE);
+            if(root.size() != TigerTree::BYTES ||
+               leaves.size() != TigerTree::calcBlocks(file->size, block) * TigerTree::BYTES) return;
+            file->leaves.assign(leaves.begin(), leaves.end());
+            TigerTree tree(file->size, block, file->leaves.data());
+            file->tth = TTHValue(reinterpret_cast<const uint8_t*>(root.data()));
+            if(tree.getRoot() != file->tth) return;
+            bytes += file->leaves.size() + file->realPath.size() + file->identity.size();
+            if(bytes > managedVerifiedByteLimit) return;
+            auto& files = restored[owner];
+            if(std::any_of(files.begin(), files.end(), [&](const ManagedFilePtr& other) {
+                return other->realPath == file->realPath;
+            })) return;
+            files.push_back(file);
+        }
+        if(reader.pos != body.size()) return;
+        managedVerifiedFiles = std::move(restored);
+        managedVerifiedBytes = bytes;
+        managedVerifiedCount = static_cast<size_t>(count);
+    } catch(...) {
+        // Missing, corrupt or incompatible caches are a performance miss only.
+    }
+}
+
+void ShareManager::saveManagedHashCache(bool invalidatePrevious) {
+    // Serialize writers before taking the snapshot so an older write cannot win.
+    std::unique_lock ioLock(managedCacheIoMutex);
+    std::filesystem::path staging;
+    try {
+        const auto path = managedCachePath();
+        if(invalidatePrevious) {
+            std::error_code error;
+            std::filesystem::remove(std::filesystem::u8path(path), error);
+            if(error) {
+                ioLock.unlock();
+                ctx().getLogManager()->message(_("Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."));
+                return;
+            }
+        }
+        string body;
+        {
+            Lock l(cs);
+            cacheNumber(body, managedVerifiedCount);
+            for(const auto& [owner, files] : managedVerifiedFiles) {
+                for(const auto& file : files) {
+                    cacheString(body, owner);
+                    cacheString(body, file->realPath);
+                    cacheString(body, file->identity);
+                    cacheNumber(body, file->size);
+                    cacheString(body, string(reinterpret_cast<const char*>(file->tth.data), TigerTree::BYTES));
+                    cacheString(body, string(file->leaves.begin(), file->leaves.end()));
+                }
+            }
+        }
+        if(body.size() + managedCacheMagic.size() + 32 > managedCacheLimit) return;
+        unsigned char random[16];
+        if(RAND_bytes(random, sizeof(random)) != 1) return;
+        staging = std::filesystem::u8path(path + "." + Encoder::toBase32(random, sizeof(random)));
+        if(!std::filesystem::create_directory(staging)) return;
+        std::filesystem::permissions(staging, std::filesystem::perms::owner_all);
+        const auto nativeTemp = staging / "cache";
+        const auto utf8Temp = nativeTemp.u8string();
+        const string temp(utf8Temp.begin(), utf8Temp.end());
+        {
+            File output(temp, File::WRITE, File::CREATE | File::TRUNCATE);
+            std::filesystem::permissions(nativeTemp, std::filesystem::perms::owner_read | std::filesystem::perms::owner_write);
+            output.write(managedCacheMagic + cacheDigest(body) + body);
+            output.flush();
+        }
+#ifdef _WIN32
+        if(!MoveFileExW(Text::utf8ToWide(temp).c_str(), Text::utf8ToWide(path).c_str(),
+                       MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+            throw ShareException("Cannot replace managed hash cache");
+#else
+        File::renameFile(temp, path);
+#endif
+    } catch(...) {
+        // Sharing still works if the optional cache cannot be written.
+    }
+    if(!staging.empty()) {
+        std::error_code error;
+        std::filesystem::remove(staging / "cache", error);
+        std::filesystem::remove(staging, error);
+    }
+}
+
+ShareManager::ManagedFileHashes ShareManager::getManagedFileHashes(const string& owner) const {
+    std::shared_ptr<const ManagedHashSnapshots> snapshots;
+    {
+        std::lock_guard lock(managedHashMutex);
+        snapshots = managedHashSnapshots;
+    }
+    if(!snapshots) return {};
+    const auto found = snapshots->find(owner);
+    return found == snapshots->end() ? ManagedFileHashes{} : found->second;
+}
+
+void ShareManager::rebuildManagedDirectories() {
+    auto hashes = std::make_shared<ManagedHashSnapshots>();
+    tthIndex.clear(); // iterators must not outlive the old managed directories
+    directories.remove_if([](const Directory::Ptr& d) { return d->managedRoot; });
+    for(const auto& entry : managedShares) {
+        for(const auto& file : entry.second.files) {
+            if(!file->available()) continue;
+            auto root = getByVirtual(entry.second.virtualName);
+            Directory::Ptr dir;
+            if(root == directories.end()) {
+                dir = Directory::create(entry.second.virtualName);
+                dir->managedRoot = true;
+                directories.push_back(dir);
+            } else {
+                dir = *root;
+                if(!dir->managedRoot) continue;
+            }
+            Directory::File item(managedLeafName(file->realPath), file->size, dir, file->tth);
+            item.managed = file;
+            item.modified = file->modified;
+            dir->files.insert(item);
+            (*hashes)[entry.first].emplace(file->realPath, std::make_pair(file->size, file->tth));
+        }
+    }
+    rebuildIndices();
+    std::shared_ptr<const ManagedHashSnapshots> published = std::move(hashes);
+    {
+        // Only exchange ownership here; no file I/O, map copying or destruction.
+        std::lock_guard lock(managedHashMutex);
+        managedHashSnapshots.swap(published);
+    }
+    setDirty();
+    forceXmlRefresh = true;
+}
 
 ShareManager::ShareManager(DCContext& ctx) : ContextAware(ctx), hits(0), xmlListLen(0), bzXmlListLen(0),
     xmlDirty(true), forceXmlRefresh(false), refreshDirs(false), update(false), initial(true), listN(0), refreshing(false),
@@ -68,6 +694,7 @@ ShareManager::ShareManager(DCContext& ctx) : ContextAware(ctx), hits(0), xmlList
     this->ctx().getTimerManager()->addListener(this);
     this->ctx().getQueueManager()->addListener(this);
     this->ctx().getHashManager()->addListener(this);
+    loadManagedHashCache();
 }
 
 ShareManager::~ShareManager() {
@@ -134,6 +761,13 @@ string ShareManager::findRealRoot(const string& virtualRoot, const string& virtu
 }
 
 int64_t ShareManager::Directory::getSize() const {
+    if(managedRoot) {
+        int64_t total = 0;
+        for(const auto& file : files) {
+            if(file.available()) total += file.getSize();
+        }
+        return total;
+    }
     int64_t tmp = size;
     for(auto& i : directories)
         tmp += i.second->getSize();
@@ -149,7 +783,7 @@ string ShareManager::toVirtual(const TTHValue& tth) const {
 
     Lock l(cs);
     auto i = tthIndex.find(tth);
-    if(i != tthIndex.end()) {
+    if(i != tthIndex.end() && i->second->available()) {
         return i->second->getADCPath();
     } else {
         throw ShareException(UserConnection::FILE_NOT_AVAILABLE);
@@ -215,20 +849,28 @@ TTHValue ShareManager::getTTH(const string& virtualFile) const {
 
 MemoryInputStream* ShareManager::getTree(const string& virtualFile) const {
     TigerTree tree;
-    if(virtualFile.compare(0, 4, "TTH/") == 0) {
-        if(!ctx().getHashManager()->getTree(TTHValue(virtualFile.substr(4)), tree))
-            return 0;
-    } else {
-        try {
-            TTHValue tth = getTTH(virtualFile);
-            ctx().getHashManager()->getTree(tth, tree);
-        } catch(const Exception&) {
-            return 0;
+    try {
+        TTHValue tth;
+        {
+            Lock l(cs);
+            if(virtualFile == Transfer::USER_LIST_NAME_BZ || virtualFile == Transfer::USER_LIST_NAME) {
+                tth = getTTH(virtualFile);
+            } else {
+                const auto file = findFile(virtualFile);
+                if(file->managed) {
+                    const auto& leaves = file->managed->leaves;
+                    return new MemoryInputStream(leaves.data(), leaves.size());
+                }
+                tth = file->getTTH();
+            }
         }
+        if(!ctx().getHashManager()->getTree(tth, tree)) return 0;
+    } catch(const Exception&) {
+        return 0;
     }
 
     ByteVector buf = tree.getLeafData();
-    return new MemoryInputStream(&buf[0], buf.size());
+    return new MemoryInputStream(buf.data(), buf.size());
 }
 
 AdcCommand ShareManager::getFileInfo(const string& aFile) {
@@ -255,7 +897,7 @@ AdcCommand ShareManager::getFileInfo(const string& aFile) {
     TTHValue val(aFile.substr(4));
     Lock l(cs);
     auto i = tthIndex.find(val);
-    if(i == tthIndex.end()) {
+    if(i == tthIndex.end() || !i->second->available()) {
         throw ShareException(UserConnection::FILE_NOT_AVAILABLE);
     }
 
@@ -299,7 +941,7 @@ pair<ShareManager::Directory::Ptr, string> ShareManager::splitVirtual(const stri
 ShareManager::Directory::File::Set::const_iterator ShareManager::findFile(const string& virtualFile) const {
     if(virtualFile.compare(0, 4, "TTH/") == 0) {
         auto i = tthIndex.find(TTHValue(virtualFile.substr(4)));
-        if(i == tthIndex.end()) {
+        if(i == tthIndex.end() || !i->second->available()) {
             throw ShareException(UserConnection::FILE_NOT_AVAILABLE);
         }
         return i->second;
@@ -308,7 +950,7 @@ ShareManager::Directory::File::Set::const_iterator ShareManager::findFile(const 
     auto v = splitVirtual(virtualFile);
     auto it = find_if(v.first->files.begin(), v.first->files.end(),
                       Directory::File::StringComp(v.second));
-    if(it == v.first->files.end())
+    if(it == v.first->files.end() || !it->available())
         throw ShareException(UserConnection::FILE_NOT_AVAILABLE);
     return it;
 }
@@ -330,6 +972,15 @@ bool ShareManager::hasVirtual(const string& virtualName) const {
 
 void ShareManager::load(SimpleXML& aXml) {
     Lock l(cs);
+    ++manualSharesGeneration;
+
+    // A settings reload is another caller-reapply boundary. Otherwise a newly
+    // loaded manual root could silently acquire an existing managed directory.
+    managedReplacements.clear();
+    if(!managedShares.empty()) {
+        managedShares.clear();
+        rebuildManagedDirectories();
+    }
 
     caseSensitiveFilelist_ = ctx().getSettingsManager()->getBool(SettingsManager::CASESENSITIVE_FILELIST);
 
@@ -373,16 +1024,20 @@ struct ShareLoader : public SimpleXMLReader::CallBack {
             const string& name = getAttrib(attribs, SNAME, 0);
             if(!name.empty()) {
                 if(depth == 0) {
-                    for(auto& i : dirs) {
-                        if(Util::stricmp(i->getName(), name) == 0) {
-                            cur = i;
-                            break;
+                    cur = 0;
+                    if(getAttrib(attribs, "Managed", 0) != "1") {
+                        for(auto& i : dirs) {
+                            if(!i->managedRoot && Util::stricmp(i->getName(), name) == 0) {
+                                cur = i;
+                                break;
+                            }
                         }
                     }
                 } else if(cur) {
                     cur = ShareManager::Directory::create(name, cur);
                     cur->getParent()->directories[cur->getName()] = cur;
                 }
+                if(cur) cur->modified = shareDate(getAttrib(attribs, "Date", 0));
             }
 
             if(simple) {
@@ -400,7 +1055,9 @@ struct ShareLoader : public SimpleXMLReader::CallBack {
                 dcdebug("Invalid file found: %s\n", fname.c_str());
                 return;
             }
-            cur->files.insert(ShareManager::Directory::File(fname, Util::toInt64(size), cur, TTHValue(root)));
+            ShareManager::Directory::File file(fname, Util::toInt64(size), cur, TTHValue(root));
+            file.modified = shareDate(getAttrib(attribs, "Date", 0));
+            cur->files.insert(file);
         }
     }
     virtual void endTag(const string& name) {
@@ -420,6 +1077,7 @@ private:
 };
 
 bool ShareManager::loadCache() {
+    Lock l(cs);
     try {
         ShareLoader loader(directories);
         SimpleXMLReader xml(&loader);
@@ -430,6 +1088,19 @@ bool ShareManager::loadCache() {
         xml.parse(f);
 
         for(auto& d : directories) {
+            const auto roots = std::count_if(shares.begin(), shares.end(), [&](const auto& share) {
+                return Util::stricmp(share.second, d->getName()) == 0;
+            });
+            if(roots > 1 && d->modified) {
+                // A dated cache root had one physical source and is now merged.
+                // Already merged cache roots are undated: preserve their known
+                // unmerged-child dates as prior observations until normal scan.
+                std::function<void(Directory&)> clearDates = [&](Directory& dir) {
+                    dir.modified = 0;
+                    for(auto& child : dir.directories) clearDates(*child.second);
+                };
+                clearDates(*d);
+            }
             updateIndices(*d);
         }
 
@@ -458,6 +1129,14 @@ void ShareManager::save(SimpleXML& aXml) {
 void ShareManager::addDirectory(const string& realPath, const string& virtualName) {
     if(realPath.empty() || virtualName.empty()) {
         throw ShareException(_("No directory specified"));
+    }
+
+    {
+        Lock l(cs);
+        for(const auto& entry : managedShares) {
+            if(Util::stricmp(entry.second.virtualName, validateVirtual(virtualName)) == 0)
+                throw ShareException("Virtual name is reserved by managed files");
+        }
     }
 
     if (!checkHidden(realPath)) {
@@ -497,7 +1176,12 @@ void ShareManager::addDirectory(const string& realPath, const string& virtualNam
     {
         Lock l(cs);
 
+        for(const auto& entry : managedShares) {
+            if(Util::stricmp(entry.second.virtualName, vName) == 0)
+                throw ShareException("Virtual name is reserved by managed files");
+        }
         shares.insert(std::make_pair(realPath, vName));
+        ++manualSharesGeneration;
         updateIndices(*merge(dp));
 
         setDirty();
@@ -520,6 +1204,7 @@ ShareManager::Directory::Ptr ShareManager::merge(const Directory::Ptr& directory
 }
 
 void ShareManager::Directory::merge(const Directory::Ptr& source) {
+    modified = 0; // A merged virtual directory has no single physical mtime.
     // merge directories
     for(auto& i: source->directories) {
         auto subSource = i.second;
@@ -581,6 +1266,7 @@ void ShareManager::removeDirectory(const string& realPath) {
     }
 
     shares.erase(i);
+    ++manualSharesGeneration;
 
     HashManager::HashPauser pauser(ctx());
 
@@ -629,18 +1315,19 @@ int64_t ShareManager::getShareSize() const {
     Lock l(cs);
     int64_t tmp = 0;
     for(auto& i: tthIndex) {
-        tmp += i.second->getSize();
+        if(i.second->available()) tmp += i.second->getSize();
     }
     return tmp;
 }
 
 size_t ShareManager::getSharedFiles() const {
     Lock l(cs);
-    return tthIndex.size();
+    return std::count_if(tthIndex.begin(), tthIndex.end(), [](const auto& i) { return i.second->available(); });
 }
 
 ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const Directory::Ptr& aParent) {
     auto dir = Directory::create(Util::getLastDir(aName), aParent);
+    const auto directoryObservation = observeSharePath(aName, true);
 
     auto lastFileIter = dir->files.begin();
 
@@ -706,14 +1393,24 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
                     continue;
                 }
                 try {
-                    if(ctx().getHashManager()->checkTTH(fileName, size, i->getLastWriteTime()))
-                        lastFileIter = dir->files.insert(lastFileIter, Directory::File(name, size, dir, ctx().getHashManager()->getTTH(fileName, size)));
+                    const auto observed = observeSharePath(fileName, false);
+                    const auto timestamp = i->getLastWriteTime();
+                    if(ctx().getHashManager()->checkTTH(fileName, size, timestamp)) {
+                        Directory::File file(name, size, dir, ctx().getHashManager()->getTTH(fileName, size));
+                        if(!observed.identity.empty() && observed.size == size && observed.modified == timestamp &&
+                           observed.identity == observeSharePath(fileName, false).identity)
+                            file.modified = observed.modified;
+                        lastFileIter = dir->files.insert(lastFileIter, file);
+                    }
                 } catch(const HashException&) {
                 }
             }
         }
     }
 
+    if(!directoryObservation.identity.empty() &&
+       directoryObservation.identity == observeSharePath(aName, true).identity)
+        dir->modified = directoryObservation.modified;
     return dir;
 }
 
@@ -763,8 +1460,9 @@ void ShareManager::updateIndices(Directory& dir) {
 
     dir.size = 0;
 
-    for(auto i = dir.files.begin(); i != dir.files.end(); ++i) {
-        updateIndices(dir, i);
+    for(auto i = dir.files.begin(); i != dir.files.end(); ) {
+        auto current = i++;
+        updateIndices(dir, current);
     }
 }
 
@@ -784,7 +1482,7 @@ void ShareManager::updateIndices(Directory& dir, const decltype(std::declval<Dir
     if(j == tthIndex.end()) {
         dir.size+=f.getSize();
     } else {
-        if(!CTX_SETTING(LIST_DUPES)) {
+        if(!CTX_SETTING(LIST_DUPES) && !f.managed && !j->second->managed) {
             try {
                 ctx().getLogManager()->message(str(F_("Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: %3%")
                                                        % Util::addBrackets(dir.getRealPath(f.getName())) % Util::toString(f.getSize()) % Util::addBrackets(j->second->getParent()->getRealPath(j->second->getName()))));
@@ -843,7 +1541,13 @@ StringPairList ShareManager::getDirectories() const {
 }
 
 int ShareManager::run() {
-    StringPairList dirs = getDirectories();
+    StringPairList dirs;
+    uint64_t generation;
+    {
+        Lock l(cs);
+        dirs = getDirectories();
+        generation = manualSharesGeneration;
+    }
     // Don't need to refresh if no directories are shared
     if(dirs.empty())
         refreshDirs = false;
@@ -851,8 +1555,6 @@ int ShareManager::run() {
     if(refreshDirs) {
         HashManager::HashPauser pauser(ctx());
         ctx().getLogManager()->message(_("File list refresh initiated"));
-
-        lastFullUpdate = GET_TICK();
 
         DirList newDirs;
         for(auto& i: dirs) {
@@ -863,19 +1565,25 @@ int ShareManager::run() {
             }
         }
 
+        bool committed = false;
         {
             Lock l(cs);
-            directories.clear();
-
-            for(auto& i: newDirs) {
-                merge(i);
+            // A removed/renamed manual root must not return from an older scan,
+            // especially after its virtual name has been reused by managed files.
+            if(generation == manualSharesGeneration) {
+                directories.clear();
+                for(auto& i: newDirs) {
+                    merge(i);
+                }
+                rebuildManagedDirectories();
+                lastFullUpdate = GET_TICK();
+                committed = true;
             }
-
-            rebuildIndices();
         }
         refreshDirs = false;
 
-        ctx().getLogManager()->message(_("File list refresh finished"));
+        ctx().getLogManager()->message(committed ? _("File list refresh finished") :
+            _("File list refresh discarded because shared directories changed"));
     }
 
     if(update) {
@@ -898,13 +1606,15 @@ void ShareManager::getBloom(ByteVector& v, size_t k, size_t m, size_t h) const {
     HashBloom bloom;
     bloom.reset(k, m, h);
     for(auto& i: tthIndex) {
-        bloom.add(i.first);
+        if(i.second->available()) bloom.add(i.first);
     }
     bloom.copy_to(v);
 }
 
 void ShareManager::generateXmlList() {
     Lock l(cs);
+    // Revalidate managed identities even when the ordinary list cache is young.
+    if(!managedShares.empty()) forceXmlRefresh = true;
     if(forceXmlRefresh || (xmlDirty && (lastXmlUpdate + 15 * 60 * 1000 < GET_TICK() || lastXmlUpdate < lastFullUpdate))) {
         listN++;
 
@@ -969,17 +1679,18 @@ void ShareManager::generateXmlList() {
 }
 
 MemoryInputStream* ShareManager::generatePartialList(const string& dir, bool recurse) const {
-    if(dir[0] != '/' || dir[dir.size()-1] != '/')
+    if(dir.empty() || dir[0] != '/' || dir[dir.size()-1] != '/')
         return 0;
 
     string xml = SimpleXML::utf8Header;
     string tmp;
-    xml += "<FileListing Version=\"1\" CID=\"" + ctx().getClientManager()->getMe()->getCID().toBase32() + "\" Base=\"" + SimpleXML::escape(dir, tmp, false) + "\" Generator=\"" APPNAME " " VERSIONSTRING "\">\r\n";
+    xml += "<FileListing Version=\"1\" CID=\"" + ctx().getClientManager()->getMe()->getCID().toBase32() + "\" Base=\"" + SimpleXML::escape(dir, tmp, false) + "\" Generator=\"" APPNAME " " VERSIONSTRING "\"";
     StringRefOutputStream sos(xml);
     string indent = "\t";
 
     Lock l(cs);
     if(dir == "/") {
+        sos.write(">\r\n");
         for(auto& i: directories) {
             tmp.clear();
             i->toXml(sos, indent, tmp, recurse);
@@ -1017,6 +1728,8 @@ MemoryInputStream* ShareManager::generatePartialList(const string& dir, bool rec
         if(!root)
             return 0;
 
+        if(root->modified) sos.write(" BaseDate=\"" + Util::toString(root->modified) + "\"");
+        sos.write(">\r\n");
         for(auto& it2: root->directories) {
             it2.second->toXml(sos, indent, tmp, recurse);
         }
@@ -1032,6 +1745,10 @@ void ShareManager::Directory::toXml(OutputStream& xmlFile, string& indent, strin
     xmlFile.write(indent);
     xmlFile.write(LITERAL("<Directory Name=\""));
     xmlFile.write(SimpleXML::escape(name, tmp2, true));
+    // The public list is also the startup cache. Never reload owned snapshots
+    // as manual shares, even if a manual root later reuses this virtual name.
+    if(managedRoot) xmlFile.write(LITERAL("\" Managed=\"1"));
+    if(modified) xmlFile.write("\" Date=\"" + Util::toString(modified));
 
     if(fullList) {
         xmlFile.write(LITERAL("\">\r\n"));
@@ -1057,6 +1774,7 @@ void ShareManager::Directory::toXml(OutputStream& xmlFile, string& indent, strin
 
 void ShareManager::Directory::filesToXml(OutputStream& xmlFile, string& indent, string& tmp2) const {
     for(auto& f: files) {
+        if(!f.available()) continue;
         xmlFile.write(indent);
         xmlFile.write(LITERAL("<File Name=\""));
         xmlFile.write(SimpleXML::escape(f.getName(), tmp2, true));
@@ -1065,6 +1783,7 @@ void ShareManager::Directory::filesToXml(OutputStream& xmlFile, string& indent, 
         xmlFile.write(LITERAL("\" TTH=\""));
         tmp2.clear();
         xmlFile.write(f.getTTH().toBase32(tmp2));
+        if(f.modified) xmlFile.write("\" Date=\"" + Util::toString(f.modified));
         xmlFile.write(LITERAL("\"/>\r\n"));
     }
 }
@@ -1231,6 +1950,7 @@ void ShareManager::Directory::search(SearchResultList& aResults, StringSearch::L
 
     if(aFileType != SearchManager::TYPE_DIRECTORY) {
         for(auto& i : files) {
+            if(!i.available()) continue;
 
             if(aSearchType == SearchManager::SIZE_ATLEAST && aSize > i.getSize()) {
                 continue;
@@ -1267,7 +1987,7 @@ void ShareManager::search(SearchResultList& results, const string& aString, int 
         if(aString.compare(0, 4, "TTH:") == 0) {
             TTHValue tth(aString.substr(4));
             auto i = tthIndex.find(tth);
-            if(i != tthIndex.end()) {
+            if(i != tthIndex.end() && i->second->available()) {
                 SearchResultPtr sr(new SearchResult(ctx(), SearchResult::TYPE_FILE, i->second->getSize(),
                                                     i->second->getParent()->getFullName() + i->second->getName(), i->second->getTTH()));
 
@@ -1391,6 +2111,7 @@ void ShareManager::Directory::search(SearchResultList& aResults, AdcSearch& aStr
 
     if(!aStrings.isDirectory) {
         for(auto& i : files) {
+            if(!i.available()) continue;
 
             if(!(i.getSize() >= aStrings.gt)) {
                 continue;
@@ -1435,7 +2156,7 @@ void ShareManager::search(SearchResultList& results, const StringList& params, S
 
     if(srch.hasRoot) {
         auto i = tthIndex.find(srch.root);
-        if(i != tthIndex.end()) {
+        if(i != tthIndex.end() && i->second->available()) {
             SearchResultPtr sr(new SearchResult(ctx(), SearchResult::TYPE_FILE,
                                                 i->second->getSize(), i->second->getParent()->getFullName() + i->second->getName(),
                                                 i->second->getTTH()));
@@ -1513,6 +2234,9 @@ void ShareManager::on(HashManagerListener::TTHDone, const string& realPath, cons
             // Get rid of false constness...
             auto f = const_cast<Directory::File*>(&(*i));
             f->setTTH(root);
+            // TTHDone supplies no matching file identity/mtime. A later scan
+            // may restore Date, but never pair a new timestamp with this hash.
+            f->modified = 0;
             tthIndex.emplace(f->getTTH(), i);
         } else {
             string name = Util::getFileName(realPath);

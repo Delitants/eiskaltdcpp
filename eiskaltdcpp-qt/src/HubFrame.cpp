@@ -12,6 +12,8 @@
 
 #include "ArenaWidgetFactory.h"
 #include "HubFrame.h"
+#include "ChatFormatBar.h"
+#include "ViewLayout.h"
 #include "PMWindow.h"
 #include "WulforUtil.h"
 #include "Antispam.h"
@@ -344,12 +346,14 @@ void positionChatInputResizeGrip(QWidget *frame)
     grip->raise();
 }
 
-void persistChatUserListLayout(QTreeView *userList, QWidget *chat)
+void persistChatUserListLayout(QTreeView *userList, QWidget *chat, const QString& layoutKey)
 {
     if (!userList || !userList->header() || !chat)
         return;
 
     qtCtx()->settings()->setStr(WS_CHAT_USERLIST_STATE,
+                                QString::fromLatin1(userList->header()->saveState().toBase64()));
+    qtCtx()->settings()->setStr(layoutKey,
                                 QString::fromLatin1(userList->header()->saveState().toBase64()));
     qtCtx()->settings()->setInt(WI_CHAT_WIDTH, chat->width());
     qtCtx()->settings()->setInt(WI_CHAT_USERLIST_WIDTH, userList->width());
@@ -393,6 +397,7 @@ public:
     bool hasHighlightMessages;
     bool drawLine;
     bool persistUserListLayoutChanges;
+    QString userListLayoutKey;
 
     QStringList status_msg_history;
     QStringList out_messages;
@@ -1361,6 +1366,7 @@ HubFrame::HubFrame(QWidget *parent, QString hub="", QString encoding="")
     d->hasHighlightMessages = false;
     d->persistUserListLayoutChanges = false;
     d->client = nullptr;
+    d->userListLayoutKey = view_layout::hubStateKey(hub);
 
     setupUi(this);
 
@@ -1405,6 +1411,9 @@ HubFrame::~HubFrame(){
     // During app shutdown, QtContext may already be partially destroyed.
     // Never call qtCtx()/dcCtx() from here.
     d->client = nullptr;
+    d->persistUserListLayoutChanges = false;
+    QObject::disconnect(treeView_USERS->header(), nullptr, this, nullptr);
+    QObject::disconnect(splitter_2, nullptr, this, nullptr);
 
     delete d->proxy;
     delete d->model;
@@ -1906,16 +1915,6 @@ void HubFrame::init(){
     toolButton_SMILE->setToolButtonStyle(Qt::ToolButtonTextOnly);
     toolButton_SMILE->setText(QString::fromUtf8("😊"));
     toolButton_SMILE->setToolTip(tr("Emoji"));
-    toolButton_SMILE->setAutoRaise(true);
-    QFont emojiFont = toolButton_SMILE->font();
-#ifdef Q_OS_WIN
-    emojiFont.setFamily(QStringLiteral("Segoe UI Emoji"));
-#endif
-    emojiFont.setPointSize(qMax(emojiFont.pointSize(), 14));
-    toolButton_SMILE->setFont(emojiFont);
-    toolButton_SMILE->setIconSize(QSize(0, 0));
-    toolButton_SMILE->setFixedSize(QSize(30, 28));
-    toolButton_SMILE->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; font-size: 18px; }"));
 
     toolButton_HIDE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
     setupChatInputSplitter();
@@ -1944,7 +1943,7 @@ void HubFrame::init(){
         if (!d->persistUserListLayoutChanges)
             return;
 
-        persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
+        persistChatUserListLayout(treeView_USERS, textEdit_CHAT, d->userListLayoutKey);
     };
     connect(treeView_USERS->header(), &QHeaderView::sectionResized, this,
             [persistUserListLayout](int, int, int) { persistUserListLayout(); });
@@ -1969,8 +1968,6 @@ void HubFrame::init(){
     connect(lineEdit_FIND, &QLineEdit::textEdited, this, &HubFrame::slotFindTextEdited);
     connect(lineEdit_FILTER, &QLineEdit::textChanged, this, &HubFrame::slotFilterTextChanged);
     connect(comboBox_COLUMNS, qOverload<int>(&QComboBox::activated), this, &HubFrame::slotFilterTextChanged);
-    connect(toolButton_SMILE, &QToolButton::clicked, this, &HubFrame::slotSmile);
-    connect(toolButton_SMILE, &QToolButton::customContextMenuRequested, this, &HubFrame::slotSmileContextMenu);
     connect(toolButton_ALL, &QToolButton::clicked, this, &HubFrame::slotFindAll);
     connect(qtCtx()->settings(), &WulforSettings::strValueChanged, this, &HubFrame::slotSettingsChanged);
     connect(qtCtx()->settings(), &WulforSettings::intValueChanged, this, &HubFrame::slotBoolSettingsChanged);
@@ -2004,46 +2001,23 @@ void HubFrame::init(){
         " background: %2;"
         "}"
     ).arg(inputBorder.name(), inputBackground.name()));
-    horizontalLayout_BBCODE->setSpacing(horizontalLayout_BBCODE->spacing() + 3);
     auto *toolButton_IMAGE = new QToolButton(this);
-    toolButton_IMAGE->setAutoRaise(true);
-    toolButton_IMAGE->setMinimumHeight(24);
+    toolButton_IMAGE->setObjectName(QStringLiteral("toolButton_IMAGE"));
     toolButton_IMAGE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILETYPE_PICTURE));
     toolButton_IMAGE->setToolTip(tr("Image"));
-    const int smileButtonIndex = horizontalLayout_BBCODE->indexOf(toolButton_SMILE);
-    if (smileButtonIndex >= 0)
-        horizontalLayout_BBCODE->insertWidget(smileButtonIndex, toolButton_IMAGE);
-    else
-        horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->count() - 1, toolButton_IMAGE);
-    const QList<QToolButton*> formatButtons = {
-        toolButton_BOLD, toolButton_ITALIC, toolButton_UNDERLINE, toolButton_STRIKE,
-        toolButton_COLOR, toolButton_LINK, toolButton_CODE, toolButton_IMAGE
-    };
-    for (auto *button : formatButtons) {
-        button->setAutoRaise(true);
-        button->setMinimumHeight(24);
-    }
-    QFont boldFont = toolButton_BOLD->font();
-    boldFont.setBold(true);
-    toolButton_BOLD->setFont(boldFont);
-    QFont italicFont = toolButton_ITALIC->font();
-    italicFont.setItalic(true);
-    toolButton_ITALIC->setFont(italicFont);
-    QFont underlineFont = toolButton_UNDERLINE->font();
-    underlineFont.setUnderline(true);
-    toolButton_UNDERLINE->setFont(underlineFont);
-    QFont strikeFont = toolButton_STRIKE->font();
-    strikeFont.setStrikeOut(true);
-    toolButton_STRIKE->setFont(strikeFont);
+    horizontalLayout_BBCODE->insertWidget(horizontalLayout_BBCODE->indexOf(toolButton_SMILE), toolButton_IMAGE);
+    auto *formatBar = new ChatFormatBar(horizontalLayout_BBCODE, plainTextEdit_INPUT);
 
-    connect(toolButton_BOLD, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
-    connect(toolButton_ITALIC, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
-    connect(toolButton_UNDERLINE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
-    connect(toolButton_STRIKE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
-    connect(toolButton_COLOR, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertColorTag(); });
-    connect(toolButton_LINK, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
-    connect(toolButton_CODE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
-    connect(toolButton_IMAGE, &QToolButton::clicked, this, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
+    formatBar->bindEditorAction(toolButton_SMILE, [this]() { slotSmile(); });
+    connect(toolButton_SMILE, &QToolButton::customContextMenuRequested, this, &HubFrame::slotSmileContextMenu);
+    formatBar->bindEditorAction(toolButton_BOLD, [this]() { plainTextEdit_INPUT->wrapWithTag("b"); });
+    formatBar->bindEditorAction(toolButton_ITALIC, [this]() { plainTextEdit_INPUT->wrapWithTag("i"); });
+    formatBar->bindEditorAction(toolButton_UNDERLINE, [this]() { plainTextEdit_INPUT->wrapWithTag("u"); });
+    formatBar->bindEditorAction(toolButton_STRIKE, [this]() { plainTextEdit_INPUT->wrapWithTag("s"); });
+    formatBar->bindEditorAction(toolButton_COLOR, [this]() { plainTextEdit_INPUT->insertColorTag(); });
+    formatBar->bindEditorAction(toolButton_LINK, [this]() { plainTextEdit_INPUT->insertUrlTag(); });
+    formatBar->bindEditorAction(toolButton_CODE, [this]() { plainTextEdit_INPUT->wrapWithTag("code"); });
+    formatBar->bindEditorAction(toolButton_IMAGE, [this]() { plainTextEdit_INPUT->insertImageMagnet(); });
 
     plainTextEdit_INPUT->setWordWrapMode(QTextOption::NoWrap);
     plainTextEdit_INPUT->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -2119,7 +2093,7 @@ void HubFrame::initMenu(){
 void HubFrame::save(){
     Q_D(HubFrame);
 
-    persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
+    persistChatUserListLayout(treeView_USERS, textEdit_CHAT, d->userListLayoutKey);
     qtCtx()->settings()->setInt(WI_CHAT_SORT_COLUMN, d->model->getSortColumn());
     qtCtx()->settings()->setInt(WI_CHAT_SORT_ORDER, qtCtx()->wulforUtil()->sortOrderToInt(d->model->getSortOrder()));
     if (qtCtx()->settings()->getBool("hubframe/change-chat-background-color", false))
@@ -2133,11 +2107,10 @@ void HubFrame::load(){
 
     const int w_chat = qtCtx()->settings()->getInt(WI_CHAT_WIDTH), w_ulist = qtCtx()->settings()->getInt(WI_CHAT_USERLIST_WIDTH);
 
-    QString ustate = qtCtx()->settings()->getStr(WS_CHAT_USERLIST_STATE);
+    QString ustate = qtCtx()->settings()->getStr(d->userListLayoutKey,
+                        qtCtx()->settings()->getStr(WS_CHAT_USERLIST_STATE));
 
-    if (!ustate.isEmpty())
-        treeView_USERS->header()->restoreState(QByteArray::fromBase64(ustate.toUtf8()));
-    else
+    if (!treeView_USERS->restoreHeaderState(QByteArray::fromBase64(ustate.toUtf8())))
         applyDefaultUserListHeaderLayout(treeView_USERS);
 
     if (w_chat >= 0 && w_ulist >= 0){
@@ -3449,7 +3422,7 @@ void HubFrame::clearUsers(){
         d->model->clear();
 
         if (treeView_USERS->model() != d->model)
-            treeView_USERS->setModel(d->model);
+            view_layout::setModelPreservingHeader(treeView_USERS, d->model);
     }
 
     d->total_shared = 0;
@@ -4111,7 +4084,7 @@ void HubFrame::slotHeaderMenu(const QPoint&){
     WulforUtil::headerMenu(treeView_USERS);
 
     if (d->persistUserListLayoutChanges)
-        persistChatUserListLayout(treeView_USERS, textEdit_CHAT);
+        persistChatUserListLayout(treeView_USERS, textEdit_CHAT, d->userListLayoutKey);
 }
 
 void HubFrame::slotShowWnd(){
@@ -4251,10 +4224,10 @@ void HubFrame::slotFilterTextChanged(){
         d->proxy->setFilterKeyColumn(comboBox_COLUMNS->currentIndex());
 
         if (treeView_USERS->model() != d->proxy)
-            treeView_USERS->setModel(d->proxy);
+            view_layout::setModelPreservingHeader(treeView_USERS, d->proxy);
     }
     else if (treeView_USERS->model() != d->model)
-        treeView_USERS->setModel(d->model);
+        view_layout::setModelPreservingHeader(treeView_USERS, d->model);
 
     if (comboBox_COLUMNS->hasFocus())
         lineEdit_FILTER->setFocus();

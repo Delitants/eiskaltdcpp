@@ -288,20 +288,12 @@ bool CryptoManager::TLSOk() const {
     return CTX_BOOLSETTING(USE_TLS) && certsLoaded && !keyprint.empty();
 }
 
-void CryptoManager::generateCertificate() {
-    // Generate certificate using OpenSSL
-    if(CTX_SETTING(TLS_PRIVATE_KEY_FILE).empty()) {
-        throw CryptoException(_("No private key file chosen"));
-    }
-    if(CTX_SETTING(TLS_CERTIFICATE_FILE).empty()) {
-        throw CryptoException(_("No certificate file chosen"));
-    }
-
+pair<string, string> CryptoManager::createIdentityPem(const string& cid) {
     ssl::BIGNUM bn(BN_new());
     ssl::RSA rsa(RSA_new());
     ssl::EVP_PKEY pkey(EVP_PKEY_new());
     ssl::X509_NAME nm(X509_NAME_new());
-    const EVP_MD *digest = EVP_sha1();
+    const EVP_MD *digest = EVP_sha256();
     ssl::X509 x509ss(X509_new());
     ssl::ASN1_INTEGER serial(ASN1_INTEGER_new());
 
@@ -309,7 +301,7 @@ void CryptoManager::generateCertificate() {
         throw CryptoException(_("Error generating certificate"));
     }
 
-    int days = 10;
+    const int days = 365;
     int keylength = 2048;
 
 #define CHECK(n) if(!(n)) { throw CryptoException(#n); }
@@ -321,10 +313,12 @@ void CryptoManager::generateCertificate() {
 
             // Set CID
             CHECK((X509_NAME_add_entry_by_txt(nm, "CN", MBSTRING_ASC,
-                                              (const unsigned char*)ctx().getClientManager()->getMyCID().toBase32().c_str(), -1, -1, 0)))
+                                              (const unsigned char*)cid.c_str(), -1, -1, 0)))
 
             // Prepare self-signed cert
-            ASN1_INTEGER_set(serial, (long)Util::rand());
+    unsigned int randomSerial = 0;
+    CHECK(RAND_bytes(reinterpret_cast<unsigned char*>(&randomSerial), sizeof(randomSerial)))
+    CHECK(ASN1_INTEGER_set(serial, long((randomSerial & 0x7fffffffU) | 1U)))
     CHECK((X509_set_serialNumber(x509ss, serial)))
             CHECK((X509_set_issuer_name(x509ss, nm)))
             CHECK((X509_set_subject_name(x509ss, nm)))
@@ -335,47 +329,58 @@ void CryptoManager::generateCertificate() {
             // Sign using own private key
             CHECK((X509_sign(x509ss, pkey, digest)))
 
-        #undef CHECK
-            // Write the key and cert (via BIO to avoid FILE* across DLL boundaries)
-    {
-        File::ensureDirectory(CTX_SETTING(TLS_PRIVATE_KEY_FILE));
-        BIO* bio = BIO_new(BIO_s_mem());
-        if(!bio || !PEM_write_bio_RSAPrivateKey(bio, rsa, NULL, NULL, 0, NULL, NULL)) {
-            BIO_free(bio);
-            return;
-        }
-        BUF_MEM* bptr;
-        BIO_get_mem_ptr(bio, &bptr);
-        try {
-            File(CTX_SETTING(TLS_PRIVATE_KEY_FILE), File::WRITE,
-                 File::OPEN | File::CREATE | File::TRUNCATE)
-                .write(string(bptr->data, bptr->length));
-        } catch (...) {
-            BIO_free(bio);
-            return;
-        }
-        BIO_free(bio);
-    }
-    {
-        File::ensureDirectory(CTX_SETTING(TLS_CERTIFICATE_FILE));
-        BIO* bio = BIO_new(BIO_s_mem());
-        if(!bio || !PEM_write_bio_X509(bio, x509ss)) {
-            BIO_free(bio);
-            File::deleteFile(CTX_SETTING(TLS_PRIVATE_KEY_FILE));
-            return;
-        }
-        BUF_MEM* bptr;
-        BIO_get_mem_ptr(bio, &bptr);
-        try {
-            File(CTX_SETTING(TLS_CERTIFICATE_FILE), File::WRITE,
-                 File::OPEN | File::CREATE | File::TRUNCATE)
-                .write(string(bptr->data, bptr->length));
-        } catch (...) {
-            BIO_free(bio);
-            File::deleteFile(CTX_SETTING(TLS_PRIVATE_KEY_FILE));
-            return;
-        }
-        BIO_free(bio);
+    #undef CHECK
+    auto encode = [](auto writer) {
+        std::unique_ptr<BIO, decltype(&BIO_free)> bio(BIO_new(BIO_s_mem()), BIO_free);
+        if(!bio || !writer(bio.get())) throw CryptoException("Cannot encode TLS identity");
+        BUF_MEM* data = nullptr;
+        BIO_get_mem_ptr(bio.get(), &data);
+        return string(data->data, data->length);
+    };
+    return {encode([&](BIO* bio) { return PEM_write_bio_X509(bio, x509ss); }),
+            encode([&](BIO* bio) { return PEM_write_bio_PrivateKey(bio, pkey, nullptr, nullptr, 0, nullptr, nullptr); })};
+}
+
+bool CryptoManager::identityPemMatches(const string& certificate, const string& key, const string& cid)
+{
+    if(certificate.empty() || key.empty() || certificate.size() > 1024*1024 || key.size() > 1024*1024)
+        return false;
+    std::unique_ptr<BIO, decltype(&BIO_free)> certBio(BIO_new_mem_buf(certificate.data(), int(certificate.size())), BIO_free);
+    std::unique_ptr<BIO, decltype(&BIO_free)> keyBio(BIO_new_mem_buf(key.data(), int(key.size())), BIO_free);
+    if(!certBio || !keyBio) return false;
+    ssl::X509 cert(PEM_read_bio_X509(certBio.get(), nullptr, nullptr, nullptr));
+    // Never prompt for an encrypted private key on a GUI or startup thread.
+    auto noPassword = [](char*, int, int, void*) { return 0; };
+    ssl::EVP_PKEY privateKey(PEM_read_bio_PrivateKey(keyBio.get(), nullptr, noPassword, nullptr));
+    if(!cert || !privateKey || X509_check_private_key(cert, privateKey) != 1) return false;
+    const auto subject = X509_get_subject_name(cert);
+    const int index = X509_NAME_get_index_by_NID(subject, NID_commonName, -1);
+    if(index < 0) return false;
+    unsigned char* text = nullptr;
+    const int size = ASN1_STRING_to_UTF8(&text, X509_NAME_ENTRY_get_data(X509_NAME_get_entry(subject, index)));
+    const bool matches = size >= 0 && string(reinterpret_cast<char*>(text), size) == cid;
+    OPENSSL_free(text);
+    int days = 0, seconds = 0;
+    const auto serialNumber = X509_get_serialNumber(cert);
+    // Imports must survive the same acceptance policy used on the next startup.
+    return matches && serialNumber && ASN1_INTEGER_get(serialNumber)
+        && X509_cmp_current_time(X509_get0_notBefore(cert)) < 0
+        && ASN1_TIME_diff(&days, &seconds, nullptr, X509_get0_notAfter(cert)) == 1 && days >= 90;
+}
+
+void CryptoManager::generateCertificate() {
+    const auto& key = CTX_SETTING(TLS_PRIVATE_KEY_FILE);
+    const auto& cert = CTX_SETTING(TLS_CERTIFICATE_FILE);
+    if(key.empty() || cert.empty() || key == cert)
+        throw CryptoException("Distinct certificate and private key files are required");
+    const auto pem = createIdentityPem(ctx().getClientManager()->getMyCID().toBase32());
+    try {
+        File::ensureDirectory(key);
+        File::ensureDirectory(cert);
+        File(key, File::WRITE, File::OPEN | File::CREATE | File::TRUNCATE).write(pem.second);
+        File(cert, File::WRITE, File::OPEN | File::CREATE | File::TRUNCATE).write(pem.first);
+    } catch (const FileException& error) {
+        throw CryptoException(error.getError());
     }
 }
 
@@ -498,13 +503,11 @@ bool CryptoManager::checkCertificate() {
         return false;
     }
 
-    ASN1_TIME* t = X509_get_notAfter(x509);
-    if(t) {
-        if(X509_cmp_current_time(t) < 0) {
-            return false;
-        }
-    }
-    return true;
+    const ASN1_TIME* expiry = X509_get0_notAfter(x509);
+    int days = 0, seconds = 0;
+    // Renew with a margin rather than letting a long-running session reach
+    // expiry shortly after startup. Invalid ASN.1 times also require renewal.
+    return expiry && ASN1_TIME_diff(&days, &seconds, nullptr, expiry) == 1 && days >= 90;
 }
 
 const ByteVector &CryptoManager::getKeyprint() const {

@@ -16,6 +16,11 @@
 #include <QScrollArea>
 
 #include "ui_UISettings.h"
+class SettingsConnection;
+
+#ifdef USE_TORRENT
+class SettingsTorrent;
+#endif
 
 class Settings :
         public QDialog,
@@ -37,12 +42,18 @@ public:
         Shortcuts,
         History,
         Advanced
+#ifdef USE_TORRENT
+        , Torrent
+#endif
     };
 
     Settings();
     virtual ~Settings();
 
     void navigate(enum Page, int tab = -1);
+
+public slots:
+    void accept() override;
 
 protected:
     void changeEvent(QEvent *event) override;
@@ -55,6 +66,7 @@ private slots:
     void dirty();
 
 private:
+    void reloadCategoryIcons();
     void init();
 
     inline void setMouseScroller(QWidget *w);
@@ -63,4 +75,8 @@ private:
     WidgetMap widgets;
     bool is_dirty;
     bool appearance_style_in_progress;
+    SettingsConnection *connectionPage = nullptr;
+#ifdef USE_TORRENT
+    SettingsTorrent *torrentPage = nullptr;
+#endif
 };

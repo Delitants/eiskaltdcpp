@@ -18,6 +18,7 @@
 #include "stdinc.h"
 
 #include "SettingsManager.h"
+#include "ProxyRoute.h"
 
 #include "SimpleXML.h"
 #include "Util.h"
@@ -102,6 +103,7 @@ const string SettingsManager::settingTags[] =
     "LogFileDiagnostic",
     "ExternalIp6", "BindAddress6",
     "ClientIdNMDC", "ClientIdADC",
+    "GostServer", "GostUser", "GostPassword", "GostCaFile",
     "SENTRY",
     // Ints
     "IncomingConnections", "InPort", "Slots", "AutoFollow",
@@ -151,6 +153,8 @@ const string SettingsManager::settingTags[] =
     "LogDiagnostic",
     "NmdcGetinfoLimit",
     "UseIPv6",
+    "GostPort",
+    "HideDHTFromHubs",
     "SENTRY",
     // Int64
     "TotalUpload", "TotalDownload",
@@ -360,6 +364,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(RECONNECT_DELAY, 15);
     setDefault(DHT_PORT, 6250);
     setDefault(USE_DHT, true);
+    setDefault(HIDE_DHT_FROM_HUBS, false);
     setDefault(DHT_BOOTSTRAP_URLS, DEFAULT_DHT_BOOTSTRAP_URL);
     setDefault(SEARCH_PASSIVE, false);
     setDefault(MAX_UPLOAD_SPEED_MAIN, 0);
@@ -393,7 +398,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(CHECK_TARGETS_PATHS_ON_START, false);
     setDefault(SHARE_SKIP_ZERO_BYTE, false);
     setDefault(APP_UNIT_BASE, 0);
-    setDefault(REQUIRE_TLS, true); // True by default: We assume TLS is commonplace enough among ADC clients.
+    setDefault(REQUIRE_TLS, false); // Allow encrypted peers on fresh profiles; preserve explicit saved policy.
     setDefault(NMDC_GETINFO_LIMIT, 0); // 0 = unlimited; positive = max $GetINFO requests per $NickList
     setDefault(USE_IPV6, false);
 
@@ -556,6 +561,8 @@ void SettingsManager::load(string const& aFileName)
     }
     if (CTX_SETTING(DHT_KEY).length() != 39 || !CID(CTX_SETTING(DHT_KEY)))
         set(DHT_KEY, CID::generate().toBase32());
+    if(ctx().getSettingsManager() == this && ctx().getProxyRoute())
+        ctx().getProxyRoute()->reload(*this);
 }
 
 void SettingsManager::save(string const& aFileName) {

@@ -15,6 +15,7 @@
 #include "QtContext.h"
 #include "WulforUtil.h"
 #include "FileBrowserModel.h"
+#include "FileMetadata.h"
 #include "MainWindow.h"
 #include "SearchFrame.h"
 #include "Magnet.h"
@@ -318,6 +319,7 @@ void ShareBrowser::init(){
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_MAUDIO);
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_HIT);
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_TS);
+    treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_MODIFIED);
 
     treeView_LPANE->setExpanded(tree_model->index(0, 0), true);
     treeView_LPANE->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -422,6 +424,7 @@ void ShareBrowser::load(){
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_MAUDIO);
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_HIT);
     treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_TS);
+    treeView_LPANE->header()->hideSection(COLUMN_FILEBROWSER_MODIFIED);
 
     treeView_LPANE->setSortingEnabled(true);
     treeView_RPANE->setSortingEnabled(true);
@@ -602,6 +605,10 @@ void ShareBrowser::changeRoot(dcpp::DirectoryListing::Directory *root){
              << size
              << "";
 
+        while (data.size() < COLUMN_FILEBROWSER_MODIFIED)
+            data << QVariant();
+        data << fileMetadataDate(dir->getRemoteDate());
+
         child = new FileBrowserItem(data, list_root);
         child->dir = dir;
 
@@ -619,13 +626,8 @@ void ShareBrowser::changeRoot(dcpp::DirectoryListing::Directory *root){
         data << _q(file->getName())
              << WulforUtil::formatBytes(size)
              << size
-             << _q(file->getTTH().toBase32())
-             << file->mediaInfo.bitrate
-             << _q(file->mediaInfo.resolution)
-             << _q(file->mediaInfo.video_info)
-             << _q(file->mediaInfo.audio_info)
-             << (quint64)file->getHit()
-             << QDateTime::fromSecsSinceEpoch(file->getTS()).toString("yyyy-MM-dd hh:mm");
+             << _q(file->getTTH().toBase32());
+        data.append(fileMetadataColumns(*file));
 
         child = new FileBrowserItem(data, list_root);
         child->file = file;

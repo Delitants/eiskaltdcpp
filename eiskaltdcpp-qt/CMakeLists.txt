@@ -10,7 +10,7 @@ set (QT "Qt${QT_MAJOR}")
 message (STATUS "Building eiskaltdcpp-qt with ${QT}")
 
 # --- Find required Qt modules ---
-find_package (${QT} ${QT_MIN_VERSION} COMPONENTS Core Gui Widgets Xml Network
+find_package (${QT} ${QT_MIN_VERSION} COMPONENTS Core Gui Widgets Svg Xml Network
               Concurrent REQUIRED)
 # Multimedia is optional (needed for QSoundEffect notification sounds)
 find_package (${QT} COMPONENTS Multimedia QUIET)
@@ -220,6 +220,7 @@ endif ()
 
 # Qt target-based linking (handles include_directories automatically)
 list (APPEND LIBS ${QT}::Core
+                  ${QT}::Svg
                   ${QT}::Gui
                   ${QT}::Widgets
                   ${QT}::Xml
@@ -323,6 +324,15 @@ add_executable (${PROJECT_NAME} MACOSX_BUNDLE WIN32 src/main.cpp
                 ${WIN_RESOURCES}
                 translations)
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_tr)
+include(${CMAKE_SOURCE_DIR}/cmake/AppIconThemes.cmake)
+eiskalt_add_icon_themes(${PROJECT_NAME})
+if (USE_TORRENT)
+    target_link_libraries(${PROJECT_NAME} eiskalt-torrent)
+    qt6_add_resources(${PROJECT_NAME} torrent_icons
+        PREFIX "/torrent"
+        BASE "${PROJECT_SOURCE_DIR}/icons/torrent"
+        FILES "${PROJECT_SOURCE_DIR}/icons/torrent/torrent.png")
+endif ()
 
 # Embed application manifest for proper DLL loading, DPI awareness, and
 # Windows version compatibility.  For MSVC, CMake passes .manifest sources
@@ -383,6 +393,73 @@ else (APPLE)
     target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp)
 endif (APPLE)
 
+if (BUILD_TESTS AND USE_TORRENT)
+    # Exercise actual QAction/arena wiring without linking the minimal Qt stubs.
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    set(_toggle_gui_sources ${SRCS})
+    list(FILTER _toggle_gui_sources EXCLUDE REGEX "(^|/)main\\.cpp$")
+    add_executable(eiskalt-mainwindow-toggle-tests
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_mainwindowtoggle.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_chatformatbar.cpp
+        ${M_SRCS} ${U_SRCS} ${_toggle_gui_sources} ${HDRS} ${MOC_HDRS})
+    target_compile_definitions(eiskalt-mainwindow-toggle-tests PRIVATE CHAT_FORMAT_REAL_EDITOR)
+    target_link_libraries(eiskalt-mainwindow-toggle-tests PRIVATE
+        ${LIBS} extra dcpp eiskalt-torrent Catch2::Catch2 Qt6::Test)
+    if (APPLE)
+        target_link_libraries(eiskalt-mainwindow-toggle-tests PRIVATE iconv)
+    elseif (HAIKU)
+        target_link_libraries(eiskalt-mainwindow-toggle-tests PRIVATE be)
+    endif ()
+    eiskalt_add_icon_themes(eiskalt-mainwindow-toggle-tests)
+    qt6_add_resources(eiskalt-mainwindow-toggle-tests torrent_toggle_icons
+        PREFIX "/torrent" BASE "${PROJECT_SOURCE_DIR}/icons/torrent"
+        FILES "${PROJECT_SOURCE_DIR}/icons/torrent/torrent.png")
+    # Each process uses the fixture's own temporary HOME and core config paths.
+    foreach (_toggle_layout IN ITEMS multiline singleline sidebar)
+        add_test(NAME eiskalt-mainwindow-toggle-${_toggle_layout}
+            COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[torrent-toggle]")
+        set_tests_properties(eiskalt-mainwindow-toggle-${_toggle_layout} PROPERTIES
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen;EISKALT_TEST_TAB_LAYOUT=${_toggle_layout}"
+            TIMEOUT 60)
+    endforeach ()
+    add_test(NAME eiskalt-transfer-column-persistence
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[transfer-columns]")
+    set_tests_properties(eiskalt-transfer-column-persistence PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 60)
+    add_test(NAME eiskalt-download-queue-ui
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[download-queue],[queue-warning]")
+    set_tests_properties(eiskalt-download-queue-ui PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 90)
+    add_test(NAME eiskalt-hub-user-selection
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[hub-selection]")
+    set_tests_properties(eiskalt-hub-user-selection PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 90)
+    foreach (_ui_layout IN ITEMS multiline singleline sidebar)
+        add_test(NAME eiskalt-ui-followup-${_ui_layout}
+            COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests>
+                "[share-browser-metadata],[public-hubs-footer],[file-extension-icons],[tab-close-owner]")
+        set_tests_properties(eiskalt-ui-followup-${_ui_layout} PROPERTIES
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_ACCESSIBILITY=0;EISKALT_TEST_TAB_LAYOUT=${_ui_layout}"
+            TIMEOUT 60)
+    endforeach ()
+    add_test(NAME eiskalt-chat-format-integration
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[chatformatbar]")
+    set_tests_properties(eiskalt-chat-format-integration PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 60)
+    add_test(NAME eiskalt-torrent-routing-isolation
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[torrent-routing-runtime]")
+    set_tests_properties(eiskalt-torrent-routing-isolation PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 60)
+    foreach (_navigation_layout IN ITEMS multiline singleline)
+        add_test(NAME eiskalt-tab-navigation-${_navigation_layout}
+            COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[tab-navigation-mainwindow]")
+        set_tests_properties(eiskalt-tab-navigation-${_navigation_layout} PROPERTIES
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen;EISKALT_TEST_TAB_LAYOUT=${_navigation_layout}"
+            TIMEOUT 60)
+    endforeach ()
+endif ()
+
 if (WIN32 OR APPLE OR HAIKU)
     set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME "${PROJECT_NAME_GLOBAL}")
 else ()
@@ -414,6 +491,8 @@ if (APPLE)
     set (MACOSX_BUNDLE_SHORT_VERSION_STRING ${APP_VERSION})
     set (MACOSX_BUNDLE_BUNDLE_VERSION ${APP_VERSION})
     set (MACOSX_BUNDLE_COPYRIGHT "Copyright 2009-2021 EiskaltDC++ developers")
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacOpenHandlers.cmake)
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleMetadata.cmake)
 endif (APPLE)
 
 if (USE_JS)
@@ -460,10 +539,6 @@ endif (APPLE)
 if(APPLE AND TARGET eiskaltdcpp-qt)
     set(EISKALT_APP_BUNDLE "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>")
     set(EISKALT_RES_DIR "${EISKALT_APP_BUNDLE}/Contents/Resources")
-
-    if(TARGET mo-update)
-        add_dependencies(eiskaltdcpp-qt mo-update)
-    endif()
 
     add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}"
@@ -533,10 +608,18 @@ if(APPLE)
     
 
     if(MACDEPLOYQT_EXECUTABLE)
+        set(EISKALT_MACDEPLOYQT_LIBRARY_PATHS "" CACHE STRING "Additional library/framework search directories for macdeployqt")
+        set(_deploy_library_paths ${EISKALT_MACDEPLOYQT_LIBRARY_PATHS})
+        if(EISKALT_MACOS_DEPS_PREFIX)
+            list(APPEND _deploy_library_paths "${EISKALT_MACOS_DEPS_PREFIX}/lib")
+        endif()
         add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Running macdeployqt..."
-            COMMAND "${MACDEPLOYQT_EXECUTABLE}"
-                    "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
+            COMMAND ${CMAKE_COMMAND}
+                    "-DMACDEPLOYQT=${MACDEPLOYQT_EXECUTABLE}"
+                    "-DAPP_BUNDLE=$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
+                    "-DLIBRARY_PATHS=${_deploy_library_paths}"
+                    -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/deploy_macos.cmake"
             VERBATIM
         )
     endif()
@@ -565,6 +648,11 @@ if(APPLE)
         endif()
     endforeach()
 
+    include("${CMAKE_SOURCE_DIR}/cmake/MacCocoaPluginOverride.cmake")
+    if(EISKALT_QCOCOA_PLUGIN_OVERRIDE)
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${EISKALT_QCOCOA_PLUGIN_OVERRIDE}")
+        set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS "${EISKALT_QCOCOA_PLUGIN_OVERRIDE}")
+    endif()
     if(EISKALT_QCOCOA_PLUGIN)
         add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Copying macOS Qt platform plugin: ${EISKALT_QCOCOA_PLUGIN}"
@@ -623,6 +711,16 @@ if(APPLE)
                     "$<TARGET_BUNDLE_CONTENT_DIR:eiskaltdcpp-qt>/Resources/qt.conf"
             VERBATIM
         )
+
+    # Catalog-only updates must refresh the POST_BUILD bundle resources/signature.
+    set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS ${TRANSLATIONS_BINARY})
+    set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS
+        "${CMAKE_SOURCE_DIR}/macos/normalize-bundle-dylib-ids.sh")
+    add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
+        COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/macos/normalize-bundle-dylib-ids.sh"
+                "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
+        VERBATIM
+    )
 
     find_program(CODESIGN_EXECUTABLE codesign)
     if(CODESIGN_EXECUTABLE)

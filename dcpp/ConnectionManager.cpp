@@ -60,6 +60,8 @@ ConnectionManager::ConnectionManager(DCContext& ctx) :
 
 void ConnectionManager::listen() {
     disconnect();
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+        return;
 
     const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
     const string bindIp = useIPv6 ? CTX_SETTING(BIND_ADDRESS6) : CTX_SETTING(BIND_ADDRESS);
@@ -181,7 +183,7 @@ void ConnectionManager::on(TimerManagerListener::Second, uint64_t aTick) {
                     continue;
                 }
 
-                if(!ctx().getClientManager()->isActive() && !ctx().getClientManager()->isTcpActive(cqi->getUser())) {
+                if(ctx().getClientManager()->isPassiveDownloadBlocked(cqi->getUser())) {
                     fire(ConnectionManagerListener::Failed(), cqi, _("Cannot download from passive user while you are in passive mode"));
                     passiveUsers.push_back(cqi->getUser());
                     removed.push_back(cqi);
@@ -328,6 +330,11 @@ int ConnectionManager::Server::run() {
  * It's always the other fellow that starts sending if he made the connection.
  */
 void ConnectionManager::accept(const Socket& sock, bool secure) {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST) {
+        Socket rejected;
+        try { rejected.accept(sock); } catch(const SocketException&) { }
+        return;
+    }
     uint64_t now = GET_TICK();
 
     if(now > floodCounter) {

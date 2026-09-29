@@ -105,6 +105,7 @@ void SearchManager::listen() {
 
     try {
         socket.reset(new Socket);
+        socket->setContext(&ctx());
         const bool useIPv6 = CTX_BOOLSETTING(USE_IPV6);
         socket->create(Socket::TYPE_UDP, useIPv6 ? AF_INET6 : AF_INET);
         socket->setBlocking(true);
@@ -195,17 +196,15 @@ int SearchManager::run() {
 int SearchManager::UdpQueue::run() {
     string x = Util::emptyString;
     string remoteIp = Util::emptyString;
-    stop = false;
-    ;
     while(true) {
-        if (resultList.empty())
-            s.wait();
-
-        if(stop)
-            break;
+        // One wake per accepted result, plus the shutdown wake. The stop
+        // request may precede worker entry and must never be reset here.
+        s.wait();
 
         {
             Lock l(csudp);
+            if(stop)
+                break;
             if(resultList.empty()) continue;
 
             x = resultList.front().first;

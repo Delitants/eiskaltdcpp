@@ -20,10 +20,14 @@
 #include <QLabel>
 #include <QGroupBox>
 #include <QPushButton>
+#include <QSpinBox>
 
 #include "ui_UISettingsConnection.h"
 #include "SettingsInterface.h"
 #include "SettingsConnectionHelpers.h"
+
+class ProxyTestRunner;
+class CertificateSettings;
 
 class SettingsConnection :
         public QWidget,
@@ -32,6 +36,7 @@ class SettingsConnection :
     Q_OBJECT
 public:
     SettingsConnection(QWidget* = nullptr);
+    bool validate();
 
 public slots:
     void ok();
@@ -66,9 +71,11 @@ private:
     void applyProxyFormState(const settings_connection::ProxyUiState& state);
     void syncProxyFormStateWithSelection();
     void saveCurrentProxyFormState();
+    void saveProbeTargets();
     bool validateShadowsocksPasswordForUi(const QString& method, const QString& password);
 
     bool dirty;
+    CertificateSettings* certificates = nullptr;
     QCheckBox* checkBox_USE_IPV6 = nullptr;
     QCheckBox* checkBox_PROXY_P2P = nullptr;
     QCheckBox* checkBox_SOCKS_TLS = nullptr;
@@ -89,9 +96,23 @@ private:
     QLineEdit *lineEdit_COUNTRY_DB = nullptr;
     QToolButton *toolButton_COUNTRY_DB = nullptr;
     QPushButton* button_TEST_PROXY = nullptr;
+    QPushButton* button_CANCEL_PROXY_TEST = nullptr;
+    QLabel* label_PROXY_TEST_RESULT = nullptr;
+    ProxyTestRunner* proxyTestRunner = nullptr;
+    bool proxyTestStale = false;
+    QLineEdit *testTcpHost = nullptr, *testDnsResolver = nullptr, *testDnsQuery = nullptr;
+    QSpinBox *testTcpPort = nullptr, *testDnsPort = nullptr;
+    QLabel *testProtocol = nullptr;
+    bool testTcpPortExplicit = false;
     QPushButton* button_TEST_HUBLIST_PROXY = nullptr;
     settings_connection::ProxyUiState socksProxyState;
     settings_connection::ProxyUiState shadowsocksProxyState;
+    settings_connection::ProxyUiState gostProxyState;
+    QRadioButton* globalGostMode = nullptr;
+    QLineEdit* globalGostCaFile = nullptr;
+    QPushButton* globalGostCaBrowse = nullptr;
+    QLabel* globalGostNotice = nullptr;
+    QWidget* globalGostTrust = nullptr;
     int currentProxyFormMode = settings_connection::ProxyUiDirect;
 
     int old_tcp, old_udp, old_tls

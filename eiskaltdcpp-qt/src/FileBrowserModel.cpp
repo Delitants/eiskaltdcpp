@@ -104,9 +104,10 @@ QVariant FileBrowserModel::data(const QModelIndex &index, int role) const
         case Qt::DecorationRole:
         {
             if (item->dir && index.column() == COLUMN_FILEBROWSER_NAME)
-                return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE).scaled(16, 16);
+                return QIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
             else if (index.column() == COLUMN_FILEBROWSER_NAME)
-                return qtCtx()->wulforUtil()->getPixmapForFile(item->data(COLUMN_FILEBROWSER_NAME).toString()).scaled(16, 16);
+                return fileIcons.iconForFile(item->data(COLUMN_FILEBROWSER_NAME).toString(),
+                    QIcon(qtCtx()->wulforUtil()->getPixmapForFile(item->data(COLUMN_FILEBROWSER_NAME).toString())));
             break;
         }
         case Qt::DisplayRole:
@@ -294,7 +295,8 @@ typename Compare<order>::AttrComp Compare<order>::attrs[NUM_OF_COLUMNS] = {  Att
                                                                 AttrCmp<COLUMN_FILEBROWSER_MVIDEO>,
                                                                 AttrCmp<COLUMN_FILEBROWSER_MAUDIO>,
                                                                 NumCmp<COLUMN_FILEBROWSER_HIT>,
-                                                                AttrCmp<COLUMN_FILEBROWSER_TS>
+                                                                AttrCmp<COLUMN_FILEBROWSER_TS>,
+                                                                AttrCmp<COLUMN_FILEBROWSER_MODIFIED>
                                                              };
 
 template <> template <typename T>
@@ -314,7 +316,7 @@ QVariant FileBrowserModel::headerData(int section, Qt::Orientation orientation,
     QList<QVariant> rootData;
     rootData << tr("Name") << tr("Size") << tr("Exact size") << QString("TTH")
              << tr("Bitrate") << tr("Resolution") << tr("Video") << tr("Audio")
-             << tr("Downloaded") << tr("Shared");
+             << tr("Downloaded") << tr("Shared") << tr("Modified");
 
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootData.at(section);

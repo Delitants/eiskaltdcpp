@@ -49,6 +49,7 @@ public:
     void download(const string& aUrl, const StringMap& postData);
 
     void abort();
+    void setPublicHubListProxy(bool enabled) { publicHubListProxy = enabled; }
 
     static bool shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMode);
     static bool responseBodyWouldExceedSize(int64_t declaredSize, int64_t bytesDone, size_t nextLen);
@@ -90,6 +91,7 @@ private:
     BufferedSocket* socket;
     DCContext& ctx_;
     bool usingHttpProxy;
+    bool publicHubListProxy = false;
     Connector connector;
 
     void prepareRequest(RequestType type);

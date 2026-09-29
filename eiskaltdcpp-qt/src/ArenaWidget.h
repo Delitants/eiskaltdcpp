@@ -45,6 +45,7 @@ public:
         CmdDebug,
         Secretary,
         LiveLog,
+        Torrent,
         NoRole  //Not valid for widgets
     };
 
@@ -69,6 +70,7 @@ public:
     virtual QAction *toolButton() { return toolBtn; }
     virtual void  setToolButton(QAction *btn) { if (btn) toolBtn = btn; }
     virtual const QPixmap &getPixmap(){ return _pxmap; }
+    virtual QIcon getIcon() { return QIcon(getPixmap()); }
 
     virtual Flags state() const { return flags; }
     virtual void  setState(Flags f) { flags = f; }

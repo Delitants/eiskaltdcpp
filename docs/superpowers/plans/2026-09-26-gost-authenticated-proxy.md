@@ -10,6 +10,12 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-26-gost-authenticated-proxy-design.md`
 
+**Execution update (2026-09-26):** The user selected Native/inline execution.
+Continue remaining work with `superpowers:executing-plans`; completed tasks are
+not repeated. The approved DC++ recommendations are tracked in the linked
+[selective-port plan](2026-09-26-dcplusplus-selective-ports.md). Independent
+maintenance can proceed without changing this plan's deployment/review gates.
+
 ## Global Constraints
 
 - Eiskalt's new GOST mode requires TLS and authentication; accepting plain clients on the server must never cause Eiskalt to downgrade.

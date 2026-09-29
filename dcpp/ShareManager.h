@@ -79,6 +79,35 @@ public:
     void removeDirectory(const string& realPath);
     void renameDirectory(const string& realPath, const string& virtualName);
 
+    /** Atomic, synchronous publication of exact files at /virtualName/basename.
+     * Call off the GUI thread: files are validated and TTH-hashed before publication.
+     * A bounded in-memory cache reuses hashes only after a no-symlink open confirms
+     * the same file identity, size, and precise modification/change timestamps.
+     * Returns false on unsafe paths, ambiguous names, I/O failure or cancellation;
+     * the previous snapshot is unchanged. Empty files removes this owner's share.
+     * Owners may overlap, but managed virtual roots cannot overlap manual roots.
+     * No persistence: callers must reapply after restart or settings reload. Removal
+     * retracts publication, not reusable hashes; explicit rechecks must forget them.
+     * Callers enforce completion/selection/privacy and retract before modifying files.
+     * The legacy upload interface reopens a pathname after toReal returns, so
+     * callers must keep published files and their ancestors immutable until retracted.
+     * externalCancelled may reject a queued call before it registers an owner
+     * generation; it is also polled during hashing and immediately before commit.
+     * The predicate must be thread-safe, nonblocking, nonthrowing, and must not
+     * reenter managers: it may run under the share lock. Its captures must live
+     * until this synchronous call returns; cancellation does not join callers.
+     */
+    bool replaceManagedFiles(const string& owner, const string& virtualName, const StringList& absoluteFiles,
+                                      std::function<bool()> externalCancelled = {},
+                                      std::function<void()> hashingStarted = {});
+    void removeManagedFiles(const string& owner);
+    // Explicit rechecks discard reusable hashes after retracting the owner.
+    void forgetManagedFileHashes(const string& owner);
+    using ManagedFileHashes = map<string, pair<int64_t, TTHValue>>;
+    // Last published hashes by absolute path. No filesystem checks or share lock:
+    // for GUI links only, never an authorization to open/upload a payload.
+    ManagedFileHashes getManagedFileHashes(const string& owner) const;
+
     bool isRefreshing() { return refreshing; }
 
     string toVirtual(const TTHValue& tth) const;
@@ -125,7 +154,8 @@ public:
 
     bool isTTHShared(const TTHValue& tth){
         Lock l(cs);
-        return tthIndex.find(tth) != tthIndex.end();
+        const auto i = tthIndex.find(tth);
+        return i != tthIndex.end() && i->second->available();
     }
     void publish();
 
@@ -133,6 +163,21 @@ public:
     GETSET(string, bzXmlFile, BZXmlFile);
 
 private:
+    struct ManagedFile {
+        string realPath;
+        string identity;
+        int64_t size = 0;
+        uint64_t modified = 0; // Positive UTC seconds; zero means unobserved/unknown.
+        TTHValue tth;
+        ByteVector leaves;
+        bool available() const;
+    };
+    using ManagedFilePtr = std::shared_ptr<const ManagedFile>;
+    struct ManagedShare {
+        string virtualName;
+        vector<ManagedFilePtr> files;
+    };
+
     struct AdcSearch;
     class Directory : public FastAlloc<Directory>, public intrusive_ptr_base<Directory>, private NonCopyable {
     public:
@@ -145,10 +190,12 @@ private:
             File(const string& aName, int64_t aSize, const Directory::Ptr& aParent, const TTHValue& aRoot) :
                 name(aName), tth(aRoot), size(aSize), parent(aParent.get()) { }
             File(const File& rhs) :
-                name(rhs.getName()), tth(rhs.getTTH()), size(rhs.getSize()), parent(rhs.getParent()) { }
+                managed(rhs.managed), modified(rhs.modified), name(rhs.getName()), tth(rhs.getTTH()), size(rhs.getSize()), parent(rhs.getParent()) { }
 
             File& operator=(const File& rhs) {
                 name = rhs.name; size = rhs.size; parent = rhs.parent; tth = rhs.tth;
+                managed = rhs.managed;
+                modified = rhs.modified;
                 return *this;
             }
 
@@ -187,7 +234,10 @@ private:
 
             string getADCPath() const { return parent->getADCPath() + name; }
             string getFullName() const { return parent->getFullName() + name; }
-            string getRealPath() const { return parent->getRealPath(name); }
+            string getRealPath() const;
+            bool available() const { return !managed || managed->available(); }
+            ManagedFilePtr managed;
+            uint64_t modified = 0;
 
             GETSET(string, name, Name);
             GETSET(TTHValue, tth, TTH);
@@ -196,6 +246,8 @@ private:
         };
 
         int64_t size;
+        bool managedRoot = false;
+        uint64_t modified = 0;
         Map directories;
         set<File, File::FileLess> files;
 
@@ -297,6 +349,25 @@ private:
     /** Map real name to virtual name - multiple real names may be mapped to a single virtual one */
     StringMap shares;
 
+    // Exact, in-memory snapshots; never insert these into shares or scan their parents.
+    map<string, ManagedShare> managedShares;
+    // Not advertised. Reuse requires a fresh no-symlink open and exact file identity.
+    map<string, vector<ManagedFilePtr>> managedVerifiedFiles;
+    size_t managedVerifiedBytes = 0;
+    size_t managedVerifiedCount = 0;
+    static constexpr size_t managedVerifiedByteLimit = 32 * 1024 * 1024;
+    static constexpr size_t managedVerifiedFileLimit = 4096;
+    void rememberManagedFiles(const string& owner, const ManagedShare& snapshot);
+    void loadManagedHashCache();
+    void saveManagedHashCache(bool invalidatePrevious = false);
+    std::mutex managedCacheIoMutex;
+    using ManagedHashSnapshots = map<string, ManagedFileHashes>;
+    mutable std::mutex managedHashMutex;
+    std::shared_ptr<const ManagedHashSnapshots> managedHashSnapshots;
+    map<string, std::shared_ptr<int>> managedReplacements;
+    bool managedConflicts(const string& owner, const ManagedShare& candidate) const;
+    void rebuildManagedDirectories(); // caller holds cs
+
 #ifdef WITH_DHT
     friend class ::dht::IndexManager;
 #endif
@@ -349,6 +420,7 @@ private:
     void load(SimpleXML& aXml);
     void save(SimpleXML& aXml);
 
+    uint64_t manualSharesGeneration = 0; // protected by cs
 };
 
 } // namespace dcpp

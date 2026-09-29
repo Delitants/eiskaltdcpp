@@ -21,6 +21,7 @@
 #include <QToolBar>
 #include <QHash>
 #include <QSessionManager>
+#include <QPointer>
 
 #include "dcpp/stdinc.h"
 #include "dcpp/ConnectionManager.h"
@@ -47,6 +48,10 @@ class FavoriteHubs;
 class DownloadQueue;
 class ToolBar;
 class MainWindow;
+#ifdef USE_TORRENT
+class TorrentRuntime;
+class TorrentWindow;
+#endif
 class MultiLineToolBar;
 #ifdef USE_JS
 class ScriptConsole;
@@ -132,7 +137,7 @@ friend class QtContext;
 
         
     bool confirmExit();
-ArenaWidget *widgetForRole(ArenaWidget::Role) const;
+ArenaWidget *widgetForRole(ArenaWidget::Role);
 
     Q_SIGNALS:
         void redrawWidgetPanels();
@@ -163,6 +168,12 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
         void parseCmdLine(const QStringList &);
         /** */
         void parseInstanceLine(const QString &);
+#ifdef USE_TORRENT
+        void showTorrents();
+        // True means handled, including cancellation/rejection: do not fall back
+        // to the DC magnet dialog or launch an external application afterward.
+        bool openTorrentSource(const QString &source);
+#endif
 
     protected:
         void closeEvent(QCloseEvent*) override;
@@ -172,6 +183,8 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
         bool eventFilter(QObject *, QEvent *) override;
 
     private Q_SLOTS:
+        void displayStatusMessage(QString);
+        void displayStatusWarning(QString);
         /** Show widget on arena */
         void mapWidgetOnArena(ArenaWidget*);
         void removeWidget(ArenaWidget *awgt);
@@ -256,6 +269,7 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
 
     Q_SIGNALS:
         void coreLogMessage(const QString&);
+        void coreLogWarning(const QString&);
         void coreOpenShare(dcpp::UserPtr, const QString &, const QString&);
         void coreUpdateStats(const QMap<QString, QString> &);
         void notifyMessage(int, const QString&, const QString&);
@@ -267,8 +281,12 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
 
     private:
 
+        bool iconThemeIsDark = false;
+        bool iconThemeRefreshPending = false;
+
         /** LogManagerListener */
         void on(dcpp::LogManagerListener::Message, time_t t, const std::string&) noexcept override;
+        void on(dcpp::LogManagerListener::Warning, time_t t, const std::string&) noexcept override;
         /** TimerManagerListener */
         void on(dcpp::TimerManagerListener::Second, uint64_t) noexcept override;
         /** QueueManagerListener */
@@ -300,6 +318,14 @@ ArenaWidget *widgetForRole(ArenaWidget::Role) const;
         HashProgress *progress_dialog(); // Lazy initialization for _progress_dialog;
 
         MainWindowPrivate *d_ptr;
+#ifdef USE_TORRENT
+        void toggleTorrents();
+        TorrentWindow *ensureTorrentWindow();
+        void pasteTorrentMagnets(const QStringList &ids, bool dc);
+        TorrentRuntime *torrentRuntime = nullptr;
+        QPointer<TorrentWindow> torrentWindow;
+        QAction *torrentAction = nullptr;
+#endif
 };
 
 Q_DECLARE_METATYPE(MainWindow*)

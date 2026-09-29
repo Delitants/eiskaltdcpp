@@ -490,3 +490,189 @@ TEST_CASE("Passive SOCKS5 DHT startup sends UDP via the relay only", "[.][qt][dh
 
     REQUIRE(sawRelayedLogicalDestination);
 }
+
+#include "dcpp/ProxyRoute.h"
+#include "dcpp/GostProtocol.h"
+#include "../proxy/DisposableGostServer.h"
+#include <fstream>
+
+TEST_CASE("DC DHT consumer routes datagrams through global GOST without claiming active reachability", "[gost-global][dc-udp][qt]") {
+    FullStartupContext tc;
+    proxy_test::GostOptions options;
+    std::atomic<unsigned> frames{0};
+    std::vector<uint8_t> pending;
+    options.transform = [&](std::span<const uint8_t> bytes) {
+        pending.insert(pending.end(), bytes.begin(), bytes.end());
+        dcpp::gost::Datagram packet;
+        size_t consumed = 0;
+        while(dcpp::gost::decodeTunnel(pending, packet, consumed) == dcpp::gost::DecodeResult::Complete) {
+            if(packet.host == "2001:db8::7" && packet.port == 6250 && !packet.payload.empty()) ++frames;
+            pending.erase(pending.begin(), pending.begin() + consumed);
+        }
+        return std::vector<uint8_t>{};
+    };
+    proxy_test::GostServer server(options);
+    auto* settings = tc.ownedCtx->getSettingsManager();
+    const auto ca = tc.tmpDir / "fixture-ca.pem";
+    std::ofstream(ca) << server.ca.pem;
+    settings->set(SettingsManager::GOST_SERVER, "127.0.0.1");
+    settings->set(SettingsManager::GOST_PORT, server.port());
+    settings->set(SettingsManager::GOST_USER, "fixture-user");
+    settings->set(SettingsManager::GOST_PASSWORD, "fixture-password");
+    settings->set(SettingsManager::GOST_CA_FILE, ca.string());
+    settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_GOST);
+    tc.ownedCtx->getProxyRoute()->reload(*settings);
+    server.start();
+    auto* dht = tc.ownedCtx->getDHT();
+    auto capture = std::make_shared<TransportCapture>();
+    UDPSocket consumer;
+    consumer.setDHT(*dht);
+    consumer.setTransportObserver(capture);
+    bool revokedQueue = false;
+    SECTION("Current route") { }
+    SECTION("Old queued request") {
+        AdcCommand stale(AdcCommand::CMD_INF, AdcCommand::TYPE_UDP);
+        consumer.send(stale, "2001:db8::7", "6250", CID(), CID());
+        settings->set(SettingsManager::GOST_PASSWORD, "replacement-fixture-password");
+        tc.ownedCtx->getProxyRoute()->reload(*settings);
+        revokedQueue = true;
+    }
+    consumer.listen();
+    if(revokedQueue) {
+        CHECK_FALSE(capture->waitForObservation(std::chrono::milliseconds(500)));
+        CHECK(frames == 0);
+    }
+    CHECK(consumer.getAdvertisedPort().empty());
+    CHECK_FALSE(consumer.hasUdpProxyEndpoint());
+    CHECK(dht->isFirewalled());
+    CHECK_FALSE(tc.ownedCtx->getClientManager()->isActive());
+    AdcCommand packet(AdcCommand::CMD_INF, AdcCommand::TYPE_UDP);
+    consumer.send(packet, "2001:db8::7", "6250", CID(), CID());
+    REQUIRE(capture->waitForObservation(std::chrono::seconds(3)));
+    const auto observed = capture->snapshot();
+    REQUIRE(observed.size() == 1);
+    CHECK(observed.front().proxied);
+    CHECK(observed.front().physicalIp == "127.0.0.1");
+    CHECK(observed.front().logicalIp == "2001:db8::7");
+    for(unsigned i = 0; i < 100 && !frames; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    CHECK(frames == 1);
+    consumer.disconnect(); server.requestStop(); server.join();
+}
+
+#include <zlib.h>
+TEST_CASE("Firewalled global GOST DHT bootstraps queries and answers over its outbound association", "[gost-global][dc-udp][qt]") {
+    FullStartupContext tc;
+    const auto remoteCid = CID::generate();
+    const std::string xml = "<Nodes><Node CID=\"" + remoteCid.toBase32() + "\" I4=\"198.51.100.7\" U4=\"6250\"/></Nodes>";
+    uLongf zippedLength = compressBound(xml.size());
+    std::vector<uint8_t> zipped(zippedLength);
+    REQUIRE(compress(zipped.data(), &zippedLength, reinterpret_cast<const Bytef*>(xml.data()), xml.size()) == Z_OK);
+    zipped.resize(zippedLength);
+    std::atomic<bool> bootstrapSent{false}, querySeen{false}, answerSeen{false}, activeAdvertisement{false};
+    std::string httpInput;
+    proxy_test::GostOptions http;
+    http.sessionMs = 8000;
+    http.transform = [&](std::span<const uint8_t> input) {
+        httpInput.append(reinterpret_cast<const char*>(input.data()), input.size());
+        if(bootstrapSent || httpInput.find("\r\n\r\n") == std::string::npos) return std::vector<uint8_t>{};
+        const std::string header = "HTTP/1.1 200 OK\r\nContent-Length: " + std::to_string(zipped.size()) + "\r\nConnection: close\r\n\r\n";
+        std::vector<uint8_t> reply(header.begin(), header.end());
+        reply.insert(reply.end(), zipped.begin(), zipped.end());
+        bootstrapSent = true;
+        return reply;
+    };
+    proxy_test::GostServer httpServer(http);
+    std::vector<uint8_t> udpInput;
+    proxy_test::GostOptions udp;
+    udp.sessionMs = 8000;
+    udp.transform = [&](std::span<const uint8_t> input) {
+        udpInput.insert(udpInput.end(), input.begin(), input.end());
+        std::vector<uint8_t> reply;
+        dcpp::gost::Datagram packet;
+        size_t consumed = 0;
+        while(dcpp::gost::decodeTunnel(udpInput, packet, consumed) == dcpp::gost::DecodeResult::Complete) {
+            udpInput.erase(udpInput.begin(), udpInput.begin() + consumed);
+            std::string plain(packet.payload.begin(), packet.payload.end());
+            if(!packet.payload.empty() && packet.payload[0] == 0xc1) {
+                std::array<uint8_t, 16384> output{}; uLongf count = output.size();
+                if(uncompress(output.data(), &count, packet.payload.data() + 1, packet.payload.size() - 1) != Z_OK)
+                    continue;
+                plain.assign(reinterpret_cast<char*>(output.data()), count);
+            }
+            if(plain.find(" FW") != std::string::npos) activeAdvertisement = true;
+            if(plain.starts_with("USND ")) answerSeen = true;
+            if(plain.starts_with("UGET ") && !querySeen.exchange(true)) {
+                for(const auto command : {AdcCommand::CMD_SND, AdcCommand::CMD_GET}) {
+                    AdcCommand response(command, AdcCommand::TYPE_UDP);
+                    response.addParam("nodes"); response.addParam("dht.xml");
+                    if(command == AdcCommand::CMD_SND) response.addParam("<Nodes/>");
+                    const auto bytes = response.toString(remoteCid);
+                    packet.payload.assign(bytes.begin(), bytes.end());
+                    const auto encoded = dcpp::gost::encodeTunnel(packet);
+                    reply.insert(reply.end(), encoded.begin(), encoded.end());
+                }
+            }
+        }
+        return reply;
+    };
+    proxy_test::GostServer udpServer(udp, "IP:127.0.0.1", false, &httpServer.ca);
+    Socket listener; listener.create(); listener.bind("0", "127.0.0.1"); listener.listen();
+    auto &sm = *tc.ownedCtx->getSettingsManager();
+    const auto ca = tc.tmpDir / "bootstrap-ca.pem"; std::ofstream(ca) << httpServer.ca.pem;
+    sm.set(SettingsManager::GOST_SERVER, "127.0.0.1");
+    sm.set(SettingsManager::GOST_PORT, std::stoi(listener.getLocalPort()));
+    sm.set(SettingsManager::GOST_USER, "fixture-user"); sm.set(SettingsManager::GOST_PASSWORD, "fixture-password");
+    sm.set(SettingsManager::GOST_CA_FILE, ca.string());
+    sm.set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_GOST);
+    sm.set(SettingsManager::USE_DHT, true);
+    sm.set(SettingsManager::DHT_BOOTSTRAP_URLS, "http://bootstrap.invalid/nodes");
+    tc.ownedCtx->getProxyRoute()->reload(sm);
+    httpServer.start(&listener);
+    auto *dht = tc.ownedCtx->getDHT();
+    dht->start();
+    for(int i = 0; i < 200 && !bootstrapSent; ++i) Thread::sleep(10);
+    REQUIRE(bootstrapSent);
+    udpServer.start(&listener);
+    for(int i = 0; i < 200 && !answerSeen; ++i) {
+        dht->getBootstrapManager().process();
+        Thread::sleep(10);
+    }
+    CHECK(querySeen); CHECK(answerSeen); CHECK_FALSE(activeAdvertisement);
+    CHECK(dht->isFirewalled()); CHECK(dht->getAdvertisedPort().empty());
+    CHECK(dht->getBootstrapManager().getLastBootstrapRequestUrl().find("&u4=") == std::string::npos);
+    dht->stop(true);
+    httpServer.requestStop(); udpServer.requestStop(); httpServer.join(); udpServer.join();
+    CHECK(httpServer.target == "bootstrap.invalid");
+}
+
+TEST_CASE("Client manager retains UDP sender after each partial search send", "[gost-global][review-fixes][qt]") {
+    FullStartupContext tc;
+    std::atomic<unsigned> received{0};
+    std::vector<uint8_t> input;
+    proxy_test::GostOptions options;
+    options.transform = [&](std::span<const uint8_t> bytes) {
+        input.insert(input.end(), bytes.begin(), bytes.end());
+        dcpp::gost::Datagram packet; size_t used = 0;
+        while(dcpp::gost::decodeTunnel(input, packet, used) == dcpp::gost::DecodeResult::Complete) {
+            if(std::string(packet.payload.begin(), packet.payload.end()) == "UPSR fixture\n") ++received;
+            input.erase(input.begin(), input.begin() + used);
+        }
+        return std::vector<uint8_t>{};
+    };
+    proxy_test::GostServer server(options);
+    auto& sm = *tc.ownedCtx->getSettingsManager();
+    const auto ca = tc.tmpDir / "sender-ca.pem"; std::ofstream(ca) << server.ca.pem;
+    sm.set(SettingsManager::GOST_SERVER, "127.0.0.1"); sm.set(SettingsManager::GOST_PORT, server.port());
+    sm.set(SettingsManager::GOST_USER, "fixture-user"); sm.set(SettingsManager::GOST_PASSWORD, "fixture-password");
+    sm.set(SettingsManager::GOST_CA_FILE, ca.string());
+    sm.set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_GOST);
+    tc.ownedCtx->getProxyRoute()->reload(sm); server.start();
+    for(int i = 0; i < 3; ++i) {
+        tc.ownedCtx->getClientManager()->sendUdp("192.0.2.1", "6000", "UPSR fixture\n");
+        for(int wait = 0; wait < 100 && received <= unsigned(i); ++wait) Thread::sleep(10);
+        REQUIRE(received == unsigned(i + 1));
+    }
+    tc.ownedCtx->getProxyRoute()->stop();
+    CHECK_THROWS(tc.ownedCtx->getClientManager()->sendUdp("192.0.2.1", "6000", "UPSR fixture\n"));
+    server.requestStop(); server.join();
+}

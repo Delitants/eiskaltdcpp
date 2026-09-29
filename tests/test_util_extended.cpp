@@ -118,7 +118,7 @@ TEST_CASE("Util::isPublicIp rejects private proxy endpoints for hub advertisemen
 TEST_CASE("Util::firstPublicIp prefers proxy observed public address", "[Util][proxy]") {
     REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "8.8.8.8" }) == "8.8.8.8");
     REQUIRE(Util::firstPublicIp(StringList{ "203.0.113.10", "8.8.8.8" }) == "8.8.8.8");
-    REQUIRE(Util::firstPublicIp(StringList{ "147.81.150.184", "192.168.4.71" }) == "147.81.150.184");
+    REQUIRE(Util::firstPublicIp(StringList{ "8.8.8.8", "192.168.4.71" }) == "8.8.8.8");
     REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "10.0.0.5" }).empty());
 }
 

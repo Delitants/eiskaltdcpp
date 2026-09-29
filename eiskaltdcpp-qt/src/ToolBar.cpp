@@ -11,6 +11,7 @@
  */
 
 #include "ToolBar.h"
+#include "ArenaTabInfo.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforUtil.h"
@@ -25,6 +26,7 @@
 #include <QPalette>
 #include <QStyleHints>
 #include <QTimer>
+#include <QSignalBlocker>
 
 #include "ArenaWidget.h"
 #include "ArenaWidgetManager.h"
@@ -40,16 +42,7 @@ QString chromeTabStyleSheet(const QWidget *widget)
     const QPalette palette = widget ? widget->palette() : QPalette();
     const QColor window = palette.color(QPalette::Window);
     const QColor text = palette.color(QPalette::Text);
-    bool dark = window.lightness() < 128;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-    if (const QStyleHints *styleHints = QGuiApplication::styleHints()) {
-        const Qt::ColorScheme colorScheme = styleHints->colorScheme();
-        if (colorScheme == Qt::ColorScheme::Dark)
-            dark = true;
-        else if (colorScheme == Qt::ColorScheme::Light)
-            dark = false;
-    }
-#endif
+    const bool dark = window.lightness() < 128;
 
     const auto blend = [](const QColor &foreground, const QColor &background, double amount) {
         const auto channel = [amount](int fg, int bg) {
@@ -77,14 +70,11 @@ QString chromeTabStyleSheet(const QWidget *widget)
         "QTabBar#arenaTabbar::tab {"
         " min-width: 0px;"
         " min-height: 20px;"
-        " padding: 5px 38px 5px 14px;"
+        " padding: 4px 8px 4px 8px;"
         " margin: 2px 2px 0px 0px;"
         " border: 1px solid %1;"
         " border-bottom-color: %2;"
-        " border-top-left-radius: 9px;"
-        " border-top-right-radius: 9px;"
-        " border-bottom-left-radius: 3px;"
-        " border-bottom-right-radius: 3px;"
+        " border-radius: 5px;"
         " background: %3;"
         " color: %4;"
         "}"
@@ -96,13 +86,10 @@ QString chromeTabStyleSheet(const QWidget *widget)
         "QTabBar#arenaTabbar::tab:hover:!selected {"
         " background: %5;"
         "}"
-        "QTabBar#arenaTabbar::close-button {"
-        " width: 14px;"
-        " height: 14px;"
-        " subcontrol-origin: padding;"
-        " subcontrol-position: right;"
-        " right: 18px;"
-        " margin: 0px;"
+        "QTabBar#arenaTabbar QToolButton {"
+        " background: %2;"
+        " color: %4;"
+        " border: none;"
         "}")
         .arg(tabBorder.name(QColor::HexRgb),
              active.name(QColor::HexRgb),
@@ -173,14 +160,14 @@ void ToolBar::showEvent(QShowEvent *e){
 }
 
 void ToolBar::initTabs(){
-    tabbar = new QTabBar(parentWidget());
+    tabbar = new tab_navigation::BoundedTabBar(this);
     tabbar->setObjectName("arenaTabbar");
     tabbar->setTabsClosable(false);
     tabbar->setDocumentMode(true);
     tabbar->setMovable(true);
     tabbar->setSelectionBehaviorOnRemove(QTabBar::SelectPreviousTab);
     tabbar->setExpanding(false);
-    tabbar->setElideMode(Qt::ElideNone);
+    tabbar->setElideMode(Qt::ElideRight);
     tabbar->setUsesScrollButtons(true);
     tabbar->setContextMenuPolicy(Qt::CustomContextMenu);
     tabbar->setSizePolicy(QSizePolicy::Expanding, tabbar->sizePolicy().verticalPolicy());
@@ -228,7 +215,22 @@ void ToolBar::initTabs(){
        
     connect(qtCtx()->globalTimer(), &GlobalTimer::second, this, &ToolBar::redraw);
 
-    addWidget(tabbar);
+    auto *strip = new QWidget(this);
+    strip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    auto *layout = new QHBoxLayout(strip);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(2);
+    layout->addWidget(tabbar, 1);
+    allTabs = new tab_navigation::AllTabsMenu(strip);
+    layout->addWidget(tab_navigation::makeAllTabsButton(allTabs, strip));
+    connect(allTabs, &QMenu::aboutToShow, this, &ToolBar::refreshTabList);
+    connect(allTabs, &tab_navigation::AllTabsMenu::selected, this, [this](quint64 id) {
+        if (auto *widget = registry.resolve(id)) {
+            if (map.contains(widget))
+                qtCtx()->arenaWidgetManager()->activate(widget);
+        }
+    });
+    addWidget(strip);
     syncCloseButtons();
 }
 
@@ -237,7 +239,9 @@ void ToolBar::refreshTabStyle()
     if (!tabbar)
         return;
 
-    const QString style = chromeTabStyleSheet(tabbar);
+    // The tab stylesheet makes its Window brush transparent. Read the surrounding
+    // toolbar palette so refreshing cannot mistake that brush for dark mode.
+    const QString style = chromeTabStyleSheet(this);
     if (tabbar->styleSheet() != style)
         tabbar->setStyleSheet(style);
 }
@@ -246,7 +250,14 @@ void ToolBar::insertWidget(ArenaWidget *awgt){
     if (!(awgt && awgt->getWidget()) || (awgt->state() & ArenaWidget::Hidden) || map.contains(awgt))
         return;
 
-    int index = tabbar->addTab(awgt->getPixmap(), awgt->getArenaShortTitle());
+    const quint64 id = registry.add(awgt);
+    int index;
+    {
+        const QSignalBlocker blocker(tabbar);
+        index = tabbar->addTab(awgt->getIcon(), tab_navigation::title(awgt));
+        tabbar->setTabData(index, QVariant::fromValue(id));
+        tabbar->setTabToolTip(index, tab_navigation::toolTip(awgt));
+    }
 
     if (awgt->toolButton())
         awgt->toolButton()->setChecked(true);
@@ -261,6 +272,7 @@ void ToolBar::insertWidget(ArenaWidget *awgt){
         if (!(typeid(*awgt) == typeid(PMWindow) && qtCtx()->settings()->getBool(WB_CHAT_KEEPFOCUS)))
             tabbar->setCurrentIndex(index);
     }
+    refreshTabList();
 }
 
 void ToolBar::removeWidget(ArenaWidget *awgt){
@@ -271,6 +283,7 @@ void ToolBar::removeWidget(ArenaWidget *awgt){
 
     if (index >= 0){
         map.erase(map.find(awgt));
+        registry.remove(awgt);
 
         rebuildIndexes(index);
 
@@ -283,6 +296,7 @@ void ToolBar::removeWidget(ArenaWidget *awgt){
         if (awgt->toolButton())
             awgt->toolButton()->setChecked(false);
     }
+    refreshTabList();
 }
 
 void ToolBar::updated ( ArenaWidget *awgt ) {
@@ -322,26 +336,14 @@ void ToolBar::toggled ( ArenaWidget *awgt) {
 }
 
 void ToolBar::slotTabMoved(int from, int to){
-    ArenaWidget *from_wgt = nullptr;
-    ArenaWidget *to_wgt   = nullptr;
-
-    for (auto it = map.begin(); it != map.end(); ++it){
-        if (it.value() == from){
-            from_wgt = it.key();
-        }
-        else if (it.value() == to)
-            to_wgt = it.key();
-
-        if (to_wgt && from_wgt){
-            map[to_wgt] = from;
-            map[from_wgt] = to;
-            syncCloseButtons();
-
-            slotIndexChanged(tabbar->currentIndex());
-
-            return;
-        }
+    Q_UNUSED(from)
+    Q_UNUSED(to)
+    for (int index = 0; index < tabbar->count(); ++index) {
+        if (auto *widget = registry.resolve(tabbar->tabData(index).toULongLong()))
+            map[widget] = index;
     }
+    slotIndexChanged(tabbar->currentIndex());
+    refreshTabList();
 }
 
 void ToolBar::slotClose(int index){
@@ -399,25 +401,24 @@ void ToolBar::slotShorcuts(){
 }
 
 ArenaWidget *ToolBar::findWidgetForIndex(const int index){
-    if (index < 0)
+    if (index < 0 || index >= tabbar->count())
         return nullptr;
-
-    for (const auto &k : map.keys()) {
-        if (map[k] == index)
-            return const_cast<ArenaWidget*>(k);
-    }
-
-    return nullptr;
+    return registry.resolve(tabbar->tabData(index).toULongLong());
 }
 
 void ToolBar::redraw(){
     for (auto it = map.begin(); it != map.end(); ++it){
-        tabbar->setTabText(it.value(), it.key()->getArenaShortTitle());
-        tabbar->setTabToolTip(it.value(), qtCtx()->wulforUtil()->compactToolTipText(it.key()->getArenaTitle(), 60, "\n"));
-        tabbar->setTabIcon(it.value(), it.key()->getPixmap());
+        auto *widget = registry.resolve(registry.idFor(it.key()));
+        if (!widget)
+            continue;
+        tabbar->setTabText(it.value(), tab_navigation::title(widget));
+        tabbar->setTabToolTip(it.value(), tab_navigation::toolTip(widget));
+        tabbar->setTabIcon(it.value(), widget->getIcon());
     }
 
     syncCloseButtons();
+    if (allTabs->isVisible())
+        refreshTabList();
 
     tabbar->repaint();
 
@@ -430,25 +431,16 @@ void ToolBar::redraw(){
 
 QWidget *ToolBar::makeCloseButton(int index)
 {
-    auto *holder = new QWidget(tabbar);
-    holder->setFixedSize(QSize(32, 18));
-
-    auto *layout = new QHBoxLayout(holder);
-    layout->setContentsMargins(0, 0, 12, 0);
-    layout->setSpacing(0);
-
-    auto *button = new QToolButton(holder);
-    button->setAutoRaise(true);
+    auto *button = tab_navigation::makeCloseButton(tabbar, tr("Close"));
     button->setCursor(Qt::ArrowCursor);
-    button->setFixedSize(QSize(18, 18));
-    button->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFILECLOSE));
-    button->setIconSize(QSize(16, 16));
-    button->setToolTip(tr("Close"));
-    button->setStyleSheet(QStringLiteral("QToolButton { border: none; padding: 0px; margin: 0px; }"));
-    connect(button, &QToolButton::clicked, this, [this, index]() { slotClose(index); });
-    layout->addWidget(button, 0, Qt::AlignVCenter | Qt::AlignRight);
-
-    return holder;
+    const quint64 id = tabbar->tabData(index).toULongLong();
+    connect(button, &QToolButton::clicked, this, [this, id]() {
+        if (auto *widget = registry.resolve(id)) {
+            if (map.contains(widget))
+                qtCtx()->arenaWidgetManager()->rem(widget);
+        }
+    });
+    return button;
 }
 
 void ToolBar::syncCloseButtons()
@@ -461,14 +453,32 @@ void ToolBar::syncCloseButtons()
 
     for (int index = 0; index < tabbar->count(); ++index) {
         QWidget *existing = tabbar->tabButton(index, QTabBar::RightSide);
-        if (existing) {
+        if (existing && !showClose) {
             existing->deleteLater();
             tabbar->setTabButton(index, QTabBar::RightSide, nullptr);
         }
 
-        if (showClose)
+        if (showClose && !existing)
             tabbar->setTabButton(index, QTabBar::RightSide, makeCloseButton(index));
+        else if (showClose) {
+            if (auto *button = qobject_cast<QToolButton*>(existing))
+                button->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFILECLOSE));
+        }
     }
+}
+
+void ToolBar::refreshTabList()
+{
+    if (!allTabs)
+        return;
+    QList<tab_navigation::Entry> entries;
+    for (int index = 0; index < tabbar->count(); ++index) {
+        const quint64 id = tabbar->tabData(index).toULongLong();
+        if (auto *widget = registry.resolve(id))
+            entries.append({id, tab_navigation::title(widget), tab_navigation::details(widget),
+                            widget->getIcon(), index == tabbar->currentIndex()});
+    }
+    allTabs->setEntries(entries);
 }
 
 void ToolBar::nextTab(){
@@ -502,13 +512,12 @@ void ToolBar::rebuildIndexes(const int removed){
 }
 
 void ToolBar::mapped(ArenaWidget *awgt){
-    blockSignals(true);
+    const QSignalBlocker blocker(tabbar);
     if (map.contains(awgt))
         tabbar->setCurrentIndex(map[awgt]);
 
     redraw();
 
-    blockSignals(false);
 }
 
 bool ToolBar::hasWidget(ArenaWidget *w) const{

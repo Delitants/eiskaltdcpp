@@ -56,6 +56,8 @@ namespace dht
         /** Key to encrypt packet */
         CID udpKey;
 
+        std::shared_ptr<std::atomic_bool> routeRevoked;
+
     };
 
     class UDPSocket :

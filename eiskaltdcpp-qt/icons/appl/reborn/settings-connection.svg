@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Connection settings</title>
+  <desc>Reborn light surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-color" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="256" y2="0"><stop offset="0" stop-color="#1486f8" stop-opacity="1"/><stop offset="0.31" stop-color="#1486f8" stop-opacity="1"/><stop offset="0.31" stop-color="#0cb5ab" stop-opacity="1"/><stop offset="0.55" stop-color="#0cb5ab" stop-opacity="1"/><stop offset="0.55" stop-color="#1486f8" stop-opacity="1"/><stop offset="1" stop-color="#1486f8" stop-opacity="1"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M212,200a36,36,0,1,1-69.85-12.25l-53-34.05a36,36,0,1,1,0-51.4l53-34a36.09,36.09,0,1,1,8.67,13.45l-53,34.05a36,36,0,0,1,0,24.5l53,34.05A36,36,0,0,1,212,200Z" fill="url(#p0-color)"/>
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Delete</title>
+  <desc>Prism dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffc1bc" stop-opacity="1"/><stop offset="0.22" stop-color="#ff7d71" stop-opacity="1"/><stop offset="0.5" stop-color="#ff5444" stop-opacity="1"/><stop offset="0.76" stop-color="#eb4d3f" stop-opacity="1"/><stop offset="1" stop-color="#9e342a" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#66221b" stop-opacity="1"/><stop offset="0.5" stop-color="#401511" stop-opacity="1"/><stop offset="1" stop-color="#2b0e0c" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56Z" fill="url(#p0-body)"/>
+    <path d="M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56Z" fill="url(#p0-shine)"/>
+    <path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z" fill="url(#p0-ink)"/>
+  </g>
+</svg>

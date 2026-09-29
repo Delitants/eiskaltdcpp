@@ -18,6 +18,7 @@
 #pragma once
 
 #include "NonCopyable.h"
+#include <functional>
 
 namespace dcpp {
 
@@ -36,6 +37,7 @@ public:
     };
 
     bool open(const string& port, const Protocol protocol, const string& description);
+    bool renew(const std::function<bool()>& cancelled = {});
     bool close();
     bool hasRules() const;
 
@@ -49,7 +51,11 @@ private:
     virtual bool add(const string& port, const Protocol protocol, const string& description) = 0;
     virtual bool remove(const string& port, const Protocol protocol) = 0;
 
-    typedef std::pair<const string, Protocol> rule;
+    struct rule {
+        string port;
+        Protocol protocol;
+        string description;
+    };
     std::vector<rule> rules;
 };
 

@@ -64,6 +64,7 @@ is_forbidden_path() {
 
 while IFS= read -r file; do
     [ -z "${file}" ] && continue
+    case "$(file -b "$file")" in *Mach-O*) ;; *) continue ;; esac
 
     while IFS= read -r dep; do
         [ -z "${dep}" ] && continue
@@ -76,7 +77,7 @@ while IFS= read -r file; do
 $(otool -L "${file}" 2>/dev/null | awk 'NR > 1 {print $1}')
 EOF
 done <<EOF
-$(find "${APP_PATH}/Contents" \( -type f -perm -111 -o -name '*.dylib' -o -name '*.so' \) -print | sort)
+$(find "${APP_PATH}/Contents" -type f -print | sort)
 EOF
 
 if [ "${FAILED}" -ne 0 ]; then

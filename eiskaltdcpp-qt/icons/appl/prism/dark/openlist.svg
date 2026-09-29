@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Open file list</title>
+  <desc>Prism dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#b0e5ff" stop-opacity="1"/><stop offset="0.22" stop-color="#58c9ff" stop-opacity="1"/><stop offset="0.5" stop-color="#23b8ff" stop-opacity="1"/><stop offset="0.76" stop-color="#20a9eb" stop-opacity="1"/><stop offset="1" stop-color="#16729e" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#0e4a66" stop-opacity="1"/><stop offset="0.5" stop-color="#092e40" stop-opacity="1"/><stop offset="1" stop-color="#061f2b" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="p1-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#aff3ec" stop-opacity="1"/><stop offset="0.22" stop-color="#56e7d7" stop-opacity="1"/><stop offset="0.5" stop-color="#21dfca" stop-opacity="1"/><stop offset="0.76" stop-color="#1ecdba" stop-opacity="1"/><stop offset="1" stop-color="#148a7d" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#0d5951" stop-opacity="1"/><stop offset="0.5" stop-color="#083833" stop-opacity="1"/><stop offset="1" stop-color="#062622" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(0.74 0 0 0.74 2 0)">
+    <path d="M208,88v24H69.77a8,8,0,0,0-7.59,5.47L32,208V64a8,8,0,0,1,8-8H93.33a8,8,0,0,1,4.8,1.6L128,80h72A8,8,0,0,1,208,88Z" fill="url(#p0-body)"/>
+    <path d="M208,88v24H69.77a8,8,0,0,0-7.59,5.47L32,208V64a8,8,0,0,1,8-8H93.33a8,8,0,0,1,4.8,1.6L128,80h72A8,8,0,0,1,208,88Z" fill="url(#p0-shine)"/>
+    <path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z" fill="url(#p0-ink)"/>
+  </g>
+  <g transform="matrix(0.43 0 0 0.43 141 139)">
+    <path d="M216,64V192H88V64Z" fill="url(#p1-body)"/>
+    <path d="M216,64V192H88V64Z" fill="url(#p1-shine)"/>
+    <path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z" fill="url(#p1-ink)"/>
+  </g>
+</svg>

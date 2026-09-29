@@ -11,6 +11,7 @@
  */
 
 #include "SettingsGUI.h"
+#include "AppIconTheme.h"
 #include "ChatEdit.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
@@ -190,7 +191,7 @@ void SettingsGUI::init(){
 
         lineEdit_LANGFILE->setText(qtCtx()->settings()->getStr(WS_TRANSLATION_FILE));
 
-        toolButton_LANGBROWSE->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
+        toolButton_LANGBROWSE->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
 
         if (qtCtx()->settings()->getBool(WB_MAINWINDOW_REMEMBER))
             radioButton_REMEMBER->setChecked(true);
@@ -223,11 +224,27 @@ void SettingsGUI::init(){
             auto *labelTheme = new QLabel(tr("Theme"), group);
 
             comboBox_APP_ICON_THEME = new QComboBox(group);
-            comboBox_APP_ICON_THEME->addItem(tr("Default"), QStringLiteral("default"));
+            comboBox_APP_ICON_THEME->setObjectName(QStringLiteral("appIconTheme"));
+            for (const auto &id : app_icon_theme::modernIds()) {
+                const QString name = id.left(1).toUpper() + id.mid(1);
+                comboBox_APP_ICON_THEME->addItem(app_icon_theme::icon(app_icon_theme::resourcePath(id),
+                    QStringLiteral("configure"), qApp->palette()), id == QStringLiteral("reborn")
+                    ? name + QStringLiteral(" (") + tr("Default") + QLatin1Char(')') : name, id);
+            }
+            comboBox_APP_ICON_THEME->insertSeparator(comboBox_APP_ICON_THEME->count());
+            comboBox_APP_ICON_THEME->addItem(tr("Original"), QStringLiteral("default"));
             comboBox_APP_ICON_THEME->addItem(QStringLiteral("Faenza"), QStringLiteral("faenza"));
             comboBox_APP_ICON_THEME->addItem(QStringLiteral("Haiku"), QStringLiteral("haiku"));
             comboBox_APP_ICON_THEME->addItem(tr("Monochrome"), QStringLiteral("monochrome"));
-            comboBox_APP_ICON_THEME->addItem(QStringLiteral("Apex"), QStringLiteral("apex"));
+            connect(qtCtx()->wulforUtil(), &WulforUtil::iconsReloaded, comboBox_APP_ICON_THEME,
+                    [combo = comboBox_APP_ICON_THEME]() {
+                for (int index = 0; index < combo->count(); ++index) {
+                    const auto id = combo->itemData(index).toString();
+                    if (!id.isEmpty() && app_icon_theme::isModern(id))
+                        combo->setItemIcon(index, app_icon_theme::icon(app_icon_theme::resourcePath(id),
+                            QStringLiteral("configure"), qApp->palette()));
+                }
+            });
 
             layout->addWidget(labelTheme, 0, 0);
             layout->addWidget(comboBox_APP_ICON_THEME, 0, 1);
@@ -237,11 +254,10 @@ void SettingsGUI::init(){
             polishCombo(comboBox_APP_ICON_THEME, 12);
         }
 
-        const QString appIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("apex"));
-        const int appIconThemeIndex = comboBox_APP_ICON_THEME->findData(appIconTheme.trimmed().isEmpty()
-                                                                        ? QStringLiteral("default")
-                                                                        : appIconTheme);
-        comboBox_APP_ICON_THEME->setCurrentIndex(appIconThemeIndex >= 0 ? appIconThemeIndex : 0);
+        const QString appIconTheme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
+        const int appIconThemeIndex = comboBox_APP_ICON_THEME->findData(appIconTheme);
+        comboBox_APP_ICON_THEME->setCurrentIndex(appIconThemeIndex >= 0 ? appIconThemeIndex
+                                               : comboBox_APP_ICON_THEME->findData(QStringLiteral("reborn")));
 
         if (!comboBox_USER_ICON_THEME) {
             auto *group = new QGroupBox(tr("User list icon theme"), tab_2);
@@ -301,7 +317,7 @@ void SettingsGUI::init(){
             auto *labelDir = new QLabel(tr("Folder"), group);
             lineEdit_CHAT_PICTURE_DIR = new QLineEdit(group);
             toolButton_CHAT_PICTURE_DIR = new QToolButton(group);
-            toolButton_CHAT_PICTURE_DIR->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+            toolButton_CHAT_PICTURE_DIR->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
             checkBox_CHAT_PICTURE_AUTOCLEAN = new QCheckBox(tr("Auto-clean files older than"), group);
             spinBox_CHAT_PICTURE_DAYS = new QSpinBox(group);
             spinBox_CHAT_PICTURE_DAYS->setRange(1, 365);
@@ -483,10 +499,10 @@ void SettingsGUI::ok(){
 
         qtCtx()->settings()->setBool("mainwindow/dont-show-icons-in-menus", checkBox_HIDE_ICONS_IN_MENU->isChecked());
 
-        const QString oldAppIconTheme = qtCtx()->settings()->getStr(WS_APP_ICONTHEME, QStringLiteral("apex"));
+        const QString oldAppIconTheme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
         const QString newAppIconTheme = comboBox_APP_ICON_THEME
                 ? comboBox_APP_ICON_THEME->currentData().toString()
-                : QStringLiteral("default");
+                : QStringLiteral("reborn");
         const bool appIconThemeChanged = oldAppIconTheme != newAppIconTheme;
 
         qtCtx()->settings()->setStr(WS_APP_ICONTHEME, newAppIconTheme);

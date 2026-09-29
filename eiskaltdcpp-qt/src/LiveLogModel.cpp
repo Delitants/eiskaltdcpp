@@ -59,37 +59,54 @@ QVariant LiveLogModel::headerData(int section, Qt::Orientation orientation, int 
 
 void LiveLogModel::appendEntry(const dcpp::LogEntry& entry)
 {
-    if(entry.sequence <= lastSequence()) {
-        return;
-    }
-
-    if(entries.size() == MAX_ENTRIES) {
-        beginResetModel();
-        entries.erase(entries.begin());
-        entries.push_back(entry);
-        rebuildVisibleRows();
-        endResetModel();
-        return;
-    }
-
-    if(isVisible(entry)) {
-        const int row = static_cast<int>(visibleRows.size());
-        beginInsertRows(QModelIndex(), row, row);
-        entries.push_back(entry);
-        visibleRows.push_back(entries.size() - 1);
-        endInsertRows();
-    } else {
-        entries.push_back(entry);
-    }
+    appendNewEntries({entry});
 }
 
 void LiveLogModel::appendNewEntries(const dcpp::LogManager::EntryList& newEntries)
 {
+    dcpp::LogManager::EntryList pending;
+    auto sequence = lastSequence();
     for(const auto& entry : newEntries) {
-        if(entry.sequence > lastSequence()) {
-            appendEntry(entry);
+        if(entry.sequence > sequence) {
+            sequence = entry.sequence;
+            pending.push_back(entry);
+            if(pending.size() > MAX_ENTRIES)
+                pending.pop_front();
         }
     }
+    if(pending.empty())
+        return;
+
+    entries.reserve(MAX_ENTRIES);
+    visibleRows.reserve(MAX_ENTRIES);
+    const size_t dropped = entries.size() + pending.size() > MAX_ENTRIES ?
+        entries.size() + pending.size() - MAX_ENTRIES : 0;
+    if(dropped) {
+        const auto visibleDropped = static_cast<size_t>(
+            std::lower_bound(visibleRows.begin(), visibleRows.end(), dropped) - visibleRows.begin());
+        if(visibleDropped)
+            beginRemoveRows(QModelIndex(), 0, static_cast<int>(visibleDropped) - 1);
+        entries.erase(entries.begin(), entries.begin() + dropped);
+        visibleRows.erase(visibleRows.begin(), visibleRows.begin() + visibleDropped);
+        for(auto& row : visibleRows)
+            row -= dropped;
+        if(visibleDropped)
+            endRemoveRows();
+    }
+
+    const auto added = std::count_if(pending.begin(), pending.end(),
+        [this](const auto& entry) { return isVisible(entry); });
+    if(added) {
+        const auto first = static_cast<int>(visibleRows.size());
+        beginInsertRows(QModelIndex(), first, first + static_cast<int>(added) - 1);
+    }
+    for(auto& entry : pending) {
+        if(isVisible(entry))
+            visibleRows.push_back(entries.size());
+        entries.push_back(std::move(entry));
+    }
+    if(added)
+        endInsertRows();
 }
 
 void LiveLogModel::replaceEntries(const dcpp::LogManager::EntryList& newEntries)

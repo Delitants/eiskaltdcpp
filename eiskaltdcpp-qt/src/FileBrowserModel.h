@@ -15,6 +15,7 @@
 #include <QMap>
 
 #include "PoolItem.h"
+#include "FileExtensionIcons.h"
 
 #include "dcpp/stdinc.h"
 #include "dcpp/User.h"
@@ -31,6 +32,7 @@ enum {
     COLUMN_FILEBROWSER_MAUDIO,
     COLUMN_FILEBROWSER_HIT,
     COLUMN_FILEBROWSER_TS,
+    COLUMN_FILEBROWSER_MODIFIED,
     NUM_OF_COLUMNS // total number of columns
 };
 
@@ -69,6 +71,7 @@ private:
 class FileBrowserModel: public QAbstractItemModel
 {
     Q_OBJECT
+    mutable FileExtensionIcons fileIcons;
 public:
     FileBrowserModel(QObject* = nullptr);
     virtual ~FileBrowserModel();

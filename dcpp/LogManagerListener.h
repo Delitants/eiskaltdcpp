@@ -34,8 +34,10 @@ public:
 
 	typedef X<0> Message;
 	typedef X<1> EntryAdded;
+	typedef X<2> Warning;
 	virtual void on(Message, time_t, const string&) noexcept { }
 	virtual void on(EntryAdded, const LogEntry&) noexcept { }
+	virtual void on(Warning, time_t, const string&) noexcept { }
 };
 
 } // namespace dcpp

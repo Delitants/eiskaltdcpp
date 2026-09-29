@@ -130,7 +130,7 @@ namespace dht
         void saveData();
 
         /** Returns if our UDP port is open */
-        bool isFirewalled() const { return firewalled; }
+        bool isFirewalled() const;
 
         /** Returns our IP got from the last firewall check */
         string getLastExternalIP() const { return lastExternalIP; }

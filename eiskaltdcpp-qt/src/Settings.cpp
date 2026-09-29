@@ -11,6 +11,7 @@
  */
 
 #include "Settings.h"
+#include "AppIconTheme.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "dcpp/DCPlusPlus.h"
@@ -25,6 +26,12 @@
 #include "SettingsShortcuts.h"
 #include "SettingsHistory.h"
 #include "SettingsAdvanced.h"
+#ifdef USE_TORRENT
+#include "SettingsTorrent.h"
+#include "TorrentRuntime.h"
+#include "TorrentToolbar.h"
+#include <QMessageBox>
+#endif
 #include <QGroupBox>
 #include <QLayout>
 #include <QFormLayout>
@@ -639,6 +646,24 @@ Settings::~Settings(){
     }
 }
 
+void Settings::accept()
+{
+    if (connectionPage && !connectionPage->validate()) {
+        navigate(Page::Connection);
+        return;
+    }
+#ifdef USE_TORRENT
+    QString error;
+    if (torrentPage && !torrentPage->save(&error)) {
+        navigate(Page::Torrent);
+        QMessageBox::critical(this, tr("Torrent preferences"),
+                              tr("Could not save Torrent settings: %1").arg(error));
+        return;
+    }
+#endif
+    QDialog::accept();
+}
+
 void Settings::changeEvent(QEvent *event)
 {
     QDialog::changeEvent(event);
@@ -667,63 +692,106 @@ void Settings::changeEvent(QEvent *event)
 #endif
 }
 
+void Settings::reloadCategoryIcons()
+{
+    const struct { const char *stem; WulforUtil::Icons fallback; } icons[] = {
+        {"settings-main", WulforUtil::eiSETTINGS_MAIN},
+        {"settings-connection", WulforUtil::eiSETTINGS_CONNECTION},
+        {"settings-downloads", WulforUtil::eiSETTINGS_DOWNLOADS},
+        {"settings-sharing", WulforUtil::eiFOLDER_BLUE},
+        {"settings-gui", WulforUtil::eiSETTINGS_GUI},
+        {"settings-notifications", WulforUtil::eiMESSAGE},
+        {"log_file", WulforUtil::eiOPEN_LOG_FILE},
+        {"settings-user-commands", WulforUtil::eiUSERS},
+        {"settings-shortcuts", WulforUtil::eiSETTINGS_SHORTCUTS},
+        {"history", WulforUtil::eiHISTORY},
+        {"settings-advanced", WulforUtil::eiCONSOLE}
+    };
+    int row = 0;
+    for (const auto &entry : icons) {
+        if (auto *item = listWidget->item(row++))
+            item->setIcon(app_icon_theme::icon(app_icon_theme::activePath(),
+                QString::fromLatin1(entry.stem), qApp->palette(),
+                qtCtx()->wulforUtil()->getIcon(entry.fallback)));
+    }
+#ifdef USE_TORRENT
+    if (auto *item = listWidget->item(row))
+        item->setIcon(torrent_toolbar::icon());
+#endif
+}
+
 void Settings::init(){
     WulforUtil *WU = qtCtx()->wulforUtil();
 
-    QListWidgetItem *item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_MAIN), tr("Main"), listWidget);
+    QListWidgetItem *item = new QListWidgetItem(WU->getIcon(WulforUtil::eiSETTINGS_MAIN), tr("Main"), listWidget);
     SettingsPersonal *personal = new SettingsPersonal(this);
     connect(this, &Settings::timeToDie, personal, &SettingsPersonal::ok);
     widgets.insert(item, (int)Page::Personal);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_CONNECTION), tr("Connection"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiSETTINGS_CONNECTION), tr("Connection"), listWidget);
     SettingsConnection *connection = new SettingsConnection(this);
+    connectionPage = connection;
     connect(this, &Settings::timeToDie, connection, &SettingsConnection::ok);
     widgets.insert(item, (int)Page::Connection);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_DOWNLOADS), tr("Downloads"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiSETTINGS_DOWNLOADS), tr("Downloads"), listWidget);
     SettingsDownloads *downloads = new SettingsDownloads(this);
     connect(this, &Settings::timeToDie, downloads, &SettingsDownloads::ok);
     widgets.insert(item, (int)Page::Downloads);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiFOLDER_BLUE), tr("Sharing"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiFOLDER_BLUE), tr("Sharing"), listWidget);
     SettingsSharing *sharing = new SettingsSharing(this);
     connect(this, &Settings::timeToDie, sharing, &SettingsSharing::ok);
     widgets.insert(item, (int)Page::Sharing);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_GUI), tr("GUI"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiSETTINGS_GUI), tr("GUI"), listWidget);
     SettingsGUI *gui = new SettingsGUI(this);
     connect(this, &Settings::timeToDie, gui, &SettingsGUI::ok);
     widgets.insert(item, (int)Page::GUI);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiMESSAGE), tr("Notifications"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiMESSAGE), tr("Notifications"), listWidget);
     SettingsNotification *notify = new SettingsNotification(this);
     connect(this, &Settings::timeToDie, notify, &SettingsNotification::ok);
     widgets.insert(item, (int)Page::Notifications);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiOPEN_LOG_FILE), tr("Logs"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiOPEN_LOG_FILE), tr("Logs"), listWidget);
     SettingsLog *logs = new SettingsLog(this);
     connect(this, &Settings::timeToDie, logs, &SettingsLog::ok);
     widgets.insert(item, (int)Page::Logs);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiUSERS), tr("User Commands"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiUSERS), tr("User Commands"), listWidget);
     SettingsUC *ucs = new SettingsUC(this);
     connect(this, &Settings::timeToDie, ucs, &SettingsUC::ok);
     widgets.insert(item, (int)Page::UserCommands);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiSETTINGS_SHORTCUTS), tr("Shortcuts"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiSETTINGS_SHORTCUTS), tr("Shortcuts"), listWidget);
     SettingsShortcuts *sshs = new SettingsShortcuts(this);
     connect(this, &Settings::timeToDie, sshs, &SettingsShortcuts::ok);
     widgets.insert(item, (int)Page::Shortcuts);
     
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiHISTORY), tr("History"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiHISTORY), tr("History"), listWidget);
     SettingsHistory *shist = new SettingsHistory(this);
     connect(this, &Settings::timeToDie, shist, &SettingsHistory::ok);
     widgets.insert(item, (int)Page::History);
 
-    item = new QListWidgetItem(WU->getPixmap(WulforUtil::eiCONSOLE), tr("Advanced"), listWidget);
+    item = new QListWidgetItem(WU->getIcon(WulforUtil::eiCONSOLE), tr("Advanced"), listWidget);
     SettingsAdvanced *sadv = new SettingsAdvanced(this);
     connect(this, &Settings::timeToDie, sadv, &SettingsAdvanced::ok);
     widgets.insert(item, (int)Page::Advanced);
+    reloadCategoryIcons();
+    connect(WU, &WulforUtil::iconsReloaded, this, &Settings::reloadCategoryIcons);
+
+#ifdef USE_TORRENT
+    item = new QListWidgetItem(torrent_toolbar::icon(), tr("Torrents"), listWidget);
+    torrentPage = new SettingsTorrent(TorrentRuntime::settingsPath(),
+                                     TorrentRuntime::snapshotProxy(qtCtx()->dcCtx()), this);
+    if (auto *runtime = TorrentRuntime::instance())
+        torrentPage->setEngine(runtime->engine());
+    widgets.insert(item, (int)Page::Torrent);
+#ifdef Q_OS_MAC
+    polishMacSettingsPage(torrentPage);
+#endif
+#endif
 
 #ifdef Q_OS_MAC
     for (QWidget *page : {static_cast<QWidget*>(personal), static_cast<QWidget*>(connection), static_cast<QWidget*>(downloads),
@@ -766,6 +834,9 @@ void Settings::init(){
     stackedWidget->insertWidget((int)Page::Shortcuts, prepareWidget(sshs));
     stackedWidget->insertWidget((int)Page::History, prepareWidget(shist));
     stackedWidget->insertWidget((int)Page::Advanced, prepareWidget(sadv));
+#ifdef USE_TORRENT
+    stackedWidget->insertWidget((int)Page::Torrent, prepareWidget(torrentPage));
+#endif
 
     stackedWidget->setCurrentIndex(0);
 
@@ -790,6 +861,14 @@ void Settings::init(){
     connect(buttonBox, &QDialogButtonBox::rejected, this, &Settings::reject);
     connect(this, &QDialog::accepted, this, &Settings::timeToDie);
     connect(this, &QDialog::accepted, this, &Settings::dirty);
+#ifdef USE_TORRENT
+    // Apply only after timeToDie saved the Connection page's DC proxy fields.
+    // Rejecting or merely opening Preferences must never configure the engine.
+    connect(this, &QDialog::accepted, this, [] {
+        if (auto *runtime = TorrentRuntime::instance())
+            runtime->reloadSettings();
+    });
+#endif
 
 #ifdef Q_OS_MAC
     if (auto *okButton = buttonBox->button(QDialogButtonBox::Ok)) {
