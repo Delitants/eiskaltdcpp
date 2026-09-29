@@ -4,7 +4,9 @@ Status: written specification approved, not an implemented updater.
 The maintainer approved the conversational design on 2026-09-29, including the
 recommended opt-in automatic installation. The maintainer subsequently approved
 this written specification at commit `8740d09d`. The native/inline implementation
-plan is the next review boundary.
+plan was subsequently confirmed. During native feasibility testing, the
+maintainer approved separate numeric build numbers and app-owned staging until
+committed normal quit, as recorded below. Product integration is not complete.
 
 ## Intent And Scope
 
@@ -40,6 +42,11 @@ feature; both must be rebuilt after integration.
 - Stable builds default to stable releases; prerelease builds default to stable
   plus prereleases so pre.1 can receive pre.2. Make this a visible setting. A
   later stable release is eligible on either channel; never downgrade implicitly.
+- Keep displayed versions and release filenames unchanged. Use a separate,
+  monotonically increasing numeric CFBundleVersion and appcast version because
+  Sparkle's standard comparator ignores the hyphenated prerelease suffix.
+  Allocate one immutable build number per published release, shared by both
+  CPU flavors; never reuse a build number for different release contents.
 - Show last successful check, available version, progress/cancel and concise
   diagnostic errors. Avoid repeated notifications for the same dismissed version.
   Rate-limit background failures in Live Log. No repeated modal failure dialogs.
@@ -100,21 +107,30 @@ and mutable-download-request delegate hooks before completing the product UI:
    capability. The bridge is not a general HTTP/CONNECT proxy.
 2. Fetch the fixed upstream appcast through the updater transport. Serve its
    original signed bytes unchanged to Sparkle through the private endpoint.
-3. Map only the selected, validated full-archive request to a capability-scoped
-   loopback endpoint. Fetch the upstream archive through that same transport;
-   Sparkle verifies the original signed archive before extraction/installation.
-4. Disable delta updates, external release-note rendering and system profiling
+3. Discover using Sparkle's information-only public API. Download the selected
+   archive through Eiskalt's transport into private app-owned staging and verify
+   its Ed25519 signature, identity and size before reporting it ready. Do not
+   start Sparkle's archive download/preparation lifecycle during background
+   download or while waiting for consent: its prepared installer can act on
+   any process exit, even after a Dismiss response.
+4. Only after committed normal quit with current version-bound consent, map the
+   selected, validated full-archive request to the staged bytes through a
+   capability-scoped loopback endpoint. Sparkle independently verifies the
+   original signature before extraction/installation. Keep the local event
+   loop alive until this handoff completes or fails; no remote fetch at quit.
+5. Disable delta updates, external release-note rendering and system profiling
    for this first integration. Plain-text release notes may come from verified
    feed content. Do not allow remote images/scripts/automatic browser requests.
-5. Reject unknown routes, methods, redirects to the bridge, path traversal and
+6. Reject unknown routes, methods, redirects to the bridge, path traversal and
    invalid capabilities. Use finite feed/body limits, connection timeouts and
    cancellation. Redact capabilities and proxy credentials from diagnostics.
-6. Constrain remote redirects to HTTPS GitHub release hosting/CDN destinations;
+7. Constrain remote redirects to HTTPS GitHub release hosting/CDN destinations;
    reject HTTP downgrade and local/private/link-local destinations. Never forward
    proxy credentials as origin headers or across a redirected origin.
 
-This bridge is a proposed integration, not a proven Sparkle capability in this
-repository. Acceptance requires the pinned framework to fetch all feed/archive
+The native disposable fixture now proves the public feed/archive hooks and
+signature checks. The production proxy bridge is not implemented. Acceptance
+still requires the pinned framework to fetch all feed/archive
 bytes through the bridge, accept signatures without rewriting signed content,
 and produce no direct remote traffic when such traffic is denied. If a public
 API cannot satisfy that test, stop installation integration and revise this
@@ -128,12 +144,15 @@ privileged installer. Local IPC must remain usable until download completion.
   verify-before-extraction controls in the pinned Sparkle framework.
 - Reject unsupported OS versions, the wrong CPU flavor, mismatching app identity,
   duplicate/conflicting entries and versions not strictly newer than installed.
-  Test ordering of pre.1, pre.2, pre.10 and final 3.0.0 with the real comparator.
+  Test their allocated numeric build order with the real comparator, independently
+  of the display strings pre.1, pre.2, pre.10 and final 3.0.0.
   An Intel app running under Rosetta stays on the Intel update feed.
 - Validate the installed bundle and downloaded archive agree with the advertised
   version, CPU and minimum OS. Preserve the existing explicit ZIP naming contract.
 - Only complete verified downloads may be queued for installation. A crash,
   forced kill, Hide, minimize-to-tray or canceled quit is not installation consent.
+- Never rely on postponing or dismissing an already prepared Sparkle installer
+  for this guarantee. Before normal-quit commitment, no installer is started.
 - Integrate with `MainWindow::closeEvent`, `slotExit` and the existing shutdown
   sequence. Torrent resume data, DC queues and settings must be saved, and runtime
   objects stopped, before the final process-exit/install handoff. Never interpret
@@ -192,10 +211,10 @@ Sparkle adapter; CMake/bundle metadata and dependency packaging; signed-feed
 release tooling; isolated test fixtures and user documentation. Keep updater
 changes separate from the Intel dependency build and unrelated UI work.
 
-No installed-app/profile modifications, signing identity generation, new
-third-party dependency installation or updater publishing were performed when
-writing this specification. Next stage is review of the implementation plan
-for the already preferred native/inline execution.
+No installed-app/profile modifications, production signing identity generation
+or updater publishing have been performed. Native implementation is underway;
+the pinned dependency and ephemeral signing keys exist only in isolated QA.
+Full transport, UI, shutdown and release acceptance remain required.
 
 ## Primary References
 

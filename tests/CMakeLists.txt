@@ -107,6 +107,10 @@ target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain )
 catch_discover_tests(eiskaltdcpp-tests)
 
 if (APPLE)
+    option(EISKALT_BUILD_UPDATER_PROBE "Build disposable native updater feasibility tests" OFF)
+    if(EISKALT_BUILD_UPDATER_PROBE)
+        add_subdirectory(macos/updater)
+    endif()
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME eiskalt-macos-bundle-dylib-ids
         COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/tests/macos/bundle/dylib-ids.sh"

@@ -1,0 +1,68 @@
+# Native Updater Feasibility Gate
+
+This is an opt-in, disposable test, **not an installed updater**. It uses the
+real pinned Sparkle framework, ephemeral Ed25519 keys, a random bundle ID and
+separate fixture homes. No production key, Keychain entry, Eiskalt profile or
+installed application is used. The framework license and source archive must
+be retained according to `macos/updater/sparkle.lock.json`.
+
+## Run
+
+Download the official archive and matching source from the lock file, verify
+their SHA-256 values, then extract the framework to an isolated directory.
+Use the existing pinned Catch2 3.5.2 source; do not install shared dependencies.
+
+```sh
+cmake -S tests/macos/updater -B build-updater-probe \
+  -DEISKALT_SPARKLE_ROOT=/absolute/path/to/extracted/sparkle \
+  -DCATCH2_SOURCE_DIR=/absolute/path/to/catch2-source \
+  -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=26.0
+cmake --build build-updater-probe -j2
+python3 tests/macos/updater/fixtures.py create --root /tmp/new-updater-fixture \
+  --sparkle /absolute/path/to/extracted/sparkle \
+  --binary build-updater-probe/eiskalt-updater-native-tests --installer-xpc
+python3 tests/macos/updater/fixtures.py verify --root /tmp/new-updater-fixture
+for mode in valid bad-feed bad-archive unmapped information-only; do
+  python3 tests/macos/updater/fixtures.py probe --root /tmp/new-updater-fixture \
+    --mode "$mode" || exit $?
+done
+```
+
+Alternatively, `EISKALT_BUILD_UPDATER_PROBE=ON` adds the native target to the
+full application's tests build. It is OFF by default and does not link Sparkle
+into the application. Socket tests require local loopback permission and a GUI
+login session for the native helper. Never remove the external-network denial
+assertion to make a restricted runner pass.
+
+The fixture runner denies external networking in the updater process, checks
+an actual external socket receives EPERM, and leaves Sparkle's downloader in
+that process. The installer launcher uses Sparkle's documented XPC helper,
+since an in-process launchd submission is forbidden under `sandbox-exec`.
+This does not establish a network sandbox for launchd-owned helpers. Full
+proxy/DNS/installer-process acceptance remains separate work.
+
+## Findings
+
+- Sparkle's standard comparator ignores the hyphen and subsequent text:
+  `3.0.0-pre.1` and `3.0.0-pre.2` compare equal. The maintainer approved a
+  separate increasing numeric CFBundleVersion; display versions and release
+  filenames remain unchanged. This fixture allocates builds 1, 2, 10 and 11
+  to pre.1, pre.2, pre.10 and final respectively, purely as ordering examples.
+  Product build-number allocation and packaging checks are not implemented yet.
+- The public feed URL and mutable archive request hooks accept original signed
+  bytes through loopback, without rewriting the signed appcast.
+- An altered feed fails before offering an update. An altered archive produces
+  a signature-validation-before-unarchiving failure. The `extracting` UI event
+  is emitted before verification and is not evidence that files were extracted.
+- **Dismiss is not cancel.** Replying Dismiss at Ready can install when the
+  process exits; this was reproduced against a disposable copy. The fixture
+  now replies Skip, awaits update-cycle completion, and checks the old app's
+  executable and metadata again after exit. This cancellation check is not a
+  crash-safety proof.
+
+Do not connect Sparkle's eager download/preparation lifecycle to the product
+controller before resolving the normal-quit-only requirement. The proposed
+revision, approved by the maintainer, is app-owned archive staging/verification,
+with Sparkle's installer started only at committed normal quit. Information-only
+discovery is tested separately to establish it does not download or prepare an
+installer. No production integration is enabled.

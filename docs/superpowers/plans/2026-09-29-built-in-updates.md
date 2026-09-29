@@ -10,6 +10,12 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-29-built-in-updates-design.md`, committed as `8740d09d`, approved by the maintainer after that commit.
 
+**Execution amendments approved 2026-09-29:** numeric internal build numbers
+replace display-version comparison; display versions/filenames stay unchanged.
+Discovery is information-only. Download and Ed25519 verification use app-owned
+staging, and Sparkle archive preparation starts only after committed normal quit.
+These supersede eager-preparation assumptions in the original task details.
+
 ## Global Constraints
 
 - Intel x86_64/macOS14+ and Apple Silicon arm64/macOS26+ are separate thin bundles. Keep their explicit filenames from `macos/RELEASE.md`.
@@ -54,12 +60,12 @@ Commands below run at the repo root. `B=build-updater` denotes the disposable ap
 
 **Interfaces:** This task produces the optional `Sparkle::Sparkle` imported target and the native test target. `fixtures.py create --root PATH` generates disposable signing keys, signed appcast/full ZIP and old/new app copies; `fixtures.py verify --root PATH` verifies fixture integrity. Nothing uses the production bundle ID/profile or generates a production key.
 
-- [ ] Record the release pin: tag `2.10.0`, commit `eef1a539a373c1f1a320624b1130fc5de7b2e100`, archive `https://github.com/sparkle-project/Sparkle/releases/download/2.10.0/Sparkle-2.10.0.tar.xz`, SHA256 `c2bf58aa8387266ac179357b1415d6f2635f044da8be41042af32425dae6da0c`. These were read from the official GitHub release/tag APIs, not inferred from search snippets. Download/verify into an isolated prefix during execution; record matching source/license provenance.
-- [ ] Add RED tests tagged `[updater-native][bridge-probe]`. Assertions: unchanged signed feed validates through a loopback URL; a mutable download request can redirect only the selected signed full ZIP to loopback; altered feed/archive fails; no extraction occurs for a bad archive; all external network calls are denied with only fixture endpoints allowed. A probe with the default external downloader must fail the network test.
-- [ ] Run `cmake --build "$B" --target eiskalt-updater-native-tests -j2` and `"$B/tests/macos/updater/eiskalt-updater-native-tests" '[bridge-probe]'`. Expected RED before the delegate bridge; keep logs.
-- [ ] Implement only the fixture delegate with public feed/download hooks and signed-feed controls. Disable telemetry, delta items and remote notes. Add comparator assertions `pre.1 < pre.2 < pre.10 < 3.0.0` using the real Sparkle comparator and existing version strings, not a replacement sort.
-- [ ] Rerun the same tests. Expected GREEN with real signed bytes and observed destination restrictions. **STOP this plan for design revision if public APIs cannot satisfy the gate.** Do not substitute unsigned local feeds, direct downloads or private installer calls.
-- [ ] Commit only the pin, optional CMake wiring and passing fixture. Expected no installed app/profile changes and no production update behavior.
+- [x] Record the release pin: tag `2.10.0`, commit `eef1a539a373c1f1a320624b1130fc5de7b2e100`, archive `https://github.com/sparkle-project/Sparkle/releases/download/2.10.0/Sparkle-2.10.0.tar.xz`, SHA256 `c2bf58aa8387266ac179357b1415d6f2635f044da8be41042af32425dae6da0c`. Downloaded/verified in isolated QA; matching source/license provenance recorded.
+- [x] Add RED tests tagged `[updater-native][bridge-probe]`: original signed bytes, selected archive mapping, tamper rejection and blocked default downloader. The parent downloader has loopback-only networking and proves external socket denial; installer-XPC network evidence remains part of later product acceptance, not a result of this fixture.
+- [x] Build/run the standalone native target. Observed RED for missing archive mapping, prerelease ordering, and eager downloads during information-only discovery; logs retained under `Work/qa/updater-20260929/`.
+- [x] Implement the fixture delegate with public feed/download hooks, signed-feed controls and no remote notes/profiling. Real comparator tests numeric builds; information-only discovery does not download or prepare installation. Prepared fixtures explicitly cancel and await completion; Dismiss is not cancellation.
+- [x] Rerun five fixture modes: valid, bad-feed, bad-archive, unmapped and information-only. Native assertions and original-app readbacks pass; no unsigned feeds, direct fallback or private APIs. Approved design amendments above address the two discovered incompatibilities.
+- [x] Commit the pin, optional CMake wiring, passing fixture and approved amendments. No installed app/profile changes or production update behavior.
 
 ### Task 2: Strict, Cancelable Update Transport
 
@@ -84,6 +90,14 @@ Introduce a namespace-level `dcpp::HttpRequestPolicy` and a constructor overload
 
 `UpdateLoopbackBridge(UpdateTransport&, QObject*)` exposes `QUrl beginSession(const QUrl& fixedFeed)`, `QUrl mapArchive(const QUrl& verifiedUrl, qint64 expectedSize)`, `void stop()`. It serves only the current unchanged signed feed and mapped full archive; mapping is backend-owned, not a user-input fetch API.
 
+Amendment: `UpdateOffer` also binds the immutable numeric build ID and archive
+digest. `download()` uses Eiskalt-owned staging and OpenSSL Ed25519 verification
+against the pinned public key and signature from the verified feed, not Sparkle's
+eager archive preparation. Fail closed on missing/invalid signatures. Retain
+verified signed feed bytes with the staged archive. `check()` uses information-only
+discovery. The normal-quit handoff serves only this revalidated local pair;
+it must not fetch remote data or launch an installer before consent commits.
+
 - [ ] RED `[updates][update-bridge]` tests: bind only 127.0.0.1, random 256-bit per-session capability, reject wrong capability/Host/method/path/query, no directory serving/CONNECT, bounded concurrent requests, cancel on route generation change. Cover replay from an earlier session and encoded traversal.
 - [ ] RED native `[updater-native][proxy-acceptance]` tests: actual authenticated SOCKS5/GOST relay with direct origin access denied; feed, archive and DNS succeed only via relay. Wrong auth/CA, failed proxy and redirects never use direct origin access. Denied external image/notes requests stay at zero.
 - [ ] Implement the bridge using Task 2, then the public adapter proven by Task 1. Require signed-feed status before emitting `available`, verify archive signature before extraction, use `SURequireSignedFeed=YES`, `SUVerifyUpdateBeforeExtraction=YES` and no expiration fallback for bad feed signatures. Validate bundle ID, CPU flavor, minOS, version and full archive selection. Non-Mac backend reports installation unsupported without linking Sparkle.
@@ -106,6 +120,11 @@ Introduce a namespace-level `dcpp::HttpRequestPolicy` and a constructor overload
 
 **Interfaces:** `normalQuitCommitted()` may arm the backend only after all existing queue/settings/Torrent shutdown steps have completed successfully. `shutdown()` cancels networking and invalidates tokens, without granting install consent. Keep a version-bound consent token, not a global boolean that can authorize a later different download.
 
+Amendment: this boundary starts Sparkle archive preparation for the first time.
+Keep the Qt/local bridge event loop alive through handoff, serve only revalidated
+staged bytes, and cancel on handoff failure. Do not stage in Sparkle earlier and
+attempt to revoke later: native probing showed Dismiss can install at process exit.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.
@@ -127,6 +146,12 @@ Introduce a namespace-level `dcpp::HttpRequestPolicy` and a constructor overload
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.
 
 **Interfaces:** `make-feeds.py --manifest FILE --output DIR --signer PATH` prepares Intel/ARM feeds offline and refuses missing/invalid inputs; `verify-feeds.py --manifest FILE --feeds DIR --public-key KEY` validates them. Manifest schema v1 records version/channel, flavor/arch/minOS, bundle ID, HTTPS asset URL, byte length, SHA256 and Ed25519 signature. The signer is the pinned Sparkle signing tool configured to read Keychain, never a shell command embedded in metadata. All outputs are offline by default; publication is a separate explicit operation.
+
+Amendment: schema v1 also records numeric `build_number`, identical for both
+flavors and increasing across published releases. CFBundleVersion and appcast
+version use this number; CFBundleShortVersionString and archive filenames retain
+the visible release version. Update the existing packaging equality checks and
+their tests rather than leaving conflicting version contracts.
 
 - [ ] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
@@ -152,6 +177,6 @@ Introduce a namespace-level `dcpp::HttpRequestPolicy` and a constructor overload
 
 Coverage: Task 1 proves the otherwise unverified API path; Tasks 2-3 enforce routing/trust; Task 4 owns policy/defaults/channels; Task 5 owns consent/replacement; Task 6 owns UI/localization; Task 7 owns signing/materials; Task 8 owns final acceptance/publication. Review Focus cases have explicit tests in those tasks. Shared method/type names above are the execution contracts; keep them consistent in task briefs.
 
-This plan is ready for user review. The execution method remains native/inline;
-do not ask the user to choose it again. Approval of this plan starts Task 1,
-not publication or replacement of a running app.
+This plan and its two execution amendments were approved. Execution remains
+native/inline; no further execution-mode confirmation is needed. Approval is
+not evidence of publication or replacement of the installed application.
