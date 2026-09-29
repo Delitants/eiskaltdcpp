@@ -16,9 +16,12 @@
 #include <QShortcut>
 
 #include "ArenaWidget.h"
+#include "TabNavigation.h"
 
 class FlowLayout;
 class TabButton;
+class QScrollArea;
+class QToolButton;
 
 class TabFrame : public QFrame
 {
@@ -58,8 +61,23 @@ private:
     void historyPush(ArenaWidget*);
     void historyPurge(ArenaWidget*);
     void historyPop();
+    void refreshTabList();
+    void layoutTabs();
+    void scheduleLayout();
+    void revealActive();
 
     FlowLayout *fr_layout;
+    QWidget *tabContents;
+    QScrollArea *scrollArea;
+    QToolButton *previousRow;
+    QToolButton *nextRow;
+    tab_navigation::AllTabsMenu *allTabs;
+    tab_navigation::Registry registry;
+    bool layoutPending = false;
+    QPointer<TabButton> lastActiveButton;
+    QRect lastActiveGeometry;
+    int tabWheelRemainder = 0;
+    int rowWheelRemainder = 0;
 
     QList<ArenaWidget*> history;
     QList<QShortcut*> shortcuts;

@@ -21,6 +21,7 @@
 
 #include <deque>
 #include <memory>
+#include <atomic>
 
 #include "typedefs.h"
 #include "BufferedSocketListener.h"
@@ -30,6 +31,7 @@
 #include "Socket.h"
 #include "Util.h"
 #include "Atomic.h"
+#include "SocketInputStream.h"
 
 namespace dcpp {
 
@@ -42,11 +44,10 @@ using std::unique_ptr;
 
 class BufferedSocket : public Speaker<BufferedSocketListener>, private Thread {
 public:
-    enum Modes {
-        MODE_LINE,
-        MODE_ZPIPE,
-        MODE_DATA
-    };
+    using Modes = SocketInputStream::Modes;
+    static constexpr Modes MODE_LINE = SocketInputStream::MODE_LINE;
+    static constexpr Modes MODE_ZPIPE = SocketInputStream::MODE_ZPIPE;
+    static constexpr Modes MODE_DATA = SocketInputStream::MODE_DATA;
 
     enum NatRoles {
         NAT_NONE,
@@ -76,11 +77,12 @@ public:
     }
 
     void accept(const Socket& srv, bool secure, bool allowUntrusted);
-    void connect(const string& aAddress, const string& aPort, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString);
-    void connect(const string& aAddress, const string& aPort, const string& localPort, NatRoles natRole, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString);
+    void connect(const string& aAddress, const string& aPort, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString, bool publicHttpProxy = false);
+    void connect(const string& aAddress, const string& aPort, const string& localPort, NatRoles natRole, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString, bool publicHttpProxy = false);
+    static bool dataModeCanConsumeMore(int64_t bytesLeftInBlock, int bufferedBytesLeft);
 
     /** Sets data mode for aBytes bytes. Must be called within onLine. */
-    void setDataMode(int64_t aBytes = -1) { mode = MODE_DATA; dataBytes = aBytes; }
+    void setDataMode(int64_t aBytes = -1) { input.setDataMode(aBytes); }
     /**
      * Rollback is an ugly hack to solve problems with compressed transfers where not all data received
      * should be treated as data.
@@ -88,7 +90,7 @@ public:
      */
     void setLineMode(size_t aRollback) { setMode (MODE_LINE, aRollback);}
     void setMode(Modes mode, size_t aRollback = 0);
-    Modes getMode() const { return mode; }
+    Modes getMode() const { return input.getMode(); }
     const string& getIp() const { return sock->getIp(); }
     bool isConnected() const { return sock->isConnected(); }
 
@@ -105,7 +107,12 @@ public:
     /** Send an updated signal to all listeners */
     void updated() { Lock l(cs); addTask(UPDATED, 0); }
 
-    void disconnect(bool graceless = false) { Lock l(cs); if(graceless) disconnecting = true; addTask(DISCONNECT, 0); }
+    void disconnect(bool graceless = false) {
+        Lock l(cs);
+        inputStopped.store(true, std::memory_order_relaxed);
+        if(graceless) disconnecting = true;
+        addTask(DISCONNECT, 0);
+    }
 
     string getLocalIp() const { return sock->getLocalIp(); }
     string getLocalPort() const { return sock->getLocalPort(); }
@@ -164,13 +171,10 @@ public:
     CriticalSection cs;
 
     Semaphore taskSem;
+    std::shared_ptr<SocketWake> taskWake;
     deque<pair<Tasks, unique_ptr<TaskData> > > tasks;
 
-    Modes mode;
-    unique_ptr<UnZFilter> filterIn;
-    int64_t dataBytes;
-    size_t rollback;
-    string line;
+    SocketInputStream input;
     ByteVector inbuf;
     ByteVector writeBuf;
     ByteVector sendBuf;
@@ -178,7 +182,8 @@ public:
     unique_ptr<Socket> sock;
     DCContext& ctx_;
     State state;
-    bool disconnecting;
+    std::atomic_bool disconnecting;
+    std::atomic<bool> inputStopped{false};
 
     virtual int run();
 
@@ -187,6 +192,8 @@ public:
     void threadRead();
     void threadSendFile(InputStream* is);
     void threadSendData();
+    bool threadFlushProxyOutput();
+    static int writeChunkSize(size_t remaining);
 
     void fail(const string& aError);
     static Atomic<long,memory_ordering_strong> sockets;

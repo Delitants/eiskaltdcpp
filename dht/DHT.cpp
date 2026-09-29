@@ -357,10 +357,16 @@ namespace dht
 
     void DHT::setRequestFWCheck()
     {
+        if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+            return;
         const string localPort = getPort();
         const string advertisedPort = getAdvertisedPort();
         Lock l(fwCheckCs);
         firewallCheck.begin(localPort, advertisedPort);
+    }
+
+    bool DHT::isFirewalled() const {
+        return CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST || firewalled;
     }
 
     /*
@@ -613,6 +619,8 @@ namespace dht
             }
             else if(resTo == "FWCHECK")
             {
+                if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+                    return;
                 Lock l(fwCheckCs);
                 string externalIP;
                 string externalUdpPort;

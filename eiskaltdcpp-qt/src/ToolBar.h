@@ -17,6 +17,7 @@
 #include <QList>
 
 #include "ArenaWidget.h"
+#include "TabNavigation.h"
 
 class ArenaWidget;
 class MainWindow;
@@ -66,8 +67,11 @@ private:
     void rebuildIndexes(const int);
     void syncCloseButtons();
     QWidget *makeCloseButton(int index);
+    void refreshTabList();
 
     QTabBar *tabbar;
     QList<QShortcut*> shortcuts;
     WidgetMap map;
+    tab_navigation::Registry registry;
+    tab_navigation::AllTabsMenu *allTabs = nullptr;
 };

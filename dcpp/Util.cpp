@@ -21,6 +21,7 @@
 #include "stdinc.h"
 
 #include "Util.h"
+#include "TimeFormatting.h"
 
 #ifdef _WIN32
 
@@ -220,9 +221,8 @@ bool ensureMmdbLoaded(const string& path) {
     return true;
 }
 
-string lookupMmdbCountryCode(const string& ip) {
+string lookupMmdbCountryCode(const string& ip, const string& path) {
     std::lock_guard<std::mutex> lock(g_mmdbMutex);
-    const string path = getConfiguredCountryDbPath();
 
     if (!ensureMmdbLoaded(path))
         return Util::emptyString;
@@ -1414,20 +1414,9 @@ string Util::formatTime(const string &msg, const time_t t) {
         if(!loc) {
             return Util::emptyString;
         }
-        size_t bufsize = msg.size() + 256;
-        string buf(bufsize, 0);
-
-        errno = 0;
-
-        buf.resize(strftime(&buf[0], bufsize-1, msg.c_str(), loc));
-
-        while(buf.empty()) {
-            if(errno == EINVAL)
-                return Util::emptyString;
-            bufsize+=64;
-            buf.resize(bufsize);
-            buf.resize(strftime(&buf[0], bufsize-1, msg.c_str(), loc));
-        }
+        string buf = detail::formatTimeBuffer(msg, *loc, strftime);
+        if(buf.empty())
+            return Util::emptyString;
 
 #ifdef _WIN32
         if(!Text::validateUtf8(buf))
@@ -1517,10 +1506,20 @@ uint32_t Util::rand() {
 */
 string Util::getIpCountry (string IP) {
 #ifdef USE_MAXMINDDB
-        const string mmdbCountry = lookupMmdbCountryCode(IP);
+    return getIpCountry(std::move(IP), getConfiguredCountryDbPath());
+#else
+    return getIpCountry(std::move(IP), Util::emptyString);
+#endif
+}
+
+string Util::getIpCountry (string IP, const string& countryDbPath) {
+#ifdef USE_MAXMINDDB
+        const string mmdbCountry = lookupMmdbCountryCode(IP, countryDbPath);
         if (mmdbCountry.size() >= 2)
             return string{static_cast<char>(toupper(static_cast<unsigned char>(mmdbCountry[0]))),
                           static_cast<char>(toupper(static_cast<unsigned char>(mmdbCountry[1])))};
+#else
+    (void)countryDbPath;
 #endif
     if (count(IP.begin(), IP.end(), '.') != 3)
         return Util::emptyString;

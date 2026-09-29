@@ -14,6 +14,7 @@
 
 #include <QObject>
 #include <QPixmap>
+#include <QIcon>
 #include <QImage>
 #include <QMap>
 #include <QHash>
@@ -182,9 +183,9 @@ public:
     static QString formatBytes(int64_t bytes);
     static QString countryFlagEmoji(const QString& countryCode);
     static QString flaggedCountryLabel(const QString& countryText, const QString& countryCode = QString());
-    static QString flaggedIpLabel(const QString& ip);
+    static QString flaggedIpLabel(const QString& ip, bool includeCountryName = false);
 
-    static void headerMenu(QTreeView*);
+    static void headerMenu(QTreeView*, const QList<QAction *> &extraActions = {});
 
     QString getHubNames(const dcpp::CID&);
     QString getHubNames(const dcpp::UserPtr&);
@@ -199,11 +200,16 @@ public:
     static bool isTTH(const QString &text);
 
     QString getNickViaOnlineUser(const QString &cid, const QString &hintUrl);
+    QIcon getIcon(Icons) const;
+    QIcon getHighlightedIcon(Icons normal, Icons active) const;
 
 public Q_SLOTS:
     const QPixmap &getPixmap(Icons);
     QString getNicks(const QString&,const QString& = "");
     bool openUrl(const QString&);
+
+Q_SIGNALS:
+    void iconsReloaded();
 
 private:
 
@@ -211,13 +217,15 @@ private:
     void clearUserIconCache();
     void initFileTypes();
 
-    QPixmap loadPixmap(const QString& file);
-
     PixmapMap m_PixmapMap;
+    struct CachedIcon {
+        QString path;
+        QIcon icon;
+    };
+    QHash<qulonglong, CachedIcon> m_IconMap;
     bool m_bError;
 
-    QPixmap FROMTHEME(const QString &name, bool resource);
-    QPixmap FROMTHEME_SIDE(const QString &name, bool resource, const int side);
+    void cacheIcon(Icons id, const QString &name, bool resource, int side = 22);
 
     QString findAppIconsPath() const;
     QString findUserIconsPath() const;

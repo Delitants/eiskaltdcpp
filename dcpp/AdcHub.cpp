@@ -19,6 +19,9 @@
 
 #include "stdinc.h"
 #include "AdcHub.h"
+#include "ProtocolNumber.h"
+#include "AdcResourceLimits.h"
+#include <limits>
 
 #include "AdcCommand.h"
 #include "ChatMessage.h"
@@ -66,6 +69,7 @@ vector<StringList> AdcHub::searchExts;
 
 AdcHub::AdcHub(DCContext& ctx, const string& aHubURL, bool secure) :
     Client(ctx, aHubURL, '\n', secure, Socket::PROTO_ADC), oldPassword(false), sid(0) {
+    udp.setContext(&ctx);
     this->ctx().getTimerManager()->addListener(this);
 }
 
@@ -276,13 +280,17 @@ void AdcHub::handle(AdcCommand::MSG, AdcCommand& c) {
     message.thirdPerson = c.hasFlag("ME", 1);
 
     if(c.getParam("TS", 1, temp))
-        message.timestamp = Util::toInt64(temp);
+        parseProtocolNumber(temp, time_t(0), std::numeric_limits<time_t>::max(), message.timestamp);
 
     fire(ClientListener::Message(), this, message);
 }
 
 void AdcHub::handle(AdcCommand::GPA, AdcCommand& c) {
     if(c.getParameters().empty())
+        return;
+    const int commandLimit = CTX_SETTING(MAX_COMMAND_LENGTH);
+    size_t decoded;
+    if(!adcPasswordChallengeSize(c.getParam(0), commandLimit > 5 ? size_t(commandLimit - 5) : 0, decoded))
         return;
     salt = c.getParam(0);
     state = STATE_VERIFY;
@@ -291,6 +299,8 @@ void AdcHub::handle(AdcCommand::GPA, AdcCommand& c) {
 }
 
 void AdcHub::handle(AdcCommand::QUI, AdcCommand& c) {
+    if(c.getParameters().empty() || c.getParam(0).size() != 4)
+        return;
     uint32_t s = AdcCommand::toSID(c.getParam(0));
 
     OnlineUser* victim = findUser(s);
@@ -324,8 +334,11 @@ void AdcHub::handle(AdcCommand::QUI, AdcCommand& c) {
             if(tmp == "-1") {
                 setAutoReconnect(false);
             } else {
-                setAutoReconnect(true);
-                setReconnDelay(Util::toUInt32(tmp));
+                uint32_t delay;
+                if(parseProtocolNumber(tmp, uint32_t(0), std::numeric_limits<uint32_t>::max(), delay)) {
+                    setAutoReconnect(true);
+                    setReconnDelay(delay);
+                }
             }
         }
         if(!victim && c.getParam("MS", 1, tmp)) {
@@ -423,8 +436,8 @@ void AdcHub::handle(AdcCommand::CMD, AdcCommand& c) {
     string sctx;
     if(!c.getParam("CT", 1, sctx))
         return;
-    int ctx = Util::toInt(sctx);
-    if(ctx <= 0)
+    int ctx;
+    if(!parseProtocolNumber(sctx, 1, std::numeric_limits<int>::max(), ctx))
         return;
     if(sep) {
         fire(ClientListener::HubUserCommand(), this, (int)UserCommand::TYPE_SEPARATOR, ctx, name, Util::emptyString);
@@ -472,16 +485,16 @@ void AdcHub::handle(AdcCommand::STA, AdcCommand& c) {
     if(c.getParameters().size() < 2)
         return;
 
+    int status;
+    if(c.getParam(0).size() != 3 || !parseProtocolNumber(c.getParam(0), 0, 299, status) ||
+            (status != 0 && status < 100))
+        return;
+
     OnlineUser* u = c.getFrom() == AdcCommand::HUB_SID ? &getUser(c.getFrom(), CID()) : findUser(c.getFrom());
     if(!u)
         return;
 
-    //int severity = Util::toInt(c.getParam(0).substr(0, 1));
-    if(c.getParam(0).size() != 3) {
-        return;
-    }
-
-    switch(Util::toInt(c.getParam(0).substr(1))) {
+    switch(status % 100) {
 
     case AdcCommand::ERROR_BAD_PASSWORD:
     {
@@ -567,32 +580,43 @@ void AdcHub::handle(AdcCommand::GET, AdcCommand& c) {
     }
     const string& type = c.getParam(0);
     string sk, sh;
-    if(type == "blom" && c.getParam("BK", 4, sk) && c.getParam("BH", 4, sh))  {
+    if(type == "blom") {
+        size_t start;
+        if(c.getParam(1) != "/" || !parseProtocolNumber(c.getParam(2), size_t(0), size_t(0), start)) {
+            send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
+                            "Unsupported bloom range", AdcCommand::TYPE_HUB));
+            return;
+        }
+        c.getParam("BK", 4, sk);
+        c.getParam("BH", 4, sh);
         ByteVector v;
-        size_t m = Util::toUInt32(c.getParam(3)) * 8;
-        size_t k = Util::toUInt32(sk);
-        size_t h = Util::toUInt32(sh);
-
-        if(k > 8 || k < 1) {
+        const size_t maxBytes = std::min(v.max_size(), std::vector<bool>().max_size() / 8);
+        BloomRequest request;
+        const auto error = parseBloomRequest(c.getParam(3), sk, sh, maxBytes, request);
+        if(error != BloomRequestError::None) {
+            const char* reason = error == BloomRequestError::Hashes ? "Unsupported k" :
+                error == BloomRequestError::HashBits ? "Unsupported h" : "Unsupported m";
             send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
-                            "Unsupported k", AdcCommand::TYPE_HUB));
+                            reason, AdcCommand::TYPE_HUB));
             return;
         }
-        if(h > 64 || h < 1) {
-            send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
-                            "Unsupported h", AdcCommand::TYPE_HUB));
-            return;
-        }
-        size_t n = ctx().getShareManager()->getSharedFiles();
-
-        // Ideal size for m is n * k / ln(2), but we allow some slack
-        if(m > size_t(5 * Util::roundUp((int64_t)(n * k / log(2.)), (int64_t)64)) || m > static_cast<size_t>(1 << h)) {
+        if(!bloomShareBudgetAllows(request, ctx().getShareManager()->getSharedFiles())) {
             send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
                             "Unsupported m", AdcCommand::TYPE_HUB));
             return;
         }
-        if (m > 0) {
-            ctx().getShareManager()->getBloom(v, k, m, h);
+        if(request.bits > 0) {
+            try {
+                ctx().getShareManager()->getBloom(v, request.hashes, request.bits, request.hashBits);
+            } catch(const std::bad_alloc&) {
+                send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
+                                "Bloom filter unavailable", AdcCommand::TYPE_HUB));
+                return;
+            } catch(const std::length_error&) {
+                send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_TRANSFER_GENERIC,
+                                "Bloom filter unavailable", AdcCommand::TYPE_HUB));
+                return;
+            }
         }
         AdcCommand cmd(AdcCommand::CMD_SND, AdcCommand::TYPE_HUB);
         cmd.addParam(c.getParam(0));
@@ -601,8 +625,8 @@ void AdcHub::handle(AdcCommand::GET, AdcCommand& c) {
         cmd.addParam(c.getParam(3));
         cmd.addParam(c.getParam(4));
         send(cmd);
-        if (m > 0) {
-            send((char*)&v[0], v.size());
+        if(!v.empty()) {
+            send(reinterpret_cast<const char*>(v.data()), v.size());
         }
     }
 }
@@ -932,16 +956,21 @@ void AdcHub::password(const string& pwd) {
     if(state != STATE_VERIFY)
         return;
     if(!salt.empty()) {
-        size_t saltBytes = salt.size() * 5 / 8;
-        std::unique_ptr<uint8_t[]> buf(new uint8_t[saltBytes]);
-        Encoder::fromBase32(salt.c_str(), &buf[0], saltBytes);
+        const int commandLimit = CTX_SETTING(MAX_COMMAND_LENGTH);
+        size_t saltBytes;
+        if(!adcPasswordChallengeSize(salt, commandLimit > 5 ? size_t(commandLimit - 5) : 0, saltBytes)) {
+            salt.clear();
+            return;
+        }
+        ByteVector buf(saltBytes);
+        Encoder::fromBase32(salt.c_str(), buf.data(), saltBytes);
         TigerHash th;
         if(oldPassword) {
             CID cid = getMyIdentity().getUser()->getCID();
             th.update(cid.data(), CID::SIZE);
         }
         th.update(pwd.data(), pwd.length());
-        th.update(&buf[0], saltBytes);
+        th.update(buf.data(), saltBytes);
         send(AdcCommand(AdcCommand::CMD_PAS, AdcCommand::TYPE_HUB).addParam(Encoder::toBase32(th.finalize(), TigerHash::BYTES)));
         salt.clear();
     }
@@ -1024,7 +1053,8 @@ void AdcHub::info(bool /*alwaysSend*/) {
     const string favIp6 = favIp.find(':') != string::npos ? favIp : Util::emptyString;
 
     const bool outgoingProxied = CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT;
-    const bool proxyP2P = outgoingProxied && CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS);
+    const bool gost = CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST;
+    const bool proxyP2P = outgoingProxied && (gost || CTX_BOOLSETTING(PROXY_P2P_CONNECTIONS));
     const bool hubStealth = ctx().getClientManager()->isProxyHubStealth();
     const bool hideHubAddress = proxyP2P || hubStealth;
     string proxyHubIp;
@@ -1038,7 +1068,7 @@ void AdcHub::info(bool /*alwaysSend*/) {
         }
 
         StringList proxyIpCandidates;
-        if(!CTX_SETTING(INTERNETIP).empty())
+        if(!gost && !CTX_SETTING(INTERNETIP).empty())
             proxyIpCandidates.push_back(CTX_SETTING(INTERNETIP));
 
         if(!proxyHost.empty()) {
@@ -1175,7 +1205,7 @@ void AdcHub::on(Connected c) {
     }
     cmd.addParam(ZLIF_SUPPORT);
 #ifdef WITH_DHT
-    if (CTX_BOOLSETTING(USE_DHT))
+    if (CTX_BOOLSETTING(USE_DHT) && !CTX_BOOLSETTING(HIDE_DHT_FROM_HUBS))
         cmd.addParam(DHT0_SUPPORT);
 #endif
     send(cmd);

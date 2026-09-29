@@ -21,8 +21,10 @@
 #include "stdinc.h"
 
 #include "BufferedSocket.h"
+#include "SocketWake.h"
 
 #include <algorithm>
+#include <limits>
 
 #include "ConnectivityManager.h"
 #include "CryptoManager.h"
@@ -39,12 +41,9 @@ namespace dcpp {
 using std::min;
 using std::max;
 
-// Polling is used for tasks...should be fixed...
-#define POLL_TIMEOUT 250
-
 BufferedSocket::BufferedSocket(char aSeparator, DCContext& ctx) :
-    separator(aSeparator), mode(MODE_LINE), dataBytes(0), rollback(0), state(STARTING),
-    ctx_(ctx), disconnecting(false)
+    separator(aSeparator), state(STARTING),
+    ctx_(ctx), disconnecting(false), taskWake(std::make_shared<SocketWake>())
 {
     start();
 
@@ -57,27 +56,17 @@ BufferedSocket::~BufferedSocket() {
     sockets.dec();
 }
 
-void BufferedSocket::setMode (Modes aMode, size_t aRollback) {
-    if (mode == aMode) {
-        dcdebug ("WARNING: Re-entering mode %d\n", mode);
-        return;
-    }
+bool BufferedSocket::dataModeCanConsumeMore(int64_t bytesLeftInBlock, int bufferedBytesLeft) {
+    return bufferedBytesLeft > 0 && (bytesLeftInBlock == -1 || bytesLeftInBlock > 0);
+}
 
-    switch (aMode) {
-    case MODE_LINE:
-        rollback = aRollback;
-        break;
-    case MODE_ZPIPE:
-        filterIn = std::unique_ptr<UnZFilter>(new UnZFilter);
-        break;
-    case MODE_DATA:
-        break;
-    }
-    mode = aMode;
+void BufferedSocket::setMode (Modes aMode, size_t aRollback) {
+    input.setMode(aMode, aRollback);
 }
 
 void BufferedSocket::setSocket(std::unique_ptr<Socket> s) {
     dcassert(!sock.get());
+    s->setWaitWake(taskWake, [this] { return disconnecting.load(); });
     s->setContext(&ctx());
     if(ctx().getSettingsManager()->get(SettingsManager::SOCKET_IN_BUFFER) > 0)
         s->setSocketOpt(SO_RCVBUF, ctx().getSettingsManager()->get(SettingsManager::SOCKET_IN_BUFFER));
@@ -103,18 +92,22 @@ void BufferedSocket::accept(const Socket& srv, bool secure, bool allowUntrusted)
     addTask(ACCEPTED, 0);
 }
 
-void BufferedSocket::connect(const string& aAddress, const string& aPort, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP) {
-    connect(aAddress, aPort, Util::emptyString, NAT_NONE, secure, allowUntrusted, proxy, proto, expKP);
+void BufferedSocket::connect(const string& aAddress, const string& aPort, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP, bool publicHttpProxy) {
+    connect(aAddress, aPort, Util::emptyString, NAT_NONE, secure, allowUntrusted, proxy, proto, expKP, publicHttpProxy);
 }
 
-void BufferedSocket::connect(const string& aAddress, const string& aPort, const string& localPort, NatRoles natRole, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP) {
+void BufferedSocket::connect(const string& aAddress, const string& aPort, const string& localPort, NatRoles natRole, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP, bool publicHttpProxy) {
     (void)expKP;
+    const bool gost = ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST && !publicHttpProxy;
+    if(gost && natRole != NAT_NONE)
+        throw SocketException("GOST does not support inbound NAT traversal");
     dcdebug("BufferedSocket::connect() %p\n", (void*)this);
     std::unique_ptr<Socket> s(secure ? (natRole == NAT_SERVER ? ctx().getCryptoManager()->getServerSocket(allowUntrusted) : ctx().getCryptoManager()->getClientSocket(allowUntrusted, proto)) : new Socket);
 
     const bool useIPv6 = ctx().getSettingsManager()->getBool(SettingsManager::USE_IPV6);
     s->create(Socket::TYPE_TCP, useIPv6 ? AF_INET6 : AF_INET);
     setSocket(std::move(s));
+    sock->setGlobalProxyExempt(publicHttpProxy);
     const string bindIp = ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE)
         ? (useIPv6 ? sock->getIfaceI6(ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE_NAME))
                    : sock->getIfaceI4(ctx().getSettingsManager()->get(SettingsManager::BIND_IFACE_NAME)))
@@ -124,7 +117,7 @@ void BufferedSocket::connect(const string& aAddress, const string& aPort, const 
 
     Lock l(cs);
     const int outgoing = ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS);
-    addTask(CONNECT, new ConnectInfo(aAddress, aPort, localPort, natRole, proxy && outgoing != SettingsManager::OUTGOING_DIRECT));
+    addTask(CONNECT, new ConnectInfo(aAddress, aPort, localPort, natRole, gost || (proxy && outgoing != SettingsManager::OUTGOING_DIRECT)));
 }
 
 #define LONG_TIMEOUT 30000
@@ -154,10 +147,8 @@ void BufferedSocket::threadConnect(const string& aAddr, const string &aPort, con
                 sock->connect(aAddr, aPort);
             }
 
-            bool connSucceeded;
-            while(!(connSucceeded = sock->waitConnected(POLL_TIMEOUT)) && endTime >= GET_TICK()) {
-                if(disconnecting) return;
-            }
+            const auto now = GET_TICK();
+            const bool connSucceeded = sock->waitConnected(static_cast<uint32_t>(now < endTime ? endTime - now : 0));
 
             if (connSucceeded) {
                 fire(BufferedSocketListener::Connected());
@@ -169,7 +160,9 @@ void BufferedSocket::threadConnect(const string& aAddr, const string &aPort, con
         } catch (const SocketException&) {
             if (natRole == NAT_NONE)
                 throw;
-            Thread::sleep(SHORT_TIMEOUT);
+            if(disconnecting) return;
+            if(taskWake->wait(SHORT_TIMEOUT)) taskWake->consume();
+            if(disconnecting) return;
         }
     }
 
@@ -183,120 +176,30 @@ void BufferedSocket::threadAccept() {
 
     state = RUNNING;
 
-    uint64_t startTime = GET_TICK();
-    while(!sock->waitAccepted(POLL_TIMEOUT)) {
-        if(disconnecting)
-            return;
-
-        if((startTime + 30000) < GET_TICK()) {
-            throw SocketException(_("Connection timeout"));
-        }
-    }
+    if(!sock->waitAccepted(LONG_TIMEOUT)) throw SocketException(_("Connection timeout"));
 }
 
 void BufferedSocket::threadRead() {
     if(state != RUNNING)
         return;
 
-    int left = (mode == MODE_DATA) ? ctx().getThrottleManager()->read(sock.get(), &inbuf[0], (int)inbuf.size()) : sock->read(&inbuf[0], (int)inbuf.size());
-    if(left == -1) {
-        // EWOULDBLOCK, no data received...
+    const int received = getMode() == MODE_DATA
+        ? ctx().getThrottleManager()->read(sock.get(), inbuf.data(), static_cast<int>(inbuf.size()))
+        : sock->read(inbuf.data(), static_cast<int>(inbuf.size()));
+    if(received == -1)
         return;
-    } else if(left == 0) {
-        // This socket has been closed...
+    if(received == 0)
         throw SocketException(_("Connection closed"));
-    }
-    string::size_type pos = 0;
-    // always uncompressed data
-    string l;
-    int bufpos = 0, total = left;
 
-    while (left > 0) {
-        switch (mode) {
-        case MODE_ZPIPE: {
-            const int BUF_SIZE = 1024;
-            // Special to autodetect nmdc connections...
-            string::size_type pos = 0;
-            std::unique_ptr<char[]> buffer(new char[BUF_SIZE]);
-            l = line;
-            // decompress all input data and store in l.
-            while (left) {
-                size_t in = BUF_SIZE;
-                size_t used = left;
-                bool ret = (*filterIn) (&inbuf[0] + total - left, used, &buffer[0], in);
-                left -= used;
-                l.append (&buffer[0], in);
-                // if the stream ends before the data runs out, keep remainder of data in inbuf
-                if (!ret) {
-                    bufpos = total-left;
-                    setMode (MODE_LINE, rollback);
-                    break;
-                }
-            }
-            // process all lines
-            while ((pos = l.find(separator)) != string::npos) {
-                if(pos > 0) // check empty (only pipe) command and don't waste cpu with it ;o)
-                    fire(BufferedSocketListener::Line(), l.substr(0, pos));
-                l.erase (0, pos + 1 /* separator char */);
-            }
-            // store remainder
-            line = l;
-
-            break;
-        }
-        case MODE_LINE:
-            // Special to autodetect nmdc connections...
-            if(separator == 0) {
-                if(inbuf[0] == '$') {
-                    separator = '|';
-                } else {
-                    separator = '\n';
-                }
-            }
-            l = line + string ((char*)&inbuf[bufpos], left);
-            while ((pos = l.find(separator)) != string::npos) {
-                if(pos > 0) // check empty (only pipe) command and don't waste cpu with it ;o)
-                    fire(BufferedSocketListener::Line(), l.substr(0, pos));
-                l.erase (0, pos + 1 /* separator char */);
-                if (l.length() < (size_t)left) left = l.length();
-                if (mode != MODE_LINE) {
-                    // we changed mode; remainder of l is invalid.
-                    l.clear();
-                    bufpos = total - left;
-                    break;
-                }
-            }
-            if (pos == string::npos)
-                left = 0;
-            line = l;
-            break;
-        case MODE_DATA:
-            while(left > 0) {
-                if(dataBytes == -1) {
-                    fire(BufferedSocketListener::Data(), &inbuf[bufpos], left);
-                    bufpos += (left - rollback);
-                    left = rollback;
-                    rollback = 0;
-                } else {
-                    int high = (int)min(dataBytes, (int64_t)left);
-                    fire(BufferedSocketListener::Data(), &inbuf[bufpos], high);
-                    bufpos += high;
-                    left -= high;
-
-                    dataBytes -= high;
-                    if(dataBytes == 0) {
-                        mode = MODE_LINE;
-                        fire(BufferedSocketListener::ModeChange());
-                    }
-                }
-            }
-            break;
-        }
-    }
-
-    if(mode == MODE_LINE && line.size() > static_cast<size_t>(ctx().getSettingsManager()->get(SettingsManager::MAX_COMMAND_LENGTH))) {
-        throw SocketException(_("Maximum command length exceeded"));
-    }
+    const int configuredLimit = ctx().getSettingsManager()->get(SettingsManager::MAX_COMMAND_LENGTH);
+    input.feed(inbuf.data(), static_cast<size_t>(received), separator,
+        configuredLimit > 0 ? static_cast<size_t>(configuredLimit) : 0,
+        {
+            [this](const string& command) { fire(BufferedSocketListener::Line(), command); },
+            [this](uint8_t* bytes, size_t size) { fire(BufferedSocketListener::Data(), bytes, size); },
+            [this] { fire(BufferedSocketListener::ModeChange()); },
+            [this] { return !inputStopped.load(std::memory_order_relaxed) && !disconnecting && state == RUNNING; }
+        });
 }
 
 void BufferedSocket::threadSendFile(InputStream* file) {
@@ -334,6 +237,7 @@ void BufferedSocket::threadSendFile(InputStream* file) {
         }
 
         if(readDone && readPos == 0) {
+            if(!threadFlushProxyOutput()) return;
             fire(BufferedSocketListener::TransmitDone());
             return;
         }
@@ -389,7 +293,7 @@ void BufferedSocket::threadSendFile(InputStream* file) {
                     }
                 } else {
                     while(!disconnecting) {
-                        int w = sock->wait(POLL_TIMEOUT, Socket::WAIT_WRITE | Socket::WAIT_READ);
+                        int w = sock->wait(Socket::WAIT_FOREVER, Socket::WAIT_WRITE | Socket::WAIT_READ);
                         if(w & Socket::WAIT_READ) {
                             threadRead();
                         }
@@ -404,13 +308,25 @@ void BufferedSocket::threadSendFile(InputStream* file) {
 }
 
 void BufferedSocket::write(const char* aBuf, size_t aLen) {
-    if(!sock.get())
+    if(aLen == 0 || !sock.get())
         return;
     Lock l(cs);
-    if(writeBuf.empty())
-        addTask(SEND_DATA, 0);
-
+    const size_t previousSize = writeBuf.size();
+    if(aLen > writeBuf.max_size() - previousSize)
+        throw std::length_error("Socket output buffer capacity exceeded");
     writeBuf.insert(writeBuf.end(), aBuf, aBuf+aLen);
+    if(previousSize == 0) {
+        try {
+            addTask(SEND_DATA, 0);
+        } catch(...) {
+            writeBuf.resize(previousSize);
+            throw;
+        }
+    }
+}
+
+int BufferedSocket::writeChunkSize(size_t remaining) {
+    return static_cast<int>(std::min(remaining, size_t(std::numeric_limits<int>::max())));
 }
 
 void BufferedSocket::threadSendData() {
@@ -432,21 +348,33 @@ void BufferedSocket::threadSendData() {
             return;
         }
 
-        int w = sock->wait(POLL_TIMEOUT, Socket::WAIT_READ | Socket::WAIT_WRITE);
+        int w = sock->wait(Socket::WAIT_FOREVER, Socket::WAIT_READ | Socket::WAIT_WRITE);
 
         if(w & Socket::WAIT_READ) {
             threadRead();
         }
 
         if(w & Socket::WAIT_WRITE) {
-            int n = sock->write(&sendBuf[done], left);
+            int n = sock->write(&sendBuf[done], writeChunkSize(left));
             if(n > 0) {
                 left -= n;
                 done += n;
             }
         }
     }
+    if(!threadFlushProxyOutput()) return;
     sendBuf.clear();
+}
+
+bool BufferedSocket::threadFlushProxyOutput() {
+    // Plaintext acceptance can leave a final encrypted record queued locally.
+    // Drain it before completing the task or processing a graceful disconnect.
+    while(!disconnecting && state == RUNNING) {
+        if(sock->flushProxyOutput()) return true;
+        const int ready = sock->wait(Socket::WAIT_FOREVER, Socket::WAIT_READ | Socket::WAIT_WRITE);
+        if(ready & Socket::WAIT_READ) threadRead();
+    }
+    return false;
 }
 
 bool BufferedSocket::checkEvents() {
@@ -456,7 +384,7 @@ bool BufferedSocket::checkEvents() {
             Lock l(cs);
             dcassert(!tasks.empty());
             p = std::move(tasks.front());
-            tasks.erase(tasks.begin());
+            tasks.pop_front();
         }
 
         if(p.first == SHUTDOWN) {
@@ -491,7 +419,12 @@ bool BufferedSocket::checkEvents() {
 }
 
 void BufferedSocket::checkSocket() {
-    int waitFor = sock->wait(POLL_TIMEOUT, Socket::WAIT_READ);
+    {
+        Lock lock(cs);
+        // A file send may have consumed a signal while later tasks remain queued.
+        if(!tasks.empty()) return;
+    }
+    int waitFor = sock->wait(Socket::WAIT_FOREVER, Socket::WAIT_READ | Socket::WAIT_WAKE);
 
     if(waitFor & Socket::WAIT_READ) {
         threadRead();
@@ -500,7 +433,6 @@ void BufferedSocket::checkSocket() {
 
 /**
  * Main task dispatcher for the buffered socket abstraction.
- * @todo Fix the polling...
  */
 int BufferedSocket::run() {
     dcdebug("BufferedSocket::run() start %p\n", (void*)this);
@@ -548,7 +480,12 @@ void BufferedSocket::shutdown() {
 
 void BufferedSocket::addTask(Tasks task, TaskData* data) {
     dcassert(task == DISCONNECT || task == SHUTDOWN || sock.get());
-    tasks.emplace_back(task, unique_ptr<TaskData>(data)); taskSem.signal();
+    unique_ptr<TaskData> owner(data);
+    if(task == UPDATED && !tasks.empty() && tasks.back().first == UPDATED)
+        return;
+    tasks.emplace_back(task, std::move(owner));
+    taskSem.signal();
+    taskWake->signal();
 }
 
 } // namespace dcpp

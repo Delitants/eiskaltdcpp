@@ -62,8 +62,10 @@ public:
      * @return True if there's more processing to be done
      */
     bool operator()(const void* in, size_t& insize, void* out, size_t& outsize);
+    bool finished() const { return streamEnded; }
 private:
     z_stream zs;
+    bool streamEnded = false;
 };
 
 class GZ {

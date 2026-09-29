@@ -1,0 +1,3 @@
+// Make bundle metadata part of the build dependency graph, not runtime behavior.
+extern const char eiskaltMacBundleMetadataHash[];
+const char eiskaltMacBundleMetadataHash[] = "@EISKALT_MAC_BUNDLE_METADATA_HASH@";

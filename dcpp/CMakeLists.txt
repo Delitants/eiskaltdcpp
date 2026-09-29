@@ -5,6 +5,9 @@ aux_source_directory(${PROJECT_SOURCE_DIR} dcpp_srcs)
 file (GLOB dcpp_hdrs ${PROJECT_SOURCE_DIR}/*.h)
 
 list (REMOVE_ITEM dcpp_srcs ${PROJECT_SOURCE_DIR}/FileReader.cpp)
+list (REMOVE_ITEM dcpp_srcs ${PROJECT_SOURCE_DIR}/ProxyTrust.cpp)
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/ProxyTrust.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../cmake/ProxyResolver.cmake)
 list (REMOVE_ITEM dcpp_hdrs ${PROJECT_SOURCE_DIR}/FileReader.h)
 
 set (DCPP_SRCS ${dcpp_srcs} PARENT_SCOPE)
@@ -65,6 +68,8 @@ endif (APPLE)
 set (UPNP "extra")
 
 add_library (dcpp ${LINK} ${dcpp_srcs})
+target_link_libraries(dcpp eiskalt-proxy-trust)
+target_link_libraries(dcpp ${EISKALT_CARES_TARGET})
 
 if (WITH_DHT)
     set (DHT_LIB "dht")

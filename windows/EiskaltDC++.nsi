@@ -34,11 +34,11 @@
 !define PRODUCT_PUBLISHER            "EiskaltDC++"
 !define PRODUCT_WEB_SITE             "https://github.com/eiskaltdcpp/eiskaltdcpp"
 !ifdef arch_x86
-    !define PRODUCT_INSTALL_DIR      "$PROGRAMFILES\EiskaltDC++"
+    !define PRODUCT_INSTALL_DIR      "$PROGRAMFILES\Eiskalt DC++"
     !define PRODUCT_NAME             "EiskaltDC++ ${PRODUCT_DISPLAY_VERSION} (32-bit)"
     !define PRODUCT_UNINST_KEY       "Software\Microsoft\Windows\CurrentVersion\Uninstall\EiskaltDC++"
 !else
-    !define PRODUCT_INSTALL_DIR      "$PROGRAMFILES64\EiskaltDC++"
+    !define PRODUCT_INSTALL_DIR      "$PROGRAMFILES64\Eiskalt DC++"
     !define PRODUCT_NAME             "EiskaltDC++ ${PRODUCT_DISPLAY_VERSION} (64-bit)"
     !define PRODUCT_UNINST_KEY       "Software\Microsoft\Windows\CurrentVersion\Uninstall\EiskaltDC++64"
 !endif
@@ -62,6 +62,7 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "installer\LICENSE"
 !insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_FINISHPAGE_RUN "$INSTDIR\EiskaltDC++.exe"
 !insertmacro MUI_PAGE_FINISH
@@ -174,17 +175,24 @@ Section "EiskaltDC++" SEC_MAIN
     ; --- Start Menu shortcuts -----------------------------------------------
     SetShellVarContext all
     !ifdef arch_x86
-        CreateDirectory "$SMPROGRAMS\EiskaltDC++"
-        CreateShortCut  "$SMPROGRAMS\EiskaltDC++\EiskaltDC++.lnk" "$INSTDIR\EiskaltDC++.exe"
-        CreateShortCut  "$SMPROGRAMS\EiskaltDC++\Uninstall.lnk"   "$INSTDIR\uninstall.exe"
+        CreateDirectory "$SMPROGRAMS\Eiskalt DC++"
+        CreateShortCut  "$SMPROGRAMS\Eiskalt DC++\EiskaltDC++.lnk" "$INSTDIR\EiskaltDC++.exe"
+        CreateShortCut  "$SMPROGRAMS\Eiskalt DC++\Uninstall.lnk"   "$INSTDIR\uninstall.exe"
     !else
-        CreateDirectory "$SMPROGRAMS\EiskaltDC++ (x64)"
-        CreateShortCut  "$SMPROGRAMS\EiskaltDC++ (x64)\EiskaltDC++.lnk" "$INSTDIR\EiskaltDC++.exe"
-        CreateShortCut  "$SMPROGRAMS\EiskaltDC++ (x64)\Uninstall.lnk"   "$INSTDIR\uninstall.exe"
+        CreateDirectory "$SMPROGRAMS\Eiskalt DC++ (x64)"
+        CreateShortCut  "$SMPROGRAMS\Eiskalt DC++ (x64)\EiskaltDC++.lnk" "$INSTDIR\EiskaltDC++.exe"
+        CreateShortCut  "$SMPROGRAMS\Eiskalt DC++ (x64)\Uninstall.lnk"   "$INSTDIR\uninstall.exe"
     !endif
+SectionEnd
 
-    ; --- Desktop shortcut ---------------------------------------------------
+; ===== Optional sections ===================================================
+Section "Desktop shortcut" SEC_DESKTOP
+    SetShellVarContext all
     CreateShortCut "$DESKTOP\EiskaltDC++.lnk" "$INSTDIR\EiskaltDC++.exe"
+SectionEnd
+
+Section "Windows Firewall exception" SEC_FIREWALL
+    ExecWait 'netsh advfirewall firewall add rule name="Eiskalt DC++" dir=in action=allow program="$INSTDIR\EiskaltDC++.exe" enable=yes'
 SectionEnd
 
 ; ===== Uninstall section ===================================================
@@ -199,10 +207,12 @@ Section "Uninstall"
 
     ; Remove Start Menu shortcuts
     !ifdef arch_x86
-        RMDir /r "$SMPROGRAMS\EiskaltDC++"
+        RMDir /r "$SMPROGRAMS\Eiskalt DC++"
     !else
-        RMDir /r "$SMPROGRAMS\EiskaltDC++ (x64)"
+        RMDir /r "$SMPROGRAMS\Eiskalt DC++ (x64)"
     !endif
+
+    ExecWait 'netsh advfirewall firewall delete rule name="Eiskalt DC++" program="$INSTDIR\EiskaltDC++.exe"'
 
     ; Remove install directory
     RMDir /r "$INSTDIR"
@@ -210,4 +220,3 @@ Section "Uninstall"
     ; Remove registry keys
     DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} ${PRODUCT_UNINST_KEY}
 SectionEnd
-

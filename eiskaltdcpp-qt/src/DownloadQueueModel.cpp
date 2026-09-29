@@ -18,6 +18,7 @@
 #include <QtWidgets>
 
 #include <QFileInfo>
+#include <QDir>
 #include <QList>
 #include <QStringList>
 #include <QPalette>
@@ -118,13 +119,20 @@ QVariant DownloadQueueModel::data(const QModelIndex &index, int role) const
         case Qt::DecorationRole:
         {
             if (item->dir && index.column() == COLUMN_DOWNLOADQUEUE_NAME)
-                return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE).scaled(16, 16);
+                return QIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
             else if (index.column() == COLUMN_DOWNLOADQUEUE_NAME)
-                return qtCtx()->wulforUtil()->getPixmapForFile(item->data(COLUMN_DOWNLOADQUEUE_NAME).toString()).scaled(16, 16);
+                return QIcon(qtCtx()->wulforUtil()->getPixmapForFile(item->data(COLUMN_DOWNLOADQUEUE_NAME).toString()));
             break;
         }
         case Qt::DisplayRole:
         {
+            if (!item->dir && (index.column() == COLUMN_DOWNLOADQUEUE_SIZE ||
+                    index.column() == COLUMN_DOWNLOADQUEUE_ESIZE) &&
+                    item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong() < 0)
+                return QString();
+            if (index.column() == COLUMN_DOWNLOADQUEUE_TTH &&
+                    item->data(COLUMN_DOWNLOADQUEUE_TTH).toString() == QString(39, QLatin1Char('A')))
+                return QString();
             if ((index.column() == COLUMN_DOWNLOADQUEUE_DOWN || index.column() == COLUMN_DOWNLOADQUEUE_SIZE) && !item->dir)
                 return WulforUtil::formatBytes(item->data(index.column()).toLongLong());
             else if ((index.column() == COLUMN_DOWNLOADQUEUE_DOWN || index.column() == COLUMN_DOWNLOADQUEUE_SIZE) && item->dir)
@@ -182,7 +190,7 @@ QVariant DownloadQueueModel::data(const QModelIndex &index, int role) const
         case Qt::ToolTipRole:
         {
             if (item->dir)
-                break;
+                return item->data(COLUMN_DOWNLOADQUEUE_PATH).toString().toHtmlEscaped();
 
             QString added  = item->data(COLUMN_DOWNLOADQUEUE_ADDED).toString();
             QString errors = item->data(COLUMN_DOWNLOADQUEUE_ERR).toString();
@@ -193,7 +201,7 @@ QVariant DownloadQueueModel::data(const QModelIndex &index, int role) const
 
             QString tooltip = QString(tr("<b>Added: </b> %1\n"
                                          "<b>Path: </b> %2\n"
-                                         "<b>Errors: </b> %3\n")).arg(added).arg(path).arg(errors);
+                                         "<b>Errors: </b> %3\n")).arg(added.toHtmlEscaped()).arg(path.toHtmlEscaped()).arg(errors.toHtmlEscaped());
 
             return tooltip;
         }
@@ -369,15 +377,18 @@ void DownloadQueueModel::sort(int column, Qt::SortOrder order) {
         return;
 
     emit layoutAboutToBeChanged();
-
+    const auto oldIndexes = persistentIndexList();
     sortRecursive(column, order, d->rootItem);
-
+    QModelIndexList newIndexes;
+    for (const auto &index : oldIndexes) {
+        auto *item = static_cast<DownloadQueueItem *>(index.internalPointer());
+        newIndexes.append(createIndex(item->row(), index.column(), item));
+    }
+    changePersistentIndexList(oldIndexes, newIndexes);
     emit layoutChanged();
 }
 
 DownloadQueueItem *DownloadQueueModel::addItem(const QVariantMap &map){
-    static quint64 counter = 0;
-
     DownloadQueueItem *droot = createPath(map["PATH"].toString());
 
     if (!droot)
@@ -388,39 +399,36 @@ DownloadQueueItem *DownloadQueueModel::addItem(const QVariantMap &map){
 
     childData << map["FNAME"]
               << map["STATUS"]
-              << (map["ESIZE"].toLongLong() > 0? map["ESIZE"] : 0)
+              << map["ESIZE"]
               << (map["DOWN"].toLongLong() > 0? map["DOWN"] : 0)
               << map["PRIO"]
               << map["USERS"]
               << map["PATH"]
-              << (map["ESIZE"].toLongLong() > 0? map["ESIZE"] : 0)
+              << map["ESIZE"]
               << map["ERRORS"]
               << map["ADDED"]
               << map["TTH"];
 
     child = new DownloadQueueItem(childData, droot);
+    beginInsertRows(createIndexForItem(droot), droot->childCount(), droot->childCount());
     droot->appendChild(child);
+    endInsertRows();
 
-    Q_D(static DownloadQueueModel);
+    Q_D(DownloadQueueModel);
 
     d->total_files++;
-    d->total_size += childData.at(COLUMN_DOWNLOADQUEUE_ESIZE).toULongLong();
+    d->total_size += qMax<qlonglong>(0, childData.at(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong());
 
     emit updateStats(d->total_files, d->total_size);
 
-    counter++;
-
-    repaint();
-
-    if ((counter % 100) == 0)
-        QApplication::processEvents();
+    emit needExpand(createIndexForItem(droot));
 
     return child;
 }
 
 void DownloadQueueModel::updItem(const QVariantMap &map){
     DownloadQueueItem *item = createPath(map["PATH"].toString());
-    Q_D(static DownloadQueueModel);
+    Q_D(DownloadQueueModel);
 
     QString target_name = map["FNAME"].toString();
     DownloadQueueItem *target = findTarget(item, target_name);
@@ -430,76 +438,48 @@ void DownloadQueueModel::updItem(const QVariantMap &map){
 
     item = target;
 
-    d->total_size -= item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toULongLong();
+    d->total_size -= qMax<qlonglong>(0, item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong());
 
     item->updateColumn(COLUMN_DOWNLOADQUEUE_STATUS, map["STATUS"]);
     item->updateColumn(COLUMN_DOWNLOADQUEUE_DOWN, (map["DOWN"].toLongLong() > 0? map["DOWN"] : 0));
-    item->updateColumn(COLUMN_DOWNLOADQUEUE_ESIZE, map["ESIZE"].toULongLong() > 0? map["ESIZE"] : 0);
-    item->updateColumn(COLUMN_DOWNLOADQUEUE_SIZE, map["ESIZE"].toULongLong() > 0? map["ESIZE"] : 0);
+    item->updateColumn(COLUMN_DOWNLOADQUEUE_ESIZE, map["ESIZE"]);
+    item->updateColumn(COLUMN_DOWNLOADQUEUE_SIZE, map["ESIZE"]);
     item->updateColumn(COLUMN_DOWNLOADQUEUE_PRIO, map["PRIO"]);
     item->updateColumn(COLUMN_DOWNLOADQUEUE_USER, map["USERS"]);
     item->updateColumn(COLUMN_DOWNLOADQUEUE_ERR, map["ERRORS"]);
+    item->updateColumn(COLUMN_DOWNLOADQUEUE_TTH, map["TTH"]);
 
-    d->total_size += item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toULongLong();
+    d->total_size += qMax<qlonglong>(0, item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong());
 
     emit updateStats(d->total_files, d->total_size);
-    emit layoutChanged();
+    const auto index = createIndexForItem(item);
+    emit dataChanged(index, index.siblingAtColumn(columnCount() - 1));
 }
 
 bool DownloadQueueModel::remItem(const QVariantMap &map){
-    DownloadQueueItem *item = createPath(map["PATH"].toString());
-
-    if (item->childItems.size() < 1)
-        return false;
-
-    QString target_name = map["FNAME"].toString();
-    DownloadQueueItem *target = findTarget(item, target_name);
-
-    if (!target)
-        return false;
-
-    Q_D(static DownloadQueueModel);
-
-    d->total_size -= target->data(COLUMN_DOWNLOADQUEUE_ESIZE).toULongLong();
-    d->total_files--;
-
-    if (item->childCount() > 1){
-        beginRemoveRows(createIndexForItem(item), target->row(), target->row());
-        {
-            int r = target->row();
-
-            item->childItems.removeAt(r);
-
-            delete target;
+    Q_D(DownloadQueueModel);
+    const QString path = QDir::cleanPath(QDir::fromNativeSeparators(map["PATH"].toString()));
+    DownloadQueueItem *group = nullptr;
+    for (auto *candidate : d->rootItem->childItems)
+        if (candidate->data(COLUMN_DOWNLOADQUEUE_PATH).toString() == path) {
+            group = candidate;
+            break;
         }
-        endRemoveRows();
+    if (!group) return false;
+    auto *target = findTarget(group, map["FNAME"].toString());
+    if (!target) return false;
+    d->total_size -= qMax<qlonglong>(0, target->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong());
+    --d->total_files;
+    if (group->childCount() == 1) {
+        beginRemoveRows({}, group->row(), group->row());
+        d->rootItem->childItems.removeAt(group->row());
+        delete group;
+    } else {
+        beginRemoveRows(createIndexForItem(group), target->row(), target->row());
+        group->childItems.removeAt(target->row());
+        delete target;
     }
-    else {
-
-        DownloadQueueItem *p = item;
-        DownloadQueueItem *_t = nullptr;
-
-        while (true) {
-            if ((p == d->rootItem) || (p->childCount() > 1) || !p->parent())
-                break;
-
-            beginRemoveRows(createIndexForItem(p->parent()), p->row(), p->row());
-            {
-                p->parent()->childItems.removeAt(p->row());
-
-                _t = p;
-            }
-            endRemoveRows();
-
-            if (p->parent()->childCount() > 0)
-                break;
-
-            p = p->parent();
-
-            delete _t;
-        }
-    }
-
+    endRemoveRows();
     emit updateStats(d->total_files, d->total_size);
 
     return true;
@@ -552,74 +532,34 @@ QModelIndex DownloadQueueModel::createIndexForItem(DownloadQueueItem *item){
 }
 
 DownloadQueueItem *DownloadQueueModel::createPath(const QString & path){
-    Q_D(static DownloadQueueModel);
+    Q_D(DownloadQueueModel);
+    const QString normalized = QDir::cleanPath(QDir::fromNativeSeparators(path));
+    for (auto *item : d->rootItem->childItems)
+        if (item->data(COLUMN_DOWNLOADQUEUE_PATH).toString() == normalized)
+            return item;
 
-    if (!d->rootItem)
-        return nullptr;
-
-    QString _path = path;
-    _path.replace("\\", "/");
-
-    QStringList list = _path.split("/", Qt::SkipEmptyParts);
-
-    DownloadQueueItem *root = d->rootItem;
-
-    bool found = false;
-
-    for (int i = 0; i < list.size(); i++){
-        found = false;
-
-        for (const auto &item : root->childItems){
-            if (!item->dir)
-                continue;
-
-            QString name = item->data(COLUMN_DOWNLOADQUEUE_NAME).toString();
-
-            if (name == list.at(i)){
-                found = true;
-                root = item;
-
-                break;
-            }
-        }
-
-        if (!found){
-            static QString data = "";
-
-            for (int j = i; j < list.size(); j++){
-                QList<QVariant> rootData;
-                rootData << list.at(j)  << data << data << data
-                         << data << data << data << data
-                         << data << data << data;
-
-                DownloadQueueItem *item = new DownloadQueueItem(rootData);
-                item->dir = true;
-
-                root->appendChild(item);
-
-                root = item;
-            }
-
-            emit layoutChanged();
-
-            return root;
-        }
-    }
-
-    return root;
+    // Group by exact destination, not every absolute-path ancestor. Keep the
+    // full destination as identity so equally named folders remain distinct.
+    QList<QVariant> values(columnCount());
+    const QString name = QFileInfo(normalized).fileName();
+    values[COLUMN_DOWNLOADQUEUE_NAME] = name.isEmpty() ? normalized : name;
+    values[COLUMN_DOWNLOADQUEUE_PATH] = normalized;
+    auto *item = new DownloadQueueItem(values, d->rootItem);
+    item->dir = true;
+    beginInsertRows({}, d->rootItem->childCount(), d->rootItem->childCount());
+    d->rootItem->appendChild(item);
+    endInsertRows();
+    return item;
 }
 
 void DownloadQueueModel::clear(){
-    blockSignals(true);
-
     Q_D(DownloadQueueModel);
-
+    beginResetModel();
     qDeleteAll(d->rootItem->childItems);
     d->rootItem->childItems.clear();
-
-    blockSignals(false);
-
-    emit layoutChanged();
+    d->total_files = d->total_size = 0;
+    endResetModel();
+    emit updateStats(0, 0);
 }
 
 void DownloadQueueModel::repaint(){
@@ -739,60 +679,42 @@ void DownloadQueueDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         return;
     }
 
-#if defined(USE_PROGRESS_BARS)
-    const qulonglong esize = item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong();
-    double percent = ((double)item->data(COLUMN_DOWNLOADQUEUE_DOWN).toLongLong() * 100.0);
-    percent = (esize > 0) ? (percent/(double)esize) : 0.0;
-
+    const qlonglong esize = item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong();
+    const double percent = esize > 0 ? qBound(0.0,
+        item->data(COLUMN_DOWNLOADQUEUE_DOWN).toLongLong() * 100.0 / esize, 100.0) : 0.0;
     const QString statusText = item->data(COLUMN_DOWNLOADQUEUE_STATUS).toString();
-    const QString display = statusText.isEmpty()
+    const QString display = esize <= 0 ? statusText : (statusText.isEmpty()
         ? QString("%1%").arg(percent, 0, 'f', 1)
-        : QString("%1 / %2%").arg(statusText).arg(percent, 0, 'f', 1);
-
-    QStyleOptionProgressBar progressBarOption;
-    if (option.widget)
-        progressBarOption.initFrom(option.widget);
-    progressBarOption.state = QStyle::State_Enabled;
-    progressBarOption.direction = QApplication::layoutDirection();
-    progressBarOption.rect = option.rect;
-    progressBarOption.fontMetrics = option.fontMetrics;
-    progressBarOption.minimum = 0;
-    progressBarOption.maximum = 100;
-    progressBarOption.textAlignment = Qt::AlignCenter;
-    progressBarOption.textVisible = false;
-    progressBarOption.progress = static_cast<int>(percent);
-
-    if (option.state & QStyle::State_Selected)
-        painter->fillRect(option.rect, option.palette.highlight());
-
-    // Draw groove and contents separately, then render text manually
-    // to avoid Qt6 style engines positioning text outside the bar.
-    QApplication::style()->drawControl(QStyle::CE_ProgressBarGroove, &progressBarOption, painter);
-    QApplication::style()->drawControl(QStyle::CE_ProgressBarContents, &progressBarOption, painter);
-
+        : QString("%1 / %2%").arg(statusText).arg(percent, 0, 'f', 1));
     painter->save();
-    if (option.state & QStyle::State_Selected)
-        painter->setPen(option.palette.highlightedText().color());
-    else
-        painter->setPen(option.palette.text().color());
-    painter->drawText(option.rect, Qt::AlignCenter, display);
-    painter->restore();
-#else
-    const qulonglong esize = item->data(COLUMN_DOWNLOADQUEUE_ESIZE).toLongLong();
-    double percent = ((double)item->data(COLUMN_DOWNLOADQUEUE_DOWN).toLongLong() * 100.0);
-    percent = (esize > 0) ? (percent/(double)esize) : 0.0;
-    const QString status = QString("%1%").arg(percent, 0, 'f', 1);
-
-    QStyleOptionViewItem plainTextOption = option;
-    plainTextOption.text = status;
-    plainTextOption.displayAlignment = Qt::AlignCenter;
-
-    QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &plainTextOption, painter);
+    painter->setClipRect(option.rect, Qt::IntersectClip);
+    QStyleOptionViewItem background(option);
+    initStyleOption(&background, index);
+    background.text.clear();
+    const auto *style = option.widget ? option.widget->style() : QApplication::style();
+    style->drawControl(QStyle::CE_ItemViewItem, &background, painter, option.widget);
+#if defined(USE_PROGRESS_BARS)
+    if (esize > 0 && percent > 0) {
+        QRect fill = option.rect.adjusted(2, 3, -2, -3);
+        fill.setWidth(qRound(fill.width() * percent / 100.0));
+        QColor progress = option.palette.highlight().color();
+        progress.setAlpha(65);
+        painter->fillRect(fill, progress);
+    }
 #endif
+    painter->setPen(option.state & QStyle::State_Selected
+        ? option.palette.highlightedText().color() : option.palette.text().color());
+    const QRect textRect = option.rect.adjusted(6, 0, -6, 0);
+    painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter,
+        option.fontMetrics.elidedText(display, Qt::ElideRight, qMax(0, textRect.width())));
+    painter->restore();
 }
 
 QSize DownloadQueueDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const{
     QSize sz = QStyledItemDelegate::sizeHint(option, index);
+    if (index.column() == COLUMN_DOWNLOADQUEUE_STATUS &&
+            !static_cast<DownloadQueueItem *>(index.internalPointer())->dir)
+        sz.setWidth(sz.width() + option.fontMetrics.horizontalAdvance(" / 100.0%") + 12);
     // Ensure rows are tall enough for an embedded progress bar
     sz.setHeight(qMax(sz.height(), option.fontMetrics.height() + 8));
     return sz;

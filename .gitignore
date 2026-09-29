@@ -15,3 +15,21 @@ GETCONTEXT_REMOVAL_PLAN.md
 MEDIA_CHAT_IMPLEMENTATION_REPORT.md
 
 _upstream/
+
+# Local QA artifacts and profile backups can contain private connection settings.
+Work/qa-backups/
+Work/qa/torrent-proxy-icons-20260907/
+
+# Local evidence, generated packaging and source-editor backups are not releases.
+/Work/qa/
+/_CPack_Packages/
+/Testing/
+__pycache__/
+*.py[cod]
+*.bak*
+/*.dmg
+/windows-build.*.log
+/eiskaltdcpp-qt/translations/*.qm
+# Host-specific infrastructure tools/configuration are curated separately.
+/tools/torrent-bootstrap/
+/tools/torrent-tracker/

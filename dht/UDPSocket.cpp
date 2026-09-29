@@ -34,6 +34,7 @@
 #include "dcpp/SettingsManager.h"
 #include "dcpp/DebugManager.h"
 #include "dcpp/DCContext.h"
+#include "dcpp/ProxyRoute.h"
 #include <zlib.h>
 #ifdef _WIN32
 #include <mswsock.h>
@@ -144,6 +145,8 @@ namespace dht
 
     std::string UDPSocket::getAdvertisedPort() const
     {
+        if(dht_ && dht_->ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+            return {};
         string relayPort;
         if(dht_)
         {
@@ -269,6 +272,8 @@ namespace dht
 
         if(packet.get())
         {
+            if(packet->routeRevoked && packet->routeRevoked->load())
+                return;
             try
             {
                 unsigned long length = compressBound(packet->data.length()) + 2;
@@ -279,6 +284,8 @@ namespace dht
 
                 // encrypt packet
                 encryptPacket(packet->targetCID, packet->udpKey, data.get(), length);
+                if(packet->routeRevoked && packet->routeRevoked->load())
+                    return;
 
                 dcdrun(sentBytes += packet->data.length());
                 dcdrun(sentPackets++);
@@ -403,6 +410,7 @@ namespace dht
         if (dht_->ctx().getDebugManager()) dht_->ctx().getDebugManager()->SendCommandMessage(command, DebugManager::DHT_OUT, ip + ":" + port);
 
         Packet* p = new Packet(ip, port, command, targetCID, udpKey);
+        p->routeRevoked = dht_->ctx().getProxyRoute()->snapshot()->revoked;
 
         Lock l(cs);
         while(sendQueue.size() >= MAX_SEND_QUEUE_SIZE)

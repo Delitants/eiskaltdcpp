@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Finished uploads</title>
+  <desc>Prism dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ccd3d7" stop-opacity="1"/><stop offset="0.22" stop-color="#92a2aa" stop-opacity="1"/><stop offset="0.5" stop-color="#70848f" stop-opacity="1"/><stop offset="0.76" stop-color="#677984" stop-opacity="1"/><stop offset="1" stop-color="#455259" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#2d3539" stop-opacity="1"/><stop offset="0.5" stop-color="#1c2124" stop-opacity="1"/><stop offset="1" stop-color="#131618" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p0-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="p1-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ccd3d7" stop-opacity="1"/><stop offset="0.22" stop-color="#92a2aa" stop-opacity="1"/><stop offset="0.5" stop-color="#70848f" stop-opacity="1"/><stop offset="0.76" stop-color="#677984" stop-opacity="1"/><stop offset="1" stop-color="#455259" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#2d3539" stop-opacity="1"/><stop offset="0.5" stop-color="#1c2124" stop-opacity="1"/><stop offset="1" stop-color="#131618" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p1-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="p2-body" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#afdfff" stop-opacity="1"/><stop offset="0.22" stop-color="#56bbff" stop-opacity="1"/><stop offset="0.5" stop-color="#20a6ff" stop-opacity="1"/><stop offset="0.76" stop-color="#1d99eb" stop-opacity="1"/><stop offset="1" stop-color="#14679e" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p2-rim" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#0d4266" stop-opacity="1"/><stop offset="0.5" stop-color="#082a40" stop-opacity="1"/><stop offset="1" stop-color="#051c2b" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p2-ink" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#effaff" stop-opacity="1"/><stop offset="0.45" stop-color="#c3deea" stop-opacity="1"/><stop offset="1" stop-color="#88adbe" stop-opacity="1"/></linearGradient>
+    <linearGradient id="p2-shine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="256"><stop offset="0" stop-color="#ffffff" stop-opacity="0.65"/><stop offset="0.25" stop-color="#ffffff" stop-opacity="0.28"/><stop offset="0.46" stop-color="#ffffff" stop-opacity="0.08"/><stop offset="0.49" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM88,80h32v64a8,8,0,0,0,16,0V80h32a8,8,0,0,0,5.66-13.66l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,88,80Z" fill="url(#p0-body)" stroke="url(#p0-rim)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM88,80h32v64a8,8,0,0,0,16,0V80h32a8,8,0,0,0,5.66-13.66l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,88,80Z" fill="url(#p0-shine)"/>
+  </g>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0ZM96.49,80.49,116,61v83a12,12,0,0,0,24,0V61l19.51,19.52a12,12,0,1,0,17-17l-40-40a12,12,0,0,0-17,0l-40,40a12,12,0,1,0,17,17Z" fill="url(#p1-body)" stroke="url(#p1-rim)" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0ZM96.49,80.49,116,61v83a12,12,0,0,0,24,0V61l19.51,19.52a12,12,0,1,0,17-17l-40-40a12,12,0,0,0-17,0l-40,40a12,12,0,1,0,17,17Z" fill="url(#p1-shine)"/>
+  </g>
+  <g transform="matrix(0.6 0 0 0.65 51.2 10)">
+    <path d="M224,120H176v88a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V120H32l96-96Z" fill="url(#p2-body)"/>
+    <path d="M224,120H176v88a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V120H32l96-96Z" fill="url(#p2-shine)"/>
+    <path d="M229.66,114.34l-96-96a8,8,0,0,0-11.32,0l-96,96A8,8,0,0,0,32,128H72v80a16,16,0,0,0,16,16h80a16,16,0,0,0,16-16V128h40a8,8,0,0,0,5.66-13.66ZM176,112a8,8,0,0,0-8,8v88H88V120a8,8,0,0,0-8-8H51.31L128,35.31,204.69,112Z" fill="url(#p2-ink)"/>
+  </g>
+</svg>

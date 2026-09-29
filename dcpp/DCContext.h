@@ -31,6 +31,7 @@ namespace dcpp {
 // Forward declarations — avoids pulling every manager header into every TU.
 class ResourceManager;
 class SettingsManager;
+class ProxyRoute;
 class LogManager;
 class TimerManager;
 class HashManager;
@@ -120,6 +121,7 @@ public:
     void shutdown();
 
     [[nodiscard]] bool isRunning() const { return running_; }
+    [[nodiscard]] ProxyRoute* getProxyRoute() const { return proxyRoute_.get(); }
 
     // ── Typed accessors (non-owning raw pointers) ──────────────────────
     [[nodiscard]] ResourceManager*     getResourceManager()     const { return resourceManager_.get(); }
@@ -159,6 +161,7 @@ private:
     // Order must match DCPlusPlus::startup() construction order.
     std::unique_ptr<ResourceManager>     resourceManager_;
     std::unique_ptr<SettingsManager>     settingsManager_;
+    std::unique_ptr<ProxyRoute>          proxyRoute_;
     std::unique_ptr<LogManager>          logManager_;
     std::unique_ptr<TimerManager>        timerManager_;
     std::unique_ptr<HashManager>         hashManager_;

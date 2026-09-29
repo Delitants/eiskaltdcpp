@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2001-2012 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2025 Jacek Sieka, arnetheduck on gmail point com
  * Copyright (C) 2026 Joe Rivera <transfix@sublevels.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -101,6 +101,8 @@ public:
     void move(const string& aSource, const string& aTarget);
 
     void remove(const string& aTarget);
+    /** Remove the targets currently queued through the normal cleanup path. */
+    void clear();
     void removeSource(const string& aTarget, const UserPtr& aUser, int reason, bool removeConn = true);
     void removeSource(const UserPtr& aUser, int reason);
 
@@ -109,7 +111,7 @@ public:
     void setPriority(const string& aTarget, QueueItem::Priority p);
 
     StringList getTargets(const TTHValue& tth);
-    QueueItem::StringMap& lockQueue() { cs.lock(); return fileQueue.getQueue(); }
+    const QueueItem::StringMap& lockQueue() { cs.lock(); return fileQueue.getQueue(); }
     void unlockQueue() { cs.unlock(); }
 
     Download* getDownload(UserConnection& aSource, bool supportsTrees);
@@ -196,7 +198,7 @@ private:
     /** All queue items by target */
     class FileQueue {
     public:
-        explicit FileQueue(DCContext& ctx) : ctx_(ctx), lastInsert(queue.end()) { }
+        explicit FileQueue(DCContext& ctx) : ctx_(ctx) { }
         DCContext& ctx() const { return ctx_; }
         ~FileQueue() {
             for(auto& i : queue)
@@ -218,14 +220,17 @@ private:
 
         QueueItem* findAutoSearch(StringList& recent);
         size_t getSize() { return queue.size(); }
-        QueueItem::StringMap& getQueue() { return queue; }
+        const QueueItem::StringMap& getQueue() const { return queue; }
         void move(QueueItem* qi, const string& aTarget);
         void remove(QueueItem* qi);
     private:
+        void ensureTTHIndex();
+        void removeTTH(QueueItem* qi);
+        using TTHIndex = unordered_multimap<TTHValue, QueueItem*>;
         DCContext& ctx_;
         QueueItem::StringMap queue;
-        /** A hint where to insert an item... */
-        QueueItem::StringIter lastInsert;
+        TTHIndex tthIndex;
+        bool tthIndexValid = false;
     };
 
     /** All queue items indexed by user (this is a cache for the FileQueue really...) */
@@ -283,7 +288,8 @@ private:
     /** Sanity check for the target filename */
     static string checkTarget(const string& aTarget, bool checkExsistence);
     /** Add a source to an existing queue item */
-    bool addSource(QueueItem* qi, const HintedUser& aUser, Flags::MaskType addBad);
+    bool addSource(QueueItem* qi, const HintedUser& aUser, Flags::MaskType addBad, bool checkReachability = true);
+    bool rejectPassiveRequest(const HintedUser& aUser, bool warn = true);
 
     void processList(const string& name, const HintedUser& user, int flags);
 

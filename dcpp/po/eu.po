@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: https://github.com/eiskaltdcpp/eiskaltdcpp/issues\n"
-"POT-Creation-Date: 2023-02-25 14:19+0300\n"
+"POT-Creation-Date: 2026-09-06 19:50-1000\n"
 "PO-Revision-Date: 2017-06-18 13:35+0000\n"
 "Last-Translator: Egoitz Rodriguez <egoitzro@gmail.com>, 2018\n"
 "Language-Team: Basque (https://www.transifex.com/tehnick/teams/11818/eu/)\n"
@@ -21,70 +21,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../ADLSearch.cpp:40
+#: ../ADLSearch.cpp:42
 msgid "<Enter string>"
 msgstr "<Enter string>"
 
-#: ../ADLSearch.cpp:444
+#: ../ADLSearch.cpp:467
 msgid "Discard"
 msgstr "Baztertu"
 
-#: ../AdcHub.cpp:155
+#: ../AdcHub.cpp:159
 msgid "%1% (%2%) has same CID {%3%} as %4% (%5%), ignoring"
 msgstr ""
 
-#: ../AdcHub.cpp:192 ../FinishedManager.cpp:161 ../QueueManager.cpp:2188
-#: ../Transfer.cpp:91
+#: ../AdcHub.cpp:196 ../FinishedManager.cpp:163 ../QueueManager.cpp:2209
+#: ../Transfer.cpp:93
 msgid "%1%/s"
 msgstr "%1%/s"
 
-#: ../AdcHub.cpp:227
+#: ../AdcHub.cpp:231
 msgid "Failed to negotiate base protocol"
 msgstr ""
 
-#: ../AdcHub.cpp:233
+#: ../AdcHub.cpp:237
 msgid ""
 "Hub probably uses an old version of ADC, please encourage the owner to "
 "upgrade"
 msgstr ""
 
-#: ../AdcHub.cpp:304
+#: ../AdcHub.cpp:308
 msgid "%1% was kicked by %2%: %3%"
 msgstr ""
 
-#: ../AdcHub.cpp:307
+#: ../AdcHub.cpp:311
 msgid "%1% was kicked: %2%"
 msgstr ""
 
-#: ../AdcHub.cpp:709
+#: ../AdcHub.cpp:728
 msgid "Not listening for connections - please restart %1%"
 msgstr ""
 
-#: ../BZUtils.cpp:34 ../BZUtils.cpp:55 ../BZUtils.cpp:63 ../ZUtils.cpp:36
-#: ../ZUtils.cpp:65 ../ZUtils.cpp:92 ../ZUtils.cpp:102
+#: ../BZUtils.cpp:34 ../BZUtils.cpp:55 ../BZUtils.cpp:63
+#: ../ZUtils.cpp:36 ../ZUtils.cpp:65 ../ZUtils.cpp:92 ../ZUtils.cpp:102
 msgid "Error during compression"
 msgstr "Hutsa konprimatu bitartean"
 
 #: ../BZUtils.cpp:75 ../BZUtils.cpp:97 ../BZUtils.cpp:100
-#: ../CryptoManager.cpp:406 ../CryptoManager.cpp:425 ../CryptoManager.cpp:439
-#: ../ZUtils.cpp:116 ../ZUtils.cpp:138 ../ZUtils.cpp:152
+#: ../CryptoManager.cpp:538 ../CryptoManager.cpp:560
+#: ../CryptoManager.cpp:578 ../ZUtils.cpp:116 ../ZUtils.cpp:138
+#: ../ZUtils.cpp:152
 msgid "Error during decompression"
 msgstr ""
 
-#: ../BufferedSocket.cpp:159 ../BufferedSocket.cpp:175
-#: ../ConnectionManager.cpp:204 ../Socket.cpp:220
+#: ../BufferedSocket.cpp:180 ../BufferedSocket.cpp:196
+#: ../ConnectionManager.cpp:227 ../Socket.cpp:434 ../Socket.cpp:1476
+#: ../Socket.cpp:1485 ../Socket.cpp:1501 ../Socket.cpp:1510
+#: ../Socket.cpp:1633
 msgid "Connection timeout"
 msgstr "Konexio denbora muga"
 
-#: ../BufferedSocket.cpp:190 ../SSLSocket.cpp:197
+#: ../BufferedSocket.cpp:211 ../SSLSocket.cpp:334 ../SSLSocket.cpp:371
+#: ../SSLSocket.cpp:380
 msgid "Connection closed"
 msgstr "Konexioa itxita"
 
-#: ../BufferedSocket.cpp:281
+#: ../BufferedSocket.cpp:309
 msgid "Maximum command length exceeded"
 msgstr ""
 
-#: ../BufferedSocket.cpp:467
+#: ../BufferedSocket.cpp:495
 msgid "Disconnected"
 msgstr "Deskonektaturik"
 
@@ -92,49 +96,55 @@ msgstr "Deskonektaturik"
 msgid "Sent "
 msgstr "Bidalitakoa"
 
-#: ../ClientManager.cpp:196 ../FinishedManager.cpp:132
-#: ../FinishedManager.cpp:138 ../FinishedManager.cpp:144
-#: ../QueueManager.cpp:2159 ../QueueManager.cpp:2165 ../QueueManager.cpp:2171
-#: ../SearchManager.cpp:279 ../SearchManager.cpp:366 ../SearchManager.cpp:368
-#: ../Transfer.cpp:81 ../Transfer.cpp:85
+#: ../ClientManager.cpp:198 ../FinishedManager.cpp:134
+#: ../FinishedManager.cpp:140 ../FinishedManager.cpp:146
+#: ../QueueManager.cpp:2180 ../QueueManager.cpp:2186
+#: ../QueueManager.cpp:2192 ../SearchManager.cpp:304
+#: ../SearchManager.cpp:391 ../SearchManager.cpp:393 ../Transfer.cpp:83
+#: ../Transfer.cpp:87
 msgid "Offline"
 msgstr "Lerroz kanpo"
 
-#: ../ConnectionManager.cpp:197
+#: ../ConnectionManager.cpp:185 ../QueueManager.cpp:888
+msgid "Cannot download from passive user while you are in passive mode"
+msgstr ""
+"Ezin da erabiltzaile pasibo batetik deskargatu modu pasiboan zauden bitartean"
+
+#: ../ConnectionManager.cpp:219
 msgid "All download slots taken"
 msgstr ""
 
-#: ../ConnectionManager.cpp:278
+#: ../ConnectionManager.cpp:304
 msgid "Connectivity restored"
 msgstr "Konektagarritasuna eraberritua"
 
-#: ../ConnectionManager.cpp:286
+#: ../ConnectionManager.cpp:312
 msgid "Connectivity error: %1%"
 msgstr "Konektagarritasun hutsa: %1%"
 
-#: ../ConnectionManager.cpp:817
+#: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
 msgstr ""
 
-#: ../ConnectionManager.cpp:835
+#: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
 msgstr ""
 
-#: ../ConnectivityManager.cpp:83
+#: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
 msgstr "Konektibitate konfigurazio onena zehazten..."
 
-#: ../ConnectivityManager.cpp:88
+#: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
 msgstr ""
 
-#: ../ConnectivityManager.cpp:98
+#: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
 msgstr "IP publikoa detektatuta, zuzeneko konexio modu aktiboa aukeratuz"
 
-#: ../ConnectivityManager.cpp:105
+#: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
@@ -142,611 +152,750 @@ msgstr ""
 "Posible tokiko sarea NAT-ekin detektatua, portuak UPnP erabiliz mapea tzen "
 "saiatzen..."
 
-#: ../ConnectivityManager.cpp:133
+#: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
 msgstr ""
 
-#: ../ConnectivityManager.cpp:145
+#: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
 msgstr "Transferitu (TCP)"
 
-#: ../ConnectivityManager.cpp:151
+#: ../ConnectivityManager.cpp:190
 msgid "Search (UDP)"
 msgstr "Bilatu (UDP)"
 
-#: ../ConnectivityManager.cpp:157
+#: ../ConnectivityManager.cpp:215
 msgid "DHT (UDP)"
 msgstr "DHT (UDP)"
 
-#: ../ConnectivityManager.cpp:172
+#: ../ConnectivityManager.cpp:230
 msgid "Connectivity: "
 msgstr "Konektagarritasuna:"
 
-#: ../CryptoManager.cpp:166
+#: ../CryptoManager.cpp:294
 msgid "No private key file chosen"
 msgstr ""
 
-#: ../CryptoManager.cpp:169
+#: ../CryptoManager.cpp:297
 msgid "No certificate file chosen"
 msgstr ""
 
-#: ../CryptoManager.cpp:181
+#: ../CryptoManager.cpp:309
 msgid "Error generating certificate"
 msgstr ""
 
-#: ../CryptoManager.cpp:244
+#: ../CryptoManager.cpp:393
 msgid "TLS disabled, no certificate file set"
 msgstr ""
 
-#: ../CryptoManager.cpp:252
+#: ../CryptoManager.cpp:401
 msgid "Generated new TLS certificate"
 msgstr ""
 
-#: ../CryptoManager.cpp:254
+#: ../CryptoManager.cpp:403
 msgid "TLS disabled, failed to generate certificate: %1%"
 msgstr ""
 
-#: ../CryptoManager.cpp:259 ../CryptoManager.cpp:263 ../CryptoManager.cpp:268
-#: ../CryptoManager.cpp:272
+#: ../CryptoManager.cpp:408 ../CryptoManager.cpp:412
+#: ../CryptoManager.cpp:417 ../CryptoManager.cpp:421
 msgid "Failed to load certificate file"
 msgstr "Hutsa ziurtagiri fitxategia kargatzean"
 
-#: ../CryptoManager.cpp:277 ../CryptoManager.cpp:281 ../CryptoManager.cpp:286
-#: ../CryptoManager.cpp:290
+#: ../CryptoManager.cpp:426 ../CryptoManager.cpp:430
+#: ../CryptoManager.cpp:435 ../CryptoManager.cpp:439
 msgid "Failed to load private key"
 msgstr "Hutsa gako pribatua kargatzean"
 
-#: ../DCPlusPlus.cpp:115
+#: ../CryptoManager.cpp:565
+msgid "Decompressed data exceeds size limit"
+msgstr ""
+
+#: ../DCContext.cpp:178
 msgid "Hash database"
 msgstr ""
 
-#: ../DCPlusPlus.cpp:118
+#: ../DCContext.cpp:182
 msgid "Shared Files"
 msgstr "Partekatutako fitxategiak"
 
-#: ../DCPlusPlus.cpp:127
+#: ../DCContext.cpp:193
 msgid "Download Queue"
 msgstr "Deskarga Ilara"
 
-#: ../DCPlusPlus.cpp:130
+#: ../DCContext.cpp:196
 msgid "Users"
 msgstr "Erabiltzaileak"
 
-#: ../DirectoryListing.cpp:95
+#: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
 msgstr ""
 
-#: ../DirectoryListing.cpp:214
+#: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
 msgstr ""
 
-#: ../DownloadManager.cpp:133
+#: ../DownloadManager.cpp:135
 msgid "IPFilter: Blocked outgoing connection to "
 msgstr ""
 
-#: ../DownloadManager.cpp:233
+#: ../DownloadManager.cpp:235
 msgid "Invalid size"
 msgstr "Tamaina baliogabea"
 
-#: ../DownloadManager.cpp:238
+#: ../DownloadManager.cpp:240
 msgid "Response does not match request"
 msgstr ""
 
-#: ../DownloadManager.cpp:245
+#: ../DownloadManager.cpp:247
 msgid "Could not open target file: %1%"
 msgstr ""
 
-#: ../DownloadManager.cpp:324
+#: ../DownloadManager.cpp:326
 msgid "Full tree does not match TTH root"
 msgstr ""
 
-#: ../DownloadManager.cpp:388
+#: ../DownloadManager.cpp:390
 msgid "No slots available"
 msgstr "Ez dago slot-ik eskuragarri"
 
-#: ../DownloadManager.cpp:499
+#: ../DownloadManager.cpp:501
 msgid "%1%: File not available"
 msgstr ""
 
-#: ../FavoriteManager.cpp:409
+#: ../FavoriteManager.cpp:414
 msgid "Kick user(s)"
 msgstr "Kanporatutako erabiltzailea(k)"
 
-#: ../FavoriteManager.cpp:413
+#: ../FavoriteManager.cpp:418
 msgid "Redirect user(s)"
 msgstr ""
 
-#: ../FavoriteManager.cpp:469
+#: ../FavoriteManager.cpp:474
 msgid "Auto-connect group (converted)"
 msgstr ""
 
-#: ../FavoriteManager.cpp:667
+#: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
 msgstr ""
 
-#: ../HashManager.cpp:230 ../HashManager.cpp:428
+#: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
 msgstr ""
 
-#: ../HashManager.cpp:237
+#: ../HashManager.cpp:239
 msgid "Finished hashing: %1% (%2% at %3%/s)"
 msgstr ""
 
-#: ../HashManager.cpp:240
+#: ../HashManager.cpp:242
 msgid "Finished hashing: %1% (%2%)"
 msgstr ""
 
-#: ../HashManager.cpp:243
+#: ../HashManager.cpp:245
 msgid "Finished hashing: %1%"
 msgstr ""
 
-#: ../HashManager.cpp:271 ../HashManager.cpp:483
+#: ../HashManager.cpp:273 ../HashManager.cpp:485
 msgid "Error saving hash data: %1%"
 msgstr ""
 
-#: ../HashManager.cpp:284
+#: ../HashManager.cpp:286
 msgid "Unable to read hash data file"
 msgstr ""
 
-#: ../HashManager.cpp:616
+#: ../HashManager.cpp:618
 msgid "Error creating hash data file: %1%"
 msgstr ""
 
-#: ../HashManager.cpp:967
+#: ../HashManager.cpp:969
 msgid "Hash database rebuilt"
 msgstr "Hash datu base berreraikia"
 
-#: ../HashManager.cpp:1061
+#: ../HashManager.cpp:1063
 msgid ""
 "%1% not shared; calculated CRC32 does not match the one found in SFV file."
 msgstr ""
 
-#: ../HashManager.cpp:1066
+#: ../HashManager.cpp:1068
 msgid "Error hashing %1%: %2%"
 msgstr ""
 
-#: ../HttpConnection.cpp:218
+#: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
 msgstr ""
 
-#: ../HttpConnection.cpp:257
+#: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
 msgstr ""
 
-#: ../HttpConnection.cpp:301
+#: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
 msgstr ""
 
-#: ../MappingManager.cpp:45
+#: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
 msgstr ""
 
-#: ../MappingManager.cpp:50
+#: ../MappingManager.cpp:57
 msgid "Another UPnP port mapping attempt is in progress..."
 msgstr ""
 
-#: ../MappingManager.cpp:82
+#: ../MappingManager.cpp:108
 msgid "Failed to initialize the %1% interface"
 msgstr ""
 
-#: ../MappingManager.cpp:86
+#: ../MappingManager.cpp:114
 msgid " Transfer Port (%1% TCP)"
 msgstr ""
 
-#: ../MappingManager.cpp:87 ../MappingManager.cpp:92 ../MappingManager.cpp:97
-#: ../MappingManager.cpp:102
+#: ../MappingManager.cpp:115 ../MappingManager.cpp:123
+#: ../MappingManager.cpp:131 ../MappingManager.cpp:139
 msgid "The %1% interface has failed to map the %2% %3% port"
 msgstr ""
 
-#: ../MappingManager.cpp:91
+#: ../MappingManager.cpp:122
 msgid " Encrypted Transfer Port (%1% TCP)"
 msgstr ""
 
-#: ../MappingManager.cpp:96
+#: ../MappingManager.cpp:130
 msgid " Search Port (%1% UDP)"
 msgstr ""
 
-#: ../MappingManager.cpp:101
+#: ../MappingManager.cpp:138
 msgid " DHT Port (%1% UDP)"
 msgstr ""
 
-#: ../MappingManager.cpp:111
+#: ../MappingManager.cpp:151
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
 msgstr ""
 
-#: ../MappingManager.cpp:113 ../MappingManager.cpp:115
+#: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
 msgstr ""
 
-#: ../MappingManager.cpp:127
+#: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
 msgstr "Kanpoko IP lortzeak huts egin du"
 
-#: ../MappingManager.cpp:137
+#: ../MappingManager.cpp:181
 msgid "Failed to create port mappings"
 msgstr ""
 
-#: ../MappingManager.cpp:146
+#: ../MappingManager.cpp:210
+msgid "Port mappings renewed"
+msgstr ""
+
+#: ../MappingManager.cpp:210
+msgid "Port mappings restored"
+msgstr ""
+
+#: ../MappingManager.cpp:212
+msgid "Port mapping renewal failed; retrying in 60 seconds"
+msgstr ""
+
+#: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
 msgstr ""
 
-#: ../MappingManager.cpp:147
+#: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
 msgstr ""
 
-#: ../MappingManager.cpp:152
+#: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
 msgstr "UPnP: %1%"
 
-#: ../NmdcHub.cpp:299
+#: ../NmdcHub.cpp:439
 msgid "%1% (Nick unknown)"
 msgstr ""
 
-#: ../NmdcHub.cpp:680
+#: ../NmdcHub.cpp:839
 msgid "Hub topic:"
 msgstr "Hub gaia:"
 
-#: ../PerFolderLimit.cpp:87
+#: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
 msgstr ""
 
-#: ../PerFolderLimit.cpp:87
+#: ../PerFolderLimit.cpp:89
 msgid "GiB"
 msgstr "GiB"
 
-#: ../PerFolderLimit.cpp:89
+#: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
 msgstr ""
 
-#: ../PerFolderLimit.cpp:90 ../SettingsManager.cpp:631
+#: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
 msgstr "-ra"
 
-#: ../QueueManager.cpp:231
+#: ../QueueManager.cpp:234
 msgid "No needed part"
 msgstr "Behar ez den zatia"
 
-#: ../QueueManager.cpp:619
+#: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
 msgstr ""
 
-#: ../QueueManager.cpp:670 ../QueueManager.cpp:731
+#: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
 msgstr ""
 
-#: ../QueueManager.cpp:695 ../QueueManager.cpp:772
+#: ../QueueManager.cpp:705 ../QueueManager.cpp:782
 msgid "This file is already queued"
 msgstr "Fitxategi hau dagoeneko ilaran dago"
 
-#: ../QueueManager.cpp:708 ../QueueManager.cpp:784
+#: ../QueueManager.cpp:718 ../QueueManager.cpp:794
 msgid "A file with a different size already exists in the queue"
 msgstr ""
 
-#: ../QueueManager.cpp:712
+#: ../QueueManager.cpp:722
 msgid "A file with different tth root already exists in the queue"
 msgstr ""
 
-#: ../QueueManager.cpp:725
+#: ../QueueManager.cpp:735
 msgid "You're trying to download from yourself!"
 msgstr ""
 
-#: ../QueueManager.cpp:787
+#: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
 msgstr ""
 
-#: ../QueueManager.cpp:791
+#: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
 msgstr ""
 
-#: ../QueueManager.cpp:828 ../QueueManager.cpp:837
+#: ../QueueManager.cpp:843 ../QueueManager.cpp:852
 msgid "Target filename too long"
 msgstr "Xede fitxategi izena luzeegia"
 
-#: ../QueueManager.cpp:833 ../QueueManager.cpp:841
+#: ../QueueManager.cpp:848 ../QueueManager.cpp:856
 msgid ""
 "Invalid target file (missing directory, check default download directory "
 "setting)"
 msgstr ""
 
-#: ../QueueManager.cpp:849
+#: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
 msgstr "Fitxategia lehendik existitzen da xede tokian"
 
-#: ../QueueManager.cpp:862 ../QueueManager.cpp:866
+#: ../QueueManager.cpp:877 ../QueueManager.cpp:881
 msgid "Duplicate source: %1%"
 msgstr ""
 
-#: ../QueueManager.cpp:1144
+#: ../QueueManager.cpp:1162
 msgid "Target removed"
 msgstr "Xedea kendu"
 
-#: ../QueueManager.cpp:1152
+#: ../QueueManager.cpp:1170
 msgid "Target file is missing or wrong size"
 msgstr "Helburuko fitxategia falta da edo okerreko tamaina"
 
-#: ../QueueManager.cpp:1201
+#: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
 msgstr ""
 
-#: ../QueueManager.cpp:1204
+#: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
 msgstr ""
 
-#: ../QueueManager.cpp:1402
+#: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
 msgstr ""
 
-#: ../QueueManager.cpp:1424
+#: ../QueueManager.cpp:1442
 msgid "%1%: Matched %2% file"
-msgstr ""
+msgid_plural "%1%: Matched %2% files"
+msgstr[0] "%1%: Bat datorren %2% fitxategi aurkitu da"
+msgstr[1] "%1%: Bat datozen %2% fitxategi aurkitu dira"
 
-#: ../QueueManager.cpp:1794
+#: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
 msgstr ""
 
-#: ../QueueManager.cpp:2027 ../QueueManager.cpp:2036
+#: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
 msgstr "CRC32 koherentzia eza (SFV-Egiaztatu)"
 
-#: ../QueueManager.cpp:2210
+#: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
 msgstr ""
 
-#: ../SSLSocket.cpp:203
-msgid "SSL Error: %1% (%2%, %3%)"
+#: ../SSLSocket.cpp:395
+msgid ""
+"SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 msgstr ""
 
-#: ../SearchManager.cpp:37
+#: ../SearchManager.cpp:55
 msgid "Any"
 msgstr "Edozein"
 
-#: ../SearchManager.cpp:38
+#: ../SearchManager.cpp:56
 msgid "Audio"
 msgstr "Soinu"
 
-#: ../SearchManager.cpp:39
+#: ../SearchManager.cpp:57
 msgid "Compressed"
 msgstr "Komprimitutakoak"
 
-#: ../SearchManager.cpp:40
+#: ../SearchManager.cpp:58
 msgid "Document"
 msgstr "Dokumentuak"
 
-#: ../SearchManager.cpp:41
+#: ../SearchManager.cpp:59
 msgid "Executable"
 msgstr "Exekutagarriak"
 
-#: ../SearchManager.cpp:42
+#: ../SearchManager.cpp:60
 msgid "Picture"
 msgstr "Irudiak"
 
-#: ../SearchManager.cpp:43
+#: ../SearchManager.cpp:61
 msgid "Video"
 msgstr "Bideoak"
 
-#: ../SearchManager.cpp:44
+#: ../SearchManager.cpp:62
 msgid "Directory"
 msgstr "Direktorioak"
 
-#: ../SearchManager.cpp:45
+#: ../SearchManager.cpp:63
 msgid "TTH"
 msgstr "TTH"
 
-#: ../SearchManager.cpp:46
+#: ../SearchManager.cpp:64
 msgid "CD Image"
 msgstr "CD irudia"
 
-#: ../SearchManager.cpp:148
+#: ../SearchManager.cpp:173
 msgid "Search enabled again"
 msgstr "Bilatu gaituta berriro"
 
-#: ../SearchManager.cpp:156
+#: ../SearchManager.cpp:181
 msgid "Search disabled: %1%"
 msgstr ""
 
-#: ../SettingsManager.cpp:187
+#: ../SettingsManager.cpp:260
 msgid "downloaded from"
 msgstr ""
 
-#: ../SettingsManager.cpp:540
+#: ../SettingsManager.cpp:635
 msgid "Invalid search type name"
 msgstr ""
 
-#: ../SettingsManager.cpp:544 ../SettingsManager.cpp:566
+#: ../SettingsManager.cpp:639 ../SettingsManager.cpp:661
 msgid "This search type already exists"
 msgstr ""
 
-#: ../SettingsManager.cpp:598
+#: ../SettingsManager.cpp:693
 msgid "No such search type"
 msgstr ""
 
-#: ../SettingsManager.cpp:626 ../SettingsManager.cpp:631
+#: ../SettingsManager.cpp:721 ../SettingsManager.cpp:726
 msgid "Error: setting not found!"
 msgstr ""
 
-#: ../SettingsManager.cpp:626
+#: ../SettingsManager.cpp:721
 msgid "Core setting "
 msgstr "Muinaren ezarpena"
 
-#: ../SettingsManager.cpp:631
+#: ../SettingsManager.cpp:726
 msgid "Change core setting "
 msgstr "Aldatu muinaren ezarpena"
 
-#: ../ShareManager.cpp:452
+#: ../ShareManager.cpp:803
 msgid "No directory specified"
 msgstr ""
 
-#: ../ShareManager.cpp:456
+#: ../ShareManager.cpp:815
 msgid "Directory is hidden"
 msgstr "Eskutatutako direktorioa"
 
-#: ../ShareManager.cpp:460
+#: ../ShareManager.cpp:819
 msgid "The temporary download directory cannot be shared"
 msgstr ""
 
-#: ../ShareManager.cpp:651
+#: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
 msgstr ""
 
-#: ../ShareManager.cpp:670
+#: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
 msgstr ""
 
-#: ../ShareManager.cpp:691
+#: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
 msgstr ""
 
-#: ../ShareManager.cpp:781
+#: ../ShareManager.cpp:1147
 msgid ""
 "Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: "
 "%3%"
 msgstr ""
 
-#: ../ShareManager.cpp:803
+#: ../ShareManager.cpp:1169
 msgid ""
 "File list refresh in progress, please wait for it to finish before trying to "
 "refresh again"
 msgstr ""
 
-#: ../ShareManager.cpp:824
+#: ../ShareManager.cpp:1190
 msgid "File list refresh failed: %1%"
 msgstr ""
 
-#: ../ShareManager.cpp:845
+#: ../ShareManager.cpp:1217
 msgid "File list refresh initiated"
 msgstr ""
 
-#: ../ShareManager.cpp:870
+#: ../ShareManager.cpp:1245
 msgid "File list refresh finished"
 msgstr ""
 
-#: ../ShareManager.cpp:952
+#: ../ShareManager.cpp:1246
+msgid "File list refresh discarded because shared directories changed"
+msgstr ""
+
+#: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
 msgstr ""
 
-#: ../Socket.cpp:85
+#: ../Socket.cpp:164
 #, c-format
 msgid "Unknown error: 0x%1$x"
 msgstr ""
 
-#: ../Socket.cpp:228 ../Socket.cpp:236 ../Socket.cpp:269 ../Socket.cpp:273
-#: ../Socket.cpp:297 ../Socket.cpp:312
+#: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
+#: ../Socket.cpp:1723
+msgid "Unsupported Shadowsocks cipher"
+msgstr ""
+
+#: ../Socket.cpp:521
+msgid "Failed to initialize Shadowsocks key derivation"
+msgstr ""
+
+#: ../Socket.cpp:558
+msgid "Failed to derive Shadowsocks subkey"
+msgstr ""
+
+#: ../Socket.cpp:586
+msgid "Failed to initialize Shadowsocks encryption"
+msgstr ""
+
+#: ../Socket.cpp:595
+msgid "Shadowsocks encryption failed"
+msgstr ""
+
+#: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
+#: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
+#: ../Socket.cpp:860 ../Socket.cpp:930 ../Socket.cpp:945
 msgid "The socks server failed establish a connection"
 msgstr ""
 
-#: ../Socket.cpp:301
+#: ../Socket.cpp:889 ../Socket.cpp:899
+msgid "The Shadowsocks server failed to establish a connection"
+msgstr ""
+
+#: ../Socket.cpp:892
+msgid "No Shadowsocks password configured"
+msgstr ""
+
+#: ../Socket.cpp:904 ../Socket.cpp:1970
+msgid "The Shadowsocks target address is invalid"
+msgstr ""
+
+#: ../Socket.cpp:934
 msgid "The socks server requires authentication"
 msgstr ""
 
-#: ../Socket.cpp:315
+#: ../Socket.cpp:948
 msgid "The socks server doesn't support login / password authentication"
 msgstr ""
 
-#: ../Socket.cpp:329 ../Socket.cpp:333
+#: ../Socket.cpp:962 ../Socket.cpp:966
 msgid "Socks server authentication failed (bad login / password?)"
 msgstr ""
 
-#: ../Socket.cpp:518
+#: ../Socket.cpp:983
+msgid "Failed to initialize SOCKS TLS context"
+msgstr ""
+
+#: ../Socket.cpp:994
+msgid "Failed to initialize SOCKS TLS session"
+msgstr ""
+
+#: ../Socket.cpp:1015
+msgid "Failed to attach SOCKS TLS session to socket"
+msgstr ""
+
+#: ../Socket.cpp:1033
+msgid "SOCKS TLS handshake timed out"
+msgstr ""
+
+#: ../Socket.cpp:1043
+msgid "SOCKS TLS handshake failed: %1%"
+msgstr ""
+
+#: ../Socket.cpp:1073
+msgid "SOCKS TLS read failed: %1%"
+msgstr ""
+
+#: ../Socket.cpp:1102
+msgid "SOCKS TLS write failed: %1%"
+msgstr ""
+
+#: ../Socket.cpp:1270 ../Socket.cpp:1293
+msgid "Shadowsocks UDP relay response is invalid"
+msgstr ""
+
+#: ../Socket.cpp:1280 ../Socket.cpp:1307
+msgid "Shadowsocks UDP relay response address is invalid"
+msgstr ""
+
+#: ../Socket.cpp:1302
+msgid "Shadowsocks UDP relay response decryption failed"
+msgstr ""
+
+#: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
+msgid "Failed to create Shadowsocks salt"
+msgstr ""
+
+#: ../Socket.cpp:1590
+msgid "Failed to create Shadowsocks padding"
+msgstr ""
+
+#: ../Socket.cpp:1753 ../Socket.cpp:1771
+msgid "Shadowsocks decryption failed"
+msgstr ""
+
+#: ../Socket.cpp:1759
+msgid "Invalid Shadowsocks payload size"
+msgstr ""
+
+#: ../Socket.cpp:1879
+msgid "Shadowsocks stream ended with an incomplete frame"
+msgstr ""
+
+#: ../Socket.cpp:1908
+msgid "Failed to create Shadowsocks UDP session"
+msgstr ""
+
+#: ../Socket.cpp:1959
+msgid "Shadowsocks UDP relay is disabled"
+msgstr ""
+
+#: ../Socket.cpp:1965
+msgid "Shadowsocks UDP relay is not configured"
+msgstr ""
+
+#: ../Socket.cpp:1979
+msgid "Failed to create Shadowsocks UDP nonce"
+msgstr ""
+
+#: ../Socket.cpp:1983
+msgid "Shadowsocks UDP packet counter exhausted"
+msgstr ""
+
+#: ../Socket.cpp:2043
 msgid ""
 "Failed to set up the socks server for UDP relay (check socks address and "
 "port)"
 msgstr ""
 
-#: ../Thread.cpp:29 ../Thread.cpp:37
-msgid "Unable to create thread"
+#: ../Socket.cpp:2049
+msgid "The SOCKS5 UDP target address is invalid"
 msgstr ""
 
-#: ../UploadManager.cpp:134
+#: ../UploadManager.cpp:136
 msgid "Connection already exists."
 msgstr "Konexioa badago lehendik."
 
-#: ../UploadManager.cpp:269
+#: ../UploadManager.cpp:271 ../UploadManager.cpp:275
+#: ../UploadManager.cpp:347
 msgid "Unable to send file %1%: %2%"
 msgstr ""
 
-#: ../UploadManager.cpp:549
+#: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
 msgstr ""
 
-#: ../UploadManager.cpp:617
+#: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
 msgstr ""
 
-#: ../UserConnection.cpp:56 ../UserConnection.cpp:71 ../UserConnection.cpp:145
+#: ../UserConnection.cpp:58 ../UserConnection.cpp:73
+#: ../UserConnection.cpp:147
 msgid "Invalid data"
 msgstr "Datu baliogabeak"
 
-#: ../UserConnection.cpp:62
+#: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
 msgstr ""
 
-#: ../Util.cpp:733
+#: ../Util.cpp:862
 #, c-format
 msgid "%d B"
 msgstr "%d B"
 
-#: ../Util.cpp:735
+#: ../Util.cpp:864
 #, c-format
 msgid "%.02f KiB"
 msgstr "%.02f KiB"
 
-#: ../Util.cpp:735
+#: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
 msgstr ""
 
-#: ../Util.cpp:737
+#: ../Util.cpp:866
 #, c-format
 msgid "%.02f MiB"
 msgstr "%.02f MiB"
 
-#: ../Util.cpp:737
+#: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
 msgstr ""
 
-#: ../Util.cpp:739
+#: ../Util.cpp:868
 #, c-format
 msgid "%.02f GiB"
 msgstr "%.02f GiB"
 
-#: ../Util.cpp:739
+#: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
 msgstr ""
 
-#: ../Util.cpp:741
+#: ../Util.cpp:870
 #, c-format
 msgid "%.02f TiB"
 msgstr "%.02f TiB"
 
-#: ../Util.cpp:741
+#: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
 msgstr ""
 
-#: ../Util.cpp:743
+#: ../Util.cpp:872
 #, c-format
 msgid "%.02f PiB"
 msgstr "%.02f PiB"
 
-#: ../Util.cpp:743
+#: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
 msgstr ""
 
-#: ../Util.cpp:777
+#: ../Util.cpp:906
 #, c-format
 msgid "%s B"
 msgstr "%s B"
 
-#: ../Util.cpp:781
+#: ../Util.cpp:910
 #, c-format
 msgid "%'lld B"
 msgstr "%'lld B"
@@ -755,46 +904,47 @@ msgstr "%'lld B"
 msgid "TTH inconsistency"
 msgstr "TTH koherentzia eza"
 
-#: ../Streams.h:157
+#: ../Streams.h:159
 msgid "More bytes written than requested"
 msgstr ""
 
-#: ../../dht/BootstrapManager.cpp:50
+#: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
 msgstr ""
 
-#: ../../dht/BootstrapManager.cpp:113
-msgid "DHT bootstrapping is finished successfully."
-msgstr ""
-
-#: ../../dht/BootstrapManager.cpp:117 ../../dht/BootstrapManager.cpp:124
+#: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
+#: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
 msgstr ""
 
-#: ../../dht/DHT.cpp:530
+#: ../../dht/BootstrapManager.cpp:225
+msgid "DHT bootstrapping is finished successfully."
+msgstr ""
+
+#: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
 msgstr ""
 
-#: ../../dht/DHT.cpp:535
+#: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
 msgstr ""
 
-#: ../../dht/DHT.cpp:590
+#: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
 msgstr ""
 
-#: ../../dht/DHT.cpp:596
+#: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
 msgstr ""
 
-#: ../../dht/UDPSocket.cpp:247
+#: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
 msgstr ""
 
-#: ../../dht/UDPSocket.cpp:258
+#: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
 msgstr ""
 
-#: ../ConnectionManager.cpp:185 ../QueueManager.cpp:887
-msgid "Cannot download from passive user while you are in passive mode"
-msgstr "Ezin da erabiltzaile pasibo batetik deskargatu modu pasiboan zauden bitartean"
+#: ../ShareManager.cpp:526
+msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
+msgstr "Ezin da gordetako DC++ hashen cachea baliogabetu. Egiaztatu profilaren karpetaren baimenak berrabiarazi aurretik."

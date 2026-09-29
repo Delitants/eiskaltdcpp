@@ -3,6 +3,9 @@
 #include "LiveLogModel.h"
 
 #include <QDateTime>
+#include <QAbstractItemModelTester>
+#include <QPersistentModelIndex>
+#include <QSignalSpy>
 
 #include <array>
 
@@ -15,6 +18,90 @@ dcpp::LogEntry entry(uint64_t sequence, time_t timestamp, dcpp::LogManager::Area
 }
 
 } // namespace
+
+TEST_CASE("LiveLogModel inserts a catch-up batch with one row notification",
+    "[livelog][batch]")
+{
+    LiveLogModel model;
+    QAbstractItemModelTester tester(&model, QAbstractItemModelTester::FailureReportingMode::Fatal);
+    QSignalSpy inserted(&model, &QAbstractItemModel::rowsInserted);
+    QSignalSpy reset(&model, &QAbstractItemModel::modelReset);
+    model.appendNewEntries({
+        entry(1, 1, dcpp::LogManager::SYSTEM, "one"),
+        entry(2, 2, dcpp::LogManager::STATUS, "two"),
+        entry(2, 2, dcpp::LogManager::STATUS, "duplicate"),
+        entry(3, 3, dcpp::LogManager::SYSTEM, "three")});
+    REQUIRE(model.rowCount() == 3);
+    CHECK(inserted.count() == 1);
+    CHECK(reset.isEmpty());
+}
+
+TEST_CASE("LiveLogModel retains persistent rows when the history rolls over",
+    "[livelog][batch]")
+{
+    LiveLogModel model;
+    dcpp::LogManager::EntryList history;
+    for(uint64_t i = 1; i <= 5000; ++i)
+        history.push_back(entry(i, i, dcpp::LogManager::SYSTEM, std::to_string(i)));
+    model.replaceEntries(history);
+    QAbstractItemModelTester tester(&model, QAbstractItemModelTester::FailureReportingMode::Fatal);
+    QPersistentModelIndex retained(model.index(20, LiveLogModel::Message));
+    QPersistentModelIndex removed(model.index(0, LiveLogModel::Message));
+    QSignalSpy resets(&model, &QAbstractItemModel::modelReset);
+    QSignalSpy removals(&model, &QAbstractItemModel::rowsRemoved);
+    QSignalSpy inserts(&model, &QAbstractItemModel::rowsInserted);
+
+    model.appendNewEntries({
+        entry(5001, 5001, dcpp::LogManager::SYSTEM, "new one"),
+        entry(5002, 5002, dcpp::LogManager::STATUS, "new two")});
+
+    CHECK(model.rowCount() == 5000);
+    CHECK(resets.isEmpty());
+    CHECK(removals.count() == 1);
+    CHECK(inserts.count() == 1);
+    CHECK_FALSE(removed.isValid());
+    REQUIRE(retained.isValid());
+    CHECK(retained.row() == 18);
+    CHECK(retained.data().toString() == "21");
+    CHECK(model.data(model.index(4999, LiveLogModel::Message)).toString() == "new two");
+}
+
+TEST_CASE("LiveLogModel batches filtered retention and oversized catch-up",
+    "[livelog][batch]")
+{
+    LiveLogModel model;
+    model.setCategoryMask(LiveLogModel::categoryBit(dcpp::LogManager::STATUS));
+    QAbstractItemModelTester tester(&model, QAbstractItemModelTester::FailureReportingMode::Fatal);
+    dcpp::LogManager::EntryList history;
+    for(uint64_t i = 1; i <= 6000; ++i)
+        history.push_back(entry(i, i, i % 2 ? dcpp::LogManager::SYSTEM :
+            dcpp::LogManager::STATUS, std::to_string(i)));
+    QSignalSpy resets(&model, &QAbstractItemModel::modelReset);
+    QSignalSpy inserted(&model, &QAbstractItemModel::rowsInserted);
+    model.appendNewEntries(history);
+    REQUIRE(model.rowCount() == 2500);
+    CHECK(model.lastSequence() == 6000);
+    CHECK(model.data(model.index(0, LiveLogModel::Message)).toString() == "1002");
+    CHECK(resets.isEmpty());
+    CHECK(inserted.count() == 1);
+    QPersistentModelIndex kept(model.index(0, LiveLogModel::Message));
+    model.appendEntry(entry(6001, 6001, dcpp::LogManager::SYSTEM, "hidden"));
+    REQUIRE(kept.isValid());
+    CHECK(kept.row() == 0);
+    CHECK(kept.data().toString() == "1002");
+    model.appendEntry(entry(6002, 6002, dcpp::LogManager::STATUS, "visible"));
+    CHECK_FALSE(kept.isValid());
+    CHECK(model.rowCount() == 2500);
+    CHECK(model.data(model.index(0, LiveLogModel::Message)).toString() == "1004");
+    CHECK(resets.isEmpty());
+
+    model.clearThroughSequence(6002);
+    model.appendNewEntries(history);
+    CHECK(model.rowCount() == 0);
+    CHECK(model.lastSequence() == 6002);
+    model.setCategoryMask(LiveLogModel::allCategoryMask());
+    CHECK(model.rowCount() == 0);
+}
 
 TEST_CASE("LiveLogModel exposes time category and message columns", "[livelog][model]")
 {

@@ -53,6 +53,7 @@ class SSLSocket : public Socket
 public:
     static void setSNIHint(const std::string& host);
     static void clearSNIHint();
+    static bool tlsReadResultMeansClosed(int ret, int sslError, unsigned long opensslError);
     virtual ~SSLSocket() { }
 
     virtual void accept(const Socket& listeningSocket);

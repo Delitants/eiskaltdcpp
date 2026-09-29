@@ -22,6 +22,7 @@
 #include "QtContext.h"
 #include "QtContextAware.h"
 #include "MainWindow.h"
+#include "PendingOpenEvents.h"
 #include "qtsingleapp/qtsinglecoreapplication.h"
 #include "WulforSettings.h"
 #include "dcpp/Util.h"
@@ -81,7 +82,7 @@ protected:
         case QEvent::FileOpen: {
             auto *foe = static_cast<QFileOpenEvent *>(event);
             if (foe)
-                emit fileOpenRequested(foe->file());
+                emit fileOpenRequested(PendingOpenEvents::nativeSource(foe->file(), foe->url()));
             break;
         }
         default:
@@ -131,10 +132,15 @@ public:
         installEventFilter(dockFilter_);
 
         QObject::connect(dockFilter_, &EiskaltEventFilter::fileOpenRequested,
-                         this, &EiskaltApp::fileOpenRequested);
+                         this, [this](const QString &source) {
+            if (pendingOpenEvents_.enqueue(source))
+                emit fileOpenRequested(source);
+        });
         QObject::connect(dockFilter_, &EiskaltEventFilter::clickedOnDock,
                          this, &EiskaltApp::handleDockClick);
     }
+
+    PendingOpenEvents &pendingOpenEvents() { return pendingOpenEvents_; }
 
 signals:
     void fileOpenRequested(const QString &path);
@@ -198,5 +204,6 @@ protected:
     void saveState(QSessionManager &) {}
 
 private:
+    PendingOpenEvents pendingOpenEvents_;
     EiskaltEventFilter *dockFilter_ = nullptr;
 };

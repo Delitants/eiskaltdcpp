@@ -11,6 +11,7 @@
  */
 
 #include "Notification.h"
+#include "AppIconTheme.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
 
@@ -446,7 +447,9 @@ void DBusNotifyModule::showMessage(const QString &title, const QString &msg, QOb
     QVariantList args;
     args << QString("EiskaltDC++");
     args << QVariant::fromValue(uint(0));
-    args << QVariant(qtCtx()->wulforUtil()->getAppIconsPath() + "/" + "icon_appl_big.png");
+    const auto iconPath = app_icon_theme::localFilePath(app_icon_theme::assetPath(
+        qtCtx()->wulforUtil()->getAppIconsPath(), QStringLiteral("icon_appl_big"), qApp->palette()));
+    args << (iconPath.isEmpty() ? QStringLiteral("eiskaltdcpp") : iconPath);
     args << QString(title);
     args << QString(msg);
     args << QStringList();

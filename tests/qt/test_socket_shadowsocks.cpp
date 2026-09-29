@@ -6,6 +6,7 @@
 #include "dcpp/CryptoManager.h"
 #include "dcpp/SSLSocket.h"
 #include "dcpp/Socket.h"
+#include "dcpp/BufferedSocket.h"
 
 #include <atomic>
 #include <array>
@@ -494,7 +495,7 @@ ByteVector makeLegacyFrame(const ByteVector& key, ByteVector& nonce, const std::
 class LegacyShadowsocksServer
 {
 public:
-    enum class ReplyMode { CoalescedFrames, TruncatedPayload };
+    enum class ReplyMode { CoalescedFrames, TruncatedPayload, HeldPartialPayload };
 
     LegacyShadowsocksServer(std::string password, ReplyMode replyMode) :
         password(std::move(password)), replyMode(replyMode)
@@ -602,7 +603,7 @@ private:
                 }
 
                 std::unique_lock<std::mutex> lock(holdMutex);
-                holdOpen.wait_for(lock, std::chrono::milliseconds(600), [this] { return stopping.load(); });
+                holdOpen.wait_for(lock, std::chrono::seconds(5), [this] { return stopping.load(); });
             } else {
                 const std::string payload = "truncated";
                 const uint8_t length[2] = { 0, static_cast<uint8_t>(payload.size()) };
@@ -614,6 +615,10 @@ private:
                 response.insert(response.end(), encryptedPayload.begin(), encryptedPayload.end());
                 if(!sendOnce(client, response)) {
                     protocolFailed = true;
+                }
+                if(replyMode == ReplyMode::HeldPartialPayload) {
+                    std::unique_lock<std::mutex> lock(holdMutex);
+                    holdOpen.wait_for(lock, std::chrono::seconds(5), [this] { return stopping.load(); });
                 }
             }
         } catch(const SocketException&) {
@@ -716,8 +721,8 @@ void appendTestU64(ByteVector& output, uint64_t value)
 class Shadowsocks2022TcpServer
 {
 public:
-    Shadowsocks2022TcpServer(Shadowsocks2022::Method method, ByteVector psk) :
-        method(method), psk(std::move(psk))
+    Shadowsocks2022TcpServer(Shadowsocks2022::Method method, ByteVector psk, bool keepOpen = false) :
+        method(method), psk(std::move(psk)), keepOpen(keepOpen)
     {
         listener.create(Socket::TYPE_TCP, AF_INET);
         listener.setSocketOpt(SO_REUSEADDR, 1);
@@ -729,6 +734,7 @@ public:
     ~Shadowsocks2022TcpServer()
     {
         stopping = true;
+        holdOpen.notify_all();
         listener.disconnect();
         if(worker.joinable()) {
             worker.join();
@@ -856,6 +862,10 @@ private:
             if(!consumeRequest(client, requestSalt) || !sendResponse(client, requestSalt)) {
                 protocolFailed = true;
             }
+            if(keepOpen) {
+                std::unique_lock<std::mutex> lock(holdMutex);
+                holdOpen.wait_for(lock, std::chrono::seconds(5), [this] { return stopping.load(); });
+            }
         } catch(...) {
             if(!stopping) {
                 protocolFailed = true;
@@ -865,6 +875,9 @@ private:
 
     const Shadowsocks2022::Method method;
     const ByteVector psk;
+    const bool keepOpen;
+    std::mutex holdMutex;
+    std::condition_variable holdOpen;
     Socket listener;
     std::atomic<bool> stopping { false };
     std::atomic<bool> protocolFailed { false };
@@ -1036,8 +1049,78 @@ TEST_CASE("Shadowsocks reader drains every complete buffered frame", "[qt][socke
     socket.proxyConnect("example.test", "443", 3000);
 
     REQUIRE(readPlainExactly(socket, 5, 3000) == "first");
+    REQUIRE(socket.wait(100, Socket::WAIT_READ) == Socket::WAIT_READ);
     REQUIRE(readPlainExactly(socket, 6, 100) == "second");
     REQUIRE_FALSE(server.hasProtocolFailed());
+}
+
+TEST_CASE("Shadowsocks partial ciphertext does not report plaintext readiness", "[qt][socket][shadowsocks-buffered]")
+{
+    LegacyShadowsocksServer server("test-password", LegacyShadowsocksServer::ReplyMode::HeldPartialPayload);
+    test::TestContext tc;
+    ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalShadowsocks(*tc.ownedCtx, server.port(), "test-password");
+    Socket socket;
+    socket.setContext(tc.ownedCtx.get());
+    socket.proxyConnect("example.test", "443", 3000);
+    REQUIRE(socket.wait(3000, Socket::WAIT_READ) == Socket::WAIT_READ);
+    char bytes[64];
+    REQUIRE(socket.read(bytes, sizeof(bytes)) == -1);
+    CHECK(socket.wait(100, Socket::WAIT_READ) == Socket::WAIT_NONE);
+    CHECK_FALSE(server.hasProtocolFailed());
+}
+
+TEST_CASE("BufferedSocket dispatches coalesced Shadowsocks replies while the proxy stays idle", "[qt][socket][shadowsocks-buffered]")
+{
+    for(bool modern : {false, true}) {
+        DYNAMIC_SECTION((modern ? "2022" : "Legacy")) {
+            std::unique_ptr<LegacyShadowsocksServer> legacy;
+            std::unique_ptr<Shadowsocks2022TcpServer> updated;
+            if(modern)
+                updated = std::make_unique<Shadowsocks2022TcpServer>(
+                    Shadowsocks2022::Method::Blake3Aes256Gcm, ByteVector(32, 0), true);
+            else
+                legacy = std::make_unique<LegacyShadowsocksServer>(
+                    "test-password", LegacyShadowsocksServer::ReplyMode::CoalescedFrames);
+            test::TestContext tc;
+            ShadowsocksSettingsScope restore(*tc.ownedCtx);
+            tc.ownedCtx->getSettingsManager()->set(SettingsManager::USE_IPV6, false);
+            configureLocalShadowsocks(*tc.ownedCtx, modern ? updated->port() : legacy->port(),
+                modern ? "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" : "test-password",
+                modern ? "2022-blake3-aes-256-gcm" : "aes-256-gcm");
+            struct Listener : BufferedSocketListener {
+                BufferedSocket* socket = nullptr;
+                std::mutex mutex;
+                std::condition_variable changed;
+                string reply, error;
+                void on(Connected) override { socket->write("ping"); }
+                void on(Line, const string& text) override {
+                    std::lock_guard lock(mutex); reply = text; changed.notify_all();
+                }
+                void on(Failed, const string& text) override {
+                    std::lock_guard lock(mutex); error = text; changed.notify_all();
+                }
+            } listener;
+            auto cleanup = [](BufferedSocket* socket) {
+                BufferedSocket::putSocket(socket);
+                BufferedSocket::waitShutdown();
+            };
+            // The delimiter is in the second frame, so delivery requires both.
+            std::unique_ptr<BufferedSocket, decltype(cleanup)> socket(
+                BufferedSocket::getSocket('d', *tc.ownedCtx), cleanup);
+            listener.socket = socket.get();
+            socket->addListener(&listener);
+            socket->connect("example.test", "443", false, false, true, Socket::PROTO_DEFAULT);
+            std::unique_lock lock(listener.mutex);
+            const bool delivered = listener.changed.wait_for(lock, std::chrono::seconds(2), [&] {
+                return !listener.reply.empty() || !listener.error.empty();
+            });
+            INFO(listener.error);
+            CHECK(delivered);
+            CHECK(listener.reply == "firstsecon");
+            CHECK(listener.error.empty());
+        }
+    }
 }
 
 TEST_CASE("Shadowsocks reader reports a truncated encrypted frame", "[qt][socket][shadowsocks]")
@@ -1083,7 +1166,7 @@ TEST_CASE("Socket exchanges TCP through Shadowsocks 2022", "[qt][socket][shadows
         for(size_t i = 0; i < psk.size(); ++i) {
             psk[i] = static_cast<uint8_t>(i);
         }
-        Shadowsocks2022TcpServer server(methodCase.method, psk);
+        Shadowsocks2022TcpServer server(methodCase.method, psk, true);
         test::TestContext tc;
         ShadowsocksSettingsScope cleanup(*tc.ownedCtx);
         configureLocalShadowsocks(*tc.ownedCtx, server.port(),
@@ -1096,6 +1179,7 @@ TEST_CASE("Socket exchanges TCP through Shadowsocks 2022", "[qt][socket][shadows
         socket.writeAll(request.data(), static_cast<int>(request.size()), 3000);
 
         REQUIRE(readPlainExactly(socket, 5, 3000) == "first");
+        REQUIRE(socket.wait(100, Socket::WAIT_READ) == Socket::WAIT_READ);
         REQUIRE(readPlainExactly(socket, 6, 100) == "second");
         REQUIRE(server.receivedPayload() == request);
         REQUIRE_FALSE(server.hasProtocolFailed());
@@ -1885,7 +1969,7 @@ TEST_CASE("Shadowsocks ADC advertisement prefers proxy observed public IP", "[qt
 {
     REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "8.8.8.8" }) == "8.8.8.8");
     REQUIRE(Util::firstPublicIp(StringList{ "203.0.113.10", "8.8.8.8" }) == "8.8.8.8");
-    REQUIRE(Util::firstPublicIp(StringList{ "147.81.150.184", "192.168.4.71" }) == "147.81.150.184");
+    REQUIRE(Util::firstPublicIp(StringList{ "8.8.8.8", "192.168.4.71" }) == "8.8.8.8");
     REQUIRE(Util::firstPublicIp(StringList{ "192.168.4.71", "10.0.0.5" }).empty());
 }
 

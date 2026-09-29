@@ -20,10 +20,58 @@
 #include "stdinc.h"
 #include "Util.h"
 #include "Text.h"
+#include "TimeFormatting.h"
 
 #include <string>
 
 using namespace dcpp;
+
+TEST_CASE("Timestamp formatting bounds repeated empty results", "[Util][time-format]") {
+    std::tm time{};
+    size_t calls = 0;
+    size_t largest = 0;
+    const auto result = detail::formatTimeBuffer("format", time,
+        [&](char*, size_t capacity, const char*, const std::tm*) -> size_t {
+            ++calls;
+            largest = capacity;
+            return 0;
+        });
+    CHECK(result.empty());
+    CHECK(calls == 1001);
+    CHECK(largest == string("format").size() + 256 + 1000 * 64 - 1);
+}
+
+TEST_CASE("Timestamp formatting stops on invalid formats and skips empty input", "[Util][time-format]") {
+    std::tm time{};
+    size_t calls = 0;
+    auto invalid = [&](char*, size_t, const char*, const std::tm*) -> size_t {
+        ++calls;
+        errno = EINVAL;
+        return 0;
+    };
+    CHECK(detail::formatTimeBuffer("format", time, invalid).empty());
+    CHECK(calls == 1);
+    CHECK(detail::formatTimeBuffer("", time, invalid).empty());
+    CHECK(calls == 1);
+}
+
+TEST_CASE("Timestamp formatting grows for valid dates and ignores stale errno", "[Util][time-format]") {
+    std::tm time{};
+    time.tm_year = 124;
+    time.tm_mon = 2;
+    time.tm_mday = 7;
+    string format;
+    string expected;
+    for(int i = 0; i < 400; ++i) {
+        format += "%Y";
+        expected += "2024";
+    }
+    errno = EINVAL;
+    CHECK(detail::formatTimeBuffer(format, time, std::strftime) == expected);
+    CHECK(detail::formatTimeBuffer("%Y-%m-%d", time, std::strftime) == "2024-03-07");
+    CHECK(Util::formatTime("literal", 1700000000) == "literal");
+    CHECK(Util::formatTime("", 1700000000).empty());
+}
 
 // ── formatBytes ─────────────────────────────────────────────────────────
 // Note: formatBytes(int64_t) requires SettingsManager (SETTING macro).

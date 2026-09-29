@@ -49,6 +49,8 @@ void DynDNS::stop()
 }
 
 void DynDNS::Request() {
+    if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
+        return;
     if (CTX_BOOLSETTING(DYNDNS_ENABLE)) {
         html.clear();
         if(CTX_SETTING(OUTGOING_CONNECTIONS) != SettingsManager::OUTGOING_DIRECT) {

@@ -1,0 +1,6 @@
+- [Home](Home.md)
+- [Getting started](Getting-Started.md)
+- [Torrents](Torrents.md)
+- [Proxy and TLS](Proxy-and-TLS.md)
+- [Troubleshooting](Troubleshooting.md)
+- [Development status](Development-Status.md)

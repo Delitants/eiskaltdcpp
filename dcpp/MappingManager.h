@@ -21,6 +21,8 @@
 #include <memory>
 #include <functional>
 #include <vector>
+#include <condition_variable>
+#include <mutex>
 
 #include "Atomic.h"
 #include "forward.h"
@@ -54,15 +56,21 @@ public:
 
 public:
     explicit MappingManager(DCContext& ctx) : ContextAware(ctx), opened(false), portMapping(false) { }
-    virtual ~MappingManager() { join(); }
+    virtual ~MappingManager() { close(); }
 
 private:
 
     typedef std::vector<std::unique_ptr<UPnP>> Impls;
     Impls impls;
 
-    bool opened;
+    std::atomic<bool> opened;
     Atomic<bool,memory_ordering_strong> portMapping;
+    std::mutex renewalMutex;
+    std::condition_variable renewalWake;
+    bool stopping = false;
+
+    void maintainMappings(UPnP& impl);
+    bool isStopping();
 
     int run();
 

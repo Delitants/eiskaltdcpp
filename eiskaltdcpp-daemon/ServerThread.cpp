@@ -903,9 +903,7 @@ void ServerThread::getItemDescbyTarget(const string& target, StringMap& sm) {
 
 void ServerThread::queueClear()
 {
-    QueueItem::StringMap &ll = dcCtx_.getQueueManager()->lockQueue();
-    ll.clear();
-    dcCtx_.getQueueManager()->unlockQueue();
+    dcCtx_.getQueueManager()->clear();
 }
 
 void ServerThread::getQueueParams(QueueItem* item, StringMap& params) {

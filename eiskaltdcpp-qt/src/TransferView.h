@@ -29,6 +29,7 @@
 
 
 class TransferViewModel;
+class AutoFitColumns;
 
 #include "QtContextAware.h"
 
@@ -83,8 +84,15 @@ private:
 
 public:
     QSize sizeHint() const override;
+#ifdef USE_TORRENT
+    void setTorrentEngine(eiskalt::torrent::TorrentEngine *engine);
+#endif
 
 Q_SIGNALS:
+#ifdef USE_TORRENT
+    void torrentDetailsRequested(const QString &id);
+    void torrentMagnetShareRequested(QStringList ids, bool dc);
+#endif
     /** DownloadManger signals */
     void coreDMRequesting(VarMap);
     void coreDMStarting(VarMap);
@@ -180,4 +188,11 @@ private:
     QString normalizeConnectionFailure(const QString&) const;
 
     TransferViewModel *model;
+    AutoFitColumns *columnLayout = nullptr;
+    QAction *fitColumnsAction = nullptr;
+#ifdef USE_TORRENT
+    void torrentContextMenu(const QModelIndexList &selection);
+    QPointer<eiskalt::torrent::TorrentEngine> torrentEngine;
+    quint64 torrentAttachment = 0;
+#endif
 };

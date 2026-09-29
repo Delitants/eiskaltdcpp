@@ -78,6 +78,8 @@ private:
     string lastBind;
     string lastBind6;
     bool lastUseIPv6;
+    uint64_t lastRouteGeneration = 0;
+    bool lastGost = false;
 };
 
 } // namespace dcpp

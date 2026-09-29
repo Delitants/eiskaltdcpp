@@ -11,6 +11,7 @@
  */
 
 #include "PublicHubs.h"
+#include "ViewLayout.h"
 #include "dcpp/DCPlusPlus.h"
 #include "MainWindow.h"
 #include "WulforSettings.h"
@@ -32,6 +33,8 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     QWidget(parent), proxy(nullptr)
 {
     setupUi(this);
+    label_STATUS->installEventFilter(this);
+    connect(comboBox_HUBS, &QComboBox::currentTextChanged, comboBox_HUBS, &QWidget::setToolTip);
 
     setUnload(false);
 
@@ -39,6 +42,8 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 
     treeView->setModel(model);
     treeView->setItemDelegate(new AutoToolTipDelegate(treeView));
+    treeView->setCursor(Qt::ArrowCursor);
+    treeView->viewport()->setCursor(Qt::ArrowCursor);
     treeView->header()->restoreState(qtCtx()->settings()->getVar(WS_PUBLICHUBS_STATE, QByteArray()).toByteArray());
     treeView->header()->setSectionResizeMode(COLUMN_PHUB_COUNTRY, QHeaderView::ResizeToContents);
 
@@ -63,7 +68,7 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     updateList();
 
     if(dcCtx().getFavoriteManager()->isDownloading()) {
-        label_STATUS->setText(tr("Downloading public hub list..."));
+        setStatus(tr("Downloading public hub list..."));
     } else if(entries.empty()) {
         dcCtx().getFavoriteManager()->refresh();
     }
@@ -103,6 +108,8 @@ PublicHubs::~PublicHubs(){
 }
 
 bool PublicHubs::eventFilter(QObject *obj, QEvent *e){
+    if (obj == label_STATUS && (e->type() == QEvent::Resize || e->type() == QEvent::FontChange))
+        updateStatusText();
     if (e->type() == QEvent::KeyRelease){
         QKeyEvent *k_e = reinterpret_cast<QKeyEvent*>(e);
 
@@ -123,7 +130,15 @@ void PublicHubs::closeEvent(QCloseEvent *e){
 }
 
 void PublicHubs::setStatus(const QString &stat){
-    label_STATUS->setText(stat);
+    statusText = stat;
+    label_STATUS->setToolTip(stat);
+    label_STATUS->setAccessibleName(stat);
+    updateStatusText();
+}
+
+void PublicHubs::updateStatusText() {
+    label_STATUS->setText(label_STATUS->fontMetrics().elidedText(
+        statusText, Qt::ElideRight, label_STATUS->contentsRect().width()));
 }
 
 void PublicHubs::updateList(){
@@ -246,7 +261,7 @@ void PublicHubs::slotDoubleClicked(const QModelIndex &index){
 
 void PublicHubs::slotFilter(){
     if (frame->isVisible()){
-        treeView->setModel(model);
+        view_layout::setModelPreservingHeader(treeView, model);
 
         disconnect(lineEdit_FILTER, &QLineEdit::textChanged, proxy, &QSortFilterProxyModel::setFilterFixedString);
 
@@ -261,7 +276,7 @@ void PublicHubs::slotFilter(){
         proxy->setFilterKeyColumn(comboBox_FILTER->currentIndex());
         proxy->setSourceModel(model);
 
-        treeView->setModel(proxy);
+        view_layout::setModelPreservingHeader(treeView, proxy);
 
         connect(lineEdit_FILTER, &QLineEdit::textChanged, proxy, &QSortFilterProxyModel::setFilterFixedString);
         connect(comboBox_FILTER, qOverload<int>(&QComboBox::currentIndexChanged), this, &PublicHubs::slotFilterColumnChanged);

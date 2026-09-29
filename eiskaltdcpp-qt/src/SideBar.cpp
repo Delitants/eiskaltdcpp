@@ -22,6 +22,9 @@
 #include "SearchFrame.h"
 #include "ShareBrowser.h"
 #include "GlobalTimer.h"
+#ifdef USE_TORRENT
+#include "TorrentToolbar.h"
+#endif
 
 #include "PMWindow.h"
 
@@ -77,6 +80,13 @@ SideBarModel::SideBarModel(QObject *parent) :
     CREATE_ROOT_EL(rootItem, eiOWN_FILELIST,tr("Share Browsers"),   roots,  ShareBrowser);
     CREATE_ROOT_EL(rootItem, eiADLS,        tr("ADLSearch"),        roots,  ADLS);
     CREATE_ROOT_EL(rootItem, eiDOWNLOAD,    tr("Download Queue"),   roots,  Downloads);
+#ifdef USE_TORRENT
+    auto *torrentRoot = new SideBarItem(nullptr, rootItem);
+    torrentRoot->pixmap = torrent_toolbar::icon().pixmap(28, 28);
+    torrentRoot->title = tr("Torrents");
+    roots.insert(ArenaWidget::Torrent, torrentRoot);
+    rootItem->appendChild(torrentRoot);
+#endif
     CREATE_ROOT_EL(rootItem, eiUSERS,       tr("Queued Users"),     roots,  QueuedUsers);
     CREATE_ROOT_EL(rootItem, eiUPLIST,      tr("Finished Uploads"), roots,  FinishedUploads);
     CREATE_ROOT_EL(rootItem, eiDOWNLIST,    tr("Finished Downloads"),roots, FinishedDownloads);
@@ -124,7 +134,7 @@ QVariant SideBarModel::data(const QModelIndex &index, int role) const
         if (!item->getWidget())
             return item->pixmap.scaled(18, 18, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         else
-            return item->getWidget()->getPixmap().scaled(18, 18, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            return item->getWidget()->getIcon();
     }
     case Qt::DisplayRole:
     {
@@ -432,6 +442,9 @@ void SideBarModel::slotSettingsChanged(const QString &key, const QString &value)
         RETRANSLATE_ROOT_EL(tr("Share Browsers"),   roots,  ShareBrowser);
         RETRANSLATE_ROOT_EL(tr("ADLSearch"),        roots,  ADLS);
         RETRANSLATE_ROOT_EL(tr("Download Queue"),   roots,  Downloads);
+#ifdef USE_TORRENT
+        RETRANSLATE_ROOT_EL(tr("Torrents"),         roots,  Torrent);
+#endif
         RETRANSLATE_ROOT_EL(tr("Finished Uploads"), roots,  FinishedUploads);
         RETRANSLATE_ROOT_EL(tr("Finished Downloads"),roots, FinishedDownloads);
         RETRANSLATE_ROOT_EL(tr("Favorite Hubs"),    roots,  FavoriteHubs);

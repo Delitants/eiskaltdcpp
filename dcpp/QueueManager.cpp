@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2001-2012 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2001-2025 Jacek Sieka, arnetheduck on gmail point com
  * Copyright (C) 2018 Boris Pek <tehnick-8@yandex.ru>
  * Copyright (C) 2026 Joe Rivera <transfix@sublevels.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -86,7 +86,7 @@ QueueItem* QueueManager::FileQueue::add(const string& aTarget, int64_t aSize,
         }
     }
 
-    QueueItem* qi = new QueueItem(ctx(), aTarget, aSize, p, aFlags, aAdded, root);
+    auto qi = std::make_unique<QueueItem>(ctx(), aTarget, aSize, p, aFlags, aAdded, root);
 
     if(qi->isSet(QueueItem::FLAG_USER_LIST)) {
         qi->setPriority(QueueItem::HIGHEST);
@@ -94,20 +94,30 @@ QueueItem* QueueManager::FileQueue::add(const string& aTarget, int64_t aSize,
 
     qi->setTempTarget(aTempTarget);
 
-    add(qi);
-    return qi;
+    add(qi.get());
+    return qi.release();
 }
 
 void QueueManager::FileQueue::add(QueueItem* qi) {
-    if(lastInsert == queue.end())
-        lastInsert = queue.emplace(const_cast<string*>(&qi->getTarget()), qi).first;
-    else
-        lastInsert = queue.insert(lastInsert, make_pair(const_cast<string*>(&qi->getTarget()), qi));
+    const auto [position, inserted] = queue.emplace(const_cast<string*>(&qi->getTarget()), qi);
+    if(!inserted) {
+        if(position->second != qi)
+            throw QueueException(_("This file is already queued"));
+        return;
+    }
+    if(tthIndexValid) {
+        try {
+            tthIndex.emplace(qi->getTTH(), qi);
+        } catch(...) {
+            queue.erase(position);
+            throw;
+        }
+    }
 }
 
 void QueueManager::FileQueue::remove(QueueItem* qi) {
-    if(lastInsert != queue.end() && Util::stricmp(*lastInsert->first, qi->getTarget()) == 0)
-        ++lastInsert;
+    if(tthIndexValid)
+        removeTTH(qi);
     queue.erase(const_cast<string*>(&qi->getTarget()));
     delete qi;
 }
@@ -118,14 +128,34 @@ QueueItem* QueueManager::FileQueue::find(const string& target) {
 }
 
 QueueManager::QueueItemList QueueManager::FileQueue::find(const TTHValue& tth) {
+    ensureTTHIndex();
     QueueItemList ql;
-    for(auto& i: queue) {
-        auto qi = i.second;
-        if(qi->getTTH() == tth) {
-            ql.push_back(qi);
+    const auto range = tthIndex.equal_range(tth);
+    for(auto i = range.first; i != range.second; ++i)
+        ql.push_back(i->second);
+    return ql;
+}
+
+// Adapted from DC++ Experimental 0.8841: build lazily, then maintain on mutation.
+void QueueManager::FileQueue::ensureTTHIndex() {
+    if(tthIndexValid)
+        return;
+    TTHIndex index;
+    index.reserve(queue.size());
+    for(const auto& item : queue)
+        index.emplace(item.second->getTTH(), item.second);
+    tthIndex.swap(index);
+    tthIndexValid = true;
+}
+
+void QueueManager::FileQueue::removeTTH(QueueItem* qi) {
+    const auto range = tthIndex.equal_range(qi->getTTH());
+    for(auto i = range.first; i != range.second; ++i) {
+        if(i->second == qi) {
+            tthIndex.erase(i);
+            return;
         }
     }
-    return ql;
 }
 
 static QueueItem* findCandidate(DCContext& ctx, QueueItem* cand, QueueItem::StringIter start, QueueItem::StringIter end, const StringList& recent) {
@@ -174,11 +204,21 @@ QueueItem* QueueManager::FileQueue::findAutoSearch(StringList& recent) {
 }
 
 void QueueManager::FileQueue::move(QueueItem* qi, const string& aTarget) {
-    if(lastInsert != queue.end() && Util::stricmp(*lastInsert->first, qi->getTarget()) == 0)
-        lastInsert = queue.end();
-    queue.erase(const_cast<string*>(&qi->getTarget()));
-    qi->setTarget(aTarget);
-    add(qi);
+    const auto existing = find(aTarget);
+    if(existing && existing != qi)
+        throw QueueException(_("This file is already queued"));
+    auto node = queue.extract(const_cast<string*>(&qi->getTarget()));
+    if(node.empty())
+        return;
+    try {
+        qi->setTarget(aTarget);
+    } catch(...) {
+        queue.insert(std::move(node));
+        throw;
+    }
+    // The item/root identity is unchanged. Reuse the map node, not add(), so
+    // the TTH index cannot acquire a duplicate record for a renamed item.
+    queue.insert(std::move(node));
 }
 
 bool QueueManager::getQueueInfo(const UserPtr& aUser, string& aTarget, int64_t& aSize, int& aFlags) {
@@ -636,8 +676,8 @@ void QueueManager::on(TimerManagerListener::Minute, uint64_t aTick) {
 
         try {
             AdcCommand cmd = ctx().getSearchManager()->toPSR(true, param->myNick, param->hubIpPort, param->tth, param->parts);
-            Socket s;
-            s.writeTo(param->ip, param->udpPort, cmd.toString(ctx().getClientManager()->getMyCID()));
+            ctx().getClientManager()->sendUdp(param->ip, param->udpPort,
+                cmd.toString(ctx().getClientManager()->getMyCID()));
         } catch(...) {
             dcdebug("Partial search caught error\n");
         }
@@ -661,6 +701,19 @@ void QueueManager::on(TimerManagerListener::Minute, uint64_t aTick) {
 
 void QueueManager::addList(const HintedUser& aUser, int aFlags, const string& aInitialDir /* = Util::emptyString */) {
     add(aInitialDir, -1, TTHValue(), aUser, QueueItem::FLAG_USER_LIST | aFlags);
+}
+
+bool QueueManager::rejectPassiveRequest(const HintedUser& aUser, bool warn) {
+    string nick;
+    if(!ctx().getClientManager()->isPassiveDownloadBlocked(aUser, &nick))
+        return false;
+    if(warn) {
+        if(nick.empty())
+            nick = aUser.user->getCID().toBase32();
+        ctx().getLogManager()->warning(string(_("Cannot download from passive user while you are in passive mode")) +
+            ": " + nick);
+    }
+    return true;
 }
 
 string QueueManager::getListPath(const HintedUser& user) {
@@ -697,7 +750,6 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
 
     Lock l(cs);
 
-    // This will be pretty slow on large queues...
     if (CTX_BOOLSETTING(DONT_DL_ALREADY_QUEUED))
     {
         auto ql = fileQueue.find(root);
@@ -734,6 +786,9 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
     if(aUser == ctx().getClientManager()->getMe()) {
         throw QueueException(_("You're trying to download from yourself!"));
     }
+
+    if(rejectPassiveRequest(aUser, !(aFlags & QueueItem::FLAG_MATCH_QUEUE)))
+        return;
 
     // Check if we're not downloading something already in our share
     if(CTX_BOOLSETTING(DONT_DL_ALREADY_SHARED)){
@@ -772,7 +827,7 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
                 for(auto& i : ql) {
                     if(!i->isSource(aUser)) {
                         try {
-                            wantConnection = addSource(i, aUser, addBad ? QueueItem::Source::FLAG_MASK : 0);
+                            wantConnection = addSource(i, aUser, addBad ? QueueItem::Source::FLAG_MASK : 0, false);
                             sourceAdded = true;
                         } catch(...) { }
                     }
@@ -804,7 +859,8 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
             q->setFlag(aFlags);
         }
 
-        wantConnection = addSource(q, aUser, addBad ? QueueItem::Source::FLAG_MASK : 0);
+        // Reachability was checked before any item, flag or source mutation.
+        wantConnection = addSource(q, aUser, addBad ? QueueItem::Source::FLAG_MASK : 0, false);
     }
 
 connect:
@@ -818,6 +874,8 @@ connect:
 }
 
 void QueueManager::readd(const string& target, const HintedUser& aUser) {
+    if(rejectPassiveRequest(aUser))
+        return;
     bool wantConnection = false;
     {
         Lock l(cs);
@@ -867,7 +925,7 @@ string QueueManager::checkTarget(const string& aTarget, bool checkExistence) {
 }
 
 /** Add a source to an existing queue item */
-bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::MaskType addBad) {
+bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::MaskType addBad, bool checkReachability) {
     bool wantConnection = (qi->getPriority() != QueueItem::PAUSED) && !userQueue.getRunning(aUser);
 
     if(qi->isSource(aUser)) {
@@ -881,19 +939,19 @@ bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::Mask
         throw QueueException(str(F_("Duplicate source: %1%") % Util::getFileName(qi->getTarget())));
     }
 
+    const bool blocked = ctx().getClientManager()->isPassiveDownloadBlocked(aUser);
+    if(checkReachability && blocked)
+        throw QueueException(_("Cannot download from passive user while you are in passive mode"));
+
     qi->addSource(aUser);
 
-    if(!ctx().getClientManager()->isActive() && !ctx().getClientManager()->isTcpActive(aUser)) {
-        if(wantConnection) {
-            ctx().getLogManager()->message(_("Cannot download from passive user while you are in passive mode"));
-        }
-        qi->removeSource(aUser, QueueItem::Source::FLAG_PASSIVE);
-        wantConnection = false;
-    } else if(qi->isFinished()) {
+    if(qi->isFinished()) {
         wantConnection = false;
     } else {
         userQueue.add(qi, aUser);
     }
+    if(blocked)
+        wantConnection = false;
 
     fire(QueueManagerListener::SourcesUpdated(), qi);
     setDirty();
@@ -902,6 +960,8 @@ bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::Mask
 }
 
 void QueueManager::addDirectory(const string& aDir, const HintedUser& aUser, const string& aTarget, QueueItem::Priority p /* = QueueItem::DEFAULT */) {
+    if(rejectPassiveRequest(aUser))
+        return;
     bool needList;
     {
         Lock l(cs);
@@ -1043,7 +1103,8 @@ void QueueManager::move(const string& aSource, const string& aTarget) {
 
             for(auto& i: qs->getSources()) {
                 try {
-                    addSource(qt, i.getUser(), QueueItem::Source::FLAG_MASK);
+                    // Merging moves existing state, not a new download request.
+                    addSource(qt, i.getUser(), QueueItem::Source::FLAG_MASK, false);
                 } catch(const Exception&) {
                 }
             }
@@ -1448,6 +1509,18 @@ void QueueManager::recheck(const string& aTarget) {
     rechecker.add(aTarget);
 }
 
+void QueueManager::clear() {
+    StringList targets;
+    {
+        Lock l(cs);
+        targets.reserve(fileQueue.getSize());
+        for(const auto& item : fileQueue.getQueue())
+            targets.push_back(item.second->getTarget());
+    }
+    for(const auto& target : targets)
+        remove(target);
+}
+
 void QueueManager::remove(const string& aTarget) {
     UserList x;
 
@@ -1824,7 +1897,8 @@ void QueueLoader::startTag(const string& name, StringPairList& attribs, bool sim
             try {
                 const string& hubHint = getAttrib(attribs, sHubHint, 1);
                 HintedUser hintedUser(user, hubHint);
-                if(qm->addSource(cur, hintedUser, 0) && user->isOnline())
+                // Restoring existing state must not discard currently unreachable sources.
+                if(qm->addSource(cur, hintedUser, 0, false) && user->isOnline())
                     ctx().getConnectionManager()->getDownloadConnection(hintedUser);
             } catch(const Exception&) {
                 return;

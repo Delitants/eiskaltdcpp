@@ -1,0 +1,17 @@
+--- a/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
++++ b/src/plugins/platforms/cocoa/qcocoasystemtrayicon.mm
+@@ -222,6 +222,14 @@
+ }
+ void QCocoaSystemTrayIcon::emitActivated()
+ {
++    // macOS 27 can open a status menu through a gesture recognizer while
++    // currentEvent is not a mouse event. Backport Qt's upstream event guard;
++    // its qt_mac_isMouseEvent helper wraps cocoaEvent2QtMouseEvent in newer Qt.
++    if (cocoaEvent2QtMouseEvent(NSApp.currentEvent) == QEvent::None) {
++        emit activated(QPlatformSystemTrayIcon::Unknown);
++        return;
++    }
++
+     auto *mouseEvent = NSApp.currentEvent;
+ 
+     auto activationReason = QPlatformSystemTrayIcon::Unknown;

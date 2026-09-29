@@ -11,7 +11,12 @@
  */
 
 #include "TransferView.h"
+#include "ViewLayout.h"
+#include "AutoFitColumns.h"
 #include "TransferViewModel.h"
+#ifdef USE_TORRENT
+#include "TorrentActionMenu.h"
+#endif
 #include "WulforUtil.h"
 #include "WulforSettings.h"
 #include "HubFrame.h"
@@ -22,6 +27,10 @@
 #include "ArenaWidgetFactory.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
+#ifdef USE_TORRENT
+#include "torrent/TorrentEngine.h"
+#include "TorrentToolbar.h"
+#endif
 
 #include "dcpp/Util.h"
 #include "dcpp/User.h"
@@ -44,6 +53,9 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QDir>
+#include <QPersistentModelIndex>
+#include <QThread>
+#include <QSet>
 
 TransferView::Menu::Menu(bool showTransferredFilesOnly):
         menu(new QMenu(nullptr)), selectedColumn(0)
@@ -81,6 +93,9 @@ TransferView::Menu::Menu(bool showTransferredFilesOnly):
     copy_column->addAction(tr("Hub"));
     copy_column->addAction(tr("IP"));
     copy_column->addAction(tr("Encryption"));
+#ifdef USE_TORRENT
+    copy_column->addAction(tr("Protocol"));
+#endif
     copy_column->addAction(tr("Magnet"));
 
     QAction *sep1        = new QAction(menu);
@@ -169,11 +184,16 @@ TransferView::TransferView(dcpp::DCContext& ctx, QWidget *parent):
 }
 
 TransferView::~TransferView(){
+#ifdef USE_TORRENT
+    setTorrentEngine(nullptr);
+#endif
+    QObject::disconnect(treeView_TRANSFERS->header(), nullptr, this, nullptr);
     dcCtx().getQueueManager()->removeListener(this);
     dcCtx().getDownloadManager()->removeListener(this);
     dcCtx().getUploadManager()->removeListener(this);
     dcCtx().getConnectionManager()->removeListener(this);
 
+    delete columnLayout;
     delete model;
 }
 
@@ -200,6 +220,8 @@ void TransferView::hideEvent(QHideEvent *e){
 
 void TransferView::save(){
     qtCtx()->settings()->setStr(WS_TRANSFERS_STATE, treeView_TRANSFERS->header()->saveState().toBase64());
+    if (columnLayout)
+        qtCtx()->settings()->setVar(QStringLiteral("transferview/column-layout-v1"), columnLayout->saveState());
 }
 
 void TransferView::load(){
@@ -208,7 +230,20 @@ void TransferView::load(){
     if (h >= 0)
         resize(this->width(), h);
 
-    treeView_TRANSFERS->header()->restoreState(QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_TRANSFERS_STATE).toUtf8()));
+    auto* header = treeView_TRANSFERS->header();
+    columnLayout->restoreState(qtCtx()->settings()->getVar(QStringLiteral("transferview/column-layout-v1")).toMap(),
+        QByteArray::fromBase64(qtCtx()->settings()->getStr(WS_TRANSFERS_STATE).toUtf8()));
+    header->setStretchLastSection(false);
+#ifdef USE_TORRENT
+    const QString introducedKey = QStringLiteral("transferview/protocol-column-introduced");
+    if (!qtCtx()->settings()->getVar(introducedKey, false).toBool()) {
+        header->showSection(COLUMN_TRANSFER_PROTOCOL);
+        header->moveSection(header->visualIndex(COLUMN_TRANSFER_PROTOCOL), 1);
+        columnLayout->fitToContents(COLUMN_TRANSFER_PROTOCOL);
+        save();
+        qtCtx()->settings()->setVar(introducedKey, true);
+    }
+#endif
 }
 
 QSize TransferView::sizeHint() const{
@@ -232,6 +267,17 @@ void TransferView::init(){
 
     connect(treeView_TRANSFERS, &QTreeView::customContextMenuRequested, this, &TransferView::slotContextMenu);
     connect(treeView_TRANSFERS->header(), &QHeaderView::customContextMenuRequested, this, &TransferView::slotHeaderMenu);
+#ifdef USE_TORRENT
+    connect(treeView_TRANSFERS, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
+        if (!index.isValid())
+            return;
+        const auto *item = static_cast<TransferViewItem *>(index.internalPointer());
+        if (item->isTorrent()) {
+            const QString id = item->torrentId;
+            emit torrentDetailsRequested(id);
+        }
+    });
+#endif
 
     connect(this, &TransferView::coreDMRequesting,     model, &TransferViewModel::initTransfer, Qt::QueuedConnection);
     connect(this, &TransferView::coreDMStarting,       model, &TransferViewModel::updateTransfer, Qt::QueuedConnection);
@@ -254,7 +300,13 @@ void TransferView::init(){
     connect(this, &TransferView::coreUMComplete,       model, &TransferViewModel::updateTransfer, Qt::QueuedConnection);
     connect(this, &TransferView::coreUMFailed,         model, &TransferViewModel::updateTransfer, Qt::QueuedConnection);
 
+    columnLayout = new AutoFitColumns(treeView_TRANSFERS);
+    columnLayout->setObjectName(QStringLiteral("transferAutoFitColumns"));
     load();
+    connect(columnLayout, &AutoFitColumns::layoutChanged, this, &TransferView::save);
+    fitColumnsAction = new QAction(tr("Fit to content"), this);
+    fitColumnsAction->setObjectName(QStringLiteral("fitTransferColumns"));
+    connect(fitColumnsAction, &QAction::triggered, this, [this] { columnLayout->fitToContents(); });
 }
 
 void TransferView::getFileList(const QString &cid, const QString &host){
@@ -371,6 +423,8 @@ void TransferView::downloadComplete(QString target){
 }
 
 QString TransferView::getTTHFromItem(const TransferViewItem *item){
+    if (!item || item->isTorrent())
+        return QString();
     QString tth_str = "";
 
     if (item->download)
@@ -449,6 +503,13 @@ void TransferView::slotContextMenu(const QPoint &){
     if (list.size() < 1)
         return;
 
+    if (!model->dcActionsAllowed(list)) {
+#ifdef USE_TORRENT
+        torrentContextMenu(list);
+#endif
+        return;
+    }
+
     Menu::Action act;
     Menu m(model->getShowTranferedFilesOnlyState());
 
@@ -457,7 +518,8 @@ void TransferView::slotContextMenu(const QPoint &){
 
     list = selection_model->selectedRows(0);
 
-    if (list.size() < 1)
+    // The menu runs an event loop: selection and snapshots may have changed.
+    if (!model->dcActionsAllowed(list))
         return;
 
     QList<TransferViewItem*> items;
@@ -465,9 +527,15 @@ void TransferView::slotContextMenu(const QPoint &){
     for (const auto &index : list){
         TransferViewItem *i = reinterpret_cast<TransferViewItem*>(index.internalPointer());
 
+        if (i->isTorrent())
+            return;
+
         if (i->childCount() > 0){
-            for (const auto &child : i->childItems)
+            for (const auto &child : i->childItems) {
+                if (child->isTorrent())
+                    return;
                 items.append(child);
+            }
         }
         else if (!items.contains(i))
             items.append(i);
@@ -621,8 +689,96 @@ void TransferView::slotContextMenu(const QPoint &){
 }
 
 void TransferView::slotHeaderMenu(const QPoint &){
-    WulforUtil::headerMenu(treeView_TRANSFERS);
+    WulforUtil::headerMenu(treeView_TRANSFERS, {fitColumnsAction});
+    save();
 }
+
+#ifdef USE_TORRENT
+void TransferView::setTorrentEngine(eiskalt::torrent::TorrentEngine *engine)
+{
+    Q_ASSERT(QThread::currentThread() == thread());
+    Q_ASSERT(!engine || engine->thread() == thread());
+    ++torrentAttachment;
+    torrentEngine = engine;
+    model->setTorrentEngine(engine);
+}
+
+void TransferView::torrentContextMenu(const QModelIndexList &selection)
+{
+    QList<QPersistentModelIndex> rows;
+    QSet<QString> ids;
+    for (const auto &index : selection) {
+        if (!index.isValid() || index.model() != model)
+            return;
+        const auto *item = static_cast<TransferViewItem *>(index.internalPointer());
+        if (!item->isTorrent())
+            return; // Mixed selections never dispatch either protocol's commands.
+        rows.append(QPersistentModelIndex(index));
+        ids.insert(item->torrentId);
+    }
+    if (ids.isEmpty())
+        return;
+    QMenu menu;
+    menu.setPalette(palette());
+    menu.setFont(font());
+    QList<eiskalt::torrent::Job> jobs;
+    if (torrentEngine) for (const auto &job : torrentEngine->jobs())
+        if (ids.contains(job.id)) jobs.append(job);
+    if (jobs.isEmpty()) return;
+    const auto currentState = jobs.size() == 1 ? jobs.front().state : tr("Multiple Torrents selected");
+    auto *stateLabel = menu.addAction(tr("Current state: %1").arg(currentState));
+    stateLabel->setEnabled(false);
+    auto *details = menu.addAction(torrent_toolbar::icon(), tr("Torrent details"));
+    details->setEnabled(ids.size() == 1);
+    menu.addSeparator();
+    const auto controls = torrent_action_menu::create(&menu, this);
+    auto *pause = controls.pause;
+    auto *resume = controls.resume;
+    auto *stop = controls.stop;
+    pause->setText(tr("Pause Torrent"));
+    resume->setText(tr("Resume Torrent"));
+    stop->setText(tr("Stop Torrent"));
+    menu.addActions({pause, resume, stop});
+    stop->setToolTip(tr("Stop all Torrent activity until Resume; keep the job and downloaded files."));
+    torrent_action_menu::update(controls, jobs, torrentEngine && torrentEngine->settings().enabled);
+    menu.addSeparator();
+    auto *shareDc = menu.addAction(tr("Paste DC++ magnet(s) in chat"));
+    auto *shareTorrent = menu.addAction(tr("Paste Torrent Magnet(s) in chat"));
+    const auto attachment = torrentAttachment;
+    const auto engine = torrentEngine;
+    const QPointer<TransferView> alive(this);
+    auto *action = menu.exec(QCursor::pos());
+    if (!alive || !action || attachment != torrentAttachment)
+        return;
+    QSet<QString> survivingIds;
+    for (const auto &index : rows) {
+        if (index.isValid()) {
+            const auto *item = static_cast<TransferViewItem *>(index.internalPointer());
+            if (item->isTorrent())
+                survivingIds.insert(item->torrentId);
+        }
+    }
+    if (action == details && survivingIds.size() == 1) {
+        emit torrentDetailsRequested(*survivingIds.cbegin());
+    } else if ((action == shareDc || action == shareTorrent) && !survivingIds.isEmpty()) {
+        emit torrentMagnetShareRequested(survivingIds.values(), action == shareDc);
+    } else if (engine && (action == pause || action == resume || action == stop)) {
+        // Recheck job existence after the menu's nested event loop. The engine's
+        // mutating API is owner-thread only, as is this view's attachment API.
+        for (const auto &job : engine->jobs()) {
+            if (!alive || !engine || attachment != torrentAttachment)
+                break;
+            if (survivingIds.contains(job.id)) {
+                if (action == stop && !job.stopped) engine->stop(job.id);
+                else if (engine->settings().enabled && action == pause && !job.paused && !job.stopped)
+                    engine->pause(job.id, true);
+                else if (engine->settings().enabled && action == resume && (job.paused || job.stopped))
+                    engine->pause(job.id, false);
+            }
+        }
+    }
+}
+#endif
 
 void TransferView::on(dcpp::DownloadManagerListener::Requesting, dcpp::Download* dl) noexcept{
     VarMap params;

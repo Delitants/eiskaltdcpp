@@ -18,11 +18,20 @@
 
 #include "stdinc.h"
 #include "Socket.h"
+#include "GostProtocol.h"
+#include "ProxyRoute.h"
+#include "SocketWake.h"
+#ifndef _WIN32
+#include <poll.h>
+#endif
+#include "ProxyResolver.h"
+#include "GostUdpRelay.h"
 
 #include "format.h"
 #include "SettingsManager.h"
 #include "TimerManager.h"
 #include "XChaCha20Poly1305.h"
+#include "ScopedFunctor.h"
 
 #ifdef __MINGW32__
 #ifndef EADDRNOTAVAIL
@@ -62,10 +71,29 @@
 #include <openssl/md5.h>
 #include <openssl/rand.h>
 #include <openssl/ssl.h>
+#include <openssl/pem.h>
+#include <openssl/x509v3.h>
 
 #include <cctype>
+#include <charconv>
 
 namespace dcpp {
+
+struct Socket::GostUdpState {
+    std::shared_ptr<const ProxyRouteSnapshot> route;
+    std::unique_ptr<GostUdpRelay> relay;
+    uint16_t port = 0;
+    uint64_t nextAttempt = 0, connectedAt = 0;
+    unsigned failures = 0;
+    void failed() {
+        relay.reset();
+        port = 0;
+        if(connectedAt && GET_TICK() - connectedAt >= 30000) failures = 0;
+        nextAttempt = GET_TICK() + std::min<uint64_t>(30000, uint64_t(1000) << std::min(failures, 5u));
+        failures = std::min(failures + 1, 5u);
+        connectedAt = 0;
+    }
+};
 
 Socket::SocksUdpAssociationPtr Socket::udpAssociation;
 std::mutex Socket::udpProxyMutex;
@@ -74,6 +102,13 @@ std::mutex Socket::udpProxySetupMutex;
 #define checkconnected() if(!isConnected()) throw SocketException(ENOTCONN))
 
 namespace {
+int globalProxyMode(DCContext& context) {
+    const auto route = context.getProxyRoute()->snapshot();
+    // Keep the published GOST generation until the entire settings batch is
+    // committed. An outgoing-mode field edited early cannot open a bypass.
+    return route->mode == SettingsManager::OUTGOING_GOST ? route->mode :
+        context.getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS);
+}
 int inferAddressFamily(const string& address) {
     if(address.empty()) {
         return AF_UNSPEC;
@@ -185,6 +220,7 @@ void Socket::create(int aType /* = TYPE_TCP */, int aFamily /* = AF_INET */) {
     }
     type = aType;
     family = aFamily;
+    udpClosing = false;
 
     setBlocking(false);
 
@@ -198,6 +234,40 @@ void Socket::create(int aType /* = TYPE_TCP */, int aFamily /* = AF_INET */) {
 
     if (ctx_ && ctx().getSettingsManager()->get(SettingsManager::IP_TOS_VALUE) != -1)
         setSocketOpt(IP_TOS, IPTOS_TOS(ctx().getSettingsManager()->get(SettingsManager::IP_TOS_VALUE)));
+}
+
+void Socket::setContext(DCContext* value) {
+    ctx_ = value;
+    if(ctx_ && connected && type == TYPE_TCP && !streamProxyOverride)
+        bindGlobalRoute(ctx().getProxyRoute()->snapshot());
+}
+
+void Socket::setWaitWake(std::shared_ptr<SocketWake> wake, std::function<bool()> cancelled) {
+    if(cancelled && !wake) throw SocketException("Socket cancellation requires a wake source");
+    globalRouteSubscription.reset();
+    overrideSubscription.reset();
+    overrideNotifier.reset();
+    waitWake = std::move(wake);
+    waitCancelled = std::move(cancelled);
+}
+
+void Socket::bindGlobalRoute(const std::shared_ptr<const ProxyRouteSnapshot>& route) {
+    globalRouteSubscription.reset();
+    globalRouteRevoked = route->revoked;
+    globalRouteNotifier = route->notifier;
+}
+
+void Socket::prepareWaitWake() {
+    const auto notifier = streamProxyOverride ? streamProxyOverride->cancellationNotifier : nullptr;
+    if(overrideNotifier != notifier) {
+        overrideSubscription.reset();
+        overrideNotifier = notifier;
+    }
+    if(!waitWake && (globalRouteNotifier || overrideNotifier)) waitWake = std::make_shared<SocketWake>();
+    if(globalRouteNotifier && !globalRouteSubscription)
+        globalRouteSubscription = globalRouteNotifier->subscribe(waitWake);
+    if(overrideNotifier && !overrideSubscription)
+        overrideSubscription = overrideNotifier->subscribe(waitWake);
 }
 
 void Socket::accept(const Socket& listeningSocket) {
@@ -299,8 +369,12 @@ const string Socket::bind(const string& aPort, const string& aIp /* = 0.0.0.0 */
         create(type, inferredFamily == AF_UNSPEC ? AF_INET : inferredFamily);
     }
 
-    const string bindIp = aIp.empty() ? (family == AF_INET6 ? "::" : "0.0.0.0") : aIp;
-    const string bindPort = aPort.empty() ? "0" : aPort;
+    const bool gostDatagram = type == TYPE_UDP && ctx_ &&
+        globalProxyMode(ctx()) == SettingsManager::OUTGOING_GOST;
+    const string bindIp = gostDatagram ? (family == AF_INET6 ? "::1" : "127.0.0.1") :
+        (aIp.empty() ? (family == AF_INET6 ? "::" : "0.0.0.0") : aIp);
+    const string bindPort = gostDatagram || aPort.empty() ? "0" : aPort;
+    if(gostDatagram) setBlocking(false);
 
     addrinfo hints = { 0, 0, 0, 0, 0, 0, 0, 0 };
     hints.ai_family = family;
@@ -322,7 +396,7 @@ const string Socket::bind(const string& aPort, const string& aIp /* = 0.0.0.0 */
     }
     freeaddrinfo(result);
 
-    if(!bound) {
+    if(!bound && !gostDatagram) {
         const string fallbackIp = (family == AF_INET6) ? "::" : "0.0.0.0";
         if(bindIp != fallbackIp) {
             dcdebug("Bind failed for %s, retrying with %s: %s\n",
@@ -345,6 +419,8 @@ const string Socket::bind(const string& aPort, const string& aIp /* = 0.0.0.0 */
         check(SOCKET_ERROR);
     }
 
+    if(gostDatagram) gostUdpOriginalBind = std::make_pair(aPort, aIp);
+
     sockaddr_storage sock_addr;
     memset(&sock_addr, 0, sizeof(sock_addr));
     socklen_t size = sizeof(sock_addr);
@@ -359,6 +435,17 @@ void Socket::listen() {
 }
 
 void Socket::connect(const string& aAddr, const string& aPort, const string&) {
+    if(ctx_ && !globalProxyExempt && !streamProxyOverride) {
+        const auto route = ctx().getProxyRoute()->snapshot();
+        if(!route->valid || route->revoked->load())
+            throw SocketException("Global proxy route is unavailable");
+        const int mode = globalProxyMode(ctx());
+        if(mode == SettingsManager::OUTGOING_GOST || mode < SettingsManager::OUTGOING_DIRECT || mode > SettingsManager::OUTGOING_GOST) {
+            proxyConnect(aAddr, aPort, 10000);
+            return;
+        }
+        bindGlobalRoute(route);
+    }
     if(sock == INVALID_SOCKET) {
         int preferredFamily = (ctx_ && ctx().getSettingsManager()->getBool(SettingsManager::USE_IPV6)) ? AF_INET6 : AF_INET;
         const int inferred = inferAddressFamily(aAddr);
@@ -372,6 +459,10 @@ void Socket::connect(const string& aAddr, const string& aPort, const string&) {
     hints.ai_family = family;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
+    if(streamProxyOverride && !streamProxyOverride->connectHost.empty()) {
+        // Resolved adapter endpoints must never re-enter the blocking resolver.
+        hints.ai_flags = AI_NUMERICHOST | AI_NUMERICSERV;
+    }
 #ifdef AI_V4MAPPED
     if(family == AF_INET6) {
         hints.ai_flags |= AI_V4MAPPED;
@@ -425,7 +516,7 @@ inline uint64_t timeLeft(uint64_t start, uint64_t timeout) {
         return 0;
     }
     uint64_t now = GET_TICK();
-    if(start + timeout < now)
+    if(start + timeout <= now)
         throw SocketException(_("Connection timeout"));
     return start + timeout - now;
 }
@@ -731,23 +822,190 @@ bool parseSocksAddress(const ByteVector& in, sockaddr_storage& remote, size_t& p
 }
 }
 
-void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
-    auto* sm = ctx().getSettingsManager();
+Socket::StreamProxyConfig Socket::streamProxyConfig(StreamProxyConfig::Type proxyType) const {
+    if(streamProxyOverride)
+        return *streamProxyOverride;
+    if(!ctx_)
+        throw SocketException("No proxy configuration available");
+    const auto* sm = ctx().getSettingsManager();
+    StreamProxyConfig config;
+    const bool shadowsocks = proxyType == StreamProxyConfig::Shadowsocks;
+    config.type = proxyType;
+    config.host = sm->get(shadowsocks ? SettingsManager::SHADOWSOCKS_SERVER : SettingsManager::SOCKS_SERVER);
+    config.port = sm->get(shadowsocks ? SettingsManager::SHADOWSOCKS_PORT : SettingsManager::SOCKS_PORT);
+    config.user = sm->get(SettingsManager::SOCKS_USER);
+    config.password = sm->get(shadowsocks ? SettingsManager::SHADOWSOCKS_PASSWORD : SettingsManager::SOCKS_PASSWORD);
+    config.cipher = sm->get(SettingsManager::SHADOWSOCKS_METHOD);
+    config.tls = sm->getBool(SettingsManager::SOCKS_TLS, true);
+    config.remoteDns = sm->getBool(SettingsManager::SOCKS_RESOLVE, true);
+    config.verifyTls = false; // Preserve the existing DC transport policy.
+    return config;
+}
 
-    if(sm->get(SettingsManager::SOCKS_SERVER).empty() || sm->get(SettingsManager::SOCKS_PORT) == 0) {
+namespace {
+void validateGostConfig(const Socket::StreamProxyConfig& config) {
+    if(config.type != Socket::StreamProxyConfig::Gost || !config.verifyTls ||
+       config.host.empty() || config.host.size() > 255 || config.host.find('\0') != string::npos ||
+       config.connectHost.find('\0') != string::npos || config.port < 1 || config.port > 65535 ||
+       config.user.empty() || config.user.size() > 255 ||
+       config.password.empty() || config.password.size() > 255 || config.caPem.size() > 1024 * 1024)
+        throw SocketException("Invalid GOST proxy configuration");
+}
+}
+
+void Socket::proxyConnect(const string& aAddr, const string& aPort,
+                          const StreamProxyConfig& config, uint32_t timeout) {
+    if(config.type == StreamProxyConfig::Gost) {
+        try {
+            validateGostConfig(config);
+            unsigned port = 0;
+            const auto parsed = std::from_chars(aPort.data(), aPort.data() + aPort.size(), port);
+            if(parsed.ec != std::errc{} || parsed.ptr != aPort.data() + aPort.size() || !port || port > 65535)
+                throw SocketException("Invalid GOST target port");
+            ByteVector request;
+            try {
+                // Standard empty UDP header has exactly the SOCKS request layout.
+                request = gost::encodeSocks({aAddr, uint16_t(port), {}});
+            } catch(const std::invalid_argument&) {
+                throw SocketException("Invalid GOST target address");
+            }
+            request[0] = 5;
+            request[1] = 1;
+            disconnect();
+            streamProxyOverride = config;
+            const auto start = GET_TICK();
+            gostHandshake(config, timeLeft(start, timeout));
+            gostCommand(request, timeLeft(start, timeout));
+            setIp(aAddr);
+        } catch(...) {
+            disconnect();
+            streamProxyOverride.reset();
+            throw;
+        }
+        return;
+    }
+    if((config.type != StreamProxyConfig::Socks5 && config.type != StreamProxyConfig::Shadowsocks) ||
+       config.host.empty() || config.port < 1 || config.port > 65535 ||
+       (config.type == StreamProxyConfig::Socks5 && (config.user.size() > 255 || config.password.size() > 255)) ||
+       aAddr.empty() || aAddr.size() > 255 || Util::toInt(aPort) < 1 || Util::toInt(aPort) > 65535)
+        throw SocketException("Invalid proxy endpoint or target");
+    streamProxyOverride = config;
+    try {
+        if(config.type == StreamProxyConfig::Socks5)
+            socksConnect(aAddr, aPort, timeout);
+        else
+            shadowsocksConnect(aAddr, aPort, timeout);
+    } catch(...) {
+        disconnect();
+        streamProxyOverride.reset();
+        throw;
+    }
+}
+
+void Socket::gostOpenUdpTunnel(const StreamProxyConfig& config, uint32_t timeout) {
+    try {
+        validateGostConfig(config);
+        disconnect();
+        streamProxyOverride = config;
+        const auto start = GET_TICK();
+        gostHandshake(config, timeLeft(start, timeout));
+        // ATYP=1 pins GOST's relay to udp4. A domain-form wildcard requests
+        // family-neutral UDP; destinations still travel verbatim in frames.
+        gostCommand({5, 0xf3, 0, 3, 7, '0', '.', '0', '.', '0', '.', '0', 0, 0}, timeLeft(start, timeout));
+    } catch(...) {
+        disconnect();
+        streamProxyOverride.reset();
+        throw;
+    }
+}
+
+void Socket::gostHandshake(const StreamProxyConfig& config, uint32_t timeout) {
+    auto stage = SocketException::ProxyStage::None;
+    try {
+        const auto start = GET_TICK();
+        checkProxyCancellation();
+        Socket::connect(config.connectHost.empty() ? config.host : config.connectHost, Util::toString(config.port));
+        if(Socket::wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT)
+            throw SocketException("GOST proxy connection timed out");
+        stage = SocketException::ProxyStage::Negotiation;
+        const uint8_t offer[]{5, 1, 0x82};
+        streamWriteAll(offer, sizeof(offer), timeLeft(start, timeout));
+        uint8_t response[2]{};
+        if(streamReadAll(response, sizeof(response), timeLeft(start, timeout)) != sizeof(response) ||
+           response[0] != 5 || response[1] != 0x82)
+            throw SocketException("GOST TLS-AUTH negotiation failed");
+
+        stage = SocketException::ProxyStage::Certificate;
+        socksStartTls(config.host, timeLeft(start, timeout));
+        stage = SocketException::ProxyStage::Authentication;
+        ByteVector auth{1, uint8_t(config.user.size())};
+        auth.insert(auth.end(), config.user.begin(), config.user.end());
+        auth.push_back(uint8_t(config.password.size()));
+        auth.insert(auth.end(), config.password.begin(), config.password.end());
+        streamWriteAll(auth.data(), auth.size(), timeLeft(start, timeout));
+        if(streamReadAll(response, sizeof(response), timeLeft(start, timeout)) != sizeof(response) ||
+           response[0] != 1 || response[1] != 0)
+            throw SocketException("GOST authentication failed");
+
+    } catch(SocketException& error) {
+        error.setProxyStage(stage);
+        throw;
+    }
+}
+
+void Socket::gostCommand(const ByteVector& request, uint32_t timeout) {
+    try {
+        const auto start = GET_TICK();
+        streamWriteAll(request.data(), request.size(), timeLeft(start, timeout));
+        auto readExact = [&](void* data, int length) {
+            if(streamReadAll(data, length, timeLeft(start, timeout)) != length)
+                throw SocketException("GOST command reply truncated");
+        };
+        uint8_t header[4]{};
+        readExact(header, sizeof(header));
+        if(header[0] != 5 || header[2] != 0)
+            throw SocketException("Invalid GOST command reply");
+        if(header[1] != 0)
+            throw SocketException("GOST command rejected", header[1]);
+        size_t addressLength = 0;
+        if(header[3] == 1) addressLength = 4;
+        else if(header[3] == 4) addressLength = 16;
+        else if(header[3] == 3) {
+            uint8_t length = 0;
+            readExact(&length, 1);
+            if(!length) throw SocketException("Invalid GOST command reply address");
+            addressLength = length;
+        } else throw SocketException("Invalid GOST command reply address");
+        uint8_t bound[257]{};
+        readExact(bound, int(addressLength + 2));
+
+    } catch(SocketException& error) {
+        error.setProxyStage(SocketException::ProxyStage::Tunnel);
+        throw;
+    }
+}
+
+void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
+    const auto config = streamProxyConfig(StreamProxyConfig::Socks5);
+    auto previous = std::move(streamProxyOverride);
+    streamProxyOverride = config;
+    ScopedFunctor([&] { streamProxyOverride = std::move(previous); });
+    checkProxyCancellation();
+
+    if(config.host.empty() || config.port == 0) {
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
     uint64_t start = GET_TICK();
 
-    Socket::connect(sm->get(SettingsManager::SOCKS_SERVER), Util::toString(sm->get(SettingsManager::SOCKS_PORT)));
+    Socket::connect(config.connectHost.empty() ? config.host : config.connectHost, Util::toString(config.port));
 
     if(Socket::wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT) {
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
-    if(sm->getBool(SettingsManager::SOCKS_TLS, true)) {
-        socksStartTls(sm->get(SettingsManager::SOCKS_SERVER), timeLeft(start, timeout));
+    if(config.tls) {
+        socksStartTls(config.host, timeLeft(start, timeout));
     }
 
     socksAuth(timeLeft(start, timeout));
@@ -759,7 +1017,7 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
     connStr.push_back(1);           // Connect
     connStr.push_back(0);           // Reserved
 
-    if(sm->getBool(SettingsManager::SOCKS_RESOLVE, true)) {
+    if(config.remoteDns) {
         connStr.push_back(3);       // Address type: domain name
         connStr.push_back((uint8_t)aAddr.size());
         connStr.insert(connStr.end(), aAddr.begin(), aAddr.end());
@@ -782,8 +1040,11 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
         throw SocketException(_("The socks server failed establish a connection"));
     }
 
-    if(replyHeader[0] != 5 || replyHeader[1] != 0) {
+    if(replyHeader[0] != 5 || replyHeader[2] != 0) {
         throw SocketException(_("The socks server failed establish a connection"));
+    }
+    if(replyHeader[1] != 0) {
+        throw SocketException(_("The socks server failed establish a connection"), replyHeader[1]);
     }
 
     size_t addressLength = 0;
@@ -815,44 +1076,77 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
 }
 
 void Socket::proxyConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
-    auto* sm = ctx().getSettingsManager();
-    switch(sm->get(SettingsManager::OUTGOING_CONNECTIONS)) {
+    const auto snapshot = ctx().getProxyRoute()->snapshot();
+    if(!snapshot->valid || snapshot->revoked->load())
+        throw SocketException("Global proxy route is unavailable");
+    bindGlobalRoute(snapshot);
+    switch(globalProxyMode(ctx())) {
     case SettingsManager::OUTGOING_SOCKS5:
         socksConnect(aAddr, aPort, timeout);
         break;
     case SettingsManager::OUTGOING_SHADOWSOCKS:
         shadowsocksConnect(aAddr, aPort, timeout);
         break;
-    default:
+    case SettingsManager::OUTGOING_GOST: {
+        const auto route = ctx().getProxyRoute()->snapshot();
+        if(!route->valid || route->revoked->load() || route->mode != SettingsManager::OUTGOING_GOST)
+            throw SocketException("Global GOST route is unavailable");
+        auto config = route->proxy;
+        const auto start = GET_TICK();
+        const auto budget = timeout ? std::min<uint32_t>(timeout, 10000) : 10000;
+        const auto endpoints = resolveProxyEndpoint(config.host, budget, [this, cancelled = config.cancelled] {
+            return cancelled() || (waitCancelled && waitCancelled());
+        });
+        for(size_t i = 0; i < endpoints.size(); ++i) {
+            config.connectHost = endpoints[i];
+            try {
+                proxyConnect(aAddr, aPort, config, timeLeft(start, budget));
+                return;
+            } catch(const SocketException& error) {
+                // Only try another proxy address when transport setup failed;
+                // authentication, identity and policy failures are terminal.
+                if(error.getProxyStage() != SocketException::ProxyStage::None ||
+                   config.cancelled() || i + 1 == endpoints.size()) throw;
+            }
+        }
+        throw SocketException("Global GOST route is unavailable");
+    }
+    case SettingsManager::OUTGOING_DIRECT:
         connect(aAddr, aPort);
         break;
+    default:
+        throw SocketException("Unknown global proxy mode");
     }
 }
 
 void Socket::shadowsocksConnect(const string& aAddr, const string& aPort, uint32_t timeout) {
-    auto* sm = ctx().getSettingsManager();
+    const auto config = streamProxyConfig(StreamProxyConfig::Shadowsocks);
+    auto previous = std::move(streamProxyOverride);
+    streamProxyOverride = config;
+    ScopedFunctor([&] { streamProxyOverride = std::move(previous); });
+    checkProxyCancellation();
 
-    if(sm->get(SettingsManager::SHADOWSOCKS_SERVER).empty() || sm->get(SettingsManager::SHADOWSOCKS_PORT) == 0) {
+    if(config.host.empty() || config.port == 0) {
         throw SocketException(_("The Shadowsocks server failed to establish a connection"));
     }
-    if(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD).empty()) {
+    if(config.password.empty()) {
         throw SocketException(_("No Shadowsocks password configured"));
     }
 
     uint64_t start = GET_TICK();
-    Socket::connect(sm->get(SettingsManager::SHADOWSOCKS_SERVER), Util::toString(sm->get(SettingsManager::SHADOWSOCKS_PORT)));
+    Socket::connect(config.connectHost.empty() ? config.host : config.connectHost, Util::toString(config.port));
 
     if(Socket::wait(timeLeft(start, timeout), WAIT_CONNECT) != WAIT_CONNECT) {
         throw SocketException(_("The Shadowsocks server failed to establish a connection"));
     }
 
     ByteVector target;
-    if(!appendSocksAddress(target, aAddr, aPort, sm->getBool(SettingsManager::SOCKS_RESOLVE, true))) {
+    if(!appendSocksAddress(target, aAddr, aPort, config.remoteDns)) {
         throw SocketException(_("The Shadowsocks target address is invalid"));
     }
 
-    const bool targetIncluded = shadowsocksStart(sm->get(SettingsManager::SHADOWSOCKS_METHOD),
-        sm->get(SettingsManager::SHADOWSOCKS_PASSWORD), target, timeLeft(start, timeout));
+    const bool targetIncluded = shadowsocksStart(config.cipher,
+        config.password, target, timeLeft(start, timeout));
     if(!targetIncluded) {
         streamWriteAll(target.data(), target.size(), timeLeft(start, timeout));
     }
@@ -861,11 +1155,11 @@ void Socket::shadowsocksConnect(const string& aAddr, const string& aPort, uint32
 
 void Socket::socksAuth(uint32_t timeout) {
     vector<uint8_t> connStr;
-    auto* sm = ctx().getSettingsManager();
+    const auto config = streamProxyConfig(StreamProxyConfig::Socks5);
 
     uint64_t start = GET_TICK();
 
-    if(sm->get(SettingsManager::SOCKS_USER).empty() && sm->get(SettingsManager::SOCKS_PASSWORD).empty()) {
+    if(config.user.empty() && config.password.empty()) {
         // No username and pw, easier...=)
         connStr.push_back(5);           // SOCKSv5
         connStr.push_back(1);           // 1 method
@@ -898,10 +1192,10 @@ void Socket::socksAuth(uint32_t timeout) {
         connStr.clear();
         // Now we send the username / pw...
         connStr.push_back(1);
-        connStr.push_back((uint8_t)sm->get(SettingsManager::SOCKS_USER).length());
-        connStr.insert(connStr.end(), sm->get(SettingsManager::SOCKS_USER).begin(), sm->get(SettingsManager::SOCKS_USER).end());
-        connStr.push_back((uint8_t)sm->get(SettingsManager::SOCKS_PASSWORD).length());
-        connStr.insert(connStr.end(), sm->get(SettingsManager::SOCKS_PASSWORD).begin(), sm->get(SettingsManager::SOCKS_PASSWORD).end());
+        connStr.push_back((uint8_t)config.user.length());
+        connStr.insert(connStr.end(), config.user.begin(), config.user.end());
+        connStr.push_back((uint8_t)config.password.length());
+        connStr.insert(connStr.end(), config.password.begin(), config.password.end());
 
         streamWriteAll(connStr.data(), connStr.size(), timeLeft(start, timeout));
 
@@ -923,6 +1217,7 @@ void Socket::socksTlsReset() {
 }
 
 void Socket::socksStartTls(const string& serverName, uint32_t timeout) {
+    const uint64_t start = GET_TICK();
     socksTlsReset();
 
     socksTlsContext.reset(SSL_CTX_new(TLS_client_method()));
@@ -930,12 +1225,57 @@ void Socket::socksStartTls(const string& serverName, uint32_t timeout) {
         throw SocketException(_("Failed to initialize SOCKS TLS context"));
     }
 
-    SSL_CTX_set_verify(socksTlsContext, SSL_VERIFY_NONE, nullptr);
+    const bool verifyPeer = streamProxyOverride && streamProxyOverride->verifyTls;
+    const bool gost = streamProxyOverride && streamProxyOverride->type == StreamProxyConfig::Gost;
+    if(gost && (!verifyPeer || SSL_CTX_set_min_proto_version(socksTlsContext, TLS1_2_VERSION) != 1))
+        throw SocketException("Cannot configure mandatory GOST TLS verification");
+    SSL_CTX_set_verify(socksTlsContext, verifyPeer ? SSL_VERIFY_PEER : SSL_VERIFY_NONE, nullptr);
+    if(gost && !streamProxyOverride->caPem.empty()) {
+        const auto& pem = streamProxyOverride->caPem;
+        // Strictly consume a PEM certificate bundle, never fall back on bad input.
+        size_t offset = 0;
+        unsigned count = 0;
+        while(offset < pem.size()) {
+            while(offset < pem.size() && std::isspace(static_cast<unsigned char>(pem[offset]))) ++offset;
+            if(offset == pem.size()) break;
+            constexpr const char* begin = "-----BEGIN CERTIFICATE-----";
+            constexpr const char* end = "-----END CERTIFICATE-----";
+            if(pem.compare(offset, strlen(begin), begin) != 0)
+                throw SocketException("Invalid GOST TLS trust roots");
+            const auto finish = pem.find(end, offset);
+            if(finish == string::npos) throw SocketException("Invalid GOST TLS trust roots");
+            const auto next = finish + strlen(end);
+            // Each bounded block is parsed independently to reject trailing garbage.
+            std::unique_ptr<BIO, decltype(&BIO_free)> block(
+                BIO_new_mem_buf(pem.data() + offset, int(next - offset)), BIO_free);
+            std::unique_ptr<X509, decltype(&X509_free)> cert(
+                block ? PEM_read_bio_X509(block.get(), nullptr, nullptr, nullptr) : nullptr, X509_free);
+            if(!cert || X509_check_ca(cert.get()) <= 0 ||
+               X509_STORE_add_cert(SSL_CTX_get_cert_store(socksTlsContext), cert.get()) != 1)
+                throw SocketException("Invalid GOST TLS trust roots");
+            ++count;
+            offset = next;
+        }
+        if(!count) throw SocketException("Invalid GOST TLS trust roots");
+        ERR_clear_error();
+    } else if(verifyPeer && SSL_CTX_set_default_verify_paths(socksTlsContext) != 1)
+        throw SocketException("Cannot load proxy TLS trust roots");
     SSL_CTX_set_options(socksTlsContext, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 
     socksTls.reset(SSL_new(socksTlsContext));
     if(!socksTls) {
         throw SocketException(_("Failed to initialize SOCKS TLS session"));
+    }
+    if(verifyPeer) {
+        in_addr v4{};
+        in6_addr v6{};
+        const bool ipLiteral = inet_pton(AF_INET, serverName.c_str(), &v4) == 1 ||
+                               inet_pton(AF_INET6, serverName.c_str(), &v6) == 1;
+        const int verified = ipLiteral
+            ? X509_VERIFY_PARAM_set1_ip_asc(SSL_get0_param(socksTls), serverName.c_str())
+            : SSL_set1_host(socksTls, serverName.c_str());
+        if(verified != 1)
+            throw SocketException("Cannot configure proxy TLS identity verification");
     }
 
 #ifndef OPENSSL_NO_TLSEXT
@@ -948,10 +1288,15 @@ void Socket::socksStartTls(const string& serverName, uint32_t timeout) {
         throw SocketException(_("Failed to attach SOCKS TLS session to socket"));
     }
 
-    uint64_t start = GET_TICK();
     while(true) {
+        if(gost) {
+            checkProxyCancellation();
+            timeLeft(start, timeout);
+        }
         const int ret = SSL_connect(socksTls);
         if(ret == 1) {
+            if(gost && (SSL_get_verify_result(socksTls) != X509_V_OK || SSL_version(socksTls) < TLS1_2_VERSION))
+                throw SocketException("GOST TLS certificate verification failed");
             socksTlsActive = true;
             socksTlsWait = WAIT_NONE;
             return;
@@ -1104,6 +1449,7 @@ void Socket::setSocketOpt(int option, int val) {
 }
 
 int Socket::read(void* aBuffer, int aBufLen) {
+    checkProxyCancellation();
     if(socksTlsActive && type == TYPE_TCP) {
         return socksTlsRead(aBuffer, aBufLen);
     }
@@ -1139,6 +1485,10 @@ int Socket::read(void* aBuffer, int aBufLen, sockaddr_storage& remote) {
     dcassert(type == TYPE_UDP);
     if(aBufLen <= 0)
         return 0;
+    if(ctx_ && globalProxyMode(ctx()) == SettingsManager::OUTGOING_GOST)
+        return readGostUdp(aBuffer, aBufLen, remote);
+    if(ctx_ && !ctx().getProxyRoute()->snapshot()->valid)
+        throw SocketException("Global proxy route is unavailable");
 
     bool proxyDatagram = false;
     if(ctx_) {
@@ -1375,14 +1725,16 @@ int Socket::readAll(void* aBuffer, int aBufLen, uint32_t timeout) {
 int Socket::streamReadAll(void* aBuffer, int aBufLen, uint32_t timeout) {
     uint8_t* buf = static_cast<uint8_t*>(aBuffer);
     int i = 0;
+    const uint64_t start = GET_TICK();
     while(i < aBufLen) {
+        timeLeft(start, timeout);
         int j = Socket::read(buf + i, aBufLen - i);
         if(j == 0) {
             return i;
         } else if(j == -1) {
             const int waitFor = tlsWaitTarget(WAIT_READ);
-            if((Socket::wait(timeout, waitFor) & waitFor) != waitFor) {
-                return i;
+            if((Socket::wait(timeLeft(start, timeout), waitFor) & waitFor) != waitFor) {
+                throw SocketException(_("Connection timeout"));
             }
             continue;
         }
@@ -1420,12 +1772,14 @@ void Socket::streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
     const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
     int pos = 0;
     int sendSize = getSocketOptInt(SO_SNDBUF);
+    const uint64_t start = GET_TICK();
 
     while(pos < aLen) {
+        timeLeft(start, timeout);
         int i = Socket::write(buf + pos, static_cast<int>(min(aLen - pos, sendSize)));
         if(i == -1) {
             const int waitFor = tlsWaitTarget(WAIT_WRITE);
-            if((Socket::wait(timeout, waitFor) & waitFor) != waitFor)
+            if((Socket::wait(timeLeft(start, timeout), waitFor) & waitFor) != waitFor)
                 throw SocketException(_("Connection timeout"));
         } else {
             pos += i;
@@ -1433,12 +1787,14 @@ void Socket::streamWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
     }
 
     while(shadowsocksActive && type == TYPE_TCP && !shadowsocksPendingOut.empty()) {
-        if(!shadowsocksFlushPending() && Socket::wait(timeout, WAIT_WRITE) != WAIT_WRITE)
+        timeLeft(start, timeout);
+        if(!flushProxyOutput() && Socket::wait(timeLeft(start, timeout), WAIT_WRITE) != WAIT_WRITE)
             throw SocketException(_("Connection timeout"));
     }
 }
 
 int Socket::write(const void* aBuffer, int aLen) {
+    checkProxyCancellation();
     if(socksTlsActive && type == TYPE_TCP) {
         return socksTlsWrite(aBuffer, aLen);
     }
@@ -1548,11 +1904,14 @@ bool Socket::shadowsocksStart(const string& method, const string& password,
 void Socket::shadowsocksWriteAll(const void* aBuffer, int aLen, uint32_t timeout) {
     const uint8_t* buf = static_cast<const uint8_t*>(aBuffer);
     int pos = 0;
+    const uint64_t start = GET_TICK();
 
     while(pos < aLen) {
+        checkProxyCancellation();
+        timeLeft(start, timeout);
         int sent = rawWrite(buf + pos, aLen - pos);
         if(sent == -1) {
-            if(wait(timeout, WAIT_WRITE) != WAIT_WRITE) {
+            if(wait(timeLeft(start, timeout), WAIT_WRITE) != WAIT_WRITE) {
                 throw SocketException(_("Connection timeout"));
             }
             continue;
@@ -1573,6 +1932,29 @@ bool Socket::shadowsocksFlushPending() {
 
     shadowsocksPendingOut.clear();
     shadowsocksPendingOutPos = 0;
+    return true;
+}
+
+bool Socket::hasPendingProxyOutput() const {
+    return shadowsocksActive && shadowsocksPendingOutPos < shadowsocksPendingOut.size();
+}
+
+bool Socket::flushProxyOutput() {
+    checkProxyCancellation();
+    return !hasPendingProxyOutput() || shadowsocksFlushPending();
+}
+
+bool Socket::shutdownWrite() {
+    if(!flushProxyOutput()) return false;
+    if(socksTlsActive && socksTls) {
+        const int result = SSL_shutdown(socksTls);
+        if(result < 0) {
+            const int error = SSL_get_error(socksTls, result);
+            if(error == SSL_ERROR_WANT_READ || error == SSL_ERROR_WANT_WRITE) return false;
+            throw SocketException("Proxy TLS shutdown failed");
+        }
+    }
+    if(sock != INVALID_SOCKET) check(::shutdown(sock, 1));
     return true;
 }
 
@@ -1825,9 +2207,157 @@ Shadowsocks2022UdpSession& Socket::shadowsocks2022UdpSessionForSettings() {
 * @param aLen Data length
 * @throw SocketExcpetion Send failed.
 */
+bool Socket::hasGostUdpTransport() const {
+    std::lock_guard<std::mutex> lock(gostUdpMutex);
+    return gostUdp && gostUdp->route && !gostUdp->route->revoked->load() &&
+        gostUdp->relay && gostUdp->relay->isRunning();
+}
+
+void Socket::writeGostUdp(const string& address, const string& port, const void* buffer, int length, UdpSendInfo* info) {
+    const auto route = ctx().getProxyRoute()->snapshot();
+    if(!route->valid || route->revoked->load() || route->mode != SettingsManager::OUTGOING_GOST)
+        throw SocketException("Global GOST route is unavailable");
+    unsigned targetPort = 0;
+    const auto parsed = std::from_chars(port.data(), port.data() + port.size(), targetPort);
+    if(parsed.ec != std::errc{} || parsed.ptr != port.data() + port.size() || !targetPort || targetPort > 65535 ||
+       length > static_cast<int>(gost::MaxPayload))
+        throw SocketException("Invalid GOST UDP destination or payload");
+    ByteVector packet;
+    try {
+        const auto* bytes = static_cast<const uint8_t*>(buffer);
+        packet = gost::encodeSocks({address, static_cast<uint16_t>(targetPort), ByteVector(bytes, bytes + length)});
+    } catch(const std::invalid_argument&) { throw SocketException("Invalid GOST UDP destination"); }
+    if(sock == INVALID_SOCKET) {
+        create(TYPE_UDP, AF_INET);
+        bind("0", "");
+    } else if(getLocalPort() == "0") {
+        bind("0", "");
+    }
+    const string local = family == AF_INET6 ? "::1" : "127.0.0.1";
+    const auto bound = getLocalIp();
+    if(type != TYPE_UDP || (bound != local && bound != "0.0.0.0" && bound != "::"))
+        throw SocketException("GOST UDP requires a new loopback-bound socket");
+    std::lock_guard<std::mutex> lock(gostUdpMutex);
+    if(!gostUdp || gostUdp->route != route) {
+        gostUdp.reset();
+        // Discard old-generation replies before opening any replacement relay.
+        std::array<char, 65535> stale{};
+        setBlocking(false);
+        for(unsigned i = 0; i < 4096; ++i)
+            if(::recv(sock, stale.data(), stale.size(), 0) < 0) break;
+        gostUdp = std::make_shared<GostUdpState>();
+        gostUdp->route = route;
+    }
+    auto& state = *gostUdp;
+    if(state.relay && !state.relay->isRunning()) state.failed();
+    if(!state.relay) {
+        if(GET_TICK() < state.nextAttempt) throw SocketException("GOST UDP reconnect backoff is active");
+        try {
+            if(udpClosing || route->revoked->load()) throw SocketException("GOST UDP cancelled");
+            auto slot = ctx().getProxyRoute()->acquireUdpSlot();
+            if(!slot) throw SocketException("Global GOST UDP association limit reached");
+            auto config = route->proxy;
+            config.cancelled = [this, route] { return udpClosing.load() || route->revoked->load(); };
+            // udpClosing has no notifier; the inherited route signal alone is insufficient.
+            config.cancellationNotifier.reset();
+            const auto start = GET_TICK();
+            const auto endpoints = resolveProxyEndpoint(config.host, 10000, config.cancelled);
+            config.connectHost = endpoints.front();
+            state.relay = std::make_unique<GostUdpRelay>(config, timeLeft(start, 10000), endpoints, std::move(slot));
+            state.port = state.relay->start(local, local, static_cast<uint16_t>(std::stoi(getLocalPort())));
+            state.connectedAt = GET_TICK();
+        } catch(...) { state.failed(); throw; }
+    }
+    if(udpClosing || route->revoked->load()) throw SocketException("GOST UDP cancelled");
+    sockaddr_storage endpoint{};
+    socklen_t size;
+    if(family == AF_INET6) {
+        auto& value = reinterpret_cast<sockaddr_in6&>(endpoint);
+        value.sin6_family = AF_INET6; value.sin6_port = htons(state.port);
+        inet_pton(AF_INET6, "::1", &value.sin6_addr);
+        size = sizeof(value);
+    } else {
+        auto& value = reinterpret_cast<sockaddr_in&>(endpoint);
+        value.sin_family = AF_INET; value.sin_port = htons(state.port);
+        inet_pton(AF_INET, "127.0.0.1", &value.sin_addr);
+        size = sizeof(value);
+    }
+    int sent;
+    do {
+        sent = ::sendto(sock, reinterpret_cast<const char*>(packet.data()), packet.size(), 0,
+            reinterpret_cast<const sockaddr*>(&endpoint), size);
+    } while(sent < 0 && getLastError() == EINTR);
+    check(sent);
+    populateUdpSendInfo(info, address, port, reinterpret_cast<const sockaddr*>(&endpoint), sent, true);
+    stats.totalUp += sent;
+}
+
+int Socket::readGostUdp(void* buffer, int length, sockaddr_storage& remote) {
+    std::lock_guard<std::mutex> lock(gostUdpMutex);
+    std::array<uint8_t, 65535> packet{};
+    sockaddr_storage sender{};
+    socklen_t size = sizeof(sender);
+    int received;
+    do {
+        received = ::recvfrom(sock, reinterpret_cast<char*>(packet.data()), packet.size(), 0,
+            reinterpret_cast<sockaddr*>(&sender), &size);
+    } while(received < 0 && getLastError() == EINTR);
+    check(received, true);
+    if(received <= 0) return received;
+    if(!gostUdp || !gostUdp->relay || !gostUdp->relay->isRunning() || gostUdp->route->revoked->load() || udpClosing)
+        return -1;
+    const string local = family == AF_INET6 ? "::1" : "127.0.0.1";
+    if(sockaddrToIp(reinterpret_cast<sockaddr*>(&sender)) != local ||
+       sockaddrToPort(reinterpret_cast<sockaddr*>(&sender)) != std::to_string(gostUdp->port)) return -1;
+    gost::Datagram decoded;
+    if(gost::decodeSocks(std::span(packet.data(), received), decoded) != gost::DecodeResult::Complete)
+        return -1;
+    sockaddr_storage source{};
+    auto& v4 = reinterpret_cast<sockaddr_in&>(source);
+    auto& v6 = reinterpret_cast<sockaddr_in6&>(source);
+    if(inet_pton(AF_INET, decoded.host.c_str(), &v4.sin_addr) == 1) {
+        v4.sin_family = AF_INET; v4.sin_port = htons(decoded.port);
+    } else if(inet_pton(AF_INET6, decoded.host.c_str(), &v6.sin6_addr) == 1) {
+        v6.sin6_family = AF_INET6; v6.sin6_port = htons(decoded.port);
+    } else return -1; // Never resolve a remote reply's hostname locally.
+    if(gostUdp->route->revoked->load()) return -1;
+    remote = source;
+    const auto count = std::min<size_t>(length, decoded.payload.size());
+    memcpy(buffer, decoded.payload.data(), count);
+    stats.totalDown += received;
+    return static_cast<int>(count);
+}
+
 void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuffer, int aLen, bool proxy, UdpSendInfo* sendInfo) {
     if(aLen <= 0)
         return;
+    if(ctx_) {
+        const auto mode = globalProxyMode(ctx());
+        if(mode == SettingsManager::OUTGOING_GOST) {
+            writeGostUdp(aAddr, aPort, aBuffer, aLen, sendInfo);
+            return;
+        }
+        if(mode < SettingsManager::OUTGOING_DIRECT || mode > SettingsManager::OUTGOING_GOST ||
+           !ctx().getProxyRoute()->snapshot()->valid)
+            throw SocketException("Global proxy route is unavailable");
+        // Restore the requested bind, not the internal loopback transport bind.
+        const auto originalBind = gostUdpOriginalBind;
+        if(originalBind) {
+            const auto originalFamily = family;
+            close();
+            create(TYPE_UDP, originalFamily);
+            bind(originalBind->first, originalBind->second);
+        } else {
+            std::lock_guard<std::mutex> lock(gostUdpMutex);
+            if(gostUdp) {
+                gostUdp.reset();
+                std::array<char, 65535> stale{};
+                setBlocking(false);
+                for(unsigned i = 0; i < 4096; ++i)
+                    if(::recv(sock, stale.data(), stale.size(), 0) < 0) break;
+            }
+        }
+    }
 
     const int targetFamily = inferAddressFamily(aAddr);
     if(sock == INVALID_SOCKET) {
@@ -2023,85 +2553,101 @@ void Socket::writeTo(const string& aAddr, const string& aPort, const void* aBuff
  * @return WAIT_*** ored together of the current state.
  * @throw SocketException Select or the connection attempt failed.
  */
+void Socket::checkProxyCancellation() const {
+    if(waitCancelled && waitCancelled())
+        throw SocketException("Socket operation cancelled");
+    if(globalRouteRevoked && globalRouteRevoked->load())
+        throw SocketException("Global proxy route changed");
+    if(streamProxyOverride && streamProxyOverride->cancelled && streamProxyOverride->cancelled())
+        throw SocketException("Proxy connection cancelled");
+}
+
 int Socket::wait(uint32_t millis, int waitFor) {
-    if(socksTlsActive && socksTls && (waitFor & WAIT_READ) && SSL_pending(socksTls) > 0) {
-        return WAIT_READ;
+    prepareWaitWake();
+    const bool forever = millis == WAIT_FOREVER;
+    const uint64_t deadline = GET_TICK() + millis;
+    // Callers without a notification source retain bounded cancellation polling.
+    const bool pollCancellation = (waitCancelled && !waitWake) ||
+        (streamProxyOverride && streamProxyOverride->cancelled && !overrideNotifier);
+    for(;;) {
+        checkProxyCancellation();
+        const uint64_t now = GET_TICK();
+        uint32_t remaining = forever ? WAIT_FOREVER : static_cast<uint32_t>(now < deadline ? deadline - now : 0);
+        if(pollCancellation) remaining = min<uint32_t>(remaining, 50);
+        int result = nativeWait(remaining, waitFor);
+        if(result & WAIT_WAKE) waitWake->consume();
+        checkProxyCancellation();
+        if(!(waitFor & WAIT_WAKE)) result &= ~WAIT_WAKE;
+        if(result || !millis || (!forever && GET_TICK() >= deadline)) return result;
     }
+}
 
-    timeval tv;
-    fd_set rfd, wfd, efd;
-    fd_set *rfdp = NULL, *wfdp = NULL;
-    tv.tv_sec = millis/1000;
-    tv.tv_usec = (millis%1000)*1000;
+int Socket::nativeWait(uint32_t millis, int waitFor) {
+    if(sock == INVALID_SOCKET) throw SocketException("Cannot wait on a closed socket");
+    // A previous read may have consumed several encrypted records from the OS
+    // but returned only the first. Partial records must still wait for the wire.
+    if((waitFor & WAIT_READ) && shadowsocksActive &&
+       shadowsocksPlainPos >= shadowsocksPlainIn.size())
+        shadowsocksTryDecode();
+    if((waitFor & WAIT_READ) && ((socksTlsActive && socksTls && SSL_pending(socksTls) > 0) ||
+       shadowsocksPlainPos < shadowsocksPlainIn.size())) return WAIT_READ;
 
-    if(waitFor & WAIT_CONNECT) {
-        dcassert(!(waitFor & WAIT_READ) && !(waitFor & WAIT_WRITE));
-
-        int result;
-        do {
-            FD_ZERO(&wfd);
-            FD_ZERO(&efd);
-
-            FD_SET(sock, &wfd);
-            FD_SET(sock, &efd);
-            result = select((int)(sock+1), 0, &wfd, &efd, &tv);
-        } while (result < 0 && getLastError() == EINTR);
+    const bool connecting = waitFor & WAIT_CONNECT;
+    dcassert(!connecting || !(waitFor & (WAIT_READ | WAIT_WRITE)));
+    const bool forever = millis == WAIT_FOREVER;
+    const uint64_t deadline = GET_TICK() + millis;
+    for(;;) {
+        const uint64_t now = GET_TICK();
+        const int remaining = static_cast<int>(min<uint64_t>(INT_MAX, now < deadline ? deadline - now : 0));
+        bool readable = false, writable = false, wakeReady = false;
+#ifdef _WIN32
+        fd_set read, write, errors;
+        FD_ZERO(&read); FD_ZERO(&write); FD_ZERO(&errors);
+        if(waitFor & WAIT_READ) FD_SET(sock, &read);
+        if(connecting || (waitFor & WAIT_WRITE)) FD_SET(sock, &write);
+        if(connecting) FD_SET(sock, &errors);
+        if(waitWake) FD_SET(waitWake->handle(), &read);
+        timeval timeout{remaining / 1000, (remaining % 1000) * 1000};
+        nativeWaitCount.fetch_add(1, std::memory_order_relaxed);
+        const int result = select(0, &read, &write, &errors, forever ? nullptr : &timeout);
+        if(result == SOCKET_ERROR && getLastError() == WSAEINTR) {
+            if(!forever && GET_TICK() >= deadline) return WAIT_NONE;
+            continue;
+        }
         check(result);
-
-        // fix buffer overflow during shutdown
-        if(sock == INVALID_SOCKET)
-            return WAIT_NONE;
-
-        if(FD_ISSET(sock, &wfd)) {
-            return WAIT_CONNECT;
+        readable = FD_ISSET(sock, &read);
+        writable = FD_ISSET(sock, &write) || FD_ISSET(sock, &errors);
+        wakeReady = waitWake && FD_ISSET(waitWake->handle(), &read);
+#else
+        pollfd items[2]{{sock, 0, 0}, {waitWake ? waitWake->handle() : -1, POLLIN, 0}};
+        if(waitFor & WAIT_READ) items[0].events |= POLLIN;
+        if(connecting || (waitFor & WAIT_WRITE)) items[0].events |= POLLOUT;
+        nativeWaitCount.fetch_add(1, std::memory_order_relaxed);
+        const int result = ::poll(items, waitWake ? 2 : 1, forever ? -1 : remaining);
+        if(result < 0 && errno == EINTR) {
+            if(!forever && GET_TICK() >= deadline) return WAIT_NONE;
+            continue;
         }
-
-        if(FD_ISSET(sock, &efd)) {
-            int y = 0;
-            socklen_t z = sizeof(y);
-            check(getsockopt(sock, SOL_SOCKET, SO_ERROR, (char*)&y, &z));
-
-            if(y != 0)
-                throw SocketException(y);
-            // No errors! We're connected (?)...
-            return WAIT_CONNECT;
+        check(result);
+        if(items[0].revents & POLLNVAL || items[1].revents & POLLNVAL)
+            throw SocketException("Invalid socket wait descriptor");
+        readable = (waitFor & WAIT_READ) && (items[0].revents & (POLLIN | POLLHUP | POLLERR));
+        writable = (connecting || (waitFor & WAIT_WRITE)) && (items[0].revents & (POLLOUT | POLLHUP | POLLERR));
+        wakeReady = items[1].revents & (POLLIN | POLLHUP | POLLERR);
+#endif
+        int ready = wakeReady ? WAIT_WAKE : WAIT_NONE;
+        if(connecting && writable) {
+            int error = 0;
+            socklen_t length = sizeof(error);
+            check(getsockopt(sock, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&error), &length));
+            if(error) throw SocketException(error);
+            ready |= WAIT_CONNECT;
+        } else {
+            if(readable) ready |= WAIT_READ;
+            if(writable) ready |= WAIT_WRITE;
         }
-        return WAIT_NONE;
+        return ready;
     }
-
-    int result;
-    do {
-        if(waitFor & WAIT_READ) {
-            dcassert(!(waitFor & WAIT_CONNECT));
-            rfdp = &rfd;
-            FD_ZERO(rfdp);
-            FD_SET(sock, rfdp);
-        }
-        if(waitFor & WAIT_WRITE) {
-            dcassert(!(waitFor & WAIT_CONNECT));
-            wfdp = &wfd;
-            FD_ZERO(wfdp);
-            FD_SET(sock, wfdp);
-        }
-
-        result = select((int)(sock+1), rfdp, wfdp, NULL, &tv);
-    } while (result < 0 && getLastError() == EINTR);
-    check(result);
-
-    waitFor = WAIT_NONE;
-
-    // fix buffer overflow during shutdown
-    if(sock == INVALID_SOCKET)
-        return WAIT_NONE;
-
-    if(rfdp && FD_ISSET(sock, rfdp)) {
-        waitFor |= WAIT_READ;
-    }
-    if(wfdp && FD_ISSET(sock, wfdp)) {
-        waitFor |= WAIT_WRITE;
-    }
-
-    return waitFor;
 }
 
 bool Socket::waitConnected(uint32_t millis) {
@@ -2289,6 +2835,8 @@ Socket::SocksTlsControlProbeDecision Socket::classifySocksTlsControlProbe(
 }
 
 bool Socket::isSocksUdpControlAlive() {
+    if(globalRouteRevoked && globalRouteRevoked->load())
+        return false;
     if(sock == INVALID_SOCKET)
         return false;
 
@@ -2365,6 +2913,8 @@ Socket::SocksUdpAssociationPtr Socket::getSocksUdpAssociation(DCContext& ctx) {
         return association;
 
     association = buildSocksUdpAssociation(ctx);
+    if(association && !association->control->isSocksUdpControlAlive())
+        return nullptr;
     publishSocksUdpAssociation(association);
     return association;
 }
@@ -2390,6 +2940,7 @@ bool Socket::getUdpProxyEndpoint(DCContext& ctx, string& server, string& port) {
 }
 
 void Socket::shutdown() {
+    udpClosing = true;
     if(socksTlsActive && socksTls) {
         SSL_shutdown(socksTls);
     }
@@ -2398,8 +2949,20 @@ void Socket::shutdown() {
 }
 
 void Socket::close() {
+    udpClosing = true;
+    {
+        std::lock_guard<std::mutex> lock(gostUdpMutex);
+        gostUdp.reset();
+    }
+    gostUdpOriginalBind.reset();
     shadowsocksReset();
     socksTlsReset();
+    streamProxyOverride.reset();
+    globalRouteRevoked.reset();
+    globalRouteSubscription.reset();
+    globalRouteNotifier.reset();
+    overrideSubscription.reset();
+    overrideNotifier.reset();
     if(sock != INVALID_SOCKET) {
 #ifdef _WIN32
         ::closesocket(sock);

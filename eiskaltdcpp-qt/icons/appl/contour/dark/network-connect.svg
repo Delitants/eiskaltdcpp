@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Quick connect</title>
+  <desc>Contour dark surface. Phosphor Icons 2.1.1, copyright 2023 Phosphor Icons, MIT. Generated; see tools/icon-themes.</desc>
+  <defs>
+    <linearGradient id="p0-color" gradientUnits="userSpaceOnUse" x1="0" y1="256" x2="256" y2="0"><stop offset="0" stop-color="#e2eaf0" stop-opacity="1"/><stop offset="0.57" stop-color="#e2eaf0" stop-opacity="1"/><stop offset="0.57" stop-color="#76cfd0" stop-opacity="1"/><stop offset="0.63" stop-color="#76cfd0" stop-opacity="1"/><stop offset="0.63" stop-color="#e2eaf0" stop-opacity="1"/><stop offset="1" stop-color="#e2eaf0" stop-opacity="1"/></linearGradient>
+  </defs>
+  <g transform="matrix(1 0 0 1 0 0)">
+    <path d="M236.24,67.76a6,6,0,0,0-8.48,0L192,103.51,152.49,64l35.75-35.76a6,6,0,0,0-8.48-8.48L144,55.51,116.24,27.76a6,6,0,1,0-8.48,8.48L115.51,44,61.13,98.38a38,38,0,0,0,0,53.75l17.13,17.12-50.5,50.51a6,6,0,1,0,8.48,8.48l50.51-50.5,17.13,17.13a38,38,0,0,0,53.74,0L212,140.49l7.76,7.75a6,6,0,0,0,8.48-8.48L200.49,112l35.75-35.76A6,6,0,0,0,236.24,67.76ZM149.13,186.38a26,26,0,0,1-36.77,0L69.62,143.64a26,26,0,0,1,0-36.77L124,52.49,203.51,132Z" fill="url(#p0-color)"/>
+  </g>
+</svg>

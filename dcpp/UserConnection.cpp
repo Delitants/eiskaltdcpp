@@ -20,6 +20,8 @@
 #include "stdinc.h"
 
 #include "UserConnection.h"
+#include "ProtocolNumber.h"
+#include <limits>
 
 #include "AdcCommand.h"
 #include "ChatMessage.h"
@@ -112,7 +114,13 @@ void UserConnection::on(BufferedSocketListener::Line, const string& aLine) {
     } else if(cmd == "$Get") {
         x = param.find('$');
         if(x != string::npos) {
-            fire(UserConnectionListener::Get(), this, Text::toUtf8(param.substr(0, x), encoding), Util::toInt64(param.substr(x+1)) - (int64_t)1);
+            int64_t offset;
+            if(!parseProtocolNumber(std::string_view(param).substr(x+1), int64_t(1),
+                    std::numeric_limits<int64_t>::max(), offset)) {
+                fire(UserConnectionListener::ProtocolError(), this, _("Invalid data"));
+                return;
+            }
+            fire(UserConnectionListener::Get(), this, Text::toUtf8(param.substr(0, x), encoding), offset - 1);
         }
     } else if(cmd == "$Key") {
         if(!param.empty())
@@ -172,7 +180,8 @@ void UserConnection::connect(const string& aServer, const string& aPort, const s
     port = aPort;
     socket = BufferedSocket::getSocket(0, ctx());
     socket->addListener(this);
-    const bool proxyPeer = ctx().getSettingsManager()->getBool(SettingsManager::PROXY_P2P_CONNECTIONS);
+    const bool proxyPeer = ctx().getSettingsManager()->getBool(SettingsManager::PROXY_P2P_CONNECTIONS) ||
+        ctx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST;
     socket->connect(aServer, aPort, localPort, natRole, isSet(FLAG_SECURE), ctx().getSettingsManager()->getBool(SettingsManager::ALLOW_UNTRUSTED_CLIENTS), proxyPeer, Socket::PROTO_DEFAULT);
 }
 

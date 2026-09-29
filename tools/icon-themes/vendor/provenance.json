@@ -1,0 +1,974 @@
+{
+  "package": "@phosphor-icons/core",
+  "version": "2.1.1",
+  "repository": "https://github.com/phosphor-icons/core",
+  "packageRepositoryAtRelease": "https://github.com/phosphor-icons/phosphor-core",
+  "registryMetadata": "https://registry.npmjs.org/@phosphor-icons/core/2.1.1",
+  "archive": "https://registry.npmjs.org/@phosphor-icons/core/-/core-2.1.1.tgz",
+  "integrity": "sha512-v4ARvrip4qBCImOE5rmPUylOEK4iiED9ZyKjcvzuezqMaiRASCHKcRIuvvxL/twvLpkfnEODCOJp5dM4eZilxQ==",
+  "archiveSha256": "313332be6190b724da24107addd781799b48bf76b13963f24501112ffe1baadd",
+  "license": "MIT",
+  "licenseSha256": "ddbe6082ec3cf979db47e5af549d2849c5d6182b3e005ef91ce1dbb9eb122f11",
+  "files": [
+    {
+      "path": "assets/bold/arrow-clockwise-bold.svg",
+      "sha256": "773d814cdf564a4d0db6e0408a60e5bd97c76c90293aaf383c72399ce2e034a1"
+    },
+    {
+      "path": "assets/bold/arrow-line-up-bold.svg",
+      "sha256": "4b2d0d18f61b580a720e0de70cfefa7dd119c7aacbd603b0d02e1b84e60be38b"
+    },
+    {
+      "path": "assets/bold/arrows-clockwise-bold.svg",
+      "sha256": "f79592c23ce2e13807dcf27ed5de18aa1484beb9a976b0c0bfd81ee280198b55"
+    },
+    {
+      "path": "assets/bold/arrows-down-up-bold.svg",
+      "sha256": "174464c54af7273e46a6fc204ebd0fc1da75906573880687836b314e3fbdb85e"
+    },
+    {
+      "path": "assets/bold/circle-dashed-bold.svg",
+      "sha256": "94c58d89b3ba8c498cc76314a6aca70863b4ff09e061119d635fbb835fbe149a"
+    },
+    {
+      "path": "assets/bold/clock-counter-clockwise-bold.svg",
+      "sha256": "dea67a02f38b4f17e6c23143b4d2daa7f417714585450a32dbc2a8bcc98485a1"
+    },
+    {
+      "path": "assets/bold/download-simple-bold.svg",
+      "sha256": "3ca0b8bba15633eb29f9818fe3670d6438bcbc897649c767e491a411e696e2d3"
+    },
+    {
+      "path": "assets/bold/gauge-bold.svg",
+      "sha256": "8d47ee3b13880836ba5659a8e2fe5dfc7094b8a6403d99284f21f5fd21113b64"
+    },
+    {
+      "path": "assets/bold/globe-bold.svg",
+      "sha256": "b1dff2302e56cfc39cb704bb109486ee53d29a9a65f5a02f50e258259fbf743e"
+    },
+    {
+      "path": "assets/bold/hash-bold.svg",
+      "sha256": "8d2cb5e39903004da3d0a85a919adc6c76adcd65b3c9c1e8e355d8cf6cdf7193"
+    },
+    {
+      "path": "assets/bold/list-bullets-bold.svg",
+      "sha256": "2de13b3d4a2f892aeb32102ffa4ce94e7bca5e4f4d572f60b40c5a251bfea8b4"
+    },
+    {
+      "path": "assets/bold/magnifying-glass-bold.svg",
+      "sha256": "b73e393b20bff0aaee96b9e325d0276fe1ab5fc81b5080633a95827bd14ebae6"
+    },
+    {
+      "path": "assets/bold/magnifying-glass-minus-bold.svg",
+      "sha256": "831612a36e34dd7a6abe6012d7397aa056ab674ac5cac666d9f9db927f8b35b3"
+    },
+    {
+      "path": "assets/bold/magnifying-glass-plus-bold.svg",
+      "sha256": "a385d91c98f91a14473dac23d5279f4be2177abb40006c9b086981b4be3d47ee"
+    },
+    {
+      "path": "assets/bold/plus-bold.svg",
+      "sha256": "3d20a4b2e00657baeb922bed94f13fbfa288968b738991d047dd252cb64005d8"
+    },
+    {
+      "path": "assets/bold/power-bold.svg",
+      "sha256": "7abd3ef7de1a44aab43d98b395013ae91058a969bb6ced2a31642815ffa571b2"
+    },
+    {
+      "path": "assets/bold/prohibit-bold.svg",
+      "sha256": "fba9bed853d84c9fc94860cb3b1504a2077ffa2da2cb99cc9e7e943636097285"
+    },
+    {
+      "path": "assets/bold/upload-simple-bold.svg",
+      "sha256": "777d53f2af2560c2284d6bd3767a4c8ff1ab83a1209bd78c2873cd250b57653e"
+    },
+    {
+      "path": "assets/bold/x-bold.svg",
+      "sha256": "d540487912a267d83c495954b24ca07981002fda05ee2ea0b492d8fc188d1c3e"
+    },
+    {
+      "path": "assets/duotone/app-window-duotone.svg",
+      "sha256": "b528ad83ebe8025555a98bcf176afed223c3e9ae7592214c5dffa61bcf2564b0"
+    },
+    {
+      "path": "assets/duotone/arrow-fat-down-duotone.svg",
+      "sha256": "6b52bd8415cc3ba000377440b48f0d2e03f4ac3fe819e12075c0e4e2ba8de1a6"
+    },
+    {
+      "path": "assets/duotone/arrow-fat-left-duotone.svg",
+      "sha256": "c4e5da6b43ddfb11d0331d4116fe96172a3f7de4ec2a4a380a50a11f403041d7"
+    },
+    {
+      "path": "assets/duotone/arrow-fat-right-duotone.svg",
+      "sha256": "ca360e93b888cb66749dbdf4d20da38fcf6105428a7e537f8424aa6493916ffa"
+    },
+    {
+      "path": "assets/duotone/arrow-fat-up-duotone.svg",
+      "sha256": "77460a3b3aed537ffbcd4180aefe30f7235e91564f6f2b24c0f19a33b6704faf"
+    },
+    {
+      "path": "assets/duotone/arrow-square-down-duotone.svg",
+      "sha256": "2ec3631f1f27ec1c55fdaaa3f5c4f6b4e58184f58b1bf9fb749ce94ab0e7bfec"
+    },
+    {
+      "path": "assets/duotone/arrow-square-left-duotone.svg",
+      "sha256": "a3ce6321c7cf6216e435561d91e01d8a1ee39b4935e57dcdde2a91f3012261a9"
+    },
+    {
+      "path": "assets/duotone/arrow-square-right-duotone.svg",
+      "sha256": "0696d550f1de38864bede5456091b98c95c9ef16cfec1a8a8733e785cdda7fa1"
+    },
+    {
+      "path": "assets/duotone/arrow-square-up-duotone.svg",
+      "sha256": "b241f1ab3ad6541d67d6b642f773d6bd5615e65557f6d0369d955ba08c7deb04"
+    },
+    {
+      "path": "assets/duotone/arrow-up-right-duotone.svg",
+      "sha256": "3708498f6654b58f0d0f5a6cd8004c42f9a977fe7773529239bebb37b2a56883"
+    },
+    {
+      "path": "assets/duotone/backspace-duotone.svg",
+      "sha256": "b4ba966a140914736563cb40ebe4ca3e63fab3cbaa19fb15d4aba2410f5fe47b"
+    },
+    {
+      "path": "assets/duotone/bell-duotone.svg",
+      "sha256": "77f99c9aa7747cc92eae7c225d96e894c40275559e0f40d7ddb7513653a87c19"
+    },
+    {
+      "path": "assets/duotone/bookmark-simple-duotone.svg",
+      "sha256": "b560161da8079c67c381dcfd1ae69b39e8eed3815370cf2adc6ba4b3bea04aff"
+    },
+    {
+      "path": "assets/duotone/broom-duotone.svg",
+      "sha256": "6c9eb5de6e40c538e3e9c67fe438cbcd2d1caf5ee3f531e77ef2eb092049aae3"
+    },
+    {
+      "path": "assets/duotone/browsers-duotone.svg",
+      "sha256": "3279db138c0b9799e9493dc2947dea03c048a0cef881f74db718be2bd51f3de2"
+    },
+    {
+      "path": "assets/duotone/chat-circle-dots-duotone.svg",
+      "sha256": "361680d35411ce4611191eb4a24a1b7d309deee350a4faea1808bdcde5700045"
+    },
+    {
+      "path": "assets/duotone/chats-circle-duotone.svg",
+      "sha256": "b760d5cc31d6e86191969557d908c1f3238f3742b4d991ec8ec67b74c578b552"
+    },
+    {
+      "path": "assets/duotone/check-circle-duotone.svg",
+      "sha256": "d9c7016e83a81c8ef1a250a307acc6d29d5c492fc46066ab5e5e7446a65b48f6"
+    },
+    {
+      "path": "assets/duotone/circle-duotone.svg",
+      "sha256": "c78bff5d21eaa8b6979e7d9b5449a30bed5a1fa31daa1087c354b4c0e8b2f335"
+    },
+    {
+      "path": "assets/duotone/copy-duotone.svg",
+      "sha256": "587be2bbc922a32b5cbd06d39b04129fae4bd01d9ee240ba86f635f6285902a2"
+    },
+    {
+      "path": "assets/duotone/desktop-duotone.svg",
+      "sha256": "bf8a8a436772763ff5e430428c3c2850c601057fef1009dee7a24a02ed709c3b"
+    },
+    {
+      "path": "assets/duotone/detective-duotone.svg",
+      "sha256": "d051c057f5f51909fc61418256470df0b426921064741e1b0eaf59b47078ed8e"
+    },
+    {
+      "path": "assets/duotone/envelope-simple-duotone.svg",
+      "sha256": "8cd858097658d41520072e3232a85185b697828751bb691bd54cd4960fc2d574"
+    },
+    {
+      "path": "assets/duotone/eraser-duotone.svg",
+      "sha256": "b462fc2b65ae9854ba1e3d6fdcce43fc742f513bb9449e61599965b388fe8331"
+    },
+    {
+      "path": "assets/duotone/file-archive-duotone.svg",
+      "sha256": "5fae5d5a082f13ec817a175ece3edcc7e644bd6469a300340c59890781995ac1"
+    },
+    {
+      "path": "assets/duotone/file-dashed-duotone.svg",
+      "sha256": "553d396163d625e556f8ffd4d6765cea3d5c5d17f4d0eb1abc4118eeaa6d787c"
+    },
+    {
+      "path": "assets/duotone/file-magnifying-glass-duotone.svg",
+      "sha256": "d5862a4992bec67e20c020086625492f6d78eef169f84a62a139c865caff4433"
+    },
+    {
+      "path": "assets/duotone/file-plus-duotone.svg",
+      "sha256": "df9d4b4276e7c6b9de7b3e208bcc41a3dc9b6eab011be751aed0ffad94c288a9"
+    },
+    {
+      "path": "assets/duotone/file-text-duotone.svg",
+      "sha256": "6b0867a397af11f3c0a66091a4e17e3c172a42f48812ba99fc8157d9093cb7ea"
+    },
+    {
+      "path": "assets/duotone/film-strip-duotone.svg",
+      "sha256": "7a1d7c655b08248422cd48d8591b8c916fb9142c7ce35cc5374dd8e88751fc36"
+    },
+    {
+      "path": "assets/duotone/folder-open-duotone.svg",
+      "sha256": "1dffe161c141ddc915ef97be2ca0264f7d1cfb710112a5d51e4b2c86a63e6aae"
+    },
+    {
+      "path": "assets/duotone/folder-simple-duotone.svg",
+      "sha256": "66ae9431d42c48e2d2d98de837174e96ca48e65417e4b54ec062f6bbe9706ad5"
+    },
+    {
+      "path": "assets/duotone/funnel-duotone.svg",
+      "sha256": "ba1eb55b4d6abd28131ac98dc5269957291f76d09ed3de4eef78c21c8cf73bb7"
+    },
+    {
+      "path": "assets/duotone/gear-duotone.svg",
+      "sha256": "844f6e041e4622283f651e76882c784af0627f950a6a2536e923b12e4ae5e590"
+    },
+    {
+      "path": "assets/duotone/globe-duotone.svg",
+      "sha256": "b9fd5ea9c984f786b47ac59f3aa913e3748d40f45f8eb212874718adc38e02b4"
+    },
+    {
+      "path": "assets/duotone/globe-hemisphere-west-duotone.svg",
+      "sha256": "52a225637cebbe67a961f6066f2ef9c29a73b9645e78258bd39e6bb2f4784bb6"
+    },
+    {
+      "path": "assets/duotone/hard-drive-duotone.svg",
+      "sha256": "eb4d09c5f768b5eff93ec0708e8b283da6bf14bb00d38d6c213fa2cc87e0ea00"
+    },
+    {
+      "path": "assets/duotone/image-duotone.svg",
+      "sha256": "32c9e73a6a35d9a34649c21549737b7d129dc191836d93975d921f41184edb14"
+    },
+    {
+      "path": "assets/duotone/info-duotone.svg",
+      "sha256": "dec9ea1394c618d6d576ba43e0f08eea265eaf20046e98bc3da19eb4b8da73e8"
+    },
+    {
+      "path": "assets/duotone/lightning-duotone.svg",
+      "sha256": "aab43bf156d9047ff4002359cecedc867c8e3fecd9d1475635ea4e7b8416267c"
+    },
+    {
+      "path": "assets/duotone/list-bullets-duotone.svg",
+      "sha256": "1f4c9a2353c05b2d3314959b2d7604c0a20c77e8bc3e35f8ed28fdb2217518b0"
+    },
+    {
+      "path": "assets/duotone/lock-key-duotone.svg",
+      "sha256": "f2359ca4afe2cb03d25e9ce10cf088a046102cee60f5613dfed7d3f228c97c39"
+    },
+    {
+      "path": "assets/duotone/magnet-duotone.svg",
+      "sha256": "1922d1db7c67977c7a7d90951895e2afb4028c2b226dc49dc4db11b1d43ef658"
+    },
+    {
+      "path": "assets/duotone/magnifying-glass-duotone.svg",
+      "sha256": "7a840ea2341e75cf1d9187e07223be4501d6c6078a064a4097be07c1b3a52fb6"
+    },
+    {
+      "path": "assets/duotone/minus-circle-duotone.svg",
+      "sha256": "375c783e84755ac25952a9c4120ab44620b4c1bfe19f4639094c69caa31cbf6b"
+    },
+    {
+      "path": "assets/duotone/minus-square-duotone.svg",
+      "sha256": "25599ee34e6177bac92662f1390740197b575b59eaf60ba6d0925d77edde967c"
+    },
+    {
+      "path": "assets/duotone/moon-duotone.svg",
+      "sha256": "64c8f8b7ba1ad4ae1e892a34ba895744747d9bcd8daaf1d924051c69c4c64650"
+    },
+    {
+      "path": "assets/duotone/music-notes-duotone.svg",
+      "sha256": "3bef98ba3b52c89aa02fa9e77d76aae93cebe71f116afa1eb5df57ff21d17d02"
+    },
+    {
+      "path": "assets/duotone/note-pencil-duotone.svg",
+      "sha256": "42e4e6d15c523016812041aa4e692c8ab9b6d6488c7b8864adb537fefc083fee"
+    },
+    {
+      "path": "assets/duotone/pause-duotone.svg",
+      "sha256": "d8cd1f4b61cc90a6f70bb87db2dc4bda686f8ef9f3c69722c3528860b5c43c1c"
+    },
+    {
+      "path": "assets/duotone/play-duotone.svg",
+      "sha256": "8485ad1efd20878370885ccf7b825aae21a3b2fede35734484475672ac707c48"
+    },
+    {
+      "path": "assets/duotone/plug-duotone.svg",
+      "sha256": "168d5edc8dd260de0a08d32aa4fe6f9231d746e3ebe968357f6e2ee1e86dbba6"
+    },
+    {
+      "path": "assets/duotone/plugs-connected-duotone.svg",
+      "sha256": "efd9719ae5dc8fac82db613a6dec9b03965893da7c5a70d200d527446ec0bd23"
+    },
+    {
+      "path": "assets/duotone/plugs-duotone.svg",
+      "sha256": "0aebcf3218ac4d34a426629c56340730bb252cd8dc11c1d3626ffcf5d843e5b3"
+    },
+    {
+      "path": "assets/duotone/plus-circle-duotone.svg",
+      "sha256": "96f01d50fb5c1c830a8a136e43a3254db228a4a1db2cbc6afabc057b7a7b4471"
+    },
+    {
+      "path": "assets/duotone/puzzle-piece-duotone.svg",
+      "sha256": "21b5ecfdd65a1aaced52daf72e1ac405e4de7c2a1363a9065800a40fb15cb602"
+    },
+    {
+      "path": "assets/duotone/share-network-duotone.svg",
+      "sha256": "0bf3d364f143754ea8b654ecef67d26c84750e6487ccb0ce86aa59ad662c4f89"
+    },
+    {
+      "path": "assets/duotone/sliders-horizontal-duotone.svg",
+      "sha256": "76260b62780cba20278d8c45eb9107801090414b0fbb8a6b67c97860664d7237"
+    },
+    {
+      "path": "assets/duotone/smiley-duotone.svg",
+      "sha256": "b5e8638df688ea1832380e63c0b986f4a502ade6d51ea2f4552d0a9f5a796eac"
+    },
+    {
+      "path": "assets/duotone/star-duotone.svg",
+      "sha256": "d99a65040b32b5da2b50077a15d8b8b5ae90307c1a5bd34771c3f7b21e055835"
+    },
+    {
+      "path": "assets/duotone/terminal-window-duotone.svg",
+      "sha256": "b2ec046efc1d26eb65403a18ee340892339842af943d24ad337ded935d2e5df2"
+    },
+    {
+      "path": "assets/duotone/trash-duotone.svg",
+      "sha256": "a027137fcada51425999e4305ef8c9baec2328364c092fe94b48fa9eec7adc6b"
+    },
+    {
+      "path": "assets/duotone/tray-duotone.svg",
+      "sha256": "fcbe602ffbd4bca5514bc008004b5a4136a1b991aadc8910fa440f03b2e6c339"
+    },
+    {
+      "path": "assets/duotone/user-duotone.svg",
+      "sha256": "58708fccb6ecc622a23f9fcd4aae24912c660d8f3d502185693ba562bef85674"
+    },
+    {
+      "path": "assets/duotone/user-list-duotone.svg",
+      "sha256": "55fcbb485f97c92ef9268b54378b56fae92374ddf1e8fd2ab8a7e4c546179b7d"
+    },
+    {
+      "path": "assets/duotone/users-duotone.svg",
+      "sha256": "bce473e028982d8383e97e4f4c9cde592564be57cc16c7a303fe72cfdced34ff"
+    },
+    {
+      "path": "assets/fill/app-window-fill.svg",
+      "sha256": "26469772dae08a0b52a1dd5b69d5da50968c54394850123e678337a32a086f89"
+    },
+    {
+      "path": "assets/fill/arrow-fat-down-fill.svg",
+      "sha256": "3ff3bb9390ad3118667c4775ba8ab6f906980707de714d396eeb9c069573d4b2"
+    },
+    {
+      "path": "assets/fill/arrow-fat-left-fill.svg",
+      "sha256": "db823a6fb02b862c1d3d4b08db2e4a31e39dc7f9278da6c0b83a9464627ae9e0"
+    },
+    {
+      "path": "assets/fill/arrow-fat-right-fill.svg",
+      "sha256": "4a2657d8c3c75c68ff8753163935846935aaffe99051b8162a64fbe4e16aeb3a"
+    },
+    {
+      "path": "assets/fill/arrow-fat-up-fill.svg",
+      "sha256": "4f486616c136ed5819df3123843c21affe08a9e438f8a296fdcc3e81da8b4eaa"
+    },
+    {
+      "path": "assets/fill/arrow-square-down-fill.svg",
+      "sha256": "391d4e47ccb778a71582ce2245ae61d70926f62ed785335a40e0b9aee92767a0"
+    },
+    {
+      "path": "assets/fill/arrow-square-left-fill.svg",
+      "sha256": "3a3efc726d5a1456f73cefe66958b4361b9aa30cc5584b3395518ba3c42fc1ef"
+    },
+    {
+      "path": "assets/fill/arrow-square-right-fill.svg",
+      "sha256": "6d3e666d91ee85f52e944135d0ea6ed85d753e2418fdef8b1e6452f5654e7854"
+    },
+    {
+      "path": "assets/fill/arrow-square-up-fill.svg",
+      "sha256": "a88d2c81f154a72973ca60053a153f3505c3973e2faa8604fd91c6d4884b7954"
+    },
+    {
+      "path": "assets/fill/arrow-up-right-fill.svg",
+      "sha256": "dd24c87b3fc52a5b8bb0712901f9f4d2422c4c06a28c1a422eac5a6cc3cdf243"
+    },
+    {
+      "path": "assets/fill/arrows-clockwise-fill.svg",
+      "sha256": "ee5fae7fd4b418cbe723c5736889f57310b101af9134cfd6d688b9b9d5a03ff6"
+    },
+    {
+      "path": "assets/fill/arrows-down-up-fill.svg",
+      "sha256": "f454333f30a47f3ed6dcbd2691913dec6876bd6e77a507da5f5cb14cbb297762"
+    },
+    {
+      "path": "assets/fill/backspace-fill.svg",
+      "sha256": "2fa17c16e6fe4f82ac9f5f8701565be8e86e66f18015fed43dad2453a72a6655"
+    },
+    {
+      "path": "assets/fill/bell-fill.svg",
+      "sha256": "26437565edc7418a2c326a74078fb4519aa2316e84fcf1adefbdd1b2c89f4ac5"
+    },
+    {
+      "path": "assets/fill/bookmark-simple-fill.svg",
+      "sha256": "379dfd32059dc79b50e9e51a92ff94e028f0325262a985ad8136b0d4c661db65"
+    },
+    {
+      "path": "assets/fill/broom-fill.svg",
+      "sha256": "e6cd873e2cb2251c070902eb3804978c88972918992e19484b065d2dd469178c"
+    },
+    {
+      "path": "assets/fill/browsers-fill.svg",
+      "sha256": "968f627bd6696759d27ff9c28b601bf31b2fffd5b595a9305e8eb41edd7e88ed"
+    },
+    {
+      "path": "assets/fill/chat-circle-dots-fill.svg",
+      "sha256": "57656525f418bd300665d866ccf23ea1770aad53f154dc1dbd40074c66f97e66"
+    },
+    {
+      "path": "assets/fill/chats-circle-fill.svg",
+      "sha256": "8221ae3a3a84c4ad157ecc191a6d7dd2d039a126de4435e0bce9dcf15f2eb266"
+    },
+    {
+      "path": "assets/fill/check-circle-fill.svg",
+      "sha256": "6ba676543869fddabb7a4ba7026fc51e14351455f4c095ea389b89d0e1d79708"
+    },
+    {
+      "path": "assets/fill/circle-fill.svg",
+      "sha256": "196c9eaad1db595b456841b93a407f932b281d5ba9f1038c03a93a3a6969cb12"
+    },
+    {
+      "path": "assets/fill/copy-fill.svg",
+      "sha256": "eac5e853ad04f714e8d7f74932b62a6227d0853c9f31550e006c9b20f469172f"
+    },
+    {
+      "path": "assets/fill/desktop-fill.svg",
+      "sha256": "aff6ce463c312f9e0d2e3eaeb0e1a5f025b155e454eb44112176e92ad1399300"
+    },
+    {
+      "path": "assets/fill/detective-fill.svg",
+      "sha256": "445c7c739517e81f87624196217d25debb804ab28e28bf05a46fe18634cb55b9"
+    },
+    {
+      "path": "assets/fill/download-simple-fill.svg",
+      "sha256": "dee151da85ad71e90a882a556481e2069a154b8892063c9f91b621a0e06ad479"
+    },
+    {
+      "path": "assets/fill/envelope-simple-fill.svg",
+      "sha256": "6cde9c0a359e967e36a6d3e54b720c67df75ce78f39e9adc7f29a7799bd09b54"
+    },
+    {
+      "path": "assets/fill/eraser-fill.svg",
+      "sha256": "7dd93ef09530c2d88cfe43246b057156ffd72089a07b8a0a9fdc086cde96b610"
+    },
+    {
+      "path": "assets/fill/file-archive-fill.svg",
+      "sha256": "82e8a7c5ca73fb1dd62f3a5ff1fb1e9225b0f536398843dca568fa830071e132"
+    },
+    {
+      "path": "assets/fill/file-dashed-fill.svg",
+      "sha256": "4de1cfd431508f74cdc28b44837f0206a136f9c661c506f51ecd892458938463"
+    },
+    {
+      "path": "assets/fill/file-magnifying-glass-fill.svg",
+      "sha256": "f15188cf2896a1dc76bf8e504726171a4b0f8b36522346fea0c32c71356f305d"
+    },
+    {
+      "path": "assets/fill/file-plus-fill.svg",
+      "sha256": "f3122e2f1912627e7469220d73b7159e11799a5a92548e7bb2b0ac2af9fb07b6"
+    },
+    {
+      "path": "assets/fill/file-text-fill.svg",
+      "sha256": "8c6f36452a441d39886ad7929778c2a90ea66cca519490da4918e7da7bade242"
+    },
+    {
+      "path": "assets/fill/film-strip-fill.svg",
+      "sha256": "aae7abd682bd0985d015c90cd952e5fdb667c5c5e23a3494b30b422a6ab5ef5b"
+    },
+    {
+      "path": "assets/fill/folder-open-fill.svg",
+      "sha256": "f9e57c3d40ab536915f8302a4390405f5660ee7b7275a3f80b384d977c59373e"
+    },
+    {
+      "path": "assets/fill/folder-simple-fill.svg",
+      "sha256": "6c64a3e669fb6a9c0a88f7b313b0277ccf522d28da9b1c29b6a3cfe7316c483d"
+    },
+    {
+      "path": "assets/fill/funnel-fill.svg",
+      "sha256": "fd3cd3e6c43a5f76b34e1bb987061c7bff95133d94d4d72668c123e782747417"
+    },
+    {
+      "path": "assets/fill/gear-fill.svg",
+      "sha256": "564f53f72b0bd4371dc14a3d39a3fcf4c5a1a74d285eb56fff465a954f993ec8"
+    },
+    {
+      "path": "assets/fill/hard-drive-fill.svg",
+      "sha256": "b31125c438fc50af14abb5b4af746251cd9d2f110fd865ebba4b6d6b2b859399"
+    },
+    {
+      "path": "assets/fill/image-fill.svg",
+      "sha256": "4f4dbea3adfc054509fed7f8e0f7d50fbf716904e37fc55387d29018d15b52fd"
+    },
+    {
+      "path": "assets/fill/info-fill.svg",
+      "sha256": "8240b810f7a3b076271a829dff61c7dd64257a781c30f29c938f88835f11136a"
+    },
+    {
+      "path": "assets/fill/lightning-fill.svg",
+      "sha256": "024d190cc1ce86eb59184eb7a598604ad28946248243fbc0cf07b9887babf88d"
+    },
+    {
+      "path": "assets/fill/list-bullets-fill.svg",
+      "sha256": "94c390559d409fa0d6f99733b940159d908735cb8fef1214b173dcca568ee7a6"
+    },
+    {
+      "path": "assets/fill/lock-key-fill.svg",
+      "sha256": "0a12a30d74b447649cd0e3855b9a5131629e8c2cd499f58106c7a398d8dff0ca"
+    },
+    {
+      "path": "assets/fill/magnet-fill.svg",
+      "sha256": "d8e242222295a8f1e008e6d9475bdf62054745537ab26701ab422263c57e21a3"
+    },
+    {
+      "path": "assets/fill/magnifying-glass-fill.svg",
+      "sha256": "e7cf953bb787af2a4b11f8a248f35b56aab2f2b44f535d03593f490a4a633244"
+    },
+    {
+      "path": "assets/fill/minus-circle-fill.svg",
+      "sha256": "177cf007310f44b323b83d3ab62a5e3117dbf405f8bbed9efce8e98956a4748e"
+    },
+    {
+      "path": "assets/fill/minus-square-fill.svg",
+      "sha256": "94d10b41da61438271ef6b90a5a80ff4199e0dc550954f71f0acc9b9a8ef214d"
+    },
+    {
+      "path": "assets/fill/moon-fill.svg",
+      "sha256": "099574dba1662cf9cdff50a1859ae8cc605a9b6a10bace00d89a0f52205e76df"
+    },
+    {
+      "path": "assets/fill/music-notes-fill.svg",
+      "sha256": "ddfa03bf39856870a4898b830525136583179dc019aa0ab8689eb5b7a65bc50d"
+    },
+    {
+      "path": "assets/fill/note-pencil-fill.svg",
+      "sha256": "6ea560be3a27f7c11d7ba5800cad720fb221a13b11d42c631148fceef1c4bff3"
+    },
+    {
+      "path": "assets/fill/pause-fill.svg",
+      "sha256": "156d3cdfa5cea803caec50b35f49bc635070c8bd84e7fe78df94b025017ccee1"
+    },
+    {
+      "path": "assets/fill/play-fill.svg",
+      "sha256": "6d2a75bc5700a68dec50516ebae121c307807e4e6fcca5c863e5b4af006df880"
+    },
+    {
+      "path": "assets/fill/plug-fill.svg",
+      "sha256": "b829d148f18ad4cd80776b5a46d04d5cf11a4bbac5a40b96eb978798dd1ecfa6"
+    },
+    {
+      "path": "assets/fill/plugs-connected-fill.svg",
+      "sha256": "0310a1554853763657b1d44f771c3a0f4322a2ff3ea1f0bf7cfefbc89dfc8c60"
+    },
+    {
+      "path": "assets/fill/plugs-fill.svg",
+      "sha256": "e5722c41327ee3c63ac95bce8a46b590124e56ed9c8a57aff53894810335b497"
+    },
+    {
+      "path": "assets/fill/plus-circle-fill.svg",
+      "sha256": "7e6b31bae705c568cb7ce2b42fca9d65f85da725bac30f207ee2ce6368abb6c5"
+    },
+    {
+      "path": "assets/fill/puzzle-piece-fill.svg",
+      "sha256": "1067dab98fff3cdaf27b39f0ebf6e0caa9de0500e72b1655ba932d3e17f06e6d"
+    },
+    {
+      "path": "assets/fill/share-network-fill.svg",
+      "sha256": "1b23169dd2d0cb3bb748fcd61b222089aefdecbeef7ca7a0f49d26ef0378cf3e"
+    },
+    {
+      "path": "assets/fill/sliders-horizontal-fill.svg",
+      "sha256": "59fdf39771e7939dd315912702f3c8241a9dfeb1f5b6512a074525884765a76c"
+    },
+    {
+      "path": "assets/fill/smiley-fill.svg",
+      "sha256": "2f993043ef4566931f5ad81be6d1030734d2dbad5e5d7c5d380debfeaeeb9399"
+    },
+    {
+      "path": "assets/fill/star-fill.svg",
+      "sha256": "42451b34121b695bdaab88fdcf3eacec9cda9ac36d222349609426dcb9f04b48"
+    },
+    {
+      "path": "assets/fill/terminal-window-fill.svg",
+      "sha256": "35ae0aa334e570d44ac77ec031f038e89ab82e25d56ba26c18760910130ecdc7"
+    },
+    {
+      "path": "assets/fill/trash-fill.svg",
+      "sha256": "f78767cc15e1a7d6eea49c4efb515cf6fceaf07fbc421e8ce18373d07c14b673"
+    },
+    {
+      "path": "assets/fill/tray-fill.svg",
+      "sha256": "8e0ed750696c01ef6e418436275501e4467c66b6f88688e1d0ac86e84a296b47"
+    },
+    {
+      "path": "assets/fill/upload-simple-fill.svg",
+      "sha256": "3d1c38449725c61048e136e7ab491b020fbf92bffc5581c3abf59b363323d8af"
+    },
+    {
+      "path": "assets/fill/user-fill.svg",
+      "sha256": "9e011a83732426181c4e18ebfe0322635ed7a222ccd572072b1233a91f88fd0b"
+    },
+    {
+      "path": "assets/fill/user-list-fill.svg",
+      "sha256": "9d289e85359dcd8ed23bb85339915d6be3c543716cf0cad0c3f5a6b882215f7c"
+    },
+    {
+      "path": "assets/fill/users-fill.svg",
+      "sha256": "6104c0634ed5b574e261acc05a3575db8abfb4ccbcb3bf12f5359a431303783b"
+    },
+    {
+      "path": "assets/light/app-window-light.svg",
+      "sha256": "9ea373b34b16fc9de05fc06994e87d11505eb332fca59d61aba82418dd008b5d"
+    },
+    {
+      "path": "assets/light/arrow-clockwise-light.svg",
+      "sha256": "5622fda1cd6a4e34233810b7e585119e109bf50013601f4f719deb59d061519d"
+    },
+    {
+      "path": "assets/light/arrow-down-light.svg",
+      "sha256": "f05bddad29e8f49bbca166729a48fa1c2289cc51cbcaf5582f8fbe348cc2ce11"
+    },
+    {
+      "path": "assets/light/arrow-left-light.svg",
+      "sha256": "8825835a66e7f6111adf539ca971cf03996aae184e69b2b6d3a597943050eb3e"
+    },
+    {
+      "path": "assets/light/arrow-line-up-light.svg",
+      "sha256": "2b7455581ba01ab403434998d45e75ddc4e0aa8f455e6d4cba43e4cae00ee2c5"
+    },
+    {
+      "path": "assets/light/arrow-right-light.svg",
+      "sha256": "546e2ebfd0cae821c9a192ef8169eac2f1944688a373e3cb158316c311ca773a"
+    },
+    {
+      "path": "assets/light/arrow-up-light.svg",
+      "sha256": "c06d325e0f16034a32df2b60379dfa65598b0d2572ff5e7652eb2d1f498ee39f"
+    },
+    {
+      "path": "assets/light/arrows-clockwise-light.svg",
+      "sha256": "46a045b04fdd2948cd0c16309ce2f50278e581b8747ee86ce9d87dc2b5fc02ce"
+    },
+    {
+      "path": "assets/light/arrows-down-up-light.svg",
+      "sha256": "4c7a0a0275e0ef13935264daf4a644f3f9965436c7b395e9a7ad4e0dcaff612d"
+    },
+    {
+      "path": "assets/light/backspace-light.svg",
+      "sha256": "64beacfa4e5ac449a82e0ad078eea16e9e89e6b9a83a4c3285267c57e0085aa2"
+    },
+    {
+      "path": "assets/light/bell-light.svg",
+      "sha256": "f75c226ae3ce1512f99a9d1f370c341c31ecd1a49047364a499a66c9cdc03109"
+    },
+    {
+      "path": "assets/light/bookmark-simple-light.svg",
+      "sha256": "bea0f4423317aad20bfc3fff6a248bfc9193b825efc0f02d720760e306dd8571"
+    },
+    {
+      "path": "assets/light/broom-light.svg",
+      "sha256": "ae9a65d4af720d74a5e3e0f6204292ec6d3a9e5bd6adf7ebec901e5b345c160e"
+    },
+    {
+      "path": "assets/light/browsers-light.svg",
+      "sha256": "528508fc65f96d5df18962d04a1da434d70b86138a432b727038bcfd83f295f4"
+    },
+    {
+      "path": "assets/light/chat-circle-dots-light.svg",
+      "sha256": "25d56cf3136335ab88c138925761929dfa35cf8ee3f44f96bb3e391f06ec4a14"
+    },
+    {
+      "path": "assets/light/chats-circle-light.svg",
+      "sha256": "205480658375e539a8c1d7ee3bfdd701c70d9f411fe7f5881456bd7be124366a"
+    },
+    {
+      "path": "assets/light/circle-dashed-light.svg",
+      "sha256": "f40c733ef46d97bc219414eea45b86fb5819c8c8c6add9006286065bee6bcfdb"
+    },
+    {
+      "path": "assets/light/circle-light.svg",
+      "sha256": "bb09e2539fc65394760823bb12a06f3bd0d63afaad5b9fb5cb9037eed09ad10e"
+    },
+    {
+      "path": "assets/light/clock-counter-clockwise-light.svg",
+      "sha256": "d51ee7f02973861519df6f2193c815ecaf8a8aec2495e2a4a19576d82c609fb0"
+    },
+    {
+      "path": "assets/light/copy-light.svg",
+      "sha256": "b21ef559e819123a013d96d82be8525f9e35abe09a07ad4092ab8096f38b877a"
+    },
+    {
+      "path": "assets/light/desktop-light.svg",
+      "sha256": "3763419a03d6cec7d1c926c575e2e3e593fcdf273446e7bc040f14a8d7b2f29f"
+    },
+    {
+      "path": "assets/light/detective-light.svg",
+      "sha256": "3e5a90981ae4e306c3a076a5a5b8b91e4b5bb05f985f9bc69ab63da7d1915f8f"
+    },
+    {
+      "path": "assets/light/download-simple-light.svg",
+      "sha256": "dea5e244ee9cc9f78a9832b690f124d86cf71bc33b7a3ec809d53ecc3ba6b4a2"
+    },
+    {
+      "path": "assets/light/envelope-simple-light.svg",
+      "sha256": "ed6978cafae9401f245df07dcfe93d62c8f4a9ae5bbe5f47baddddd82cc0b8f9"
+    },
+    {
+      "path": "assets/light/eraser-light.svg",
+      "sha256": "e617f9efedcf2b0d878f00896278644b63b1910cba402e6b5d8285c7eb703f1d"
+    },
+    {
+      "path": "assets/light/file-archive-light.svg",
+      "sha256": "3bdbe10624a70b8a37224c4303062d8fe45230b3c229862a73b3e66b88e0db17"
+    },
+    {
+      "path": "assets/light/file-dashed-light.svg",
+      "sha256": "639e35ecc3cf5de2b1dd5430295c73a60b4eafd7002ef8eb70fe139fc0be5388"
+    },
+    {
+      "path": "assets/light/file-magnifying-glass-light.svg",
+      "sha256": "e5302931a2c37ebce8f4726186a9fc716c73c6c3b7e5ebb1259f3bc7e1d9b1e3"
+    },
+    {
+      "path": "assets/light/file-plus-light.svg",
+      "sha256": "c2ef343715894a07442ebfe631fcde98c0f9c89c3acf2564742340759053f049"
+    },
+    {
+      "path": "assets/light/file-text-light.svg",
+      "sha256": "4579a0026554224ce339d52b4bf468f246e010f58bec025f5019f63e3ab67530"
+    },
+    {
+      "path": "assets/light/film-strip-light.svg",
+      "sha256": "623246fd4f393c14d15a31c8805c56873d8a13c0a7892df1ef9995571298b258"
+    },
+    {
+      "path": "assets/light/folder-open-light.svg",
+      "sha256": "2aa614fd18fe12dc376950bfae276264f1d073942c1eb05224589065a9d5fb4f"
+    },
+    {
+      "path": "assets/light/folder-simple-light.svg",
+      "sha256": "94a31a36d39c5fda00738a36bd1a586022f931191e7655b8295b14ed74a4859b"
+    },
+    {
+      "path": "assets/light/funnel-light.svg",
+      "sha256": "5b496dae4149c8b396b9543e8a79e1f964001f0614ccbf63d8574c380e934683"
+    },
+    {
+      "path": "assets/light/gauge-light.svg",
+      "sha256": "5aa3f85db15d91f654f6751652fe9db696aac2c5c428b343ad57ece596ddf699"
+    },
+    {
+      "path": "assets/light/gear-light.svg",
+      "sha256": "f31ef3e36fb8ffdbdffba0cff464412fe3f903c606e06438129f7a7937b366e8"
+    },
+    {
+      "path": "assets/light/globe-light.svg",
+      "sha256": "e3dcd7e7b26e07e1f0b1f878681d826da58aeb54aaf7e256f031e8fc21efc67a"
+    },
+    {
+      "path": "assets/light/hard-drive-light.svg",
+      "sha256": "f480a1324ae1d74c795ae936bfd0c073ea9fffc591b1e463e5bd19d29a53b2c5"
+    },
+    {
+      "path": "assets/light/hash-light.svg",
+      "sha256": "b2a386bdad3f25d4ef541932d8a5b281124111791181e9cab565b2d66d2377f2"
+    },
+    {
+      "path": "assets/light/image-light.svg",
+      "sha256": "148e506672999a455eb0f735e7730eee308d0140a8efab228b937025134b4a20"
+    },
+    {
+      "path": "assets/light/info-light.svg",
+      "sha256": "c57885e282dd796185bd330356a96cd2090313b3bedafaf41f97dd304df9c87c"
+    },
+    {
+      "path": "assets/light/list-bullets-light.svg",
+      "sha256": "ac4f1eaf4da5e9e7f5bd8adc3fb27ef270cbd6832a312b94ec4026ab0467dff0"
+    },
+    {
+      "path": "assets/light/magnet-light.svg",
+      "sha256": "cf44164a6928f58b7630fe553dc11802070611853f862fb54075a9d25dc37f1b"
+    },
+    {
+      "path": "assets/light/magnifying-glass-light.svg",
+      "sha256": "e24a8c8778901b20b37d025f49c72ebfaa28c5f46d68c6c4fea82fa8f8bf1ee3"
+    },
+    {
+      "path": "assets/light/magnifying-glass-minus-light.svg",
+      "sha256": "ac412d24d0de9a9102ab4ae5de4964efa21f2efbef99fcdb878a14bda52039e4"
+    },
+    {
+      "path": "assets/light/magnifying-glass-plus-light.svg",
+      "sha256": "ab990675c775574196c1175bcf99e2a4679bd6ebdd366d75828ad701b5df5ee6"
+    },
+    {
+      "path": "assets/light/minus-square-light.svg",
+      "sha256": "14ea0bc777802c4a38961ca7cf3bc648cf52786070354936077e48458f053835"
+    },
+    {
+      "path": "assets/light/music-notes-light.svg",
+      "sha256": "db293a7c256dde69adf1ed4389f1a7bbf22e9c8b96659a4b5c2def02c62e0e34"
+    },
+    {
+      "path": "assets/light/note-pencil-light.svg",
+      "sha256": "6468eaab944d70e2457031d16f1e56c201f98ac1bef1019326e6a23caa1187d6"
+    },
+    {
+      "path": "assets/light/pause-light.svg",
+      "sha256": "147247f306ee08381b5f43bfd2dda840b7f4d798e264eac86c3bb8ca6b0c3092"
+    },
+    {
+      "path": "assets/light/play-light.svg",
+      "sha256": "9d9ac3f00479550fecdd3f0cb11d131c555ceca77bff4c1ef5bf21c770ec1488"
+    },
+    {
+      "path": "assets/light/plug-light.svg",
+      "sha256": "4a6d995b7bf6d1cc3c470abee0ee234bbe60a715798b4b2a12070369d3eba095"
+    },
+    {
+      "path": "assets/light/plugs-connected-light.svg",
+      "sha256": "213aab30713660bf2504530d964e3100906b1be823bb65ff8d48784e28250b4d"
+    },
+    {
+      "path": "assets/light/plugs-light.svg",
+      "sha256": "8f771da1d5f0730778812155f5eccff2ffc4f5beb540999b18737fd2dcc447b9"
+    },
+    {
+      "path": "assets/light/plus-light.svg",
+      "sha256": "d924e999d110e1f84c3197dba33206d46fb94cb28a2b53f6ca35217466e3c92e"
+    },
+    {
+      "path": "assets/light/power-light.svg",
+      "sha256": "466a85bef679a06aaf24a1c7b44ea5b7c545966216b30c5ccb4f1325f2151968"
+    },
+    {
+      "path": "assets/light/prohibit-light.svg",
+      "sha256": "9fd52ae9ff6013a5e97a4af9efd6123cc96d68386e961374e480fd3c82c16294"
+    },
+    {
+      "path": "assets/light/puzzle-piece-light.svg",
+      "sha256": "06fc78f4bbc1a49effc63bfb361cf73235bae0b02f160e31fdafe01c3b472781"
+    },
+    {
+      "path": "assets/light/share-network-light.svg",
+      "sha256": "946c5d6d0a51f4e58e0d675c44b6ceeb881dc8c99bd91269085d749ac16dc2ee"
+    },
+    {
+      "path": "assets/light/sliders-horizontal-light.svg",
+      "sha256": "fc2bcb8ac38ce3a38f0dabe03e2e6dd19dbd40e978b86797e498e8ac80cedd18"
+    },
+    {
+      "path": "assets/light/smiley-light.svg",
+      "sha256": "2577f18e143ee4a8a05a10ac1604dba9023b9433efd2a25448b9952f628545d5"
+    },
+    {
+      "path": "assets/light/star-light.svg",
+      "sha256": "513d052171854cfafb91aeca3f87e978d8c9d5d79b9424478a437f59bc9e7ec9"
+    },
+    {
+      "path": "assets/light/terminal-window-light.svg",
+      "sha256": "3d308dd89d8caad7c34f93a434fabc209604b4052e33f9428e6f677d101ca352"
+    },
+    {
+      "path": "assets/light/trash-light.svg",
+      "sha256": "66c779b57b990777b9f2d311d5957b19269ccf9f79d73c5eed6d0f6a2aae3370"
+    },
+    {
+      "path": "assets/light/tray-light.svg",
+      "sha256": "b2c175b4c2c66f6de1590b2474bbd0ff3731f8800fc3a62624b46ef16730bfd7"
+    },
+    {
+      "path": "assets/light/upload-simple-light.svg",
+      "sha256": "5edf1473c405eed3d11252da3b8da4b89d56f57d3bef1dbf6a5861ed13c24012"
+    },
+    {
+      "path": "assets/light/user-light.svg",
+      "sha256": "b26184abbe006d1874c2cf7bee91e13b807731966c1326b485431fbe3e4d9b57"
+    },
+    {
+      "path": "assets/light/user-list-light.svg",
+      "sha256": "4383595676ddab77bfb4f5b0ac47ede981ebbb2771bd55f2273a12a956ee1153"
+    },
+    {
+      "path": "assets/light/users-light.svg",
+      "sha256": "c7207ced94f5e276daf3f42e18eaecadc7ab05e8950858f1c9456349c18847aa"
+    },
+    {
+      "path": "assets/light/x-light.svg",
+      "sha256": "7f3f44f5e9fdc40d7d8ecaf49c9b2cca95a6f7b944f81f7ae5d8d8bb674d8d91"
+    },
+    {
+      "path": "assets/regular/arrow-down.svg",
+      "sha256": "cc6416ae83e20660f14b11f5525c6d05ee679c3f26cee41b696cb37aa905d4f5"
+    },
+    {
+      "path": "assets/regular/arrow-square-down.svg",
+      "sha256": "cfeccc8c10f28d48fe4ba9cfe8f1070f6fb84eaab5485d59f5177b02f07d6eaf"
+    },
+    {
+      "path": "assets/regular/arrow-square-left.svg",
+      "sha256": "ee2a0d62281d1f94c79fd6b8ba52a04ad5a43cc460ec27cddaccae0ffed3629e"
+    },
+    {
+      "path": "assets/regular/arrow-square-right.svg",
+      "sha256": "e09f5adad79b5deacc4cd3a3163ad78db5eb57923e525b40f75974a7e8d50ab8"
+    },
+    {
+      "path": "assets/regular/arrow-square-up.svg",
+      "sha256": "0530c14e1a023d7080fc54329885fd01278322ce65e03eda61e4705937643790"
+    },
+    {
+      "path": "assets/regular/arrow-up-right.svg",
+      "sha256": "44db5257b360ec04863eb6daaa41f220c8b714d23fb81403517d0a30acfda9f4"
+    },
+    {
+      "path": "assets/regular/bell.svg",
+      "sha256": "439b02c746ff59945b6175c6d327113ca3f7a729a43d5bcafb278a0f11ee34b5"
+    },
+    {
+      "path": "assets/regular/chat-circle-dots.svg",
+      "sha256": "2af44e36757c90c999e070065ae61c495c66c8e88f43c5f07964dc3367cad60d"
+    },
+    {
+      "path": "assets/regular/check-circle.svg",
+      "sha256": "e02a080c3d1a758de5c5fd41abd913dec4cffbc70fe1e9637dbf7ce35f377055"
+    },
+    {
+      "path": "assets/regular/lightning.svg",
+      "sha256": "3a50c776266b21812f8ec5b5a841a81f54aa942569a31eb03a36fb0a5bfbe66e"
+    },
+    {
+      "path": "assets/regular/list-bullets.svg",
+      "sha256": "5c685a673fbd053a3c548039725d1a9f902938fbcddaef3c5f958f0a64c19341"
+    },
+    {
+      "path": "assets/regular/lock-key.svg",
+      "sha256": "a8177687fb7b376afa1cf3bc0b16599c91b96a323687e2145f772b93ed0f2c95"
+    },
+    {
+      "path": "assets/regular/magnifying-glass.svg",
+      "sha256": "f9fa2561978a9a3291e8ae0ebfcb651104f5069fade8f84871627bca68889cde"
+    },
+    {
+      "path": "assets/regular/minus-circle.svg",
+      "sha256": "969de9cfae81e75d377f932733c8d003e1ad7903afe7fee67b8aecccb0c08d4d"
+    },
+    {
+      "path": "assets/regular/moon.svg",
+      "sha256": "5c91f82aea4e7b53305bf29628caebc22a1198ba9fa46c62eef13fb8b3c3f21d"
+    },
+    {
+      "path": "assets/regular/plus-circle.svg",
+      "sha256": "592d418a2e4af4f1f111b65da8e548d4dc5ae981d7ca883ff447a3af0f34ef39"
+    },
+    {
+      "path": "assets/regular/star.svg",
+      "sha256": "165cd96e51d60442fb9c7aa89592fa6ef28f22d18368c85771be302c2e977101"
+    }
+  ]
+}

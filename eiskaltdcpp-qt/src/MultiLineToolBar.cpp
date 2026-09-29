@@ -67,6 +67,7 @@ void MultiLineToolBar::slotContextMenu(){
 
     if (m->exec(QCursor::pos())){
         qtCtx()->settings()->setBool(WB_APP_TBAR_SHOW_CL_BTNS, act->isChecked());
+        frame->redraw();
     }
 
     m->deleteLater();

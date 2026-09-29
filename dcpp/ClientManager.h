@@ -146,12 +146,15 @@ public:
     UserPtr& getMe();
 
     void send(AdcCommand& c, const CID& to);
+    void sendUdp(const string& ip, const string& port, const string& data);
     void connect(const HintedUser& user, const string& token);
     void privateMessage(const HintedUser& user, const string& msg, bool thirdPerson);
     void userCommand(const HintedUser& user, const UserCommand& uc, ParamMap& params, bool compatibility);
     int getMode(const string& aHubUrl) const;
     bool isProxyHubStealth() const;
     bool isTcpActive(const HintedUser& user);
+    /** Only reject known unreachable peers on the hub connect() would select. */
+    bool isPassiveDownloadBlocked(const HintedUser& user, string* nick = nullptr);
     bool isActive(const string& aHubUrl = Util::emptyString) const { return getMode(aHubUrl) != SettingsManager::INCOMING_FIREWALL_PASSIVE; }
     bool ucExecuteLua(const string& cmd, StringMap& params);
 
@@ -195,6 +198,7 @@ private:
     UserPtr me;
 
     Socket udp;
+    CriticalSection udpMutex;
 
     CID pid;
 

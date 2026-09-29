@@ -11,7 +11,7 @@ endif ()
 
 add_definitions(-DJSON_HAS_RVALUE_REFERENCES=0)
 set (PROJECT_NAME "EiskaltDC++")
-set (APP_VERSION "2.5.6-pre.2") # Main program version (displayed in UI)
+set (APP_VERSION "2.5.6") # Main program version (displayed in UI)
 set (CONF_VERSION "2.0500") # Config version (for updating of DCPlusPlus.xml)
 set (SO_VERSION "2.5") # Library version (incremented after changes in API or ABI)
 
@@ -85,6 +85,13 @@ option (WITH_LUASCRIPTS "Install examples of lua scripts" ON)
 option (WITH_SOUNDS "Install sound files" ON)
 option (WITH_DEV_FILES "Install development files (headers for libeiskaltdcpp)" OFF)
 option (BUILD_TESTS "Build unit tests (requires internet for Catch2 fetch)" OFF)
+option (USE_TORRENT "Build experimental Qt BitTorrent support" OFF)
+if (USE_TORRENT)
+    if (NOT USE_QT6)
+        message (FATAL_ERROR "Torrent support requires the Qt6 frontend")
+    endif ()
+    add_definitions (-DUSE_TORRENT)
+endif ()
 option (DBUS_NOTIFY "QtDbus support in Qt interface" ON)
 option (USE_JS "JavaScript scripting support in Qt interface (QJSEngine)" OFF)
 option (XMLRPC_DAEMON "Make daemon as xmlrpc server" OFF)
@@ -253,8 +260,11 @@ message (STATUS "Data directory: ${CLIENT_DATA_DIR}")
 
 if (REPLACE_VERSION)
     set (APP_VERSION "${REPLACE_VERSION}")
+elseif (USE_TORRENT)
+    # The combined DC/Torrent client starts a new major series, not the old git tag.
+    set (APP_VERSION "3.0.0")
 elseif (APPLE)
-    set (APP_VERSION "2.5.6-pre.2")
+    set (APP_VERSION "2.5.6")
 elseif (GIT_FOUND)
     if (EXISTS "${PROJECT_SOURCE_DIR}/.git/config")
         execute_process (COMMAND ${GIT_EXECUTABLE} describe --tags
@@ -415,6 +425,13 @@ endif (WITH_DHT)
 
 add_subdirectory (dcpp)
 
+if (USE_TORRENT)
+    find_package(Qt6 REQUIRED COMPONENTS Core Network)
+    find_package(LibtorrentRasterbar 2.1 CONFIG REQUIRED)
+    find_package(Threads REQUIRED)
+    add_subdirectory (torrent)
+endif ()
+
 if (BUILD_TESTS)
     enable_testing()
     add_subdirectory (tests)
@@ -453,6 +470,16 @@ if (GETTEXT_FOUND)
     option (CREATE_MO "Create mo files" ON)
     add_subdirectory (cmake)
 endif (GETTEXT_FOUND)
+
+# The gettext target is declared after the Qt subdirectory. A target-only app
+# build must generate catalogs too, and changed catalogs must rerun bundling.
+if (APPLE AND TARGET eiskaltdcpp-qt AND TARGET mo-update)
+    add_dependencies(eiskaltdcpp-qt mo-update)
+    foreach (LANG ${LANGUAGES})
+        set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS
+            "${CMAKE_BINARY_DIR}/dcpp/${LANG}_libeiskaltdcpp.mo")
+    endforeach ()
+endif ()
 
 message (STATUS "CMAKE_SYSTEM: ${CMAKE_SYSTEM}")
 message (STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
@@ -498,8 +525,20 @@ if (WIN32)
     set (CPACK_NSIS_DISPLAY_NAME "${PROJECT_NAME_GLOBAL}")
     set (CPACK_NSIS_PACKAGE_NAME "${PROJECT_NAME_GLOBAL}")
     set (CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+    set (CPACK_PACKAGE_INSTALL_DIRECTORY "Eiskalt DC++")
     set (CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
     set (CPACK_NSIS_URL_INFO_ABOUT "https://github.com/eiskaltdcpp/eiskaltdcpp")
+    set (CPACK_PACKAGE_EXECUTABLES "EiskaltDC++" "${PROJECT_NAME_GLOBAL}")
+    set (CPACK_CREATE_DESKTOP_LINKS "EiskaltDC++")
+    set (CPACK_NSIS_MUI_FINISHPAGE_RUN "EiskaltDC++.exe")
+    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS [=[
+MessageBox MB_YESNO|MB_DEFBUTTON1 "Add Eiskalt DC++ to Windows Firewall exceptions?" IDNO noFirewallException
+  ExecWait 'netsh advfirewall firewall add rule name="Eiskalt DC++" dir=in action=allow program="$INSTDIR\EiskaltDC++.exe" enable=yes'
+noFirewallException:
+]=])
+    set (CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS [=[
+ExecWait 'netsh advfirewall firewall delete rule name="Eiskalt DC++" program="$INSTDIR\EiskaltDC++.exe"'
+]=])
     # Start-menu shortcuts
     set (CPACK_NSIS_CREATE_ICONS_EXTRA
         "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\${PROJECT_NAME_GLOBAL}.lnk' '$INSTDIR\\\\EiskaltDC++.exe'")

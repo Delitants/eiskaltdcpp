@@ -16,6 +16,7 @@
  */
 
 #include "stdinc.h"
+#include "TimerManager.h"
 #include <openssl/x509v3.h>
 #include "SSLSocket.h"
 
@@ -43,7 +44,9 @@ int socketBioWrite(BIO* bio, const char* data, int len) {
         return 0;
 
     BIO_clear_retry_flags(bio);
-    const int ret = socket->Socket::write(data, len);
+    int ret;
+    try { ret = socket->Socket::write(data, len); }
+    catch(...) { return -1; } // Exceptions must not cross OpenSSL's C callbacks.
     if(ret == -1) {
         BIO_set_retry_write(bio);
     }
@@ -59,7 +62,9 @@ int socketBioRead(BIO* bio, char* data, int len) {
         return 0;
 
     BIO_clear_retry_flags(bio);
-    const int ret = socket->Socket::read(data, len);
+    int ret;
+    try { ret = socket->Socket::read(data, len); }
+    catch(...) { return -1; }
     if(ret == -1) {
         BIO_set_retry_read(bio);
     }
@@ -114,6 +119,21 @@ bool isUnexpectedEof(unsigned long err) {
 
 }
 
+bool SSLSocket::tlsReadResultMeansClosed(int ret, int sslError, unsigned long opensslError) {
+    if(ret > 0) {
+        return false;
+    }
+
+    if(sslError == SSL_ERROR_ZERO_RETURN) {
+        return true;
+    }
+
+    // OpenSSL may report a TCP EOF without close_notify as SSL_ERROR_SYSCALL
+    // with an empty error queue, or as SSL_ERROR_SSL with "unexpected eof".
+    return (sslError == SSL_ERROR_SYSCALL && opensslError == 0) ||
+        isUnexpectedEof(opensslError);
+}
+
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
 static const unsigned char alpn_protos_nmdc[] = {
 	4, 'n', 'm', 'd', 'c',
@@ -154,6 +174,8 @@ static inline int SSL_is_server(SSL *s)
 #endif
 
 bool SSLSocket::waitConnected(uint32_t millis) {
+    const uint64_t deadline = GET_TICK() + millis;
+    checkProxyCancellation();
     if(!ssl) {
         if(!Socket::waitConnected(millis)) {
             return false;
@@ -240,7 +262,8 @@ bool SSLSocket::waitConnected(uint32_t millis) {
                     errBuf[0] ? errBuf : "<none>");
         }
 
-        if(!waitWant(ret, millis)) {
+        const auto now = GET_TICK();
+        if(!waitWant(ret, static_cast<uint32_t>(now < deadline ? deadline - now : 0))) {
             int sslErr = SSL_get_error(ssl, ret);
             unsigned long e = ERR_peek_error();
             char errBuf[256] = {0};
@@ -263,6 +286,8 @@ void SSLSocket::accept(const Socket& listeningSocket) {
 }
 
 bool SSLSocket::waitAccepted(uint32_t millis) {
+    const uint64_t deadline = GET_TICK() + millis;
+    checkProxyCancellation();
     if(!ssl) {
         if(!Socket::waitAccepted(millis)) {
             return false;
@@ -284,7 +309,8 @@ bool SSLSocket::waitAccepted(uint32_t millis) {
             dcdebug("Connected to SSL client using %s\n", SSL_get_cipher(ssl));
             return true;
         }
-        if(!waitWant(ret, millis)) {
+        const auto now = GET_TICK();
+        if(!waitWant(ret, static_cast<uint32_t>(now < deadline ? deadline - now : 0))) {
             return false;
         }
     }
@@ -306,10 +332,22 @@ bool SSLSocket::waitWant(int ret, uint32_t millis) {
 }
 
 int SSLSocket::read(void* aBuffer, int aBufLen) {
+    checkProxyCancellation();
     if(!ssl) {
         return -1;
     }
-    int len = checkSSL(SSL_read(ssl, aBuffer, aBufLen));
+    const int ret = SSL_read(ssl, aBuffer, aBufLen);
+    if(ret <= 0) {
+        const int sslErr = SSL_get_error(ssl, ret);
+        const unsigned long libErr = ERR_peek_error();
+        if(tlsReadResultMeansClosed(ret, sslErr, libErr)) {
+            ERR_clear_error();
+            ssl.reset();
+            throw SocketException(_("Connection closed"));
+        }
+    }
+
+    int len = checkSSL(ret);
 
     if(len > 0) {
         stats.totalDown += len;
@@ -319,6 +357,7 @@ int SSLSocket::read(void* aBuffer, int aBufLen) {
 }
 
 int SSLSocket::write(const void* aBuffer, int aLen) {
+    checkProxyCancellation();
     if(!ssl) {
         return -1;
     }
@@ -338,6 +377,13 @@ int SSLSocket::checkSSL(int ret) {
         /* inspired by boost.asio (asio/ssl/detail/impl/engine.ipp, function engine::perform) and
            the SSL_get_error doc at <https://www.openssl.org/docs/ssl/SSL_get_error.html>. */
         auto err = SSL_get_error(ssl, ret);
+        const unsigned long peekedErr = ERR_peek_error();
+        if(tlsReadResultMeansClosed(ret, err, peekedErr)) {
+            ERR_clear_error();
+            ssl.reset();
+            throw SocketException(_("Connection closed"));
+        }
+
         switch(err) {
         case SSL_ERROR_NONE:        // Fallthrough - YaSSL doesn't for example return an openssl compatible error on recv fail
         case SSL_ERROR_WANT_READ:   // Fallthrough
@@ -348,14 +394,7 @@ int SSLSocket::checkSSL(int ret) {
         default:
         {
             long verifyRes = SSL_get_verify_result(ssl);
-            unsigned long libErr = ERR_peek_error();
-            if(isUnexpectedEof(libErr)) {
-                ERR_clear_error();
-                ssl.reset();
-                throw SocketException(_("Connection closed"));
-            }
-
-            libErr = ERR_get_error();
+            unsigned long libErr = ERR_get_error();
             char errbuf[256] = {0};
             if(libErr) {
                 ERR_error_string_n(libErr, errbuf, sizeof(errbuf));
@@ -382,6 +421,7 @@ int SSLSocket::checkSSL(int ret) {
 }
 
 int SSLSocket::wait(uint32_t millis, int waitFor) {
+    checkProxyCancellation();
     if(ssl && (waitFor & Socket::WAIT_READ)) {
         /** @todo Take writing into account as well if reading is possible? */
         char c;
@@ -426,8 +466,14 @@ ByteVector SSLSocket::getKeyprint() const {
 }
 
 void SSLSocket::shutdown() {
-    if(ssl)
-        SSL_shutdown(ssl);
+    if(ssl) {
+        try {
+            checkProxyCancellation();
+            SSL_shutdown(ssl);
+        } catch(const SocketException&) {
+            // A revoked route must close without sending further TLS payload.
+        }
+    }
 }
 
 void SSLSocket::close() {

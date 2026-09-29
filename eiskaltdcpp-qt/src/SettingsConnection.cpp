@@ -12,6 +12,10 @@
 
 #include "SettingsConnection.h"
 #include "SettingsConnectionHelpers.h"
+#include "ProxyTestRunner.h"
+#include "PasswordRevealAction.h"
+#include "CertificateSettings.h"
+#include "dcpp/ClientManager.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "DHTBootstrapList.h"
@@ -23,6 +27,7 @@
 #include "dcpp/stdinc.h"
 #include "dcpp/SettingsManager.h"
 #include "dcpp/Socket.h"
+#include "dcpp/ProxyRoute.h"
 #include "dcpp/DCPlusPlus.h"
 #include "extra/dyndns.h"
 
@@ -51,6 +56,9 @@
 #include <QNetworkInterface>
 #include <QSignalBlocker>
 #include <QTcpSocket>
+#include <QFormLayout>
+#include <QSettings>
+#include "dcpp/Util.h"
 
 #ifndef IPTOS_TOS_MASK
 #define	IPTOS_TOS_MASK		0x1E
@@ -77,6 +85,11 @@
 using namespace dcpp;
 
 namespace {
+
+QString proxyDiagnosticsPath()
+{
+    return QString::fromStdString(Util::getPath(Util::PATH_USER_CONFIG)) + QStringLiteral("ProxyDiagnostics.ini");
+}
 
 bool isDarkWidgetAppearance(QWidget *widget)
 {
@@ -506,7 +519,7 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     lineEdit_COUNTRY_DB->setPlaceholderText(tr("Path to GeoLite2/MaxMind country .mmdb"));
     lineEdit_COUNTRY_DB->setMinimumWidth(320);
     toolButton_COUNTRY_DB = new QToolButton(tab_3);
-    toolButton_COUNTRY_DB->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_COUNTRY_DB->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
     toolButton_COUNTRY_DB->setAutoRaise(false);
     gridLayout_11->addWidget(labelCountryDb, 2, 0);
     gridLayout_11->addWidget(lineEdit_COUNTRY_DB, 2, 1);
@@ -529,8 +542,16 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     gridLayout_13->setColumnStretch(2, 1);
     auto *buttonEditDHT = new QPushButton(tr("Configure DHT bootstrap URLs"), groupBox_DHT);
     buttonEditDHT->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    gridLayout_13->addWidget(buttonEditDHT, 1, 1);
+    gridLayout_13->addWidget(buttonEditDHT, 3, 1);
     connect(buttonEditDHT, &QPushButton::clicked, this, &SettingsConnection::slotCfgDHTBootstrap);
+    const auto updateDhtControls = [this, buttonEditDHT](bool enabled) {
+        label_23->setEnabled(enabled);
+        spinBox_DHT->setEnabled(enabled);
+        label_DHT_BOOTSTRAP_URLS->setEnabled(enabled);
+        buttonEditDHT->setEnabled(enabled);
+    };
+    connect(checkBox_DHT, &QCheckBox::toggled, this, updateDhtControls);
+    updateDhtControls(checkBox_DHT->isChecked());
 
     auto *labelHubLists = new QLabel(tr("Public hub list URLs"), tab_3);
     labelHubLists->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -558,14 +579,126 @@ SettingsConnection::SettingsConnection( QWidget *parent):
                                       "Incoming connection options are disabled and the client is advertised as passive."));
     gridLayout_8->addWidget(checkBox_PROXY_P2P, 9, 0, 1, 4);
 
+    globalGostMode = new QRadioButton(tr("GOST (TLS + UDP)"), radioButton_DC->parentWidget());
+    globalGostMode->setObjectName(QStringLiteral("globalGostMode"));
+    gridLayout_6->addWidget(globalGostMode, 4, 0);
+    gridLayout_7->setAlignment(radioButton_DC->parentWidget(), Qt::AlignTop);
+    radioButton_DC->parentWidget()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    globalGostTrust = new QWidget(frame_2);
+    auto *trustLayout = new QHBoxLayout(globalGostTrust);
+    trustLayout->setContentsMargins(0, 0, 0, 0);
+    trustLayout->addWidget(new QLabel(tr("CA certificate file:"), globalGostTrust));
+    globalGostCaFile = new QLineEdit(globalGostTrust);
+    globalGostCaFile->setObjectName(QStringLiteral("globalGostCaFile"));
+    globalGostCaFile->setPlaceholderText(tr("Empty: system trust roots"));
+    trustLayout->addWidget(globalGostCaFile, 1);
+    globalGostCaBrowse = new QPushButton(tr("Browse..."), globalGostTrust);
+    globalGostCaBrowse->setObjectName(QStringLiteral("globalGostCaBrowse"));
+    trustLayout->addWidget(globalGostCaBrowse);
+    gridLayout_8->addWidget(globalGostTrust, 10, 0, 1, 4);
+    globalGostNotice = new QLabel(tr("GOST requires authenticated TLS with certificate verification. TCP and UDP use the encrypted tunnel; there is no plain or direct fallback.") + QLatin1Char(' ') +
+        tr("GOST uses passive peer mode; saved incoming settings are preserved."), frame_2);
+    globalGostNotice->setWordWrap(true);
+    gridLayout_8->addWidget(globalGostNotice, 11, 0, 1, 4);
+    connect(globalGostCaBrowse, &QPushButton::clicked, this, [this] {
+        const auto path = QFileDialog::getOpenFileName(this, tr("Select CA certificate file"), globalGostCaFile->text(), QStringLiteral("PEM (*.pem *.crt)"));
+        if (!path.isEmpty()) globalGostCaFile->setText(path);
+    });
+
+    auto *diagnostics = new QGroupBox(tr("What to test (diagnostics only)"), frame_2);
+    auto *diagnosticForm = new QFormLayout(diagnostics);
+    diagnosticForm->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    diagnosticForm->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    QSettings diagnosticSettings(proxyDiagnosticsPath(), QSettings::IniFormat);
+    diagnosticSettings.beginGroup(QStringLiteral("GlobalProxyTest"));
+    auto diagnosticText = [&](const char *name, const QString &label, const char *key, const QString &fallback) {
+        auto *edit = new QLineEdit(diagnosticSettings.value(QString::fromLatin1(key), fallback).toString(), diagnostics);
+        edit->setObjectName(QString::fromLatin1(name));
+        edit->setMaxLength(253);
+        diagnosticForm->addRow(label, edit);
+        return edit;
+    };
+    auto diagnosticPort = [&](const char *name, const QString &label, const char *key, int fallback) {
+        auto *port = new QSpinBox(diagnostics);
+        port->setObjectName(QString::fromLatin1(name));
+        port->setRange(1, 65535);
+        port->setValue(diagnosticSettings.value(QString::fromLatin1(key), fallback).toInt());
+        diagnosticForm->addRow(label, port);
+        return port;
+    };
+    testTcpHost = diagnosticText("globalProxyTestTcpHost", tr("TCP host / IP:"), "tcpHost", QStringLiteral("google.com"));
+    testTcpHost->setText(QStringLiteral("google.com"));
+    testTcpHost->setReadOnly(true);
+    testTcpPort = diagnosticPort("globalProxyTestTcpPort", tr("TCP port:"), "tcpPort", 443);
+    testTcpPortExplicit = diagnosticSettings.value(QStringLiteral("tcpPortExplicit"), false).toBool();
+    testDnsResolver = diagnosticText("globalProxyTestDnsResolver", tr("UDP DNS resolver (numeric IP):"), "dnsResolver", QStringLiteral("1.1.1.1"));
+    testDnsPort = diagnosticPort("globalProxyTestDnsPort", tr("UDP DNS port:"), "dnsPort", 53);
+    testDnsQuery = diagnosticText("globalProxyTestDnsQuery", tr("UDP DNS query name:"), "dnsQuery", QStringLiteral("google.com"));
+    testDnsQuery->setText(QStringLiteral("google.com"));
+    testDnsQuery->setReadOnly(true);
+    testProtocol = new QLabel(diagnostics);
+    testProtocol->setObjectName(QStringLiteral("globalProxyTestProtocol"));
+    testProtocol->setWordWrap(true);
+    testProtocol->setTextFormat(Qt::PlainText);
+    diagnosticForm->addRow(testProtocol);
+    gridLayout_8->addWidget(diagnostics, 12, 0, 1, 4);
+
     button_TEST_PROXY = new QPushButton(tr("Test proxy"), frame_2);
+    button_TEST_PROXY->setObjectName(QStringLiteral("globalProxyTest"));
     button_TEST_PROXY->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    gridLayout_8->addWidget(button_TEST_PROXY, 10, 1, 1, 1);
+    gridLayout_8->addWidget(button_TEST_PROXY, 13, 1, 1, 1);
+    button_CANCEL_PROXY_TEST = new QPushButton(tr("Cancel test"), frame_2);
+    button_CANCEL_PROXY_TEST->setObjectName(QStringLiteral("globalProxyTestCancel"));
+    button_CANCEL_PROXY_TEST->setEnabled(false);
+    gridLayout_8->addWidget(button_CANCEL_PROXY_TEST, 13, 2, 1, 1);
+    label_PROXY_TEST_RESULT = new QLabel(frame_2);
+    label_PROXY_TEST_RESULT->setObjectName(QStringLiteral("globalProxyTestResult"));
+    label_PROXY_TEST_RESULT->setTextFormat(Qt::PlainText);
+    label_PROXY_TEST_RESULT->setWordWrap(true);
+    label_PROXY_TEST_RESULT->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    gridLayout_8->addWidget(label_PROXY_TEST_RESULT, 14, 0, 1, 4);
+    proxyTestRunner = new ProxyTestRunner(this);
+    connect(button_CANCEL_PROXY_TEST, &QPushButton::clicked, proxyTestRunner, &ProxyTestRunner::cancel);
+    connect(proxyTestRunner, &ProxyTestRunner::finished, this, [this](const ProxyTestRunner::Result& result) {
+        button_CANCEL_PROXY_TEST->setEnabled(false);
+        slotToggleOutgoing();
+        if (!proxyTestStale) {
+            label_PROXY_TEST_RESULT->setText(tr("TCP: %1\nUDP: %2").arg(result.tcp.message, result.udp.message));
+            if (result.tcp.status != ProxyTestRunner::Status::Cancelled &&
+                result.udp.status != ProxyTestRunner::Status::Cancelled)
+                saveProbeTargets();
+        }
+    });
+    const auto invalidateProxyTest = [this] {
+        proxyTestStale = true;
+        if (proxyTestRunner->isRunning()) {
+            proxyTestRunner->cancel();
+            label_PROXY_TEST_RESULT->setText(tr("Proxy settings changed; test cancelled. Test again with the new values."));
+        } else {
+            label_PROXY_TEST_RESULT->clear();
+        }
+    };
+    for (auto* edit : QList<QLineEdit *>{lineEdit_SIP, lineEdit_SPORT, lineEdit_SUSR, lineEdit_SPSWD,
+                                       globalGostCaFile, testTcpHost, testDnsResolver, testDnsQuery})
+        connect(edit, &QLineEdit::textChanged, this, invalidateProxyTest);
+    connect(testTcpPort, qOverload<int>(&QSpinBox::valueChanged), this, [this, invalidateProxyTest] {
+        testTcpPortExplicit = true;
+        invalidateProxyTest();
+    });
+    connect(testTcpPort, &QSpinBox::editingFinished, this, [this] { testTcpPortExplicit = true; });
+    connect(testDnsPort, qOverload<int>(&QSpinBox::valueChanged), this, invalidateProxyTest);
+    for (auto* radio : {radioButton_DC, radioButton_SOCKS, radioButton_SHADOWSOCKS, globalGostMode})
+        connect(radio, &QRadioButton::toggled, this, invalidateProxyTest);
+    connect(checkBox_RESOLVE, &QCheckBox::toggled, this, invalidateProxyTest);
+    connect(checkBox_SOCKS_TLS, &QCheckBox::toggled, this, invalidateProxyTest);
+    connect(comboBox_SHADOWSOCKS_METHOD, QOverload<int>::of(&QComboBox::currentIndexChanged), this, invalidateProxyTest);
 
     const QString shadowsocksPskHelp = tr(
         "Legacy methods accept a password. Shadowsocks 2022 methods require canonical Base64 PSKs. "
         "For identity chains, enter identityPSK:userPSK in that order.");
     lineEdit_SPSWD->setToolTip(shadowsocksPskHelp);
+    lineEdit_SPSWD->setEchoMode(QLineEdit::Password);
+    new PasswordRevealAction(lineEdit_SPSWD);
     comboBox_SHADOWSOCKS_METHOD->setToolTip(shadowsocksPskHelp);
 
     comboBox_TOS->setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -573,6 +706,10 @@ SettingsConnection::SettingsConnection( QWidget *parent):
 
 
     init();
+    certificates = new CertificateSettings(*qtCtx()->dcCtx().getSettingsManager(),
+        QString::fromStdString(qtCtx()->dcCtx().getClientManager()->getMyCID().toBase32()),
+        QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)) + QStringLiteral("Certificates"), groupBox_7);
+    verticalLayout_6->addWidget(certificates);
 }
 
 bool SettingsConnection::eventFilter(QObject *obj, QEvent *e){
@@ -582,12 +719,62 @@ bool SettingsConnection::eventFilter(QObject *obj, QEvent *e){
     return QWidget::eventFilter(obj, e);
 }
 
+bool SettingsConnection::validate()
+{
+    if (certificates) {
+        const auto error = certificates->validationError();
+        if (!error.isEmpty()) { showMsg(error, certificates); return false; }
+    }
+    saveCurrentProxyFormState();
+    if (globalGostMode->isChecked()) {
+        Socket::StreamProxyConfig config;
+        const auto error = settings_connection::gostProxyConfig(gostProxyState, config);
+        if (!error.isEmpty()) { showMsg(error, globalGostCaFile); return false; }
+    } else if (!radioButton_DC->isChecked()) {
+        const auto state = visibleProxyFormState();
+        bool validPort = false;
+        const int port = state.port.toInt(&validPort);
+        if (state.server.trimmed().isEmpty() || !validPort || port < 1 || port > 65535) {
+            showMsg(tr("Enter a valid proxy server and port before testing."), lineEdit_SIP);
+            return false;
+        }
+        if (radioButton_SHADOWSOCKS->isChecked() && !validateShadowsocksPasswordForUi(state.method, state.password))
+            return false;
+    }
+    if (!lineEdit_HUBLIST_PROXY_HOST->text().trimmed().isEmpty()) {
+        bool validPort = false;
+        const int port = lineEdit_HUBLIST_PROXY_PORT->text().toInt(&validPort);
+        if (!validPort || port < 1 || port > 65535) {
+            showMsg(tr("No valid public hub list proxy port found!"), lineEdit_HUBLIST_PROXY_PORT);
+            return false;
+        }
+    }
+    if (!globalGostMode->isChecked() && (!checkBox_AUTO_DETECT_CONNECTION->isChecked() || isProxyP2PMode() || isProxyHubStealthMode())) {
+        auto bind4 = bindAddressText();
+        if (!bind4.isEmpty() && !validateIp4(bind4)) {
+            showMsg(tr("No valid bind IPv4 address found!"), comboBox_BIND_ADDRESS); return false;
+        }
+        auto bind6 = bindAddress6Text();
+        if (!bind6.isEmpty() && !validateIp6(bind6)) {
+            showMsg(tr("No valid bind IPv6 address found!"), comboBox_BIND_ADDRESS6); return false;
+        }
+        auto wan6 = lineEdit_WANIP6->text().trimmed();
+        if (checkBox_USE_IPV6->isChecked() && !wan6.isEmpty() && !validateIp6(wan6)) {
+            showMsg(tr("No valid external IPv6 address found!"), lineEdit_WANIP6); return false;
+        }
+    }
+    return true;
+}
+
 void SettingsConnection::ok(){
+
+    if (!validate()) return;
 
     SettingsManager *SM = qtCtx()->dcCtx().getSettingsManager();
     saveCurrentProxyFormState();
 
     const bool use_shadowsocks = radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
+    const bool use_gost = globalGostMode->isChecked();
     if (use_shadowsocks && !validateShadowsocksPasswordForUi(
             shadowsocksProxyState.method, shadowsocksProxyState.password))
         return;
@@ -601,8 +788,8 @@ void SettingsConnection::ok(){
 
     int old_mode = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true);
     const bool old_auto_detect = qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::AUTO_DETECT_CONNECTION, true);
-    SM->set(SettingsManager::AUTO_DETECT_CONNECTION, autoDetect);
-    if (!autoDetect && active){
+    if (!use_gost) SM->set(SettingsManager::AUTO_DETECT_CONNECTION, autoDetect);
+    if (!use_gost && !autoDetect && active){
         if (radioButton_ACTIVE->isChecked())
             SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_DIRECT);
         else if (radioButton_PORT->isChecked())
@@ -651,7 +838,7 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::BIND_ADDRESS6, bindIp6.toStdString());
         SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
-    else if (!autoDetect) {
+    else if (!use_gost && !autoDetect) {
         SM->set(SettingsManager::INCOMING_CONNECTIONS, SettingsManager::INCOMING_FIREWALL_PASSIVE);
         QString bind_ip = bindAddressText();
         if (bind_ip.isEmpty())
@@ -684,10 +871,10 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::USE_IPV6, useIPv6);
     }
 
-    int type = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true);
-
-    SM->set(SettingsManager::BIND_IFACE, radioButton_BIND_IFACE->isChecked());
-    SM->set(SettingsManager::BIND_IFACE_NAME, _tq(comboBox_IFACES->currentText()));
+    if (!use_gost) {
+        SM->set(SettingsManager::BIND_IFACE, radioButton_BIND_IFACE->isChecked());
+        SM->set(SettingsManager::BIND_IFACE_NAME, _tq(comboBox_IFACES->currentText()));
+    }
 
     if (lineEdit_HUBLIST_PROXY_HOST && lineEdit_HUBLIST_PROXY_PORT) {
         const QString hubListProxyHost = lineEdit_HUBLIST_PROXY_HOST->text().trimmed();
@@ -703,8 +890,33 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::HTTP_PROXY, _tq(buildHubListProxySetting(hubListProxyHost, hubListProxyPort)));
     }
 
+    SM->set(SettingsManager::SOCKS_TLS, socksProxyState.useTls);
+    SM->set(SettingsManager::SOCKS_SERVER, socksProxyState.server.trimmed().toStdString());
+    SM->set(SettingsManager::SOCKS_USER, socksProxyState.user.toStdString());
+    SM->set(SettingsManager::SOCKS_PASSWORD, socksProxyState.password.toStdString());
+    bool socksPortOk = false;
+    const int socksPort = socksProxyState.port.trimmed().toInt(&socksPortOk);
+    if (socksPortOk && socksPort > 0 && socksPort <= 65535)
+        SM->set(SettingsManager::SOCKS_PORT, socksPort);
+    SM->set(SettingsManager::SHADOWSOCKS_SERVER, shadowsocksProxyState.server.trimmed().toStdString());
+    SM->set(SettingsManager::SHADOWSOCKS_PASSWORD, shadowsocksProxyState.password.toStdString());
+    SM->set(SettingsManager::SHADOWSOCKS_METHOD, shadowsocksProxyState.method.isEmpty()
+        ? std::string("aes-256-gcm")
+        : shadowsocksProxyState.method.toStdString());
+    SM->set(SettingsManager::SHADOWSOCKS_TRANSPORT, shadowsocksProxyState.shadowsocksTransport);
+    bool shadowsocksPortOk = false;
+    const int shadowsocksPort = shadowsocksProxyState.port.trimmed().toInt(&shadowsocksPortOk);
+    if (shadowsocksPortOk && shadowsocksPort > 0 && shadowsocksPort <= 65535)
+        SM->set(SettingsManager::SHADOWSOCKS_PORT, shadowsocksPort);
+
+    SM->set(SettingsManager::GOST_SERVER, gostProxyState.server.trimmed().toStdString());
+    SM->set(SettingsManager::GOST_PORT, gostProxyState.port.toInt());
+    SM->set(SettingsManager::GOST_USER, gostProxyState.user.toStdString());
+    SM->set(SettingsManager::GOST_PASSWORD, gostProxyState.password.toStdString());
+    SM->set(SettingsManager::GOST_CA_FILE, gostProxyState.caFile.trimmed().toStdString());
+
     if (use_proxy){
-        settings_connection::ProxyUiState& selectedProxyState = use_shadowsocks ? shadowsocksProxyState : socksProxyState;
+        const auto& selectedProxyState = use_gost ? gostProxyState : (use_shadowsocks ? shadowsocksProxyState : socksProxyState);
         const QString server = selectedProxyState.server.trimmed();
 
         if (server.isEmpty()){
@@ -721,29 +933,14 @@ void SettingsConnection::ok(){
             return;
         }
 
-        SM->set(SettingsManager::SOCKS_RESOLVE, checkBox_RESOLVE->checkState() == Qt::Checked);
-        SM->set(SettingsManager::SOCKS_STEALTH, checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked());
-        SM->set(SettingsManager::SOCKS_TLS, socksProxyState.useTls);
-        SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, proxyP2P);
-        SM->set(SettingsManager::SOCKS_SERVER, socksProxyState.server.trimmed().toStdString());
-        SM->set(SettingsManager::SOCKS_USER, socksProxyState.user.toStdString());
-        SM->set(SettingsManager::SOCKS_PASSWORD, socksProxyState.password.toStdString());
-        bool socksPortOk = false;
-        const int socksPort = socksProxyState.port.trimmed().toInt(&socksPortOk);
-        if (socksPortOk && socksPort > 0 && socksPort <= 65535)
-            SM->set(SettingsManager::SOCKS_PORT, socksPort);
-        SM->set(SettingsManager::SHADOWSOCKS_SERVER, shadowsocksProxyState.server.trimmed().toStdString());
-        SM->set(SettingsManager::SHADOWSOCKS_PASSWORD, shadowsocksProxyState.password.toStdString());
-        SM->set(SettingsManager::SHADOWSOCKS_METHOD, shadowsocksProxyState.method.isEmpty()
-            ? std::string("aes-256-gcm")
-            : shadowsocksProxyState.method.toStdString());
-        SM->set(SettingsManager::SHADOWSOCKS_TRANSPORT, shadowsocksProxyState.shadowsocksTransport);
-        bool shadowsocksPortOk = false;
-        const int shadowsocksPort = shadowsocksProxyState.port.trimmed().toInt(&shadowsocksPortOk);
-        if (shadowsocksPortOk && shadowsocksPort > 0 && shadowsocksPort <= 65535)
-            SM->set(SettingsManager::SHADOWSOCKS_PORT, shadowsocksPort);
-
-        if (use_shadowsocks) {
+        if (!use_gost) {
+            SM->set(SettingsManager::SOCKS_RESOLVE, checkBox_RESOLVE->checkState() == Qt::Checked);
+            SM->set(SettingsManager::SOCKS_STEALTH, checkBox_SOCKS_STEALTH && checkBox_SOCKS_STEALTH->isChecked());
+            SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, proxyP2P);
+        }
+        if (use_gost) {
+            SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_GOST);
+        } else if (use_shadowsocks) {
             SM->set(SettingsManager::SHADOWSOCKS_PORT, port);
             SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
         } else {
@@ -755,9 +952,6 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
         SM->set(SettingsManager::PROXY_P2P_CONNECTIONS, false);
     }
-
-    if (use_proxy || qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::OUTGOING_CONNECTIONS, true) != type)
-        Socket::socksUpdated(qtCtx()->dcCtx());
 
     SM->set(SettingsManager::THROTTLE_ENABLE, checkBox_THROTTLE_ENABLE->isChecked());
     SM->set(SettingsManager::TIME_DEPENDENT_THROTTLE, checkBox_TIME_DEPENDENT_THROTTLE->isChecked());
@@ -774,11 +968,9 @@ void SettingsConnection::ok(){
         SM->set(SettingsManager::COUNTRY_DB_PATH, lineEdit_COUNTRY_DB->text().trimmed().toStdString());
     SM->set(SettingsManager::DYNDNS_SERVER, lineEdit_DYNDNS_SERVER->text().toStdString());
     SM->set(SettingsManager::DYNDNS_ENABLE, checkBox_DYNDNS->isChecked());
-    if (checkBox_DYNDNS->isChecked() && qtCtx()->dcCtx().getDynDNS()) {
-        qtCtx()->dcCtx().getDynDNS()->load();
-    }
 #ifdef WITH_DHT
-    SM->set(SettingsManager::USE_DHT, groupBox_DHT->isChecked());
+    SM->set(SettingsManager::USE_DHT, checkBox_DHT->isChecked());
+    SM->set(SettingsManager::HIDE_DHT_FROM_HUBS, checkBox_HIDE_DHT->isChecked());
     if (spinBox_DHT->value() != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true))
         SM->set(SettingsManager::DHT_PORT, spinBox_DHT->value());
     else
@@ -792,8 +984,10 @@ void SettingsConnection::ok(){
 
     SM->set(SettingsManager::USE_TLS, (comboBox_TLS->currentIndex() == 1) || (comboBox_TLS->currentIndex() == 2));
     SM->set(SettingsManager::REQUIRE_TLS, (comboBox_TLS->currentIndex() == 2));
+    certificates->save();
 
-    if (old_auto_detect != qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::AUTO_DETECT_CONNECTION, true) ||
+    const bool routeChanged = qtCtx()->dcCtx().getProxyRoute()->reload(*SM);
+    if (routeChanged || old_auto_detect != qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::AUTO_DETECT_CONNECTION, true) ||
         old_mode != qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::INCOMING_CONNECTIONS, true) || old_tcp != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TCP_PORT, true))
         || old_udp != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::UDP_PORT, true)) || old_tls != (qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::TLS_PORT, true)))
     {
@@ -803,6 +997,10 @@ void SettingsConnection::ok(){
 
         qtCtx()->mainWindow()->startSocket(true);
     }
+    if (checkBox_DYNDNS->isChecked() && qtCtx()->dcCtx().getDynDNS()) {
+        qtCtx()->dcCtx().getDynDNS()->load();
+    }
+    saveProbeTargets();
 }
 
 void SettingsConnection::init(){
@@ -843,7 +1041,8 @@ void SettingsConnection::init(){
     checkBox_DYNDNS->setCheckState( qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::DYNDNS_ENABLE, true) ? Qt::Checked : Qt::Unchecked );
     lineEdit_DYNDNS_SERVER->setText(QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DYNDNS_SERVER, true)));
 #ifdef WITH_DHT
-    groupBox_DHT->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_DHT, true));
+    checkBox_DHT->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::USE_DHT, true));
+    checkBox_HIDE_DHT->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::HIDE_DHT_FROM_HUBS, true));
     spinBox_DHT->setValue(old_dht = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::DHT_PORT, true));
 #else
     groupBox_DHT->hide();
@@ -930,10 +1129,16 @@ void SettingsConnection::init(){
     shadowsocksProxyState.password = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_PASSWORD, true));
     shadowsocksProxyState.method = QString::fromStdString(qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_METHOD, true));
     shadowsocksProxyState.shadowsocksTransport = qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SHADOWSOCKS_TRANSPORT, true);
-    currentProxyFormMode = outgoingMode == SettingsManager::OUTGOING_SHADOWSOCKS
+    auto *sm = qtCtx()->dcCtx().getSettingsManager();
+    gostProxyState.server = QString::fromStdString(sm->get(SettingsManager::GOST_SERVER));
+    gostProxyState.port = QString::number(sm->get(SettingsManager::GOST_PORT));
+    gostProxyState.user = QString::fromStdString(sm->get(SettingsManager::GOST_USER));
+    gostProxyState.password = QString::fromStdString(sm->get(SettingsManager::GOST_PASSWORD));
+    gostProxyState.caFile = QString::fromStdString(sm->get(SettingsManager::GOST_CA_FILE));
+    currentProxyFormMode = outgoingMode == SettingsManager::OUTGOING_GOST ? settings_connection::ProxyUiGost : outgoingMode == SettingsManager::OUTGOING_SHADOWSOCKS
         ? settings_connection::ProxyUiShadowsocks
         : (outgoingMode == SettingsManager::OUTGOING_SOCKS5 ? settings_connection::ProxyUiSocks5 : settings_connection::ProxyUiDirect);
-    applyProxyFormState(currentProxyFormMode == settings_connection::ProxyUiShadowsocks ? shadowsocksProxyState : socksProxyState);
+    applyProxyFormState(currentProxyFormMode == settings_connection::ProxyUiGost ? gostProxyState : currentProxyFormMode == settings_connection::ProxyUiShadowsocks ? shadowsocksProxyState : socksProxyState);
 
     checkBox_RESOLVE->setCheckState( qtCtx()->dcCtx().getSettingsManager()->get(SettingsManager::SOCKS_RESOLVE, true)? Qt::Checked : Qt::Unchecked );
     if(checkBox_SOCKS_STEALTH)
@@ -946,6 +1151,9 @@ void SettingsConnection::init(){
     comboBox_SHADOWSOCKS_METHOD->setCurrentIndex(methodIndex >= 0 ? methodIndex : 0);
 
     switch (outgoingMode){
+    case SettingsManager::OUTGOING_GOST:
+        globalGostMode->setChecked(true);
+        break;
     case SettingsManager::OUTGOING_DIRECT:
         {
             radioButton_DC->toggle();
@@ -993,6 +1201,7 @@ void SettingsConnection::init(){
     connect(radioButton_DC, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
     connect(radioButton_SOCKS, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
     connect(radioButton_SHADOWSOCKS, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
+    connect(globalGostMode, &QRadioButton::toggled, this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_PROXY_P2P)
         connect(checkBox_PROXY_P2P, &QCheckBox::toggled, this, &SettingsConnection::slotToggleOutgoing);
     if(checkBox_SOCKS_STEALTH)
@@ -1054,8 +1263,9 @@ void SettingsConnection::init(){
 }
 
 void SettingsConnection::slotToggleIncomming(){
-    const bool hubPassive = isProxyP2PMode() || isProxyHubStealthMode();
-    if(hubPassive && !radioButton_PASSIVE->isChecked())
+    const bool gost = globalGostMode && globalGostMode->isChecked();
+    const bool hubPassive = gost || isProxyP2PMode() || isProxyHubStealthMode();
+    if(hubPassive && !gost && !radioButton_PASSIVE->isChecked())
         radioButton_PASSIVE->setChecked(true);
 
     const bool autoDetect = checkBox_AUTO_DETECT_CONNECTION && checkBox_AUTO_DETECT_CONNECTION->isChecked() && !hubPassive;
@@ -1108,14 +1318,21 @@ void SettingsConnection::slotToggleOutgoing(){
     const bool proxy = !radioButton_DC->isChecked();
     const bool socks = proxy && radioButton_SOCKS && radioButton_SOCKS->isChecked();
     const bool shadowsocks = proxy && radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
+    const bool gost = globalGostMode->isChecked();
+    globalGostTrust->setVisible(gost);
+    globalGostNotice->setVisible(gost);
+    for (auto *field : QList<QWidget *>{label_SHADOWSOCKS_METHOD, comboBox_SHADOWSOCKS_METHOD,
+             checkBox_SOCKS_TLS, label_SHADOWSOCKS_TRANSPORT, comboBox_SHADOWSOCKS_TRANSPORT,
+             checkBox_RESOLVE, checkBox_SOCKS_STEALTH, checkBox_PROXY_P2P})
+        field->setVisible(!gost);
 
     frame_2->setEnabled(true);
     setProxyFieldEnabled(label_5, proxy);
     setProxyFieldEnabled(lineEdit_SIP, proxy);
     setProxyFieldEnabled(label_6, proxy);
     setProxyFieldEnabled(lineEdit_SPORT, proxy);
-    setProxyFieldEnabled(label_7, socks);
-    setProxyFieldEnabled(lineEdit_SUSR, socks);
+    setProxyFieldEnabled(label_7, socks || gost);
+    setProxyFieldEnabled(lineEdit_SUSR, socks || gost);
     setProxyFieldEnabled(label_8, proxy);
     setProxyFieldEnabled(lineEdit_SPSWD, proxy);
     setProxyFieldEnabled(label_SHADOWSOCKS_METHOD, shadowsocks);
@@ -1123,17 +1340,31 @@ void SettingsConnection::slotToggleOutgoing(){
     setProxyFieldEnabled(checkBox_SOCKS_TLS, socks);
     setProxyFieldEnabled(label_SHADOWSOCKS_TRANSPORT, shadowsocks);
     setProxyFieldEnabled(comboBox_SHADOWSOCKS_TRANSPORT, shadowsocks);
-    setProxyFieldEnabled(checkBox_RESOLVE, proxy);
-    setProxyFieldEnabled(checkBox_SOCKS_STEALTH, proxy);
-    setProxyFieldEnabled(checkBox_PROXY_P2P, proxy);
-    setProxyFieldEnabled(button_TEST_PROXY, proxy);
-    if (groupBox_HUBLIST_PROXY)
-        groupBox_HUBLIST_PROXY->setEnabled(!proxy);
-    setProxyFieldEnabled(label_HUBLIST_PROXY_HOST, !proxy);
-    setProxyFieldEnabled(lineEdit_HUBLIST_PROXY_HOST, !proxy);
-    setProxyFieldEnabled(label_HUBLIST_PROXY_PORT, !proxy);
-    setProxyFieldEnabled(lineEdit_HUBLIST_PROXY_PORT, !proxy);
-    setProxyFieldEnabled(button_TEST_HUBLIST_PROXY, !proxy);
+    setProxyFieldEnabled(checkBox_RESOLVE, proxy && !gost);
+    setProxyFieldEnabled(checkBox_SOCKS_STEALTH, proxy && !gost);
+    setProxyFieldEnabled(checkBox_PROXY_P2P, proxy && !gost);
+    setProxyFieldEnabled(button_TEST_PROXY, proxy && (!proxyTestRunner || !proxyTestRunner->isRunning()));
+    if (testTcpPort) {
+        if (!testTcpPortExplicit) {
+            const QSignalBlocker blocker(testTcpPort);
+            testTcpPort->setValue(shadowsocks ? 80 : 443);
+        }
+        testProtocol->setText(gost ? tr("GOST tests verified proxy TLS and authenticated CONNECT, not destination TLS or application traffic. UDP requires a matching DNS reply through the encrypted tunnel. No direct fallback.") : shadowsocks
+            ? tr("Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.")
+            : tr("TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback."));
+        testTcpHost->setEnabled(proxy);
+        testTcpPort->setEnabled(proxy);
+        const bool udpProbe = gost || (socks && !checkBox_SOCKS_TLS->isChecked());
+        for (auto *field : QList<QWidget *>{testDnsResolver, testDnsPort, testDnsQuery})
+            field->setEnabled(udpProbe);
+    }
+    if (groupBox_HUBLIST_PROXY) {
+        groupBox_HUBLIST_PROXY->setEnabled(true);
+        groupBox_HUBLIST_PROXY->setTitle(tr("Public hub list proxy") + QLatin1Char(' ') + tr("(separate route)"));
+    }
+    for (auto *field : QList<QWidget *>{label_HUBLIST_PROXY_HOST, lineEdit_HUBLIST_PROXY_HOST,
+             label_HUBLIST_PROXY_PORT, lineEdit_HUBLIST_PROXY_PORT, button_TEST_HUBLIST_PROXY})
+        setProxyFieldEnabled(field, true);
 
     slotToggleIncomming();
 }
@@ -1215,6 +1446,8 @@ void SettingsConnection::populateBindAddressCombos(const QString& bind4, const Q
 
 int SettingsConnection::selectedProxyFormMode() const
 {
+    if (globalGostMode && globalGostMode->isChecked())
+        return settings_connection::ProxyUiGost;
     if (radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked())
         return settings_connection::ProxyUiShadowsocks;
     if (radioButton_SOCKS && radioButton_SOCKS->isChecked())
@@ -1229,6 +1462,7 @@ settings_connection::ProxyUiState SettingsConnection::visibleProxyFormState() co
     state.port = lineEdit_SPORT ? lineEdit_SPORT->text() : QString();
     state.user = lineEdit_SUSR ? lineEdit_SUSR->text() : QString();
     state.password = lineEdit_SPSWD ? lineEdit_SPSWD->text() : QString();
+    state.caFile = globalGostCaFile ? globalGostCaFile->text() : QString();
     if (comboBox_SHADOWSOCKS_METHOD) {
         state.method = comboBox_SHADOWSOCKS_METHOD->currentData().toString();
         if (state.method.isEmpty())
@@ -1242,6 +1476,11 @@ settings_connection::ProxyUiState SettingsConnection::visibleProxyFormState() co
 
 void SettingsConnection::applyProxyFormState(const settings_connection::ProxyUiState& state)
 {
+    PasswordRevealAction::mask(lineEdit_SPSWD);
+    // Updating a profile must not recursively save a half-updated form.
+    const QSignalBlocker tlsBlock(checkBox_SOCKS_TLS);
+    const QSignalBlocker transportBlock(comboBox_SHADOWSOCKS_TRANSPORT);
+    if (globalGostCaFile) globalGostCaFile->setText(state.caFile);
     if (lineEdit_SIP)
         lineEdit_SIP->setText(state.server);
     if (lineEdit_SPORT)
@@ -1272,6 +1511,7 @@ void SettingsConnection::syncProxyFormStateWithSelection()
     const settings_connection::ProxyUiState state = settings_connection::switchProxyUiState(
         socksProxyState,
         shadowsocksProxyState,
+        gostProxyState,
         currentProxyFormMode,
         selectedMode,
         visibleProxyFormState());
@@ -1287,6 +1527,8 @@ void SettingsConnection::saveCurrentProxyFormState()
         socksProxyState = state;
     } else if (currentProxyFormMode == settings_connection::ProxyUiShadowsocks) {
         shadowsocksProxyState = state;
+    } else if (currentProxyFormMode == settings_connection::ProxyUiGost) {
+        gostProxyState = state;
     }
 }
 
@@ -1319,128 +1561,71 @@ bool SettingsConnection::validateShadowsocksPasswordForUi(const QString& method,
 
 void SettingsConnection::slotTestProxy()
 {
+    if (proxyTestRunner->isRunning())
+        return;
     if (radioButton_DC->isChecked()) {
-        showMsg(tr("Select SOCKS5 or Shadowsocks before testing a proxy."), radioButton_DC);
+        label_PROXY_TEST_RESULT->setText(tr("Select a proxy mode before testing."));
         return;
     }
 
-    const bool shadowsocks = radioButton_SHADOWSOCKS && radioButton_SHADOWSOCKS->isChecked();
-    const QString typeName = shadowsocks ? tr("Shadowsocks") : tr("SOCKS5");
-    const QString server = lineEdit_SIP->text().trimmed();
+    const bool shadowsocks = radioButton_SHADOWSOCKS->isChecked();
+    QString server = lineEdit_SIP->text().trimmed();
+    if (server.startsWith(QLatin1Char('[')) && server.endsWith(QLatin1Char(']')))
+        server = server.mid(1, server.size() - 2);
     bool portOk = false;
     const int port = lineEdit_SPORT->text().trimmed().toInt(&portOk);
-
-    if (server.isEmpty()) {
-        showMsg(tr("No %1 server found!").arg(typeName), lineEdit_SIP);
+    if (server.isEmpty() || !portOk || port < 1 || port > 65535) {
+        label_PROXY_TEST_RESULT->setText(tr("Enter a valid proxy server and port before testing."));
         return;
     }
-    if (!portOk || port <= 0 || port > 65535) {
-        showMsg(tr("No valid proxy port found!"), lineEdit_SPORT);
-        return;
-    }
-    if (shadowsocks && lineEdit_SPSWD->text().isEmpty()) {
-        showMsg(tr("No Shadowsocks password configured."), lineEdit_SPSWD);
-        return;
-    }
-    if (shadowsocks && !validateShadowsocksPasswordForUi(
-            comboBox_SHADOWSOCKS_METHOD->currentData().toString(), lineEdit_SPSWD->text()))
-        return;
 
-    auto *settings = qtCtx()->dcCtx().getSettingsManager();
-    struct SavedProxySettings {
-        SettingsManager *settings;
-        int outgoing;
-        int socksPort;
-        int socksResolve;
-        int socksTls;
-        int shadowPort;
-        int shadowTransport;
-        std::string socksServer;
-        std::string socksUser;
-        std::string socksPassword;
-        std::string shadowServer;
-        std::string shadowPassword;
-        std::string shadowMethod;
-
-        explicit SavedProxySettings(SettingsManager *sm) :
-            settings(sm),
-            outgoing(sm->get(SettingsManager::OUTGOING_CONNECTIONS, true)),
-            socksPort(sm->get(SettingsManager::SOCKS_PORT, true)),
-            socksResolve(sm->get(SettingsManager::SOCKS_RESOLVE, true)),
-            socksTls(sm->get(SettingsManager::SOCKS_TLS, true)),
-            shadowPort(sm->get(SettingsManager::SHADOWSOCKS_PORT, true)),
-            shadowTransport(sm->get(SettingsManager::SHADOWSOCKS_TRANSPORT, true)),
-            socksServer(sm->get(SettingsManager::SOCKS_SERVER, true)),
-            socksUser(sm->get(SettingsManager::SOCKS_USER, true)),
-            socksPassword(sm->get(SettingsManager::SOCKS_PASSWORD, true)),
-            shadowServer(sm->get(SettingsManager::SHADOWSOCKS_SERVER, true)),
-            shadowPassword(sm->get(SettingsManager::SHADOWSOCKS_PASSWORD, true)),
-            shadowMethod(sm->get(SettingsManager::SHADOWSOCKS_METHOD, true))
-        {
+    Socket::StreamProxyConfig config;
+    config.type = shadowsocks ? Socket::StreamProxyConfig::Shadowsocks : Socket::StreamProxyConfig::Socks5;
+    config.host = server.toStdString();
+    config.port = port;
+    config.user = shadowsocks ? std::string() : lineEdit_SUSR->text().toStdString();
+    config.password = lineEdit_SPSWD->text().toStdString();
+    config.cipher = comboBox_SHADOWSOCKS_METHOD->currentData().toString().toStdString();
+    config.tls = !shadowsocks && checkBox_SOCKS_TLS->isChecked();
+    config.remoteDns = checkBox_RESOLVE->isChecked();
+    // Match the global transport policy; the torrent adapter verifies TLS.
+    config.verifyTls = false;
+    const bool gost = globalGostMode->isChecked();
+    if (gost) {
+        const auto validationError = settings_connection::gostProxyConfig(visibleProxyFormState(), config);
+        if (!validationError.isEmpty()) {
+            label_PROXY_TEST_RESULT->setText(validationError);
+            return;
         }
-
-        ~SavedProxySettings()
-        {
-            settings->set(SettingsManager::OUTGOING_CONNECTIONS, outgoing);
-            settings->set(SettingsManager::SOCKS_PORT, socksPort);
-            settings->set(SettingsManager::SOCKS_RESOLVE, socksResolve);
-            settings->set(SettingsManager::SOCKS_TLS, socksTls);
-            settings->set(SettingsManager::SHADOWSOCKS_PORT, shadowPort);
-            settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT, shadowTransport);
-            settings->set(SettingsManager::SOCKS_SERVER, socksServer);
-            settings->set(SettingsManager::SOCKS_USER, socksUser);
-            settings->set(SettingsManager::SOCKS_PASSWORD, socksPassword);
-            settings->set(SettingsManager::SHADOWSOCKS_SERVER, shadowServer);
-            settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, shadowPassword);
-            settings->set(SettingsManager::SHADOWSOCKS_METHOD, shadowMethod);
-        }
-    } saved(settings);
-
-    try {
-        CursorGuard cursor;
-        settings->set(SettingsManager::SOCKS_RESOLVE, checkBox_RESOLVE->isChecked());
-
-        if (shadowsocks) {
-            settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SHADOWSOCKS);
-            settings->set(SettingsManager::SHADOWSOCKS_SERVER, server.toStdString());
-            settings->set(SettingsManager::SHADOWSOCKS_PORT, port);
-            settings->set(SettingsManager::SHADOWSOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
-            settings->set(SettingsManager::SHADOWSOCKS_METHOD, comboBox_SHADOWSOCKS_METHOD->currentData().toString().toStdString());
-            settings->set(SettingsManager::SHADOWSOCKS_TRANSPORT,
-                comboBox_SHADOWSOCKS_TRANSPORT ? comboBox_SHADOWSOCKS_TRANSPORT->currentData().toInt()
-                                                : SettingsManager::SHADOWSOCKS_TRANSPORT_TCP_ONLY);
-        } else {
-            settings->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_SOCKS5);
-            settings->set(SettingsManager::SOCKS_SERVER, server.toStdString());
-            settings->set(SettingsManager::SOCKS_PORT, port);
-            settings->set(SettingsManager::SOCKS_USER, lineEdit_SUSR->text().toStdString());
-            settings->set(SettingsManager::SOCKS_PASSWORD, lineEdit_SPSWD->text().toStdString());
-            settings->set(SettingsManager::SOCKS_TLS, checkBox_SOCKS_TLS && checkBox_SOCKS_TLS->isChecked());
-        }
-
-        Socket socket;
-        socket.setContext(&qtCtx()->dcCtx());
-        socket.proxyConnect("example.com", "80", 8000);
-
-        const std::string request = "HEAD / HTTP/1.0\r\nHost: example.com\r\nConnection: close\r\n\r\n";
-        socket.writeAll(request.data(), static_cast<int>(request.size()), 8000);
-        if (socket.wait(8000, Socket::WAIT_READ) != Socket::WAIT_READ)
-            throw SocketException("Proxy test timed out waiting for target response");
-
-        char reply[16] = {};
-        if (socket.read(reply, sizeof(reply)) <= 0)
-            throw SocketException("Proxy test did not receive a target response");
-    } catch (const Exception& e) {
-        showMsg(tr("%1 proxy test failed:\n%2").arg(typeName, QString::fromStdString(e.getError())), lineEdit_SIP);
-        return;
-    } catch (const std::exception& e) {
-        showMsg(tr("%1 proxy test failed:\n%2").arg(typeName, QString::fromUtf8(e.what())), lineEdit_SIP);
+    }
+    const ProxyTestRunner::ProbeTargets targets(QStringLiteral("google.com"), testTcpPort->value(),
+        testDnsResolver->text(), testDnsPort->value(), QStringLiteral("google.com"));
+    const auto error = ProxyTestRunner::validateTargets(targets, gost || (!shadowsocks && !config.tls));
+    if (!error.isEmpty()) {
+        label_PROXY_TEST_RESULT->setText(error);
         return;
     }
+    proxyTestStale = false;
+    label_PROXY_TEST_RESULT->setText(tr("Testing TCP and UDP through %1:%2...").arg(server).arg(port));
+    if (proxyTestRunner->start(config, targets, true)) {
+        button_TEST_PROXY->setEnabled(false);
+        button_CANCEL_PROXY_TEST->setEnabled(true);
+    }
+}
 
-    QMessageBox::information(this,
-                             tr("Proxy test"),
-                             tr("%1 proxy test succeeded through %2:%3.").arg(typeName, server, QString::number(port)));
+void SettingsConnection::saveProbeTargets()
+{
+    const ProxyTestRunner::ProbeTargets targets(QStringLiteral("google.com"), testTcpPort->value(),
+        testDnsResolver->text(), testDnsPort->value(), QStringLiteral("google.com"));
+    if (!ProxyTestRunner::validateTargets(targets, true).isEmpty()) return;
+    QSettings saved(proxyDiagnosticsPath(), QSettings::IniFormat);
+    saved.beginGroup(QStringLiteral("GlobalProxyTest"));
+    saved.setValue(QStringLiteral("tcpHost"), targets.tcpHost);
+    saved.setValue(QStringLiteral("tcpPort"), targets.tcpPort);
+    saved.setValue(QStringLiteral("tcpPortExplicit"), testTcpPortExplicit);
+    saved.setValue(QStringLiteral("dnsResolver"), targets.dnsResolver);
+    saved.setValue(QStringLiteral("dnsPort"), targets.dnsPort);
+    saved.setValue(QStringLiteral("dnsQuery"), targets.dnsQuery);
 }
 
 void SettingsConnection::slotTestHubListProxy()

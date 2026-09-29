@@ -97,14 +97,14 @@ void SettingsSharing::ok(){
 void SettingsSharing::init(){
     WulforUtil *WU = qtCtx()->wulforUtil();
 
-    toolButton_ADD->setIcon(WU->getPixmap(WulforUtil::eiBOOKMARK_ADD));
-    toolButton_EDIT->setIcon(WU->getPixmap(WulforUtil::eiEDIT));
-    toolButton_DELETE->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
-    toolButton_BROWSE->setIcon(WU->getPixmap(WulforUtil::eiFOLDER_BLUE));
+    toolButton_ADD->setIcon(WU->getIcon(WulforUtil::eiBOOKMARK_ADD));
+    toolButton_EDIT->setIcon(WU->getIcon(WulforUtil::eiEDIT));
+    toolButton_DELETE->setIcon(WU->getIcon(WulforUtil::eiEDITDELETE));
+    toolButton_BROWSE->setIcon(WU->getIcon(WulforUtil::eiFOLDER_BLUE));
 
-    toolButton_RECREATE->setIcon(WU->getPixmap(WulforUtil::eiRELOAD));
-    pushButton_SHARE_ADD->setIcon(WU->getPixmap(WulforUtil::eiEDITADD));
-    pushButton_SHARE_REMOVE->setIcon(WU->getPixmap(WulforUtil::eiEDITDELETE));
+    toolButton_RECREATE->setIcon(WU->getIcon(WulforUtil::eiRELOAD));
+    pushButton_SHARE_ADD->setIcon(WU->getIcon(WulforUtil::eiEDITADD));
+    pushButton_SHARE_REMOVE->setIcon(WU->getIcon(WulforUtil::eiEDITDELETE));
 
     checkBox_SHAREHIDDEN->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::SHARE_HIDDEN, true));
     checkBox_SHARE_TEMP_FILES->setChecked(qtCtx()->dcCtx().getSettingsManager()->getBool(SettingsManager::SHARE_TEMP_FILES, true));
@@ -408,16 +408,16 @@ void SettingsSharing::slotContextMenu(const QPoint &){
     QAction *add_new = nullptr, *rem = nullptr, *rename = nullptr;
     WulforUtil *WU = qtCtx()->wulforUtil();
 
-    add_new = new QAction(WU->getPixmap(WulforUtil::eiEDITADD), tr("Add"), menu);
+    add_new = new QAction(WU->getIcon(WulforUtil::eiEDITADD), tr("Add"), menu);
     menu->addAction(add_new);
 
     if (selected.size() == 1){
-        rename = new QAction(WU->getPixmap(WulforUtil::eiEDIT), tr("Rename"), menu);
+        rename = new QAction(WU->getIcon(WulforUtil::eiEDIT), tr("Rename"), menu);
         menu->addAction(rename);
     }
 
     if (!selected.isEmpty()){
-        rem = new QAction(WU->getPixmap(WulforUtil::eiEDITDELETE), tr("Remove"), menu);
+        rem = new QAction(WU->getIcon(WulforUtil::eiEDITDELETE), tr("Remove"), menu);
         menu->addAction(rem);
     }
 

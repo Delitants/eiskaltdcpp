@@ -199,7 +199,7 @@ p, li { white-space: pre-wrap; }
           <item row="1" column="0" colspan="3">
            <layout class="QHBoxLayout" name="horizontalLayout_BBCODE">
             <property name="spacing">
-             <number>0</number>
+             <number>4</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -215,153 +215,177 @@ p, li { white-space: pre-wrap; }
             </property>
             <item>
              <widget class="QToolButton" name="toolButton_BOLD">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Bold</string>
+              </property>
               <property name="text">
                <string notr="true">B</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_ITALIC">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Italic</string>
+              </property>
               <property name="text">
                <string notr="true">I</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_UNDERLINE">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Underline</string>
+              </property>
               <property name="text">
                <string notr="true">U</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_STRIKE">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Strikethrough</string>
+              </property>
               <property name="text">
                <string notr="true">S</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_COLOR">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Text color</string>
+              </property>
               <property name="text">
                <string>Color</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_LINK">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Insert link</string>
+              </property>
               <property name="text">
                <string>Link</string>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_CODE">
-              <property name="text">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
                <string>Code</string>
               </property>
-              <property name="maximumHeight">
-               <number>28</number>
+              <property name="text">
+               <string>Code</string>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QToolButton" name="toolButton_SMILE">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>32</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Emoji</string>
+              </property>
               <property name="text">
                <string notr="true"/>
-              </property>
-              <property name="maximumHeight">
-               <number>28</number>
               </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">QToolButton { padding: 2px; }</string>
               </property>
              </widget>
             </item>

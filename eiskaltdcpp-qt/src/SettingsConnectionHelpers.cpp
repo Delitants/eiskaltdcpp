@@ -1,4 +1,6 @@
 #include "SettingsConnectionHelpers.h"
+#include "dcpp/ProxyTrust.h"
+#include <QCoreApplication>
 
 #include <QByteArray>
 
@@ -26,6 +28,7 @@ QStringList bindAddressOptions(const QString& defaultAddress,
 
 ProxyUiState switchProxyUiState(ProxyUiState& socks,
                                 ProxyUiState& shadowsocks,
+                                ProxyUiState& gost,
                                 int& currentMode,
                                 int selectedMode,
                                 const ProxyUiState& visibleState)
@@ -34,6 +37,8 @@ ProxyUiState switchProxyUiState(ProxyUiState& socks,
         socks = visibleState;
     } else if (currentMode == ProxyUiShadowsocks) {
         shadowsocks = visibleState;
+    } else if (currentMode == ProxyUiGost) {
+        gost = visibleState;
     }
 
     currentMode = selectedMode;
@@ -42,8 +47,34 @@ ProxyUiState switchProxyUiState(ProxyUiState& socks,
         return socks;
     if (selectedMode == ProxyUiShadowsocks)
         return shadowsocks;
+    if (selectedMode == ProxyUiGost)
+        return gost;
 
     return visibleState;
+}
+
+QString gostProxyConfig(const ProxyUiState& state, dcpp::Socket::StreamProxyConfig& config)
+{
+    config = {};
+    config.type = dcpp::Socket::StreamProxyConfig::Gost;
+    config.tls = config.verifyTls = config.remoteDns = true;
+    config.host = state.server.trimmed().toStdString();
+    config.user = state.user.toStdString();
+    config.password = state.password.toStdString();
+    bool validPort = false;
+    config.port = state.port.toInt(&validPort);
+    if (!validPort || config.port < 1 || config.port > 65535 || config.host.empty() ||
+        config.host.size() > 255 || config.host.find('\0') != std::string::npos)
+        return QCoreApplication::translate("SettingsConnection", "Enter a valid proxy server and port before testing.");
+    if (config.user.empty() || config.password.empty())
+        return QCoreApplication::translate("SettingsConnection", "GOST authentication requires a username and password.");
+    if (config.user.size() > 255 || config.password.size() > 255)
+        return QCoreApplication::translate("SettingsConnection", "SOCKS5 authentication requires a username and credentials of at most 255 bytes each.");
+    try { config.caPem = dcpp::loadProxyCaPem(state.caFile.trimmed().toStdString()); }
+    catch (const dcpp::ProxyTrustError&) {
+        return QCoreApplication::translate("SettingsConnection", "The proxy CA file must contain valid PEM CA certificates only (maximum 1 MiB).");
+    }
+    return {};
 }
 
 bool shadowsocksUsesUdp(int transport)

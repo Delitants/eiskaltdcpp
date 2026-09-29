@@ -14,6 +14,7 @@
 #include "WulforUtil.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
+#include "AppIconTheme.h"
 
 #ifdef USE_ASPELL
 #include "SpellCheck.h"
@@ -130,7 +131,7 @@ void WulforSettings::load(){
             settings.setValue(WS_FAV_HUBS_STATE,        "");
             settings.setValue(WS_ADLS_STATE,            "");
             settings.setValue(WS_APP_THEME,             "");
-            settings.setValue(WS_APP_ICONTHEME,         "apex");
+            settings.setValue(WS_APP_ICONTHEME,         "reborn");
             settings.setValue(WS_APP_USERTHEME,         "apex");
             settings.setValue(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
             settings.setValue(WS_NOTIFY_SOUNDS,         "");
@@ -229,6 +230,8 @@ void WulforSettings::load(){
             settings.setValue(WI_OUT_IN_HIST,           50);//number of output messages in history
         }
     }
+    settings.setValue(WS_APP_ICONTHEME,
+                      app_icon_theme::canonicalId(settings.value(WS_APP_ICONTHEME).toString()));
 }
 
 void WulforSettings::loadOldConfig(){
@@ -271,7 +274,7 @@ void WulforSettings::loadOldConfig(){
         strmap.insert(WS_FAV_HUBS_STATE,        "");
         strmap.insert(WS_ADLS_STATE,            "");
         strmap.insert(WS_APP_THEME,             "");
-        strmap.insert(WS_APP_ICONTHEME,         "apex");
+        strmap.insert(WS_APP_ICONTHEME,         "reborn");
         strmap.insert(WS_APP_USERTHEME,         "apex");
         strmap.insert(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
         strmap.insert(WS_NOTIFY_SOUNDS,         "");

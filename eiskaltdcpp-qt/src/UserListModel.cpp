@@ -128,8 +128,8 @@ QVariant UserListModel::data(const QModelIndex & index, int role) const {
 
                 ttip += "<b>" + headerData(COLUMN_EMAIL, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + mail + "<br/>";
 
-                ttip += "<b>" + headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + WulforUtil::flaggedIpLabel(item->getIP()) + "<br/>";
-                ttip += "<b>" + headerData(COLUMN_IPV6, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + item->getIP6() + "<br/>";
+                ttip += "<b>" + headerData(COLUMN_IP, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + WulforUtil::flaggedIpLabel(item->getIP(), true).toHtmlEscaped() + "<br/>";
+                ttip += "<b>" + headerData(COLUMN_IPV6, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " + WulforUtil::flaggedIpLabel(item->getIP6(), true).toHtmlEscaped() + "<br/>";
                 ttip += "<b>" + headerData(COLUMN_SHARE, Qt::Horizontal, Qt::DisplayRole).toString() + "</b>: " +
                         WulforUtil::formatBytes(item->getShare()) + "<br/>";
 
@@ -317,13 +317,31 @@ void UserListModel::sort(int column, Qt::SortOrder order) {
         return;
 
     emit layoutAboutToBeChanged();
+    const auto previous = persistentIndexList();
 
     if (order == Qt::AscendingOrder)
         acomp.sort(column, rootItem->childItems);
     else if (order == Qt::DescendingOrder)
         dcomp.sort(column, rootItem->childItems);
 
+    remapPersistentIndexes(previous);
     emit layoutChanged();
+}
+
+void UserListModel::remapPersistentIndexes(const QModelIndexList& previous) {
+    // Keep selections attached to users, not to their old row positions.
+    QHash<UserListItem*, int> rows;
+    rows.reserve(rootItem->childCount());
+    for (int row = 0; row < rootItem->childCount(); ++row)
+        rows.insert(rootItem->child(row), row);
+
+    QModelIndexList current;
+    current.reserve(previous.size());
+    for (const auto& old : previous) {
+        const int row = rows.value(static_cast<UserListItem*>(old.internalPointer()), -1);
+        current.append(index(row, old.column()));
+    }
+    changePersistentIndexList(previous, current);
 }
 
 QModelIndex UserListModel::index(int row, int column, const QModelIndex &parent) const {
@@ -411,7 +429,7 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
 
     item->updateIdentity(_id, _cid, _fav);
 
-    if (needSorted) {
+    if (needSorted && sortColumn >= 0 && sortColumn < columnCount()) {
 
         static AscendingCompare  acomp = AscendingCompare();
         static DescendingCompare dcomp = DescendingCompare();
@@ -421,11 +439,9 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
         if (oldRow < 0 || oldRow >= rootItem->childCount())
             return;
 
-        beginRemoveRows(QModelIndex(), oldRow, oldRow);
-        {
-            rootItem->childItems.removeAt(oldRow);
-        }
-        endRemoveRows();
+        emit layoutAboutToBeChanged();
+        const auto previous = persistentIndexList();
+        rootItem->childItems.removeAt(oldRow);
 
         auto it = rootItem->childItems.end();
 
@@ -434,23 +450,14 @@ void UserListModel::updateUser(UserListItem *item, const Identity& _id, const QS
         else if (sortOrder == Qt::DescendingOrder)
             it = dcomp.insertSorted(sortColumn, rootItem->childItems, item);
 
-        const int newRow = it - rootItem->childItems.begin();
-
-        beginInsertRows(QModelIndex(), newRow, newRow);
-        {
-            rootItem->childItems.insert(it, item);
-        }
-        endInsertRows();
-    } else {
-        const int row = item->row();
-
-        if (row < 0 || row >= rootItem->childCount())
-            return;
-
-        repaintData(index(row, COLUMN_NICK), index(row, COLUMN_EMAIL));
+        rootItem->childItems.insert(it, item);
+        remapPersistentIndexes(previous);
+        emit layoutChanged();
     }
 
-    return;
+    const int row = item->row();
+    if (row >= 0 && row < rootItem->childCount())
+        repaintData(index(row, COLUMN_NICK), index(row, COLUMN_EMAIL));
 }
 
 UserListItem *UserListModel::addUser(const UserPtr& _ptr, const Identity& _id, const QString& _cid, bool _fav) {

@@ -49,6 +49,9 @@ public:
 
     void loadCertificates();
     void generateCertificate();
+    // Detached generation for Preferences: no settings, files or live TLS state change.
+    static pair<string, string> createIdentityPem(const string& cid);
+    static bool identityPemMatches(const string& certificate, const string& key, const string& cid);
     bool checkCertificate();
     const ByteVector& getKeyprint() const;
 

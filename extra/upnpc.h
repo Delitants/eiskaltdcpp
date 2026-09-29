@@ -33,18 +33,21 @@ class UPnPc :
     public dcpp::UPnP
 {
     public:
-        explicit UPnPc(dcpp::DCContext& ctx) : ctx_(ctx) {}
+        explicit UPnPc(dcpp::DCContext& ctx);
+        ~UPnPc() override;
 
     private:
         dcpp::DCContext& ctx_;
-        bool init();
+        struct Gateway;
+        std::unique_ptr<Gateway> gateway;
+        bool init() override;
 
-        bool add(const std::string &port, const dcpp::UPnP::Protocol protocol, const std::string& description);
-        bool remove(const std::string &port, const dcpp::UPnP::Protocol protocol);
-        const std::string& getName() const {
+        bool add(const std::string &port, const dcpp::UPnP::Protocol protocol, const std::string& description) override;
+        bool remove(const std::string &port, const dcpp::UPnP::Protocol protocol) override;
+        const std::string& getName() const override {
             return name;
         }
 
-        std::string getExternalIP();
+        std::string getExternalIP() override;
         static const std::string name;
 };

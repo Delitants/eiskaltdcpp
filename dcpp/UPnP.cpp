@@ -30,15 +30,31 @@ bool UPnP::open(const string& port, const Protocol protocol, const string& descr
     if(!add(port, protocol, description))
         return false;
 
-    rules.emplace_back(port, protocol);
+    for(auto& existing : rules) {
+        if(existing.port == port && existing.protocol == protocol) {
+            existing.description = description;
+            return true;
+        }
+    }
+    rules.push_back({port, protocol, description});
     return true;
+}
+
+bool UPnP::renew(const std::function<bool()>& cancelled) {
+    bool success = true;
+    for(const auto& entry : rules) {
+        if(cancelled && cancelled())
+            return false;
+        success = add(entry.port, entry.protocol, entry.description) && success;
+    }
+    return success;
 }
 
 bool UPnP::close() {
     bool ret = true;
 
     for(std::vector<rule>::const_iterator i = rules.begin(), iend = rules.end(); i != iend; ++i)
-        ret &= remove(i->first, i->second);
+        ret &= remove(i->port, i->protocol);
     rules.clear();
 
     return ret;

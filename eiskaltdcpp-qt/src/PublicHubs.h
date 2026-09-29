@@ -84,6 +84,8 @@ public:
 private:
 
     void updateList();
+    void updateStatusText();
+    QString statusText;
 
     dcpp::HubEntryList entries;
     PublicHubModel *model;

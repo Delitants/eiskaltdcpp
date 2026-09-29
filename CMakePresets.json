@@ -12,6 +12,61 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}"
     },
     {
+      "name": "macos-release-base",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Unix Makefiles",
+      "condition": {
+        "type": "allOf",
+        "conditions": [
+          { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin" },
+          { "type": "notEquals", "lhs": "$env{DEPS_PREFIX}", "rhs": "" },
+          { "type": "notEquals", "lhs": "$env{QT_PREFIX}", "rhs": "" },
+          { "type": "notEquals", "lhs": "$env{COCOA_PLUGIN}", "rhs": "" },
+          { "type": "notEquals", "lhs": "$env{COCOA_PLUGIN_SHA256}", "rhs": "" }
+        ]
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "REPLACE_VERSION": "3.0.0-pre.1",
+        "CMAKE_PREFIX_PATH": "$env{QT_PREFIX};$env{DEPS_PREFIX};$env{DEPS_PREFIX}/opt/openssl@3;$env{DEPS_PREFIX}/opt/gettext",
+        "CMAKE_FIND_USE_PACKAGE_REGISTRY": "OFF",
+        "CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY": "OFF",
+        "CMAKE_BUILD_RPATH": "$env{QT_PREFIX}/lib;$env{DEPS_PREFIX}/lib",
+        "EISKALT_MACOS_DEPS_PREFIX": "$env{DEPS_PREFIX}",
+        "EISKALT_MACDEPLOYQT_LIBRARY_PATHS": "$env{QT_PREFIX}/lib;$env{DEPS_PREFIX}/lib;$env{DEPS_PREFIX}/opt/webp/lib",
+        "EISKALT_QCOCOA_PLUGIN_OVERRIDE": "$env{COCOA_PLUGIN}",
+        "EISKALT_QCOCOA_PLUGIN_SHA256": "$env{COCOA_PLUGIN_SHA256}",
+        "USE_QT6": "ON",
+        "USE_GTK3": "OFF",
+        "USE_TORRENT": "ON",
+        "WITH_DHT": "ON",
+        "BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "macos-intel",
+      "displayName": "macOS 14+ / Intel x86_64 only",
+      "description": "Requires matching Intel dependencies and patched Cocoa plugin; see macos/RELEASE.md",
+      "inherits": "macos-release-base",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "14.0",
+        "CMAKE_IGNORE_PREFIX_PATH": "/opt/homebrew;/opt/local"
+      }
+    },
+    {
+      "name": "macos-apple-silicon",
+      "displayName": "macOS 26+ / Apple Silicon arm64 only",
+      "description": "Requires matching ARM64 dependencies and patched Cocoa plugin; see macos/RELEASE.md",
+      "inherits": "macos-release-base",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "26.0",
+        "CMAKE_IGNORE_PREFIX_PATH": "/usr/local;/opt/local"
+      }
+    },
+    {
       "name": "windows-base",
       "hidden": true,
       "inherits": "base",
@@ -72,6 +127,16 @@
     }
   ],
   "buildPresets": [
+    {
+      "name": "build-macos-intel",
+      "configurePreset": "macos-intel",
+      "jobs": 2
+    },
+    {
+      "name": "build-macos-apple-silicon",
+      "configurePreset": "macos-apple-silicon",
+      "jobs": 2
+    },
     {
       "name": "build-windows-vs2022-release",
       "displayName": "Build (VS2022, Release)",

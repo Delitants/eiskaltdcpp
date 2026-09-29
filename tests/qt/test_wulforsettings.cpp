@@ -11,6 +11,9 @@
 #include "WulforSettings.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
+#include "TabButton.h"
+#include "AppIconTheme.h"
+#include <QLabel>
 #include "../TestContext.h"
 
 #include <memory>
@@ -38,6 +41,41 @@ static void ensureSettings() {
 TEST_CASE("WulforSettings: exists after context creation", "[qt][wulforsettings]") {
     ensureSettings();
     REQUIRE(qtCtx()->settings() != nullptr);
+}
+
+TEST_CASE("Multi-line tab icons retain their logical size on Retina screens", "[qt][tab-icons][icontheme]") {
+    ensureSettings();
+    TabButton button;
+    const auto source = app_icon_theme::icon(app_icon_theme::resourcePath("reborn"),
+        "torrent", button.palette());
+    button.setWidgetIcon(source);
+    auto *iconLabel = button.findChild<QLabel*>("tabWidgetIcon");
+    REQUIRE(iconLabel);
+    const auto rendered = iconLabel->pixmap();
+    CHECK(rendered.deviceIndependentSize() == QSizeF(16, 16));
+    CHECK(rendered.toImage() == source.pixmap(QSize(16, 16), button.devicePixelRatioF()).toImage());
+    iconLabel->ensurePolished();
+    CHECK(iconLabel->contentsRect().size() == QSize(16, 16));
+}
+
+TEST_CASE("WulforSettings: Reborn is the default toolbar theme", "[qt][wulforsettings][icontheme]") {
+    ensureSettings();
+    qtCtx()->settings()->load();
+    REQUIRE(qtCtx()->settings()->getStr(WS_APP_ICONTHEME) == "reborn");
+    REQUIRE(qtCtx()->settings()->getStr(WS_APP_USERTHEME) == "apex");
+}
+
+TEST_CASE("WulforSettings: only the old Apex toolbar selection migrates", "[qt][wulforsettings][icontheme]") {
+    ensureSettings();
+    auto *ws = qtCtx()->settings();
+    const QString previous = ws->getStr(WS_APP_ICONTHEME);
+    for (const auto &id : {"apex", "contour", "faenza", "default"}) {
+        ws->setStr(WS_APP_ICONTHEME, id);
+        ws->load();
+        CHECK(ws->getStr(WS_APP_ICONTHEME) == (QString(id) == "apex" ? "reborn" : id));
+        CHECK(ws->getStr(WS_APP_USERTHEME) == "apex");
+    }
+    ws->setStr(WS_APP_ICONTHEME, previous);
 }
 
 // ─── String get/set ─────────────────────────────────────────────────────

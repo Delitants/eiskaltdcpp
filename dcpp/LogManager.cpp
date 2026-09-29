@@ -63,6 +63,11 @@ void LogManager::message(const string& msg) {
     fire(LogManagerListener::Message(), t, msg);
 }
 
+void LogManager::warning(const string& msg) {
+    message(msg);
+    fire(LogManagerListener::Warning(), GET_TIME(), msg);
+}
+
 LogManager::List LogManager::getLastLogs() {
     Lock l(cs);
     return lastLogs;
