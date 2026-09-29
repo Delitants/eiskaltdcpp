@@ -1,9 +1,10 @@
 # Built-In Updates For The v3 macOS Prerelease
 
-Status: written specification for review, not an implemented updater.
+Status: written specification approved, not an implemented updater.
 The maintainer approved the conversational design on 2026-09-29, including the
-recommended opt-in automatic installation. This document defines the next
-review boundary before the native/inline implementation plan.
+recommended opt-in automatic installation. The maintainer subsequently approved
+this written specification at commit `8740d09d`. The native/inline implementation
+plan is the next review boundary.
 
 ## Intent And Scope
 
@@ -193,8 +194,8 @@ changes separate from the Intel dependency build and unrelated UI work.
 
 No installed-app/profile modifications, signing identity generation, new
 third-party dependency installation or updater publishing were performed when
-writing this specification. Next stage is specification approval, followed by
-the implementation plan for the already preferred native/inline execution.
+writing this specification. Next stage is review of the implementation plan
+for the already preferred native/inline execution.
 
 ## Primary References
 
