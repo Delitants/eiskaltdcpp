@@ -85,6 +85,12 @@ particular, a bundle linked against newer macOS dependencies must not be
 advertised as supporting an older system just because its deployment target is
 lower. Do not ship bundles with external Homebrew library dependencies.
 
+The v3 macOS release targets separate **Intel-only macOS 14+** and
+**Apple-Silicon-only macOS 26+** ZIPs, explicitly named by architecture and minimum
+OS. See [macOS release builds](macos/RELEASE.md) for filenames, build presets and
+whole-bundle validation. These targets do not imply both artifacts or native
+minimum-OS acceptance are already complete.
+
 ## Contributing
 
 Report reproducible bugs in [Issues](https://github.com/Delitants/eiskaltdcpp/issues),

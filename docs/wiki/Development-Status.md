@@ -30,8 +30,11 @@ ad-hoc signature checks. A packaging regression also covers extensionless,
 non-executable framework binaries, which must not escape the link/OS audits.
 Its isolated CLI startup passes with network, real-profile and Homebrew reads
 denied. The candidate declares macOS 26 because of its bundled dependencies;
-testing was on macOS 27, not macOS 26 or older. The release support-floor choice
-remains open. Dependency notices and matching source materials have been staged
+testing was on macOS 27, not macOS 26 or older. The approved release split is an
+Intel-only macOS 14+ ZIP and an Apple-Silicon-only macOS 26+ ZIP, with explicit
+architecture/minimum-OS filenames. The Intel dependency build and native
+minimum-OS acceptance remain pending; the ARM64 candidate is not an Intel build.
+Dependency notices and matching source materials have been staged
 for the exact candidate; final distribution checks are still required. Ad-hoc
 verification is not Developer ID signing or notarization, and CLI startup is
 not live GUI QA.

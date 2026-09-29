@@ -107,8 +107,12 @@ target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain )
 catch_discover_tests(eiskaltdcpp-tests)
 
 if (APPLE)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME eiskalt-macos-bundle-dylib-ids
         COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/tests/macos/bundle/dylib-ids.sh"
+                "${CMAKE_SOURCE_DIR}")
+    add_test(NAME eiskalt-macos-release-profiles
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/release-profiles.py"
                 "${CMAKE_SOURCE_DIR}")
 endif ()
 
