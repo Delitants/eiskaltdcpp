@@ -15,6 +15,8 @@ struct HttpRequestPolicy {
     unsigned redirects = 5;
     uint32_t connectMs = 15000, idleMs = 30000, totalMs = 30 * 60 * 1000;
     std::shared_ptr<const ProxyRouteSnapshot> route;
+    std::function<bool()> cancelled;
+    std::shared_ptr<WakeNotifier> cancellationNotifier;
     // Called on the I/O worker for the initial URL and every Location. Must
     // validate the namespace and resolve on this route, returning a pinned IP.
     std::function<Target(const std::string&, const std::string&,

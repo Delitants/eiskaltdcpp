@@ -132,4 +132,9 @@ std::vector<std::string> resolveProxyEndpoint(const std::string& host, uint32_t 
     const std::function<bool()>& cancelled) {
     return proxy_resolver_detail::resolve(host, timeoutMs, cancelled, {});
 }
+
+std::vector<std::string> resolveDirectEndpoint(const std::string& host, uint32_t timeoutMs,
+    const std::function<bool()>& cancelled) {
+    return proxy_resolver_detail::resolve(host, timeoutMs, cancelled, {});
+}
 }

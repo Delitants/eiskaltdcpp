@@ -65,6 +65,9 @@ add_executable(eiskaltdcpp-qt-tests
     test_settingsconnectionhelpers.cpp
     test_proxytestrunner.cpp
     test_updateurlpolicy.cpp
+    test_updatetransport.cpp
+    ${QT_SRC_DIR}/updates/UpdateTransport.cpp
+    ${QT_SRC_DIR}/updates/UpdateTransport.h
     ${QT_SRC_DIR}/updates/UpdateUrlPolicy.cpp
     ${QT_SRC_DIR}/ProxyTestRunner.cpp
     ${QT_SRC_DIR}/ProxyTestRunner.h

@@ -66,7 +66,7 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
     const auto deadline = Clock::now() + std::chrono::milliseconds(policy.totalMs);
     const char* stage = "policy";
     const auto cancelled = [&] {
-        return strictCancelled.load() || !policy.route || !policy.route->revoked ||
+        return strictCancelled.load() || (policy.cancelled && policy.cancelled()) || !policy.route || !policy.route->revoked ||
             policy.route->revoked->load();
     };
     const auto check = [&] {
@@ -96,6 +96,8 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
              (route.mode == SettingsManager::OUTGOING_GOST && type == Socket::StreamProxyConfig::Gost)))
             throw std::runtime_error("Invalid HTTPS route");
         const auto subscription = route.notifier->subscribe(strictWake);
+        const auto cancellationSubscription = policy.cancellationNotifier ?
+            policy.cancellationNotifier->subscribe(strictWake) : std::shared_ptr<void>();
         const string agent = userAgent.empty() ? dcpp::fullHTTPVersionString : userAgent;
         if(agent.find_first_of("\r\n") != string::npos || agent.find('\0') != string::npos)
             throw std::runtime_error("Invalid HTTPS user agent");
