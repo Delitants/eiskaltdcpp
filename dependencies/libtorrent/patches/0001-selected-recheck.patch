@@ -348,7 +348,18 @@
  
  		if (!valid_metadata()) return;
  
-@@ -9813,6 +10012,7 @@
+@@ -7472,7 +7671,9 @@
+ 		// for the piece
+ 		// bit 0: set if we have the piece
+ 		// bit 1: set if we have verified the piece (in seed mode)
+-		bool const is_checking = state() == torrent_status::checking_files;
++		// A selected check maintains a complete conservative piece bitmap,
++		// not the full checker's sequential m_num_checked_pieces prefix.
++		bool const is_checking = state() == torrent_status::checking_files && !m_selected_active;
+ 
+ 		// if we are checking, only save the have_pieces bitfield up to the piece
+ 		// we have actually checked. This allows us to resume the checking when we
+@@ -9813,6 +10014,7 @@
  
  	void torrent::auto_managed(bool const a)
  	{
@@ -356,7 +367,7 @@
  		TORRENT_ASSERT(is_single_thread());
  		INVARIANT_CHECK;
  
-@@ -10291,6 +10491,7 @@
+@@ -10291,6 +10493,7 @@
  
  	void torrent::resume()
  	{

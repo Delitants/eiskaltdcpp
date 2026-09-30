@@ -50,6 +50,9 @@ public:
     void stop(const QString &id);
     void remove(const QString &id, bool deleteFiles = false);
     void recheck(const QString &id);
+    bool supportsFileRecheck() const;
+    void recheckFiles(const QString &id, const QList<int> &indices, quint64 expectedRevision);
+    void cancelFileRecheck(const QString &id, quint64 token);
     // Call before dependent controllers are destroyed. Idempotent; joins worker.
     void shutdown();
     // Joins the worker and reports its final resume/atomic-write result.

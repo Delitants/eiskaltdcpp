@@ -34,8 +34,11 @@ Preparation drains one torrent's writes and prevents peers from restarting it.
 Start clears only requested piece availability and disk-cache state, then uses
 native disk hashing. v2 results compare fresh block Merkle roots with authenticated
 native nodes; absent hashes yield unavailable. Terminal results remain paused
-until the caller saves resume state and finalizes. Application callers must own
-the recovery journal, user intent and publication barriers before enabling UI.
+until the caller saves resume state and finalizes. While a selected check is
+active, resume snapshots retain the full conservative availability bitmap, not
+the unrelated full checker's sequential checked-piece prefix. Application callers
+must own the recovery journal, user intent and publication barriers before
+enabling UI.
 
 The patch also initializes skipped-file/partfile mappings through read-only
 metadata reads when a local checking handle bypasses normal resume verification.
@@ -51,8 +54,9 @@ BUILD/tests/torrent/eiskalt-selected-recheck-dependency-tests '[selected-recheck
 They instrument the native disk boundary and real filesystem fixtures. Tests
 cover shared boundaries, v1/v2/hybrid corruption, missing authenticated hashes,
 read-only payloads, cancellation, stale requests, local-only stopped checks,
-partfiles, empty scopes and a concurrent loopback transfer. The unpatched-library
-test must fail rather than silently skip missing capability.
+partfiles, empty scopes, pre-finalization checkpoint bits and a concurrent
+loopback transfer. The unpatched-library test must fail rather than silently
+skip missing capability.
 
 This dependency checkpoint does not itself enable the application feature.
 Separate journal/engine/UI integration, upstream patch review and native Intel

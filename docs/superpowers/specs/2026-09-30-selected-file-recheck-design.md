@@ -2,8 +2,10 @@
 
 Status: specification and implementation plan approved on 2026-09-30. Native
 dependency, scope-planner and recovery-journal components are complete locally;
-native resume replies now have a persisted generation fence. Selected-check
-application lifecycle and UI integration are not enabled.
+native resume replies have a persisted generation fence. Local backend admission,
+journaled native checking and conservative restart recovery exist, including
+engine subprocess-exit tests. Extended lifecycle/fault acceptance and scoped DC
+hash invalidation remain pending; selected-check UI integration is not enabled.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit

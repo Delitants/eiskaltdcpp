@@ -18,6 +18,8 @@
 #include <QUdpSocket>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QProcess>
+#include <QProcessEnvironment>
 #include <libtorrent/create_torrent.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/bdecode.hpp>
@@ -3666,3 +3668,592 @@ TEST_CASE("A failed atomic checkpoint cannot advance the durable verification ge
     }));
     CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "2");
 }
+
+#if EISKALT_SELECTED_RECHECK_AVAILABLE && !defined(Q_OS_WIN)
+TEST_CASE("Selected checks reject stale and invalid file selections before publication cancellation", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    int invalidations = 0;
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString) { ++invalidations; }, Qt::DirectConnection);
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString message) { errors << message; });
+    const auto revision = jobSnapshot(engine, id).revision;
+    engine.recheckFiles(id, {0}, revision + 1);
+    CHECK(invalidations == 0);
+    REQUIRE_FALSE(errors.isEmpty());
+    CHECK(errors.last().contains("changed"));
+    for (const auto &selection : QList<QList<int>>{{}, {-1}, {2}}) {
+        errors.clear();
+        engine.recheckFiles(id, selection, revision);
+        CHECK(invalidations == 0);
+        CHECK_FALSE(errors.isEmpty());
+        CHECK(jobSnapshot(engine, id).revision == revision);
+        CHECK(jobSnapshot(engine, id).complete);
+    }
+    CHECK(engine.supportsFileRecheck());
+}
+
+TEST_CASE("Selected native checks invalidate corrupt pieces without scanning away unrelated trust", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    for (const auto &[format, name] : {std::pair{lt::create_torrent::v1_only, "v1"},
+            std::pair{lt::create_torrent::v2_only, "v2"}, std::pair{lt::create_flags_t{}, "hybrid"}}) {
+        DYNAMIC_SECTION(name) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            TorrentEngine engine(dir.filePath("state"));
+            engine.configure(settings, {});
+            const auto id = engine.add(fixture(settings.downloadPath, format, true));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            engine.setWantedFiles(id, {0, 1}, {{0, 1}, {1, 7}});
+            REQUIRE(eventually([&] { const auto files = engine.files(id); return files.size() == 2 && files[0].priority == 1 && files[1].priority == 7; }));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            engine.pause(id, true);
+            REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userPaused; }));
+            const auto other = hashFile(dir.filePath("payload/bundle/b.bin"));
+            QFile payload(dir.filePath("payload/bundle/a.bin"));
+            REQUIRE(payload.open(QIODevice::WriteOnly | QIODevice::Truncate));
+            REQUIRE(payload.write(QByteArray(131072, 'z')) == 131072);
+            payload.close();
+            const auto replaced = hashFile(payload.fileName());
+            engine.recheckFiles(id, {0, 0}, jobSnapshot(engine, id).revision);
+            const bool finished = eventually([&] { const auto check = jobSnapshot(engine, id).fileCheck; return check.token != 0 && !check.active; }, 1500);
+            const auto trace = TorrentEngineTestAccess::call(engine, [id](auto &d) {
+                const auto &r = d.records.at(id);
+                const auto native = lt::query_selected_recheck(r.handle, r.fileCheck.token);
+                return QString("phase=%1 error=%2 started=%3 terminal=%4 save=%5 generations=%6/%7 state=%8")
+                    .arg(int(native.phase)).arg(QString::fromStdString(native.error.message())).arg(r.checkStarted)
+                    .arg(r.checkTerminal).arg(r.savePending).arg(r.resumeGeneration).arg(r.resumeSnapshotGeneration)
+                    .arg(int(r.handle.status().state)).toStdString();
+            });
+            INFO(trace);
+            REQUIRE(finished);
+            const auto job = jobSnapshot(engine, id);
+            REQUIRE(job.fileCheck.files.size() == 1);
+            CHECK(job.fileCheck.files[0].index == 0);
+            CHECK(job.fileCheck.files[0].outcome == FileCheckOutcome::FailedPiece);
+            CHECK(job.fileCheck.error.isEmpty());
+            CHECK(job.fileCheck.checkedBytes == 131072);
+            CHECK(job.fileCheck.totalBytes == 131072);
+            CHECK(job.downloaded == 131072);
+            CHECK(job.progress == 0.5);
+            CHECK_FALSE(job.complete);
+            CHECK(job.paused);
+            CHECK(hashFile(payload.fileName()) == replaced);
+            CHECK(hashFile(dir.filePath("payload/bundle/b.bin")) == other);
+            CHECK(engine.files(id)[0].priority == 1);
+            CHECK(engine.files(id)[1].priority == 7);
+            CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).resume.have_pieces.count(); }) == 8);
+        }
+    }
+}
+
+TEST_CASE("Stopped selected checks create no regular session or proxy connection", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    LocalSocksProxy bridge;
+    REQUIRE(bridge.server.listen(QHostAddress::LocalHost));
+    int connections = 0;
+    QObject::connect(&bridge.server, &QTcpServer::newConnection, &bridge.server, [&] { ++connections; });
+    auto settings = isolated(dir.filePath("payload"));
+    settings.proxyMode = ProxyMode::RequireProxy;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {ProxyType::Socks5, "127.0.0.1", {}, {}, {}, int(bridge.server.serverPort()), true, false});
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true), {}, {}, true);
+    REQUIRE(eventually([&] { return engine.files(id).size() == 2; }));
+    engine.stop(id);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userStopped; }));
+    CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+    const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(eventually([&] { const auto check = jobSnapshot(engine, id).fileCheck; return check.token != 0 && !check.active; }, 1500));
+    const auto job = jobSnapshot(engine, id);
+    REQUIRE(job.fileCheck.files.size() == 1);
+    CHECK(job.fileCheck.files[0].outcome == FileCheckOutcome::Verified);
+    CHECK(job.stopped);
+    CHECK(job.paused);
+    CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+    CHECK(engine.effectiveListeners().isEmpty());
+    CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+    CHECK(connections == 0);
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Selected admission cancels publication outside the mutex and reserves an active token", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    const auto epoch = engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    const auto old = jobSnapshot(engine, id).revision;
+    struct Gate { std::atomic_bool entered{false}, release{false}; };
+    auto gate = std::make_shared<Gate>();
+    struct Release { std::shared_ptr<Gate> gate; ~Release() { gate->release = true; } } release{gate};
+    REQUIRE(TorrentEngineTestAccess::call(engine, [gate](auto &d) { return d.enqueue([gate] { gate->entered = true; while (!gate->release) std::this_thread::sleep_for(1ms); }); }));
+    REQUIRE(eventually([&] { return gate->entered.load(); }));
+    int invalidations = 0;
+    QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString target) {
+        CHECK(target == id);
+        CHECK(engine.publicationValid(id, old, epoch));
+        CHECK(QThread::currentThread() == engine.thread());
+        ++invalidations;
+    }, Qt::DirectConnection);
+    engine.recheckFiles(id, {0}, old);
+    CHECK(invalidations == 1);
+    CHECK_FALSE(engine.publicationValid(id, old, epoch));
+    CHECK(jobSnapshot(engine, id).revision == old + 1);
+    REQUIRE(jobSnapshot(engine, id).fileCheck.active);
+    const auto token = jobSnapshot(engine, id).fileCheck.token;
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString message) { errors << message; });
+    engine.setWantedFiles(id, {});
+    engine.recheck(id);
+    engine.recheckFiles(id, {0}, old + 1);
+    CHECK(invalidations == 1);
+    CHECK(errors.size() == 3);
+    engine.cancelFileRecheck(id, token + 1);
+    CHECK_FALSE(jobSnapshot(engine, id).fileCheck.canceling);
+    engine.stop(id);
+    gate->release = true;
+    QObject::disconnect(&engine, &TorrentEngine::storageInvalidating, &engine, nullptr);
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    CHECK(jobSnapshot(engine, id).stopped);
+    CHECK(jobSnapshot(engine, id).paused);
+    CHECK(engine.files(id)[0].wanted);
+}
+
+TEST_CASE("An unwritable selected-check journal prevents native availability invalidation", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    QFile blocked(dir.filePath("state/rechecks"));
+    REQUIRE(blocked.open(QIODevice::WriteOnly));
+    REQUIRE(blocked.write("not a directory") == 15);
+    blocked.close();
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(eventually([&] { const auto check = jobSnapshot(engine, id).fileCheck; return check.token != 0 && !check.active; }, 1500));
+    CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+    CHECK(jobSnapshot(engine, id).paused);
+    CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 8);
+}
+
+namespace {
+RecheckRecord interruptedCheck(const QString &state, const Settings &settings, bool sourceReadOnly = false) {
+    QString id;
+    {
+        TorrentEngine engine(state);
+        engine.configure(settings, {});
+        const auto input = fixture(settings.downloadPath, lt::create_torrent::v1_only, true);
+        id = sourceReadOnly ? engine.seedCreated(input, settings.downloadPath) : engine.add(input);
+        REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+        REQUIRE(engine.shutdownChecked());
+    }
+    const auto item = savedJob(QDir(state).filePath("jobs.json"), id);
+    const auto bytes = QByteArray::fromBase64(item["resume"].toString().toLatin1());
+    lt::error_code error;
+    const auto params = lt::read_resume_data(lt::span<const char>(bytes.constData(), bytes.size()), error);
+    REQUIRE_FALSE(error);
+    REQUIRE(params.ti);
+    REQUIRE(params.have_pieces.count() == 16);
+    RecheckRecord record{id, metadataIdentity(*params.ti), checkStorageIdentity(text(params.save_path)),
+        41, 7, item["resumeGeneration"].toString().toULongLong() + 1,
+        {0}, {0, 1, 2, 3, 4, 5, 6, 7}, sourceReadOnly};
+    QString reason;
+    INFO("storage=" << text(params.save_path).toStdString() << " identity=" << record.storageIdentity.toStdString());
+    REQUIRE(RecheckJournal(state).begin(record, &reason));
+    return record;
+}
+}
+
+TEST_CASE("An interrupted selected check is reconciled before any native route or completion", "[selected-recheck-engine][selected-recheck-recovery]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    const auto record = interruptedCheck(state, settings);
+    TorrentEngine engine(state);
+    int completions = 0;
+    QObject::connect(&engine, &TorrentEngine::completed, &engine, [&] { ++completions; });
+    engine.configure(settings, {});
+    REQUIRE(eventually([&] { return !engine.jobs().isEmpty(); }));
+    const auto job = jobSnapshot(engine, record.jobId);
+    CHECK(job.paused);
+    CHECK_FALSE(job.complete);
+    CHECK(job.fileCheck.recoveryRequired);
+    CHECK_FALSE(job.fileCheck.recheckOnly);
+    CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+    CHECK(engine.effectiveListeners().isEmpty());
+    CHECK(completions == 0);
+    REQUIRE(job.files.size() == 2);
+    CHECK(TorrentEngineTestAccess::call(engine, [id = record.jobId](auto &d) {
+        const auto &bits = d.records.at(id).resume.have_pieces;
+        if (bits.size() != 16 || bits.count() != 8) return false;
+        for (int i = 0; i < 16; ++i) if (bits[lt::piece_index_t(i)] != (i >= 8)) return false;
+        return true;
+    }));
+    QString error;
+    CHECK_FALSE(RecheckJournal(state).pending(record.jobId, &error));
+    CHECK(error.isEmpty());
+    CHECK(savedJob(dir.filePath("state/jobs.json"), record.jobId)["resumeGeneration"].toString() == QString::number(record.resumeGeneration));
+    engine.pause(record.jobId, false);
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, record.jobId).fileCheck.recoveryRequired; }));
+    CHECK(TorrentEngineTestAccess::active(engine));
+    CHECK(TorrentEngineTestAccess::status(engine, record.jobId).num_pieces == 8);
+    CHECK_FALSE(jobSnapshot(engine, record.jobId).checking);
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Read-only interruption allows rechecking but never recovery downloads", "[selected-recheck-engine][selected-recheck-recovery]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    const auto record = interruptedCheck(state, settings, true);
+    const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+    TorrentEngine engine(state);
+    engine.configure(settings, {});
+    REQUIRE(eventually([&] { return !engine.jobs().isEmpty(); }));
+    REQUIRE(jobSnapshot(engine, record.jobId).fileCheck.recoveryRequired);
+    CHECK(jobSnapshot(engine, record.jobId).fileCheck.recheckOnly);
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString message) { errors << message; });
+    engine.pause(record.jobId, false);
+    REQUIRE_FALSE(errors.isEmpty());
+    CHECK(jobSnapshot(engine, record.jobId).paused);
+    engine.recheckFiles(record.jobId, {1}, jobSnapshot(engine, record.jobId).revision);
+    CHECK_FALSE(jobSnapshot(engine, record.jobId).fileCheck.active);
+    engine.recheckFiles(record.jobId, {0}, jobSnapshot(engine, record.jobId).revision);
+    REQUIRE(eventually([&] { const auto check = jobSnapshot(engine, record.jobId).fileCheck; return check.token != 41 && !check.active && !check.recoveryRequired; }));
+    REQUIRE(jobSnapshot(engine, record.jobId).fileCheck.files.size() == 1);
+    CHECK(jobSnapshot(engine, record.jobId).fileCheck.files[0].outcome == FileCheckOutcome::Verified);
+    CHECK(jobSnapshot(engine, record.jobId).paused);
+    CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+    CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Invalid or redirected interrupted checks stay blocked with their journal intact", "[selected-recheck-engine][selected-recheck-recovery]") {
+    application();
+    for (int failure : {0, 1, 2, 3}) {
+        DYNAMIC_SECTION("failure=" << failure) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            auto record = interruptedCheck(state, settings);
+            if (failure == 0) {
+                const auto entries = QDir(dir.filePath("state/rechecks")).entryList(QDir::Files);
+                REQUIRE(entries.size() == 1);
+                QFile file(QDir(dir.filePath("state/rechecks")).filePath(entries[0]));
+                REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+                REQUIRE(file.write("{broken") == 7);
+            } else if (failure == 3) {
+                REQUIRE(QDir().rename(settings.downloadPath, dir.filePath("moved")));
+                REQUIRE(QFile::link(dir.filePath("moved"), settings.downloadPath));
+            } else {
+                QString error;
+                REQUIRE(RecheckJournal(state).finish(record.jobId, record.token, record.resumeGeneration, &error));
+                if (failure == 1) record.metadataDigest = "different metadata";
+                else record.pieces = {8};
+                REQUIRE(RecheckJournal(state).begin(record, &error));
+            }
+            TorrentEngine engine(state);
+            engine.configure(settings, {});
+            REQUIRE(eventually([&] { return !engine.jobs().isEmpty(); }));
+            CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+            CHECK_FALSE(jobSnapshot(engine, record.jobId).complete);
+            CHECK_FALSE(jobSnapshot(engine, record.jobId).error.isEmpty());
+            engine.pause(record.jobId, false);
+            CHECK_FALSE(TorrentEngineTestAccess::active(engine));
+            CHECK(QDir(dir.filePath("state/rechecks")).entryList(QDir::Files).size() == 1);
+        }
+    }
+}
+
+TEST_CASE("A failed final selected checkpoint retains its journal and blocks activity", "[selected-recheck-engine][selected-recheck-failure]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    QString id;
+    {
+        TorrentEngine engine(state);
+        engine.configure(settings, {});
+        id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+        REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+        engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+        REQUIRE(TorrentEngineTestAccess::call(engine, [id, state](auto &d) {
+            const auto deadline = Clock::now() + 2s;
+            auto &r = d.records.at(id);
+            while (!r.checkStarted && r.fileCheck.active && Clock::now() < deadline) {
+                d.alerts(); d.pollFileChecks(true); std::this_thread::sleep_for(1ms);
+            }
+            const auto path = QDir(state).filePath("jobs.json");
+            return r.checkStarted && QFile::rename(path, path + ".previous") && QDir().mkdir(path);
+        }));
+        REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+        CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+        CHECK(jobSnapshot(engine, id).paused);
+        CHECK_FALSE(jobSnapshot(engine, id).complete);
+        QString error;
+        CHECK(RecheckJournal(state).pending(id, &error));
+        engine.pause(id, false);
+        CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+            const auto &r = d.records.at(id);
+            return bool(r.handle.status().flags & lt::torrent_flags::paused) && bool(r.checkRecord);
+        }));
+        engine.remove(id, true);
+        REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.contains(id); }));
+        CHECK_FALSE(engine.jobs().isEmpty());
+        CHECK(QFile::exists(dir.filePath("payload/bundle/a.bin")));
+        REQUIRE(QDir().rmdir(dir.filePath("state/jobs.json")));
+        REQUIRE(QFile::rename(dir.filePath("state/jobs.json.previous"), dir.filePath("state/jobs.json")));
+        CHECK_FALSE(engine.shutdownChecked());
+    }
+    TorrentEngine restored(state);
+    restored.configure(settings, {});
+    REQUIRE(eventually([&] { return !restored.jobs().isEmpty(); }));
+    CHECK(jobSnapshot(restored, id).fileCheck.recoveryRequired);
+    CHECK(jobSnapshot(restored, id).paused);
+    CHECK_FALSE(TorrentEngineTestAccess::active(restored));
+    CHECK(TorrentEngineTestAccess::call(restored, [id](auto &d) { return d.records.at(id).resume.have_pieces.count(); }) == 8);
+}
+
+TEST_CASE("Changing storage identity during verification cannot clear the recovery barrier", "[selected-recheck-engine][selected-recheck-failure]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    TorrentEngine engine(state);
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id, dirRoot = dir.path()](auto &d) {
+        const auto deadline = Clock::now() + 2s;
+        auto &r = d.records.at(id);
+        while (!r.checkStarted && r.fileCheck.active && Clock::now() < deadline) {
+            d.alerts(); d.pollFileChecks(true); std::this_thread::sleep_for(1ms);
+        }
+        return r.checkStarted && QDir().rename(r.savePath, QDir(dirRoot).filePath("old-storage")) && QDir().mkdir(r.savePath);
+    }));
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+    CHECK_FALSE(jobSnapshot(engine, id).complete);
+    QString error;
+    CHECK(RecheckJournal(state).pending(id, &error));
+    CHECK_FALSE(engine.shutdownChecked());
+}
+
+TEST_CASE("Route changes removal and shutdown drain selected checks before teardown", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    for (int action : {0, 1, 2}) {
+        DYNAMIC_SECTION("action=" << action) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            TorrentEngine engine(state);
+            engine.configure(settings, {});
+            const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+            engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+            REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+                const auto deadline = Clock::now() + 2s;
+                auto &r = d.records.at(id);
+                while (!r.checkStarted && r.fileCheck.active && Clock::now() < deadline) {
+                    d.alerts(); d.pollFileChecks(true); std::this_thread::sleep_for(1ms);
+                }
+                return r.checkStarted && r.checkRecord.has_value();
+            }));
+            if (action == 0) {
+                settings.uploadLimitKiB = 73;
+                const auto epoch = engine.configure(settings, {});
+                REQUIRE(TorrentEngineTestAccess::call(engine, [epoch](auto &d) { return d.listenerEpoch == epoch; }));
+                CHECK_FALSE(jobSnapshot(engine, id).fileCheck.active);
+                CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).handle.is_valid(); }));
+                CHECK(engine.settings().uploadLimitKiB == 73);
+            } else if (action == 1) {
+                engine.remove(id, false);
+                REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return !d.records.contains(id); }));
+                CHECK(engine.jobs().isEmpty());
+            }
+            CHECK(engine.shutdownChecked());
+            QString error;
+            CHECK_FALSE(RecheckJournal(state).pending(id, &error));
+            CHECK(error.isEmpty());
+            CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+        }
+    }
+}
+
+TEST_CASE("Engine process exits cannot restore affected trust before journal finalization", "[selected-recheck-engine][selected-recheck-recovery]") {
+    application();
+    for (const auto &mode : {QString("journal-after"), QString("result-after"), QString("finish-after")}) {
+        DYNAMIC_SECTION(mode.toStdString()) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            QString id;
+            {
+                TorrentEngine engine(state);
+                engine.configure(settings, {});
+                id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+                REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+                REQUIRE(engine.shutdownChecked());
+            }
+            QProcess process;
+            auto env = QProcessEnvironment::systemEnvironment();
+            env.insert("EISKALT_RECHECK_ENGINE_ROOT", dir.path());
+            env.insert("EISKALT_RECHECK_ENGINE_JOB", id);
+            env.insert("EISKALT_RECHECK_ENGINE_MODE", mode);
+            process.setProcessEnvironment(env);
+            process.start(QCoreApplication::applicationFilePath(), {"[.selected-recheck-engine-child]"});
+            REQUIRE(process.waitForFinished(20000));
+            INFO(process.readAllStandardError().toStdString());
+            INFO(process.readAllStandardOutput().toStdString());
+            REQUIRE(process.exitCode() == 73);
+            QString error;
+            const auto pending = RecheckJournal(state).pending(id, &error);
+            REQUIRE(error.isEmpty());
+            CHECK(bool(pending) == (mode != "finish-after"));
+            TorrentEngine restored(state);
+            restored.configure(settings, {});
+            REQUIRE(eventually([&] { return !restored.jobs().isEmpty(); }));
+            if (pending) {
+                CHECK(jobSnapshot(restored, id).fileCheck.recoveryRequired);
+                CHECK(jobSnapshot(restored, id).paused);
+                CHECK_FALSE(TorrentEngineTestAccess::active(restored));
+                CHECK(TorrentEngineTestAccess::call(restored, [id](auto &d) { return d.records.at(id).resume.have_pieces.count(); }) == 8);
+                CHECK_FALSE(RecheckJournal(state).pending(id, &error));
+            } else {
+                CHECK_FALSE(jobSnapshot(restored, id).fileCheck.recoveryRequired);
+                REQUIRE(eventually([&] { return jobSnapshot(restored, id).complete; }));
+                CHECK(TorrentEngineTestAccess::status(restored, id).num_pieces == 16);
+            }
+            CHECK(restored.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Resume accepted during local checking starts the saved route only after checkpoint", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    TorrentEngine engine(state);
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true), {}, {}, true);
+    REQUIRE(eventually([&] { return engine.files(id).size() == 2; }));
+    engine.stop(id);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userStopped; }));
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 2s;
+        while (!r.checkStarted && r.fileCheck.active && Clock::now() < deadline) {
+            d.pollFileChecks(true); std::this_thread::sleep_for(1ms);
+        }
+        return r.checkStarted && r.checkRecord && !d.session;
+    }));
+    engine.pause(id, false);
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    CHECK(TorrentEngineTestAccess::active(engine));
+    CHECK_FALSE(jobSnapshot(engine, id).stopped);
+    QString error;
+    CHECK_FALSE(RecheckJournal(state).pending(id, &error));
+    CHECK(error.isEmpty());
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Closing without a normal route destroys local contexts on the worker", "[selected-recheck-engine][selected-recheck-lifecycle]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath), {}, {}, true);
+    REQUIRE(eventually([&] { return engine.files(id).size() == 1; }));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        auto settings = sessionSettings(d.config, {});
+        settings.set_str(lt::settings_pack::listen_interfaces, "");
+        r.checkSession = std::make_unique<lt::session>(lt::session_params(settings));
+        auto params = r.resume;
+        params.flags &= ~lt::torrent_flags::auto_managed;
+        params.flags |= lt::torrent_flags::paused | lt::torrent_flags::no_verify_files;
+        lt::error_code error;
+        r.handle = r.checkSession->add_torrent(params, error);
+        return !error && !d.session;
+    }));
+    CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        const bool saved = d.closeSession();
+        const auto &r = d.records.at(id);
+        return saved && !r.checkSession && !r.handle.is_valid();
+    }));
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Engine selected-check process boundary fixture", "[.selected-recheck-engine-child]") {
+    application();
+    const auto root = qEnvironmentVariable("EISKALT_RECHECK_ENGINE_ROOT");
+    const auto id = qEnvironmentVariable("EISKALT_RECHECK_ENGINE_JOB");
+    const auto mode = qEnvironmentVariable("EISKALT_RECHECK_ENGINE_MODE");
+    REQUIRE_FALSE(root.isEmpty());
+    REQUIRE_FALSE(id.isEmpty());
+    REQUIRE((mode == "journal-after" || mode == "result-after" || mode == "finish-after"));
+    const auto settings = isolated(QDir(root).filePath("payload"));
+    TorrentEngine engine(QDir(root).filePath("state"));
+    engine.configure(settings, {});
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    if (mode == "finish-after") {
+        REQUIRE(eventually([&] { const auto &check = jobSnapshot(engine, id).fileCheck; return check.token && !check.active; }));
+        std::_Exit(73);
+    }
+    TorrentEngineTestAccess::call(engine, [id, mode](auto &d) -> bool {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 3s;
+        while (!r.checkStarted && r.fileCheck.active && Clock::now() < deadline) {
+            d.alerts(); d.pollFileChecks(true); std::this_thread::sleep_for(1ms);
+        }
+        if (!r.checkStarted || !r.checkRecord) return false;
+        if (mode == "journal-after") std::_Exit(73);
+        while (Clock::now() < deadline) {
+            const auto native = lt::query_selected_recheck(r.handle, r.fileCheck.token);
+            if (native.phase == lt::selected_recheck_phase::complete) break;
+            std::this_thread::sleep_for(1ms);
+        }
+        if (lt::query_selected_recheck(r.handle, r.fileCheck.token).phase != lt::selected_recheck_phase::complete) return false;
+        r.checkTerminal = true;
+        d.requestSave(r);
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); std::this_thread::sleep_for(1ms); }
+        if (r.savePending || r.resumeSnapshotGeneration != r.checkRecord->resumeGeneration || !d.persist()) return false;
+        std::_Exit(73);
+    });
+    FAIL("Did not reach the requested abrupt-exit boundary");
+}
+#endif

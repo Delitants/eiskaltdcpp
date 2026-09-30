@@ -28,5 +28,6 @@ target_include_directories(eiskalt-torrent-tests PRIVATE "${CMAKE_CURRENT_SOURCE
 target_link_libraries(eiskalt-torrent-tests PRIVATE Qt6::Core Qt6::Network
     LibtorrentRasterbar::torrent-rasterbar Threads::Threads Catch2::Catch2WithMain eiskalt-proxy-trust)
 eiskalt_torrent_match_dependency_abi(eiskalt-torrent-tests)
+eiskalt_torrent_selected_recheck_capability(eiskalt-torrent-tests)
 add_test(NAME torrent-backend COMMAND eiskalt-torrent-tests)
 set_tests_properties(torrent-backend PROPERTIES TIMEOUT 180)

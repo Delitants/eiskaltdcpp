@@ -173,6 +173,11 @@ TEST_CASE("Selected recheck reads the boundary piece and preserves unrelated ava
     REQUIRE(handle.have_piece(lt::piece_index_t(2)));
     REQUIRE(handle.get_file_priorities() == priorities);
     REQUIRE(bool(handle.status().flags & lt::torrent_flags::paused));
+    const auto checkpoint = handle.get_resume_data(lt::torrent_handle::save_info_dict);
+    REQUIRE(checkpoint.have_pieces.size() == handle.torrent_file()->num_pieces());
+    REQUIRE_FALSE(checkpoint.have_pieces[lt::piece_index_t(0)]);
+    REQUIRE(checkpoint.have_pieces[lt::piece_index_t(1)]);
+    REQUIRE(checkpoint.have_pieces[lt::piece_index_t(2)]);
     { std::lock_guard l(reads->mutex);
       REQUIRE(reads->pieces == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
       REQUIRE(reads->writes == 0);

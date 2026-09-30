@@ -11,8 +11,9 @@
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
 Status: approved for Native inline execution on 2026-09-30. Tasks 1-3 are complete;
-Task 4's resume-generation fence is implemented locally, but the selected-check
-lifecycle, later milestones and installation/release acceptance remain pending.
+Task 4 has local generation-fenced admission, journaled native checking and
+restart recovery. Its extended I/O/interleaving acceptance, later milestones and
+installation/release acceptance remain pending. No Files UI action is enabled.
 
 ## Global Constraints
 
@@ -88,22 +89,26 @@ Expose asynchronous free functions `prepare_selected_recheck(torrent_handle, uin
 
 ### Task 4: Integrate Engine Lifecycle And Recovery
 
-Checkpoint: native save replies are generation-gated, overlapping save requests
-coalesce one follow-up checkpoint, and canonical 64-bit generations survive
-atomic persistence and restart. Eight focused cases cover delayed replies,
-legacy profiles, malformed/exhausted generations and failed atomic writes.
-The journal-to-native admission/finalization/recovery flow below is not enabled;
-this checkpoint does not complete Task 4.
+Checkpoint: generation-fenced admission now quiesces only the selected native
+job, writes a journal before invalidating pieces and commits a matching resume
+snapshot before clearing that journal. Stopped checks use a local-only session.
+Valid interrupted scopes are conservatively checkpointed and remain paused;
+malformed or changed storage identities block the job. Real engine subprocess
+exits cover journal/result/finalization boundaries. The maintained dependency
+now saves the full conservative piece bitmap during selected checks rather
+than using the full checker's sequential prefix. Task 4 still needs extended
+held-I/O/cancellation, source-write and fault-interleaving acceptance; no UI
+activation, application installation or release proof is claimed.
 
 **Files:** Modify `torrent/TorrentEngine.h`, `torrent/TorrentEngine.cpp`, `torrent/TorrentTypes.h`, `tests/torrent/test_torrent.cpp`; use Tasks 1-3 components without reimplementing hashing.
 
 **Interfaces:** Add `recheckFiles(const QString& id, const QList<int>& indices, quint64 expectedRevision)` and `cancelFileRecheck(const QString& id, quint64 token)` owner-thread methods. Add `FileCheckOutcome { Pending, Verified, FailedPiece, Unavailable, Canceled }`, `FileCheckResult { int index; FileCheckOutcome outcome; QString detail; }`, `FileRecheckSnapshot { quint64 token; bool active, canceling; qint64 checkedBytes, totalBytes; QList<FileCheckResult> files; QString error; }` to job snapshots; new fields default safely for aggregate callers. Add capability query `supportsFileRecheck() const -> bool`.
 
-- [ ] Add `[selected-recheck-engine]` tests to the existing private engine-probe translation unit. Assert stale revisions and invalid indices reject before storage invalidation, user priorities remain identical, completion progress stays separate, and requests for conflicting operations return visible reasons. Run RED.
-- [ ] Implement validated admission, synchronous publication cancellation, worker preparation, journal begin, scoped invalidation and start in that order. Take no backend mutex while calling direct publication slots. Poll extension snapshots with bounded existing refresh cadence, reject stale tokens and keep the GUI responsive.
-- [ ] Commit final resume state with matching generation before journal finish and restoring activity. Gate every save-resume reply by generation; never assign an older snapshot over a completed check. Missing/corrupt pieces become unavailable and redownload only under permitted activity.
+- [x] Add `[selected-recheck-engine]` tests to the existing private engine-probe translation unit. Assert stale revisions and invalid indices reject before storage invalidation, user priorities remain identical, completion progress stays separate, and requests for conflicting operations return visible reasons. Run RED.
+- [x] Implement validated admission, synchronous publication cancellation, worker preparation, journal begin, scoped invalidation and start in that order. Take no backend mutex while calling direct publication slots. Poll extension snapshots with bounded existing refresh cadence, reject stale tokens and keep the GUI responsive.
+- [x] Commit final resume state with matching generation before journal finish and restoring activity. Gate every save-resume reply by generation; never assign an older snapshot over a completed check. Missing/corrupt pieces become unavailable and redownload only under permitted activity.
 - [ ] Implement stopped local-only checking and source-read-only protection proven by Task 1; prepare must never advertise stale seed state. Cancel drains reads and conservatively invalidates unchecked affected pieces. Pause changes subsequent activity intent; Stop cancels and wins over old running state; moves/selection/priority changes reject during the check.
-- [ ] Reconcile pending journals before normal `start`, completion or DC publication. Interrupted jobs remain paused, affected pieces untrusted, unrelated pieces intact. Offer recheck or explicit resume/redownload except read-only sources, which permit recheck only. Corrupt journal/unsafe paths block the job.
+- [x] Reconcile pending journals before normal `start`, completion or DC publication. Interrupted jobs remain paused, affected pieces untrusted, unrelated pieces intact. Offer recheck or explicit resume/redownload except read-only sources, which permit recheck only. Corrupt journal/unsafe paths block the job.
 - [ ] Test same-size replacement, moved/symlinked ancestor, delayed alerts, second-job traffic, configure/remove/shutdown during checks, disk-full, permission denial, cancellation, and restart. Verify zero source writes and zero direct-route fallback. Run `eiskalt-torrent-tests '[selected-recheck-engine]'` then the full backend suite; require zero failures. Commit as `Integrate selective checks with torrent lifecycle`.
 
 ### Task 5: Preserve Unrelated DC Hashes

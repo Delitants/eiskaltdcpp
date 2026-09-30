@@ -2,8 +2,11 @@
 #include "TorrentSettings.h"
 #include "SocksUdpBootstrap.h"
 #include "TorrentPeerPolicy.h"
+#include "SelectedRecheck.h"
+#include "RecheckJournal.h"
 
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
@@ -14,6 +17,7 @@
 #include <QJsonObject>
 #include <QRandomGenerator>
 #include <QSaveFile>
+#include <QSet>
 #include <QThread>
 #include <QUuid>
 #include <QUrl>
@@ -43,6 +47,12 @@
 #include <optional>
 #include <thread>
 #include <utility>
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+#include <libtorrent/eiskalt_selected_recheck.hpp>
+#endif
+#ifndef Q_OS_WIN
+#include <sys/stat.h>
+#endif
 
 namespace eiskalt::torrent {
 namespace {
@@ -226,6 +236,24 @@ lt::load_torrent_limits parseLimits() {
     limits.max_decode_tokens = 500000;
     return limits;
 }
+QString metadataIdentity(const lt::torrent_info &metadata) {
+    const auto hashes = metadata.info_hashes();
+    return QString::fromLatin1(QByteArray(hashes.v1.data(), hashes.v1.size()).toHex()) + '/' +
+        QString::fromLatin1(QByteArray(hashes.v2.data(), hashes.v2.size()).toHex());
+}
+QString checkStorageIdentity(const QString &root) {
+    if (!noSymlinks(root)) return {};
+#ifndef Q_OS_WIN
+    struct stat info {};
+    if (::stat(QFile::encodeName(root).constData(), &info) != 0 || !S_ISDIR(info.st_mode)) return {};
+    const auto identity = root.toUtf8() + '\n' + QByteArray::number(quint64(info.st_dev)) + ':' +
+        QByteArray::number(quint64(info.st_ino));
+    return QString::fromLatin1(QCryptographicHash::hash(identity, QCryptographicHash::Sha256).toHex());
+#else
+    // Do not substitute timestamps for an authoritative directory identity.
+    return {};
+#endif
+}
 }
 
 struct TorrentEngine::Impl {
@@ -247,12 +275,19 @@ struct TorrentEngine::Impl {
         bool checking = false, savePending = false, saveAgain = false;
         quint64 resumeGeneration = 1, resumeSnapshotGeneration = 1;
         quint64 requestedSaveGeneration = 0, durableResumeGeneration = 0;
+        FileRecheckSnapshot fileCheck;
+        std::optional<RecheckPlan> checkPlan;
+        std::optional<RecheckRecord> checkRecord;
+        std::unique_ptr<lt::session> checkSession;
+        QString checkIdentity;
+        bool checkStarted = false, checkTerminal = false, checkSaveRequested = false;
         bool deferred = false, sourceReadOnly = false;
         qint64 observedUpload = 0, uploadBaseline = 0, lastPayloadUpload = 0;
         int downloadingPeers = 0, uploadingPeers = 0;
     };
     TorrentEngine *q;
     QString stateDir;
+    RecheckJournal journal;
     const CountryLookup countryLookup;
     mutable std::mutex mutex;
     std::condition_variable wake;
@@ -265,6 +300,9 @@ struct TorrentEngine::Impl {
     quint64 peerObservationEpoch = 0;
     QStringList listenerSnapshots;
     QHash<QString, QList<FileEntry>> fileSnapshots;
+    QHash<QString, std::shared_ptr<const lt::torrent_info>> metadataSnapshots;
+    QSet<QString> checkAdmissions, mutationBusy;
+    quint64 checkSerial = 0;
     QHash<QString, quint64> revisions;
     struct PendingActivity { quint64 serial; bool paused, stopped; };
     QHash<QString, PendingActivity> pendingActivities;
@@ -298,8 +336,9 @@ struct TorrentEngine::Impl {
     std::vector<Removal> removals;
     Clock::time_point nextSnapshot = Clock::now(), nextSave = Clock::now(), nextPolicyStatus = Clock::now();
     Clock::time_point nextPeerSnapshot = Clock::now();
+    Clock::time_point nextFileCheck = Clock::now();
 
-    Impl(TorrentEngine *owner, QString directory, CountryLookup lookup) : q(owner), stateDir(std::move(directory)), countryLookup(std::move(lookup)) {
+    Impl(TorrentEngine *owner, QString directory, CountryLookup lookup) : q(owner), stateDir(std::move(directory)), journal(stateDir), countryLookup(std::move(lookup)) {
         worker = std::thread([this] { run(); });
     }
     ~Impl() { stop(); }
@@ -360,6 +399,8 @@ struct TorrentEngine::Impl {
         if (removing) {
             snapshots.removeIf([&](const Job &job) { return job.id == id; });
             fileSnapshots.remove(id);
+            metadataSnapshots.remove(id);
+            mutationBusy.remove(id);
             if (observedJobId == id) {
                 observedJobId.clear();
                 peerSnapshots.clear();
@@ -393,6 +434,7 @@ struct TorrentEngine::Impl {
             }
             try {
                 if (command) command();
+                pollFileChecks();
                 if (session) {
                     alerts();
                     reapRemovals();
@@ -527,17 +569,263 @@ struct TorrentEngine::Impl {
     }
     void requestSave(Record &r) {
         if (!r.handle.is_valid()) return;
+        if (r.fileCheck.active && !r.checkTerminal) return;
         if (r.savePending) { r.saveAgain = true; return; }
         r.savePending = true;
         r.requestedSaveGeneration = r.resumeGeneration;
         r.handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::flush_disk_cache);
     }
     void requestSaves() { for (auto &[id, r] : records) requestSave(r); }
+    bool hasFileCheck(const QString &id) const {
+        std::lock_guard lock(mutex);
+        if (checkAdmissions.contains(id)) return true;
+        return std::any_of(snapshots.cbegin(), snapshots.cend(), [&](const Job &job) {
+            return job.id == id && job.fileCheck.active;
+        });
+    }
+    void failFileCheck(Record &r, const QString &reason) {
+        r.fileCheck.error = reason;
+        r.userPaused = true;
+        r.fileCheck.active = false;
+        r.notified = false;
+        for (auto &file : r.fileCheck.files) if (file.outcome == FileCheckOutcome::Pending)
+            file.outcome = FileCheckOutcome::Unavailable;
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+        if (r.handle.is_valid()) {
+            lt::cancel_selected_recheck(r.handle, r.fileCheck.token);
+            lt::finish_selected_recheck(r.handle, r.fileCheck.token, false);
+        }
+#endif
+        fail(r, reason);
+        if (r.checkSession) { r.handle = {}; r.checkSession.reset(); }
+        r.checkPlan.reset();
+        dirty = true;
+    }
+    void cancelCheck(Record &r) {
+        if (!r.fileCheck.active) return;
+        r.fileCheck.canceling = true;
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+        // A cancel before admission still needs the durable scope and native
+        // invalidation, otherwise unchecked old seed bits could survive it.
+        if (r.checkStarted && !r.checkTerminal)
+            lt::cancel_selected_recheck(r.handle, r.fileCheck.token);
+#endif
+    }
+    void beginFileCheck(Record &r, RecheckPlan plan, quint64 token, quint64 revision) {
+        r.revision = revision;
+        r.fileCheck = {token, true, false, 0, plan.totalBytes, {}, {}};
+        for (int index : plan.selectedFiles) r.fileCheck.files.append({index, FileCheckOutcome::Pending, {}});
+        r.checkPlan = std::move(plan);
+        r.checkStarted = r.checkTerminal = r.checkSaveRequested = false;
+        r.notified = false;
+        const auto metadata = r.handle.is_valid() ? r.handle.torrent_file() : r.resume.ti;
+        r.checkIdentity = checkStorageIdentity(r.savePath);
+        if (!metadata || !safeMetadata(*metadata, r.savePath) || r.checkIdentity.isEmpty() ||
+            r.storageCollision || r.moving || r.selectionPending || r.checking || r.checkRecord) {
+            failFileCheck(r, tr("Selected-file verification conflicts with another operation or unsafe storage."));
+            publish();
+            return;
+        }
+        if (!invalidateResume(r)) { failFileCheck(r, r.failure); publish(); return; }
+        r.failure.clear();
+        if (!r.resume.ti) {
+            r.resume.ti = std::make_shared<lt::torrent_info>(*metadata);
+            if (!persist()) { failFileCheck(r, tr("Cannot save Torrent metadata before file verification.")); publish(); return; }
+        }
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+        if (!r.handle.is_valid()) {
+            auto settings = sessionSettings(config, {});
+            using P = lt::settings_pack;
+            settings.set_str(P::listen_interfaces, "");
+            settings.set_str(P::outgoing_interfaces, "");
+            settings.set_str(P::dht_bootstrap_nodes, "");
+            for (const int option : {P::enable_dht, P::enable_lsd, P::enable_upnp, P::enable_natpmp,
+                    P::enable_incoming_tcp, P::enable_outgoing_tcp, P::enable_incoming_utp, P::enable_outgoing_utp})
+                settings.set_bool(option, false);
+            r.checkSession = std::make_unique<lt::session>(lt::session_params(settings));
+            auto params = r.resume;
+            params.save_path = r.savePath.toStdString();
+            params.file_priorities = priorities(r, *metadata);
+            params.trackers.clear(); params.tracker_tiers.clear(); params.dht_nodes.clear(); params.url_seeds.clear();
+#if TORRENT_ABI_VERSION < 4
+            QT_WARNING_PUSH
+            QT_WARNING_DISABLE_DEPRECATED
+            params.http_seeds.clear();
+            QT_WARNING_POP
+#endif
+            params.flags &= ~(lt::torrent_flags::auto_managed | lt::torrent_flags::seed_mode);
+            params.flags |= lt::torrent_flags::paused | lt::torrent_flags::no_verify_files |
+                lt::torrent_flags::disable_dht | lt::torrent_flags::disable_lsd | lt::torrent_flags::disable_pex;
+            if (r.sourceReadOnly) params.flags |= lt::torrent_flags::upload_mode;
+            lt::error_code error;
+            r.handle = r.checkSession->add_torrent(params, error);
+            if (error) { failFileCheck(r, tr("Cannot prepare local-only Torrent verification.")); publish(); return; }
+            // Startup is metadata-only; preparation is attempted once native
+            // resume initialization has reached the ready paused state.
+            r.status = r.handle.status();
+        } else lt::prepare_selected_recheck(r.handle, token);
+#endif
+        publish();
+    }
+    void updateCheckResults(Record &r, const lt::torrent_info &metadata,
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+                            const lt::selected_recheck_status &native
+#else
+                            int
+#endif
+    ) {
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+        r.fileCheck.checkedBytes = native.checked_bytes;
+        const auto &files = metadata.layout();
+        QSet<int> passed, failedPieces, unavailablePieces;
+        for (const auto piece : native.passed) passed.insert(int(piece));
+        for (const auto piece : native.failed) failedPieces.insert(int(piece));
+        for (const auto piece : native.unavailable) unavailablePieces.insert(int(piece));
+        for (auto &file : r.fileCheck.files) {
+            const auto index = lt::file_index_t(file.index);
+            bool failed = false, unavailable = false, pending = false;
+            if (files.file_size(index) != 0) {
+                const int first = int(files.piece_index_at_file(index)), last = int(files.last_piece_index_at_file(index));
+                for (int p = first; p <= last; ++p) {
+                    const bool bad = failedPieces.contains(p), missing = unavailablePieces.contains(p);
+                    failed |= bad;
+                    unavailable |= missing;
+                    pending |= !passed.contains(p) && !bad && !missing;
+                }
+            }
+            file.outcome = failed ? FileCheckOutcome::FailedPiece : unavailable || (r.checkTerminal && pending)
+                ? (native.phase == lt::selected_recheck_phase::canceled ? FileCheckOutcome::Canceled : FileCheckOutcome::Unavailable)
+                : pending ? FileCheckOutcome::Pending : FileCheckOutcome::Verified;
+            if (file.outcome == FileCheckOutcome::FailedPiece)
+                file.detail = tr("An affected piece is missing or corrupt; shared boundaries may include neighboring files.");
+            else if (file.outcome == FileCheckOutcome::Canceled)
+                file.detail = tr("Unchecked affected pieces remain unavailable after cancellation.");
+            else if (file.outcome == FileCheckOutcome::Unavailable)
+                file.detail = tr("Required storage or authenticated hashes were unavailable.");
+        }
+#endif
+    }
+    void pollFileChecks(bool force = false) {
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+        const auto now = Clock::now();
+        if (!force && now < nextFileCheck) return;
+        nextFileCheck = now + 250ms;
+        bool changed = false;
+        for (auto &[id, r] : records) {
+            if (!r.fileCheck.active || !r.checkPlan) continue;
+            if (r.checkSession) alerts(r.checkSession.get());
+            if (!r.fileCheck.active) { changed = true; continue; }
+            const auto metadata = r.handle.torrent_file();
+            if (!metadata) {
+                failFileCheck(r, tr("Torrent metadata disappeared during verification; recovery remains required."));
+                changed = true; continue;
+            }
+            if (checkStorageIdentity(r.savePath) != r.checkIdentity || !safeMetadata(*metadata, r.savePath)) {
+                failFileCheck(r, tr("Torrent storage changed during verification; recovery remains required."));
+                changed = true; continue;
+            }
+            if (r.checkSession && !r.checkStarted) {
+                const auto state = r.handle.status();
+                if (state.state == lt::torrent_status::checking_resume_data) continue;
+                const auto before = lt::query_selected_recheck(r.handle, r.fileCheck.token);
+                if (before.error && before.phase == lt::selected_recheck_phase::failed)
+                    lt::prepare_selected_recheck(r.handle, r.fileCheck.token);
+            }
+            const auto native = lt::query_selected_recheck(r.handle, r.fileCheck.token);
+            if (native.token != r.fileCheck.token) continue;
+            if (native.phase == lt::selected_recheck_phase::quiesced && !r.checkStarted) {
+                if (!r.fileCheck.error.isEmpty()) { failFileCheck(r, r.fileCheck.error); changed = true; continue; }
+                RecheckRecord record{id, metadataIdentity(*metadata), r.checkIdentity, r.fileCheck.token,
+                    r.revision, r.resumeGeneration, r.checkPlan->selectedFiles, r.checkPlan->pieces, r.sourceReadOnly};
+                QString error;
+                if (!journal.begin(record, &error)) { failFileCheck(r, error); changed = true; continue; }
+                r.checkRecord = std::move(record);
+                lt::selected_recheck_request request;
+                request.token = r.fileCheck.token;
+                for (int piece : r.checkPlan->pieces) request.pieces.emplace_back(piece);
+                r.checkStarted = true;
+                lt::start_selected_recheck(r.handle, std::move(request));
+                if (r.fileCheck.canceling) lt::cancel_selected_recheck(r.handle, r.fileCheck.token);
+            } else if (native.phase == lt::selected_recheck_phase::complete ||
+                       native.phase == lt::selected_recheck_phase::canceled || native.phase == lt::selected_recheck_phase::failed) {
+                r.checkTerminal = true;
+                if (native.error) r.fileCheck.error = tr("Selected-file verification encountered a storage or metadata error.");
+                updateCheckResults(r, *metadata, native);
+                if (!r.checkRecord) { failFileCheck(r, r.fileCheck.error); changed = true; continue; }
+                if (!r.checkSaveRequested) {
+                    // Capture newer owner-accepted activity before the final
+                    // snapshot is committed, without undoing a pending Stop.
+                    {
+                        std::lock_guard lock(mutex);
+                        const auto pending = pendingActivities.constFind(id);
+                        if (pending != pendingActivities.cend()) { r.userPaused = pending->paused; r.userStopped = pending->stopped; }
+                    }
+                    if (!r.fileCheck.error.isEmpty()) r.userPaused = true;
+                    r.checkSaveRequested = true;
+                    requestSave(r);
+                } else if (!r.savePending && r.resumeSnapshotGeneration == r.checkRecord->resumeGeneration) {
+                    QString error;
+                    if (!persist() || !journal.finish(id, r.fileCheck.token, r.durableResumeGeneration, &error)) {
+                        failFileCheck(r, error.isEmpty() ? tr("Cannot commit selected-file verification; recovery remains required.") : error);
+                        changed = true; continue;
+                    }
+                    r.checkRecord.reset();
+                    lt::finish_selected_recheck(r.handle, r.fileCheck.token, false);
+                    r.fileCheck.active = false;
+                    r.checkPlan.reset();
+                    r.status = r.handle.status(lt::torrent_handle::query_name | lt::torrent_handle::query_save_path);
+                    if (!r.fileCheck.error.isEmpty()) fail(r, r.fileCheck.error);
+                    bool hold;
+                    { std::lock_guard lock(mutex); const auto pending = pendingActivities.constFind(id);
+                      hold = pending != pendingActivities.cend() && (pending->paused || pending->stopped); }
+                    const bool restoreActivity = !closing && !hold && !r.userPaused && !r.userStopped && !r.seedStopped &&
+                        r.failure.isEmpty() && (!r.wanted || !r.wanted->isEmpty());
+                    if (r.checkSession) {
+                        r.handle = {}; r.checkSession.reset();
+                        if (restoreActivity) { r.deferred = false; start(r); }
+                    }
+                    else if (restoreActivity) resume(r);
+                    dirty = true;
+                }
+            } else updateCheckResults(r, *metadata, native);
+            changed = true;
+        }
+        if (changed) publish();
+#else
+        (void)force;
+#endif
+    }
+    bool drainFileChecks() {
+        for (auto &[id, r] : records) cancelCheck(r);
+        const auto deadline = Clock::now() + 3s;
+        while (std::any_of(records.begin(), records.end(), [](const auto &entry) { return entry.second.fileCheck.active; })) {
+            if (session) alerts();
+            pollFileChecks(true);
+            if (Clock::now() >= deadline) return false;
+            std::this_thread::sleep_for(20ms);
+        }
+        return std::none_of(records.begin(), records.end(), [](const auto &entry) { return bool(entry.second.checkRecord); });
+    }
     bool closeSession() {
         pendingBootstrap.clear();
         nextBootstrapRetry = Clock::time_point::max();
-        if (!session) return true;
         closing = true;
+        const bool checksOk = drainFileChecks();
+        if (!session) {
+            for (auto &[id, r] : records) if (r.checkSession) {
+                if (r.fileCheck.active)
+                    failFileCheck(r, tr("Local verification drain timed out; the Torrent requires recovery."));
+                r.handle = {};
+                r.checkSession.reset();
+                r.savePending = r.saveAgain = false;
+                r.requestedSaveGeneration = 0;
+                r.fileCheck.active = false;
+                r.notified = false;
+            }
+            closing = false;
+            const bool committed = persist();
+            return checksOk && committed;
+        }
         session->pause();
         const auto drainSaves = [&] {
             const auto deadline = Clock::now() + 3s;
@@ -561,6 +849,8 @@ struct TorrentEngine::Impl {
             r.saveAgain = false;
             r.requestedSaveGeneration = 0;
             r.handle = {};
+            r.checkSession.reset();
+            r.fileCheck.active = false;
             r.notified = false;
             r.downloadingPeers = r.uploadingPeers = 0;
         }
@@ -571,7 +861,7 @@ struct TorrentEngine::Impl {
         removals.clear();
         closing = false;
         const bool committed = persist();
-        return checkpointOk && committed;
+        return checksOk && checkpointOk && committed;
     }
     bool persist() {
         if (!loaded) return true;
@@ -598,6 +888,11 @@ struct TorrentEngine::Impl {
                 for (auto it = r.filePriorities.cbegin(); it != r.filePriorities.cend(); ++it)
                     priorities.insert(QString::number(it.key()), it.value());
                 item.insert("filePriorities", priorities);
+                if (r.fileCheck.recoveryRequired) {
+                    QJsonArray files;
+                    for (const auto &result : r.fileCheck.files) files.append(result.index);
+                    item.insert("fileCheckRecovery", files);
+                }
                 entries.append(item);
             }
         } catch (...) { report(tr("Cannot encode Torrent resume state.")); return false; }
@@ -687,6 +982,19 @@ struct TorrentEngine::Impl {
                     r.wanted->append(index.toInt());
                 }
             }
+            if (item.contains("fileCheckRecovery")) {
+                const auto files = item["fileCheckRecovery"].toArray();
+                bool valid = item["fileCheckRecovery"].isArray() && !files.isEmpty() && files.size() <= maxFiles;
+                int previous = -1;
+                for (const auto &index : files) {
+                    const int i = index.toInt(-1);
+                    valid &= index.isDouble() && i > previous && i < maxFiles && index.toDouble() == i;
+                    previous = i;
+                    r.fileCheck.files.append({i, FileCheckOutcome::Unavailable, {}});
+                }
+                if (!valid) { report(tr("Invalid selected-file recovery state; the job was skipped.")); continue; }
+                r.fileCheck.recoveryRequired = true;
+            }
             records.emplace(id, std::move(r));
         }
         // Rebuild established ownership before starting any newly restored jobs.
@@ -694,6 +1002,64 @@ struct TorrentEngine::Impl {
             if (safeMetadata(*r.resume.ti, r.savePath)) claimStorage(r, *r.resume.ti, r.savePath);
             else fail(r, tr("Unsafe Torrent storage path or symlink metadata was rejected."));
         }
+        for (auto &[id, r] : records) reconcileFileCheck(r);
+    }
+    void reconcileFileCheck(Record &r) {
+        QString error;
+        const auto record = journal.pending(r.id, &error);
+        if (!record && error.isEmpty() && !r.fileCheck.recoveryRequired) return;
+        r.userPaused = r.deferred = true;
+        r.notified = false;
+        const auto block = [&](const QString &reason) {
+            r.fileCheck.error = reason;
+            r.fileCheck.recoveryRequired = false;
+            fail(r, reason);
+        };
+        if (!error.isEmpty()) { block(error); return; }
+        const auto metadata = r.resume.ti;
+        QList<int> selected;
+        if (record) selected = record->selectedFiles;
+        else for (const auto &file : r.fileCheck.files) selected.append(file.index);
+        const auto plan = metadata ? planSelectedRecheck(*metadata, selected, r.revision) : RecheckPlanResult{};
+        if (!metadata || !plan.plan || !safeMetadata(*metadata, r.savePath) ||
+            checkStorageIdentity(r.savePath).isEmpty() || (record &&
+            (record->metadataDigest != metadataIdentity(*metadata) || record->storageIdentity != checkStorageIdentity(r.savePath) ||
+             record->sourceReadOnly != r.sourceReadOnly || record->pieces != plan.plan->pieces ||
+             record->resumeGeneration < r.resumeSnapshotGeneration))) {
+            block(tr("Interrupted verification metadata, scope or storage identity changed; recovery is blocked."));
+            return;
+        }
+        if (record) {
+            r.checkRecord = record;
+            r.resume.have_pieces.resize(metadata->num_pieces(), false);
+            for (int p : record->pieces) {
+                const auto piece = lt::piece_index_t(p);
+                r.resume.have_pieces.clear_bit(piece);
+                if (p < r.resume.verified_pieces.size()) r.resume.verified_pieces.clear_bit(piece);
+                r.resume.unfinished_pieces.erase(piece);
+            }
+            r.resume.flags &= ~(lt::torrent_flags::seed_mode | lt::torrent_flags::auto_managed);
+            r.resume.flags |= lt::torrent_flags::paused | lt::torrent_flags::no_verify_files;
+            r.resumeGeneration = r.resumeSnapshotGeneration = record->resumeGeneration;
+            r.fileCheck.token = record->token;
+            { std::lock_guard lock(mutex); checkSerial = std::max(checkSerial, record->token); }
+        }
+        r.fileCheck.recoveryRequired = true;
+        r.fileCheck.recheckOnly = r.sourceReadOnly;
+        r.fileCheck.totalBytes = plan.plan->totalBytes;
+        r.fileCheck.files.clear();
+        for (int index : plan.plan->selectedFiles)
+            r.fileCheck.files.append({index, FileCheckOutcome::Unavailable, tr("Interrupted verification left affected pieces unavailable.")});
+        r.fileCheck.error = r.sourceReadOnly ? tr("Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.") :
+            tr("Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.");
+        if (metadata) priorities(r, *metadata);
+        if (record && (!persist() || !journal.finish(r.id, record->token, r.durableResumeGeneration, &error))) {
+            block(error.isEmpty() ? tr("Cannot checkpoint interrupted verification; recovery remains blocked.") : error);
+            return;
+        }
+        r.checkRecord.reset();
+        fail(r, r.fileCheck.error);
+        dirty = true;
     }
     bool claimStorage(Record &r, const lt::torrent_info &ti, const QString &root) {
         QStringList paths;
@@ -838,7 +1204,7 @@ struct TorrentEngine::Impl {
         r.handle.resume();
     }
     void start(Record &r) {
-        if (r.storageCollision) return;
+        if (r.storageCollision || r.fileCheck.recoveryRequired || r.checkRecord) return;
         auto params = r.resume;
         params.save_path = r.savePath.toStdString();
         routing(params);
@@ -941,9 +1307,9 @@ struct TorrentEngine::Impl {
         }
         requestSave(r);
     }
-    void alerts() {
+    void alerts(lt::session *source = nullptr) {
         std::vector<lt::alert *> batch;
-        session->pop_alerts(&batch);
+        (source ? source : session.get())->pop_alerts(&batch);
         for (auto *alert : batch) {
             if (auto *a = lt::alert_cast<lt::torrent_deleted_alert>(alert)) {
                 for (auto &removal : removals) if (removal.deleting && removal.hashes == a->info_hashes)
@@ -989,6 +1355,8 @@ struct TorrentEngine::Impl {
                 }
                 if (r && closing) closingCheckpointOk = false;
                 report(tr("Torrent resume checkpoint failed; retaining the previous checkpoint."));
+                if (r && r->fileCheck.active && r->checkTerminal)
+                    failFileCheck(*r, tr("Cannot persist selected-file verification; recovery remains required."));
             } else if (lt::alert_cast<lt::metadata_received_alert>(alert)) {
                 if (r && !closing) metadata(*r);
             } else if (lt::alert_cast<lt::file_prio_alert>(alert)) {
@@ -1019,7 +1387,7 @@ struct TorrentEngine::Impl {
         }
     }
     void finish(Record &r) {
-        if (!r.failure.isEmpty() || r.checking || r.selectionPending || r.moving || !r.status.is_finished ||
+        if (!r.failure.isEmpty() || r.fileCheck.active || r.checkRecord || r.checking || r.selectionPending || r.moving || !r.status.is_finished ||
             !r.status.has_metadata || r.status.state == lt::torrent_status::checking_files ||
             r.status.state == lt::torrent_status::checking_resume_data || r.files.isEmpty()) return;
         const bool anyWanted = std::any_of(r.files.begin(), r.files.end(), [](const auto &f) { return f.wanted; });
@@ -1133,12 +1501,19 @@ struct TorrentEngine::Impl {
     }
     void publish() {
         QList<Job> next;
+        QHash<QString, std::shared_ptr<const lt::torrent_info>> metadata;
+        QSet<QString> busy;
         for (auto &[id, r] : records) {
+            metadata.insert(id, r.handle.is_valid() ? r.handle.torrent_file() : r.resume.ti);
+            if (r.moving || r.selectionPending || r.checking || (r.handle.is_valid() &&
+                (r.status.state == lt::torrent_status::checking_files || r.status.state == lt::torrent_status::checking_resume_data)))
+                busy.insert(id);
             Job j;
             j.id = id;
             j.proxied = proxy.type != ProxyType::Direct;
             j.revision = r.revision;
             j.files = r.files;
+            j.fileCheck = r.fileCheck;
             j.name = r.resume.ti ? text(r.resume.ti->name()) : text(r.status.name);
             if (j.name.isEmpty()) j.name = tr("Fetching Torrent metadata");
             j.savePath = r.savePath;
@@ -1150,10 +1525,12 @@ struct TorrentEngine::Impl {
             }
             j.progress = double(r.status.progress_ppm) / 1000000;
             const bool checkingFiles = r.status.state == lt::torrent_status::checking_files;
-            j.checking = r.checking || (r.handle.is_valid() &&
+            j.checking = r.fileCheck.active || r.checking || (r.handle.is_valid() &&
                 (checkingFiles || r.status.state == lt::torrent_status::checking_resume_data));
             if (j.checking) {
                 j.checkProgress = checkingFiles ? std::clamp(j.progress, 0.0, 1.0) : -1;
+                if (r.fileCheck.active) j.checkProgress = r.fileCheck.totalBytes > 0 ?
+                    double(r.fileCheck.checkedBytes) / r.fileCheck.totalBytes : 0;
                 j.progress = r.status.total_wanted > 0 ? std::clamp(
                     double(r.status.total_wanted_done) / r.status.total_wanted, 0.0, 1.0) : 0;
             }
@@ -1178,13 +1555,15 @@ struct TorrentEngine::Impl {
                 share.name = j.name.toStdString();
                 j.magnet = text(lt::make_magnet_uri(share));
             }
-            j.complete = r.notified && !r.checking && !r.selectionPending && !r.moving && r.failure.isEmpty();
+            j.complete = r.notified && !r.fileCheck.active && !r.checkRecord && !r.checking && !r.selectionPending && !r.moving && r.failure.isEmpty();
             j.error = r.failure.isEmpty() ? blocked : r.failure;
             if (j.paused || !j.error.isEmpty()) {
                 j.downloadingPeers = j.uploadingPeers = 0;
                 j.downloadRate = j.uploadRate = 0;
             }
             if (!j.error.isEmpty()) j.state = tr("Blocked");
+            else if (r.fileCheck.active) j.state = r.fileCheck.canceling ? tr("Canceling selected-file verification") :
+                tr("Checking selected files... %1%").arg(j.checkProgress * 100, 0, 'f', 1);
             else if (j.checking) {
                 if (j.checkProgress < 0)
                     j.state = j.paused ? tr("Recheck queued (paused)") : tr("Recheck queued");
@@ -1218,7 +1597,11 @@ struct TorrentEngine::Impl {
                     if (job.error.isEmpty())
                         job.state = job.stopped ? tr("Stopped") : job.paused ? tr("Paused") : tr("Resuming");
                 }
-                if (job.revision == revisions.value(job.id)) merged.append(std::move(job));
+                if (job.revision == revisions.value(job.id)) {
+                    metadataSnapshots.insert(job.id, metadata.value(job.id));
+                    if (busy.contains(job.id)) mutationBusy.insert(job.id); else mutationBusy.remove(job.id);
+                    merged.append(std::move(job));
+                }
                 else {
                     const auto existing = std::find_if(snapshots.begin(), snapshots.end(), [&](const Job &old) { return old.id == job.id; });
                     if (existing != snapshots.end()) merged.append(*existing);
@@ -1416,6 +1799,7 @@ void TorrentEngine::setWantedFiles(const QString &id, const QList<int> &wanted) 
 }
 void TorrentEngine::setWantedFiles(const QString &id, const QList<int> &wanted, const QMap<int, int> &filePriorities) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if (d->hasFileCheck(id)) { emit error(tr("File selection and priorities cannot change during selected-file verification.")); return; }
     emit storageInvalidating(id);
     const auto revision = d->invalidate(id);
     d->enqueue([p = d.get(), id, wanted, filePriorities, revision] {
@@ -1479,6 +1863,12 @@ void TorrentEngine::stop(const QString &id) {
 void TorrentEngine::setPaused(const QString &id, bool paused, bool stopped) {
     Q_ASSERT(QThread::currentThread() == thread());
     std::unique_lock lock(d->mutex);
+    const auto current = std::find_if(d->snapshots.cbegin(), d->snapshots.cend(), [&](const Job &job) { return job.id == id; });
+    if (!paused && current != d->snapshots.cend() && current->fileCheck.recoveryRequired && current->fileCheck.recheckOnly) {
+        lock.unlock();
+        emit error(tr("Recheck the original files before resuming; recovery downloads cannot modify read-only sources."));
+        return;
+    }
     if (d->stopped || d->commands.size() >= 1024) {
         lock.unlock();
         emit error(tr("Torrent backend is shut down or its command queue is full."));
@@ -1505,15 +1895,30 @@ void TorrentEngine::setPaused(const QString &id, bool paused, bool stopped) {
         auto it = p->records.find(id);
         if (it == p->records.end()) { finishRequest(); return; }
         auto &r = it->second;
+        if (!paused && r.fileCheck.recoveryRequired) {
+            if (r.sourceReadOnly || r.checkRecord) { finishRequest(); p->publish(); return; }
+            r.fileCheck.recoveryRequired = false;
+            r.fileCheck.error.clear();
+            r.failure.clear();
+            r.userPaused = r.userStopped = false;
+            // Persist the explicit choice before enabling any route.
+            if (!p->persist()) {
+                r.fileCheck.recoveryRequired = true;
+                r.userPaused = true;
+                p->fail(r, tr("Cannot save the verification recovery choice; the Torrent remains paused."));
+                finishRequest(); p->publish(); return;
+            }
+        }
         r.userPaused = paused;
         r.userStopped = stopped;
         if (paused) r.downloadingPeers = r.uploadingPeers = 0;
         if (!paused) r.seedStopped = false;
-        if (!paused && r.deferred && p->blocked.isEmpty() && r.failure.isEmpty()) {
+        if (stopped) p->cancelCheck(r);
+        if (!paused && !r.fileCheck.active && r.deferred && p->blocked.isEmpty() && r.failure.isEmpty()) {
             r.deferred = false;
             p->start(r);
         }
-        if (r.handle.is_valid()) {
+        if (r.handle.is_valid() && !r.fileCheck.active) {
             if (paused) {
                 r.handle.unset_flags(lt::torrent_flags::auto_managed);
                 r.handle.pause(stopped ? lt::pause_flags_t{} : lt::torrent_handle::graceful_pause);
@@ -1540,6 +1945,20 @@ void TorrentEngine::remove(const QString &id, bool deleteFiles) {
         auto it = p->records.find(id);
         if (it == p->records.end()) return;
         auto &r = it->second;
+        if (r.fileCheck.active || r.checkRecord) {
+            p->cancelCheck(r);
+            const auto deadline = Clock::now() + 3s;
+            while (r.fileCheck.active && Clock::now() < deadline) {
+                if (p->session) p->alerts();
+                p->pollFileChecks(true);
+                std::this_thread::sleep_for(20ms);
+            }
+            if (r.fileCheck.active || r.checkRecord) {
+                r.revision = revision;
+                p->failFileCheck(r, tr("Torrent removal waits for verification recovery; no data was deleted."));
+                p->publish(); return;
+            }
+        }
         r.revision = revision;
         if (deleteFiles && r.sourceReadOnly) {
             deleteFiles = false;
@@ -1567,6 +1986,7 @@ void TorrentEngine::remove(const QString &id, bool deleteFiles) {
 }
 void TorrentEngine::recheck(const QString &id) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if (d->hasFileCheck(id)) { emit error(tr("Another recheck cannot start during selected-file verification.")); return; }
     emit storageInvalidating(id);
     emit hashRecheckRequested(id);
     const auto revision = d->invalidate(id);
@@ -1600,6 +2020,74 @@ void TorrentEngine::recheck(const QString &id) {
 }
 void TorrentEngine::shutdown() {
     (void)shutdownChecked();
+}
+bool TorrentEngine::supportsFileRecheck() const {
+#if EISKALT_SELECTED_RECHECK_AVAILABLE && !defined(Q_OS_WIN)
+    return lt::eiskalt_selected_recheck_abi() == 1;
+#else
+    return false;
+#endif
+}
+void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, quint64 expectedRevision) {
+    Q_ASSERT(QThread::currentThread() == thread());
+    if (!supportsFileRecheck()) { emit error(tr("Selected-file checking is not available in this build.")); return; }
+    std::unique_lock lock(d->mutex);
+    const auto find = [&] { return std::find_if(d->snapshots.begin(), d->snapshots.end(), [&](const Job &job) { return job.id == id; }); };
+    auto job = find();
+    QString reason;
+    if (d->stopped || d->commands.size() >= 1024) reason = tr("Torrent backend is shut down or its command queue is full.");
+    else if (job == d->snapshots.end() || job->revision != expectedRevision) reason = tr("The Torrent selection changed; select the files again.");
+    else if (job->fileCheck.active || d->checkAdmissions.contains(id) || d->mutationBusy.contains(id)) reason = tr("Selected-file verification conflicts with another operation.");
+    else if (!job->error.isEmpty() && !job->fileCheck.recoveryRequired) reason = tr("Resolve Torrent recovery or storage errors before file verification.");
+    else if (d->checkSerial == std::numeric_limits<quint64>::max() || expectedRevision == std::numeric_limits<quint64>::max()) reason = tr("Torrent verification generation is exhausted.");
+    const auto metadata = d->metadataSnapshots.value(id);
+    if (reason.isEmpty() && (!metadata || indices.size() > maxFiles)) reason = tr("Torrent metadata or file selection is unavailable.");
+    RecheckPlanResult scope;
+    if (reason.isEmpty()) { scope = planSelectedRecheck(*metadata, indices, expectedRevision); reason = scope.error; }
+    if (reason.isEmpty() && job->fileCheck.recoveryRequired && std::any_of(job->fileCheck.files.cbegin(), job->fileCheck.files.cend(),
+            [&](const FileCheckResult &file) { return !scope.plan->selectedFiles.contains(file.index); }))
+        reason = tr("Recheck all files from the interrupted operation before checking a different selection.");
+    if (!reason.isEmpty()) { lock.unlock(); emit error(reason); return; }
+    d->checkAdmissions.insert(id);
+    lock.unlock();
+    emit storageInvalidating(id);
+    lock.lock();
+    d->checkAdmissions.remove(id);
+    job = find();
+    if (d->stopped || d->commands.size() >= 1024 || job == d->snapshots.end() || job->revision != expectedRevision) {
+        lock.unlock(); emit error(tr("The Torrent selection changed before verification could start.")); return;
+    }
+    const auto revision = ++d->revisions[id];
+    const auto token = ++d->checkSerial;
+    scope.plan->revision = revision;
+    job->revision = revision;
+    job->complete = false;
+    job->checking = true;
+    job->downloadRate = job->uploadRate = 0;
+    job->downloadingPeers = job->uploadingPeers = 0;
+    job->fileCheck = {token, true, false, 0, scope.plan->totalBytes, {}, {}};
+    for (int index : scope.plan->selectedFiles) job->fileCheck.files.append({index, FileCheckOutcome::Pending, {}});
+    d->commands.push_back([p = d.get(), id, plan = std::move(*scope.plan), token, revision]() mutable {
+        const auto it = p->records.find(id);
+        if (it != p->records.end()) p->beginFileCheck(it->second, std::move(plan), token, revision);
+    });
+    if (d->observedJobId == id) { d->peerSnapshots.clear(); ++d->peerObservationEpoch; }
+    lock.unlock();
+    d->wake.notify_one();
+    emit peersChanged(); emit changed();
+}
+void TorrentEngine::cancelFileRecheck(const QString &id, quint64 token) {
+    Q_ASSERT(QThread::currentThread() == thread());
+    std::unique_lock lock(d->mutex);
+    const auto job = std::find_if(d->snapshots.begin(), d->snapshots.end(), [&](const Job &job) { return job.id == id; });
+    if (!token || job == d->snapshots.end() || !job->fileCheck.active || job->fileCheck.token != token) return;
+    if (d->stopped || d->commands.size() >= 1024) { lock.unlock(); emit error(tr("Torrent backend cannot accept cancellation.")); return; }
+    job->fileCheck.canceling = true;
+    d->commands.push_back([p = d.get(), id, token] {
+        const auto it = p->records.find(id);
+        if (it != p->records.end() && it->second.fileCheck.token == token) p->cancelCheck(it->second);
+    });
+    lock.unlock(); d->wake.notify_one(); emit changed();
 }
 bool TorrentEngine::shutdownChecked() {
     Q_ASSERT(QThread::currentThread() == thread());

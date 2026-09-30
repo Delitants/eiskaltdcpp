@@ -53,6 +53,20 @@ struct Peer {
     double progress = 0;
     qint64 downloadRate = 0, uploadRate = 0;
 };
+enum class FileCheckOutcome { Pending, Verified, FailedPiece, Unavailable, Canceled };
+struct FileCheckResult {
+    int index = -1;
+    FileCheckOutcome outcome = FileCheckOutcome::Pending;
+    QString detail;
+};
+struct FileRecheckSnapshot {
+    quint64 token = 0;
+    bool active = false, canceling = false;
+    qint64 checkedBytes = 0, totalBytes = 0;
+    QList<FileCheckResult> files;
+    QString error;
+    bool recoveryRequired = false, recheckOnly = false;
+};
 struct Job {
     quint64 revision = 0;
     QList<FileEntry> files;
@@ -69,6 +83,7 @@ struct Job {
     bool stopped = false, v1 = false, v2 = false;
     bool checking = false;
     double checkProgress = -1; // Negative while queued; separate from downloaded bytes.
+    FileRecheckSnapshot fileCheck;
 };
 
 } // namespace eiskalt::torrent
