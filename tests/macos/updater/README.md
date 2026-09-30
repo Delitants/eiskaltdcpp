@@ -99,3 +99,33 @@ exit. It does not target the installed Eiskalt app. This proves the production Q
 bridge can serve the pinned Sparkle consumer, not that production proxy DNS,
 installer-helper network confinement, or the application shutdown controller is
 complete. Those remain separate release gates.
+
+## Controller Contract
+
+The independent Qt controller/policy tests use an explicitly injected backend and
+clock; they do not claim that the production platform adapter is connected.
+Automatic checks and notices default ON, while automatic download/install defaults
+OFF. All persisted values use the existing WulforSettings `updates/*` namespace.
+The installed identity must provide the allocated numeric build, bundle ID, CPU,
+OS and default channel; there is no guessed build-number fallback.
+
+Backend commands and replies carry a process-unique operation ID. A canceled or
+previous controller's late replies must not advance current work. The backend may
+emit an offer only after authenticating its signed metadata, and `downloadReady`
+only after verifying the full archive against that offer. The controller also
+checks compatibility, build ordering and the ready build/digest pair, but those
+checks are not substitutes for cryptographic verification.
+
+The single controller timer polls after startup settles and applies a persisted
+24-hour last-attempt gate. Manual checks bypass scheduling OFF, never backend
+verification. Last success is separate from last attempt. Background error reports
+are category-only and limited to once per category/hour; manual results remain
+visible. Later/Skip and notification deduplication survive controller recreation.
+
+Only `normalQuitCommitted()` may delegate install preparation. Its caller must
+first complete the application's queue, settings and Torrent shutdown successfully.
+It rereads saved preferences and binds consent to numeric build plus archive hash.
+Ordinary `shutdown()`, destruction, and cancellation never grant consent. Settings
+and backend must outlive the controller. Production platform wiring, handoff error
+recovery, persisted ready-cache verification and actual app shutdown acceptance
+remain pending; no application window constructs this controller yet.
