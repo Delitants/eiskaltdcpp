@@ -114,7 +114,7 @@ struct UpdateController::Impl {
         if(stopped || !busy || operation != id) return;
         const bool manual = kind == CheckKind::Manual;
         cancelOperation();
-        setState(offer.build ? State::Available : State::Idle);
+        offer = {}; setState(State::Idle);
         const auto now = clock();
         const int code = static_cast<int>(category);
         if(code < 0 || code > 3) category = FailureCategory::Verification;
@@ -202,7 +202,7 @@ void UpdateController::skipVersion() {
 }
 void UpdateController::cancel() {
     impl->assertThread(); if(impl->stopped) return;
-    impl->cancelOperation(); impl->setState(impl->offer.build ? State::Available : State::Idle);
+    impl->cancelOperation(); impl->offer = {}; impl->setState(State::Idle);
 }
 void UpdateController::normalQuitCommitted() {
     impl->assertThread(); if(impl->stopped) return;

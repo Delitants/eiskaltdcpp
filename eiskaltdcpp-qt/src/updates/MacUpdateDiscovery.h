@@ -23,6 +23,7 @@ signals:
     void failed(quint64 operation);
 private:
     friend struct MacUpdateDiscoveryTestAccess;
+    friend class MacUpdateBackend;
     MacUpdateDiscovery(const QString& fixtureBundle, QObject* parent);
     struct Impl;
     std::unique_ptr<Impl> impl;

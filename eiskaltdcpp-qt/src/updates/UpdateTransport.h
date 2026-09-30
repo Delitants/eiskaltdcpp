@@ -32,6 +32,7 @@ signals:
     void failed(quint64 id, const QString& redactedMessage);
 private:
     friend struct UpdateTransportTestAccess;
+    friend class MacUpdateBackend;
     UpdateTransport(dcpp::DCContext&, transport_detail::Backend, QObject*);
     struct Impl;
     std::unique_ptr<Impl> impl;

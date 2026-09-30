@@ -18,6 +18,11 @@
 #include <memory>
 #ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
 #include "updates/MacUpdateDiscovery.h"
+#include "updates/MacUpdateBackend.h"
+#include "updates/UpdateController.h"
+#include "WulforSettings.h"
+#include "tests/TestContext.h"
+#include "dcpp/HttpRequestPolicy.h"
 #include <QSysInfo>
 #include <QGuiApplication>
 #include <QTimer>
@@ -28,6 +33,11 @@ namespace updates {
 struct MacUpdateDiscoveryTestAccess {
     static std::unique_ptr<MacUpdateDiscovery> make(const QString& bundle) {
         return std::unique_ptr<MacUpdateDiscovery>(new MacUpdateDiscovery(bundle, nullptr));
+    }
+};
+struct MacUpdateBackendTestAccess {
+    static std::unique_ptr<MacUpdateBackend> make(dcpp::DCContext& context, const QString& bundle, transport_detail::Backend transport) {
+        return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), nullptr));
     }
 };
 }
@@ -533,5 +543,123 @@ TEST_CASE("Native discovery revocation and owner destruction suppress offers", "
     }
     QElapsedTimer timer; timer.start(); REQUIRE(discoveryPump([&] { return timer.elapsed() >= 150; }));
     CHECK(f.found == 0); CHECK(f.absent == 0); CHECK(f.errors == (destroy ? 0 : 1));
+}
+
+namespace {
+struct BackendFixture {
+    DiscoveryFixture fixture;
+    dcpp::test::TestContext context;
+    QByteArray archive = QByteArray(8192, 'A');
+    QByteArray feed;
+    std::atomic_int requests{0};
+    std::atomic_bool holdArchive{false}, archiveEntered{false}, workerCancelled{false};
+    bool corrupt = false;
+    std::unique_ptr<MacUpdateBackend> backend;
+    int offers = 0, ready = 0, failures = 0, absent = 0;
+    quint64 operation = 0;
+    UpdateOffer offer;
+    FailureCategory category{};
+    BackendFixture() {
+        auto item = fixture.signer.item(2, QSysInfo::buildCpuArchitecture().toLatin1(), "stable");
+        const auto signedArchive = fixture.signer.sign(archive);
+        const auto signature = signedArchive.mid(archive.size()).split('\n')[1].mid(13);
+        item.replace("org.eiskaltdcpp.EiskaltDCpp", fixture.bundle);
+        item.replace(">26.0<", ">14.0<");
+        item.replace("length=\"123\"", "length=\"" + QByteArray::number(archive.size()) + "\"");
+        item.replace(QByteArray(64, 's').toBase64(), signature);
+        item.replace(QByteArray(64, 'a'), QCryptographicHash::hash(archive, QCryptographicHash::Sha256).toHex());
+        feed = fixture.signer.sign(fixture.signer.xml(item));
+        backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app,
+            [this](const auto& policy, const std::string& url, const auto& sink) {
+                ++requests;
+                if(url.find("raw.githubusercontent.com") == std::string::npos) {
+                    archiveEntered = true;
+                    for(int i = 0; holdArchive && i < 3000 && !policy.cancelled(); ++i) QThread::msleep(1);
+                }
+                if(policy.cancelled()) workerCancelled = true;
+                if(policy.cancelled()) throw std::runtime_error("cancelled");
+                const auto bytes = url.find("raw.githubusercontent.com") != std::string::npos ? feed :
+                    (corrupt ? QByteArray(archive.size(), 'B') : archive);
+                sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
+            });
+        QObject::connect(backend.get(), &UpdateBackend::available, [&](quint64 op, UpdateOffer value) { ++offers; operation = op; offer = value; });
+        QObject::connect(backend.get(), &UpdateBackend::downloadReady, [&](quint64 op, quint64 build, QByteArray digest) {
+            ++ready; operation = op; CHECK(build == offer.build); CHECK(digest == offer.sha256);
+        });
+        QObject::connect(backend.get(), &UpdateBackend::failed, [&](quint64 op, QString, FailureCategory value) { ++failures; operation = op; category = value; });
+        QObject::connect(backend.get(), &UpdateBackend::noUpdate, [&](quint64 op) { ++absent; operation = op; });
+    }
+    void discover() {
+        backend->check(201, Channel::Stable, CheckKind::Manual);
+        REQUIRE(discoveryPump([&] { return offers || failures || absent; }));
+        REQUIRE(offers == 1); REQUIRE(failures == 0); REQUIRE(operation == 201);
+        REQUIRE(requests.load() == 1);
+    }
+};
+}
+TEST_CASE("Mac backend stages only the independently verified selected archive", "[.][update-backend-native]") {
+    BackendFixture f; f.discover();
+    bool invalid = false;
+    SECTION("valid archive") {}
+    SECTION("corrupt archive") { f.corrupt = true; invalid = true; }
+    auto requested = f.offer;
+    SECTION("changed offer digest") { requested.sha256[0] ^= 1; invalid = true; }
+    SECTION("changed offer size") { ++requested.size; invalid = true; }
+    f.backend->download(202, requested);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.operation == 202); CHECK(f.ready == (invalid ? 0 : 1)); CHECK(f.failures == (invalid ? 1 : 0));
+    CHECK(f.requests.load() == (requested.sha256 != f.offer.sha256 || requested.size != f.offer.size ? 1 : 2));
+    if(invalid) CHECK(f.category == FailureCategory::Verification);
+}
+TEST_CASE("Mac backend cancellation and route change invalidate discovered offers", "[.][update-backend-native]") {
+    BackendFixture f; f.discover();
+    SECTION("explicit cancellation") { f.backend->cancel(); }
+    SECTION("route revoked") { f.context.ownedCtx->getProxyRoute()->stop(); }
+    f.backend->download(203, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.ready == 0); CHECK(f.failures == 1); CHECK(f.requests.load() == 1);
+}
+TEST_CASE("Mac backend cancels an in-flight archive without stale readiness", "[.][update-backend-native]") {
+    BackendFixture f; f.discover(); f.holdArchive = true;
+    f.backend->download(204, f.offer);
+    REQUIRE(discoveryPump([&] { return f.archiveEntered.load(); }));
+    bool revoked = false, destroyed = false;
+    QElapsedTimer cancellation; cancellation.start();
+    SECTION("cancel then reuse") { f.backend->cancel(); }
+    SECTION("route revoked") { f.context.ownedCtx->getProxyRoute()->stop(); revoked = true; }
+    SECTION("owner destroyed") { f.backend.reset(); destroyed = true; }
+    CHECK(cancellation.elapsed() < 500);
+    REQUIRE(discoveryPump([&] { return f.workerCancelled.load(); }));
+    QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 150; }));
+    CHECK(f.ready == 0); CHECK(f.failures == (revoked ? 1 : 0)); CHECK(f.requests.load() == 2);
+    if(!revoked && !destroyed) {
+        f.backend->check(205, Channel::Stable, CheckKind::Manual);
+        REQUIRE(discoveryPump([&] { return f.offers == 2 || f.failures; }));
+        CHECK(f.offers == 2); CHECK(f.failures == 0); CHECK(f.operation == 205);
+    }
+}
+TEST_CASE("Mac backend rejects a bad feed and completes no-update without downloading", "[.][update-backend-native]") {
+    BackendFixture f; bool invalid = false;
+    SECTION("bad signature") { f.feed.replace("Plain", "Wrong"); invalid = true; }
+    SECTION("already current") { f.fixture.setting("Set :CFBundleVersion 10"); }
+    f.backend->check(206, Channel::Stable, CheckKind::Manual);
+    REQUIRE(discoveryPump([&] { return f.absent || f.failures || f.offers; }));
+    CHECK(f.offers == 0); CHECK(f.ready == 0); CHECK(f.failures == (invalid ? 1 : 0));
+    CHECK(f.absent == (invalid ? 0 : 1)); CHECK(f.requests.load() == 1);
+}
+TEST_CASE("Real Mac backend advances controller to staged Ready and honors Later", "[.][update-backend-native]") {
+    BackendFixture f;
+    WulforSettings settings(*f.context.ownedCtx);
+    UpdateIdentity installed{1, Channel::Stable, QString::fromLatin1(f.fixture.bundle), QSysInfo::buildCpuArchitecture(), QVersionNumber(26, 0)};
+    UpdateController controller(settings, *f.backend, installed);
+    controller.checkNow();
+    REQUIRE(discoveryPump([&] { return controller.state() == UpdateController::State::Available || f.failures; }));
+    REQUIRE(f.failures == 0);
+    controller.download();
+    REQUIRE(discoveryPump([&] { return controller.state() == UpdateController::State::Ready || f.failures; }));
+    REQUIRE(f.failures == 0); CHECK(f.ready == 1); CHECK(f.requests.load() == 2);
+    controller.later(); controller.normalQuitCommitted();
+    CHECK(controller.state() == UpdateController::State::Stopped);
+    CHECK(f.failures == 0); CHECK(f.requests.load() == 2);
 }
 #endif

@@ -65,6 +65,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src SRCS)
 list(APPEND SRCS src/updates/UpdateTransport.cpp src/updates/UpdateUrlPolicy.cpp)
 list(APPEND SRCS src/updates/UpdateArchiveVerifier.cpp)
 list(APPEND SRCS src/updates/UpdateFeedVerifier.cpp)
+list(APPEND SRCS src/updates/UnsupportedUpdateBackend.cpp)
 list(APPEND SRCS src/updates/UpdateLoopbackBridge.cpp)
 list(APPEND SRCS src/updates/UpdatePolicy.cpp src/updates/UpdateController.cpp)
 
@@ -75,6 +76,7 @@ endif (NOT HAIKU)
 file (GLOB MOC_HDRS ${PROJECT_SOURCE_DIR}/src/*.h)
 list(APPEND MOC_HDRS ${PROJECT_SOURCE_DIR}/src/updates/UpdateTransport.h)
 list(APPEND MOC_HDRS ${PROJECT_SOURCE_DIR}/src/updates/UpdateController.h ${PROJECT_SOURCE_DIR}/src/updates/UpdateBackend.h)
+list(APPEND MOC_HDRS ${PROJECT_SOURCE_DIR}/src/updates/UnsupportedUpdateBackend.h)
 
 if (NOT HAIKU AND NOT APPLE)
     list (APPEND MOC_HDRS

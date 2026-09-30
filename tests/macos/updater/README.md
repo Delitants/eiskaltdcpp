@@ -268,3 +268,39 @@ not an equivalent acceptance run. A GUI login session and local socket permissio
 are required. Tests cover stable/preview selection with a newer wrong-CPU item,
 bad signatures/policies, no-update completion, overlap rejection, pre-start and
 in-flight cancellation, reused IDs, route revocation and owner destruction.
+
+## Backend Composition
+
+`MacUpdateBackend` connects the worker transport, native discovery adapter and
+archive verifier. It captures one immutable connection route, downloads the
+fixed CPU-specific feed into private temporary staging, and emits only the
+independently verified native offer. A download request must match that offer's
+complete metadata. The signed feed is reauthenticated against the installed key;
+archive size, SHA-256 and Ed25519 signature are then checked on a worker thread.
+Ready means verified app-owned staging, not installer preparation or consent.
+
+Cancel and route changes invalidate the offer immediately. A canceled network or
+verification worker retains its staging until it exits; new work is rejected
+while that worker drains, so cancellation cannot create unbounded parallel jobs.
+Owner destruction cancels and joins its workers. Archive verification is bounded
+to 512 MiB; OpenSSL's single Ed25519 verification call cannot be interrupted
+mid-call, so final destruction can wait for that call to finish. Ordinary cancel
+does not join it on the GUI thread. Staging is temporary and is removed on normal
+destruction; crash/restart cache recovery is not implemented by this checkpoint.
+
+The controller discards invalidated offers after cancel/failure and requires a
+new check before retrying. `UnsupportedUpdateBackend` reports unsupported
+capability asynchronously without network, download or installer access. It is
+compiled into the portable app target but is not selected by a runtime factory
+yet. The Mac backend remains opt-in in the native Qt tests; neither backend is
+activated by MainWindow. Mac installer handoff explicitly reports unsupported
+until the committed-normal-quit implementation is completed.
+
+Run `[update-backend-native],[update-discovery-native],[update-backend]` with the
+same Cocoa/disposable-HOME/external-network-denied command above. The backend
+fixture injects bytes at the worker transport boundary, then exercises real
+Sparkle discovery, real archive signature verification and the real controller's
+Ready/Later lifecycle. It also checks tampering, changed offers, route revocation,
+in-flight cancellation/reuse and destruction. This is composition evidence,
+**not production HTTP/proxy DNS acceptance or an installation test**. Those
+remain separate gates, together with the quit handoff and release packaging.

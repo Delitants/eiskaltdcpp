@@ -104,6 +104,18 @@ TEST_CASE("Verified downloads require matching operation build and digest", "[up
     CHECK_FALSE(f.controller->state() == UpdateController::State::Ready);
     f.controller->normalQuitCommitted(); CHECK(f.backend.installs == 0);
 }
+TEST_CASE("Cancelled and failed downloads discard invalidated offers before retry", "[updates][update-controller][update-cancel-refresh]") {
+    Fixture f; f.controller->checkNow(); f.available(); f.controller->download();
+    const auto old = f.backend.operation;
+    SECTION("cancel") { f.controller->cancel(); }
+    SECTION("failure") { emit f.backend.failed(old, "failure", FailureCategory::Verification); events(); }
+    CHECK(f.controller->state() == UpdateController::State::Idle);
+    CHECK(f.controller->offer().build == 0);
+    f.controller->download(); CHECK(f.backend.downloads == 1);
+    f.controller->checkNow(); f.available(); f.controller->download(); CHECK(f.backend.downloads == 2);
+    emit f.backend.downloadReady(old, 2, f.offer().sha256); events();
+    CHECK(f.controller->state() == UpdateController::State::Downloading);
+}
 TEST_CASE("Update installation requires version bound consent at committed normal quit", "[updates][update-controller][update-shutdown]") {
     Fixture f; f.ready(); CHECK(f.backend.installs == 0);
     SECTION("ordinary shutdown is not consent") { f.controller->installOnNextQuit(); f.controller->shutdown(); }
@@ -168,6 +180,8 @@ TEST_CASE("Turning automatic installation off cancels only automatic downloads",
     CHECK_FALSE(f.controller->state() == UpdateController::State::Downloading);
     emit f.backend.downloadReady(old, 2, f.offer().sha256); events();
     CHECK_FALSE(f.controller->state() == UpdateController::State::Ready);
+    // Cancellation invalidates the backend's offer; manual retry rechecks first.
+    f.controller->checkNow(); f.available();
     f.controller->download(); REQUIRE(f.controller->state() == UpdateController::State::Downloading);
     p.checks = false; f.controller->applyPreferences(p);
     CHECK(f.controller->state() == UpdateController::State::Downloading);
