@@ -142,6 +142,18 @@ are prerequisites, not committed-quit integration: stop core producers and hub
 sockets safely before consuming their results, then keep the event loop alive
 for the installer handoff. The macOS emergency exit workaround is unchanged.
 
+Hub-stop checkpoint: `Client::stopForShutdown` permanently closes the reconnect
+gate, drains/removes its timer listener and detaches the socket without deleting
+the UI-owned client. Its caller must own client lifetime and serialize manual
+connect/reconnect/deletion; it must not run from a timer/socket callback or under
+a ClientManager lock. Socket completion accounting now remains nonzero until
+transport/member destruction finishes. A bounded `BufferedSocket::waitShutdown`
+overload exposes incomplete drain, but is not a producer fence. Isolated ADC/NMDC,
+in-flight callback/timer and delayed transport-destruction cases cover these
+primitives. They are not yet wired into the application. Full core producer stop,
+client-registry lifetime sequencing, active-transfer and real MainWindow quit
+acceptance remain required; do not replace `_Exit` or arm the installer yet.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

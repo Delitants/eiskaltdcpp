@@ -76,6 +76,10 @@ public:
             Thread::sleep(100);
     }
 
+    /// Bounded resource-drain check, not a stop request or a producer fence.
+    /// Callers must prevent new sockets before using true to tear down managers.
+    static bool waitShutdown(uint32_t timeoutMillis);
+
     void accept(const Socket& srv, bool secure, bool allowUntrusted);
     void connect(const string& aAddress, const string& aPort, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString, bool publicHttpProxy = false);
     void connect(const string& aAddress, const string& aPort, const string& localPort, NatRoles natRole, bool secure, bool allowUntrusted, bool proxy, Socket::Protocol proto, const string& expKP = Util::emptyString, bool publicHttpProxy = false);

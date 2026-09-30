@@ -55,6 +55,31 @@ TEST_CASE("UDP search queue rejects results after shutdown", "[searchmanager][sh
     CHECK(queue.resultList.empty());
 }
 
+TEST_CASE("UDP search worker ignores truncated packets and continues", "[searchmanager][shutdown]") {
+    test::TestContext fixture;
+    ShutdownDeadline deadline;
+    for(const auto& packet : StringList{"", "$", "$SR ", "U", "URES", string(1, '\0')}) {
+        SearchManager::UdpQueue queue(*fixture.ownedCtx);
+        queue.addResult(packet, "127.0.0.1");
+        queue.addResult("ignored", "127.0.0.1");
+        queue.start();
+        bool drained = false;
+        const auto end = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+        while(std::chrono::steady_clock::now() < end) {
+            {
+                Lock lock(queue.csudp);
+                drained = queue.resultList.empty();
+            }
+            if(drained) break;
+            Thread::sleep(1);
+        }
+        queue.shutdown();
+        CAPTURE(packet.size());
+        REQUIRE(drained);
+        CHECK_FALSE(queue.joinable());
+    }
+}
+
 TEST_CASE("UDP search queue joins while producers are active", "[searchmanager][shutdown]") {
     test::TestContext fixture;
     ShutdownDeadline deadline;

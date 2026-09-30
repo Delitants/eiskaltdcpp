@@ -45,15 +45,28 @@ BufferedSocket::BufferedSocket(char aSeparator, DCContext& ctx) :
     separator(aSeparator), state(STARTING),
     ctx_(ctx), disconnecting(false), taskWake(std::make_shared<SocketWake>())
 {
-    start();
-
     sockets.inc();
+    try {
+        start();
+    } catch(...) {
+        sockets.dec();
+        throw;
+    }
 }
 
 Atomic<long,memory_ordering_strong> BufferedSocket::sockets(0);
 
 BufferedSocket::~BufferedSocket() {
-    sockets.dec();
+}
+
+bool BufferedSocket::waitShutdown(uint32_t timeoutMillis) {
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMillis);
+    while(sockets > 0) {
+        const auto now = std::chrono::steady_clock::now();
+        if(now >= deadline) return false;
+        std::this_thread::sleep_until(std::min(deadline, now + std::chrono::milliseconds(10)));
+    }
+    return true;
 }
 
 bool BufferedSocket::dataModeCanConsumeMore(int64_t bytesLeftInBlock, int bufferedBytesLeft) {
@@ -456,8 +469,11 @@ int BufferedSocket::run() {
         }
     }
     dcdebug("BufferedSocket::run() end %p\n", (void*)this);
-    detach();  // prevent jthread destructor from self-joining
+    detach();  // prevent the Thread destructor from self-joining
     delete this;
+    // Publish completion only after transport, queues and listener locks have
+    // been destroyed. Nothing may access this instance or its context below.
+    sockets.dec();
     return 0;
 }
 

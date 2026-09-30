@@ -212,6 +212,10 @@ int SearchManager::UdpQueue::run() {
             resultList.pop_front();
         }
 
+        // ADC dispatch below reads at offset one. Ignore truncated datagrams
+        // instead of allowing an empty packet to terminate the queue worker.
+        if(x.size() < 5) continue;
+
         if(x.compare(0, 4, "$SR ") == 0) {
             string::size_type i, j;
             // Directories: $SR <nick><0x20><directory><0x20><free slots>/<total slots><0x05><Hubname><0x20>(<Hubip:port>)

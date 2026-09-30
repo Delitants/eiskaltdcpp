@@ -171,6 +171,37 @@ profiles. None of these helpers grants update consent. Core producers and hub
 sockets still need a verified non-destructive stop sequence before the real
 MainWindow can use these results to authorize installer handoff.
 
+### Hub And Socket Stop Primitives
+
+The core `[hub-shutdown]` cases exercise `Client::stopForShutdown` on local ADC
+and NMDC sockets. The terminal stop preserves the client object and its UI
+listeners, rejects late reconnect requests even after gate reset/completion,
+drains the in-flight timer/socket callback, and detaches further timer ticks.
+The final auto-reconnect flag write occurs after the socket callback barrier, so
+an already-running callback cannot overwrite it during stop.
+Invoke it only from the client lifetime owner, serialized with manual
+connect/reconnect/deletion, not from a timer/socket callback. Do not hold a
+ClientManager lock across these callback barriers. The barriers themselves are
+not timed and require callbacks to return.
+
+`BufferedSocket::waitShutdown(timeoutMillis)` is a bounded resource-drain check.
+It returns false for a live socket or a blocked transport destructor, and true
+only after destruction finishes. The global count now increments before worker
+launch (rolling back on failure) and decrements after deletion rather than in
+the destructor body before member cleanup. Neither overload prevents new socket
+creation or represents a join of the native thread's final return epilogue.
+Producers must already be stopped before a true result authorizes core teardown.
+
+These fixtures do not invoke the real MainWindow or install an update. Complete
+core quiescence, client registry ownership, checked persistence, and the normal
+quit event-loop handoff remain integration gates. The installed app and its
+emergency macOS exit behavior remain unchanged.
+
+The `[searchmanager][shutdown]` cases also verify that truncated UDP input does
+not terminate the queue worker before a subsequent packet can be consumed. This
+keeps active-producer shutdown tests from passing after an empty fixture packet
+has already killed the worker with an out-of-range string access.
+
 ## Controller Contract
 
 The independent Qt controller/policy tests use an explicitly injected backend and

@@ -56,11 +56,14 @@ public:
     bool requestManual();
     void complete();
     void reset();
+    /// Permanently reject new attempts, including after late complete/reset calls.
+    void stop();
 
 private:
     CriticalSection cs;
     bool active;
     bool manualPending;
+    bool stopped = false;
 };
 
 class ReconnectAttemptRollback : private NonCopyable {
@@ -177,6 +180,11 @@ public:
 
     void reconnect();
     void shutdown();
+    /// Terminal stop without deleting this client or its UI listeners. Call on
+    /// the lifetime owner's thread, serialized with connect/reconnect/deletion,
+    /// never from a timer or socket callback. Waits for in-flight callbacks;
+    /// BufferedSocket::waitShutdown must still drain asynchronous destruction.
+    void stopForShutdown();
     bool isActive() const;
     void send(const string& aMessage) { send(aMessage.c_str(), aMessage.length()); }
     void send(const char* aMessage, size_t aLen);

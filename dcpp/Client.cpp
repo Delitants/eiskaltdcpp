@@ -45,7 +45,7 @@ ReconnectAttemptGate::ReconnectAttemptGate() : active(false), manualPending(fals
 
 bool ReconnectAttemptGate::tryBegin() {
     Lock l(cs);
-    if(active)
+    if(stopped || active)
         return false;
 
     active = true;
@@ -56,7 +56,7 @@ bool ReconnectAttemptGate::tryBegin() {
 bool ReconnectAttemptGate::tryBeginScheduled(bool disconnected, bool autoReconnect,
     uint64_t now, uint64_t lastAttempt, uint32_t delaySeconds) {
     Lock l(cs);
-    if(active || !disconnected || !autoReconnect)
+    if(stopped || active || !disconnected || !autoReconnect)
         return false;
 
     if(!manualPending && !ReconnectPolicy::due(disconnected, autoReconnect,
@@ -70,7 +70,7 @@ bool ReconnectAttemptGate::tryBeginScheduled(bool disconnected, bool autoReconne
 
 bool ReconnectAttemptGate::requestManual() {
     Lock l(cs);
-    if(active || manualPending)
+    if(stopped || active || manualPending)
         return false;
 
     manualPending = true;
@@ -85,6 +85,12 @@ void ReconnectAttemptGate::complete() {
 void ReconnectAttemptGate::reset() {
     Lock l(cs);
     active = false;
+    manualPending = false;
+}
+
+void ReconnectAttemptGate::stop() {
+    Lock l(cs);
+    stopped = true;
     manualPending = false;
 }
 
@@ -145,6 +151,15 @@ void Client::shutdown() {
     }
     reconnectAttempt.reset();
     state = STATE_DISCONNECTED;
+}
+
+void Client::stopForShutdown() {
+    reconnectAttempt.stop();
+    // Drain timer callbacks before touching the socket; they may already be
+    // connecting. Do not hold any ClientManager lock across listener barriers.
+    ctx().getTimerManager()->removeListener(this);
+    shutdown();
+    setAutoReconnect(false);
 }
 
 void Client::reloadSettings(bool updateNick) {
