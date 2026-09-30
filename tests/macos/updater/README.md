@@ -129,3 +129,59 @@ Ordinary `shutdown()`, destruction, and cancellation never grant consent. Settin
 and backend must outlive the controller. Production platform wiring, handoff error
 recovery, persisted ready-cache verification and actual app shutdown acceptance
 remain pending; no application window constructs this controller yet.
+
+## Signed Feed Contract
+
+`UpdateFeedVerifier` authenticates the original bounded bytes before parsing XML.
+It accepts the pinned Sparkle signer's single Ed25519 trailer, with canonical
+Base64, an exact signed length and no unsigned suffix except the final newline.
+The key must come from installed app metadata, never from the feed. The original
+signed bytes are retained for Sparkle's independent verification. This helper
+does not grant installation consent, extract files or perform network requests.
+
+The intentionally narrow RSS 2.0 schema is part of the forthcoming publisher
+contract. It uses the normal Sparkle namespace and the custom namespace
+`https://eiskaltdcpp.org/xml-namespaces/updates/1` (an identifier, never fetched):
+
+- Each item has a canonical positive numeric `sparkle:version`, bounded display
+  `sparkle:shortVersionString` and `sparkle:minimumSystemVersion`.
+- Stable items omit `sparkle:channel`, matching Sparkle's default-channel
+  semantics. Preview items use `sparkle:channel` equal to `preview`.
+- `eiskalt:bundleIdentifier` and `eiskalt:cpu` bind the exact app and thin CPU
+  flavor (`arm64` or `x86_64`). Selection uses the installed flavor, not the host
+  CPU, so running under Rosetta cannot silently switch architectures.
+- Exactly one full ZIP enclosure carries the allowlisted GitHub release URL,
+  positive `length`, `type="application/octet-stream"`, `sparkle:os="macos"`,
+  canonical `sparkle:edSignature` and lowercase hexadecimal `eiskalt:sha256`.
+- Optional item `title`, `pubDate` and inline `description` are text only. The
+  description is returned as literal text, including any escaped markup; UI
+  consumers must explicitly use plain-text rendering, not Qt's auto/rich text.
+
+Limits are 1 MiB for the entire signed feed, 128 releases, 4096 XML elements,
+five levels, eight attributes per element, 16 KiB of notes and 512 MiB per
+archive. Duplicate/conflicting release identities or fields, DTDs/entities,
+processing instructions, unknown elements/attributes, external release notes,
+deltas and package installers are rejected. A wrong-channel, current/older,
+wrong-bundle, wrong-CPU or too-new-OS candidate is never selected. A malformed
+signed item rejects the entire feed rather than silently changing selection.
+
+Run the portable tests and optional real signer/consumer interoperability tests:
+
+```sh
+QT_QPA_PLATFORM=offscreen \
+  EISKALT_SPARKLE_SIGNER="$SPARKLE/bin/sign_update" \
+  EISKALT_UPDATER_SIGNATURE_FIXTURE="$FIXTURE" \
+  EISKALT_UPDATER_PROBE_BINARY="$PWD/build-updater-probe/eiskalt-updater-native-tests" \
+  "$B/tests/qt/eiskaltdcpp-qt-tests" \
+  '[update-feed],[update-feed-native],[update-feed-bridge-native]'
+```
+
+Rebuild the native probe first. The final test clones the disposable fixture,
+uses an ephemeral test identity and a separate home, serves the original signed
+feed over the staged-only Qt bridge and denies the consumer external networking.
+Both stable and preview selection must match Sparkle, with no download,
+extraction, preparation or executable/plist changes. This is signed-metadata
+interoperability, not production backend activation, proxy DNS acceptance,
+helper confinement or a successful app update. The future adapter must still
+require Sparkle's signed-feed success and match its selected build/archive
+against the authenticated offer before advancing.

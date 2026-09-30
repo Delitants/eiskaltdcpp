@@ -20,10 +20,16 @@
 @property BOOL verifiedFeed;
 @property BOOL finishedCycle;
 @property NSError *error;
+@property NSString *foundVersion;
+@property NSString *foundArchive;
 @end
 
 @implementation Probe
 - (NSString *)feedURLStringForUpdater:(SPUUpdater *)updater { return self.feed; }
+- (NSSet<NSString *> *)allowedChannelsForUpdater:(SPUUpdater *)updater {
+    return [NSProcessInfo.processInfo.environment[@"EISKALT_PROBE_PREVIEW"] isEqualToString:@"1"]
+        ? [NSSet setWithObject:@"preview"] : [NSSet set];
+}
 - (BOOL)updater:(SPUUpdater *)updater shouldDownloadReleaseNotesForUpdate:(SUAppcastItem *)item { return NO; }
 - (void)updater:(SPUUpdater *)updater willDownloadUpdate:(SUAppcastItem *)item withRequest:(NSMutableURLRequest *)request {
     request.timeoutInterval = 3;
@@ -38,6 +44,8 @@
 - (void)updater:(SPUUpdater *)updater didFindValidUpdate:(SUAppcastItem *)item {
     self.found = YES;
     self.verifiedFeed = item.signingValidationStatus == SPUAppcastSigningValidationStatusSucceeded;
+    self.foundVersion = item.versionString;
+    self.foundArchive = item.fileURL.absoluteString;
 }
 - (void)updater:(SPUUpdater *)updater didFinishUpdateCycleForUpdateCheck:(SPUUpdateCheck)check error:(NSError *)error {
     self.finishedCycle = YES;
@@ -145,6 +153,10 @@ TEST_CASE("Real Sparkle checks signed bytes through the public bridge hooks", "[
         REQUIRE_FALSE(probe.ready);
         REQUIRE(probe.rewrites == 0);
         REQUIRE(probe.error == nil);
+        if (env[@"EISKALT_PROBE_EXPECTED_BUILD"] != nil) {
+            REQUIRE([probe.foundVersion isEqualToString:env[@"EISKALT_PROBE_EXPECTED_BUILD"]]);
+            REQUIRE([probe.foundArchive isEqualToString:env[@"EISKALT_PROBE_EXPECTED_ARCHIVE"]]);
+        }
     } else if ([probe.mode isEqualToString:@"bad-feed"]) {
         REQUIRE_FALSE(probe.found);
         REQUIRE(probe.error != nil);

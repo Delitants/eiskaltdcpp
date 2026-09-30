@@ -64,6 +64,7 @@ endif (USE_QT_SQLITE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SRCS)
 list(APPEND SRCS src/updates/UpdateTransport.cpp src/updates/UpdateUrlPolicy.cpp)
 list(APPEND SRCS src/updates/UpdateArchiveVerifier.cpp)
+list(APPEND SRCS src/updates/UpdateFeedVerifier.cpp)
 list(APPEND SRCS src/updates/UpdateLoopbackBridge.cpp)
 list(APPEND SRCS src/updates/UpdatePolicy.cpp src/updates/UpdateController.cpp)
 
