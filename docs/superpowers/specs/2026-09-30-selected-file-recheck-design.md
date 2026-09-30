@@ -1,12 +1,14 @@
 # Selected-File Torrent Rechecking
 
-Status: proposed written specification, awaiting review. Not implemented.
+Status: written specification approved by the maintainer's subsequent Proceed
+on 2026-09-30. Implementation plan awaiting review. Not implemented.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit
 `e72f7fec0`; they are not installed. On 2026-09-30 the maintainer said to proceed
 after the recommendation to prepare an app-bundled engine-extension design.
-This document records that design, not approval of an implementation plan.
+The subsequent Proceed approved this written design at commit `92e5aa1fe`;
+it does not approve an implementation plan that had not yet been written.
 
 ## Intent And Scope
 
