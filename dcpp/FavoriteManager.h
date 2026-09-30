@@ -50,6 +50,9 @@ public:
     void setHubList(int aHubList);
     int getSelectedHubList() { return lastServer; }
     void refresh(bool forceDownload = false);
+    /// Owner-thread terminal stop of hub-list HTTP, retaining cached lists and
+    /// favorites. Do not invoke from a download callback or under manager locks.
+    void stopForShutdown();
     HubTypes getHubListType() { return listType; }
     HubEntryList getPublicHubs() {
         Lock l(cs);
@@ -127,6 +130,7 @@ private:
     PubListMap publicListMatrix;
     string publicListServer;
     bool useHttp, running;
+    std::atomic_bool shutdownStopped{false};
     HttpConnection* c;
     int lastServer;
     HubTypes listType;

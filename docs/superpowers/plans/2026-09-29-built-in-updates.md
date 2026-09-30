@@ -154,6 +154,17 @@ primitives. They are not yet wired into the application. Full core producer stop
 client-registry lifetime sequencing, active-transfer and real MainWindow quit
 acceptance remain required; do not replace `_Exit` or arm the installer yet.
 
+HTTP-stop checkpoint: `HttpConnection::stopForShutdown` permanently rejects
+new requests, waits for admitted legacy callbacks, then detaches the remaining
+socket. Callback accounting does not hold a lock across application callbacks
+or socket listener barriers. Ordinary `abort` remains reusable. Strict HTTPS
+requests are cancelled only; their owner must still join the I/O worker.
+`FavoriteManager` and `DynDNS` expose terminal stops that preserve the managers
+and prevent late refresh/load/retry requests. Owners must serialize terminal
+stop with public request methods and destruction, never call it from a callback,
+and still drain asynchronous socket resources afterwards. These are prerequisites,
+not a whole-core stop coordinator or application quit integration.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

@@ -19,6 +19,8 @@
 #pragma once
 
 #include <functional>
+#include <condition_variable>
+#include <mutex>
 #include <string>
 
 #include "BufferedSocketListener.h"
@@ -54,6 +56,12 @@ public:
     void download(const string& aUrl, const StringMap& postData);
 
     void abort();
+    /// Terminal stop, serialized by the owner with public request methods and
+    /// destruction. Never call from an HTTP callback. Legacy requests drain
+    /// callbacks before detaching the socket; asynchronous destruction still
+    /// requires BufferedSocket::waitShutdown. Strict requests are cancelled,
+    /// not joined: their owner must join the dedicated I/O worker separately.
+    void stopForShutdown();
     void setPublicHubListProxy(bool enabled) { publicHubListProxy = enabled; }
 
     static bool shouldUseOutgoingProxy(bool usingHttpProxy, int outgoingMode);
@@ -100,6 +108,16 @@ private:
     Connector connector;
     std::unique_ptr<const HttpRequestPolicy> strictPolicy;
     std::atomic_bool strictCancelled{false};
+    std::atomic_bool shutdownStopped{false};
+    std::mutex callbackMutex;
+    std::condition_variable callbacksDone;
+    size_t activeCallbacks = 0;
+    struct CallbackGuard {
+        explicit CallbackGuard(HttpConnection& owner);
+        ~CallbackGuard();
+        HttpConnection& owner;
+        bool admitted = false;
+    };
     std::shared_ptr<SocketWake> strictWake;
     void downloadStrict(const string& requestedUrl);
 

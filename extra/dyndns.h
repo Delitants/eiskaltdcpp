@@ -31,6 +31,9 @@ public:
 
     void load();
     void stop();
+    /// Owner-thread terminal stop; retains this manager but drains HTTP
+    /// callbacks and prevents later load/retry. Never call from a callback.
+    void stopForShutdown();
 
 private:
     void Request();
@@ -46,6 +49,7 @@ private:
     HttpConnection httpConnection;
     string html;
     bool request;
+    std::atomic_bool shutdownStopped{false};
     int minutesCounter;
 };
 

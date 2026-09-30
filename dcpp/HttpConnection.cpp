@@ -51,7 +51,7 @@ HttpConnection::HttpConnection(DCContext& ctx, const string& aUserAgent, Connect
 }
 
 HttpConnection::~HttpConnection() {
-    abort();
+    stopForShutdown();
 }
 
 HttpConnection::HttpConnection(DCContext& context, const HttpRequestPolicy& policy, const string& agent)
@@ -207,6 +207,7 @@ bool HttpConnection::responseBodyWouldExceedSize(int64_t declaredSize, int64_t b
  * @return A string with the content, or empty if download failed
  */
 void HttpConnection::downloadFile(const string& aFile) {
+    if(shutdownStopped.load()) return;
     if(strictPolicy) { downloadStrict(aFile); return; }
     url = aFile;
     prepareRequest(TYPE_GET);
@@ -218,6 +219,7 @@ void HttpConnection::downloadFile(const string& aFile) {
  * @param aData StringMap with the args and values
  */
 void HttpConnection::download(const string& aUrl, const StringMap& postData) {
+    if(shutdownStopped.load()) return;
     if(strictPolicy) {
         fire(HttpConnectionListener::Failed(), this, string("Strict HTTPS permits only GET"));
         return;
@@ -230,6 +232,36 @@ void HttpConnection::download(const string& aUrl, const StringMap& postData) {
 
     if (!requestBody.empty()) requestBody = requestBody.substr(1);
     prepareRequest(TYPE_POST);
+}
+
+HttpConnection::CallbackGuard::CallbackGuard(HttpConnection& value) : owner(value) {
+    std::lock_guard lock(owner.callbackMutex);
+    admitted = !owner.shutdownStopped.load();
+    if(admitted) ++owner.activeCallbacks;
+}
+
+HttpConnection::CallbackGuard::~CallbackGuard() {
+    if(!admitted) return;
+    std::lock_guard lock(owner.callbackMutex);
+    if(--owner.activeCallbacks == 0) owner.callbacksDone.notify_all();
+}
+
+void HttpConnection::stopForShutdown() {
+    shutdownStopped.store(true);
+    if(strictPolicy) {
+        abort();
+        return;
+    }
+    BufferedSocket* retired;
+    {
+        std::unique_lock lock(callbackMutex);
+        callbacksDone.wait(lock, [this] { return activeCallbacks == 0; });
+        retired = socket;
+        socket = nullptr;
+    }
+    // Never hold the callback accounting lock across a socket listener barrier.
+    // Late callbacks are rejected; admitted callbacks have all finished.
+    BufferedSocket::putSocket(retired);
 }
 
 void HttpConnection::abort() {
@@ -352,6 +384,8 @@ void HttpConnection::updateSpeed() {
 }
 
 void HttpConnection::on(BufferedSocketListener::Connected) {
+    CallbackGuard callback(*this);
+    if(!callback.admitted) return;
     dcassert(socket);
     socket->write(method + " " + file + " HTTP/1.1\r\n");
 
@@ -385,6 +419,8 @@ void HttpConnection::on(BufferedSocketListener::Connected) {
 }
 
 void HttpConnection::on(BufferedSocketListener::Line, const string& aLine) {
+    CallbackGuard callback(*this);
+    if(!callback.admitted) return;
     if(connState == CONN_CHUNKED && aLine.size() > 1) {
         string::size_type i;
         string chunkSizeStr;
@@ -466,6 +502,8 @@ void HttpConnection::on(BufferedSocketListener::Line, const string& aLine) {
 }
 
 void HttpConnection::on(BufferedSocketListener::Failed, const string& aLine) {
+    CallbackGuard callback(*this);
+    if(!callback.admitted) return;
     abortRequest(false);
     connState = CONN_FAILED;
     statusLine = Util::trimCopy(aLine);
@@ -473,6 +511,8 @@ void HttpConnection::on(BufferedSocketListener::Failed, const string& aLine) {
 }
 
 void HttpConnection::on(BufferedSocketListener::ModeChange) {
+    CallbackGuard callback(*this);
+    if(!callback.admitted) return;
     if(connState != CONN_CHUNKED) {
         abortRequest(true);
 
@@ -480,6 +520,8 @@ void HttpConnection::on(BufferedSocketListener::ModeChange) {
     }
 }
 void HttpConnection::on(BufferedSocketListener::Data, uint8_t* aBuf, size_t aLen) {
+    CallbackGuard callback(*this);
+    if(!callback.admitted) return;
     if(responseBodyWouldExceedSize(size, done, aLen)) {
         abortRequest(true);
 

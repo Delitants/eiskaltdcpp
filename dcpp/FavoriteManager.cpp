@@ -41,6 +41,7 @@ FavoriteManager::FavoriteManager(DCContext& ctx) : ContextAware(ctx), lastId(0),
 }
 
 FavoriteManager::~FavoriteManager() {
+    stopForShutdown();
     if (ctx().getClientManager())
         ctx().getClientManager()->removeListener(this);
     if (ctx().getSettingsManager())
@@ -650,6 +651,7 @@ void FavoriteManager::setHubList(int aHubList) {
 }
 
 void FavoriteManager::refresh(bool forceDownload /* = false */) {
+    if(shutdownStopped.load()) return;
     StringList sl = getHubLists();
     if(sl.empty()) {
         fire(FavoriteManagerListener::DownloadFailed(), Util::emptyString);
@@ -707,6 +709,17 @@ void FavoriteManager::refresh(bool forceDownload /* = false */) {
         c->downloadFile(publicListServer);
         running = true;
     }
+}
+
+void FavoriteManager::stopForShutdown() {
+    shutdownStopped.store(true);
+    if(c) {
+        c->stopForShutdown();
+        c->removeListener(this);
+    }
+    running = false;
+    useHttp = false;
+    downloadBuf.clear();
 }
 
 UserCommand::List FavoriteManager::getUserCommands(int ucCtx, const StringList& hubs) {

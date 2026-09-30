@@ -33,11 +33,12 @@ DynDNS::DynDNS(DCContext& ctx) :
 }
 
 DynDNS::~DynDNS() {
-    httpConnection.removeListener(this);
+    stopForShutdown();
 }
 
 void DynDNS::load()
 {
+    if(shutdownStopped.load()) return;
     request = true;
     minutesCounter = 0;
     Request();
@@ -48,7 +49,17 @@ void DynDNS::stop()
     request = false;
 }
 
+void DynDNS::stopForShutdown()
+{
+    shutdownStopped.store(true);
+    httpConnection.stopForShutdown();
+    httpConnection.removeListener(this);
+    request = false;
+    html.clear();
+}
+
 void DynDNS::Request() {
+    if(shutdownStopped.load()) return;
     if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
         return;
     if (CTX_BOOLSETTING(DYNDNS_ENABLE)) {
@@ -67,6 +78,7 @@ void DynDNS::Request() {
 }
 
 void DynDNS::on(TimerManagerListener::Minute, uint64_t) noexcept {
+    if(shutdownStopped.load()) return;
     ++minutesCounter;
     if (minutesCounter < 2) {
         return;
@@ -81,10 +93,12 @@ void DynDNS::on(TimerManagerListener::Minute, uint64_t) noexcept {
 }
 
 void DynDNS::on(HttpConnectionListener::Data, HttpConnection*, const uint8_t* buf, size_t len) noexcept {
+    if(shutdownStopped.load()) return;
     html += string((const char*)buf, len);
 }
 
 void DynDNS::on(HttpConnectionListener::Complete, HttpConnection*, string const&) noexcept {
+    if(shutdownStopped.load()) return;
     request = false;
     string internetIP = Util::firstPublicIpFromText(html);
 
@@ -102,6 +116,7 @@ void DynDNS::on(HttpConnectionListener::Complete, HttpConnection*, string const&
 }
 
 void DynDNS::on(HttpConnectionListener::Failed, HttpConnection*, const string&) noexcept {
+    if(shutdownStopped.load()) return;
     if (request) {
         Request();
     }
