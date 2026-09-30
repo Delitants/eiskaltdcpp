@@ -16,6 +16,7 @@ eiskalt_torrent_match_dependency_abi(eiskalt-selected-recheck-dependency-tests)
 # Compile the engine in this test translation unit for the private test probe.
 # The public library contains neither a peer-injection API nor test hooks.
 add_executable(eiskalt-torrent-tests test_torrent.cpp test_torrentcreator.cpp
+    test_selectedrecheck.cpp ../../torrent/SelectedRecheck.cpp
     ../../torrent/SocksUdpBootstrap.cpp
     ../../torrent/ProxyTrust.cpp
     ../../torrent/TorrentSettings.cpp ../../torrent/TorrentEngine.h

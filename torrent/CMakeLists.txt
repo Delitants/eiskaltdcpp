@@ -28,6 +28,7 @@ endfunction()
 
 add_library(eiskalt-torrent STATIC
     TorrentTypes.h TorrentSettings.h TorrentSettings.cpp
+    SelectedRecheck.h SelectedRecheck.cpp
     ProxyTrust.h ProxyTrust.cpp
     SocksUdpBootstrap.h SocksUdpBootstrap.cpp
     TorrentEngine.h TorrentEngine.cpp

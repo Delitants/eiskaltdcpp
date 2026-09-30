@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
-Status: approved for Native inline execution on 2026-09-30. Task 1 is complete;
+Status: approved for Native inline execution on 2026-09-30. Tasks 1 and 2 are complete;
 later milestones and installation/release acceptance remain pending.
 
 ## Global Constraints
@@ -63,16 +63,16 @@ Expose asynchronous free functions `prepare_selected_recheck(torrent_handle, uin
 - [x] Extend dependency tests for skipped-file partfiles, v2/hybrid, absent authenticated v2 hashes, zero-size/padding, cancellation, stopped local-only handle creation, and source-read-only storage. Unknown hashes must produce unavailable, not success. Assert zero network announcements and source writes.
 - [x] Build in `Work/dependencies/selected-recheck/arm64` using the new script, `--prefix` and `--jobs 2`; expose script `--help` and reject any prefix outside the supplied development/release staging root. Compile/run `eiskalt-selected-recheck-dependency-tests '[selected-recheck-dependency]'`. Require all cases to pass and exact read-set evidence.
 - [x] Stop here if safe local-only checking or native v2 state correction cannot be demonstrated. Record the failing contract and revise the design with the user; do not continue to UI work. Otherwise commit only this task's paths as `Add isolated libtorrent selected-recheck capability`.
- Add A Stable Piece-Scope Planner
+### Task 2: Add A Stable Piece-Scope Planner
 
 **Files:** Create `torrent/SelectedRecheck.h`, `torrent/SelectedRecheck.cpp`, `tests/torrent/test_selectedrecheck.cpp`. Modify both Torrent CMake files.
 
 **Interfaces:** `RecheckPlan { QList<int> selectedFiles, affectedFiles, pieces; quint64 revision; qint64 totalBytes; }`; `RecheckPlanResult { std::optional<RecheckPlan> plan; QString error; }`; `planSelectedRecheck(const libtorrent::torrent_info&, const QList<int>& files, quint64 revision) -> RecheckPlanResult`. Indices refer to metadata, never view rows. Sum each affected piece's actual payload extent once; handle zero pieces explicitly.
 
-- [ ] Write `[selected-recheck-plan]` tests: duplicate selections deduplicate, overlapping boundaries count once, unrelated C is absent, invalid/empty input is rejected, padding/zero-size behavior is explicit, and selected IDs survive reordered view rows. Include a last partial piece and file sizes/offsets above 32-bit range.
-- [ ] Run `eiskalt-torrent-tests '[selected-recheck-plan]'` and record RED before implementing the planner.
-- [ ] Implement with native metadata/layout helpers, not filename heuristics. Keep path/storage validation separate; no I/O or mutation in the planner.
-- [ ] Run the same filter to GREEN and add metadata fixtures for v1/v2/hybrid. Commit the explicit files as `Plan selected torrent verification scopes`.
+- [x] Write `[selected-recheck-plan]` tests: duplicate selections deduplicate, overlapping boundaries count once, unrelated C is absent, invalid/empty input is rejected, padding/zero-size behavior is explicit, and selected IDs survive reordered view rows. Include a last partial piece and file sizes/offsets above 32-bit range.
+- [x] Run `eiskalt-torrent-tests '[selected-recheck-plan]'` and record RED before implementing the planner.
+- [x] Implement with native metadata/layout helpers, not filename heuristics. Keep path/storage validation separate; no I/O or mutation in the planner.
+- [x] Run the same filter to GREEN and add metadata fixtures for v1/v2/hybrid. Commit the explicit files as `Plan selected torrent verification scopes`.
 
 ### Task 3: Implement Crash-Safe Pending Checks
 
