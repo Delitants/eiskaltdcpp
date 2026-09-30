@@ -55,8 +55,8 @@ proxy/DNS/installer-process acceptance remains separate work.
   a signature-validation-before-unarchiving failure. The `extracting` UI event
   is emitted before verification and is not evidence that files were extracted.
 - **Dismiss is not cancel.** Replying Dismiss at Ready can install when the
-  process exits; this was reproduced against a disposable copy. The fixture
-  now replies Skip, awaits update-cycle completion, and checks the old app's
+  process exits; this was reproduced against a disposable copy. Ordinary probes
+  reply Skip, await update-cycle completion, and check the old app's
   executable and metadata again after exit. This cancellation check is not a
   crash-safety proof.
 
@@ -99,6 +99,54 @@ exit. It does not target the installed Eiskalt app. This proves the production Q
 bridge can serve the pinned Sparkle consumer, not that production proxy DNS,
 installer-helper network confinement, or the application shutdown controller is
 complete. Those remain separate release gates.
+
+## Committed-Exit Fixture
+
+`install-probe` checks installation after the native child has exited. Create a
+fresh fixture for each mode using the `create` command above, then run:
+
+```sh
+python3 tests/macos/updater/fixtures.py install-probe \
+  --root /tmp/fresh-updater-fixture --mode normal
+```
+
+Modes are `normal`, `hide`, `cancel-quit`, `kill-before-commit`,
+`cancel-prepared`, and `bad-identity`. For the last mode, pass `--wrong-identity`
+to `create`. Only `normal` may reply Dismiss at Ready to install on exit.
+`cancel-prepared` replies Skip and awaits cancellation. Pre-commit modes
+use information-only discovery, never preparation. `kill-before-commit` kills
+only the disposable child spawned by this runner, after discovery completes.
+These simulate lifecycle boundaries, not actual MainWindow gestures.
+
+The runner authenticates fixture bytes before preflight and requires exact HTTP
+requests, exact old/new executable and Info.plist readback after exit, no relaunch
+sentinel, and unchanged profile/share/download sentinel files. This does not
+exercise Eiskalt's real persistence, authorization failure, disk-full recovery,
+an interruption after commit, or installer-helper network confinement.
+
+Native probing found Sparkle can prepare a validly signed archive with the wrong
+internal bundle ID when its app filename matches. `BundleArchiveVerifier` therefore
+independently checks identity before any installer preparation. It reads bounded
+ZIP metadata without extraction, verifies the plist CRC, requires the expected
+bundle ID, numeric build and displayed version, and checks a thin Mach-O main
+executable's CPU/type. Ambiguous paths and non-directory identity-path ancestors
+are rejected. Supported packaging is one app root, stored/deflated entries,
+non-ZIP64, a maximum 512 MiB archive and 1 MiB Info.plist. This is not a signature
+verifier or general safe-extraction library. The caller must first authenticate
+the entire archive and retain exclusive immutable staging until handoff.
+
+`create` also writes **unsigned parser-only** cases under `parser-cases/`.
+Run `[bundle-archive]` in the old disposable bundle with a separate HOME and
+`EISKALT_PROBE_LOCAL_ARCHIVE` pointing to its signed `update.zip`. The test checks
+the real package, both ZIP methods, identity/CPU mismatches, cancellation, path
+aliases/traversal, symlink ancestors, malformed headers, CRC failure and bounds.
+These unsigned cases must never be offered to Sparkle.
+
+The verifier is currently linked only into this opt-in native harness. Production
+normal-quit handoff remains disabled. In particular, macOS currently leaves the
+Qt loop through an emergency `_Exit` path that skips core teardown; installation
+must not be enabled there without first establishing successful queue/settings/
+Torrent persistence and keeping the bridge event loop alive through preparation.
 
 ## Controller Contract
 

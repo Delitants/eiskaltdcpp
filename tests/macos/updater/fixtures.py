@@ -14,6 +14,8 @@ import subprocess
 import threading
 import time
 import uuid
+import zipfile
+import struct
 
 
 def run(*args, **kwargs):
@@ -48,7 +50,7 @@ def create(args):
         shutil.copy2(args.binary, contents / "MacOS" / "UpdaterProbe")
         shutil.copytree(sparkle / "Sparkle.framework", contents / "Frameworks" / "Sparkle.framework", symlinks=True)
         info = {
-            "CFBundleIdentifier": bundle_id, "CFBundleName": "UpdaterProbe",
+            "CFBundleIdentifier": bundle_id + (".wrong" if label == "new" and getattr(args, "wrong_identity", False) else ""), "CFBundleName": "UpdaterProbe",
             "CFBundleExecutable": "UpdaterProbe", "CFBundlePackageType": "APPL",
             "CFBundleVersion": "1" if label == "old" else "2", "CFBundleShortVersionString": version,
             "LSMinimumSystemVersion": "14.0", "LSUIElement": True,
@@ -87,7 +89,65 @@ def create(args):
                 "sparkle": str(sparkle), "files": {p.name: digest(p) for p in
                 (feed, archive, root / "bad-feed.xml", root / "bad-archive.zip")}}
     (root / "fixture.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    archive_cases(root)
     print("Created disposable signed fixture (private keys remain in mode-0700 root)")
+
+
+def archive_cases(root):
+    """Unsigned parser inputs only: never offered to the installer or trust gate."""
+    target = root / "parser-cases"
+    target.mkdir()
+    app = root / "new/UpdaterProbe.app/Contents"
+    info = (app / "Info.plist").read_bytes()
+    header = (app / "MacOS/UpdaterProbe").read_bytes()[:64]
+    base = [("UpdaterProbe.app/", b"", 0o40755),
+            ("UpdaterProbe.app/Contents/", b"", 0o40755),
+            ("UpdaterProbe.app/Contents/MacOS/", b"", 0o40755),
+            ("UpdaterProbe.app/Contents/Info.plist", info, 0o100644),
+            ("UpdaterProbe.app/Contents/MacOS/UpdaterProbe", header, 0o100755)]
+    def make(name, entries, method=zipfile.ZIP_DEFLATED):
+        with zipfile.ZipFile(target / (name + ".zip"), "w", compression=method) as archive:
+            for path, data, mode in entries:
+                entry = zipfile.ZipInfo(path)
+                entry.create_system = 3
+                entry.external_attr = mode << 16
+                entry.compress_type = method
+                archive.writestr(entry, data)
+    make("valid-stored", base, zipfile.ZIP_STORED)
+    make("valid-deflated", base)
+    make("valid-binary-plist", base[:3] + [(base[3][0], plistlib.dumps(plistlib.loads(info), fmt=plistlib.FMT_BINARY), 0o100644)] + base[4:])
+    nul = plistlib.loads(info)
+    nul["CFBundleExecutable"] = "UpdaterProbe\x00other"
+    make("nul-executable", base[:3] + [(base[3][0], plistlib.dumps(nul, fmt=plistlib.FMT_BINARY), 0o100644)] + base[4:])
+    make("traversal", base + [("UpdaterProbe.app/../escape", b"", 0o100644)])
+    make("second-app", base + [("Other.app/", b"", 0o40755)])
+    make("aliased-plist", base + [("UpdaterProbe.app/Contents/info.plist", info, 0o100644)])
+    make("aliased-directory", base + [("UpdaterProbe.app/Contents", b"elsewhere", 0o120777)])
+    make("symlink-plist", base[:3] + [(base[3][0], info, 0o120777)] + base[4:])
+    make("symlink-parent", [base[0], ("UpdaterProbe.app/Contents", b"elsewhere", 0o120777)] + base[2:])
+    make("missing-executable", base[:-1])
+    make("fat-executable", base[:-1] + [(base[-1][0], b"\xca\xfe\xba\xbe" + header[4:], 0o100755)])
+    make("oversize-plist", base[:3] + [(base[3][0], b" " * (1024 * 1024 + 1), 0o100644)] + base[4:])
+    make("plist-array", base[:3] + [(base[3][0], plistlib.dumps([]), 0o100644)] + base[4:])
+    for field, value in (("CFBundleExecutable", "../UpdaterProbe"), ("CFBundleVersion", 2),
+                         ("CFBundleIdentifier", "other.bundle"), ("CFBundlePackageType", "FMWK")):
+        changed = plistlib.loads(info)
+        changed[field] = value
+        make("wrong-" + field, base[:3] + [(base[3][0], plistlib.dumps(changed), 0o100644)] + base[4:])
+    stored = (target / "valid-stored.zip").read_bytes()
+    (target / "truncated.zip").write_bytes(stored[:-5])
+    (target / "trailing.zip").write_bytes(stored + b"garbage")
+    for name, offset, fmt, value in (("entry-count", len(stored) - 12, "H", 65535),
+                                    ("central-offset", len(stored) - 6, "I", 0xffffffff),
+                                    ("local-method", 8, "H", 8),
+                                    ("local-name", 30, "B", ord("X"))):
+        changed = bytearray(stored)
+        struct.pack_into("<" + fmt, changed, offset, value)
+        (target / (name + ".zip")).write_bytes(changed)
+    changed = bytearray(stored)
+    at = stored.index(b"<?xml")
+    changed[at] ^= 1
+    (target / "plist-crc.zip").write_bytes(changed)
 
 
 def verify(args):
@@ -173,10 +233,117 @@ def probe(args):
         server.server_close()
 
 
+def install_probe(args):
+    """Post-exit assertions for disposable bundles, never the installed app."""
+    root = args.root.resolve()
+    manifest = json.loads((root / "fixture.json").read_text())
+    app = root / "old/UpdaterProbe.app"
+    info = app / "Contents/Info.plist"
+    if not manifest["bundle_id"].startswith("org.eiskaltdcpp.updater-probe.") or (root.stat().st_mode & 0o077):
+        raise RuntimeError("not a private disposable fixture")
+    if plistlib.loads(info.read_bytes())["CFBundleIdentifier"] != manifest["bundle_id"]:
+        raise RuntimeError("unexpected target identity")
+    if plistlib.loads(info.read_bytes())["CFBundleVersion"] != "1":
+        raise RuntimeError("use a fresh version-1 fixture for each install case")
+    # Authenticate the staged archive before its native identity preflight.
+    verify(args)
+    before_info = info.read_bytes()
+    before_executable = digest(app / "Contents/MacOS/UpdaterProbe")
+    home = root / "install-home"
+    home.mkdir(mode=0o700, exist_ok=False)
+    protected = root / "user-data"
+    for name in ("profile/settings.xml", "shares/shared.dat", "downloads/partial.dat"):
+        file = protected / name
+        file.parent.mkdir(parents=True, exist_ok=True)
+        file.write_bytes(secrets.token_bytes(73))
+    def snapshot():
+        return {str(p.relative_to(protected)): digest(p) for p in protected.rglob("*") if p.is_file()}
+    before_data = snapshot()
+    token = secrets.token_hex(32)
+    requests = []
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            requests.append(self.path.replace(token, "CAPABILITY"))
+            name = {f"/{token}/feed": "appcast.xml", f"/{token}/update.zip": "update.zip"}.get(self.path)
+            if name is None:
+                self.send_error(404)
+                return
+            data = (root / name).read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+        def log_message(self, *unused):
+            pass
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    worker = threading.Thread(target=server.serve_forever, daemon=True)
+    worker.start()
+    base = f"http://127.0.0.1:{server.server_port}/{token}"
+    relaunch_marker, kill_marker = root / "relaunched", root / "kill-ready"
+    environment = dict(os.environ, HOME=str(home), CFFIXED_USER_HOME=str(home),
+        EISKALT_INSTALL_MODE=args.mode, EISKALT_PROBE_FEED=base + "/feed",
+        EISKALT_PROBE_ARCHIVE=base + "/update.zip", EISKALT_PROBE_RELAUNCH_MARKER=str(relaunch_marker),
+        EISKALT_PROBE_KILL_MARKER=str(kill_marker), EISKALT_PROBE_LOCAL_ARCHIVE=str(root / "update.zip"))
+    sandbox = '(version 1)(allow default)(deny network*)' \
+        '(allow network-outbound (remote ip "localhost:*"))' \
+        '(allow network-bind (local ip "localhost:*"))' \
+        '(allow network-inbound (local ip "localhost:*"))'
+    child = None
+    try:
+        child = subprocess.Popen(["sandbox-exec", "-p", sandbox,
+            str(app / "Contents/MacOS/UpdaterProbe"), "[update-install]"], env=environment,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        if args.mode == "kill-before-commit":
+            deadline = time.monotonic() + 35
+            while not kill_marker.exists() and child.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.05)
+            if not kill_marker.exists():
+                raise RuntimeError("disposable child did not reach pre-commit discovery boundary")
+            child.kill()
+        output, _ = child.communicate(timeout=40)
+        (root / "install.log").write_text(output.replace(token, "CAPABILITY"))
+        print(output.replace(token, "CAPABILITY"))
+        if child.returncode != (-9 if args.mode == "kill-before-commit" else 0):
+            raise RuntimeError("native install probe failed: " + str(child.returncode))
+        committed = args.mode in ("normal", "cancel-prepared", "bad-identity")
+        expected = ["/CAPABILITY/feed"] + (["/CAPABILITY/update.zip"] if committed else [])
+        if args.mode == "bad-identity":
+            expected = []
+        if requests != expected:
+            raise RuntimeError("unexpected requests: " + repr(requests))
+        # Installation is asynchronous and can complete after the old process exits.
+        deadline = time.monotonic() + (15 if args.mode == "normal" else 3)
+        while time.monotonic() < deadline:
+            if args.mode == "normal" and info.exists() and plistlib.loads(info.read_bytes())["CFBundleVersion"] == "2":
+                break
+            time.sleep(0.1)
+        time.sleep(2)
+        if args.mode == "normal":
+            if info.read_bytes() != (root / "new/UpdaterProbe.app/Contents/Info.plist").read_bytes() or \
+                digest(app / "Contents/MacOS/UpdaterProbe") != digest(root / "new/UpdaterProbe.app/Contents/MacOS/UpdaterProbe"):
+                raise RuntimeError("normal quit did not install the exact signed new bundle")
+        elif info.read_bytes() != before_info or digest(app / "Contents/MacOS/UpdaterProbe") != before_executable:
+            raise RuntimeError("uncommitted/cancelled/invalid update replaced the old bundle")
+        if relaunch_marker.exists():
+            raise RuntimeError("application relaunched despite no-relaunch policy")
+        if snapshot() != before_data:
+            raise RuntimeError("profile/share/download fixture changed")
+        result = {"mode": args.mode, "requests": requests, "installed": args.mode == "normal",
+                  "relaunched": False, "user_data_unchanged": True}
+        (root / "install-result.json").write_text(json.dumps(result, indent=2) + "\n")
+        print("PASS:", json.dumps(result))
+    finally:
+        if child is not None and child.poll() is None:
+            child.kill()
+            child.communicate(timeout=5)
+        server.shutdown()
+        server.server_close()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("create", "verify", "probe"):
+    for name in ("create", "verify", "probe", "install-probe"):
         sub = commands.add_parser(name)
         sub.add_argument("--root", type=Path, required=True)
         if name == "create":
@@ -185,9 +352,12 @@ if __name__ == "__main__":
             sub.add_argument("--openssl", default="/opt/homebrew/opt/openssl@3/bin/openssl")
             sub.add_argument("--installer-xpc", action="store_true",
                              help="Use Sparkle's documented sandbox installer service")
+            sub.add_argument("--wrong-identity", action="store_true", help="Sign a disposable archive with a mismatched bundle ID")
         if name == "probe":
             sub.add_argument("--mode", choices=("valid", "bad-feed", "bad-archive", "unmapped", "information-only"), default="valid")
             sub.add_argument("--filter", default="[bridge-probe]")
-        sub.set_defaults(function=globals()[name])
+        if name == "install-probe":
+            sub.add_argument("--mode", choices=("normal", "hide", "cancel-quit", "kill-before-commit", "cancel-prepared", "bad-identity"), required=True)
+        sub.set_defaults(function=globals()[name.replace("-", "_")])
     args = parser.parse_args()
     args.function(args)

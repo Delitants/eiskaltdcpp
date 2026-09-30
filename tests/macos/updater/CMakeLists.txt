@@ -15,13 +15,13 @@ if(NOT APPLE)
 endif()
 enable_language(OBJCXX)
 include("${CMAKE_CURRENT_LIST_DIR}/../../../cmake/MacUpdater.cmake")
-add_executable(eiskalt-updater-native-tests main.mm)
+add_executable(eiskalt-updater-native-tests main.mm ../../../macos/updater/BundleArchiveVerifier.mm)
 target_compile_options(eiskalt-updater-native-tests PRIVATE -fobjc-arc)
 target_include_directories(eiskalt-updater-native-tests PRIVATE
     "${EISKALT_SPARKLE_ROOT}/Sparkle.framework/Headers")
 target_compile_options(eiskalt-updater-native-tests PRIVATE "-F${EISKALT_SPARKLE_ROOT}")
 target_link_options(eiskalt-updater-native-tests PRIVATE "-F${EISKALT_SPARKLE_ROOT}")
 target_link_libraries(eiskalt-updater-native-tests PRIVATE Catch2::Catch2
-    "-framework AppKit" Sparkle::Sparkle)
+    "-framework AppKit" Sparkle::Sparkle "-lz")
 set_target_properties(eiskalt-updater-native-tests PROPERTIES
     BUILD_RPATH "@executable_path/../Frameworks;${EISKALT_SPARKLE_ROOT}")

@@ -125,6 +125,16 @@ Keep the Qt/local bridge event loop alive through handoff, serve only revalidate
 staged bytes, and cancel on handoff failure. Do not stage in Sparkle earlier and
 attempt to revoke later: native probing showed Dismiss can install at process exit.
 
+Native acceptance checkpoint: a signed ZIP with a matching app filename but a
+wrong internal bundle ID reached Sparkle Ready. Independently preflight its
+bounded ZIP identity after signature verification and before preparation; preserve
+the exclusive immutable stage through handoff. `BundleArchiveVerifier` and the
+disposable `install-probe` runner exercise this boundary, not the product window.
+The current macOS `_Exit` path skips core teardown. Establish successful queue,
+settings and Torrent persistence before wiring the final handoff; do not regard
+an accepted close event alone as sufficient. Authorization/disk-full/recovery and
+real MainWindow acceptance remain required below.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

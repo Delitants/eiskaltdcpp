@@ -1,12 +1,13 @@
 #import <AppKit/AppKit.h>
 #import <Sparkle/Sparkle.h>
+#include "../../../macos/updater/BundleArchiveVerifier.h"
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-// Disposable driver only. Cancels prepared fixtures and never targets the real app.
+// Disposable driver only. Installation requires the explicit committed-exit fixture.
 @interface Probe : NSObject <SPUUpdaterDelegate, SPUUserDriver>
 @property NSString *feed;
 @property NSString *archive;
@@ -19,6 +20,7 @@
 @property NSInteger rewrites;
 @property BOOL verifiedFeed;
 @property BOOL finishedCycle;
+@property BOOL installOnCommittedExit;
 @property NSError *error;
 @property NSString *foundVersion;
 @property NSString *foundArchive;
@@ -31,6 +33,7 @@
         ? [NSSet setWithObject:@"preview"] : [NSSet set];
 }
 - (BOOL)updater:(SPUUpdater *)updater shouldDownloadReleaseNotesForUpdate:(SUAppcastItem *)item { return NO; }
+- (BOOL)updaterShouldRelaunchApplication:(SPUUpdater *)updater { return NO; }
 - (void)updater:(SPUUpdater *)updater willDownloadUpdate:(SUAppcastItem *)item withRequest:(NSMutableURLRequest *)request {
     request.timeoutInterval = 3;
     if (![self.mode isEqualToString:@"unmapped"] && self.verifiedFeed &&
@@ -76,8 +79,9 @@
 - (void)showExtractionReceivedProgress:(double)progress {}
 - (void)showReadyToInstallAndRelaunch:(void (^)(SPUUserUpdateChoice))reply {
     self.ready = YES;
-    // Dismiss still installs on process exit. Cancel and await cycle completion.
-    reply(SPUUserUpdateChoiceSkip);
+    // Dismiss is permitted only after this disposable test commits normal quit.
+    // Ordinary feasibility probes still cancel preparation and await completion.
+    reply(self.installOnCommittedExit ? SPUUserUpdateChoiceDismiss : SPUUserUpdateChoiceSkip);
 }
 - (void)showInstallingUpdateWithApplicationTerminated:(BOOL)terminated retryTerminatingApplication:(void (^)(void))retry {
     self.done = YES;
@@ -184,8 +188,110 @@ TEST_CASE("Real Sparkle checks signed bytes through the public bridge hooks", "[
     }
 }
 
+static updates::BundleArchiveIdentity expectedIdentity() {
+    return {NSBundle.mainBundle.bundleIdentifier.UTF8String, "2", "3.0.0-pre.2",
+#if defined(__arm64__)
+        "arm64"
+#else
+        "x86_64"
+#endif
+    };
+}
+
+TEST_CASE("Installer preparation is confined to committed normal quit", "[update-install]") {
+    NSDictionary* env = NSProcessInfo.processInfo.environment;
+    REQUIRE(env[@"EISKALT_INSTALL_MODE"] != nil);
+    REQUIRE([NSBundle.mainBundle.bundleIdentifier hasPrefix:@"org.eiskaltdcpp.updater-probe."]);
+    int fd = socket(AF_INET, SOCK_STREAM, 0); REQUIRE(fd >= 0);
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    sockaddr_in address{}; address.sin_family = AF_INET; address.sin_port = htons(443);
+    inet_pton(AF_INET, "203.0.113.1", &address.sin_addr);
+    const int connected = connect(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    const int error = errno; close(fd);
+    REQUIRE(connected == -1); REQUIRE(error == EPERM);
+    const bool committed = [env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"normal"] ||
+        [env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"cancel-prepared"] ||
+        [env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"bad-identity"];
+    if(committed) {
+        REQUIRE(env[@"EISKALT_PROBE_LOCAL_ARCHIVE"] != nil);
+        const bool valid = updates::bundleArchiveMatches([env[@"EISKALT_PROBE_LOCAL_ARCHIVE"] UTF8String], expectedIdentity());
+        if([env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"bad-identity"]) {
+            REQUIRE_FALSE(valid);
+            return; // No Sparkle instance, archive mapping or installer preparation.
+        }
+        REQUIRE(valid);
+    }
+    Probe* probe = [Probe new];
+    probe.feed = env[@"EISKALT_PROBE_FEED"];
+    probe.archive = env[@"EISKALT_PROBE_ARCHIVE"];
+    probe.mode = @"valid";
+    probe.installOnCommittedExit = committed && [env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"normal"];
+    SPUUpdater* updater = [[SPUUpdater alloc] initWithHostBundle:NSBundle.mainBundle
+        applicationBundle:NSBundle.mainBundle userDriver:probe delegate:probe];
+    NSError* startError = nil;
+    REQUIRE([updater startUpdater:&startError]);
+    updater.automaticallyChecksForUpdates = NO;
+    updater.automaticallyDownloadsUpdates = NO;
+    updater.sendsSystemProfile = NO;
+    if(committed) [updater checkForUpdates];
+    else [updater checkForUpdateInformation];
+    NSDate* deadline = [NSDate dateWithTimeIntervalSinceNow:25];
+    while(!probe.done && deadline.timeIntervalSinceNow > 0)
+        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.02]];
+    INFO((probe.error ? probe.error.description.UTF8String : "no updater error"));
+    REQUIRE(probe.done);
+    REQUIRE(probe.verifiedFeed);
+    REQUIRE(probe.error == nil);
+    REQUIRE(probe.finishedCycle);
+    CHECK(probe.ready == committed);
+    CHECK(probe.downloaded == committed);
+    CHECK(probe.rewrites == (committed ? 1 : 0));
+    printf("INSTALL_PROBE committed=%d ready=%d downloaded=%d rewrites=%ld\n",
+        committed, probe.ready, probe.downloaded, (long)probe.rewrites);
+    fflush(stdout);
+    if([env[@"EISKALT_INSTALL_MODE"] isEqualToString:@"kill-before-commit"]) {
+        REQUIRE(env[@"EISKALT_PROBE_KILL_MARKER"] != nil);
+        REQUIRE([[@"ready" dataUsingEncoding:NSUTF8StringEncoding] writeToFile:env[@"EISKALT_PROBE_KILL_MARKER"] atomically:YES]);
+        // The parent kills only this disposable child, after information-only discovery.
+        [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:60]];
+        FAIL("parent did not stop the disposable child");
+    }
+}
+
+TEST_CASE("Archive identity preflight rejects mismatched package metadata", "[bundle-archive]") {
+    NSDictionary* env = NSProcessInfo.processInfo.environment;
+    REQUIRE(env[@"EISKALT_PROBE_LOCAL_ARCHIVE"] != nil);
+    const auto expected = expectedIdentity();
+    const std::string archive = [env[@"EISKALT_PROBE_LOCAL_ARCHIVE"] UTF8String];
+    REQUIRE(updates::bundleArchiveMatches(archive, expected));
+    auto wrong = expected; wrong.bundleId += ".wrong";
+    CHECK_FALSE(updates::bundleArchiveMatches(archive, wrong));
+    wrong = expected; wrong.build = "3";
+    CHECK_FALSE(updates::bundleArchiveMatches(archive, wrong));
+    wrong = expected; wrong.version = "4.0";
+    CHECK_FALSE(updates::bundleArchiveMatches(archive, wrong));
+    wrong = expected; wrong.cpu = expected.cpu == "arm64" ? "x86_64" : "arm64";
+    CHECK_FALSE(updates::bundleArchiveMatches(archive, wrong));
+    CHECK_FALSE(updates::bundleArchiveMatches(archive, expected, [] { return true; }));
+    NSString* cases = [[env[@"EISKALT_PROBE_LOCAL_ARCHIVE"] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"parser-cases"];
+    NSArray<NSString*>* files = [NSFileManager.defaultManager contentsOfDirectoryAtPath:cases error:nil];
+    REQUIRE(files.count >= 20);
+    for(NSString* file in files) {
+        INFO(file.UTF8String);
+        const bool valid = [file hasPrefix:@"valid-"];
+        CHECK(updates::bundleArchiveMatches([[cases stringByAppendingPathComponent:file] UTF8String], expected) == valid);
+    }
+}
+
 int main(int argc, char **argv) {
     @autoreleasepool {
+        NSDictionary* env = NSProcessInfo.processInfo.environment;
+        if(env[@"EISKALT_PROBE_RELAUNCH_MARKER"] &&
+            [[NSBundle.mainBundle objectForInfoDictionaryKey:@"CFBundleVersion"] isEqualToString:@"2"]) {
+            [[@"unexpected relaunch" dataUsingEncoding:NSUTF8StringEncoding]
+                writeToFile:env[@"EISKALT_PROBE_RELAUNCH_MARKER"] atomically:YES];
+            return 97;
+        }
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
         return Catch::Session().run(argc, argv);
