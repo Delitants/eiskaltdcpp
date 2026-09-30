@@ -67,6 +67,8 @@ add_executable(eiskaltdcpp-qt-tests
     test_updateurlpolicy.cpp
     test_updatetransport.cpp
     test_updatearchiveverifier.cpp
+    test_updatebridge.cpp
+    ${QT_SRC_DIR}/updates/UpdateLoopbackBridge.cpp
     ${QT_SRC_DIR}/updates/UpdateArchiveVerifier.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.h

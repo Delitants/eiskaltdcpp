@@ -66,3 +66,36 @@ revision, approved by the maintainer, is app-owned archive staging/verification,
 with Sparkle's installer started only at committed normal quit. Information-only
 discovery is tested separately to establish it does not download or prepare an
 installer. No production integration is enabled.
+
+## Staged Qt Bridge Acceptance
+
+`UpdateLoopbackBridge` serves already-staged files and has no remote fetch API.
+The backend must fetch the feed through `UpdateTransport`, authenticate its
+metadata, and verify the archive before mapping that archive at committed normal
+quit. Starting a local bridge session is not installation consent.
+
+The bridge binds only IPv4 loopback with a new 256-bit capability for each
+session. It accepts exact GET paths and Host headers, with no query strings,
+ranges, request bodies, proxy methods, or directory serving. Header size,
+concurrent clients, socket write queues and connection lifetimes are bounded.
+Route revocation, restart and stop invalidate the session. Files must be private
+regular staging files; they stay open on their original descriptors and changes
+invalidate delivery. Windows staging remains unavailable until its private ACL
+requirements have a platform implementation.
+
+After creating the pinned signed fixture above, run the actual Qt bridge and
+native consumer together (substitute the Qt build and fixture directories):
+
+```sh
+QT_QPA_PLATFORM=offscreen EISKALT_UPDATER_SIGNATURE_FIXTURE="$FIXTURE" \
+  "$B/tests/qt/eiskaltdcpp-qt-tests" '[update-bridge],[update-bridge-native]'
+```
+
+The native case clones the disposable probe app into a private temporary
+directory, gives it a separate home, denies its external networking and exercises
+information-only discovery, altered-feed rejection, and archive delivery followed
+by Skip/cycle completion. Its executable and metadata must remain unchanged after
+exit. It does not target the installed Eiskalt app. This proves the production Qt
+bridge can serve the pinned Sparkle consumer, not that production proxy DNS,
+installer-helper network confinement, or the application shutdown controller is
+complete. Those remain separate release gates.
