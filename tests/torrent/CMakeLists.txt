@@ -6,6 +6,13 @@ if(NOT TARGET Catch2::Catch2WithMain)
     endif()
 endif()
 
+add_executable(eiskalt-selected-recheck-dependency-tests EXCLUDE_FROM_ALL
+    test_selectedrecheck_dependency.cpp)
+target_compile_features(eiskalt-selected-recheck-dependency-tests PRIVATE cxx_std_20)
+target_link_libraries(eiskalt-selected-recheck-dependency-tests PRIVATE Qt6::Core
+    LibtorrentRasterbar::torrent-rasterbar Catch2::Catch2WithMain)
+eiskalt_torrent_match_dependency_abi(eiskalt-selected-recheck-dependency-tests)
+
 # Compile the engine in this test translation unit for the private test probe.
 # The public library contains neither a peer-injection API nor test hooks.
 add_executable(eiskalt-torrent-tests test_torrent.cpp test_torrentcreator.cpp

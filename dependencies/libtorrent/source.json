@@ -1,0 +1,8 @@
+{
+  "version": "2.1.1",
+  "url": "https://github.com/arvidn/libtorrent/releases/download/v2.1.1/libtorrent-rasterbar-2.1.1.tar.gz",
+  "sha256": "0f163516ecef2e3331500266751de3098835a3c3ae0c2290448046c632bc0e93",
+  "patch_sha256": "0f5f9d0fda3c867d043785743947d1625020e4ead793b2f4e555db692faed32a",
+  "extension_abi": 1,
+  "license": "BSD-3-Clause"
+}

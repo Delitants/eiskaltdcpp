@@ -10,7 +10,8 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
-Status: proposed implementation plan, awaiting user review. No tasks executed.
+Status: approved for Native inline execution on 2026-09-30. Task 1 is complete;
+later milestones and installation/release acceptance remain pending.
 
 ## Global Constraints
 
@@ -55,15 +56,14 @@ Define `selected_recheck_request { uint64_t token; vector<piece_index_t> pieces;
 
 Expose asynchronous free functions `prepare_selected_recheck(torrent_handle, uint64_t)`, `start_selected_recheck(torrent_handle, selected_recheck_request)`, `cancel_selected_recheck(torrent_handle, uint64_t)`, `finish_selected_recheck(torrent_handle, uint64_t, bool resume_network)`, and snapshot `query_selected_recheck(torrent_handle, uint64_t) -> selected_recheck_status`. Prepare drains peer/disk activity and holds the job quiesced; start is legal only in that state; terminal results remain held until finish after Eiskalt persistence. Invalid/stale tokens produce errors without changing another operation. Polling must not block for hashing.
 
-- [ ] Add dependency tests tagged `[selected-recheck-dependency]`. Start with v1 files A/B sharing a piece plus unrelated C. Assert exact disk read set, changed availability after same-size corruption, unchanged priorities, and continued transfer on a second job. The unpatched library must fail the capability test, not silently skip the test target.
-- [ ] Record RED using a dedicated dependency-test target `eiskalt-selected-recheck-dependency-tests`. Existing ordinary system-library builds remain usable; explicitly requested capability tests must fail until patched.
-- [ ] Pin `https://github.com/arvidn/libtorrent/releases/download/v2.1.1/libtorrent-rasterbar-2.1.1.tar.gz`, expected SHA256 `0f163516ecef2e3331500266751de3098835a3c3ae0c2290448046c632bc0e93` (local installed formula provenance). Verify downloaded bytes before extraction; preserve BSD-3-Clause notices and record the patch SHA256. Do not accept redirects to arbitrary schemes or silently substitute a newer version.
-- [ ] Implement the patch using libtorrent's native disk/hash/picker machinery, including per-job network inhibition before checking. Instrument disk reads in tests, not production. Ensure v2/hybrid validation, failure eviction, partial-block/hash-cache invalidation and local corruption without peer blame. No payload writes during verification.
-- [ ] Extend dependency tests for skipped-file partfiles, v2/hybrid, absent authenticated v2 hashes, zero-size/padding, cancellation, stopped local-only handle creation, and source-read-only storage. Unknown hashes must produce unavailable, not success. Assert zero network announcements and source writes.
-- [ ] Build in `Work/dependencies/selected-recheck/arm64` using the new script, `--prefix` and `--jobs 2`; expose script `--help` and reject any prefix outside the supplied development/release staging root. Compile/run `eiskalt-selected-recheck-dependency-tests '[selected-recheck-dependency]'`. Require all cases to pass and exact read-set evidence.
-- [ ] Stop here if safe local-only checking or native v2 state correction cannot be demonstrated. Record the failing contract and revise the design with the user; do not continue to UI work. Otherwise commit only this task's paths as `Add isolated libtorrent selected-recheck capability`.
-
-### Task 2: Add A Stable Piece-Scope Planner
+- [x] Add dependency tests tagged `[selected-recheck-dependency]`. Start with v1 files A/B sharing a piece plus unrelated C. Assert exact disk read set, changed availability after same-size corruption, unchanged priorities, and continued transfer on a second job. The unpatched library must fail the capability test, not silently skip the test target.
+- [x] Record RED using a dedicated dependency-test target `eiskalt-selected-recheck-dependency-tests`. Existing ordinary system-library builds remain usable; explicitly requested capability tests must fail until patched.
+- [x] Pin `https://github.com/arvidn/libtorrent/releases/download/v2.1.1/libtorrent-rasterbar-2.1.1.tar.gz`, expected SHA256 `0f163516ecef2e3331500266751de3098835a3c3ae0c2290448046c632bc0e93` (local installed formula provenance). Verify downloaded bytes before extraction; preserve BSD-3-Clause notices and record the patch SHA256. Do not accept redirects to arbitrary schemes or silently substitute a newer version.
+- [x] Implement the patch using libtorrent's native disk/hash/picker machinery, including per-job network inhibition before checking. Instrument disk reads in tests, not production. Ensure v2/hybrid validation, failure eviction, partial-block/hash-cache invalidation and local corruption without peer blame. No payload writes during verification.
+- [x] Extend dependency tests for skipped-file partfiles, v2/hybrid, absent authenticated v2 hashes, zero-size/padding, cancellation, stopped local-only handle creation, and source-read-only storage. Unknown hashes must produce unavailable, not success. Assert zero network announcements and source writes.
+- [x] Build in `Work/dependencies/selected-recheck/arm64` using the new script, `--prefix` and `--jobs 2`; expose script `--help` and reject any prefix outside the supplied development/release staging root. Compile/run `eiskalt-selected-recheck-dependency-tests '[selected-recheck-dependency]'`. Require all cases to pass and exact read-set evidence.
+- [x] Stop here if safe local-only checking or native v2 state correction cannot be demonstrated. Record the failing contract and revise the design with the user; do not continue to UI work. Otherwise commit only this task's paths as `Add isolated libtorrent selected-recheck capability`.
+ Add A Stable Piece-Scope Planner
 
 **Files:** Create `torrent/SelectedRecheck.h`, `torrent/SelectedRecheck.cpp`, `tests/torrent/test_selectedrecheck.cpp`. Modify both Torrent CMake files.
 

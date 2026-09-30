@@ -1,0 +1,3 @@
+# Preserve upstream license bytes and unified-diff context formatting.
+dependencies/libtorrent/LICENSE -whitespace
+dependencies/libtorrent/patches/*.patch -whitespace
