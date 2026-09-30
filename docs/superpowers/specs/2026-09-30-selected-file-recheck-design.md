@@ -2,6 +2,7 @@
 
 Status: specification and implementation plan approved on 2026-09-30. Native
 dependency, scope-planner and recovery-journal components are complete locally;
+native resume replies now have a persisted generation fence. Selected-check
 application lifecycle and UI integration are not enabled.
 
 The maintainer requested individual-file rechecking after visible whole-torrent

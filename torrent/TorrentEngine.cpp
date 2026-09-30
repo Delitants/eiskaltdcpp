@@ -37,10 +37,12 @@
 #include <condition_variable>
 #include <deque>
 #include <functional>
+#include <limits>
 #include <map>
 #include <mutex>
 #include <optional>
 #include <thread>
+#include <utility>
 
 namespace eiskalt::torrent {
 namespace {
@@ -242,7 +244,9 @@ struct TorrentEngine::Impl {
         bool dcShareExcluded = false;
         bool moving = false, selectionPending = false;
         bool ownsStorage = false, storageCollision = false;
-        bool checking = false, savePending = false;
+        bool checking = false, savePending = false, saveAgain = false;
+        quint64 resumeGeneration = 1, resumeSnapshotGeneration = 1;
+        quint64 requestedSaveGeneration = 0, durableResumeGeneration = 0;
         bool deferred = false, sourceReadOnly = false;
         qint64 observedUpload = 0, uploadBaseline = 0, lastPayloadUpload = 0;
         int downloadingPeers = 0, uploadingPeers = 0;
@@ -513,9 +517,19 @@ struct TorrentEngine::Impl {
         }
         emit q->configurationApplied(epoch);
     }
+    bool invalidateResume(Record &r) {
+        if (r.resumeGeneration == std::numeric_limits<quint64>::max()) {
+            fail(r, tr("Torrent verification generation is exhausted; remove and add the job again without deleting data."));
+            return false;
+        }
+        ++r.resumeGeneration;
+        return true;
+    }
     void requestSave(Record &r) {
-        if (!r.handle.is_valid() || r.savePending) return;
+        if (!r.handle.is_valid()) return;
+        if (r.savePending) { r.saveAgain = true; return; }
         r.savePending = true;
+        r.requestedSaveGeneration = r.resumeGeneration;
         r.handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::flush_disk_cache);
     }
     void requestSaves() { for (auto &[id, r] : records) requestSave(r); }
@@ -544,6 +558,8 @@ struct TorrentEngine::Impl {
         for (auto &[id, r] : records) {
             if (r.savePending) report(tr("Torrent resume checkpoint timed out; the last atomic checkpoint was retained."));
             r.savePending = false;
+            r.saveAgain = false;
+            r.requestedSaveGeneration = 0;
             r.handle = {};
             r.notified = false;
             r.downloadingPeers = r.uploadingPeers = 0;
@@ -567,6 +583,7 @@ struct TorrentEngine::Impl {
                 params.save_path = r.savePath.toStdString();
                 const auto bytes = lt::write_resume_data_buf(params);
                 QJsonObject item{{"id", id}, {"resume", QString::fromLatin1(QByteArray(bytes.data(), qsizetype(bytes.size())).toBase64())},
+                                 {"resumeGeneration", QString::number(r.resumeSnapshotGeneration)},
                                  {"paused", r.userPaused}, {"seedStopped", r.seedStopped}, {"deferred", r.deferred},
                                  {"stopped", r.userStopped},
                                  {"dcShareExcluded", r.dcShareExcluded},
@@ -587,10 +604,12 @@ struct TorrentEngine::Impl {
         if (!QDir().mkpath(stateDir)) { report(tr("Cannot create Torrent state directory.")); return false; }
         QFile::setPermissions(stateDir, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
         QSaveFile file(QDir(stateDir).filePath("jobs.json"));
+        file.setDirectWriteFallback(false);
         if (!file.open(QIODevice::WriteOnly)) { report(tr("Cannot open Torrent resume state for atomic writing.")); return false; }
         file.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
         const auto bytes = QJsonDocument(QJsonObject{{"version", 2}, {"jobs", entries}}).toJson(QJsonDocument::Compact);
         if (file.write(bytes) != bytes.size() || !file.commit()) { report(tr("Cannot commit Torrent resume state.")); return false; }
+        for (auto &[id, r] : records) r.durableResumeGeneration = r.resumeSnapshotGeneration;
         return true;
     }
     void restore() {
@@ -609,6 +628,17 @@ struct TorrentEngine::Impl {
         }
         for (const auto &value : doc["jobs"].toArray()) {
             const auto item = value.toObject();
+            quint64 generation = 1;
+            if (item.contains("resumeGeneration")) {
+                bool valid = false;
+                const auto encoded = item["resumeGeneration"].toString();
+                generation = encoded.toULongLong(&valid);
+                if (!item["resumeGeneration"].isString() || !valid || generation == 0 ||
+                    QString::number(generation) != encoded) {
+                    report(tr("Invalid verification generation in Torrent resume state; the job was skipped."));
+                    continue;
+                }
+            }
             if ((version == 2 || item.contains("sourceReadOnly")) && !item["sourceReadOnly"].isBool()) {
                 report(tr("Invalid source protection in Torrent resume state; the job was skipped.")); continue;
             }
@@ -623,6 +653,7 @@ struct TorrentEngine::Impl {
             }
             Record r;
             r.id = id;
+            r.resumeGeneration = r.resumeSnapshotGeneration = r.durableResumeGeneration = generation;
             r.resume = std::move(params);
             r.savePath = text(r.resume.save_path);
             r.userPaused = item["paused"].toBool();
@@ -898,6 +929,7 @@ struct TorrentEngine::Impl {
             fail(r, tr("Received Torrent metadata has an unsafe path or invalid file selection.")); return;
         }
         if (!claimStorage(r, *ti, r.savePath)) return;
+        if (!invalidateResume(r)) return;
         r.handle.prioritize_files(priorities(r, *ti));
         r.selectionPending = true;
         r.handle.unset_flags(lt::torrent_flags::default_dont_download);
@@ -937,9 +969,24 @@ struct TorrentEngine::Impl {
             auto *ta = dynamic_cast<lt::torrent_alert *>(alert);
             Record *r = ta ? find(ta->handle) : nullptr;
             if (auto *a = lt::alert_cast<lt::save_resume_data_alert>(alert)) {
-                if (r) { r->resume = a->params; r->savePending = false; dirty = true; }
+                if (r && r->savePending) {
+                    // Only one save is admitted per handle. A mutation fences its
+                    // queued reply before a newer request can be submitted.
+                    if (r->requestedSaveGeneration == r->resumeGeneration) {
+                        r->resume = a->params;
+                        r->resumeSnapshotGeneration = r->requestedSaveGeneration;
+                        dirty = true;
+                    }
+                    r->savePending = false;
+                    r->requestedSaveGeneration = 0;
+                    if (std::exchange(r->saveAgain, false)) requestSave(*r);
+                }
             } else if (lt::alert_cast<lt::save_resume_data_failed_alert>(alert)) {
-                if (r) r->savePending = false;
+                if (r) {
+                    r->savePending = false;
+                    r->requestedSaveGeneration = 0;
+                    if (std::exchange(r->saveAgain, false)) requestSave(*r);
+                }
                 if (r && closing) closingCheckpointOk = false;
                 report(tr("Torrent resume checkpoint failed; retaining the previous checkpoint."));
             } else if (lt::alert_cast<lt::metadata_received_alert>(alert)) {
@@ -989,6 +1036,7 @@ struct TorrentEngine::Impl {
                     fail(r, tr("Unsafe or unavailable Torrent completed directory.")); return;
                 }
                 r.moving = true;
+                if (!invalidateResume(r)) { r.moving = false; return; }
                 r.handle.move_storage(config.completedPath.toStdString(), lt::move_flags_t::fail_if_exist);
             }
             return;
@@ -1401,6 +1449,7 @@ void TorrentEngine::setWantedFiles(const QString &id, const QList<int> &wanted, 
             r.wanted = old;
             p->report(tr("Invalid Torrent file selection.")); return;
         }
+        if (!p->invalidateResume(r)) { r.wanted = old; p->publish(); return; }
         r.notified = false;
         for (auto priority = filePriorities.cbegin(); priority != filePriorities.cend(); ++priority)
             r.filePriorities.insert(priority.key(), priority.value());
@@ -1538,6 +1587,7 @@ void TorrentEngine::recheck(const QString &id) {
         if (r.sourceReadOnly && !p->sourceAvailable(*ti, r.savePath)) {
             p->fail(r, tr("Original Torrent source files are missing or changed size; recheck refused.")); return;
         }
+        if (!p->invalidateResume(r)) { p->publish(); return; }
         r.notified = false;
         r.checking = true;
         r.failure.clear();

@@ -11,7 +11,8 @@
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
 Status: approved for Native inline execution on 2026-09-30. Tasks 1-3 are complete;
-later milestones and installation/release acceptance remain pending.
+Task 4's resume-generation fence is implemented locally, but the selected-check
+lifecycle, later milestones and installation/release acceptance remain pending.
 
 ## Global Constraints
 
@@ -86,6 +87,13 @@ Expose asynchronous free functions `prepare_selected_recheck(torrent_handle, uin
 - [x] Run to GREEN; commit as `Persist selective verification recovery barriers`. Atomic app-crash recovery is required; do not claim power-loss guarantees beyond the existing persistence layer.
 
 ### Task 4: Integrate Engine Lifecycle And Recovery
+
+Checkpoint: native save replies are generation-gated, overlapping save requests
+coalesce one follow-up checkpoint, and canonical 64-bit generations survive
+atomic persistence and restart. Eight focused cases cover delayed replies,
+legacy profiles, malformed/exhausted generations and failed atomic writes.
+The journal-to-native admission/finalization/recovery flow below is not enabled;
+this checkpoint does not complete Task 4.
 
 **Files:** Modify `torrent/TorrentEngine.h`, `torrent/TorrentEngine.cpp`, `torrent/TorrentTypes.h`, `tests/torrent/test_torrent.cpp`; use Tasks 1-3 components without reimplementing hashing.
 

@@ -3427,3 +3427,242 @@ TEST_CASE("DC exclusion fences a stale worker publication synchronously", "[torr
     REQUIRE(eventually([&] { return engine.publicationValid(id, jobSnapshot(engine, id).revision, epoch); }));
     REQUIRE_FALSE(engine.publicationValid(id, before, epoch));
 }
+
+namespace {
+QJsonObject savedJob(const QString &path, const QString &id) {
+    QFile state(path);
+    if (!state.open(QIODevice::ReadOnly)) return {};
+    for (const auto &entry : QJsonDocument::fromJson(state.readAll())["jobs"].toArray())
+        if (entry.toObject()["id"].toString() == id) return entry.toObject();
+    return {};
+}
+}
+
+TEST_CASE("A delayed native resume reply cannot restore pre-check availability", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 2s;
+        while (r.savePending && Clock::now() < deadline) {
+            d.alerts();
+            d.session->wait_for_alert(lt::milliseconds(10));
+        }
+        if (r.savePending) return false;
+        d.requestSave(r);
+        if (!d.invalidateResume(r)) return false;
+        // Model the conservative availability produced by an admitted native
+        // check, while its older real save reply is still queued in libtorrent.
+        r.resume.have_pieces.resize(r.resume.ti->num_pieces(), false);
+        r.resume.have_pieces.clear_all();
+        r.resume.name = "new verification generation";
+        while (r.savePending && Clock::now() < deadline) {
+            d.alerts();
+            d.session->wait_for_alert(lt::milliseconds(10));
+        }
+        return !r.savePending;
+    }));
+    CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        const auto &resume = d.records.at(id).resume;
+        return resume.have_pieces.count() == 0 && resume.name == "new verification generation";
+    }));
+}
+
+TEST_CASE("A current native resume reply remains eligible after older replies drain", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 2s;
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        if (r.savePending || !d.invalidateResume(r)) return false;
+        r.resume.have_pieces.clear_all();
+        d.requestSave(r);
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        return !r.savePending && r.resume.have_pieces.count() == r.resume.ti->num_pieces() && d.persist();
+    }));
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "2");
+}
+
+TEST_CASE("A new checkpoint requested behind an old native save is not lost", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 2s;
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        if (r.savePending) return false;
+        d.requestSave(r);
+        if (!d.invalidateResume(r)) return false;
+        d.requestSave(r);
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        return !r.savePending && d.persist();
+    }));
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "2");
+}
+
+TEST_CASE("Resume generations survive restart and whole recheck advances them", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    QString id;
+    {
+        TorrentEngine engine(dir.filePath("state"));
+        engine.configure(settings, {});
+        id = engine.add(fixture(settings.downloadPath));
+        REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+        engine.recheck(id);
+        REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+        REQUIRE(engine.shutdownChecked());
+    }
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "2");
+    TorrentEngine restored(dir.filePath("state"));
+    restored.configure(settings, {});
+    REQUIRE(eventually([&] { return jobSnapshot(restored, id).complete; }));
+    restored.recheck(id);
+    REQUIRE(eventually([&] { return jobSnapshot(restored, id).complete; }));
+    REQUIRE(restored.shutdownChecked());
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "3");
+}
+
+TEST_CASE("Invalid persisted resume generations never start a job", "[selected-recheck-engine][resume-fence]") {
+    application();
+    for (const auto &invalid : QList<QJsonValue>{"0", "01", "-1", "18446744073709551616", 2.0, QJsonValue::Null}) {
+        DYNAMIC_SECTION("invalid generation " << invalid.toVariant().toString().toStdString()) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            QString id;
+            {
+                TorrentEngine engine(dir.filePath("state"));
+                engine.configure(settings, {});
+                id = engine.add(fixture(settings.downloadPath), {}, {}, true);
+                REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+                REQUIRE(engine.shutdownChecked());
+            }
+            QFile state(dir.filePath("state/jobs.json"));
+            REQUIRE(state.open(QIODevice::ReadOnly));
+            auto root = QJsonDocument::fromJson(state.readAll()).object();
+            state.close();
+            auto jobs = root["jobs"].toArray();
+            auto item = jobs[0].toObject();
+            item["resumeGeneration"] = invalid;
+            jobs[0] = item;
+            root["jobs"] = jobs;
+            REQUIRE(state.open(QIODevice::WriteOnly | QIODevice::Truncate));
+            const auto bytes = QJsonDocument(root).toJson();
+            REQUIRE(state.write(bytes) == bytes.size());
+            state.close();
+            TorrentEngine restored(dir.filePath("state"));
+            QStringList errors;
+            QObject::connect(&restored, &TorrentEngine::error, &restored, [&](QString message) { errors << message; });
+            restored.configure(settings, {});
+            REQUIRE(TorrentEngineTestAccess::call(restored, [](auto &) { return true; }));
+            QCoreApplication::processEvents();
+            CHECK(restored.jobs().isEmpty());
+            CHECK_FALSE(errors.isEmpty());
+            CHECK_FALSE(TorrentEngineTestAccess::active(restored));
+        }
+    }
+}
+
+TEST_CASE("An exhausted resume generation refuses a new verification fence", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    TorrentEngine engine(dir.filePath("state"));
+    CHECK(TorrentEngineTestAccess::call(engine, [](auto &d) {
+        auto &r = d.records[QStringLiteral("exhausted")];
+        r.id = "exhausted";
+        r.resumeGeneration = std::numeric_limits<quint64>::max();
+        return !d.invalidateResume(r) && !r.failure.isEmpty();
+    }));
+}
+
+TEST_CASE("Legacy and full-width generations retain their identity after restart", "[selected-recheck-engine][resume-fence]") {
+    application();
+    bool legacy = false;
+    SECTION("legacy profile without a generation") { legacy = true; }
+    SECTION("generation beyond JSON exact numeric range") { legacy = false; }
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    QString id;
+    {
+        TorrentEngine engine(dir.filePath("state"));
+        engine.configure(settings, {});
+        id = engine.add(fixture(settings.downloadPath), {}, {}, true);
+        REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+        REQUIRE(engine.shutdownChecked());
+    }
+    QFile state(dir.filePath("state/jobs.json"));
+    REQUIRE(state.open(QIODevice::ReadOnly));
+    auto root = QJsonDocument::fromJson(state.readAll()).object();
+    state.close();
+    auto jobs = root["jobs"].toArray();
+    auto item = jobs[0].toObject();
+    if (legacy) item.remove("resumeGeneration");
+    else item["resumeGeneration"] = "18446744073709551614";
+    jobs[0] = item;
+    root["jobs"] = jobs;
+    REQUIRE(state.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    const auto bytes = QJsonDocument(root).toJson();
+    REQUIRE(state.write(bytes) == bytes.size());
+    state.close();
+    TorrentEngine restored(dir.filePath("state"));
+    restored.configure(settings, {});
+    REQUIRE(eventually([&] { return !restored.files(id).isEmpty(); }));
+    restored.pause(id, false);
+    REQUIRE(eventually([&] { return jobSnapshot(restored, id).complete; }));
+    restored.recheck(id);
+    REQUIRE(eventually([&] { return jobSnapshot(restored, id).complete; }));
+    REQUIRE(restored.shutdownChecked());
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() ==
+        (legacy ? "2" : "18446744073709551615"));
+}
+
+TEST_CASE("A failed atomic checkpoint cannot advance the durable verification generation", "[selected-recheck-engine][resume-fence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    const auto state = dir.filePath("state");
+    TorrentEngine engine(state);
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id, state](auto &d) {
+        auto &r = d.records.at(id);
+        const auto deadline = Clock::now() + 2s;
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        if (r.savePending || !d.persist() || r.durableResumeGeneration != 1 || !d.invalidateResume(r)) return false;
+        d.requestSave(r);
+        while (r.savePending && Clock::now() < deadline) { d.alerts(); d.session->wait_for_alert(lt::milliseconds(10)); }
+        if (r.savePending || r.resumeSnapshotGeneration != 2) return false;
+        const auto path = QDir(state).filePath("jobs.json");
+        if (!QFile::rename(path, path + ".previous") || !QDir().mkdir(path)) return false;
+        const bool refused = !d.persist() && r.durableResumeGeneration == 1;
+        const bool restored = QDir().rmdir(path) && QFile::rename(path + ".previous", path);
+        return refused && restored && d.persist() && r.durableResumeGeneration == 2;
+    }));
+    CHECK(savedJob(dir.filePath("state/jobs.json"), id)["resumeGeneration"].toString() == "2");
+}
