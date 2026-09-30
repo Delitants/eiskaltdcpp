@@ -6301,6 +6301,18 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Stop</source>
             <translation>Διακοπή</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Άνοιγμα θέσης λήψης στο Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Άνοιγμα φακέλου λήψης</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Δεν ήταν δυνατό το άνοιγμα του φακέλου λήψης.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10204,6 +10216,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Αποστολή ανεσταλμένη προς τον ομότιμο</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Επανέλεγχος σε αναμονή</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Επανέλεγχος σε αναμονή (σε παύση)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Επανέλεγχος σε παύση (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Επανέλεγχος... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Ο επανέλεγχος δεν είναι διαθέσιμος. Συνεχίστε πρώτα το torrent.</translation>
         </message>
     </context>
     <context>

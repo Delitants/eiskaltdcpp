@@ -6295,6 +6295,18 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
             <source>Stop</source>
             <translation>Zaustavi</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Otvori mesto preuzimanja u Finder-u</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Otvori fasciklu preuzimanja</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Nije moguće otvoriti fasciklu preuzimanja.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10347,6 +10359,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</trans
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Slanje učesniku je obustavljeno</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Ponovna provera je na čekanju</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Ponovna provera je na čekanju (pauzirano)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Ponovna provera je pauzirana (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Ponovna provera... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Ponovna provera nije dostupna. Prvo nastavite torent.</translation>
         </message>
     </context>
     <context>

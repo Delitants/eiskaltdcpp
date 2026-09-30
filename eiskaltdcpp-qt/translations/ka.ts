@@ -6265,6 +6265,18 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Stop</source>
             <translation>შეჩერება</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>ჩამოტვირთვის მდებარეობის გახსნა Finder-ში</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>ჩამოტვირთვის საქაღალდის გახსნა</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>ჩამოტვირთვის საქაღალდე ვერ გაიხსნა.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10192,6 +10204,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>პირთან ატვირთვა შეფერხებულია</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>ხელახალი შემოწმება რიგშია</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>ხელახალი შემოწმება რიგშია (შეჩერებულია)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>ხელახალი შემოწმება შეჩერებულია (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>ხელახალი შემოწმება... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>ხელახალი შემოწმება მიუწვდომელია. ჯერ განაახლეთ ტორენტი.</translation>
         </message>
     </context>
     <context>

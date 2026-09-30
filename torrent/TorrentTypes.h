@@ -67,6 +67,8 @@ struct Job {
     bool dcShareExcluded = false;
     bool proxied = false;
     bool stopped = false, v1 = false, v2 = false;
+    bool checking = false;
+    double checkProgress = -1; // Negative while queued; separate from downloaded bytes.
 };
 
 } // namespace eiskalt::torrent

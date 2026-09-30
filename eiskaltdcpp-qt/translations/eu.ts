@@ -6210,6 +6210,18 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <source>Stop</source>
             <translation>Gelditu</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Ireki deskargaren kokapena Finder-en</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Ireki deskargen karpeta</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Ezin izan da deskargen karpeta ireki.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10097,6 +10109,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Parerako igoera etenda</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Berriz egiaztatzea ilaran</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Berriz egiaztatzea ilaran (pausatuta)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Berriz egiaztatzea pausatuta (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Berriz egiaztatzen... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Ezin da berriz egiaztatu. Berrekin torrentari lehenik.</translation>
         </message>
     </context>
     <context>

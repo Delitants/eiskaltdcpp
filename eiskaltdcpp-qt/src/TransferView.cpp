@@ -730,6 +730,9 @@ void TransferView::torrentContextMenu(const QModelIndexList &selection)
     stateLabel->setEnabled(false);
     auto *details = menu.addAction(torrent_toolbar::icon(), tr("Torrent details"));
     details->setEnabled(ids.size() == 1);
+    auto *openLocation = torrent_action_menu::createLocationAction(&menu);
+    openLocation->setEnabled(jobs.size() == 1 && !torrent_action_menu::downloadDirectory(jobs.front()).isEmpty());
+    menu.addAction(openLocation);
     menu.addSeparator();
     const auto controls = torrent_action_menu::create(&menu, this);
     auto *pause = controls.pause;
@@ -760,6 +763,11 @@ void TransferView::torrentContextMenu(const QModelIndexList &selection)
     }
     if (action == details && survivingIds.size() == 1) {
         emit torrentDetailsRequested(*survivingIds.cbegin());
+    } else if (action == openLocation && engine && survivingIds.size() == 1) {
+        for (const auto &job : engine->jobs()) {
+            if (survivingIds.contains(job.id) && !torrent_action_menu::openDownloadDirectory(job))
+                QMessageBox::warning(this, openLocation->text(), torrent_action_menu::locationError());
+        }
     } else if ((action == shareDc || action == shareTorrent) && !survivingIds.isEmpty()) {
         emit torrentMagnetShareRequested(survivingIds.values(), action == shareDc);
     } else if (engine && (action == pause || action == resume || action == stop)) {

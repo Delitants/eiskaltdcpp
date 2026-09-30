@@ -6319,6 +6319,18 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Stop</source>
             <translation>Заустави</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Отвори место преузимања у Finder-у</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Отвори фасциклу преузимања</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Није могуће отворити фасциклу преузимања.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10358,6 +10370,26 @@ EiskaltDC++ подржава отпремање фајл листи и фајл�
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Слање учеснику је обустављено</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Поновна провера је на чекању</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Поновна провера је на чекању (паузирано)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Поновна провера је паузирана (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Поновна провера... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Поновна провера није доступна. Прво наставите торент.</translation>
         </message>
     </context>
     <context>

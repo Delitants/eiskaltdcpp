@@ -6194,6 +6194,18 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
             <source>Stop</source>
             <translation>Stoppar</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Aperter li localisation del descargas in Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Aperter li fólder de descargas</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Ne successat aperter li fólder de descargas.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10053,6 +10065,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Cargament al pare impedit</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Recontrol in linea</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Recontrol in linea (pausat)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Recontrol pausat (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Recontrol... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Recontrol ínaccessibil. In prim reprende li torrent.</translation>
         </message>
     </context>
     <context>

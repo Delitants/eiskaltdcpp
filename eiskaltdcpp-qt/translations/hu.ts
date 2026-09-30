@@ -6311,6 +6311,18 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <source>Stop</source>
             <translation>Leállítás</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Letöltési hely megnyitása a Finderben</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Letöltési mappa megnyitása</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Nem sikerült megnyitni a letöltési mappát.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10354,6 +10366,26 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Feltöltés felfüggesztve a partnernek</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Újraellenőrzés sorban</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Újraellenőrzés sorban (szüneteltetve)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Újraellenőrzés szüneteltetve (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Újraellenőrzés... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Az újraellenőrzés nem érhető el. Előbb folytassa a torrentet.</translation>
         </message>
     </context>
     <context>

@@ -1101,6 +1101,14 @@ struct TorrentEngine::Impl {
                 j.privateTorrent = ti && ti->priv();
             }
             j.progress = double(r.status.progress_ppm) / 1000000;
+            const bool checkingFiles = r.status.state == lt::torrent_status::checking_files;
+            j.checking = r.checking || (r.handle.is_valid() &&
+                (checkingFiles || r.status.state == lt::torrent_status::checking_resume_data));
+            if (j.checking) {
+                j.checkProgress = checkingFiles ? std::clamp(j.progress, 0.0, 1.0) : -1;
+                j.progress = r.status.total_wanted > 0 ? std::clamp(
+                    double(r.status.total_wanted_done) / r.status.total_wanted, 0.0, 1.0) : 0;
+            }
             j.size = r.status.total_wanted;
             j.downloaded = r.status.total_wanted_done;
             j.uploaded = r.observedUpload;
@@ -1129,9 +1137,15 @@ struct TorrentEngine::Impl {
                 j.downloadRate = j.uploadRate = 0;
             }
             if (!j.error.isEmpty()) j.state = tr("Blocked");
+            else if (j.checking) {
+                if (j.checkProgress < 0)
+                    j.state = j.paused ? tr("Recheck queued (paused)") : tr("Recheck queued");
+                else
+                    j.state = (j.paused ? tr("Recheck paused (%1%)") : tr("Rechecking... %1%"))
+                        .arg(j.checkProgress * 100, 0, 'f', 1);
+            }
             else if (r.userStopped) j.state = tr("Stopped");
             else if (r.userPaused) j.state = tr("Paused");
-            else if (r.checking || r.status.state == lt::torrent_status::checking_files || r.status.state == lt::torrent_status::checking_resume_data) j.state = tr("Checking");
             else if (r.moving) j.state = tr("Moving completed files");
             else if (r.seedStopped) j.state = tr("Seeding limit reached");
             else if (r.wanted && r.wanted->isEmpty()) j.state = tr("No files selected");
@@ -1513,7 +1527,11 @@ void TorrentEngine::recheck(const QString &id) {
         auto &r = it->second;
         r.revision = revision;
         if (r.storageCollision) { p->publish(); return; }
-        if (!r.handle.is_valid()) { p->publish(); return; }
+        if (!r.handle.is_valid()) {
+            p->report(tr("Recheck unavailable. Resume the Torrent first."));
+            p->publish();
+            return;
+        }
         auto ti = r.handle.torrent_file();
         if (!ti || !safeMetadata(*ti, r.savePath)) { p->fail(r, tr("Unsafe Torrent storage path; recheck refused.")); return; }
         p->protectSource(r);

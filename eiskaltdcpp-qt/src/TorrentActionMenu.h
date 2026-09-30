@@ -4,11 +4,44 @@
 #include "torrent/TorrentTypes.h"
 #include <QAction>
 #include <QCoreApplication>
+#include <QDesktopServices>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrl>
 #include <QStyle>
 #include <QWidget>
 #include <algorithm>
 
 namespace torrent_action_menu {
+inline QString downloadDirectory(const eiskalt::torrent::Job &job)
+{
+    const auto &path = job.savePath;
+    return !path.contains(QChar(0)) && QDir::isAbsolutePath(path) && QFileInfo(path).isDir()
+        ? QDir::cleanPath(path) : QString{};
+}
+
+inline bool openDownloadDirectory(const eiskalt::torrent::Job &job)
+{
+    const auto path = downloadDirectory(job);
+    return !path.isEmpty() && QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+}
+
+inline QAction *createLocationAction(QObject *parent)
+{
+#ifdef Q_OS_MAC
+    auto *action = new QAction(QCoreApplication::translate("TorrentWindow", "Open Download Location in Finder"), parent);
+#else
+    auto *action = new QAction(QCoreApplication::translate("TorrentWindow", "Open Download Folder"), parent);
+#endif
+    action->setObjectName(QStringLiteral("torrentOpenLocation"));
+    return action;
+}
+
+inline QString locationError()
+{
+    return QCoreApplication::translate("TorrentWindow", "Could not open the download folder.");
+}
+
 struct Actions {
     QAction *pause;
     QAction *resume;

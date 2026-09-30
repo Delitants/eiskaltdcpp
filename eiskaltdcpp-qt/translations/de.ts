@@ -6315,6 +6315,18 @@ Zum schreibgeschützten Seeding hinzugefügt. Die Quelldateien werden anhand ihr
             <source>Stop</source>
             <translation>Stoppen</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Download-Ordner im Finder öffnen</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Download-Ordner öffnen</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Der Download-Ordner konnte nicht geöffnet werden.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10378,6 +10390,26 @@ gewährt EiskaltDC++ ihm wieder einen Slot.</translation>
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Upload blockiert</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Erneute Prüfung eingereiht</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Erneute Prüfung eingereiht (pausiert)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Erneute Prüfung pausiert (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Erneute Prüfung... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Erneute Prüfung nicht verfügbar. Setzen Sie zuerst den Torrent fort.</translation>
         </message>
     </context>
     <context>

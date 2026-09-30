@@ -6318,6 +6318,18 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
             <source>Stop</source>
             <translation>Detener</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Abrir ubicación de descarga en Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Abrir carpeta de descarga</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>No se pudo abrir la carpeta de descarga.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10417,6 +10429,26 @@ volverá a conceder un slot a dicho usuario.</translation>
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Subida bloqueada</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Recomprobación en cola</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Recomprobación en cola (en pausa)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Recomprobación en pausa (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Recomprobando... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Recomprobación no disponible. Reanude primero el torrent.</translation>
         </message>
     </context>
     <context>

@@ -6291,6 +6291,18 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
             <source>Stop</source>
             <translation>Zatrzymaj</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Otwórz miejsce pobierania w Finderze</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Otwórz folder pobierania</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Nie udało się otworzyć folderu pobierania.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10268,6 +10280,26 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Wysyłanie wstrzymane</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Ponowne sprawdzanie w kolejce</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Ponowne sprawdzanie w kolejce (wstrzymane)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Ponowne sprawdzanie wstrzymane (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Ponowne sprawdzanie... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Ponowne sprawdzanie niedostępne. Najpierw wznów torrent.</translation>
         </message>
     </context>
     <context>

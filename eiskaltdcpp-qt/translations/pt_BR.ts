@@ -6265,6 +6265,18 @@ Adicionado para distribuição somente leitura. Os hashes dos arquivos de origem
             <source>Stop</source>
             <translation>Parar</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Abrir local de download no Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Abrir pasta de download</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Não foi possível abrir a pasta de download.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10136,6 +10148,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Envio bloqueado</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Reverificação na fila</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Reverificação na fila (pausada)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Reverificação pausada (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Reverificando... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Reverificação indisponível. Retome o torrent primeiro.</translation>
         </message>
     </context>
     <context>

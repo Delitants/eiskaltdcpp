@@ -6319,6 +6319,18 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <source>Stop</source>
             <translation>Durdur</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>İndirme konumunu Finder'da aç</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>İndirme klasörünü aç</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>İndirme klasörü açılamadı.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10380,6 +10392,26 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Yükleme engellendi</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Yeniden denetim sırada</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Yeniden denetim sırada (duraklatıldı)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Yeniden denetim duraklatıldı (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Yeniden denetleniyor... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Yeniden denetim kullanılamıyor. Önce torrenti sürdürün.</translation>
         </message>
     </context>
     <context>

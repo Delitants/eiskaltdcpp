@@ -6320,6 +6320,18 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Stop</source>
             <translation>Остановить</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Открыть папку загрузки в Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Открыть папку загрузки</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Не удалось открыть папку загрузки.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10395,6 +10407,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Отдача заблокирована</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Перепроверка в очереди</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Перепроверка в очереди (приостановлена)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Перепроверка приостановлена (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Перепроверка... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Перепроверка недоступна. Сначала возобновите торрент.</translation>
         </message>
     </context>
     <context>

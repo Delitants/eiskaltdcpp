@@ -6299,6 +6299,18 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
             <source>Stop</source>
             <translation>Arrêter</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Ouvrir l'emplacement du téléchargement dans le Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Ouvrir le dossier de téléchargement</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Impossible d'ouvrir le dossier de téléchargement.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10326,6 +10338,26 @@ les dix minutes, EiskaltDC++ lui redonne automatiquement un slot.</translation>
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Envoi bloqué</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Revérification en attente</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Revérification en attente (en pause)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Revérification en pause (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Revérification... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Revérification indisponible. Reprenez d'abord le torrent.</translation>
         </message>
     </context>
     <context>

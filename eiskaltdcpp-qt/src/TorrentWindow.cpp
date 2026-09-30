@@ -298,7 +298,7 @@ struct TorrentWindow::Controls {
     QLabel *notice, *fileNotice, *peerNotice, *sharing;
     QPushButton *applyFiles;
     QAction *addFile, *addMagnet, *pause, *resume, *stop, *remove, *deleteFiles, *recheck;
-    QAction *shareDc, *shareTorrent;
+    QAction *shareDc, *shareTorrent, *openLocation;
     QAction *dcShareFollowGlobal, *dcShareExclude;
     QMenu *dcSharing;
     FileExtensionIcons fileIcons;
@@ -391,6 +391,8 @@ TorrentWindow::TorrentWindow(TorrentEngine *torrentEngine, const QString &layout
     ui->jobs->setSelectionMode(QAbstractItemView::ExtendedSelection);
     ui->jobs->setContextMenuPolicy(Qt::ActionsContextMenu);
     ui->jobs->addActions({ui->pause, ui->resume, ui->stop, ui->recheck, ui->remove});
+    ui->openLocation = torrent_action_menu::createLocationAction(ui->jobs);
+    ui->jobs->addAction(ui->openLocation);
     ui->shareDc = new QAction(tr("Paste DC++ magnet(s) in chat"), ui->jobs);
     ui->shareTorrent = new QAction(tr("Paste Torrent Magnet(s) in chat"), ui->jobs);
     ui->shareDc->setObjectName(QStringLiteral("torrentShareDc"));
@@ -657,6 +659,16 @@ TorrentWindow::TorrentWindow(TorrentEngine *torrentEngine, const QString &layout
     connect(ui->remove, &QAction::triggered, this, [this] { removeSelected(false); });
     connect(ui->deleteFiles, &QAction::triggered, this, [this] { removeSelected(true); });
     connect(ui->recheck, &QAction::triggered, this, &TorrentWindow::recheckSelected);
+    connect(ui->openLocation, &QAction::triggered, this, [this] {
+        const auto id = selectedId();
+        if (!engine || id.isEmpty()) return;
+        for (const auto &job : engine->jobs()) {
+            if (job.id != id) continue;
+            if (!torrent_action_menu::openDownloadDirectory(job))
+                showError(torrent_action_menu::locationError());
+            return;
+        }
+    });
     connect(ui->jobs, &QTreeWidget::itemSelectionChanged, this, [this] {
         selectionDirty = false;
         ui->restoreJobId.clear();
@@ -867,11 +879,15 @@ void TorrentWindow::refresh()
         ui->pendingRefresh = true;
         return;
     }
+    renderJobs(engine ? engine->jobs() : QList<Job>{});
+}
+
+void TorrentWindow::renderJobs(const QList<Job> &jobs)
+{
     auto selected = selectedIds();
     if (selected.isEmpty() && !ui->restoreJobId.isEmpty()) selected.append(ui->restoreJobId);
     const int scroll = ui->jobs->verticalScrollBar()->value();
     const QSignalBlocker blocked(ui->jobs);
-    const auto jobs = engine ? engine->jobs() : QList<Job>{};
     // Update existing rows instead of replacing the model/header on each alert.
     QHash<QString, QTreeWidgetItem *> existing;
     for (int i = 0; i < ui->jobs->topLevelItemCount(); ++i) {
@@ -902,7 +918,12 @@ void TorrentWindow::refresh()
             auto palette = ui->jobs->palette();
             palette.setColor(QPalette::Highlight, color);
             progress->setPalette(palette);
-            progress->setValue(std::isfinite(job.progress) ? qRound(std::clamp(job.progress, 0.0, 1.0) * 1000) : 0);
+            const bool queued = job.checking && job.checkProgress < 0;
+            progress->setRange(0, queued && !job.paused ? 0 : 1000);
+            progress->setFormat(queued ? QString{} : tr("%p%"));
+            progress->setToolTip(job.checking ? job.state : QString{});
+            const double value = job.checking ? job.checkProgress : job.progress;
+            progress->setValue(std::isfinite(value) ? qRound(std::clamp(value, 0.0, 1.0) * 1000) : 0);
         }
         item->setText(Size, sizeText(job.size));
         item->setText(DownloadSpeed, tr("%1/s").arg(sizeText(job.downloadRate)));
@@ -1057,7 +1078,8 @@ void TorrentWindow::updateActions()
     ui->shareTorrent->setEnabled(selected);
     ui->remove->setEnabled(single);
     ui->deleteFiles->setEnabled(single);
-    ui->recheck->setEnabled(single && available);
+    ui->recheck->setEnabled(single && available && !selectedJobs.first().checking);
+    ui->openLocation->setEnabled(single && !torrent_action_menu::downloadDirectory(selectedJobs.first()).isEmpty());
     ui->files->setEnabled(single);
     ui->peers->setEnabled(single);
     ui->applyFiles->setEnabled(single && selectionDirty && !fileJobId.isEmpty());

@@ -6319,6 +6319,18 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <source>Stop</source>
             <translation>Stoppa</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Öppna nedladdningsplats i Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Öppna nedladdningsmapp</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Kunde inte öppna nedladdningsmappen.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10376,6 +10388,26 @@ stänga hans slott, men om användaren återkommer inom
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Uppladdning hålls tillbaka för motparten</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Omkontroll köad</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Omkontroll köad (pausad)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Omkontroll pausad (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Kontrollerar igen... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Omkontroll är inte tillgänglig. Återuppta torrenten först.</translation>
         </message>
     </context>
     <context>

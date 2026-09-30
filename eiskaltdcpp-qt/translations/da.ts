@@ -6202,6 +6202,18 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <source>Stop</source>
             <translation>Stop</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Åbn downloadplacering i Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Åbn downloadmappe</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Kunne ikke åbne downloadmappen.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10065,6 +10077,26 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Upload tilbageholdes for peer</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Genkontrol i kø</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Genkontrol i kø (sat på pause)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Genkontrol sat på pause (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Genkontrollerer... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Genkontrol er ikke tilgængelig. Genoptag først torrenten.</translation>
         </message>
     </context>
     <context>

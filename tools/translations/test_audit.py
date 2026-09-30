@@ -161,7 +161,9 @@ class ExtractionRegressionTests(unittest.TestCase):
             keys = {(c.findtext("name"), m.findtext("source"))
                     for c in ET.parse(output).getroot().findall("context")
                     for m in c.findall("message")}
-        self.assertEqual({("TorrentWindow", text) for text in ("Pause", "Resume", "Stop")}, keys)
+        self.assertEqual({("TorrentWindow", text) for text in (
+            "Pause", "Resume", "Stop", "Open Download Folder",
+            "Open Download Location in Finder", "Could not open the download folder.")}, keys)
 
     def test_manifest_includes_root_torrent_sources_and_headers(self):
         manifest = ROOT / "eiskaltdcpp-qt/translations.pro"

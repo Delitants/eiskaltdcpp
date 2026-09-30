@@ -583,6 +583,49 @@ TEST_CASE("MainWindow Torrent action toggles the real singleton without losing s
     CHECK_FALSE(QFile::exists(fixture.home.filePath("downloads/payload.bin")));
 }
 
+TEST_CASE("Transfer Torrent menu exposes the actual download directory", "[qt][torrent-location][mainwindow]")
+{
+    IsolatedMainWindow fixture;
+    auto *engine = TorrentRuntime::instance()->engine();
+    QFile metadata(fixture.home.filePath("offline.torrent"));
+    REQUIRE(metadata.open(QIODevice::WriteOnly));
+    const QByteArray bytes = QByteArray("d4:infod6:lengthi1e4:name11:payload.bin12:piece lengthi16384e6:pieces20:") +
+        QCryptographicHash::hash("x", QCryptographicHash::Sha1) + "ee";
+    REQUIRE(metadata.write(bytes) == bytes.size());
+    metadata.close();
+    const auto path = fixture.home.filePath("downloads");
+    REQUIRE(QDir().mkpath(path));
+    const auto id = engine->add(metadata.fileName(), path, {}, true);
+    REQUIRE_FALSE(id.isEmpty());
+    // The optimistic admission row has no resolved storage location yet.
+    REQUIRE(waitFor([&] { return engine->files(id).size() == 1; }));
+    TransferView transfers(*fixture.core);
+    transfers.setTorrentEngine(engine);
+    transfers.show();
+    auto *table = child<QTreeView>(&transfers, "treeView_TRANSFERS");
+    REQUIRE(waitFor([&] { return table->model()->rowCount() == 1; }));
+    table->selectionModel()->select(table->model()->index(0, 0),
+        QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    bool found = false, enabled = false;
+    QTimer closer;
+    QObject::connect(&closer, &QTimer::timeout, &transfers, [&] {
+        if (auto *menu = qobject_cast<QMenu *>(QApplication::activePopupWidget())) {
+            if (auto *action = menu->findChild<QAction *>("torrentOpenLocation")) {
+                found = true;
+                enabled = action->isEnabled();
+            }
+            menu->close();
+        }
+    });
+    closer.start(20);
+    REQUIRE(QMetaObject::invokeMethod(&transfers, "slotContextMenu", Qt::DirectConnection, Q_ARG(QPoint, QPoint{})));
+    closer.stop();
+    CHECK(found);
+    CHECK(enabled);
+    CHECK(engine->jobs().first().paused);
+    CHECK_FALSE(QFile::exists(QDir(path).filePath("payload.bin")));
+}
+
 TEST_CASE("Transfer columns persist manual widths through real view reconstruction", "[qt][transfer-columns][mainwindow]")
 {
     QTranslator translation;

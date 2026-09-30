@@ -6308,6 +6308,18 @@ Přidáno ke sdílení v režimu pouze pro čtení. U zdrojových souborů se ov
             <source>Stop</source>
             <translation>Zastavit</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Otevřít umístění stahování ve Finderu</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Otevřít složku stahování</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Složku stahování se nepodařilo otevřít.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10360,6 +10372,26 @@ pokud se uživatel vrátí do 10 minut, EiskaltDC++ mu tyto sloty navrátí.</tr
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Odesílání blokováno</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Opětovná kontrola čeká ve frontě</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Opětovná kontrola čeká ve frontě (pozastaveno)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Opětovná kontrola pozastavena (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Opětovná kontrola... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Opětovná kontrola není dostupná. Nejprve obnovte torrent.</translation>
         </message>
     </context>
     <context>

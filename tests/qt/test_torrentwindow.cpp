@@ -15,6 +15,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCryptographicHash>
+#include <QDesktopServices>
 #include <QElapsedTimer>
 #include <QFile>
 #include <QHeaderView>
@@ -44,11 +45,23 @@
 #include <QTreeWidget>
 #include <functional>
 
+class TorrentLocationCapture : public QObject {
+    Q_OBJECT
+public:
+    QList<QUrl> opened;
+public slots:
+    void open(const QUrl &url) { opened.append(url); }
+};
+
 using namespace eiskalt::torrent;
 
 // Exercise the same snapshot renderer as refreshPeers without starting networking.
 // The requires branches keep the pre-implementation RED build runnable.
 struct TorrentWindowTestAccess {
+    template<class Window> static void jobs(Window &window, const QList<Job> &jobs) {
+        if constexpr (requires { window.renderJobs(jobs); }) window.renderJobs(jobs);
+        else FAIL("No snapshot job renderer");
+    }
     template<class Window> static void render(Window &window, const QList<Peer> &peers)
     {
         if constexpr (requires { window.renderPeers(QString{}, peers); })
@@ -144,6 +157,81 @@ QString pausedFixture(QTemporaryDir &dir, TorrentEngine &engine)
     REQUIRE(waitFor([&] { return engine.files(id).size() == 1; }));
     return id;
 }
+}
+
+TEST_CASE("Torrent context menu opens current storage without starting a paused job", "[qt][torrent-location]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = pausedFixture(dir, engine);
+    const auto path = dir.filePath("payload");
+    REQUIRE(QDir().mkpath(path));
+    TorrentLocationCapture capture;
+    QDesktopServices::setUrlHandler("file", &capture, "open");
+    struct Reset { ~Reset() { QDesktopServices::unsetUrlHandler("file"); } } reset;
+    TorrentWindow tab(&engine, dir.filePath("layout.ini"));
+    tab.selectJob(id);
+    auto *action = control<QAction>(tab, "torrentOpenLocation");
+    REQUIRE(action->isEnabled());
+    action->trigger();
+    REQUIRE(capture.opened.size() == 1);
+    CHECK(capture.opened.first() == QUrl::fromLocalFile(engine.jobs().first().savePath));
+    CHECK(QFileInfo(capture.opened.first().toLocalFile()).canonicalFilePath() == QFileInfo(path).canonicalFilePath());
+    CHECK(engine.jobs().first().paused);
+    REQUIRE(QDir(path).removeRecursively());
+    action->trigger();
+    CHECK(capture.opened.size() == 1);
+    CHECK_FALSE(QFileInfo::exists(path));
+}
+
+template<class Snapshot> void markChecking(Snapshot &job, double progress) {
+    if constexpr (requires { job.checking = true; job.checkProgress = progress; }) {
+        job.checking = true;
+        job.checkProgress = progress;
+    } else FAIL("Missing explicit check progress");
+}
+
+TEST_CASE("Torrent recheck bar is distinct from completed download progress", "[qt][recheck-status]")
+{
+    QTemporaryDir dir;
+    TorrentWindow tab(nullptr, dir.filePath("layout.ini"));
+    Job job;
+    job.id = "checking";
+    job.name = "fixture";
+    job.progress = 1;
+    job.state = "Rechecking... 37.5%";
+    markChecking(job, .375);
+    TorrentWindowTestAccess::jobs(tab, {job});
+    auto *tree = control<QTreeWidget>(tab, "torrentJobs");
+    REQUIRE(tree->topLevelItemCount() == 1);
+    auto *bar = qobject_cast<QProgressBar *>(tree->itemWidget(tree->topLevelItem(0), 2));
+    REQUIRE(bar);
+    CHECK(bar->value() == 375);
+    CHECK(bar->format() == "%p%");
+    CHECK(bar->toolTip() == job.state);
+    CHECK(tree->topLevelItem(0)->text(1) == job.state);
+    if (qEnvironmentVariableIsSet("EISKALT_RECHECK_SCREENSHOT")) {
+        tab.resize(1100, 620);
+        tab.show();
+        QTest::qWait(100);
+        REQUIRE(tab.grab().save(qEnvironmentVariable("EISKALT_RECHECK_SCREENSHOT")));
+    }
+    markChecking(job, -1);
+    TorrentWindowTestAccess::jobs(tab, {job});
+    CHECK(bar->maximum() == 0);
+    job.paused = true;
+    job.state = "Recheck queued (paused)";
+    TorrentWindowTestAccess::jobs(tab, {job});
+    CHECK(bar->maximum() == 1000);
+    CHECK(bar->format().isEmpty());
+    CHECK(bar->toolTip() == job.state);
+    job = Job{};
+    job.id = "checking";
+    job.progress = 1;
+    TorrentWindowTestAccess::jobs(tab, {job});
+    CHECK(bar->maximum() == 1000);
+    CHECK(bar->value() == 1000);
+    CHECK(bar->format() == "%p%");
 }
 
 TEST_CASE("Torrent management embeds as a reusable arena tab with the selected icon", "[qt][torrent-tab]")
@@ -1262,4 +1350,8 @@ TEST_CASE("Torrent DC sharing controls apply full selection without unsafe singl
     for (const auto &job : engine.jobs()) REQUIRE_FALSE(windowExcluded(job));
     REQUIRE(follow->isChecked());
 }
+#endif
+
+#ifdef USE_TORRENT
+#include "test_torrentwindow.moc"
 #endif

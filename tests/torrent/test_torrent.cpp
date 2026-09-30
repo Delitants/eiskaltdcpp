@@ -1872,6 +1872,53 @@ TEST_CASE("Authenticated SOCKS5 UDP transfers a complete uTP-only peer payload",
     REQUIRE(eventually([&] { return bridge.udpActive == 0; }));
 }
 
+TEST_CASE("Recheck status exposes verification progress without changing download progress", "[torrent][recheck-status]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    for (const int mode : {0, 1, 2}) {
+        REQUIRE(TorrentEngineTestAccess::call(engine, [mode](auto &d) {
+            auto &r = d.records[QStringLiteral("check")];
+            r.id = "check";
+            r.checking = true;
+            r.userPaused = mode == 1;
+            r.userStopped = mode == 2;
+            r.status.flags = mode == 0 ? lt::torrent_flags_t{} : lt::torrent_flags::paused;
+            r.status.state = lt::torrent_status::checking_files;
+            r.status.progress_ppm = 375000;
+            r.status.total_wanted = 100;
+            r.status.total_wanted_done = 100;
+            d.publish();
+            return true;
+        }));
+        const auto job = jobSnapshot(engine, "check");
+        CHECK(job.state.contains("37.5%"));
+        CHECK(job.state.contains(mode == 0 ? "Rechecking" : "Recheck paused"));
+        CHECK(job.progress == 1.0);
+    }
+}
+
+TEST_CASE("Recheck without a live handle reports why it cannot start", "[torrent][recheck-status]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    REQUIRE(TorrentEngineTestAccess::call(engine, [](auto &d) {
+        auto &r = d.records[QStringLiteral("offline")];
+        r.id = "offline";
+        r.userStopped = true;
+        d.publish();
+        return true;
+    }));
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString text) { errors << text; });
+    engine.recheck("offline");
+    REQUIRE(TorrentEngineTestAccess::call(engine, [](auto&) { return true; }));
+    QCoreApplication::processEvents();
+    REQUIRE_FALSE(errors.isEmpty());
+    CHECK(errors.join(' ').contains("Resume"));
+    CHECK(jobSnapshot(engine, "offline").stopped);
+}
+
 TEST_CASE("Recheck retracts completion on corruption and deletion preserves unrelated files", "[torrent][engine]") {
     application();
     QTemporaryDir dir;

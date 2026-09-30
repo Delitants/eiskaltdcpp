@@ -6312,6 +6312,18 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Stop</source>
             <translation>Спиране</translation>
         </message>
+        <message>
+            <source>Open Download Location in Finder</source>
+            <translation>Отваряне на мястото за изтегляне във Finder</translation>
+        </message>
+        <message>
+            <source>Open Download Folder</source>
+            <translation>Отваряне на папката за изтегляне</translation>
+        </message>
+        <message>
+            <source>Could not open the download folder.</source>
+            <translation>Папката за изтегляне не може да се отвори.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10381,6 +10393,26 @@ EiskaltDC++ поддържа качване на файлове и списъц�
             <location filename="../../torrent/TorrentEngine.cpp" line="1049" />
             <source>Upload choked</source>
             <translation>Качването към пиъра е възпрепятствано</translation>
+        </message>
+        <message>
+            <source>Recheck queued</source>
+            <translation>Повторната проверка е на опашка</translation>
+        </message>
+        <message>
+            <source>Recheck queued (paused)</source>
+            <translation>Повторната проверка е на опашка (на пауза)</translation>
+        </message>
+        <message>
+            <source>Recheck paused (%1%)</source>
+            <translation>Повторната проверка е на пауза (%1%)</translation>
+        </message>
+        <message>
+            <source>Rechecking... %1%</source>
+            <translation>Повторна проверка... %1%</translation>
+        </message>
+        <message>
+            <source>Recheck unavailable. Resume the Torrent first.</source>
+            <translation>Повторната проверка е недостъпна. Първо възобновете торента.</translation>
         </message>
     </context>
     <context>

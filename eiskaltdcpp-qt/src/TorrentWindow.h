@@ -52,6 +52,7 @@ protected:
 
 private:
     void refresh();
+    void renderJobs(const QList<eiskalt::torrent::Job> &jobs);
     void refreshFiles();
     void refreshPeers();
     void renderPeers(const QString &id, const QList<eiskalt::torrent::Peer> &peers);
