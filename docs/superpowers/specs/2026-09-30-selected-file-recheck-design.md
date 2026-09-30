@@ -1,7 +1,8 @@
 # Selected-File Torrent Rechecking
 
 Status: specification and implementation plan approved on 2026-09-30. Native
-dependency implementation is in progress; application integration is not enabled.
+dependency, scope-planner and recovery-journal components are complete locally;
+application lifecycle and UI integration are not enabled.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit

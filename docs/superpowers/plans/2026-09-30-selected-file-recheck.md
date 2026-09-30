@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
-Status: approved for Native inline execution on 2026-09-30. Tasks 1 and 2 are complete;
+Status: approved for Native inline execution on 2026-09-30. Tasks 1-3 are complete;
 later milestones and installation/release acceptance remain pending.
 
 ## Global Constraints
@@ -80,10 +80,10 @@ Expose asynchronous free functions `prepare_selected_recheck(torrent_handle, uin
 
 **Interfaces:** `RecheckRecord { QString jobId, metadataDigest, storageIdentity; quint64 token, revision, resumeGeneration; QList<int> selectedFiles, pieces; bool sourceReadOnly; }`; `RecheckJournal(QString stateDirectory)` with `begin(const RecheckRecord&, QString *error) -> bool`, `pending(const QString& jobId, QString *error) -> std::optional<RecheckRecord>`, and `finish(const QString& jobId, quint64 token, quint64 durableResumeGeneration, QString *error) -> bool`. A nonempty read error means blocked recovery, never no pending check.
 
-- [ ] Add `[selected-recheck-journal]` tests for interrupted atomic replacement, truncated/malformed input, token mismatch, old resume generation and removal before matching durable resume. Require corrupt records to block the affected job. Cap input at 16 MiB, indices at metadata's validated count and strings at existing engine metadata/path limits; reject duplicates/out-of-range pieces on reconciliation.
-- [ ] Run the filter to RED. Implement owner-controlled QSaveFile records using opaque safe job-derived filenames, with bounded decoding. `finish` rejects mismatched tokens/generations and keeps the pending record on persistence failure.
-- [ ] Add subprocess crash/fault injection around begin, result-save and finish. An older resume completion must not satisfy a newer operation's durable-generation requirement.
-- [ ] Run to GREEN; commit as `Persist selective verification recovery barriers`. Atomic app-crash recovery is required; do not claim power-loss guarantees beyond the existing persistence layer.
+- [x] Add `[selected-recheck-journal]` tests for interrupted atomic replacement, truncated/malformed input, token mismatch, old resume generation and removal before matching durable resume. Require corrupt records to block the affected job. Cap input at 16 MiB, indices at metadata's validated count and strings at existing engine metadata/path limits; reject duplicates/out-of-range pieces on reconciliation.
+- [x] Run the filter to RED. Implement owner-controlled QSaveFile records using opaque safe job-derived filenames, with bounded decoding. `finish` rejects mismatched tokens/generations and keeps the pending record on persistence failure.
+- [x] Add subprocess crash/fault injection around begin, result-save and finish. An older resume completion must not satisfy a newer operation's durable-generation requirement.
+- [x] Run to GREEN; commit as `Persist selective verification recovery barriers`. Atomic app-crash recovery is required; do not claim power-loss guarantees beyond the existing persistence layer.
 
 ### Task 4: Integrate Engine Lifecycle And Recovery
 
