@@ -219,3 +219,52 @@ SSL_CERT_FILE=/nonexistent-eiskalt-qa-ca.pem \
 SSL_CERT_DIR=/nonexistent-eiskalt-qa-ca-directory \
   build-gost-core/tests/eiskaltdcpp-tests '[https-roots],[strict-https]'
 ```
+
+## Native Information-Only Adapter
+
+`MacUpdateDiscovery` has only check/cancel operations, with no archive mapping,
+download, consent or installer API. It verifies a bounded signed feed against
+the installed bundle's pinned key, selects by numeric build, channel, CPU and
+minimum OS, and gives Sparkle a private unchanged copy through the loopback
+bridge. An offer requires Sparkle's own successful signature validation and an
+exact match of build, version, archive URL, size, signature, channel and minimum
+OS. A missing match explicitly opts out of Sparkle's default candidate selection.
+
+The adapter requires explicit fail-closed bundle settings (signed feeds,
+verification before extraction, zero signature-failure expiration, no external
+downloader, automatic checks/downloads or profiling). It invokes only
+`checkForUpdateInformation`, rejects other check types and unexpected user-driver
+callbacks, and cancels on route revocation or a 30-second deadline. Generation
+guards discard queued callbacks even when an external operation ID is reused.
+Cancellation releases the updater and removes the local staged feed; no prepared
+archive is retained. The pinned information-only driver stops at discovery even
+when probing an existing installer; an unverified resumed result is rejected.
+
+This source is currently opt-in in the Qt test target, not connected to the
+application controller. Backend composition, routed acceptance, committed-quit
+handoff and product packaging remain pending. Do not treat passing discovery
+tests as an installed or fully integrated updater.
+
+With the pinned disposable fixture created above and a Qt test build `$B`:
+
+```sh
+cmake -S . -B "$B" -DEISKALT_TEST_MAC_UPDATE_DISCOVERY=ON \
+  -DEISKALT_SPARKLE_ROOT="$SPARKLE"
+cmake --build "$B" --target eiskaltdcpp-qt-tests -j2
+QA_HOME=$(mktemp -d /private/tmp/eiskalt-discovery-home.XXXXXX)
+HOME="$QA_HOME" CFFIXED_USER_HOME="$QA_HOME" \
+XDG_CONFIG_HOME="$QA_HOME/config" QT_QPA_PLATFORM=cocoa \
+EISKALT_UPDATER_SIGNATURE_FIXTURE="$FIXTURE" \
+  /usr/bin/sandbox-exec -p '(version 1)(allow default)(deny network*)
+    (allow network-outbound (remote ip "localhost:*"))
+    (allow network-bind (local ip "localhost:*"))
+    (allow network-inbound (local ip "localhost:*"))' \
+  "$B/tests/qt/eiskaltdcpp-qt-tests" '[update-discovery-native]'
+```
+
+The tests assert external socket denial (`EPERM`), a disposable home and Qt's
+Cocoa platform. Offscreen Qt does not dispatch the native callback loop and is
+not an equivalent acceptance run. A GUI login session and local socket permission
+are required. Tests cover stable/preview selection with a newer wrong-CPU item,
+bad signatures/policies, no-update completion, overlap rejection, pre-start and
+in-flight cancellation, reused IDs, route revocation and owner destruction.

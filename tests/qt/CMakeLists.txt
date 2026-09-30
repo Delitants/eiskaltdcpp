@@ -199,6 +199,18 @@ endif()
 
 target_link_libraries(eiskaltdcpp-qt-tests PRIVATE dcpp Catch2::Catch2 Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::Test Qt6::Network )
 
+option(EISKALT_TEST_MAC_UPDATE_DISCOVERY "Build the opt-in native Sparkle discovery tests" OFF)
+if(APPLE AND EISKALT_TEST_MAC_UPDATE_DISCOVERY)
+    enable_language(OBJCXX)
+    include(${CMAKE_SOURCE_DIR}/cmake/MacUpdater.cmake)
+    target_sources(eiskaltdcpp-qt-tests PRIVATE
+        ${QT_SRC_DIR}/updates/MacUpdateDiscovery.mm ${QT_SRC_DIR}/updates/MacUpdateDiscovery.h)
+    set_source_files_properties(${QT_SRC_DIR}/updates/MacUpdateDiscovery.mm
+        PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
+    target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE EISKALT_TEST_MAC_UPDATE_DISCOVERY)
+    target_link_libraries(eiskaltdcpp-qt-tests PRIVATE Sparkle::Sparkle "-framework AppKit")
+endif()
+
 # Auto-discover test cases.
 # - PRE_TEST defers discovery to ctest time (avoids build-time env issues)
 # - ENVIRONMENT sets offscreen rendering for headless CI runners

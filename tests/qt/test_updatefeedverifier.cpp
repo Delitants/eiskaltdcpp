@@ -16,6 +16,22 @@
 #include <QThread>
 #include <openssl/evp.h>
 #include <memory>
+#ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
+#include "updates/MacUpdateDiscovery.h"
+#include <QSysInfo>
+#include <QGuiApplication>
+#include <QTimer>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <unistd.h>
+namespace updates {
+struct MacUpdateDiscoveryTestAccess {
+    static std::unique_ptr<MacUpdateDiscovery> make(const QString& bundle) {
+        return std::unique_ptr<MacUpdateDiscovery>(new MacUpdateDiscovery(bundle, nullptr));
+    }
+};
+}
+#endif
 
 using namespace updates;
 namespace {
@@ -356,5 +372,166 @@ TEST_CASE("Real Sparkle discovers the same authenticated Eiskalt release without
     CHECK(output.contains("All tests passed"));
     CHECK(output.contains("downloaded=0 extracting=0 ready=0 rewrites=0"));
     CHECK(digest(executable) == beforeBinary); CHECK(digest(plist) == beforePlist);
+}
+#endif
+
+#ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
+namespace {
+bool discoveryPump(const std::function<bool()>& done, int timeout = 10000) {
+    QElapsedTimer timer; timer.start();
+    while(!done() && timer.elapsed() < timeout) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10); QThread::msleep(2);
+    }
+    return done();
+}
+struct DiscoveryFixture {
+    FeedFixture signer;
+    QTemporaryDir root;
+    QString app = root.filePath("UpdaterProbe.app");
+    QByteArray bundle;
+    std::shared_ptr<dcpp::ProxyRouteSnapshot> route = std::make_shared<dcpp::ProxyRouteSnapshot>();
+    std::unique_ptr<MacUpdateDiscovery> adapter;
+    int found = 0, absent = 0, errors = 0;
+    quint64 operation = 0;
+    SignedUpdate result;
+    QByteArray run(const QString& command, const QStringList& args) {
+        QProcess p; p.start(command, args); REQUIRE(p.waitForFinished(30000));
+        REQUIRE(p.exitStatus() == QProcess::NormalExit); REQUIRE(p.exitCode() == 0);
+        return p.readAllStandardOutput();
+    }
+    void setting(const QString& command) { run("/usr/libexec/PlistBuddy", {"-c", command, app + "/Contents/Info.plist"}); }
+    DiscoveryFixture() {
+        REQUIRE(root.isValid());
+        const auto fixture = qEnvironmentVariable("EISKALT_UPDATER_SIGNATURE_FIXTURE");
+        if(fixture.isEmpty()) SKIP("Opt-in: set EISKALT_UPDATER_SIGNATURE_FIXTURE and use the documented native discovery sandbox");
+        REQUIRE_FALSE(fixture.isEmpty());
+        // Run this opt-in group with a disposable home and network-denied process.
+        REQUIRE(qEnvironmentVariable("CFFIXED_USER_HOME") == qEnvironmentVariable("HOME"));
+        REQUIRE(qEnvironmentVariable("HOME").startsWith("/private/tmp/"));
+        REQUIRE(QGuiApplication::platformName() == "cocoa");
+        const int fd = socket(AF_INET, SOCK_STREAM, 0); REQUIRE(fd >= 0);
+        fcntl(fd, F_SETFL, O_NONBLOCK);
+        sockaddr_in address{}; address.sin_family = AF_INET; address.sin_port = htons(443);
+        inet_pton(AF_INET, "203.0.113.1", &address.sin_addr);
+        const int connected = connect(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+        const int error = errno; close(fd);
+        REQUIRE(connected == -1); REQUIRE(error == EPERM);
+        run("/usr/bin/ditto", {fixture + "/old/UpdaterProbe.app", app});
+        setting("Set :SUPublicEDKey " + QString::fromLatin1(signer.publicKey));
+        bundle = run("/usr/libexec/PlistBuddy", {"-c", "Print :CFBundleIdentifier", app + "/Contents/Info.plist"}).trimmed();
+    }
+    QByteArray feed() {
+        const auto cpu = QSysInfo::buildCpuArchitecture().toLatin1();
+        const auto foreign = cpu == "arm64" ? QByteArray("x86_64") : QByteArray("arm64");
+        auto items = signer.item(2, cpu, "stable") + signer.item(3, cpu) + signer.item(4, foreign);
+        items.replace("org.eiskaltdcpp.EiskaltDCpp", bundle);
+        items.replace(">26.0<", ">14.0<");
+        return signer.sign(signer.xml(items));
+    }
+    void create() {
+        adapter = MacUpdateDiscoveryTestAccess::make(app);
+        QObject::connect(adapter.get(), &MacUpdateDiscovery::available, [&](quint64 op, SignedUpdate r) { ++found; operation = op; result = r; });
+        QObject::connect(adapter.get(), &MacUpdateDiscovery::noUpdate, [&](quint64 op) { ++absent; operation = op; });
+        QObject::connect(adapter.get(), &MacUpdateDiscovery::failed, [&](quint64 op) { ++errors; operation = op; });
+    }
+    bool done() const { return found + absent + errors != 0; }
+};
+}
+
+TEST_CASE("Native discovery reports only Sparkle-verified matching CPU and channel offers", "[.][update-discovery-native]") {
+    DiscoveryFixture f;
+    Channel channel = Channel::Stable;
+    SECTION("stable") {}
+    SECTION("preview") { channel = Channel::Preview; }
+    f.create();
+    REQUIRE(f.adapter->check(71, f.feed(), channel, f.route));
+    CHECK(f.adapter->active()); CHECK_FALSE(f.done());
+    CHECK_FALSE(f.adapter->check(72, f.feed(), channel, f.route));
+    REQUIRE(discoveryPump([&] { return f.done(); }));
+    CHECK(f.found == 1); CHECK(f.errors == 0); CHECK(f.absent == 0); CHECK(f.operation == 71);
+    CHECK(f.result.offer.build == (channel == Channel::Stable ? 2 : 3));
+    CHECK(f.result.offer.cpu == QSysInfo::buildCpuArchitecture());
+    CHECK_FALSE(f.adapter->active());
+}
+
+TEST_CASE("Native discovery rejects unsigned metadata and unsafe bundle policies", "[.][update-discovery-native]") {
+    DiscoveryFixture f;
+    auto bytes = f.feed();
+    SECTION("tampered signed feed") { bytes.replace("Plain", "Wrong"); }
+    SECTION("wrong pinned key") { f.setting("Set :SUPublicEDKey " + QString::fromLatin1(QByteArray(32, 'z').toBase64())); }
+    SECTION("unsigned feeds allowed") { f.setting("Set :SURequireSignedFeed false"); }
+    SECTION("expiration fallback") { f.setting("Set :SUSignedFeedFailureExpirationInterval 1"); }
+    SECTION("external downloader") { f.setting("Set :SUEnableDownloaderService true"); }
+    SECTION("automatic checks enabled") { f.setting("Set :SUEnableAutomaticChecks true"); }
+    SECTION("automatic download enabled") { f.setting("Set :SUAutomaticallyUpdate true"); }
+    SECTION("profiling enabled") { f.setting("Set :SUEnableSystemProfiling true"); }
+    SECTION("verification after extraction") { f.setting("Set :SUVerifyUpdateBeforeExtraction false"); }
+    SECTION("missing signature policy") { f.setting("Delete :SURequireSignedFeed"); }
+    SECTION("invalid installed build") { f.setting("Set :CFBundleVersion 3.0.0-pre.1"); }
+    SECTION("revoked route") { f.route->revoked->store(true); }
+    SECTION("invalid route") { f.route->valid = false; }
+    SECTION("absent route") { f.route.reset(); }
+    SECTION("oversized input") { bytes = QByteArray(1024 * 1024 + 1, 'a'); }
+    f.create();
+    REQUIRE(f.adapter->check(81, bytes, Channel::Preview, f.route));
+    REQUIRE(discoveryPump([&] { return f.done(); }));
+    CHECK(f.found == 0); CHECK(f.absent == 0); CHECK(f.errors == 1); CHECK(f.operation == 81);
+}
+
+TEST_CASE("Native discovery no-update requires a completed signed information cycle", "[.][update-discovery-native]") {
+    DiscoveryFixture f; f.setting("Set :CFBundleVersion 10"); f.create();
+    REQUIRE(f.adapter->check(91, f.feed(), Channel::Preview, f.route));
+    REQUIRE(discoveryPump([&] { return f.done(); }));
+    CHECK(f.absent == 1); CHECK(f.errors == 0); CHECK(f.found == 0);
+}
+
+TEST_CASE("Native discovery cancellation invalidates callbacks and permits a fresh operation", "[.][update-discovery-native]") {
+    DiscoveryFixture f; f.create();
+    REQUIRE(f.adapter->check(101, f.feed(), Channel::Preview, f.route));
+    f.adapter->cancel(); CHECK_FALSE(f.adapter->active());
+    REQUIRE(f.adapter->check(102, f.feed(), Channel::Stable, f.route));
+    REQUIRE(discoveryPump([&] { return f.done(); }));
+    CHECK(f.found == 1); CHECK(f.operation == 102); CHECK(f.result.offer.build == 2); CHECK(f.errors == 0);
+    f.adapter.reset();
+    QElapsedTimer timer; timer.start(); REQUIRE(discoveryPump([&] { return timer.elapsed() > 100; }));
+    CHECK(f.found == 1);
+}
+
+TEST_CASE("Native discovery cancels after Sparkle starts without accepting stale callbacks", "[.][update-discovery-native]") {
+    DiscoveryFixture f; f.create();
+    REQUIRE(f.adapter->check(111, f.feed(), Channel::Preview, f.route));
+    bool cancelled = false;
+    // start() is queued before this callback; the feed request cannot finish in it.
+    QTimer::singleShot(0, f.adapter.get(), [&] {
+        CHECK_FALSE(f.done()); f.adapter->cancel(); cancelled = true;
+        CHECK_FALSE(f.adapter->active());
+        // Reusing an external ID must still reject callbacks from its old generation.
+        REQUIRE(f.adapter->check(111, f.feed(), Channel::Stable, f.route));
+    });
+    REQUIRE(discoveryPump([&] { return f.done(); }));
+    CHECK(cancelled); CHECK(f.found == 1); CHECK(f.operation == 111);
+    CHECK(f.result.offer.build == 2); CHECK(f.errors == 0); CHECK(f.absent == 0);
+}
+
+TEST_CASE("Native discovery revocation and owner destruction suppress offers", "[.][update-discovery-native]") {
+    DiscoveryFixture f; f.create();
+    bool destroy = false;
+    SECTION("route changes during native check") {}
+    SECTION("owner destroyed during native check") { destroy = true; }
+    REQUIRE(f.adapter->check(121, f.feed(), Channel::Preview, f.route));
+    bool interrupted = false;
+    QTimer::singleShot(0, QCoreApplication::instance(), [&] {
+        CHECK_FALSE(f.done());
+        if(destroy) f.adapter.reset();
+        else f.route->revoked->store(true);
+        interrupted = true;
+    });
+    REQUIRE(discoveryPump([&] { return interrupted; }));
+    if(!destroy) {
+        REQUIRE(discoveryPump([&] { return f.done(); }));
+        CHECK(f.errors == 1); CHECK(f.operation == 121); CHECK_FALSE(f.adapter->active());
+    }
+    QElapsedTimer timer; timer.start(); REQUIRE(discoveryPump([&] { return timer.elapsed() >= 150; }));
+    CHECK(f.found == 0); CHECK(f.absent == 0); CHECK(f.errors == (destroy ? 0 : 1));
 }
 #endif
