@@ -617,6 +617,34 @@ TEST_CASE("Independent HTTPS reports buffered TLS close as readable EOF", "[upda
     server.requestStop(); server.join();
 }
 
+#ifdef __APPLE__
+TEST_CASE("macOS updater HTTPS ignores environment CA overrides inside GOST", "[https-roots][update-transport][network]") {
+    dcpp::test::TestContext tc;
+    auto origin = std::make_shared<NestedTlsEcho>();
+    const auto ca = tc.tmpDir / "untrusted-origin-ca.pem";
+    std::ofstream(ca) << origin->roots();
+    struct Environment {
+        bool existed = std::getenv("SSL_CERT_FILE") != nullptr;
+        std::string before = existed ? std::getenv("SSL_CERT_FILE") : "";
+        ~Environment() {
+            if(existed) setenv("SSL_CERT_FILE", before.c_str(), 1);
+            else unsetenv("SSL_CERT_FILE");
+        }
+    } restore;
+    REQUIRE(setenv("SSL_CERT_FILE", ca.c_str(), 1) == 0);
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto data) { return origin->exchange(data); };
+    proxy_test::GostServer server(options);
+    const auto policy = fixtureHttpPolicy(server, *origin);
+    server.start();
+    auto client = dcpp::SSLSocket::createVerifiedClient("proxy.test");
+    client->proxyConnect("8.8.8.8", "443", policy.route->proxy, 1500);
+    CHECK_THROWS(client->waitConnected(1500));
+    client->disconnect(); server.requestStop(); server.join();
+    CHECK(server.target == "8.8.8.8");
+}
+#endif
+
 TEST_CASE("Global GOST preserves inner hub and peer TLS", "[gost-global][routing]") {
     dcpp::test::TestContext tc;
     auto inner = std::make_shared<NestedTlsEcho>();

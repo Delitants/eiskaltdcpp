@@ -19,6 +19,7 @@
 #include "TimerManager.h"
 #include <openssl/x509v3.h>
 #include "SSLSocket.h"
+#include "HttpsTrust.h"
 
 #include "format.h"
 #include "CryptoManager.h"
@@ -161,7 +162,7 @@ std::unique_ptr<SSLSocket> SSLSocket::createVerifiedClient(const string& host, c
     if(SSL_CTX_set_min_proto_version(result->ctx, TLS1_2_VERSION) != 1)
         throw SSLSocketException("Cannot configure HTTPS protocol minimum");
     if(rootsPem.empty()) {
-        if(SSL_CTX_set_default_verify_paths(result->ctx) != 1)
+        if(!loadDefaultHttpsRoots(result->ctx))
             throw SSLSocketException("Cannot load HTTPS trust roots");
     } else {
         if(rootsPem.size() > 1024 * 1024) throw SSLSocketException("HTTPS trust roots exceed limit");

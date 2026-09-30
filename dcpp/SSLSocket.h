@@ -52,7 +52,8 @@ class SSLSocket : public Socket
 {
 public:
     // Independent HTTPS identity/trust, never the configured DC certificate.
-    // Empty roots uses system trust; explicit roots support isolated callers/tests.
+    // Empty roots uses macOS default anchors (OpenSSL defaults elsewhere).
+    // Explicit roots support isolated callers/tests; no client identity is loaded.
     static std::unique_ptr<SSLSocket> createVerifiedClient(const string& host, const string& rootsPem = {});
     static void setSNIHint(const std::string& host);
     static void clearSNIHint();

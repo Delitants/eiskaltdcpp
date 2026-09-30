@@ -185,3 +185,37 @@ interoperability, not production backend activation, proxy DNS acceptance,
 helper confinement or a successful app update. The future adapter must still
 require Sparkle's signed-feed success and match its selected build/archive
 against the authenticated offer before advancing.
+
+## Origin HTTPS Roots On macOS
+
+The updater's independent `SSLSocket::createVerifiedClient` context imports the
+OS default root certificates using Security.framework's local
+`SecTrustCopyAnchorCertificates` API. It does not need an OpenSSL/Homebrew CA
+file on the user's machine. On macOS, `SSL_CERT_FILE` and `SSL_CERT_DIR` cannot
+silently replace this updater root set. Other platforms retain their existing
+OpenSSL default-root behavior; explicit isolated fixture roots remain supported.
+
+DER certificates are bounded to 4096 anchors, 64 KiB each and 16 MiB total.
+Empty, malformed, trailing-data and non-CA entries fail closed. A replacement
+store is installed only after the entire set is valid, never mixed with a prior
+store, DC certificates or the GOST CA. The context has no client identity.
+OpenSSL still checks the certificate chain, validity period, server purpose and
+logical hostname, even when origin TLS is nested inside GOST.
+
+This imports the OS default anchor set; it is not a native SecTrust evaluation
+or a promise to honor per-user Keychain exceptions. No native trust evaluation,
+AIA fetching or OCSP requests are started, avoiding an additional network path
+outside the selected proxy. Existing per-connection cancellation and TLS
+deadlines still apply. Fresh Intel/macOS14 and Apple Silicon/macOS26 package
+acceptance remains a separate release gate.
+
+`[https-roots]` compares imported certificates to the native default anchor set,
+checks atomic failure and bounds, and verifies that an environment-injected CA
+does not authorize an origin inside a disposable authenticated GOST tunnel.
+Run with local socket permission; no system Keychain or trust setting is changed:
+
+```sh
+SSL_CERT_FILE=/nonexistent-eiskalt-qa-ca.pem \
+SSL_CERT_DIR=/nonexistent-eiskalt-qa-ca-directory \
+  build-gost-core/tests/eiskaltdcpp-tests '[https-roots],[strict-https]'
+```

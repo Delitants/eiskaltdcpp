@@ -64,6 +64,7 @@ add_executable(eiskaltdcpp-tests
     test_bufferedsocket.cpp
     test_socketwake.cpp
     test_sslsocket.cpp
+    test_httpstrust.cpp
     test_upnp.cpp
     test_streamproxy.cpp
     test_gostprotocol.cpp

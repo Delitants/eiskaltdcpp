@@ -62,7 +62,7 @@ if (NOT LINK)
 endif (NOT LINK)
 
 if (APPLE)
-    set (APPLE_LIBS "iconv")
+    set (APPLE_LIBS "iconv" "-framework Security" "-framework CoreFoundation")
 endif (APPLE)
 
 set (UPNP "extra")
