@@ -66,6 +66,8 @@ add_executable(eiskaltdcpp-qt-tests
     test_proxytestrunner.cpp
     test_updateurlpolicy.cpp
     test_updatetransport.cpp
+    test_updatearchiveverifier.cpp
+    ${QT_SRC_DIR}/updates/UpdateArchiveVerifier.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.h
     ${QT_SRC_DIR}/updates/UpdateUrlPolicy.cpp
@@ -196,5 +198,5 @@ catch_discover_tests(eiskaltdcpp-qt-tests
     # Catch's all-skipped exit code can equal a real failure count. Match only
     # these explicit opt-in/child notices, never a numeric exit code.
     PROPERTIES SKIP_REGULAR_EXPRESSION
-        "Opt-in: set verified GOST_BIN|Internal fixture child; use the public"
+        "Opt-in: set verified GOST_BIN|Opt-in: set EISKALT_UPDATER_SIGNATURE_FIXTURE|Internal fixture child; use the public"
 )
