@@ -147,6 +147,53 @@ SSLSocket::SSLSocket(SSL_CTX* context, Socket::Protocol proto) : ctx(context), s
 
 }
 
+std::unique_ptr<SSLSocket> SSLSocket::createVerifiedClient(const string& host, const string& rootsPem) {
+    if(host.empty() || host.size() > 253 || host.find('\0') != string::npos ||
+        !std::all_of(host.begin(), host.end(), [](unsigned char c) {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                (c >= '0' && c <= '9') || c == '-' || c == '.';
+        })) throw SSLSocketException("Invalid HTTPS hostname");
+    auto result = std::unique_ptr<SSLSocket>(new SSLSocket(nullptr, Socket::PROTO_DEFAULT));
+    result->ownedContext.reset(SSL_CTX_new(TLS_client_method()));
+    if(!result->ownedContext) throw SSLSocketException("Cannot initialize HTTPS trust context");
+    result->ctx = result->ownedContext;
+    SSL_CTX_set_verify(result->ctx, SSL_VERIFY_PEER, nullptr);
+    if(SSL_CTX_set_min_proto_version(result->ctx, TLS1_2_VERSION) != 1)
+        throw SSLSocketException("Cannot configure HTTPS protocol minimum");
+    if(rootsPem.empty()) {
+        if(SSL_CTX_set_default_verify_paths(result->ctx) != 1)
+            throw SSLSocketException("Cannot load HTTPS trust roots");
+    } else {
+        if(rootsPem.size() > 1024 * 1024) throw SSLSocketException("HTTPS trust roots exceed limit");
+        size_t offset = 0;
+        unsigned count = 0;
+        while(offset < rootsPem.size()) {
+            while(offset < rootsPem.size() && std::isspace(static_cast<unsigned char>(rootsPem[offset]))) ++offset;
+            if(offset == rootsPem.size()) break;
+            constexpr const char* begin = "-----BEGIN CERTIFICATE-----";
+            constexpr const char* end = "-----END CERTIFICATE-----";
+            if(rootsPem.compare(offset, strlen(begin), begin) != 0)
+                throw SSLSocketException("Invalid HTTPS trust roots");
+            const auto finish = rootsPem.find(end, offset);
+            if(finish == string::npos) throw SSLSocketException("Invalid HTTPS trust roots");
+            const auto next = finish + strlen(end);
+            std::unique_ptr<BIO, decltype(&BIO_free)> block(
+                BIO_new_mem_buf(rootsPem.data() + offset, int(next - offset)), BIO_free);
+            std::unique_ptr<X509, decltype(&X509_free)> cert(
+                block ? PEM_read_bio_X509(block.get(), nullptr, nullptr, nullptr) : nullptr, X509_free);
+            if(!cert || X509_check_ca(cert.get()) <= 0 ||
+                X509_STORE_add_cert(SSL_CTX_get_cert_store(result->ctx), cert.get()) != 1)
+                throw SSLSocketException("Invalid HTTPS trust roots");
+            offset = next;
+            ++count;
+        }
+        if(!count) throw SSLSocketException("Empty HTTPS trust roots");
+        ERR_clear_error();
+    }
+    result->setServerName(host);
+    return result;
+}
+
 void SSLSocket::setSNIHint(const std::string& host) {
     sniHostHint = host;
 }
@@ -160,7 +207,7 @@ void SSLSocket::setServerName(const string& host) {
 }
 
 void SSLSocket::connect(const string& aIp, const string& aPort) {
-    setServerName(!sniHostHint.empty() ? sniHostHint : aIp);
+    if(!ownedContext) setServerName(!sniHostHint.empty() ? sniHostHint : aIp);
     Socket::connect(aIp, aPort);
 
     waitConnected(0);
@@ -200,14 +247,17 @@ bool SSLSocket::waitConnected(uint32_t millis) {
         }
 #ifndef OPENSSL_NO_TLSEXT
         if(!sniServerName.empty()) {
-            SSL_set_tlsext_host_name(ssl, sniServerName.c_str());
+            const auto configured = SSL_set_tlsext_host_name(ssl, sniServerName.c_str());
+            if(ownedContext && configured != 1) throw SSLSocketException("Cannot configure HTTPS SNI");
         }
 #endif
 #if OPENSSL_VERSION_NUMBER >= 0x10002000L
         if(!sniServerName.empty()) {
             X509_VERIFY_PARAM* param = SSL_get0_param(ssl);
             if(param) {
-                X509_VERIFY_PARAM_set1_host(param, sniServerName.c_str(), 0);
+                if(ownedContext) X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+                const auto configured = X509_VERIFY_PARAM_set1_host(param, sniServerName.c_str(), 0);
+                if(ownedContext && configured != 1) throw SSLSocketException("Cannot configure HTTPS hostname verification");
             }
         }
 #endif
@@ -340,6 +390,9 @@ int SSLSocket::read(void* aBuffer, int aBufLen) {
     if(ret <= 0) {
         const int sslErr = SSL_get_error(ssl, ret);
         const unsigned long libErr = ERR_peek_error();
+        // Strict HTTP may use an authenticated close-delimited body. An
+        // unclean transport EOF remains an error, never successful completion.
+        if(ownedContext && sslErr == SSL_ERROR_ZERO_RETURN) return 0;
         if(tlsReadResultMeansClosed(ret, sslErr, libErr)) {
             ERR_clear_error();
             ssl.reset();
@@ -426,6 +479,8 @@ int SSLSocket::wait(uint32_t millis, int waitFor) {
         /** @todo Take writing into account as well if reading is possible? */
         char c;
         if(SSL_peek(ssl, &c, 1) > 0)
+            return WAIT_READ;
+        if(ownedContext && (SSL_get_shutdown(ssl) & SSL_RECEIVED_SHUTDOWN))
             return WAIT_READ;
     }
     return Socket::wait(millis, waitFor);

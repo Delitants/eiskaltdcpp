@@ -344,8 +344,16 @@ class NestedTlsEcho {
     proxy_test::Identity identity = proxy_test::Identity::make(&ca);
     std::unique_ptr<SSL_CTX, decltype(&SSL_CTX_free)> context{SSL_CTX_new(TLS_server_method()), SSL_CTX_free};
     std::unique_ptr<SSL, decltype(&SSL_free)> session{nullptr, SSL_free};
+    std::string response;
+    bool sent = false;
+    bool closeNotify = false;
 public:
-    NestedTlsEcho() {
+    std::string request;
+    std::function<std::string(const std::string&)> responder;
+    const std::string& roots() const { return ca.pem; }
+    explicit NestedTlsEcho(std::string reply = {}, bool closeAfter = false, const proxy_test::Identity* trust = nullptr)
+        : ca(trust ? *trust : proxy_test::Identity::make()), identity(proxy_test::Identity::make(&ca)),
+          response(std::move(reply)), closeNotify(closeAfter) {
         SSL_CTX_use_certificate(context.get(), identity.cert.get());
         SSL_CTX_use_PrivateKey(context.get(), identity.key.get());
         session.reset(SSL_new(context.get()));
@@ -358,15 +366,295 @@ public:
         if(SSL_is_init_finished(session.get())) {
             char plain[1024];
             int count;
-            while((count = SSL_read(session.get(), plain, sizeof(plain))) > 0)
-                SSL_write(session.get(), plain, count);
+            while((count = SSL_read(session.get(), plain, sizeof(plain))) > 0) {
+                if(response.empty() && !responder) SSL_write(session.get(), plain, count);
+                else {
+                    request.append(plain, count);
+                    if(!sent && request.find("\r\n\r\n") != std::string::npos) {
+                        if(responder) response = responder(request);
+                        SSL_write(session.get(), response.data(), response.size());
+                        if(closeNotify) SSL_shutdown(session.get());
+                        sent = true;
+                    }
+                }
+            }
         }
         std::vector<uint8_t> result(BIO_ctrl_pending(SSL_get_wbio(session.get())));
         if(!result.empty()) BIO_read(SSL_get_wbio(session.get()), result.data(), result.size());
         return result;
     }
 };
+
+struct HttpResult : dcpp::HttpConnectionListener {
+    std::string body, error;
+    bool complete = false;
+    std::function<void()> received;
+    void on(Data, dcpp::HttpConnection*, const uint8_t* data, size_t size) override {
+        body.append(reinterpret_cast<const char*>(data), size);
+        if(received) received();
+    }
+    void on(Failed, dcpp::HttpConnection*, const std::string& message) override { error = message; }
+    void on(Complete, dcpp::HttpConnection*, const std::string&) override { complete = true; }
+};
+
+dcpp::HttpRequestPolicy fixtureHttpPolicy(proxy_test::GostServer& server, NestedTlsEcho& origin) {
+    dcpp::HttpRequestPolicy policy;
+    auto route = std::make_shared<dcpp::ProxyRouteSnapshot>();
+    route->mode = SM::OUTGOING_GOST;
+    route->proxy.type = Socket::StreamProxyConfig::Gost;
+    route->proxy.host = route->proxy.connectHost = "127.0.0.1";
+    route->proxy.port = server.port();
+    route->proxy.user = "fixture-user";
+    route->proxy.password = "fixture-password";
+    route->proxy.caPem = server.ca.pem;
+    policy.route = route;
+    policy.rootsPem = origin.roots();
+    policy.connectMs = policy.idleMs = 1000;
+    policy.totalMs = 3000;
+    policy.prepare = [](const auto& url, const auto& base, const auto&, auto, const auto&) {
+        if(url != "https://proxy.test/file" || !base.empty()) throw std::runtime_error("fixture URL rejected");
+        return dcpp::HttpRequestPolicy::Target{url, "proxy.test", "443", "/file", "8.8.8.8"};
+    };
+    return policy;
 }
+}
+
+TEST_CASE("Strict HTTP streams over its snapshot without inheriting hub proxy settings", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    tc.ownedCtx->getSettingsManager()->set(SM::HTTP_PROXY, "http://127.0.0.1:1");
+    auto origin = std::make_shared<NestedTlsEcho>("HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nhello");
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+    proxy_test::GostServer server(options);
+    auto policy = fixtureHttpPolicy(server, *origin);
+    policy.limits.bodyBytes = 5;
+    HttpResult result;
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    server.start();
+    connection.downloadFile("https://proxy.test/file");
+    server.requestStop(); server.join();
+    REQUIRE(result.error.empty());
+    REQUIRE(result.complete);
+    CHECK(result.body == "hello");
+    CHECK(server.target == "8.8.8.8");
+    CHECK(origin->request.find("GET /file HTTP/1.1\r\n") == 0);
+    CHECK(origin->request.find("Host: proxy.test\r\n") != std::string::npos);
+    CHECK(origin->request.find("Authorization") == std::string::npos);
+    CHECK(origin->request.find("fixture-password") == std::string::npos);
+}
+
+TEST_CASE("Strict HTTP refuses completion after route revocation", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    auto origin = std::make_shared<NestedTlsEcho>("HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nhello");
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+    proxy_test::GostServer server(options);
+    auto policy = fixtureHttpPolicy(server, *origin);
+    HttpResult result;
+    result.received = [&] { policy.route->revoked->store(true); policy.route->notifier->notify(); };
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    server.start();
+    connection.downloadFile("https://proxy.test/file");
+    server.requestStop(); server.join();
+    REQUIRE(result.body == "hello");
+    CHECK_FALSE(result.complete);
+    CHECK_FALSE(result.error.empty());
+}
+
+TEST_CASE("Strict HTTP rejects a redirect before opening its destination", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    auto origin = std::make_shared<NestedTlsEcho>("HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1/private\r\n\r\n");
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+    proxy_test::GostServer server(options);
+    auto policy = fixtureHttpPolicy(server, *origin);
+    unsigned prepares = 0;
+    const auto prepare = policy.prepare;
+    policy.prepare = [&](const auto& next, const auto& base, const auto& route, auto timeout, const auto& cancel) {
+        ++prepares;
+        return prepare(next, base, route, timeout, cancel);
+    };
+    HttpResult result;
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    server.start();
+    connection.downloadFile("https://proxy.test/file");
+    server.requestStop(); server.join();
+    REQUIRE(prepares == 2);
+    CHECK_FALSE(result.complete);
+    CHECK_FALSE(result.error.empty());
+    CHECK(result.body.empty());
+}
+
+TEST_CASE("Strict HTTP distinguishes authenticated EOF from a truncated body", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    std::string response = "HTTP/1.1 200 OK\r\n\r\nhello";
+    bool complete = true;
+    SECTION("Close-delimited body with TLS close notify") {}
+    SECTION("Declared length is truncated before TLS close notify") {
+        response = "HTTP/1.1 200 OK\r\nContent-Length: 6\r\n\r\nhello";
+        complete = false;
+    }
+    auto origin = std::make_shared<NestedTlsEcho>(response, true);
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+    proxy_test::GostServer server(options);
+    const auto policy = fixtureHttpPolicy(server, *origin);
+    HttpResult result;
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    server.start();
+    connection.downloadFile("https://proxy.test/file");
+    server.requestStop(); server.join();
+    REQUIRE(result.body == "hello");
+    CHECK(result.complete == complete);
+    CHECK(result.error.empty() == complete);
+}
+
+TEST_CASE("Strict HTTP cancellation and timeout interrupt a stalled proxy handshake", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    NestedTlsEcho origin;
+    proxy_test::GostOptions options;
+    options.stallTls = true;
+    options.stallTlsMs = 2000;
+    proxy_test::GostServer server(options);
+    auto policy = fixtureHttpPolicy(server, origin);
+    bool cancel = false, revoke = false;
+    SECTION("Connect deadline") { policy.connectMs = 80; }
+    SECTION("Explicit cancellation") { cancel = true; }
+    SECTION("Route revocation") { revoke = true; }
+    HttpResult result;
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    server.start();
+    const auto begin = std::chrono::steady_clock::now();
+    std::jthread worker([&] { connection.downloadFile("https://proxy.test/file"); });
+    if(cancel || revoke) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(40));
+        if(cancel) connection.abort();
+        else { policy.route->revoked->store(true); policy.route->notifier->notify(); }
+    }
+    worker.join();
+    const auto elapsed = std::chrono::steady_clock::now() - begin;
+    server.requestStop(); server.join();
+    CHECK(elapsed < std::chrono::milliseconds(500));
+    CHECK_FALSE(result.complete);
+    CHECK_FALSE(result.error.empty());
+    CHECK(result.error.find(policy.route->proxy.password) == std::string::npos);
+    CHECK(result.error.find(policy.route->proxy.host) == std::string::npos);
+    CHECK(result.body.empty());
+}
+
+TEST_CASE("Strict HTTP accepts exactly five redirects and rejects a sixth", "[update-transport][strict-http][network]") {
+    dcpp::test::TestContext tc;
+    const auto ca = proxy_test::Identity::make();
+    Socket listener;
+    listener.create(); listener.bind("0", "127.0.0.1"); listener.listen();
+    bool extra = false;
+    SECTION("Five redirects") {}
+    SECTION("Six redirects") { extra = true; }
+    std::vector<std::shared_ptr<NestedTlsEcho>> origins;
+    std::vector<std::unique_ptr<proxy_test::GostServer>> servers;
+    for(unsigned i = 0; i < 6; ++i) {
+        auto origin = std::make_shared<NestedTlsEcho>("", false, &ca);
+        origin->responder = [extra](const std::string& request) {
+            const auto path = request.find("/hop");
+            if(path == std::string::npos) throw std::runtime_error("fixture missing hop");
+            const auto hop = unsigned(request.at(path + 4) - '0');
+            if(hop == 5 && !extra) return std::string("HTTP/1.1 200 OK\r\nContent-Length: 5\r\n\r\nhello");
+            return "HTTP/1.1 302 Found\r\nLocation: /hop" + std::to_string(hop + 1) + "\r\n\r\n";
+        };
+        proxy_test::GostOptions options;
+        options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+        servers.push_back(std::make_unique<proxy_test::GostServer>(options, "IP:127.0.0.1,DNS:proxy.test", false, &ca));
+        origins.push_back(origin);
+    }
+    auto policy = fixtureHttpPolicy(*servers.front(), *origins.front());
+    auto route = std::make_shared<dcpp::ProxyRouteSnapshot>(*policy.route);
+    route->proxy.port = std::stoi(listener.getLocalPort());
+    policy.route = route;
+    unsigned prepares = 0;
+    policy.prepare = [&](const auto& next, const auto&, const auto&, auto, const auto&) {
+        // One acceptor per request avoids a thundering herd on the shared
+        // nonblocking listener while retaining one immutable proxy endpoint.
+        if(prepares >= servers.size()) throw std::runtime_error("fixture redirect budget exceeded");
+        servers[prepares]->start(&listener);
+        ++prepares;
+        const std::string url = next.front() == '/' ? "https://proxy.test" + next : next;
+        return dcpp::HttpRequestPolicy::Target{url, "proxy.test", "443", url.substr(18), "8.8.8.8"};
+    };
+    HttpResult result;
+    dcpp::HttpConnection connection(*tc.ownedCtx, policy, "fixture-updater");
+    connection.addListener(&result);
+    connection.downloadFile("https://proxy.test/hop0");
+    for(auto& server : servers) { server->requestStop(); server->join(); }
+    INFO(result.error);
+    CHECK(prepares == 6);
+    CHECK(result.complete == !extra);
+    CHECK(result.error.empty() == !extra);
+    CHECK(result.body == (extra ? "" : "hello"));
+    for(const auto& server : servers) { INFO(server->error); CHECK(server->target == "8.8.8.8"); }
+}
+TEST_CASE("Independent HTTPS verifies origin identity inside authenticated GOST", "[update-transport][strict-https][network]") {
+    auto inner = std::make_shared<NestedTlsEcho>();
+    proxy_test::GostOptions options;
+    options.transform = [inner](auto data) { return inner->exchange(data); };
+    proxy_test::GostServer server(options);
+    Socket::StreamProxyConfig config;
+    config.type = Socket::StreamProxyConfig::Gost;
+    config.host = config.connectHost = "127.0.0.1";
+    config.port = server.port();
+    config.user = "fixture-user";
+    config.password = "fixture-password";
+    config.caPem = server.ca.pem;
+    std::string host = "proxy.test", roots = inner->roots();
+    bool success = true;
+    SECTION("Trusted origin and correct hostname") {}
+    SECTION("Proxy CA does not trust the origin") { roots = server.ca.pem; success = false; }
+    SECTION("Valid certificate with wrong hostname") { host = "wrong.invalid"; success = false; }
+    SECTION("System roots reject disposable origin") { roots.clear(); success = false; }
+    server.start();
+    auto client = dcpp::SSLSocket::createVerifiedClient(host, roots);
+    client->proxyConnect(host, "443", config, 1500);
+    if(success) {
+        REQUIRE(client->waitConnected(1500));
+        REQUIRE(client->isTrusted());
+        client->writeAll("https", 5, 1000);
+        char reply[5]{};
+        REQUIRE(client->readAll(reply, sizeof(reply), 1000) == 5);
+        CHECK(std::string(reply, 5) == "https");
+    } else {
+        REQUIRE_THROWS(client->waitConnected(1500));
+    }
+    client->disconnect();
+    server.requestStop(); server.join();
+    CHECK(server.target == host);
+    CHECK(server.user == config.user);
+    CHECK(server.password == config.password);
+}
+
+TEST_CASE("Independent HTTPS reports buffered TLS close as readable EOF", "[update-transport][strict-https][network]") {
+    auto origin = std::make_shared<NestedTlsEcho>("hello", true);
+    proxy_test::GostOptions options;
+    options.transform = [origin](auto bytes) { return origin->exchange(bytes); };
+    proxy_test::GostServer server(options);
+    const auto policy = fixtureHttpPolicy(server, *origin);
+    server.start();
+    auto client = dcpp::SSLSocket::createVerifiedClient("proxy.test", origin->roots());
+    client->proxyConnect("8.8.8.8", "443", policy.route->proxy, 1000);
+    REQUIRE(client->waitConnected(1000));
+    client->writeAll("test\r\n\r\n", 8, 1000);
+    char bytes[5]{};
+    REQUIRE(client->readAll(bytes, sizeof(bytes), 1000) == 5);
+    CHECK(std::string(bytes, 5) == "hello");
+    CHECK(client->wait(100, Socket::WAIT_READ) == Socket::WAIT_READ);
+    CHECK(client->read(bytes, sizeof(bytes)) == 0);
+    client->disconnect();
+    server.requestStop(); server.join();
+}
+
 TEST_CASE("Global GOST preserves inner hub and peer TLS", "[gost-global][routing]") {
     dcpp::test::TestContext tc;
     auto inner = std::make_shared<NestedTlsEcho>();

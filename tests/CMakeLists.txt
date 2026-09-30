@@ -60,6 +60,7 @@ add_executable(eiskaltdcpp-tests
     test_searchresult.cpp
     test_favoritemanager.cpp
     test_httpconnection.cpp
+    test_httpresponseparser.cpp
     test_bufferedsocket.cpp
     test_socketwake.cpp
     test_sslsocket.cpp

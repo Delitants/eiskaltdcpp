@@ -27,6 +27,8 @@
 #include "GetSet.h"
 #include "Speaker.h"
 #include "Util.h"
+#include "HttpRequestPolicy.h"
+#include <atomic>
 
 namespace dcpp {
 
@@ -41,6 +43,9 @@ public:
 
     HttpConnection(DCContext& ctx, const string& aUserAgent = Util::emptyString,
         Connector aConnector = Connector());
+    // Strict requests run synchronously on the caller's dedicated I/O worker.
+    // Only abort() is cross-thread; listeners and destruction stay on the worker.
+    HttpConnection(DCContext& ctx, const HttpRequestPolicy& policy, const string& userAgent);
     virtual ~HttpConnection();
 
     DCContext& ctx() const { return ctx_; }
@@ -93,6 +98,10 @@ private:
     bool usingHttpProxy;
     bool publicHubListProxy = false;
     Connector connector;
+    std::unique_ptr<const HttpRequestPolicy> strictPolicy;
+    std::atomic_bool strictCancelled{false};
+    std::shared_ptr<SocketWake> strictWake;
+    void downloadStrict(const string& requestedUrl);
 
     void prepareRequest(RequestType type);
     void abortRequest(bool disconnect);

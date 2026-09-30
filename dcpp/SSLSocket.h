@@ -51,6 +51,9 @@ class CryptoManager;
 class SSLSocket : public Socket
 {
 public:
+    // Independent HTTPS identity/trust, never the configured DC certificate.
+    // Empty roots uses system trust; explicit roots support isolated callers/tests.
+    static std::unique_ptr<SSLSocket> createVerifiedClient(const string& host, const string& rootsPem = {});
     static void setSNIHint(const std::string& host);
     static void clearSNIHint();
     static bool tlsReadResultMeansClosed(int ret, int sslError, unsigned long opensslError);
@@ -81,6 +84,7 @@ private:
     SSLSocket(const SSLSocket&);
     SSLSocket& operator=(const SSLSocket&);
 
+    ssl::SSL_CTX ownedContext;
     SSL_CTX* ctx;
     std::string sniServerName;
     ssl::SSL ssl;
