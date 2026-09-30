@@ -92,6 +92,9 @@ public:
 
     static void copyFile(const string& src, const string& target);
     static void renameFile(const string& source, const string& target);
+    // Commit a flushed, closed, same-filesystem checkpoint. Never delete first
+    // or copy on failure. Not a guarantee against filesystem/power loss.
+    static void replaceFile(const string& source, const string& target);
     static void deleteFile(const string& aFileName);
 
     static int64_t getSize(const string& aFileName);

@@ -331,6 +331,25 @@ struct RuntimeFixture {
 };
 }
 
+template<class Runtime> bool checkedRuntimeShutdown(Runtime& runtime) {
+    if constexpr(requires { runtime.shutdownChecked(); }) return runtime.shutdownChecked();
+    runtime.shutdown();
+    return false;
+}
+
+TEST_CASE("Runtime preserves torrent shutdown checkpoint outcome", "[qt][torrent][runtime][shutdown-persistence]") {
+    RuntimeFixture f;
+    bool expected = true;
+    SECTION("successful checkpoint") {}
+    SECTION("failed atomic checkpoint") {
+        const auto state = QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)) + "torrent/state/jobs.json";
+        REQUIRE(QDir().mkpath(state));
+        expected = false;
+    }
+    CHECK(checkedRuntimeShutdown(*f.runtime) == expected);
+    CHECK(checkedRuntimeShutdown(*f.runtime) == expected);
+}
+
 TEST_CASE("Runtime restart restores unchanged sharing without preparing payload again", "[qt][torrent][runtime][managedhash-restart]") {
     RuntimeFixture f;
     const auto id = f.add();

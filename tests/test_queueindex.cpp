@@ -15,12 +15,14 @@
 #include "SearchManager.h"
 #include "SearchResult.h"
 #include "TimerManager.h"
+#include "File.h"
 
 #include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <random>
 #include <type_traits>
+#include <fstream>
 
 using namespace dcpp;
 
@@ -99,6 +101,78 @@ struct QueueFixture {
             QueueItem::NORMAL, {}, 1700000000, rootFor(root));
     }
 };
+
+template<class Manager> bool checkedQueueSave(Manager& manager) {
+    if constexpr(requires { manager.saveQueueChecked(true); }) return manager.saveQueueChecked(true);
+    manager.saveQueue(true);
+    return false;
+}
+template<class Settings> bool checkedSettingsSave(Settings& settings, const string& path) {
+    if constexpr(requires { settings.saveChecked(path); }) return settings.saveChecked(path);
+    settings.save(path);
+    return false;
+}
+string checkpointBytes(const string& path) {
+    std::ifstream stream(path, std::ios::binary);
+    return string(std::istreambuf_iterator<char>(stream), {});
+}
+
+template<class Files> void replaceCheckpoint(const string& source, const string& target) {
+    if constexpr(requires { Files::replaceFile(source, target); }) Files::replaceFile(source, target);
+    else FAIL("Checkpoint replacement needs an atomic no-copy-fallback API");
+}
+
+TEST_CASE("Checkpoint replacement never removes the target before a failed commit", "[file][shutdown-persistence]") {
+    QueueFixture f;
+    const auto target = f.target("committed"), pending = f.target("pending");
+    std::ofstream(target) << "previous";
+    std::ofstream(pending) << "replacement";
+    replaceCheckpoint<File>(pending, target);
+    CHECK(checkpointBytes(target) == "replacement");
+    CHECK_FALSE(std::filesystem::exists(pending));
+    REQUIRE_THROWS_AS(replaceCheckpoint<File>(pending, target), FileException);
+    CHECK(checkpointBytes(target) == "replacement");
+    std::filesystem::create_directory(pending);
+    REQUIRE_THROWS_AS(replaceCheckpoint<File>(pending, target), FileException);
+    CHECK(checkpointBytes(target) == "replacement");
+}
+
+TEST_CASE("Queue checkpoint reports commit and retains dirty state on failure", "[queueindex][shutdown-persistence]") {
+    QueueFixture f;
+    f.add(1, 1);
+    const auto path = f.manager().getQueueFile();
+    REQUIRE(checkedQueueSave(f.manager()));
+    const auto previous = checkpointBytes(path);
+    REQUIRE(previous.find("1.bin") != string::npos);
+    f.add(2, 2);
+    f.manager().dirty = true;
+    std::filesystem::create_directory(path + ".tmp");
+    CHECK_FALSE(checkedQueueSave(f.manager()));
+    CHECK(f.manager().dirty);
+    CHECK(checkpointBytes(path) == previous);
+    std::filesystem::remove(path + ".tmp");
+    REQUIRE(checkedQueueSave(f.manager()));
+    CHECK_FALSE(f.manager().dirty);
+    CHECK(checkpointBytes(path).find("2.bin") != string::npos);
+}
+
+TEST_CASE("Core settings checkpoint reports failure and preserves last committed bytes", "[settingsmanager][shutdown-persistence]") {
+    QueueFixture f;
+    auto& settings = *f.context.getSettingsManager();
+    const auto path = f.target("checkpoint.xml");
+    settings.set(SettingsManager::NICK, "Before");
+    REQUIRE(checkedSettingsSave(settings, path));
+    const auto previous = checkpointBytes(path);
+    REQUIRE(previous.find("Before") != string::npos);
+    settings.set(SettingsManager::NICK, "After");
+    std::filesystem::create_directory(path + ".tmp");
+    CHECK_FALSE(checkedSettingsSave(settings, path));
+    CHECK(checkpointBytes(path) == previous);
+    std::filesystem::remove(path + ".tmp");
+    REQUIRE(checkedSettingsSave(settings, path));
+    CHECK(checkpointBytes(path).find("After") != string::npos);
+    CHECK_FALSE(checkedSettingsSave(settings, f.target("missing/config.xml")));
+}
 
 StringList linearTargets(const QueueItem::StringMap& queue, const TTHValue& root)
 {

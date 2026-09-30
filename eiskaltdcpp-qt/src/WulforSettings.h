@@ -178,6 +178,8 @@ public:
 
     void load();
     void save();
+    // QSettings retains errors for this store's lifetime; fail closed on any.
+    bool saveChecked();
 
     void loadTranslation();
     void loadTheme();

@@ -148,6 +148,29 @@ Qt loop through an emergency `_Exit` path that skips core teardown; installation
 must not be enabled there without first establishing successful queue/settings/
 Torrent persistence and keeping the bridge event loop alive through preparation.
 
+### Shutdown Checkpoint Results
+
+`SettingsManager::saveChecked`, `QueueManager::saveQueueChecked(true)` and
+`WulforSettings::saveChecked` expose write/sync failure rather than silently
+treating a save attempt as success. The core XML writers flush a sibling temporary
+file and atomically replace the previous file without deleting it first or
+falling back to a potentially partial copy. Legacy void methods remain wrappers.
+This is not a power-loss/filesystem durability guarantee or a process-stop API.
+
+`TorrentEngine::shutdownChecked` joins its worker and retains the final checkpoint
+result for repeated calls. It drains an older pending resume request before
+requesting a fresh paused checkpoint. A missing/failed resume reply or atomic
+state-write failure returns false, even if an older checkpoint was retained.
+`TorrentRuntime::shutdownChecked` stops publication and proxy workers and passes
+that result through. The existing void shutdown entry points remain compatible.
+
+Run `[shutdown-persistence]` in the core, torrent, and Qt test binaries to exercise
+successful writes, failure/retry with previous bytes retained, GUI sync failure,
+resume timeout, and repeatable engine/runtime outcomes. Fixtures use isolated
+profiles. None of these helpers grants update consent. Core producers and hub
+sockets still need a verified non-destructive stop sequence before the real
+MainWindow can use these results to authorize installer handoff.
+
 ## Controller Contract
 
 The independent Qt controller/policy tests use an explicitly injected backend and

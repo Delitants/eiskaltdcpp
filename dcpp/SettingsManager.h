@@ -279,6 +279,8 @@ public:
 
     void load(const string& aFileName);
     void save(const string& aFileName);
+    bool saveChecked() { return saveChecked(getConfigFile()); }
+    bool saveChecked(const string& aFileName);
 
     bool getType(const char* name, int& n, Types& type) const;
     // Search types

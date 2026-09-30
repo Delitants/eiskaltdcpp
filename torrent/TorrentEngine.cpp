@@ -267,6 +267,8 @@ struct TorrentEngine::Impl {
     quint64 activitySerial = 0;
     quint64 configurationEpoch = 0;
     bool stopped = false;
+    // Written by the worker, read by the owner only after join.
+    bool shutdownSaved = false;
     std::thread worker;
     // Everything below is confined to worker, including session destruction.
     Settings config;
@@ -274,7 +276,7 @@ struct TorrentEngine::Impl {
     quint64 listenerEpoch = 0;
     ProxyConfig proxy;
     QString blocked;
-    bool loaded = false, closing = false, dirty = false;
+    bool loaded = false, closing = false, dirty = false, closingCheckpointOk = true;
     std::unique_ptr<lt::session> session;
     std::shared_ptr<PeerPolicy> peerPolicy;
     QStringList pendingBootstrap;
@@ -362,7 +364,7 @@ struct TorrentEngine::Impl {
         }
         return revision;
     }
-    void stop() {
+    bool stop() {
         {
             std::lock_guard lock(mutex);
             stopped = true;
@@ -372,6 +374,7 @@ struct TorrentEngine::Impl {
         }
         wake.notify_one();
         if (worker.joinable()) worker.join();
+        return shutdownSaved;
     }
     void run() {
         for (;;) {
@@ -419,7 +422,13 @@ struct TorrentEngine::Impl {
                 report(tr("Torrent backend operation failed; details were withheld to protect credentials."));
             }
         }
-        try { closeSession(); if (loaded) persist(); } catch (...) { report(tr("Torrent shutdown persistence failed.")); }
+        try {
+            shutdownSaved = closeSession();
+            if (loaded) shutdownSaved = persist() && shutdownSaved;
+        } catch (...) {
+            shutdownSaved = false;
+            report(tr("Torrent shutdown persistence failed."));
+        }
     }
     bool bootstrapCancelled() {
         std::lock_guard lock(mutex);
@@ -510,18 +519,27 @@ struct TorrentEngine::Impl {
         r.handle.save_resume_data(lt::torrent_handle::save_info_dict | lt::torrent_handle::flush_disk_cache);
     }
     void requestSaves() { for (auto &[id, r] : records) requestSave(r); }
-    void closeSession() {
+    bool closeSession() {
         pendingBootstrap.clear();
         nextBootstrapRetry = Clock::time_point::max();
-        if (!session) return;
+        if (!session) return true;
         closing = true;
         session->pause();
-        requestSaves();
-        const auto deadline = Clock::now() + 3s;
-        while (Clock::now() < deadline) {
-            alerts();
-            if (std::none_of(records.begin(), records.end(), [](const auto &entry) { return entry.second.savePending; })) break;
-            session->wait_for_alert(lt::milliseconds(20));
+        const auto drainSaves = [&] {
+            const auto deadline = Clock::now() + 3s;
+            for (;;) {
+                alerts();
+                if (std::none_of(records.begin(), records.end(), [](const auto &entry) { return entry.second.savePending; })) return true;
+                if (Clock::now() >= deadline) return false;
+                session->wait_for_alert(lt::milliseconds(20));
+            }
+        };
+        // An older in-flight reply cannot stand in for the final paused checkpoint.
+        bool checkpointOk = drainSaves();
+        if (checkpointOk) {
+            closingCheckpointOk = true;
+            requestSaves();
+            checkpointOk = drainSaves() && closingCheckpointOk;
         }
         for (auto &[id, r] : records) {
             if (r.savePending) report(tr("Torrent resume checkpoint timed out; the last atomic checkpoint was retained."));
@@ -536,7 +554,8 @@ struct TorrentEngine::Impl {
         for (const auto &removal : removals) releaseStorage(removal.id);
         removals.clear();
         closing = false;
-        persist();
+        const bool committed = persist();
+        return checkpointOk && committed;
     }
     bool persist() {
         if (!loaded) return true;
@@ -921,6 +940,7 @@ struct TorrentEngine::Impl {
                 if (r) { r->resume = a->params; r->savePending = false; dirty = true; }
             } else if (lt::alert_cast<lt::save_resume_data_failed_alert>(alert)) {
                 if (r) r->savePending = false;
+                if (r && closing) closingCheckpointOk = false;
                 report(tr("Torrent resume checkpoint failed; retaining the previous checkpoint."));
             } else if (lt::alert_cast<lt::metadata_received_alert>(alert)) {
                 if (r && !closing) metadata(*r);
@@ -1511,8 +1531,11 @@ void TorrentEngine::recheck(const QString &id) {
     emit changed();
 }
 void TorrentEngine::shutdown() {
+    (void)shutdownChecked();
+}
+bool TorrentEngine::shutdownChecked() {
     Q_ASSERT(QThread::currentThread() == thread());
-    if (d) d->stop();
+    return !d || d->stop();
 }
 
 } // namespace eiskalt::torrent

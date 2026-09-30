@@ -566,6 +566,10 @@ void SettingsManager::load(string const& aFileName)
 }
 
 void SettingsManager::save(string const& aFileName) {
+    (void)saveChecked(aFileName);
+}
+
+bool SettingsManager::saveChecked(string const& aFileName) {
 
     SimpleXML xml;
     xml.addTag("DCPlusPlus");
@@ -630,11 +634,11 @@ void SettingsManager::save(string const& aFileName) {
         xml.toXML(&f);
         f.flush();
         out.close();
-        File::deleteFile(aFileName);
-        File::renameFile(aFileName + ".tmp", aFileName);
+        File::replaceFile(aFileName + ".tmp", aFileName);
     } catch(const FileException&) {
-        // ...
+        return false;
     }
+    return true;
 }
 
 void SettingsManager::validateSearchTypeName(const string& name) const {

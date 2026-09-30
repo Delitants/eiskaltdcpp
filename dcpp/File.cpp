@@ -153,6 +153,12 @@ void File::renameFile(const string& source, const string& target) {
     }
 }
 
+void File::replaceFile(const string& source, const string& target) {
+    if(!::MoveFileExW(Text::utf8ToWide(source).c_str(), Text::utf8ToWide(target).c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+        throw FileException(Util::translateError(GetLastError()));
+}
+
 void File::copyFile(const string& src, const string& target) {
     if(!::CopyFileW(Text::utf8ToWide(src).c_str(), Text::utf8ToWide(target).c_str(), FALSE)) {
         throw FileException(Util::translateError(GetLastError()));
@@ -354,6 +360,11 @@ void File::renameFile(const string& source, const string& target) {
         deleteFile(source);
     } else if(ret != 0)
         throw FileException(source + Util::translateError(errno));
+}
+
+void File::replaceFile(const string& source, const string& target) {
+    if(::rename(Text::fromUtf8(source).c_str(), Text::fromUtf8(target).c_str()) != 0)
+        throw FileException(Util::translateError(errno));
 }
 
 // This doesn't assume all bytes are written in one write call, it is a bit safer

@@ -1696,13 +1696,17 @@ int QueueManager::countOnlineSources(const string& aTarget) {
 }
 
 void QueueManager::saveQueue(bool force) {
-    if(!dirty && !force)
-        return;
+    (void)saveQueueChecked(force);
+}
+
+bool QueueManager::saveQueueChecked(bool force) {
 
     std::vector<CID> cids;
 
     try {
         Lock l(cs);
+        if(!dirty && !force)
+            return true;
 
         File ff(getQueueFile() + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
         BufferedOutputStream<false> f(&ff);
@@ -1769,12 +1773,12 @@ void QueueManager::saveQueue(bool force) {
         f.write(LIT("</Downloads>\r\n"));
         f.flush();
         ff.close();
-        File::deleteFile(getQueueFile());
-        File::renameFile(getQueueFile() + ".tmp", getQueueFile());
+        File::replaceFile(getQueueFile() + ".tmp", getQueueFile());
 
         dirty = false;
     } catch(const FileException&) {
-        // ...
+        lastSave = GET_TICK();
+        return false;
     }
     // Put this here to avoid very many saves tries when disk is full...
     lastSave = GET_TICK();
@@ -1782,6 +1786,7 @@ void QueueManager::saveQueue(bool force) {
     for(auto& cid : cids) {
         ctx().getClientManager()->saveUser(cid);
     }
+    return true;
 }
 
 class QueueLoader : public SimpleXMLReader::CallBack {

@@ -52,6 +52,9 @@ public:
     void recheck(const QString &id);
     // Call before dependent controllers are destroyed. Idempotent; joins worker.
     void shutdown();
+    // Joins the worker and reports its final resume/atomic-write result.
+    // Repeated calls return the same result; success is not updater consent.
+    bool shutdownChecked();
 
 signals:
     // Emitted inline before public configure/selection/recheck/remove mutations.

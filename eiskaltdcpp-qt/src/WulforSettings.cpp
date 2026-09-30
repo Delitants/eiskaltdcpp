@@ -404,7 +404,12 @@ void WulforSettings::loadOldConfig(){
 }
 
 void WulforSettings::save(){
+    (void)saveChecked();
+}
+
+bool WulforSettings::saveChecked(){
     settings.sync();
+    return settings.status() == QSettings::NoError;
 }
 
 void WulforSettings::parseCmd(const QString &cmd, QString& res) {

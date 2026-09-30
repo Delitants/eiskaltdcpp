@@ -129,6 +129,8 @@ public:
 
     void loadQueue();
     void saveQueue(bool force = false);
+    // Use force=true for shutdown checkpoints. This does not stop producers.
+    bool saveQueueChecked(bool force = false);
 
     void noDeleteFileList(const string& path);
 

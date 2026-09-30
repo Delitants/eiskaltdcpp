@@ -335,11 +335,18 @@ void TorrentRuntime::invalidateShare(const QString &id)
 
 void TorrentRuntime::shutdown()
 {
+    (void)shutdownChecked();
+}
+
+bool TorrentRuntime::shutdownChecked()
+{
     if (stopped)
-        return;
+        return shutdownSaved;
     stopped = true;
     sharePublisher->stop();
-    torrentEngine->shutdown();
+    const bool checkpointSaved = torrentEngine->shutdownChecked();
     proxyAdapter->stop();
+    shutdownSaved = checkpointSaved;
+    return shutdownSaved;
 }
 #endif

@@ -7,6 +7,10 @@
 #include <QSignalSpy>
 #include <QString>
 #include <QVariant>
+#include <QTemporaryDir>
+#include <QDir>
+#include <QFile>
+#include <QSettings>
 
 #include "WulforSettings.h"
 #include "QtContext.h"
@@ -33,6 +37,47 @@ static void ensureSettings() {
         g_qtCtx = std::make_unique<QtContext>(*dcpp::getContext());  // auto-registers
         g_qtCtx->createSettings();
         std::atexit(cleanupQtContext);
+    }
+}
+
+template<class Store> bool checkedGuiSave(Store& store) {
+    if constexpr(requires { store.saveChecked(); }) return store.saveChecked();
+    store.save();
+    return false;
+}
+
+TEST_CASE("GUI checkpoint reports sync failure instead of authorizing installation", "[qt][wulforsettings][shutdown-persistence]") {
+    ensureSettings();
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    struct Paths {
+        dcpp::Util::PathsMap previous;
+        explicit Paths(const QString& path) {
+            for(int i = 0; i < dcpp::Util::PATH_LAST; ++i) {
+                auto key = static_cast<dcpp::Util::Paths>(i);
+                previous[key] = dcpp::Util::getPath(key);
+            }
+            auto overrides = previous;
+            overrides[dcpp::Util::PATH_USER_CONFIG] = path.toStdString() + PATH_SEPARATOR;
+            dcpp::Util::uninitialize(); dcpp::Util::initialize(overrides);
+        }
+        ~Paths() { dcpp::Util::uninitialize(); dcpp::Util::initialize(previous); }
+    } paths(directory.path());
+    const auto path = directory.filePath("EiskaltDC++_Qt.conf");
+    SECTION("committed settings survive reopening") {
+        WulforSettings settings(*g_tc->ownedCtx);
+        settings.setBool("updates/automatic-checks", false);
+        REQUIRE(checkedGuiSave(settings));
+        QSettings reopened(path, QSettings::IniFormat);
+        REQUIRE(reopened.contains("updates/automatic-checks"));
+        CHECK_FALSE(reopened.value("updates/automatic-checks").toBool());
+    }
+    SECTION("unwritable destination is a failed checkpoint") {
+        REQUIRE(QDir().mkdir(path));
+        WulforSettings settings(*g_tc->ownedCtx);
+        settings.setStr("updates/probe", "value");
+        CHECK_FALSE(checkedGuiSave(settings));
+        CHECK(QFileInfo(path).isDir());
     }
 }
 

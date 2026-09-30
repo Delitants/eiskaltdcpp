@@ -35,6 +35,7 @@ public slots:
     void reloadSettings();
     void applySecurity(eiskalt::torrent::EncryptionMode encryption, const QStringList &countries, bool blockUnknownClients);
     void shutdown();
+    bool shutdownChecked();
     void invalidateShare(const QString &id);
 
 signals:
@@ -60,6 +61,7 @@ private:
     quint64 requestedConfiguration = 0;
     bool publicationArmed = false;
     bool stopped = false;
+    bool shutdownSaved = false;
     void refreshPublication();
     void setShareStatus(const QString &id, const QString &status);
 };

@@ -952,6 +952,61 @@ TEST_CASE("Invalid input and shutdown reject jobs visibly", "[torrent][engine]")
     REQUIRE_FALSE(errors.isEmpty());
 }
 
+template<class Engine> bool checkedTorrentShutdown(Engine& engine) {
+    if constexpr(requires { engine.shutdownChecked(); }) return engine.shutdownChecked();
+    engine.shutdown();
+    return false;
+}
+
+TEST_CASE("Unused torrent engine has no shutdown checkpoint to save", "[torrent][shutdown-persistence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    TorrentEngine engine(dir.filePath("state"));
+    CHECK(checkedTorrentShutdown(engine));
+    CHECK(checkedTorrentShutdown(engine));
+    CHECK_FALSE(QDir(dir.filePath("state")).exists());
+}
+
+TEST_CASE("Torrent shutdown reports whether its final atomic checkpoint committed", "[torrent][shutdown-persistence]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto state = dir.filePath("state");
+    TorrentEngine engine(state);
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")));
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    SECTION("normal shutdown commits and repeated shutdown retains the result") {
+        REQUIRE(checkedTorrentShutdown(engine));
+        CHECK(checkedTorrentShutdown(engine));
+        QFile jobs(QDir(state).filePath("jobs.json"));
+        REQUIRE(jobs.open(QIODevice::ReadOnly));
+        CHECK(jobs.readAll().contains(id.toUtf8()));
+    }
+    SECTION("destination failure cannot report a successful shutdown checkpoint") {
+        const auto path = QDir(state).filePath("jobs.json");
+        REQUIRE(TorrentEngineTestAccess::call(engine, [=](auto&) {
+            QFile::remove(path);
+            return QDir().mkdir(path);
+        }));
+        CHECK_FALSE(checkedTorrentShutdown(engine));
+        CHECK_FALSE(checkedTorrentShutdown(engine));
+        CHECK(QFileInfo(path).isDir());
+    }
+    SECTION("outstanding resume checkpoint timeout fails closed") {
+        REQUIRE(TorrentEngineTestAccess::call(engine, [=](auto& d) {
+            auto& record = d.records.at(id);
+            // Simulate a removed handle whose final resume reply never arrived.
+            record.handle = {};
+            record.savePending = true;
+            return true;
+        }));
+        CHECK_FALSE(checkedTorrentShutdown(engine));
+        CHECK_FALSE(checkedTorrentShutdown(engine));
+    }
+}
+
 TEST_CASE("Private metadata and explicit empty selection survive restart", "[torrent][engine]") {
     application();
     QTemporaryDir dir;

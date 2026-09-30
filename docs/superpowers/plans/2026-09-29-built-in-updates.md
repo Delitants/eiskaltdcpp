@@ -135,6 +135,13 @@ settings and Torrent persistence before wiring the final handoff; do not regard
 an accepted close event alone as sufficient. Authorization/disk-full/recovery and
 real MainWindow acceptance remain required below.
 
+Persistence checkpoint: checked core/GUI settings and queue saves now expose
+failure, with no-delete-first core replacement. Checked torrent engine/runtime
+shutdown retains resume/atomic-write failure and repeated-call outcomes. These
+are prerequisites, not committed-quit integration: stop core producers and hub
+sockets safely before consuming their results, then keep the event loop alive
+for the installer handoff. The macOS emergency exit workaround is unchanged.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.
