@@ -227,8 +227,31 @@ hashing still completes. Partial-work status and buffers are cleared on exit.
 This does not save the hash store or revoke the consent-bound proxy route.
 Startup/configuration, raw cache pointers and destruction remain owner-serialized;
 never stop from callbacks or under manager/listener locks. Legacy HashStore
-saving remains unchecked, not installer consent. Queue rechecker/mover and
+saving remains unchecked, not installer consent. Remaining queue producers and
 active transfers still need their barriers before coordinator/final persistence.
+
+Queue-worker checkpoint: `QueueManager::stopWorkersForShutdown` closes recheck
+and physical-move admission, cancels queued/current rechecks, drains admitted
+calls and callbacks, joins the rechecker, then drains and joins accepted mover
+jobs. Concurrent stop callers join the same terminal barrier. Queue data and
+read/save APIs remain available; the destructor stops workers before destroying
+queue state. This is deliberately not a whole QueueManager terminal stop.
+
+Rechecking retains previously verified segments until a complete, still-applicable
+result is ready; cancellation, read failures and changed queue progress cannot
+commit partial or stale results. A failed file read does not strand the next
+queued recheck. Accepted completed-file moves are not discarded. Blocking disk
+I/O delays shutdown instead of allowing force-exit or installer consent.
+
+The coordinator must first fence other queue producers and drain transfer
+completion, and retain hash/client/log/queue dependencies through worker drain.
+Manual/raw worker lifecycle and destruction remain owner-serialized; never stop
+from a worker/listener callback or under queue/listener locks. Worker quiescence
+is not proof a legacy physical move succeeded: `moveFile_` can log rename/fallback
+failures without a checked outcome. Whole-queue/active-transfer barriers, checked
+final move/persistence outcomes, non-destructive coordination and committed-quit
+installer acceptance remain pending. No MainWindow/Sparkle activation or `_Exit`
+replacement is authorized by this checkpoint.
 
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.

@@ -33,6 +33,7 @@
 #include "MerkleCheckOutputStream.h"
 #include "SearchManager.h"
 #include "SearchResult.h"
+#include "ScopedFunctor.h"
 #include "SFVReader.h"
 #include "ShareManager.h"
 #include "SimpleXML.h"
@@ -378,20 +379,32 @@ void QueueManager::UserQueue::remove(QueueItem* qi, const UserPtr& aUser, bool r
 
 void QueueManager::FileMover::moveFile(const string& source, const string& target) {
     Lock l(cs);
+    if(stopped) return;
     files.emplace_back(source, target);
     if(!active) {
         active = true;
-        start();
+        try { start(); }
+        catch(...) { active = false; throw; }
     }
 }
 
+void QueueManager::FileMover::closeAdmission() {
+    Lock l(cs);
+    stopped = true;
+}
+
 int QueueManager::FileMover::run() {
+    bool normalExit = false;
+    auto cleanup = makeScopedFunctor([this, &normalExit] {
+        if(!normalExit) { Lock l(cs); active = false; }
+    });
     while(true) {
         FilePair next;
         {
             Lock l(cs);
             if(files.empty()) {
                 active = false;
+                normalExit = true;
                 return 0;
             }
             next = files.back();
@@ -405,149 +418,186 @@ int QueueManager::FileMover::run() {
 
 void QueueManager::Rechecker::add(const string& file) {
     Lock l(cs);
+    if(stopped) return;
     files.push_back(file);
     if(!active) {
         active = true;
-        start();
+        try { start(); }
+        catch(...) { active = false; throw; }
     }
 }
 
+void QueueManager::Rechecker::requestStop() {
+    Lock l(cs);
+    stopped = true;
+    files.clear();
+}
+
 int QueueManager::Rechecker::run() {
+    bool normalExit = false;
+    auto cleanup = makeScopedFunctor([this, &normalExit] {
+        if(!normalExit) { Lock l(cs); active = false; }
+    });
     while(true) {
         string file;
         {
             Lock l(cs);
+            if(stopped) break;
             auto i = files.begin();
             if(i == files.end()) {
                 active = false;
+                normalExit = true;
                 return 0;
             }
             file = *i;
             files.erase(i);
         }
 
-        QueueItem* q;
-        int64_t tempSize;
-        TTHValue tth;
+        if(!qm->beginWorkerOperation()) break;
+        ScopedFunctor([this] { qm->finishWorkerOperation(); });
+        try {
 
-        {
-            Lock l(qm->cs);
+            QueueItem* q;
+            int64_t tempSize;
+            TTHValue tth;
+            string tempTarget;
+            QueueItem::SegmentSet previousDone;
 
-            q = qm->fileQueue.find(file);
-            if(!q || q->isSet(QueueItem::FLAG_USER_LIST))
-                continue;
+            {
+                Lock l(qm->cs);
 
-            qm->fire(QueueManagerListener::RecheckStarted(), q->getTarget());
-            dcdebug("Rechecking %s\n", file.c_str());
+                q = qm->fileQueue.find(file);
+                if(stopped || !q || q->isSet(QueueItem::FLAG_USER_LIST))
+                    continue;
 
-            tempSize = File::getSize(q->getTempTarget());
+                qm->fire(QueueManagerListener::RecheckStarted(), q->getTarget());
+                if(stopped) continue;
+                dcdebug("Rechecking %s\n", file.c_str());
 
-            if(tempSize == -1) {
-                qm->fire(QueueManagerListener::RecheckNoFile(), q->getTarget());
-                continue;
+                tempSize = File::getSize(q->getTempTarget());
+
+                if(tempSize == -1) {
+                    qm->fire(QueueManagerListener::RecheckNoFile(), q->getTarget());
+                    continue;
+                }
+
+                if(tempSize < 64*1024) {
+                    qm->fire(QueueManagerListener::RecheckFileTooSmall(), q->getTarget());
+                    continue;
+                }
+
+                if(q->isRunning()) {
+                    qm->fire(QueueManagerListener::RecheckDownloadsRunning(), q->getTarget());
+                    continue;
+                }
+
+                if(stopped) continue;
+                if(tempSize != q->getSize()) {
+                    File(q->getTempTarget(), File::WRITE, File::OPEN).setSize(q->getSize());
+                    tempSize = q->getSize();
+                }
+
+                tth = q->getTTH();
+                tempTarget = q->getTempTarget();
+                previousDone = q->getDone();
             }
 
-            if(tempSize < 64*1024) {
-                qm->fire(QueueManagerListener::RecheckFileTooSmall(), q->getTarget());
-                continue;
+            TigerTree tt;
+            bool gotTree = qm->ctx().getHashManager()->getTree(tth, tt);
+
+            {
+                Lock l(qm->cs);
+
+                // get q again in case it has been (re)moved
+                q = qm->fileQueue.find(file);
+                if(stopped || !q || q->isRunning() || q->getTTH() != tth ||
+                   q->getSize() != tempSize || q->getTempTarget() != tempTarget ||
+                   q->getDone() != previousDone)
+                    continue;
+
+                if(!gotTree) {
+                    qm->fire(QueueManagerListener::RecheckNoTree(), q->getTarget());
+                    continue;
+                }
+
             }
 
-            if(tempSize != q->getSize()) {
-                File(q->getTempTarget(), File::WRITE, File::OPEN).setSize(q->getSize());
+            // Merklecheck
+            int64_t startPos=0;
+            DummyOutputStream dummy;
+            int64_t blockSize = tt.getBlockSize();
+            bool hasBadBlocks = false;
+
+            vector<uint8_t> buf((size_t)min((int64_t)1024*1024, blockSize));
+
+            typedef pair<int64_t, int64_t> SizePair;
+            typedef vector<SizePair> Sizes;
+            Sizes sizes;
+
+            {
+                File inFile(tempTarget, File::READ, File::OPEN);
+
+                while(startPos < tempSize && !stopped) {
+                    inFile.setPos(startPos);
+                    bool readFailed = false;
+                    try {
+                        MerkleCheckOutputStream<TigerTree, false> check(tt, &dummy, startPos);
+
+                        int64_t bytesLeft = min((tempSize - startPos),blockSize); //Take care of the last incomplete block
+                        int64_t segmentSize = bytesLeft;
+                        while(bytesLeft > 0 && !stopped) {
+                            size_t n = (size_t)min((int64_t)buf.size(), bytesLeft);
+                            size_t nr;
+                            try { nr = inFile.read(&buf[0], n); }
+                            catch(const FileException&) { readFailed = true; throw; }
+                            check.write(&buf[0], nr);
+                            bytesLeft -= nr;
+                            if(bytesLeft > 0 && nr == 0) {
+                                readFailed = true;
+                                throw FileException(_("Unexpected end of file while rechecking"));
+                            }
+                        }
+                        if(stopped) break;
+                        check.flush();
+
+                        sizes.emplace_back(startPos, segmentSize);
+                    } catch(const Exception&) {
+                        if(readFailed) throw;
+                        hasBadBlocks = true;
+                        dcdebug("Found bad block at " I64_FMT "\n", static_cast<long long int>(startPos));
+                    }
+                    startPos += blockSize;
+                }
             }
 
-            if(q->isRunning()) {
-                qm->fire(QueueManagerListener::RecheckDownloadsRunning(), q->getTarget());
-                continue;
-            }
+            if(stopped) continue;
 
-            tth = q->getTTH();
-        }
-
-        TigerTree tt;
-        bool gotTree = qm->ctx().getHashManager()->getTree(tth, tt);
-
-        string tempTarget;
-
-        {
             Lock l(qm->cs);
 
             // get q again in case it has been (re)moved
             q = qm->fileQueue.find(file);
-            if(!q)
+            if(stopped || !q || q->isRunning() || q->getTTH() != tth ||
+               q->getSize() != tempSize || q->getTempTarget() != tempTarget ||
+               q->getDone() != previousDone)
                 continue;
 
-            if(!gotTree) {
-                qm->fire(QueueManagerListener::RecheckNoTree(), q->getTarget());
-                continue;
-            }
-
-            //Clear segments
+            // Only a complete, still-applicable result replaces verified segments.
             q->resetDownloaded();
 
-            tempTarget = q->getTempTarget();
-        }
-
-        // Merklecheck
-        int64_t startPos=0;
-        DummyOutputStream dummy;
-        int64_t blockSize = tt.getBlockSize();
-        bool hasBadBlocks = false;
-
-        vector<uint8_t> buf((size_t)min((int64_t)1024*1024, blockSize));
-
-        typedef pair<int64_t, int64_t> SizePair;
-        typedef vector<SizePair> Sizes;
-        Sizes sizes;
-
-        {
-            File inFile(tempTarget, File::READ, File::OPEN);
-
-            while(startPos < tempSize) {
-                try {
-                    MerkleCheckOutputStream<TigerTree, false> check(tt, &dummy, startPos);
-
-                    inFile.setPos(startPos);
-                    int64_t bytesLeft = min((tempSize - startPos),blockSize); //Take care of the last incomplete block
-                    int64_t segmentSize = bytesLeft;
-                    while(bytesLeft > 0) {
-                        size_t n = (size_t)min((int64_t)buf.size(), bytesLeft);
-                        size_t nr = inFile.read(&buf[0], n);
-                        check.write(&buf[0], nr);
-                        bytesLeft -= nr;
-                        if(bytesLeft > 0 && nr == 0) {
-                            // Huh??
-                            throw Exception();
-                        }
-                    }
-                    check.flush();
-
-                    sizes.emplace_back(startPos, segmentSize);
-                } catch(const Exception&) {
-                    hasBadBlocks = true;
-                    dcdebug("Found bad block at " I64_FMT "\n", static_cast<long long int>(startPos));
-                }
-                startPos += blockSize;
+            //If no bad blocks then the file probably got stuck in the temp folder for some reason
+            if(!hasBadBlocks) {
+                qm->moveStuckFile(q);
+                continue;
             }
+
+            for(auto& i : sizes)
+                q->addSegment(Segment(i.first, i.second));
+
+            qm->rechecked(q);
+        } catch(const FileException& e) {
+            if(!stopped)
+                qm->ctx().getLogManager()->message(str(F_("Error rechecking %1%: %2%") % file % e.getError()));
         }
-
-        Lock l(qm->cs);
-
-        // get q again in case it has been (re)moved
-        q = qm->fileQueue.find(file);
-        if(!q)
-            continue;
-
-        //If no bad blocks then the file probably got stuck in the temp folder for some reason
-        if(!hasBadBlocks) {
-            qm->moveStuckFile(q);
-            continue;
-        }
-
-        for(auto& i : sizes)
-            q->addSegment(Segment(i.first, i.second));
-
-        qm->rechecked(q);
     }
     return 0;
 }
@@ -571,6 +621,7 @@ QueueManager::QueueManager(DCContext& ctx) :
 }
 
 QueueManager::~QueueManager() {
+    stopWorkersForShutdown();
     ctx().getSearchManager()->removeListener(this);
     ctx().getTimerManager()->removeListener(this);
     ctx().getClientManager()->removeListener(this);
@@ -589,6 +640,44 @@ QueueManager::~QueueManager() {
         std::sort(filelists.begin(), filelists.end());
         std::for_each(filelists.begin(), std::set_difference(filelists.begin(), filelists.end(),
                                                              protectedFileLists.begin(), protectedFileLists.end(), filelists.begin()), &File::deleteFile);
+    }
+}
+
+bool QueueManager::beginWorkerOperation() {
+    std::lock_guard<std::mutex> lock(workerMutex);
+    if(workerShutdownRequested) return false;
+    ++workerOperations;
+    return true;
+}
+
+void QueueManager::finishWorkerOperation() {
+    std::lock_guard<std::mutex> lock(workerMutex);
+    if(--workerOperations == 0) workersChanged.notify_all();
+}
+
+void QueueManager::stopWorkersForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(workerMutex);
+        if(workerShutdownRequested) {
+            workersChanged.wait(lock, [this] { return workerShutdownComplete; });
+            return;
+        }
+        workerShutdownRequested = true;
+    }
+    rechecker.requestStop();
+    {
+        std::unique_lock<std::mutex> lock(workerMutex);
+        workersChanged.wait(lock, [this] { return workerOperations == 0; });
+    }
+    // Admitted commits/moves can enqueue until their lease ends. Only then
+    // close and drain the mover; do not discard completed-file renames.
+    rechecker.join();
+    mover.closeAdmission();
+    mover.join();
+    {
+        std::lock_guard<std::mutex> lock(workerMutex);
+        workerShutdownComplete = true;
+        workersChanged.notify_all();
     }
 }
 
@@ -1260,6 +1349,12 @@ void QueueManager::setFile(Download* d) {
 }
 
 void QueueManager::moveFile(const string& source, const string& target) {
+    if(!beginWorkerOperation()) return;
+    ScopedFunctor([this] { finishWorkerOperation(); });
+    moveFileAccepted(source, target);
+}
+
+void QueueManager::moveFileAccepted(const string& source, const string& target) {
     File::ensureDirectory(target);
     if(File::getSize(source) > MOVER_LIMIT) {
         mover.moveFile(source, target);
@@ -1287,7 +1382,7 @@ void QueueManager::moveFile_(DCContext& ctx, const string& source, const string&
 }
 
 void QueueManager::moveStuckFile(QueueItem* qi) {
-    moveFile(qi->getTempTarget(), qi->getTarget());
+    moveFileAccepted(qi->getTempTarget(), qi->getTarget());
 
     if(qi->isFinished()) {
         userQueue.remove(qi);
@@ -1506,6 +1601,8 @@ void QueueManager::processList(const string& name, const HintedUser& user, int f
 }
 
 void QueueManager::recheck(const string& aTarget) {
+    if(!beginWorkerOperation()) return;
+    ScopedFunctor([this] { finishWorkerOperation(); });
     rechecker.add(aTarget);
 }
 

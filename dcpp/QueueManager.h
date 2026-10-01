@@ -19,6 +19,9 @@
 #pragma once
 
 #include <deque>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 #include "ClientManagerListener.h"
 #include "CriticalSection.h"
@@ -108,6 +111,10 @@ public:
 
     void recheck(const string& aTarget);
 
+    // Workers only: other queue producers must be fenced separately by owner.
+    // Never call from callbacks or under queue/listener locks. Retains queue data.
+    void stopWorkersForShutdown();
+
     void setPriority(const string& aTarget, QueueItem::Priority p);
 
     StringList getTargets(const TTHValue& tth);
@@ -163,12 +170,14 @@ private:
         virtual ~FileMover() { join(); }
 
         void moveFile(const string& source, const string& target);
+        void closeAdmission();
         virtual int run();
     private:
         typedef pair<string, string> FilePair;
 
         DCContext& ctx_;
         bool active;
+        bool stopped = false;
         CriticalSection cs;
 
         vector<FilePair> files;
@@ -187,11 +196,13 @@ private:
         virtual ~Rechecker() { join(); }
 
         void add(const string& file);
+        void requestStop();
         virtual int run();
 
     private:
         QueueManager* qm;
         bool active;
+        std::atomic<bool> stopped{false};
 
         StringList files;
         CriticalSection cs;
@@ -272,6 +283,13 @@ private:
     friend class QueueLoader;
 
     mutable CriticalSection cs;
+    std::mutex workerMutex;
+    std::condition_variable workersChanged;
+    bool workerShutdownRequested = false;
+    bool workerShutdownComplete = false;
+    size_t workerOperations = 0;
+    bool beginWorkerOperation();
+    void finishWorkerOperation();
 
     /** QueueItems by target */
     FileQueue fileQueue;
@@ -297,6 +315,8 @@ private:
 
     void load(const SimpleXML& aXml);
     void moveFile(const string& source, const string& target);
+    // Requires an admitted worker-operation lease; keeps mover drain open.
+    void moveFileAccepted(const string& source, const string& target);
     static void moveFile_(DCContext& ctx, const string& source, const string& target);
     void moveStuckFile(QueueItem* qi);
     void rechecked(QueueItem* qi);
