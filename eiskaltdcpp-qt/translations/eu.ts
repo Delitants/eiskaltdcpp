@@ -6222,6 +6222,26 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <source>Could not open the download folder.</source>
             <translation>Ezin izan da deskargen karpeta ireki.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Utzi fitxategien egiaztapena</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Hautatutako fitxategien egiaztapena bertan behera uzten...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Berriz egiaztatu hautatutako fitxategiak...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Hautatutako fitxategiak berriz egiaztatzen... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Egiaztapena</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

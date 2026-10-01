@@ -43,6 +43,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSettings>
+#include <QSet>
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QStyle>
@@ -61,6 +62,27 @@ enum Column { Name, Status, Progress, Size, DownloadSpeed, UploadSpeed, Peers, S
 enum PeerColumn { PeerAddress, PeerCountry, PeerClient, PeerProgress, PeerDownload, PeerUpload, PeerState, PeerCount };
 constexpr int PeerSortRole = Qt::UserRole + 1;
 constexpr int FilePriorityRole = Qt::UserRole + 1;
+constexpr int FileSizeRole = Qt::UserRole + 2;
+
+class FileItem final : public QTreeWidgetItem {
+public:
+    using QTreeWidgetItem::QTreeWidgetItem;
+    bool operator<(const QTreeWidgetItem &other) const override
+    {
+        const int column = treeWidget()->sortColumn();
+        int comparison = 0;
+        if (column == 1 || column == 2) {
+            const int role = column == 1 ? FileSizeRole : FilePriorityRole;
+            const auto a = data(column, role).toLongLong();
+            const auto b = other.data(column, role).toLongLong();
+            comparison = a < b ? -1 : a > b ? 1 : 0;
+        } else {
+            comparison = QString::localeAwareCompare(text(column), other.text(column));
+        }
+        return comparison ? comparison < 0 :
+            data(0, Qt::UserRole).toInt() < other.data(0, Qt::UserRole).toInt();
+    }
+};
 
 class FilePriorityDelegate final : public QStyledItemDelegate {
 public:
@@ -296,9 +318,15 @@ struct TorrentWindow::Controls {
     QTabWidget *details;
     QSplitter *splitter;
     QLabel *notice, *fileNotice, *peerNotice, *sharing;
+    QLabel *fileCheckNotice;
+    QProgressBar *fileCheckProgress;
+    QPushButton *cancelCheck;
     QPushButton *applyFiles;
     QAction *addFile, *addMagnet, *pause, *resume, *stop, *remove, *deleteFiles, *recheck;
     QAction *shareDc, *shareTorrent, *openLocation;
+    QAction *recheckFiles, *cancelFileCheck;
+    QString checkJobId;
+    quint64 checkToken = 0;
     QAction *dcShareFollowGlobal, *dcShareExclude;
     QMenu *dcSharing;
     FileExtensionIcons fileIcons;
@@ -448,24 +476,66 @@ TorrentWindow::TorrentWindow(TorrentEngine *torrentEngine, const QString &layout
     ui->files->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->files->setRootIsDecorated(false);
     ui->files->setAlternatingRowColors(true);
-    ui->files->setHeaderLabels({tr("Download selected files"), tr("Size"), tr("Priority")});
+    ui->files->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    ui->files->setHeaderLabels({tr("Download selected files"), tr("Size"), tr("Priority"), tr("Verification")});
     ui->files->header()->setStretchLastSection(false);
     ui->files->setColumnWidth(0, 650);
     ui->files->setColumnWidth(1, 130);
     // Set only the fresh default; saved header state below and later user resizes win.
     ui->files->setColumnWidth(2, qMax(110, priorityDelegate->editorCellSizeHint(ui->files->font()).width()));
+    ui->files->setColumnWidth(3, 240);
+    ui->files->setSortingEnabled(true);
+    ui->files->sortItems(0, Qt::AscendingOrder);
+    ui->recheckFiles = new QAction(tr("Recheck selected files..."), this);
+    ui->recheckFiles->setObjectName(QStringLiteral("torrentRecheckFiles"));
+    ui->cancelFileCheck = new QAction(tr("Cancel file check"), this);
+    ui->cancelFileCheck->setObjectName(QStringLiteral("torrentCancelFileRecheck"));
+    ui->cancelFileCheck->setToolTip(tr("Unchecked affected pieces remain unavailable after cancellation."));
+    ui->files->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->files, &QTreeWidget::customContextMenuRequested, this, [this](const QPoint &point) {
+        if (auto *item = ui->files->itemAt(point); item && !item->isSelected())
+            ui->files->setCurrentItem(item);
+        updateActions();
+        QMenu menu(this);
+        menu.setToolTipsVisible(true);
+        menu.addActions({ui->recheckFiles, ui->cancelFileCheck});
+        menu.exec(ui->files->viewport()->mapToGlobal(point));
+    });
+    connect(ui->recheckFiles, &QAction::triggered, this, &TorrentWindow::recheckSelectedFiles);
+    connect(ui->cancelFileCheck, &QAction::triggered, this, &TorrentWindow::cancelSelectedFileRecheck);
     filesLayout->addWidget(ui->files, 1);
     connect(ui->files, &QTreeWidget::itemClicked, this, [this](QTreeWidgetItem *item, int column) {
-        if (column != 2) return;
+        if (column != 2 || !(item->flags() & Qt::ItemIsEditable)) return;
         const QPersistentModelIndex index(ui->files->indexFromItem(item, column));
         // Finish the activating mouse release before installing the combo editor.
         QTimer::singleShot(0, ui->files, [tree = ui->files, index] {
             if (index.isValid()) tree->edit(index);
         });
     });
+    ui->fileCheckNotice = new QLabel(filesPanel);
+    ui->fileCheckNotice->setObjectName(QStringLiteral("torrentFileCheckNotice"));
+    ui->fileCheckNotice->setTextFormat(Qt::PlainText);
+    ui->fileCheckNotice->setWordWrap(true);
+    ui->fileCheckNotice->hide();
+    filesLayout->addWidget(ui->fileCheckNotice);
+    ui->fileCheckProgress = new QProgressBar(filesPanel);
+    ui->fileCheckProgress->setObjectName(QStringLiteral("torrentFileCheckProgress"));
+    ui->fileCheckProgress->setAccessibleName(tr("Selected-file verification progress"));
+    ui->fileCheckProgress->setRange(0, 1000);
+    ui->fileCheckProgress->hide();
+    filesLayout->addWidget(ui->fileCheckProgress);
+    auto *fileButtons = new QHBoxLayout;
+    fileButtons->addStretch();
+    ui->cancelCheck = new QPushButton(ui->cancelFileCheck->text(), filesPanel);
+    ui->cancelCheck->setObjectName(QStringLiteral("torrentCancelFileCheckButton"));
+    ui->cancelCheck->setToolTip(ui->cancelFileCheck->toolTip());
+    ui->cancelCheck->hide();
+    connect(ui->cancelCheck, &QPushButton::clicked, ui->cancelFileCheck, &QAction::trigger);
+    fileButtons->addWidget(ui->cancelCheck);
     ui->applyFiles = new QPushButton(tr("Apply file selection"), filesPanel);
     ui->applyFiles->setObjectName(QStringLiteral("torrentApplyFiles"));
-    filesLayout->addWidget(ui->applyFiles, 0, Qt::AlignRight);
+    fileButtons->addWidget(ui->applyFiles);
+    filesLayout->addLayout(fileButtons);
     auto *peersPanel = new QWidget(ui->details);
     ui->details->addTab(peersPanel, tr("Peers"));
     auto *peersLayout = new QVBoxLayout(peersPanel);
@@ -684,6 +754,7 @@ TorrentWindow::TorrentWindow(TorrentEngine *torrentEngine, const QString &layout
             updateActions();
         }
     });
+    connect(ui->files, &QTreeWidget::itemSelectionChanged, this, &TorrentWindow::updateActions);
     connect(ui->applyFiles, &QPushButton::clicked, this, &TorrentWindow::applyFileSelection);
     ui->refreshTimer = new QTimer(this);
     ui->refreshTimer->setSingleShot(true);
@@ -1028,25 +1099,34 @@ void TorrentWindow::refreshFiles()
             return a.index == b.index && a.path == b.path && a.size == b.size && a.wanted == b.wanted && a.priority == b.priority;
         }))
         return;
+    const bool sameJob = id == fileJobId;
     ui->displayedFiles = files;
     ui->filesInitialized = true;
     fileJobId = id;
     selectionDirty = false;
     const QSignalBlocker blocked(ui->files);
     const int scroll = ui->files->verticalScrollBar()->value();
+    QSet<int> selectedFiles;
+    if (sameJob)
+        for (const auto *item : ui->files->selectedItems()) selectedFiles.insert(item->data(0, Qt::UserRole).toInt());
+    const bool sorting = ui->files->isSortingEnabled();
+    ui->files->setSortingEnabled(false);
     ui->files->clear();
     for (const auto &file : files) {
-        auto *item = new QTreeWidgetItem(ui->files);
+        auto *item = new FileItem(ui->files);
         item->setText(0, file.path);
         item->setIcon(0, ui->fileIcons.iconForFile(file.path, ui->files->style()->standardIcon(QStyle::SP_FileIcon)));
         item->setText(1, sizeText(file.size));
+        item->setData(1, FileSizeRole, file.size);
         item->setData(2, FilePriorityRole, file.priority);
         item->setText(2, file.priority == 1 ? tr("Low") : file.priority == 7 ? tr("High") : tr("Normal"));
         item->setToolTip(2, tr("Choose Low, Normal or High. Unchecked files are skipped regardless of priority."));
         item->setData(0, Qt::UserRole, file.index);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsEditable);
         item->setCheckState(0, file.wanted ? Qt::Checked : Qt::Unchecked);
+        item->setSelected(selectedFiles.contains(file.index));
     }
+    ui->files->setSortingEnabled(sorting);
     ui->files->verticalScrollBar()->setValue(scroll);
     ui->fileNotice->setText(id.isEmpty() ? tr("Select a Torrent to review its files.") :
                            files.isEmpty() ? tr("File selection is available when metadata arrives. A paused magnet may need to be resumed to fetch metadata.") :
@@ -1082,7 +1162,80 @@ void TorrentWindow::updateActions()
     ui->openLocation->setEnabled(single && !torrent_action_menu::downloadDirectory(selectedJobs.first()).isEmpty());
     ui->files->setEnabled(single);
     ui->peers->setEnabled(single);
-    ui->applyFiles->setEnabled(single && selectionDirty && !fileJobId.isEmpty());
+    const auto *job = single ? &selectedJobs.first() : nullptr;
+    const bool checking = job && job->checking;
+    ui->applyFiles->setEnabled(single && !checking && selectionDirty && !fileJobId.isEmpty());
+    QString reason;
+    if (!engine || !engine->supportsFileRecheck()) reason = tr("Selected-file checking is not available in this build.");
+    else if (!single || fileJobId != selectedId() || ui->files->selectedItems().isEmpty()) reason = tr("Select files in one Torrent.");
+    else if (selectionDirty) reason = tr("Apply file selection and priority changes before verification.");
+    else {
+        QList<int> indices;
+        for (const auto *item : ui->files->selectedItems()) indices.append(item->data(0, Qt::UserRole).toInt());
+        reason = engine->previewFileRecheck(job->id, indices, job->revision).error;
+    }
+    ui->recheckFiles->setEnabled(reason.isEmpty());
+    ui->recheckFiles->setToolTip(reason.isEmpty() ? ui->recheckFiles->text() : reason);
+    ui->recheckFiles->setStatusTip(ui->recheckFiles->toolTip());
+    ui->cancelFileCheck->setEnabled(job && job->fileCheck.active && !job->fileCheck.canceling);
+    ui->cancelCheck->setEnabled(ui->cancelFileCheck->isEnabled());
+    {
+        const QSignalBlocker blocked(ui->files);
+        for (int i = 0; i < ui->files->topLevelItemCount(); ++i) {
+            auto *item = ui->files->topLevelItem(i);
+            auto flags = item->flags();
+            flags.setFlag(Qt::ItemIsUserCheckable, !checking);
+            flags.setFlag(Qt::ItemIsEditable, !checking);
+            item->setFlags(flags);
+        }
+    }
+    renderFileCheck(job);
+}
+
+void TorrentWindow::renderFileCheck(const Job *job)
+{
+    const FileRecheckSnapshot check = job ? job->fileCheck : FileRecheckSnapshot{};
+    ui->checkJobId = job ? job->id : QString{};
+    ui->checkToken = check.token;
+    const bool visible = check.token || check.recoveryRequired;
+    ui->fileCheckNotice->setVisible(visible);
+    ui->fileCheckProgress->setVisible(visible && check.totalBytes > 0);
+    ui->cancelCheck->setVisible(check.active);
+    if (check.canceling) ui->fileCheckNotice->setText(tr("Canceling selected-file check..."));
+    else if (check.active) {
+        ui->fileCheckNotice->setText(check.totalBytes > 0
+            ? tr("Rechecking selected files... %1%").arg(QLocale().toString(
+                100.0 * std::clamp(double(check.checkedBytes) / check.totalBytes, 0.0, 1.0), 'f', 1))
+            : tr("Rechecking selected files (no payload pieces)."));
+    } else if (!check.error.isEmpty()) ui->fileCheckNotice->setText(tr("Could not verify: %1").arg(check.error));
+    else ui->fileCheckNotice->setText(tr("Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.")
+        .arg(check.files.size()).arg(check.checkedPieces).arg(check.totalPieces).arg(check.untrustedPieces));
+    ui->fileCheckProgress->setValue(check.totalBytes > 0
+        ? qRound(1000.0 * std::clamp(double(check.checkedBytes) / check.totalBytes, 0.0, 1.0)) : 0);
+    QHash<int, FileCheckResult> results;
+    for (const auto &result : check.files) results.insert(result.index, result);
+    const QSignalBlocker blocked(ui->files);
+    // Updating the sorted column must not move rows out from under this batch.
+    const bool verificationSorting = ui->files->isSortingEnabled() && ui->files->sortColumn() == 3;
+    if (verificationSorting) ui->files->setSortingEnabled(false);
+    for (int i = 0; i < ui->files->topLevelItemCount(); ++i) {
+        auto *item = ui->files->topLevelItem(i);
+        const auto found = results.constFind(item->data(0, Qt::UserRole).toInt());
+        QString outcome, detail;
+        if (found != results.cend()) {
+            switch (found->outcome) {
+            case FileCheckOutcome::Pending: outcome = tr("Pending"); break;
+            case FileCheckOutcome::Verified: outcome = tr("Verified"); break;
+            case FileCheckOutcome::FailedPiece: outcome = tr("Affected piece missing or corrupt"); break;
+            case FileCheckOutcome::Unavailable: outcome = tr("Could not verify"); break;
+            case FileCheckOutcome::Canceled: outcome = tr("Canceled"); break;
+            }
+            detail = found->detail;
+        }
+        item->setText(3, outcome);
+        item->setToolTip(3, detail.isEmpty() ? outcome : outcome + QStringLiteral("\n") + detail);
+    }
+    if (verificationSorting) ui->files->setSortingEnabled(true);
 }
 
 void TorrentWindow::createTorrent()
@@ -1209,6 +1362,51 @@ void TorrentWindow::recheckSelected()
     emit shareInvalidationRequested(id);
     if (engine)
         engine->recheck(id);
+}
+
+void TorrentWindow::recheckSelectedFiles()
+{
+    const auto id = selectedId();
+    if (!engine || id.isEmpty() || id != fileJobId || selectionDirty) return;
+    const auto jobs = engine->jobs();
+    const auto found = std::find_if(jobs.cbegin(), jobs.cend(), [&](const Job &job) { return job.id == id; });
+    if (found == jobs.cend()) return;
+    QList<int> indices;
+    for (const auto *item : ui->files->selectedItems()) indices.append(item->data(0, Qt::UserRole).toInt());
+    const auto revision = found->revision;
+    const auto scope = engine->previewFileRecheck(id, indices, revision);
+    if (!scope.plan) { showError(scope.error); return; }
+    QMessageBox confirm(QMessageBox::Question, ui->recheckFiles->text(),
+        tr("Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.")
+            .arg(scope.plan->selectedFiles.size()).arg(scope.plan->pieces.size()),
+        QMessageBox::Yes | QMessageBox::Cancel, this);
+    confirm.setDefaultButton(QMessageBox::Cancel);
+    confirm.setTextFormat(Qt::PlainText);
+    QStringList neighbors;
+    for (const auto &file : found->files)
+        if (scope.plan->affectedFiles.contains(file.index) && !scope.plan->selectedFiles.contains(file.index))
+            neighbors.append(file.path);
+    const auto fragments = tr("Only affected pieces are read; these shared boundary pieces also touch neighboring files:");
+    if (!neighbors.isEmpty()) {
+        // Keep confirmation geometry bounded; the expandable detail lists every neighbor.
+        confirm.setInformativeText(fragments + QLatin1Char('\n') + neighbors.mid(0, 5).join(QLatin1Char('\n')));
+        if (neighbors.size() > 5) confirm.setDetailedText(neighbors.join(QLatin1Char('\n')));
+    }
+    if (confirm.exec() != QMessageBox::Yes || !engine) return;
+    if (selectedId() != id || fileJobId != id || selectionDirty) {
+        showError(tr("The Torrent selection changed; select the files again.")); return;
+    }
+    const auto current = engine->previewFileRecheck(id, scope.plan->selectedFiles, revision);
+    if (!current.plan) { showError(current.error); return; }
+    engine->recheckFiles(id, scope.plan->selectedFiles, revision);
+    updateActions();
+}
+
+void TorrentWindow::cancelSelectedFileRecheck()
+{
+    if (engine && selectedId() == ui->checkJobId && ui->checkToken)
+        engine->cancelFileRecheck(ui->checkJobId, ui->checkToken);
+    updateActions();
 }
 
 void TorrentWindow::applyFileSelection()

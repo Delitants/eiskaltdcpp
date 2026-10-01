@@ -6303,6 +6303,26 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
             <source>Could not open the download folder.</source>
             <translation>Nie udało się otworzyć folderu pobierania.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Anuluj sprawdzanie plików</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Anulowanie sprawdzania wybranych plików...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Sprawdź ponownie wybrane pliki...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Ponowne sprawdzanie wybranych plików... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Weryfikacja</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6313,6 +6313,26 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Could not open the download folder.</source>
             <translation>Δεν ήταν δυνατό το άνοιγμα του φακέλου λήψης.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Ακύρωση ελέγχου αρχείων</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Ακύρωση ελέγχου επιλεγμένων αρχείων...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Επανέλεγχος επιλεγμένων αρχείων...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Επανέλεγχος επιλεγμένων αρχείων... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Επαλήθευση</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

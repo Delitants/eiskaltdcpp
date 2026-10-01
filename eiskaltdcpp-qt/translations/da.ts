@@ -6214,6 +6214,26 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <source>Could not open the download folder.</source>
             <translation>Kunne ikke åbne downloadmappen.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Annullér filkontrol</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Annullerer kontrol af valgte filer...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Kontrollér valgte filer igen...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Kontrollerer valgte filer igen... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Kontrol</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -14,6 +14,20 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_selected_file_verification_controls_are_translated(self):
+        captions = {"Recheck selected files...", "Cancel file check", "Verification",
+                    "Rechecking selected files... %1%", "Canceling selected-file check..."}
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            for caption in captions:
+                with self.subTest(language=path.stem, caption=caption):
+                    translation = entries.get(("TorrentWindow", caption))
+                    self.assertIsNotNone(translation)
+                    self.assertNotIn(translation.get("type"), {"unfinished", "obsolete", "vanished"})
+                    self.assertTrue("".join(translation.itertext()).strip())
+
     def test_dht_advertisement_controls_are_translated(self):
         captions = {"Enable DHT", "Do not advertise DHT to hubs",
                     "Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy."}

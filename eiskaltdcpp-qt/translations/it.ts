@@ -6321,6 +6321,26 @@ Aggiunto per la condivisione in sola lettura. Verranno verificati gli hash dei f
             <source>Could not open the download folder.</source>
             <translation>Impossibile aprire la cartella di download.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Annulla controllo dei file</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Annullamento del controllo dei file selezionati...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Ricontrolla i file selezionati...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Ricontrollo dei file selezionati... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Verifica</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

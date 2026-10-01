@@ -6292,6 +6292,26 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
             <source>Could not open the download folder.</source>
             <translation>Priečinok sťahovania sa nepodarilo otvoriť.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Zrušiť kontrolu súborov</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Rušenie kontroly vybraných súborov...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Znova overiť vybrané súbory...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Overovanie vybraných súborov... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Overenie</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

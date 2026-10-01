@@ -6330,6 +6330,26 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
             <source>Could not open the download folder.</source>
             <translation>No se pudo abrir la carpeta de descarga.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Cancelar verificación de archivos</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Cancelando la verificación de archivos seleccionados...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Volver a verificar los archivos seleccionados...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Verificando los archivos seleccionados... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Verificación</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

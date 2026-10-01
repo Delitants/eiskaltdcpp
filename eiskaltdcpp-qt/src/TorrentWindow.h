@@ -63,6 +63,9 @@ private:
     QStringList checkedCountries() const;
     void removeSelected(bool deleteFiles);
     void recheckSelected();
+    void recheckSelectedFiles();
+    void cancelSelectedFileRecheck();
+    void renderFileCheck(const eiskalt::torrent::Job *job);
     void applyFileSelection();
     QString selectedId() const;
     QStringList selectedIds() const;

@@ -6323,6 +6323,26 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <source>Could not open the download folder.</source>
             <translation>Nem sikerült megnyitni a letöltési mappát.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Fájlellenőrzés megszakítása</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Kijelölt fájlok ellenőrzésének megszakítása...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Kijelölt fájlok újraellenőrzése...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Kijelölt fájlok újraellenőrzése... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Ellenőrzés</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

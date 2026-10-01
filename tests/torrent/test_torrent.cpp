@@ -3673,6 +3673,86 @@ TEST_CASE("A failed atomic checkpoint cannot advance the durable verification ge
 }
 
 #if EISKALT_SELECTED_RECHECK_AVAILABLE && !defined(Q_OS_WIN)
+template<class Engine> RecheckPlanResult previewSelectedCheck(Engine &engine, const QString &id,
+        const QList<int> &indices, quint64 revision) {
+    if constexpr (requires { engine.previewFileRecheck(id, indices, revision); })
+        return engine.previewFileRecheck(id, indices, revision);
+    else return {std::nullopt, "Selected-check scope preview is unavailable"};
+}
+template<class Snapshot> QList<int> pieceCounts(const Snapshot &snapshot) {
+    if constexpr (requires { snapshot.checkedPieces; snapshot.totalPieces; snapshot.untrustedPieces; })
+        return {snapshot.checkedPieces, snapshot.totalPieces, snapshot.untrustedPieces};
+    else return {-1, -1, -1};
+}
+TEST_CASE("Selected preview discloses scope without mutation and counts completed pieces", "[selected-recheck-engine][selected-recheck-preview]") {
+    application();
+    QTemporaryDir dir;
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    const auto revision = jobSnapshot(engine, id).revision;
+    int invalidations = 0;
+    QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString) { ++invalidations; });
+    const auto scope = previewSelectedCheck(engine, id, {0, 0}, revision);
+    REQUIRE(scope.plan);
+    CHECK(scope.plan->selectedFiles == QList<int>{0});
+    CHECK(scope.plan->affectedFiles == QList<int>{0});
+    CHECK(scope.plan->pieces == QList<int>{0, 1, 2, 3, 4, 5, 6, 7});
+    CHECK(scope.plan->totalBytes == 131072);
+    CHECK(scope.plan->revision == revision);
+    for (const auto &indices : QList<QList<int>>{{}, {-1}, {2}}) {
+        const auto rejected = previewSelectedCheck(engine, id, indices, revision);
+        CHECK_FALSE(rejected.plan);
+        CHECK_FALSE(rejected.error.isEmpty());
+    }
+    CHECK_FALSE(previewSelectedCheck(engine, "missing", {0}, revision).plan);
+    CHECK_FALSE(previewSelectedCheck(engine, id, {0}, revision + 1).plan);
+    CHECK(invalidations == 0);
+    CHECK(jobSnapshot(engine, id).revision == revision);
+    CHECK(jobSnapshot(engine, id).complete);
+    TorrentEngineTestAccess::call(engine, [](auto &d) {
+        std::lock_guard lock(d.mutex);
+        d.checkSerial = std::numeric_limits<quint64>::max();
+        return true;
+    });
+    CHECK_FALSE(previewSelectedCheck(engine, id, {0}, revision).plan);
+    TorrentEngineTestAccess::call(engine, [](auto &d) {
+        std::lock_guard lock(d.mutex);
+        d.checkSerial = 0;
+        return true;
+    });
+    engine.recheckFiles(id, {0}, revision);
+    CHECK_FALSE(previewSelectedCheck(engine, id, {0}, jobSnapshot(engine, id).revision).plan);
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    CHECK(pieceCounts(jobSnapshot(engine, id).fileCheck) == QList<int>{8, 8, 0});
+}
+TEST_CASE("Resume publication does not recycle the preceding native paused snapshot", "[selected-recheck-engine][resume-snapshot]") {
+    application();
+    QTemporaryDir dir;
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    engine.pause(id, true);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto &r = d.records.at(id);
+        // Freeze the last native paused snapshot while its async resume is queued.
+        // Availability and all other status fields remain real fixture values.
+        r.status.flags |= lt::torrent_flags::paused;
+        r.userPaused = r.userStopped = false;
+        d.resume(r);
+        d.publish();
+        std::lock_guard lock(d.mutex);
+        const auto job = std::find_if(d.snapshots.begin(), d.snapshots.end(), [&](const Job &j) { return j.id == id; });
+        return job != d.snapshots.end() && !job->paused && !job->stopped && job->complete;
+    }));
+    engine.stop(id);
+    CHECK(jobSnapshot(engine, id).paused);
+    CHECK(jobSnapshot(engine, id).stopped);
+}
 TEST_CASE("Selected checks reject stale and invalid file selections before publication cancellation", "[selected-recheck-engine][selected-recheck-lifecycle]") {
     application();
     QTemporaryDir dir;

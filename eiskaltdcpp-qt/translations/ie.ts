@@ -6206,6 +6206,26 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
             <source>Could not open the download folder.</source>
             <translation>Ne successat aperter li fólder de descargas.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Anullar verification de files</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Anullante verification de selectet files...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Reverificar selectet files...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Reverificante selectet files... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Verification</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

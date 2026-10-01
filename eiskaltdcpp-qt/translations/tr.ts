@@ -6331,6 +6331,26 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <source>Could not open the download folder.</source>
             <translation>İndirme klasörü açılamadı.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Dosya denetimini iptal et</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Seçili dosyaların denetimi iptal ediliyor...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Seçili dosyaları yeniden denetle...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Seçili dosyalar yeniden denetleniyor... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Doğrulama</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6332,6 +6332,26 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Could not open the download folder.</source>
             <translation>Не удалось открыть папку загрузки.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Отменить проверку файлов</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Отмена проверки выбранных файлов...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Перепроверить выбранные файлы...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Перепроверка выбранных файлов... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Проверка</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

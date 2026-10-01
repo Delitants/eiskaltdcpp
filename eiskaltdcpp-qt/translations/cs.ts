@@ -6320,6 +6320,26 @@ Přidáno ke sdílení v režimu pouze pro čtení. U zdrojových souborů se ov
             <source>Could not open the download folder.</source>
             <translation>Složku stahování se nepodařilo otevřít.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Zrušit kontrolu souborů</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Rušení kontroly vybraných souborů...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Znovu ověřit vybrané soubory...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Ověřování vybraných souborů... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Ověření</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

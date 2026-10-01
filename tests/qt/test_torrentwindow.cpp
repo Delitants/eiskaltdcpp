@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QContextMenuEvent>
 #include <QCryptographicHash>
 #include <QDesktopServices>
 #include <QElapsedTimer>
@@ -58,6 +59,11 @@ using namespace eiskalt::torrent;
 // Exercise the same snapshot renderer as refreshPeers without starting networking.
 // The requires branches keep the pre-implementation RED build runnable.
 struct TorrentWindowTestAccess {
+    template<class Window> static void actions(Window &window) { window.updateActions(); }
+    template<class Window> static void fileCheck(Window &window, const Job &job) {
+        if constexpr (requires { window.renderFileCheck(&job); }) window.renderFileCheck(&job);
+        else FAIL("No selected-file verification renderer");
+    }
     template<class Window> static void jobs(Window &window, const QList<Job> &jobs) {
         if constexpr (requires { window.renderJobs(jobs); }) window.renderJobs(jobs);
         else FAIL("No snapshot job renderer");
@@ -83,6 +89,12 @@ public:
         palette.setColor(QPalette::Window, dark ? QColor(40, 40, 40) : QColor(240, 240, 240));
         palette.setColor(QPalette::Base, dark ? QColor(30, 30, 30) : QColor(Qt::white));
         palette.setColor(QPalette::Text, dark ? QColor(242, 242, 242) : QColor(18, 18, 18));
+        palette.setColor(QPalette::WindowText, palette.color(QPalette::Text));
+        palette.setColor(QPalette::ButtonText, palette.color(QPalette::Text));
+        palette.setColor(QPalette::Button, palette.color(QPalette::Window));
+        palette.setColor(QPalette::Disabled, QPalette::Text, dark ? QColor(150, 150, 150) : QColor(110, 110, 110));
+        palette.setColor(QPalette::Disabled, QPalette::WindowText, palette.color(QPalette::Disabled, QPalette::Text));
+        palette.setColor(QPalette::Disabled, QPalette::ButtonText, palette.color(QPalette::Disabled, QPalette::Text));
         palette.setColor(QPalette::Highlight, QColor(55, 112, 220));
         palette.setColor(QPalette::HighlightedText, Qt::white);
         if (qEnvironmentVariableIsSet("EISKALT_TORRENT_PRIORITY_SCREENSHOTS")) {
@@ -157,6 +169,369 @@ QString pausedFixture(QTemporaryDir &dir, TorrentEngine &engine)
     REQUIRE(waitFor([&] { return engine.files(id).size() == 1; }));
     return id;
 }
+
+QString selectedCheckFixture(QTemporaryDir &dir, TorrentEngine &engine)
+{
+    Settings settings;
+    settings.dht = settings.pex = settings.localDiscovery = settings.portMapping = false;
+    settings.bootstrapNodes.clear();
+    engine.configure(settings, {});
+    const auto root = dir.filePath("payload");
+    REQUIRE(QDir().mkpath(root + "/bundle"));
+    QByteArray metadata("d4:infod5:filesl");
+    const QList<QPair<QByteArray, QByteArray>> files = {
+        {"A.bin", QByteArray(8192, 'a')}, {"B.bin", QByteArray(8192, 'b')},
+        {"C.bin", QByteArray(32768, 'c')}, {"empty.bin", {}}};
+    QByteArray payload;
+    for (const auto &[name, bytes] : files) {
+        QFile file(root + "/bundle/" + QString::fromLatin1(name));
+        REQUIRE(file.open(QIODevice::WriteOnly));
+        REQUIRE(file.write(bytes) == bytes.size());
+        metadata += "d6:lengthi" + QByteArray::number(bytes.size()) + "e4:pathl" +
+            QByteArray::number(name.size()) + ":" + name + "ee";
+        payload += bytes;
+    }
+    metadata += "e4:name6:bundle12:piece lengthi16384e6:pieces60:";
+    for (int offset = 0; offset < payload.size(); offset += 16384)
+        metadata += QCryptographicHash::hash(payload.mid(offset, 16384), QCryptographicHash::Sha1);
+    metadata += "ee";
+    QFile source(dir.filePath("selected.torrent"));
+    REQUIRE(source.open(QIODevice::WriteOnly));
+    REQUIRE(source.write(metadata) == metadata.size());
+    source.close();
+    const auto id = engine.add(source.fileName(), root, {}, true);
+    REQUIRE(waitFor([&] { return engine.files(id).size() == 4; }));
+    engine.stop(id);
+    REQUIRE(waitFor([&] { return engine.jobs().first().stopped; }));
+    return id;
+}
+
+QTreeWidgetItem *metadataItem(QTreeWidget *files, int index)
+{
+    for (int i = 0; i < files->topLevelItemCount(); ++i)
+        if (files->topLevelItem(i)->data(0, Qt::UserRole).toInt() == index)
+            return files->topLevelItem(i);
+    FAIL("Metadata file index missing");
+    return nullptr;
+}
+}
+
+TEST_CASE("Selected-file checks use metadata selection across confirmation sorting", "[qt][selected-recheck-ui]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    engine.setWantedFiles(id, {0, 2, 3});
+    REQUIRE(waitFor([&] { return !engine.files(id)[1].wanted; }));
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    auto *action = control<QAction>(window, "torrentRecheckFiles");
+    REQUIRE(files->selectionMode() == QAbstractItemView::ExtendedSelection);
+    CHECK_FALSE(action->isEnabled());
+    if (!engine.supportsFileRecheck()) {
+        CHECK_FALSE(action->toolTip().isEmpty());
+        return;
+    }
+    metadataItem(files, 0)->setSelected(true);
+    metadataItem(files, 3)->setSelected(true);
+    REQUIRE(action->isEnabled());
+    QSignalSpy invalidation(&engine, &TorrentEngine::fileHashRecheckRequested);
+    bool confirmedScope = false;
+    QTimer::singleShot(0, &window, [&] {
+        if (auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget())) {
+            confirmedScope = box->text().contains("2") && box->text().contains("1") &&
+                box->informativeText().contains("bundle/B.bin") &&
+                !box->informativeText().contains("bundle/C.bin") &&
+                box->informativeText().contains("Only affected pieces") && box->textFormat() == Qt::PlainText;
+            files->sortItems(0, Qt::DescendingOrder);
+            box->button(QMessageBox::Yes)->click();
+        }
+    });
+    action->trigger();
+    REQUIRE(confirmedScope);
+    REQUIRE(invalidation.count() == 1);
+    CHECK(invalidation.first()[1].toStringList() == QStringList{
+        engine.jobs().first().savePath + "/bundle/A.bin", engine.jobs().first().savePath + "/bundle/B.bin"});
+    REQUIRE(waitFor([&] { return !engine.jobs().first().fileCheck.active; }));
+    const auto result = engine.jobs().first();
+    REQUIRE(result.fileCheck.files.size() == 2);
+    CHECK(result.fileCheck.files[0].index == 0);
+    CHECK(result.fileCheck.files[1].index == 3);
+    CHECK(result.stopped);
+    CHECK_FALSE(engine.files(id)[1].wanted);
+    CHECK(control<QAction>(window, "torrentRecheck") != action);
+    CHECK(control<QAction>(window, "torrentOpenLocation") != action);
+}
+
+TEST_CASE("Selected-file confirmation rejects changed revision dirty edits and removed jobs", "[qt][selected-recheck-ui]")
+{
+    const int change = GENERATE(0, 1, 2);
+    CAPTURE(change);
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    if (!engine.supportsFileRecheck()) return;
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    metadataItem(files, 0)->setSelected(true);
+    auto *action = control<QAction>(window, "torrentRecheckFiles");
+    REQUIRE(action->isEnabled());
+    QSignalSpy invalidation(&engine, &TorrentEngine::fileHashRecheckRequested);
+    bool sawDialog = false;
+    QTimer::singleShot(0, &window, [&] {
+        if (auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget())) {
+            sawDialog = true;
+            if (change == 0) engine.setWantedFiles(id, {0});
+            if (change == 1) engine.remove(id);
+            if (change == 2) metadataItem(files, 0)->setCheckState(0, Qt::Unchecked);
+            box->button(QMessageBox::Yes)->click();
+        }
+    });
+    action->trigger();
+    REQUIRE(sawDialog);
+    CHECK(invalidation.isEmpty());
+    CHECK_FALSE(control<QLabel>(window, "torrentNotice")->text().isEmpty());
+}
+
+TEST_CASE("Selected checks explain unavailability and offer cancellation without wanted edits", "[qt][selected-recheck-ui]")
+{
+    QTemporaryDir dir;
+    TorrentWindow unavailable(nullptr, dir.filePath("unavailable.ini"));
+    auto *disabled = control<QAction>(unavailable, "torrentRecheckFiles");
+    CHECK_FALSE(disabled->isEnabled());
+    CHECK_FALSE(disabled->toolTip().isEmpty());
+    CHECK_FALSE(control<QAction>(unavailable, "torrentCancelFileRecheck")->isEnabled());
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    auto *action = control<QAction>(window, "torrentRecheckFiles");
+    metadataItem(files, 0)->setSelected(true);
+    if (!engine.supportsFileRecheck()) {
+        CHECK_FALSE(action->isEnabled());
+        CHECK_FALSE(action->toolTip().isEmpty());
+        return;
+    }
+    REQUIRE(action->isEnabled());
+    metadataItem(files, 0)->setCheckState(0, Qt::Unchecked);
+    CHECK_FALSE(action->isEnabled());
+    CHECK_FALSE(action->toolTip().isEmpty());
+    control<QPushButton>(window, "torrentApplyFiles")->click();
+    REQUIRE(waitFor([&] { return !engine.files(id).first().wanted; }));
+    REQUIRE(waitFor([&] { return action->isEnabled(); }));
+    engine.recheckFiles(id, {0}, engine.jobs().first().revision);
+    TorrentWindowTestAccess::actions(window);
+    CHECK_FALSE(action->isEnabled());
+    CHECK_FALSE(control<QAction>(window, "torrentRecheck")->isEnabled());
+    auto *cancel = control<QAction>(window, "torrentCancelFileRecheck");
+    REQUIRE(cancel->isEnabled());
+    CHECK_FALSE(cancel->toolTip().isEmpty());
+    CHECK_FALSE(control<QPushButton>(window, "torrentApplyFiles")->isEnabled());
+    CHECK(control<QProgressBar>(window, "torrentFileCheckProgress")->maximum() == 1000);
+    CHECK_FALSE(control<QLabel>(window, "torrentFileCheckNotice")->text().isEmpty());
+    cancel->trigger();
+    REQUIRE(waitFor([&] { return !engine.jobs().first().fileCheck.active; }));
+    CHECK(engine.jobs().first().stopped);
+    CHECK_FALSE(engine.files(id).first().wanted);
+    REQUIRE(waitFor([&] { return !cancel->isEnabled(); }));
+}
+
+TEST_CASE("Selected results separate verification from download progress and boundary blame", "[qt][selected-recheck-ui]")
+{
+    const int theme = GENERATE(0, 1);
+    ApplicationInputStyle appearance(theme);
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    window.resize(1000, 700);
+    window.show();
+    control<QTreeWidget>(window, "torrentFiles")->sortItems(3, Qt::AscendingOrder);
+    auto job = engine.jobs().first();
+    job.progress = 1;
+    job.fileCheck = {42, true, false, 8192, 16384,
+        {{0, FileCheckOutcome::Pending, {}}, {3, FileCheckOutcome::Verified, {}}}, {}};
+    TorrentWindowTestAccess::fileCheck(window, job);
+    auto *progress = control<QProgressBar>(window, "torrentFileCheckProgress");
+    REQUIRE(progress->value() == 500);
+    REQUIRE(progress->isVisible());
+    CHECK_FALSE(control<QLabel>(window, "torrentFileCheckNotice")->text().contains("100%"));
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    CHECK_FALSE(metadataItem(files, 3)->text(3).isEmpty());
+    CHECK(metadataItem(files, 2)->text(3).isEmpty());
+    job.fileCheck.active = false;
+    job.fileCheck.files = {{0, FileCheckOutcome::FailedPiece, "An affected piece may include neighboring fragments."},
+        {1, FileCheckOutcome::Unavailable, "Could not read payload"}, {2, FileCheckOutcome::Canceled, "Unchecked pieces remain unavailable"},
+        {3, FileCheckOutcome::Verified, {}}};
+    job.fileCheck.checkedPieces = 2;
+    job.fileCheck.totalPieces = job.fileCheck.untrustedPieces = 3;
+    TorrentWindowTestAccess::fileCheck(window, job);
+    CHECK_FALSE(metadataItem(files, 0)->text(3).contains("File corrupt", Qt::CaseInsensitive));
+    CHECK(metadataItem(files, 0)->toolTip(3).contains("neighboring"));
+    CHECK(metadataItem(files, 1)->toolTip(3).contains("Could not read"));
+    CHECK(metadataItem(files, 2)->toolTip(3).contains("unavailable"));
+    job.fileCheck.error = "Fixture permission denied";
+    TorrentWindowTestAccess::fileCheck(window, job);
+    CHECK(control<QLabel>(window, "torrentFileCheckNotice")->text().contains("Fixture permission denied"));
+    job.fileCheck.error.clear();
+    TorrentWindowTestAccess::fileCheck(window, job);
+    const auto screenshots = qEnvironmentVariable("EISKALT_SELECTED_RECHECK_SCREENSHOTS");
+    if (!screenshots.isEmpty()) {
+        REQUIRE(QDir().mkpath(screenshots));
+        files->setColumnWidth(0, 390);
+        files->setColumnWidth(1, 100);
+        files->setColumnWidth(2, 115);
+        files->setColumnWidth(3, 300);
+        QTest::qWait(20);
+        REQUIRE(window.grab().save(QDir(screenshots).filePath(QStringLiteral("selected-results-%1.png").arg(theme))));
+    }
+    job.fileCheck = {43, true, false, 0, 0, {{3, FileCheckOutcome::Pending, {}}}, {}};
+    TorrentWindowTestAccess::fileCheck(window, job);
+    CHECK_FALSE(progress->isVisible());
+    CHECK_FALSE(control<QLabel>(window, "torrentFileCheckNotice")->text().contains("%"));
+    window.resize(700, 480);
+    QTest::qWait(20);
+    window.resize(1150, 800);
+    QTest::qWait(20);
+    CHECK(window.width() == 1150);
+}
+
+TEST_CASE("File-row selection survives refresh but never crosses torrent identity", "[qt][selected-recheck-ui]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto first = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(first);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    metadataItem(files, 0)->setSelected(true);
+    engine.setDcShareExcluded(first, true);
+    REQUIRE(waitFor([&] { return engine.jobs().first().dcShareExcluded; }));
+    QTest::qWait(120);
+    REQUIRE(files->selectedItems().size() == 1);
+    CHECK(files->selectedItems().first()->data(0, Qt::UserRole).toInt() == 0);
+    const auto other = pausedFixture(dir, engine);
+    REQUIRE(waitFor([&] { return control<QTreeWidget>(window, "torrentJobs")->topLevelItemCount() == 2; }));
+    window.selectJob(other);
+    REQUIRE(files->topLevelItemCount() == 1);
+    CHECK(files->selectedItems().isEmpty());
+    CHECK_FALSE(control<QAction>(window, "torrentRecheckFiles")->isEnabled());
+    window.selectJob(first);
+    CHECK(files->selectedItems().isEmpty());
+}
+
+TEST_CASE("Selected-check controls load the shipped Ukrainian catalog", "[qt][selected-recheck-ui][selected-recheck-i18n]")
+{
+    const auto directory = qEnvironmentVariable("EISKALT_SELECTED_RECHECK_TRANSLATIONS");
+    if (directory.isEmpty()) {
+        WARN("Set EISKALT_SELECTED_RECHECK_TRANSLATIONS to exercise compiled catalogs");
+        return;
+    }
+    QTranslator translator;
+    REQUIRE(translator.load(QDir(directory).filePath("uk.qm")));
+    qApp->installTranslator(&translator);
+    struct Restore { QTranslator *translator; ~Restore() { qApp->removeTranslator(translator); } } restore{&translator};
+    QTemporaryDir dir;
+    TorrentWindow window(nullptr, dir.filePath("layout.ini"));
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    CHECK(files->headerItem()->text(3) == QString::fromUtf8("Перевірка"));
+    CHECK(control<QAction>(window, "torrentRecheckFiles")->text() == QString::fromUtf8("Перевірити вибрані файли повторно..."));
+    Job job;
+    job.id = "translated";
+    job.fileCheck = {42, true, false, 8192, 16384, {}, {}};
+    TorrentWindowTestAccess::fileCheck(window, job);
+    CHECK(control<QLabel>(window, "torrentFileCheckNotice")->text().startsWith(QString::fromUtf8("Повторна перевірка вибраних файлів...")));
+    CHECK_FALSE(control<QProgressBar>(window, "torrentFileCheckProgress")->accessibleName().isEmpty());
+}
+
+TEST_CASE("Files context menu retains multi-selection and uses native action availability", "[qt][selected-recheck-ui]")
+{
+    const int theme = GENERATE(0, 1);
+    ApplicationInputStyle appearance(theme);
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    window.resize(1000, 700);
+    window.show();
+    QTest::qWait(30);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    metadataItem(files, 0)->setSelected(true);
+    metadataItem(files, 3)->setSelected(true);
+    const auto wanted = metadataItem(files, 0)->checkState(0);
+    bool sawMenu = false, actionsCorrect = false;
+    QTimer::singleShot(0, &window, [&] {
+        if (auto *menu = qobject_cast<QMenu *>(QApplication::activePopupWidget())) {
+            sawMenu = true;
+            const auto actions = menu->actions();
+            actionsCorrect = actions.size() == 2 && actions[0]->isEnabled() == engine.supportsFileRecheck() &&
+                !actions[1]->isEnabled() && !actions[1]->toolTip().isEmpty();
+            const auto screenshots = qEnvironmentVariable("EISKALT_SELECTED_RECHECK_SCREENSHOTS");
+            if (!screenshots.isEmpty()) {
+                QDir().mkpath(screenshots);
+                menu->grab().save(QDir(screenshots).filePath(QStringLiteral("selected-menu-%1.png").arg(theme)));
+            }
+            menu->close();
+        }
+    });
+    const auto point = files->visualItemRect(metadataItem(files, 0)).center();
+    QContextMenuEvent event(QContextMenuEvent::Mouse, point, files->viewport()->mapToGlobal(point));
+    QApplication::sendEvent(files->viewport(), &event);
+    REQUIRE(sawMenu);
+    CHECK(actionsCorrect);
+    CHECK(files->selectedItems().size() == 2);
+    CHECK(metadataItem(files, 0)->checkState(0) == wanted);
+    CHECK(engine.jobs().first().fileCheck.token == 0);
+}
+
+TEST_CASE("Dismissing selected-file confirmation does not invalidate sharing or start verification", "[qt][selected-recheck-ui]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    if (!engine.supportsFileRecheck()) return;
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    metadataItem(control<QTreeWidget>(window, "torrentFiles"), 0)->setSelected(true);
+    QSignalSpy invalidation(&engine, &TorrentEngine::storageInvalidating);
+    QTimer::singleShot(0, &window, [] {
+        if (auto *box = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()))
+            box->button(QMessageBox::Cancel)->click();
+    });
+    control<QAction>(window, "torrentRecheckFiles")->trigger();
+    CHECK(invalidation.isEmpty());
+    CHECK(engine.jobs().first().fileCheck.token == 0);
+    CHECK(engine.jobs().first().stopped);
+}
+
+TEST_CASE("File size and priority sorting use numeric values without changing metadata identities", "[qt][selected-recheck-ui]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    metadataItem(files, 0)->setSelected(true);
+    files->sortItems(1, Qt::AscendingOrder);
+    QList<int> order;
+    for (int i = 0; i < files->topLevelItemCount(); ++i) order.append(files->topLevelItem(i)->data(0, Qt::UserRole).toInt());
+    CHECK(order == QList<int>{3, 0, 1, 2});
+    metadataItem(files, 0)->setData(2, Qt::UserRole + 1, 7);
+    metadataItem(files, 0)->setText(2, "High");
+    metadataItem(files, 1)->setData(2, Qt::UserRole + 1, 1);
+    metadataItem(files, 1)->setText(2, "Low");
+    files->sortItems(2, Qt::AscendingOrder);
+    CHECK(files->topLevelItem(0)->data(0, Qt::UserRole).toInt() == 1);
+    CHECK(files->topLevelItem(3)->data(0, Qt::UserRole).toInt() == 0);
+    REQUIRE(files->selectedItems().size() == 1);
+    CHECK(files->selectedItems().first()->data(0, Qt::UserRole).toInt() == 0);
+    CHECK(metadataItem(files, 0)->checkState(0) == Qt::Checked);
 }
 
 TEST_CASE("Torrent context menu opens current storage without starting a paused job", "[qt][torrent-location]")
@@ -759,10 +1134,11 @@ TEST_CASE("Torrent priority resting cells follow application item styling", "[qt
     QTemporaryDir dir;
     TorrentWindow tab(nullptr, dir.filePath("layout.ini"));
     auto *files = control<QTreeWidget>(tab, "torrentFiles");
-    files->setEnabled(true);
     files->setLayoutDirection(direction);
     auto *row = new QTreeWidgetItem(files, {"payload.bin", "1 B", "Normal"});
     row->setData(2, Qt::UserRole + 1, 4);
+    // Row setup invokes the real unavailable-backend action refresh.
+    files->setEnabled(true);
     files->ensurePolished();
     QStyleOptionViewItem option;
     option.initFrom(files);
@@ -903,7 +1279,7 @@ TEST_CASE("Torrent file checkbox and priority edits apply and survive refresh", 
     QTest::qWait(50);
     auto *files = control<QTreeWidget>(tab, "torrentFiles");
     auto *item = files->topLevelItem(0);
-    REQUIRE(files->columnCount() == 3);
+    REQUIRE(files->columnCount() == 4);
     QStyleOptionViewItem option;
     REQUIRE(files->itemDelegateForColumn(0)->createEditor(files->viewport(), option,
                  files->model()->index(0, 0)) == nullptr);

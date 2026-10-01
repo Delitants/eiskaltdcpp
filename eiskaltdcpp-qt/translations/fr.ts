@@ -6311,6 +6311,26 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
             <source>Could not open the download folder.</source>
             <translation>Impossible d'ouvrir le dossier de téléchargement.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Annuler la vérification des fichiers</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Annulation de la vérification des fichiers sélectionnés...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Revérifier les fichiers sélectionnés...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Vérification des fichiers sélectionnés... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Vérification</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

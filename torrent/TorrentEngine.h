@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TorrentTypes.h"
+#include "SelectedRecheck.h"
 #include <QObject>
 #include <QMap>
 #include <memory>
@@ -51,6 +52,9 @@ public:
     void remove(const QString &id, bool deleteFiles = false);
     void recheck(const QString &id);
     bool supportsFileRecheck() const;
+    // Cache-only scope disclosure for confirmation; no I/O, reservation or mutation.
+    RecheckPlanResult previewFileRecheck(const QString &id, const QList<int> &indices,
+                                        quint64 expectedRevision) const;
     void recheckFiles(const QString &id, const QList<int> &indices, quint64 expectedRevision);
     void cancelFileRecheck(const QString &id, quint64 token);
     // Call before dependent controllers are destroyed. Idempotent; joins worker.

@@ -6307,6 +6307,26 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
             <source>Could not open the download folder.</source>
             <translation>Nije moguće otvoriti fasciklu preuzimanja.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Otkaži proveru datoteka</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Otkazivanje provere izabranih datoteka...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Ponovo proveri izabrane datoteke...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Ponovna provera izabranih datoteka... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Provera</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

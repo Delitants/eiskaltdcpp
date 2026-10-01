@@ -6327,6 +6327,26 @@ Zum schreibgeschützten Seeding hinzugefügt. Die Quelldateien werden anhand ihr
             <source>Could not open the download folder.</source>
             <translation>Der Download-Ordner konnte nicht geöffnet werden.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Dateiprüfung abbrechen</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Prüfung ausgewählter Dateien wird abgebrochen...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Ausgewählte Dateien erneut prüfen...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Ausgewählte Dateien werden geprüft... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Überprüfung</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6331,6 +6331,26 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Could not open the download folder.</source>
             <translation>Није могуће отворити фасциклу преузимања.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Откажи проверу датотека</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Отказивање провере изабраних датотека...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Поново провери изабране датотеке...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Поновна провера изабраних датотека... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Провера</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6294,6 +6294,26 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Could not open the download folder.</source>
             <translation>无法打开下载文件夹。</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>取消文件校验</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>正在取消所选文件校验...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>重新校验所选文件...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>正在重新校验所选文件... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>校验</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6277,6 +6277,26 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Could not open the download folder.</source>
             <translation>ჩამოტვირთვის საქაღალდე ვერ გაიხსნა.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>ფაილების შემოწმების გაუქმება</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>არჩეული ფაილების შემოწმების გაუქმება...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>არჩეული ფაილების ხელახალი შემოწმება...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>არჩეული ფაილების ხელახალი შემოწმება... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>შემოწმება</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

@@ -6277,6 +6277,26 @@ Adicionado para distribuição somente leitura. Os hashes dos arquivos de origem
             <source>Could not open the download folder.</source>
             <translation>Não foi possível abrir a pasta de download.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Cancelar verificação de arquivos</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Cancelando a verificação dos arquivos selecionados...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Verificar novamente os arquivos selecionados...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Verificando os arquivos selecionados... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Verificação</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

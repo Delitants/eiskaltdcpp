@@ -6331,6 +6331,26 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <source>Could not open the download folder.</source>
             <translation>Kunde inte öppna nedladdningsmappen.</translation>
         </message>
+        <message>
+            <source>Cancel file check</source>
+            <translation>Avbryt filkontroll</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file check...</source>
+            <translation>Avbryter kontrollen av valda filer...</translation>
+        </message>
+        <message>
+            <source>Recheck selected files...</source>
+            <translation>Kontrollera valda filer igen...</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files... %1%</source>
+            <translation>Kontrollerar valda filer igen... %1%</translation>
+        </message>
+        <message>
+            <source>Verification</source>
+            <translation>Verifiering</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>

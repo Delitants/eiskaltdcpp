@@ -657,6 +657,7 @@ struct TorrentEngine::Impl {
     void beginFileCheck(Record &r, RecheckPlan plan, quint64 token, quint64 revision) {
         r.revision = revision;
         r.fileCheck = {token, true, false, 0, plan.totalBytes, {}, {}};
+        r.fileCheck.totalPieces = r.fileCheck.untrustedPieces = plan.pieces.size();
         for (int index : plan.selectedFiles) r.fileCheck.files.append({index, FileCheckOutcome::Pending, {}});
         r.checkPlan = std::move(plan);
         r.checkStarted = r.checkTerminal = r.checkSaveRequested = false;
@@ -725,6 +726,8 @@ struct TorrentEngine::Impl {
         for (const auto piece : native.passed) passed.insert(int(piece));
         for (const auto piece : native.failed) failedPieces.insert(int(piece));
         for (const auto piece : native.unavailable) unavailablePieces.insert(int(piece));
+        r.fileCheck.checkedPieces = passed.size() + failedPieces.size() + unavailablePieces.size();
+        r.fileCheck.untrustedPieces = std::max(0, r.fileCheck.totalPieces - int(passed.size()));
         for (auto &file : r.fileCheck.files) {
             const auto index = lt::file_index_t(file.index);
             bool failed = false, unavailable = false, pending = false;
@@ -1257,6 +1260,9 @@ struct TorrentEngine::Impl {
         if (r.sourceReadOnly) protectSource(r);
         else r.handle.set_flags(lt::torrent_flags::auto_managed);
         r.handle.resume();
+        // Resume is asynchronous; do not republish the preceding paused snapshot.
+        // Subsequent native status updates still report actual scheduler pauses.
+        r.status.flags &= ~lt::torrent_flags::paused;
     }
     void start(Record &r) {
         if (r.storageCollision || r.fileCheck.recoveryRequired || r.checkRecord) return;
@@ -2083,6 +2089,30 @@ bool TorrentEngine::supportsFileRecheck() const {
     return false;
 #endif
 }
+RecheckPlanResult TorrentEngine::previewFileRecheck(const QString &id, const QList<int> &indices,
+                                                  quint64 expectedRevision) const {
+    if (!supportsFileRecheck()) return {{}, tr("Selected-file checking is not available in this build.")};
+    std::lock_guard lock(d->mutex);
+    const auto job = std::find_if(d->snapshots.cbegin(), d->snapshots.cend(), [&](const Job &job) { return job.id == id; });
+    if (d->stopped || d->commands.size() >= 1024)
+        return {{}, tr("Torrent backend is shut down or its command queue is full.")};
+    if (job == d->snapshots.cend() || job->revision != expectedRevision)
+        return {{}, tr("The Torrent selection changed; select the files again.")};
+    if (job->checking || job->fileCheck.active || d->checkAdmissions.contains(id) || d->mutationBusy.contains(id))
+        return {{}, tr("Selected-file verification conflicts with another operation.")};
+    if (!job->error.isEmpty() && !job->fileCheck.recoveryRequired)
+        return {{}, tr("Resolve Torrent recovery or storage errors before file verification.")};
+    if (d->checkSerial == std::numeric_limits<quint64>::max() || expectedRevision == std::numeric_limits<quint64>::max())
+        return {{}, tr("Torrent verification generation is exhausted.")};
+    const auto metadata = d->metadataSnapshots.value(id);
+    if (!metadata || indices.size() > maxFiles || job->savePath.isEmpty())
+        return {{}, tr("Torrent metadata or file selection is unavailable.")};
+    auto result = planSelectedRecheck(*metadata, indices, expectedRevision);
+    if (result.plan && job->fileCheck.recoveryRequired && std::any_of(job->fileCheck.files.cbegin(), job->fileCheck.files.cend(),
+            [&](const FileCheckResult &file) { return !result.plan->selectedFiles.contains(file.index); }))
+        return {{}, tr("Recheck all files from the interrupted operation before checking a different selection.")};
+    return result;
+}
 void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, quint64 expectedRevision) {
     Q_ASSERT(QThread::currentThread() == thread());
     if (!supportsFileRecheck()) { emit error(tr("Selected-file checking is not available in this build.")); return; }
@@ -2128,6 +2158,7 @@ void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, q
     job->downloadRate = job->uploadRate = 0;
     job->downloadingPeers = job->uploadingPeers = 0;
     job->fileCheck = {token, true, false, 0, scope.plan->totalBytes, {}, {}};
+    job->fileCheck.totalPieces = job->fileCheck.untrustedPieces = scope.plan->pieces.size();
     for (int index : scope.plan->selectedFiles) job->fileCheck.files.append({index, FileCheckOutcome::Pending, {}});
     d->commands.push_back([p = d.get(), id, plan = std::move(*scope.plan), token, revision]() mutable {
         const auto it = p->records.find(id);

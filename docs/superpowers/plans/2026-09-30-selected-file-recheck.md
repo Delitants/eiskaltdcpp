@@ -13,8 +13,11 @@
 Status: approved for Native inline execution on 2026-09-30. Tasks 1-5 are complete
 locally, including held-I/O/fault acceptance and conservative restart recovery.
 Scoped DC hash invalidation preserves unaffected cache evidence across restart.
-Native Files controls and integration/package/review acceptance remain pending.
-No Files UI action is enabled or app installed.
+Native Files controls are implemented locally in maintained-extension development
+builds, with stable multi-selection, scope confirmation, progress and cancellation.
+Current-host native Cocoa light/dark, resize, cancellation and priority checks pass.
+Task 6 remains in progress: full localization is still required, followed by Task 7
+integration/package/review acceptance. No app is installed.
 
 ## Global Constraints
 
@@ -138,9 +141,9 @@ runtime/native Qt scenario acceptance remains in Task 7.
 
 **Interfaces:** Add private `recheckSelectedFiles()` and `cancelSelectedFileRecheck()`; controls consume Task 4 snapshots. Action object names: `torrentRecheckFiles`, `torrentCancelFileRecheck`. Selection uses metadata index item data and captured job revision, never checked/wanted state or visual row number.
 
-- [ ] Add `[selected-recheck-ui]` tests for multi-selection, sorting between confirmation and execution, unapplied edits, disappearing job, missing capability, disabled conflicts and cancel availability. Run Qt filter to RED.
-- [ ] Implement native context actions, scope/boundary confirmation, status `Rechecking selected files... %1%`, progress and outcomes; retain normal file priorities and download checkboxes. Show zero-piece checks without a bogus percentage. Confirm canceled unchecked pieces need verification/download before reuse.
-- [ ] Revalidate revision and metadata indices at execution. Render failed boundary pieces without falsely accusing one particular file. Full Recheck and Finder remain distinct actions.
+- [x] Add `[selected-recheck-ui]` tests for multi-selection, sorting between confirmation and execution, unapplied edits, disappearing job, missing capability, disabled conflicts and cancel availability. Run Qt filter to RED.
+- [x] Implement native context actions, scope/boundary confirmation, status `Rechecking selected files... %1%`, progress and outcomes; retain normal file priorities and download checkboxes. Show zero-piece checks without a bogus percentage. Confirm canceled unchecked pieces need verification/download before reuse.
+- [x] Revalidate revision and metadata indices at execution. Render failed boundary pieces without falsely accusing one particular file. Full Recheck and Finder remain distinct actions.
 - [ ] Run focused Qt tests to GREEN, catalog/extraction audit, then native Cocoa light/dark screenshots and responsive resize/cancel checks on fixtures. Verify translated strings and accessibility names; commit as `Expose selected-file checks in torrent details`.
 
 ### Task 7: Package, Review And Accept

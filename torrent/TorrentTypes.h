@@ -66,6 +66,7 @@ struct FileRecheckSnapshot {
     QList<FileCheckResult> files;
     QString error;
     bool recoveryRequired = false, recheckOnly = false;
+    int checkedPieces = 0, totalPieces = 0, untrustedPieces = 0;
 };
 struct Job {
     quint64 revision = 0;
