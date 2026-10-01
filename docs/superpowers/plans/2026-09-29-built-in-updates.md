@@ -315,6 +315,32 @@ and worker admission must remain alive through the later peer/socket drain befor
 worker stop and checked final saves. Normal-quit/coordinator/installer gates remain
 pending, with no `_Exit` replacement or Sparkle activation.
 
+Accepted-transfer cleanup checkpoint: both transfer managers expose
+`stopCleanupForShutdown()` as a second terminal phase. After producer closure and
+owner-fenced peer/socket drain, it closes accepted callback admission, joins whole
+operations (including already-admitted synchronous nested cleanup), and returns
+one stable result to concurrent/repeated callers. Download failure/completion
+queue tails and upload stream/slot retirement finish before that result. Late
+entries refuse raw pointers/dependencies. Listener detach and waits occur without
+manager/lifecycle locks. Reads remain available; manual/raw/configuration users
+and socket lifetime remain the owner's separate prerequisite.
+
+Download flush errors are latched for the manager lifetime and discard only the
+current uncommitted segment progress, preserving earlier verified queue segments.
+Active downloads/idlers, upload streams/slots, or a flush error yield false, never
+installer or destructive-teardown permission. Empty lists or CM registry retirement
+alone do not imply resource completion. Destructor cleanup now joins admitted
+accepted callbacks after the legacy active-list wait; this does not replace the
+owner's socket drain. Queue accepted-cleanup/checked physical move outcomes,
+non-destructive whole-core sequencing, final checked saves and normal-quit handoff
+remain required. No MainWindow/DCContext/Sparkle activation or `_Exit` replacement.
+
+Interrupted Merkle flushes retain partial hash state and validate complete leaves
+without falsely comparing an unfinished leaf with a complete expected leaf. Actual
+EOF finalizes once, repeated flushes keep root validation, and excess/post-EOF
+payload rejects before hashing/writing. Real-file regressions cover continued
+partial writes, corrupt complete/short final blocks and valid short-file cleanup.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

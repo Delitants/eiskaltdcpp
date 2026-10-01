@@ -61,6 +61,7 @@ UploadManager::~UploadManager() {
         }
         Thread::sleep(100);
     }
+    stopCleanupForShutdown();
 }
 
 bool UploadManager::beginProducer() {
@@ -90,6 +91,45 @@ void UploadManager::stopProducersForShutdown() {
     producersChanged.wait(lock, [this] { return producers == 0; });
     producerShutdownComplete = true;
     producersChanged.notify_all();
+}
+
+bool UploadManager::beginCleanup() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    const auto thread = std::this_thread::get_id();
+    if(cleanupShutdownRequested && cleanupThreads.find(thread) == cleanupThreads.end()) return false;
+    ++cleanupThreads[thread];
+    ++cleanupOperations;
+    return true;
+}
+
+void UploadManager::finishCleanup() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    auto thread = cleanupThreads.find(std::this_thread::get_id());
+    if(--thread->second == 0) cleanupThreads.erase(thread);
+    if(--cleanupOperations == 0) producersChanged.notify_all();
+}
+
+bool UploadManager::stopCleanupForShutdown() {
+    stopProducersForShutdown();
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(cleanupShutdownRequested) {
+            producersChanged.wait(lock, [this] { return cleanupShutdownComplete; });
+            return cleanupSucceeded;
+        }
+        cleanupShutdownRequested = true;
+        producersChanged.wait(lock, [this] { return cleanupOperations == 0; });
+    }
+    bool empty;
+    {
+        Lock lock(cs);
+        empty = uploads.empty() && running == 0 && extra == 0;
+    }
+    std::lock_guard<std::mutex> lock(producerMutex);
+    cleanupSucceeded = empty;
+    cleanupShutdownComplete = true;
+    producersChanged.notify_all();
+    return cleanupSucceeded;
 }
 
 bool UploadManager::hasUpload ( UserConnection& aSource ) {
@@ -402,6 +442,8 @@ bool UploadManager::getAutoSlot() {
 }
 
 void UploadManager::removeUpload(Upload* aUpload) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     Lock l(cs);
     dcassert(find(uploads.begin(), uploads.end(), aUpload) != uploads.end());
     uploads.erase(remove(uploads.begin(), uploads.end(), aUpload), uploads.end());
@@ -506,6 +548,8 @@ void UploadManager::on(AdcCommand::GET, UserConnection* aSource, const AdcComman
 }
 
 void UploadManager::on(UserConnectionListener::BytesSent, UserConnection* aSource, size_t aBytes, size_t aActual) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     dcassert(aSource->getState() == UserConnection::STATE_RUNNING);
     Upload* u = aSource->getUpload();
     dcassert(u != NULL);
@@ -514,6 +558,8 @@ void UploadManager::on(UserConnectionListener::BytesSent, UserConnection* aSourc
 }
 
 void UploadManager::on(UserConnectionListener::Failed, UserConnection* aSource, const string& aError) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     Upload* u = aSource->getUpload();
 
     if(u) {
@@ -527,6 +573,8 @@ void UploadManager::on(UserConnectionListener::Failed, UserConnection* aSource, 
 }
 
 void UploadManager::on(UserConnectionListener::TransmitDone, UserConnection* aSource) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     dcassert(aSource->getState() == UserConnection::STATE_RUNNING);
     Upload* u = aSource->getUpload();
     dcassert(u != NULL);
@@ -646,7 +694,10 @@ void UploadManager::addConnection(UserConnectionPtr conn) {
 }
 
 void UploadManager::removeConnection(UserConnection* aSource) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     aSource->removeListener(this);
+    Lock lock(cs);
     if(aSource->isSet(UserConnection::FLAG_HASSLOT)) {
         running--;
         aSource->unsetFlag(UserConnection::FLAG_HASSLOT);

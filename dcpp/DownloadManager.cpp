@@ -58,6 +58,7 @@ DownloadManager::~DownloadManager() {
         }
         Thread::sleep(100);
     }
+    stopCleanupForShutdown();
 }
 
 bool DownloadManager::beginProducer() {
@@ -86,6 +87,53 @@ void DownloadManager::stopProducersForShutdown() {
     producersChanged.wait(lock, [this] { return producers == 0; });
     producerShutdownComplete = true;
     producersChanged.notify_all();
+}
+
+bool DownloadManager::beginCleanup() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    const auto thread = std::this_thread::get_id();
+    if(cleanupShutdownRequested && cleanupThreads.find(thread) == cleanupThreads.end()) return false;
+    ++cleanupThreads[thread];
+    ++cleanupOperations;
+    return true;
+}
+
+void DownloadManager::finishCleanup() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    auto thread = cleanupThreads.find(std::this_thread::get_id());
+    if(--thread->second == 0) cleanupThreads.erase(thread);
+    if(--cleanupOperations == 0) producersChanged.notify_all();
+}
+
+bool DownloadManager::stopCleanupForShutdown() {
+    stopProducersForShutdown();
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(cleanupShutdownRequested) {
+            producersChanged.wait(lock, [this] { return cleanupShutdownComplete; });
+            return cleanupSucceeded;
+        }
+        cleanupShutdownRequested = true;
+        producersChanged.wait(lock, [this] { return cleanupOperations == 0; });
+    }
+    bool empty;
+    {
+        Lock lock(cs);
+        empty = downloads.empty() && idlers.empty();
+    }
+    std::lock_guard<std::mutex> lock(producerMutex);
+    cleanupSucceeded = empty && !flushFailed;
+    cleanupShutdownComplete = true;
+    producersChanged.notify_all();
+    return cleanupSucceeded;
+}
+
+void DownloadManager::recordFlushFailure(Download* d) {
+    // Bytes buffered or only partially written cannot become verified queue
+    // progress. Existing segments remain valid; the current segment is retried.
+    d->resetPos();
+    std::lock_guard<std::mutex> lock(producerMutex);
+    flushFailed = true;
 }
 
 void DownloadManager::on(TimerManagerListener::Second, uint64_t aTick) {
@@ -337,6 +385,8 @@ void DownloadManager::startData(UserConnection* aSource, int64_t start, int64_t 
 }
 
 void DownloadManager::on(UserConnectionListener::Data, UserConnection* aSource, const uint8_t* aData, size_t aLen) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     Download* d = aSource->getDownload();
     dcassert(d != NULL);
 
@@ -355,13 +405,21 @@ void DownloadManager::on(UserConnectionListener::Data, UserConnection* aSource, 
 
 /** Download finished! */
 void DownloadManager::endData(UserConnection* aSource) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     dcassert(aSource->getState() == UserConnection::STATE_RUNNING);
     Download* d = aSource->getDownload();
     dcassert(d != NULL);
 
-    if(d->getType() == Transfer::TYPE_TREE) {
+    try {
         d->getFile()->flush();
+    } catch(const Exception& e) {
+        recordFlushFailure(d);
+        failDownload(aSource, e.getError());
+        return;
+    }
 
+    if(d->getType() == Transfer::TYPE_TREE) {
         int64_t bl = 1024;
         while(bl * (int64_t)d->getTigerTree().getLeaves().size() < d->getTigerTree().getFileSize())
             bl *= 2;
@@ -382,15 +440,6 @@ void DownloadManager::endData(UserConnection* aSource) {
         }
         d->setTreeValid(true);
     } else {
-        // First, finish writing the file (flushing the buffers and closing the file...)
-        try {
-            d->getFile()->flush();
-        } catch(const Exception& e) {
-            d->resetPos();
-            failDownload(aSource, e.getError());
-            return;
-        }
-
         aSource->setSpeed(d->getAverageSpeed());
         aSource->updateChunkSize(d->getTigerTree().getBlockSize(), d->getSize(), GET_TICK() - d->getStart());
 
@@ -429,6 +478,8 @@ void DownloadManager::on(UserConnectionListener::MaxedOut, UserConnection* aSour
 }
 
 void DownloadManager::noSlots(UserConnection* aSource) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     if(aSource->getState() != UserConnection::STATE_SND) {
         dcdebug("DM::noSlots Bad state, disconnecting\n");
         aSource->disconnect();
@@ -439,6 +490,8 @@ void DownloadManager::noSlots(UserConnection* aSource) {
 }
 
 void DownloadManager::onFailed(UserConnection* aSource, const string& aError) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     {
         Lock l(cs);
         idlers.erase(remove(idlers.begin(), idlers.end(), aSource), idlers.end());
@@ -447,7 +500,8 @@ void DownloadManager::onFailed(UserConnection* aSource, const string& aError) {
 }
 
 void DownloadManager::failDownload(UserConnection* aSource, const string& reason) {
-
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     Download* d = aSource->getDownload();
 
     if(d) {
@@ -461,17 +515,22 @@ void DownloadManager::failDownload(UserConnection* aSource, const string& reason
 }
 
 void DownloadManager::removeConnection(UserConnectionPtr aConn) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     dcassert(aConn->getDownload() == NULL);
     aConn->removeListener(this);
     aConn->disconnect();
 }
 
 void DownloadManager::removeDownload(Download* d) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     if(d->getFile()) {
         if(d->getActual() > 0) {
             try {
                 d->getFile()->flush();
             } catch(const Exception&) {
+                recordFlushFailure(d);
             }
         }
     }
@@ -490,6 +549,8 @@ void DownloadManager::on(UserConnectionListener::FileNotAvailable, UserConnectio
 
 /** @todo Handle errors better */
 void DownloadManager::on(AdcCommand::STA, UserConnection* aSource, const AdcCommand& cmd) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     if(cmd.getParameters().size() < 2) {
         aSource->disconnect();
         return;
@@ -537,6 +598,8 @@ void DownloadManager::on(UserConnectionListener::Updated, UserConnection* aSourc
 }
 
 void DownloadManager::fileNotAvailable(UserConnection* aSource) {
+    if(!beginCleanup()) return;
+    ScopedFunctor([this] { finishCleanup(); });
     if(aSource->getState() != UserConnection::STATE_SND) {
         dcdebug("DM::fileNotAvailable Invalid state, disconnecting");
         aSource->disconnect();

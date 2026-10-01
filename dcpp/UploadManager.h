@@ -23,6 +23,7 @@
 #include <list>
 #include <mutex>
 #include <set>
+#include <thread>
 #include <unordered_map>
 
 #include "forward.h"
@@ -84,6 +85,11 @@ public:
     // Retain dependencies through socket drain. Never from callbacks or under
     // manager/listener locks; serialize manual raw/config/destruction.
     void stopProducersForShutdown();
+    // Final accepted-callback phase, after owner-fenced peer/socket drain. Joins
+    // admitted cleanup; retained streams/slots yield a stable false outcome, not
+    // teardown/install permission. Retain dependencies; never from callbacks or
+    // manager/listener locks. This does not initiate socket shutdown.
+    bool stopCleanupForShutdown();
 
     //GETSET(int, running, Running);
     GETSET(uint8_t, extraPartial, ExtraPartial);
@@ -102,6 +108,13 @@ private:
     size_t producers = 0;
     bool beginProducer();
     void finishProducer();
+    bool cleanupShutdownRequested = false;
+    bool cleanupShutdownComplete = false;
+    bool cleanupSucceeded = false;
+    size_t cleanupOperations = 0;
+    std::unordered_map<std::thread::id, size_t> cleanupThreads;
+    bool beginCleanup();
+    void finishCleanup();
 
     typedef unordered_set<UserPtr, User::Hash> SlotSet;
     typedef SlotSet::iterator SlotIter;

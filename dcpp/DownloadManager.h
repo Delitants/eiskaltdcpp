@@ -20,6 +20,8 @@
 
 #include <condition_variable>
 #include <mutex>
+#include <thread>
+#include <unordered_map>
 #include "forward.h"
 #include "DownloadManagerListener.h"
 #include "UserConnectionListener.h"
@@ -59,6 +61,11 @@ public:
     // accepted transfer cleanup and socket resources drain. Never from callbacks
     // or under manager/listener locks; serialize manual raw/config/destruction.
     void stopProducersForShutdown();
+    // Final accepted-callback phase, after owner-fenced peer/socket drain. Joins
+    // admitted cleanup and returns a stable checked outcome; false is never
+    // teardown/install permission. Retain dependencies; never call from callbacks
+    // or under manager/listener locks. This does not initiate socket shutdown.
+    bool stopCleanupForShutdown();
 private:
 
     CriticalSection cs;
@@ -71,6 +78,15 @@ private:
     size_t producers = 0;
     bool beginProducer();
     void finishProducer();
+    bool cleanupShutdownRequested = false;
+    bool cleanupShutdownComplete = false;
+    bool cleanupSucceeded = false;
+    bool flushFailed = false;
+    size_t cleanupOperations = 0;
+    std::unordered_map<std::thread::id, size_t> cleanupThreads;
+    bool beginCleanup();
+    void finishCleanup();
+    void recordFlushFailure(Download*);
 
     void removeConnection(UserConnectionPtr aConn);
     void removeDownload(Download* aDown);

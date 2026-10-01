@@ -25,7 +25,7 @@ namespace dcpp {
 template<class TreeType, bool managed>
 class MerkleCheckOutputStream : public OutputStream {
 public:
-    MerkleCheckOutputStream(const TreeType& aTree, OutputStream* aStream, int64_t start) : s(aStream), real(aTree), cur(aTree.getBlockSize()), verified(0), bufPos(0) {
+    MerkleCheckOutputStream(const TreeType& aTree, OutputStream* aStream, int64_t start) : s(aStream), real(aTree), cur(aTree.getBlockSize()), verified(0), bufPos(0), finalized(false) {
         memset(&buf, 0, sizeof(buf));
         cur.setFileSize(start);
 
@@ -40,12 +40,15 @@ public:
     virtual ~MerkleCheckOutputStream() { if(managed) delete s; }
 
     virtual size_t flush() {
-        if (bufPos != 0)
-            cur.update(buf, bufPos);
-        bufPos = 0;
-
-        cur.finalize();
-        if(cur.getLeaves().size() == real.getLeaves().size()) {
+        // An interrupted leaf is not a corrupt complete leaf. Keep its hash
+        // state resumable, and finalize the short last leaf only once at EOF.
+        if(!finalized && cur.getFileSize() + static_cast<int64_t>(bufPos) == real.getFileSize()) {
+            if(bufPos != 0) cur.update(buf, bufPos);
+            bufPos = 0;
+            cur.finalize();
+            finalized = true;
+        }
+        if(finalized) {
             if (cur.getRoot() != real.getRoot())
                 throw FileException(_("TTH inconsistency"));
         } else {
@@ -85,6 +88,9 @@ public:
     }
 
     virtual size_t write(const void* b, size_t len) {
+        const auto remaining = real.getFileSize() - cur.getFileSize() - static_cast<int64_t>(bufPos);
+        if(len && (finalized || remaining < 0 || static_cast<uint64_t>(len) > static_cast<uint64_t>(remaining)))
+            throw FileException(_("More bytes written than requested"));
         commitBytes(b, len);
         checkTrees();
         return s->write(b, len);
@@ -101,6 +107,7 @@ private:
 
     uint8_t buf[TreeType::BASE_BLOCK_SIZE];
     size_t bufPos;
+    bool finalized;
 
     void checkTrees() {
         while(cur.getLeaves().size() > verified) {
