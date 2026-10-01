@@ -21,6 +21,7 @@
 #include "DownloadManager.h"
 
 #include "QueueManager.h"
+#include "ScopedFunctor.h"
 #include "Download.h"
 #include "LogManager.h"
 #include "User.h"
@@ -48,7 +49,7 @@ DownloadManager::DownloadManager(DCContext& ctx) : ContextAware(ctx) {
 }
 
 DownloadManager::~DownloadManager() {
-    ctx().getTimerManager()->removeListener(this);
+    stopProducersForShutdown();
     while(true) {
         {
             Lock l(cs);
@@ -59,7 +60,37 @@ DownloadManager::~DownloadManager() {
     }
 }
 
+bool DownloadManager::beginProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(producerShutdownRequested) return false;
+    ++producers;
+    return true;
+}
+
+void DownloadManager::finishProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(--producers == 0) producersChanged.notify_all();
+}
+
+void DownloadManager::stopProducersForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(producerShutdownRequested) {
+            producersChanged.wait(lock, [this] { return producerShutdownComplete; });
+            return;
+        }
+        producerShutdownRequested = true;
+    }
+    ctx().getTimerManager()->removeListener(this);
+    std::unique_lock<std::mutex> lock(producerMutex);
+    producersChanged.wait(lock, [this] { return producers == 0; });
+    producerShutdownComplete = true;
+    producersChanged.notify_all();
+}
+
 void DownloadManager::on(TimerManagerListener::Second, uint64_t aTick) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     typedef vector<pair<string, UserPtr> > TargetList;
     TargetList dropTargets;
 
@@ -111,6 +142,8 @@ void DownloadManager::on(TimerManagerListener::Second, uint64_t aTick) {
 }
 
 void DownloadManager::checkIdle(const UserPtr& user) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     for(auto uc: idlers) {
         if(uc->getUser() == user) {
@@ -121,6 +154,8 @@ void DownloadManager::checkIdle(const UserPtr& user) {
 }
 
 void DownloadManager::addConnection(UserConnectionPtr conn) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
 
     if(!conn->isSet(UserConnection::FLAG_SUPPORTS_TTHF) || !conn->isSet(UserConnection::FLAG_SUPPORTS_ADCGET)) {
         // Can't download from these...
@@ -149,6 +184,8 @@ void DownloadManager::addConnection(UserConnectionPtr conn) {
 }
 
 bool DownloadManager::startDownload(QueueItem::Priority prio) {
+    if(!beginProducer()) return false;
+    ScopedFunctor([this] { finishProducer(); });
     size_t downloadCount = getDownloadCount();
 
     bool full = (CTX_SETTING(DOWNLOAD_SLOTS) != 0) && (downloadCount >= (size_t)CTX_SETTING(DOWNLOAD_SLOTS));
@@ -170,6 +207,13 @@ bool DownloadManager::startDownload(QueueItem::Priority prio) {
 }
 
 void DownloadManager::checkDownloads(UserConnection* aConn) {
+    if(!beginProducer()) {
+        // Accepted completion has already put its download back in the queue.
+        // Do not schedule another job or leave the idle peer attached here.
+        removeConnection(aConn);
+        return;
+    }
+    ScopedFunctor([this] { finishProducer(); });
     QueueItem::Priority prio = ctx().getQueueManager()->hasDownload(aConn->getUser());
     if(!startDownload(prio)) {
         removeConnection(aConn);
@@ -203,6 +247,8 @@ void DownloadManager::checkDownloads(UserConnection* aConn) {
 }
 
 void DownloadManager::on(AdcCommand::SND, UserConnection* aSource, const AdcCommand& cmd) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(aSource->getState() != UserConnection::STATE_SND) {
         dcdebug("DM::onFileLength Bad state, ignoring\n");
         return;
@@ -222,6 +268,8 @@ void DownloadManager::on(AdcCommand::SND, UserConnection* aSource, const AdcComm
 }
 
 void DownloadManager::startData(UserConnection* aSource, int64_t start, int64_t bytes, bool z) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Download* d = aSource->getDownload();
     dcassert(d != NULL);
 
@@ -475,6 +523,8 @@ void DownloadManager::on(AdcCommand::STA, UserConnection* aSource, const AdcComm
 }
 
 void DownloadManager::on(UserConnectionListener::Updated, UserConnection* aSource) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     {
         Lock l(cs);
         auto i = find(idlers.begin(), idlers.end(), aSource);

@@ -19,7 +19,9 @@
 #pragma once
 
 #include <algorithm>
+#include <condition_variable>
 #include <list>
+#include <mutex>
 #include <set>
 #include <unordered_map>
 
@@ -76,7 +78,12 @@ public:
     void addConnection(UserConnectionPtr conn);
 
     void notifyQueuedUsers();
-    void setRunning(int _running) { running = _running; notifyQueuedUsers(); }
+    void setRunning(int _running);
+
+    // Stops new work only; accepted transfer/stream/slot cleanup remains alive.
+    // Retain dependencies through socket drain. Never from callbacks or under
+    // manager/listener locks; serialize manual raw/config/destruction.
+    void stopProducersForShutdown();
 
     //GETSET(int, running, Running);
     GETSET(uint8_t, extraPartial, ExtraPartial);
@@ -88,6 +95,13 @@ private:
     int running;
     UploadList uploads;
     mutable CriticalSection cs;
+    std::mutex producerMutex;
+    std::condition_variable producersChanged;
+    bool producerShutdownRequested = false;
+    bool producerShutdownComplete = false;
+    size_t producers = 0;
+    bool beginProducer();
+    void finishProducer();
 
     typedef unordered_set<UserPtr, User::Hash> SlotSet;
     typedef SlotSet::iterator SlotIter;

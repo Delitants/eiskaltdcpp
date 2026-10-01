@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include "ConnectionManager.h"
+#include "ScopedFunctor.h"
 #include "LogManager.h"
 #include "ShareManager.h"
 #include "ClientManager.h"
@@ -51,8 +52,7 @@ UploadManager::UploadManager(DCContext& ctx) : ContextAware(ctx), extra(0), last
 }
 
 UploadManager::~UploadManager() {
-    ctx().getTimerManager()->removeListener(this);
-    ctx().getClientManager()->removeListener(this);
+    stopProducersForShutdown();
     while(true) {
         {
             Lock l(cs);
@@ -61,6 +61,35 @@ UploadManager::~UploadManager() {
         }
         Thread::sleep(100);
     }
+}
+
+bool UploadManager::beginProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(producerShutdownRequested) return false;
+    ++producers;
+    return true;
+}
+
+void UploadManager::finishProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(--producers == 0) producersChanged.notify_all();
+}
+
+void UploadManager::stopProducersForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(producerShutdownRequested) {
+            producersChanged.wait(lock, [this] { return producerShutdownComplete; });
+            return;
+        }
+        producerShutdownRequested = true;
+    }
+    ctx().getTimerManager()->removeListener(this);
+    ctx().getClientManager()->removeListener(this);
+    std::unique_lock<std::mutex> lock(producerMutex);
+    producersChanged.wait(lock, [this] { return producers == 0; });
+    producerShutdownComplete = true;
+    producersChanged.notify_all();
 }
 
 bool UploadManager::hasUpload ( UserConnection& aSource ) {
@@ -86,6 +115,8 @@ bool UploadManager::hasUpload ( UserConnection& aSource ) {
 }
 
 bool UploadManager::prepareFile(UserConnection& aSource, const string& aType, const string& aFile, int64_t aStartPos, int64_t aBytes, bool listRecursive) {
+    if(!beginProducer()) return false;
+    ScopedFunctor([this] { finishProducer(); });
     dcdebug("Preparing %s %s " I64_FMT " " I64_FMT " %d\n", aType.c_str(), aFile.c_str(),
             static_cast<long long int>(aStartPos), static_cast<long long int>(aBytes), listRecursive);
 
@@ -378,6 +409,8 @@ void UploadManager::removeUpload(Upload* aUpload) {
 }
 
 void UploadManager::reserveSlot(const HintedUser& aUser) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     {
         Lock l(cs);
         reservedSlots.insert(aUser);
@@ -387,6 +420,8 @@ void UploadManager::reserveSlot(const HintedUser& aUser) {
 }
 
 void UploadManager::on(UserConnectionListener::Get, UserConnection* aSource, const string& aFile, int64_t aResume) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     try {
     if(aSource->getState() != UserConnection::STATE_GET) {
         dcdebug("UM::onGet Bad state, ignoring\n");
@@ -407,6 +442,8 @@ void UploadManager::on(UserConnectionListener::Get, UserConnection* aSource, con
 }
 
 void UploadManager::on(UserConnectionListener::Send, UserConnection* aSource) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(aSource->getState() != UserConnection::STATE_SEND) {
         dcdebug("UM::onSend Bad state, ignoring\n");
         return;
@@ -423,6 +460,8 @@ void UploadManager::on(UserConnectionListener::Send, UserConnection* aSource) {
 }
 
 void UploadManager::on(AdcCommand::GET, UserConnection* aSource, const AdcCommand& c) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     try {
     if(aSource->getState() != UserConnection::STATE_GET) {
         dcdebug("UM::onGET Bad state, ignoring\n");
@@ -506,6 +545,8 @@ void UploadManager::on(UserConnectionListener::TransmitDone, UserConnection* aSo
 }
 
 void UploadManager::notifyQueuedUsers() {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     int freeSlots = getFreeSlots()*2;               //because there will be non-connecting users
 
@@ -521,6 +562,13 @@ void UploadManager::notifyQueuedUsers() {
 
         waitingUsers.pop_front();
     }
+}
+
+void UploadManager::setRunning(int value) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
+    running = value;
+    notifyQueuedUsers();
 }
 
 void UploadManager::addFailedUpload(const UserConnection& source, string filename) {
@@ -539,6 +587,8 @@ void UploadManager::addFailedUpload(const UserConnection& source, string filenam
 }
 
 void UploadManager::clearUserFiles(const UserPtr& source) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     //run this when a user's got a slot or goes offline.
     auto sit = find_if(waitingUsers.begin(), waitingUsers.end(), CompareFirst<UserPtr, uint64_t>(source));
@@ -566,6 +616,8 @@ const UploadManager::FileSet& UploadManager::getWaitingUserFiles(const UserPtr& 
 }
 
 void UploadManager::addConnection(UserConnectionPtr conn) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     if (!CTX_BOOLSETTING(ALLOW_UPLOAD_MULTI_HUB)) {
         for(auto u: uploads) {
@@ -610,6 +662,8 @@ void UploadManager::reloadRestrictions(){
 }
 
 void UploadManager::on(TimerManagerListener::Minute, uint64_t /* aTick */) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     UserList disconnects;
     {
         Lock l(cs);
@@ -658,11 +712,15 @@ void UploadManager::on(TimerManagerListener::Minute, uint64_t /* aTick */) {
 }
 
 void UploadManager::on(GetListLength, UserConnection* conn) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     conn->error("GetListLength not supported");
     conn->disconnect(false);
 }
 
 void UploadManager::on(AdcCommand::GFI, UserConnection* aSource, const AdcCommand& c) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(aSource->getState() != UserConnection::STATE_GET) {
         dcdebug("UM::onSend Bad state, ignoring\n");
         return;
@@ -689,6 +747,8 @@ void UploadManager::on(AdcCommand::GFI, UserConnection* aSource, const AdcComman
 
 // TimerManagerListener
 void UploadManager::on(TimerManagerListener::Second, uint64_t) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     UploadList ticks;
 
@@ -706,6 +766,8 @@ void UploadManager::on(TimerManagerListener::Second, uint64_t) {
 }
 
 void UploadManager::on(ClientManagerListener::UserDisconnected, const UserPtr& aUser) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(!aUser->isOnline()) {
         clearUserFiles(aUser);
     }

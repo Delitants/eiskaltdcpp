@@ -275,6 +275,27 @@ stop/final checked persistence. Pre-existing allocation/transfer/move failure
 outcomes and non-destructive whole-core/committed-quit installer acceptance remain
 pending. Do not replace `_Exit` or activate Sparkle based on this barrier alone.
 
+Transfer-producer checkpoint: `DownloadManager::stopProducersForShutdown` and
+`UploadManager::stopProducersForShutdown` close new connection/request/file/slot/
+timer work, drain admitted setup callbacks and detach their timer/client sources.
+Concurrent/repeated calls join the same terminal phase. No lifecycle or transfer
+registry lock is held across source detach or condition-variable waits. Manual
+raw/configuration/limit mutations and destruction remain owner-serialized; never
+call the fence from callbacks or under manager/listener locks. Ordinary transfer
+setup and waiting-list controls remain usable before terminal fencing.
+
+These APIs intentionally leave accepted data, completion, failure, queue progress,
+stream and slot cleanup operational. A completed download cannot schedule its
+next job after closure; its now-idle listener is detached and peer disconnected.
+Read/waiting state survives. Destructor-body fencing retains the existing active-
+list wait, but this is not a complete transfer destructor/resource barrier: the
+blocked failure regression proves active-list removal precedes final queue
+bookkeeping. Retain transfer/queue/hash/share/finished/log/CM dependencies through
+the later peer/socket drain, and keep queue workers open for accepted completion
+moves. Whole-queue fencing, checked flush/move outcomes, final resource/cleanup
+completion, non-destructive coordination and committed-quit installer acceptance
+remain pending. No MainWindow/DCContext/Sparkle activation or `_Exit` replacement.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

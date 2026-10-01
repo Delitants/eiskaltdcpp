@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include <condition_variable>
+#include <mutex>
 #include "forward.h"
 #include "DownloadManagerListener.h"
 #include "UserConnectionListener.h"
@@ -53,11 +55,22 @@ public:
     }
 
     bool startDownload(QueueItem::Priority prio);
+    // Stops new work only. Retain this manager and its dependencies until
+    // accepted transfer cleanup and socket resources drain. Never from callbacks
+    // or under manager/listener locks; serialize manual raw/config/destruction.
+    void stopProducersForShutdown();
 private:
 
     CriticalSection cs;
     DownloadList downloads;
     UserConnectionList idlers;
+    std::mutex producerMutex;
+    std::condition_variable producersChanged;
+    bool producerShutdownRequested = false;
+    bool producerShutdownComplete = false;
+    size_t producers = 0;
+    bool beginProducer();
+    void finishProducer();
 
     void removeConnection(UserConnectionPtr aConn);
     void removeDownload(Download* aDown);
