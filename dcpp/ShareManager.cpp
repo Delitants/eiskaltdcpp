@@ -491,6 +491,30 @@ void ShareManager::forgetManagedFileHashes(const string& owner) {
     saveManagedHashCache(true);
 }
 
+void ShareManager::forgetManagedFileHashes(const string& owner, const StringList& absoluteFiles) {
+    if(absoluteFiles.empty()) return;
+    const set<string> affected(absoluteFiles.begin(), absoluteFiles.end());
+    bool changed = false;
+    {
+        Lock l(cs);
+        // A replacement may already hold these records outside the lock.
+        // Revoke its token even though unaffected cached records stay reusable.
+        managedReplacements.erase(owner);
+        const auto cached = managedVerifiedFiles.find(owner);
+        if(cached == managedVerifiedFiles.end()) return;
+        auto& files = cached->second;
+        files.erase(std::remove_if(files.begin(), files.end(), [&](const ManagedFilePtr& file) {
+            if(!affected.count(file->realPath)) return false;
+            managedVerifiedBytes -= file->leaves.size() + file->realPath.size() + file->identity.size();
+            --managedVerifiedCount;
+            changed = true;
+            return true;
+        }), files.end());
+        if(files.empty()) managedVerifiedFiles.erase(cached);
+    }
+    if(changed) saveManagedHashCache(true);
+}
+
 void ShareManager::rememberManagedFiles(const string& owner, const ManagedShare& snapshot) {
     size_t bytes = 0;
     for(const auto& file : snapshot.files)

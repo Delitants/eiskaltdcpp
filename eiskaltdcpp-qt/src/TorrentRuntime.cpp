@@ -81,6 +81,12 @@ TorrentRuntime::TorrentRuntime(dcpp::DCContext &context, QObject *parent)
     connect(torrentEngine, &TorrentEngine::hashRecheckRequested, this, [&context](const QString &id) {
         context.getShareManager()->forgetManagedFileHashes("torrent:" + id.toStdString());
     }, Qt::DirectConnection);
+    connect(torrentEngine, &TorrentEngine::fileHashRecheckRequested, this, [&context](const QString &id, const QStringList &paths) {
+        dcpp::StringList affected;
+        affected.reserve(paths.size());
+        for (const auto &path : paths) affected.push_back(path.toStdString());
+        context.getShareManager()->forgetManagedFileHashes("torrent:" + id.toStdString(), affected);
+    }, Qt::DirectConnection);
     connect(torrentEngine, &TorrentEngine::configurationApplied, this, [this](quint64 epoch) {
         if (stopped || epoch != requestedConfiguration)
             return;

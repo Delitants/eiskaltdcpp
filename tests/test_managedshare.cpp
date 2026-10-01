@@ -653,6 +653,93 @@ TEST_CASE("Explicit managed hash invalidation forces fresh verification", "[mana
     REQUIRE(updated->tth == verified->tth);
 }
 
+namespace {
+template<class Manager> void forgetSelectedHashes(Manager& manager, const string& owner, const StringList& files) {
+    if constexpr(requires { manager.forgetManagedFileHashes(owner, files); })
+        manager.forgetManagedFileHashes(owner, files);
+    else manager.forgetManagedFileHashes(owner);
+}
+}
+
+TEST_CASE("Scoped rechecks persist only affected hash removal and keep unrelated files reusable", "[managedshare][selected-recheck-sharing]") {
+    ManagedShareFixture f;
+    const auto a = f.file("payload/A.bin", "first boundary fragment");
+    const auto b = f.file("payload/B.bin", "second boundary fragment");
+    const auto c = f.file("payload/C.bin", "untouched payload");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:scope", "Completed", {a, b, c}));
+    const auto old = f.shares().managedVerifiedFiles.at("torrent:scope");
+    const auto bytes = f.shares().managedVerifiedBytes;
+    const auto cost = [](const auto& file) { return file->leaves.size() + file->realPath.size() + file->identity.size(); };
+    f.shares().removeManagedFiles("torrent:scope");
+    forgetSelectedHashes(f.shares(), "torrent:scope", {a, b, a, f.temp.string() + "/absent.bin"});
+    REQUIRE(f.shares().managedVerifiedFiles.contains("torrent:scope"));
+    REQUIRE(f.shares().managedVerifiedFiles.at("torrent:scope").size() == 1);
+    CHECK(f.shares().managedVerifiedFiles.at("torrent:scope").front() == old[2]);
+    CHECK(f.shares().managedVerifiedCount == 1);
+    CHECK(f.shares().managedVerifiedBytes == bytes - cost(old[0]) - cost(old[1]));
+    f.context.shareManager_.reset();
+    f.context.shareManager_ = std::make_unique<ShareManager>(f.context);
+    REQUIRE(f.shares().managedVerifiedFiles.contains("torrent:scope"));
+    REQUIRE(f.shares().managedVerifiedFiles.at("torrent:scope").size() == 1);
+    CHECK(f.shares().managedVerifiedFiles.at("torrent:scope").front()->realPath == c);
+    CHECK(f.shares().getManagedFileHashes("torrent:scope").empty());
+    int hashes = 0;
+    REQUIRE(f.shares().replaceManagedFiles("torrent:scope", "Completed", {c}, {}, [&] { ++hashes; }));
+    CHECK(hashes == 0);
+    const auto reused = f.shares().managedShares.at("torrent:scope").files.front();
+    REQUIRE(f.shares().replaceManagedFiles("torrent:scope", "Completed", {a, b, c}, {}, [&] { ++hashes; }));
+    CHECK(hashes == 1);
+    CHECK(f.shares().managedShares.at("torrent:scope").files[0] != old[0]);
+    CHECK(f.shares().managedShares.at("torrent:scope").files[1] != old[1]);
+    CHECK(f.shares().managedShares.at("torrent:scope").files[2] == reused);
+    CHECK(f.shares().getManagedFileHashes("torrent:scope").at(c).second == old[2]->tth);
+}
+
+TEST_CASE("Scoped hash removal fences captured replacements without forgetting untouched evidence", "[managedshare][selected-recheck-sharing]") {
+    ManagedShareFixture f;
+    const auto a = f.file("payload/A.bin"), c = f.file("payload/C.bin");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:scope", "Completed", {a, c}));
+    const auto untouched = f.shares().managedVerifiedFiles.at("torrent:scope")[1];
+    f.shares().removeManagedFiles("torrent:scope");
+    std::atomic<int> polls{0};
+    std::atomic<bool> captured{false}, release{false};
+    auto worker = std::async(std::launch::async, [&] {
+        return f.shares().replaceManagedFiles("torrent:scope", "Completed", {a, c}, [&] {
+            if(++polls == 3) {
+                captured = true;
+                while(!release) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            return false;
+        });
+    });
+    struct Release { std::atomic<bool>& flag; ~Release() { flag = true; } } guard{release};
+    for(int i = 0; i < 2000 && !captured; ++i) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    REQUIRE(captured);
+    forgetSelectedHashes(f.shares(), "torrent:scope", {a});
+    release = true;
+    CHECK_FALSE(worker.get());
+    CHECK(f.shares().getManagedFileHashes("torrent:scope").empty());
+    REQUIRE(f.shares().managedVerifiedFiles.contains("torrent:scope"));
+    REQUIRE(f.shares().managedVerifiedFiles.at("torrent:scope").size() == 1);
+    CHECK(f.shares().managedVerifiedFiles.at("torrent:scope").front() == untouched);
+}
+
+TEST_CASE("Empty scoped invalidation and another owner's records remain untouched", "[managedshare][selected-recheck-sharing]") {
+    ManagedShareFixture f;
+    const auto a = f.file("payload/A.bin"), c = f.file("payload/C.bin");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:scope", "Completed", {a}));
+    REQUIRE(f.shares().replaceManagedFiles("torrent:other", "Other", {c}));
+    const auto bytes = f.shares().managedVerifiedBytes;
+    f.shares().removeManagedFiles("torrent:scope");
+    forgetSelectedHashes(f.shares(), "torrent:scope", {});
+    CHECK(f.shares().managedVerifiedCount == 2);
+    CHECK(f.shares().managedVerifiedBytes == bytes);
+    forgetSelectedHashes(f.shares(), "torrent:scope", {a});
+    CHECK_FALSE(f.shares().managedVerifiedFiles.contains("torrent:scope"));
+    CHECK(f.shares().managedVerifiedCount == 1);
+    CHECK(f.shares().getManagedFileHashes("torrent:other").at(c).first > 0);
+}
+
 TEST_CASE("Reusable managed hashes never restore unselected or unsafe files", "[managedshare][managedhash-reuse]") {
     ManagedShareFixture f;
     const auto first = f.file("payload/first.bin"), second = f.file("payload/second.bin");

@@ -10,10 +10,11 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
-Status: approved for Native inline execution on 2026-09-30. Tasks 1-4 are complete
+Status: approved for Native inline execution on 2026-09-30. Tasks 1-5 are complete
 locally, including held-I/O/fault acceptance and conservative restart recovery.
-Scoped DC hash invalidation, native Files controls and integration/package/review
-acceptance remain pending. No Files UI action is enabled or app installed.
+Scoped DC hash invalidation preserves unaffected cache evidence across restart.
+Native Files controls and integration/package/review acceptance remain pending.
+No Files UI action is enabled or app installed.
 
 ## Global Constraints
 
@@ -115,13 +116,21 @@ native dependency tests pass 14 / 434. No UI, install or release proof is claime
 
 ### Task 5: Preserve Unrelated DC Hashes
 
+Completed locally: validated affected metadata paths revoke only their owner's
+TTH records after publication cancellation and before native check scheduling.
+Count/byte accounting and replacement fencing remain correct; unrelated hashes
+survive restart and reuse. Whole-Torrent Recheck behavior is unchanged. Focused
+managed-sharing tests pass 30 / 353; full core passes 842 / 146,784 and full
+maintained backend passes 150 / 18,335. TorrentRuntime consumers compile; patched
+runtime/native Qt scenario acceptance remains in Task 7.
+
 **Files:** Modify `dcpp/ShareManager.h`, `dcpp/ShareManager.cpp`, `torrent/TorrentEngine.h`, `torrent/TorrentEngine.cpp`, `eiskaltdcpp-qt/src/TorrentRuntime.cpp`, `tests/test_managedshare.cpp`, `tests/torrent/test_torrent.cpp`.
 
 **Interfaces:** Overload `ShareManager::forgetManagedFileHashes(const string& owner, const StringList& absoluteFiles)`; retain the whole-owner overload. Add direct signal `fileHashRecheckRequested(QString id, QStringList affectedPaths)` following synchronous publication cancellation and validated request admission. Paths derive only from the validated affected-files plan, not UI input.
 
-- [ ] Write `[selected-recheck-sharing]` regressions: recheck A touching B's boundary drops A/B cache only, keeps unrelated C reusable across restart, and fences an in-flight replacement that captured old A/B records. Run core filter to RED.
-- [ ] Implement scoped record removal with accurate byte/count accounting and cache persistence, without reentrant callbacks under the share lock. Runtime may retract the whole job while checking; preserve unchanged file hash records.
-- [ ] Test private/excluded/wanted rules, cancellation/restart, changed path identities and selective republishing. Verify BitTorrent verification does not substitute for TTH hashing. Run focused tests plus existing managed-share tests to GREEN; commit as `Invalidate only affected torrent sharing hashes`.
+- [x] Write `[selected-recheck-sharing]` regressions: recheck A touching B's boundary drops A/B cache only, keeps unrelated C reusable across restart, and fences an in-flight replacement that captured old A/B records. Run core filter to RED.
+- [x] Implement scoped record removal with accurate byte/count accounting and cache persistence, without reentrant callbacks under the share lock. Runtime may retract the whole job while checking; preserve unchanged file hash records.
+- [x] Test private/excluded/wanted rules, cancellation/restart, changed path identities and selective republishing. Verify BitTorrent verification does not substitute for TTH hashing. Run focused tests plus existing managed-share tests to GREEN; commit as `Invalidate only affected torrent sharing hashes`.
 
 ### Task 6: Add Native Files-Table Controls
 

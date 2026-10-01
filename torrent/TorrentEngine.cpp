@@ -2103,9 +2103,16 @@ void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, q
             [&](const FileCheckResult &file) { return !scope.plan->selectedFiles.contains(file.index); }))
         reason = tr("Recheck all files from the interrupted operation before checking a different selection.");
     if (!reason.isEmpty()) { lock.unlock(); emit error(reason); return; }
+    QStringList affectedPaths;
+    affectedPaths.reserve(scope.plan->affectedFiles.size());
+    for (int index : scope.plan->affectedFiles)
+        affectedPaths.append(QDir(job->savePath).filePath(text(metadata->layout().file_path(lt::file_index_t(index)))));
     d->checkAdmissions.insert(id);
     lock.unlock();
     emit storageInvalidating(id);
+    // Persist scoped TTH revocation before any native check can start. This
+    // reservation still rejects reentrant mutations, with no cache mutex held.
+    emit fileHashRecheckRequested(id, affectedPaths);
     lock.lock();
     d->checkAdmissions.remove(id);
     job = find();

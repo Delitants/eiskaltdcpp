@@ -4,8 +4,9 @@ Status: specification and implementation plan approved on 2026-09-30. Native
 dependency, scope planner, recovery journal and backend lifecycle are complete
 locally, including generation-fenced checkpoints, held-I/O/fault acceptance and
 engine subprocess-exit recovery. Affected payload identities fence replaced files
-and directories. Scoped DC hash invalidation and later native UI/integration/
-package/review acceptance remain pending; selected-check UI is not enabled.
+and directories; scoped DC hash invalidation preserves unrelated records across
+restart. Native UI/integration/package/review acceptance remains pending;
+selected-check UI is not enabled.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit

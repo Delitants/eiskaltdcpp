@@ -4261,6 +4261,11 @@ TEST_CASE("Engine selected-check process boundary fixture", "[.selected-recheck-
 }
 
 namespace {
+template<class Engine, class F> void connectScopedHashes(Engine &engine, F callback) {
+    if constexpr (requires { &Engine::fileHashRecheckRequested; })
+        QObject::connect(&engine, &Engine::fileHashRecheckRequested, &engine, callback, Qt::DirectConnection);
+}
+
 struct EngineDiskProbe {
     std::shared_ptr<selected_recheck_test::Reads> reads = std::make_shared<selected_recheck_test::Reads>();
     std::function<void()> release;
@@ -4685,6 +4690,82 @@ TEST_CASE("Overdue disk completions retain recovery and block teardown success",
             CHECK_FALSE(TorrentEngineTestAccess::active(restored));
             CHECK(TorrentEngineTestAccess::call(restored, [id](auto &d) { return d.records.at(id).resume.have_pieces.count(); }) == 8);
             CHECK(restored.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Selected cache invalidation carries validated boundary paths and preserves sharing policy", "[selected-recheck-engine][selected-recheck-sharing]") {
+    application();
+    for (int policy : {0, 1, 2}) {
+        DYNAMIC_SECTION("public=0 private=1 excluded=2 policy=" << policy) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            REQUIRE(QDir().mkpath(dir.filePath("payload/boundary")));
+            std::vector<lt::create_file_entry> entries;
+            for (const auto &entry : {std::pair{"A", 8192}, std::pair{"B", 8192}, std::pair{"C", 32768}}) {
+                QFile file(dir.filePath("payload/boundary/" + QString::fromLatin1(entry.first)));
+                REQUIRE(file.open(QIODevice::WriteOnly));
+                REQUIRE(file.write(QByteArray(entry.second, entry.first[0])) == entry.second);
+                entries.emplace_back("boundary/" + std::string(entry.first), entry.second);
+            }
+            lt::create_torrent maker(entries, 16384, lt::create_torrent::v1_only);
+            maker.set_priv(policy == 1);
+            lt::error_code error;
+            lt::set_piece_hashes(maker, settings.downloadPath.toStdString(), error);
+            REQUIRE_FALSE(error);
+            const auto bytes = lt::bencode(maker.generate());
+            const auto input = dir.filePath("boundary.torrent");
+            QFile file(input);
+            REQUIRE(file.open(QIODevice::WriteOnly));
+            REQUIRE(file.write(bytes.data(), bytes.size()) == qint64(bytes.size()));
+            file.close();
+            TorrentEngine engine(dir.filePath("state"));
+            engine.configure(settings, {});
+            const auto id = engine.add(input, {}, {0, 2});
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            if (policy == 2) {
+                engine.setDcShareExcluded(id, true);
+                REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).dcShareExcluded; }));
+            }
+            const auto revision = jobSnapshot(engine, id).revision;
+            bool retracted = false;
+            int scoped = 0, whole = 0;
+            QStringList paths;
+            QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString target) {
+                CHECK(target == id);
+                retracted = true;
+            }, Qt::DirectConnection);
+            QObject::connect(&engine, &TorrentEngine::hashRecheckRequested, &engine, [&] { ++whole; }, Qt::DirectConnection);
+            connectScopedHashes(engine, [&](QString target, QStringList affected) {
+                CHECK(target == id);
+                CHECK(retracted);
+                CHECK(QThread::currentThread() == engine.thread());
+                CHECK_FALSE(engine.jobs().isEmpty());
+                ++scoped;
+                paths = std::move(affected);
+            });
+            engine.recheckFiles(id, {0}, revision - 1);
+            engine.recheckFiles(id, {-1}, revision);
+            CHECK_FALSE(retracted);
+            CHECK(scoped == 0);
+            engine.recheckFiles(id, {0, 0}, revision);
+            CHECK(retracted);
+            CHECK(scoped == 1);
+            CHECK(whole == 0);
+            CHECK(paths == QStringList{QDir(jobSnapshot(engine, id).savePath).filePath("boundary/A"),
+                QDir(jobSnapshot(engine, id).savePath).filePath("boundary/B")});
+            const auto token = jobSnapshot(engine, id).fileCheck.token;
+            engine.cancelFileRecheck(id, token);
+            REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+            CHECK(jobSnapshot(engine, id).privateTorrent == (policy == 1));
+            CHECK(jobSnapshot(engine, id).dcShareExcluded == (policy == 2));
+            REQUIRE(engine.files(id).size() == 3);
+            CHECK(engine.files(id)[0].wanted);
+            CHECK_FALSE(engine.files(id)[1].wanted);
+            CHECK(engine.files(id)[2].wanted);
+            CHECK(scoped == 1);
+            CHECK(engine.shutdownChecked());
         }
     }
 }

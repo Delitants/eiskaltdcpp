@@ -103,6 +103,7 @@ public:
     void removeManagedFiles(const string& owner);
     // Explicit rechecks discard reusable hashes after retracting the owner.
     void forgetManagedFileHashes(const string& owner);
+    void forgetManagedFileHashes(const string& owner, const StringList& absoluteFiles);
     using ManagedFileHashes = map<string, pair<int64_t, TTHValue>>;
     // Last published hashes by absolute path. No filesystem checks or share lock:
     // for GUI links only, never an authorization to open/upload a payload.

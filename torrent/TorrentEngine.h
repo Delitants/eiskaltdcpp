@@ -67,6 +67,7 @@ signals:
     void dcShareExclusionChanged(QString id);
     // Explicit payload recheck, after synchronous publication cancellation.
     void hashRecheckRequested(QString id);
+    void fileHashRecheckRequested(QString id, QStringList affectedPaths);
     void configurationApplied(quint64 generation);
     void listenersChanged();
     void peersChanged();
