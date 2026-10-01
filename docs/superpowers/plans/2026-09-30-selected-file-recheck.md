@@ -18,14 +18,18 @@ builds, with stable multi-selection, scope confirmation, progress and cancellati
 Current-host native Cocoa light/dark, resize, cancellation and priority checks pass.
 Task 6 controls and all 25 verification catalogs are complete locally. The full
 translation audit and compiled-catalog/native controls checks pass. Current full
-Qt passes 547 cases with 8 external-GOST cases explicitly skipped, no failures.
+Qt passes 548 cases with 8 external-GOST cases explicitly skipped, no failures.
 Task 7 is in progress: its registered actual-Mach-O audit fixtures pass, including
 ABI/symbol/dependency/CPU/OS rejection and a fresh required header-pair configure.
 Capability reconfiguration cannot reuse a stale success. An exact-current-pin
-arm64 dependency rebuild passes native 14 / 434 and backend 152 / 18,361 tests,
-with actual loader readback; it is not a self-contained app or minimum-OS proof.
-Integrated repair/restart, reproducible current-pin consumer matrices, both real
-CPU/OS bundles and independent review remain. No app is installed.
+arm64 dependency rebuild passes native 17 / 586 and backend 152 / 18,430 tests,
+with actual loader readback. The Qt repair/redownload/sharing-cache restart
+scenario passes 1 / 148; full Qt, native Cocoa controls and core/DC-only matrices
+pass. Independent review findings are resolved with storage-race, partfile-map,
+paused-discovery, repair-scheduling and loader-relative regressions. These are
+current-host isolated fixtures, not self-contained app or minimum-OS proof.
+Both real CPU/OS bundles and matching minimum-OS acceptance remain. No app is
+installed.
 
 ## Global Constraints
 
@@ -161,10 +165,10 @@ runtime/native Qt scenario acceptance remains in Task 7.
 **Interfaces:** `EISKALT_REQUIRE_SELECTED_RECHECK=ON` requires extension capability at configure/link time. Audit takes a bundle path, expected architecture and deployment floor; fails on missing/mismatched ABI, wrong CPU, newer floor or dependencies outside the bundle/system allowlist. Ordinary unpatched dev builds keep capability OFF with explicit UI explanation.
 
 - [x] Add audit negative fixtures for missing extension symbol, wrong header/library pair, outside-Homebrew dylib, wrong architecture and too-new deployment target. Record RED, then implement the smallest audit changes and run to GREEN.
-- [ ] Run current-source core, Torrent, Qt and DC-only builds/suites serially. Use the selected-recheck build tree for patched-dependent tests and record CMake cache, source/archive/patch hashes and binary paths. Never report old system-library test results as extension coverage.
-- [ ] Exercise a local peer download, selected check with injected corruption, permitted redownload and restart. Also verify a stopped/read-only check remains network-inactive and other jobs continue. Keep real user torrents/profile out of fixtures.
+- [x] Run current-source core, Torrent, Qt and DC-only builds/suites serially. Use the selected-recheck build tree for patched-dependent tests and record CMake cache, source/archive/patch hashes and binary paths. Never report old system-library test results as extension coverage.
+- [x] Exercise a local peer download, selected check with injected corruption, permitted redownload and restart. Also verify a stopped/read-only check remains network-inactive and other jobs continue. Keep real user torrents/profile out of fixtures.
 - [ ] Build/audit the two approved CPU/OS flavors. Runtime-test on matching machines/OS where available; otherwise explicitly retain those gates as pending. Compilation/cross-architecture inspection does not prove native minimum-OS behavior.
-- [ ] Request independent review of the extension, journal/state machine and publication/cache boundaries. If no reviewer tool is available, report independent review pending rather than impersonate a fresh reviewer. Resolve findings and rerun affected tests.
+- [x] Request independent review of the extension, journal/state machine and publication/cache boundaries. If no reviewer tool is available, report independent review pending rather than impersonate a fresh reviewer. Resolve findings and rerun affected tests.
 - [ ] Commit explicit packaging/doc changes only. Record remaining installation/release gates and return to the separate updater backlog. Do not push, install or publish merely because this feature's tests pass.
 
 ## Verification Commands And Evidence

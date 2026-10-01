@@ -9,8 +9,12 @@
 #include <libtorrent/load_torrent.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/disk_interface.hpp>
+#include <libtorrent/posix_disk_io.hpp>
+#include <libtorrent/pread_disk_io.hpp>
 #include <libtorrent/torrent_status.hpp>
 #include <libtorrent/alert_types.hpp>
+#include <QCoreApplication>
+#include <QTcpServer>
 #include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
@@ -50,7 +54,7 @@ struct Fixture {
     std::shared_ptr<Reads> reads = std::make_shared<Reads>();
     std::unique_ptr<lt::session> session;
     lt::torrent_handle handle;
-    Fixture(lt::create_flags_t flags = lt::create_torrent::v1_only, bool omitLayers = false, bool allPresent = true, bool skipBoundaryFile = false, int lastSize = 32768, bool v1Pad = false) {
+    Fixture(lt::create_flags_t flags = lt::create_torrent::v1_only, bool omitLayers = false, bool allPresent = true, bool skipBoundaryFile = false, int lastSize = 32768, bool v1Pad = false, int diskBackend = 0) {
         REQUIRE(temp.isValid());
         REQUIRE(QDir().mkpath(temp.path()+"/fixture"));
         put(temp.path()+"/fixture/A",8192,'a');
@@ -77,8 +81,10 @@ struct Fixture {
         if(skipBoundaryFile) params.flags &= ~lt::torrent_flags::no_verify_files;
         params.have_pieces.resize(params.ti->num_pieces(),allPresent);
         lt::session_params sp(settings());
-        sp.disk_io_constructor = [r=reads](lt::io_context& io,lt::settings_interface const& p,lt::counters& c) {
-            return std::make_unique<CountingDisk>(lt::default_disk_io_constructor(io,p,c),r);
+        sp.disk_io_constructor = [r=reads, diskBackend](lt::io_context& io,lt::settings_interface const& p,lt::counters& c) {
+            auto disk = diskBackend == 1 ? lt::posix_disk_io_constructor(io,p,c) :
+                diskBackend == 2 ? lt::pread_disk_io_constructor(io,p,c) : lt::default_disk_io_constructor(io,p,c);
+            return std::make_unique<CountingDisk>(std::move(disk),r);
         };
         session = std::make_unique<lt::session>(std::move(sp));
         handle = session->add_torrent(params,ec);
@@ -131,6 +137,88 @@ TEST_CASE("Selected recheck reads the boundary piece and preserves unrelated ava
       REQUIRE(reads->writes == 0);
     }
     lt::finish_selected_recheck(handle,1,false);
+}
+
+TEST_CASE("Stopped selected-check finalization does not resolve web seeds", "[selected-recheck-dependency][selected-recheck-webseed]") {
+    static int argc = 1;
+    static char name[] = "selected-recheck-network-fixture";
+    static char *argv[] = {name, nullptr};
+    static QCoreApplication application(argc, argv);
+    Fixture f;
+    QTcpServer webSeed;
+    REQUIRE(webSeed.listen(QHostAddress::LocalHost));
+    lt::settings_pack logging;
+    logging.set_int(lt::settings_pack::alert_mask,
+        int(static_cast<std::uint32_t>(lt::alert_category::torrent_log | lt::alert_category::error)));
+    f.session->apply_settings(logging);
+    f.handle.add_url_seed("http://localhost:" + std::to_string(webSeed.serverPort()) + "/fixture/");
+    f.prepare();
+    std::vector<lt::alert *> alerts;
+    f.session->pop_alerts(&alerts);
+    put(f.temp.path() + "/fixture/A", 8192, 'x');
+    lt::start_selected_recheck(f.handle, {1, {lt::piece_index_t(0)}});
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 1).phase == lt::selected_recheck_phase::complete; }));
+    lt::finish_selected_recheck(f.handle, 1, false);
+    const auto status = f.handle.status();
+    CHECK(bool(status.flags & lt::torrent_flags::paused));
+    CHECK_FALSE(f.handle.have_piece(lt::piece_index_t(0)));
+    f.session->pop_alerts(&alerts);
+    REQUIRE_FALSE(alerts.empty());
+    for (const auto *alert : alerts) {
+        const auto message = alert->message();
+        INFO(message);
+        REQUIRE(message.find("resolving web seed") == std::string::npos);
+    }
+    lt::settings_pack active;
+    active.set_str(lt::settings_pack::listen_interfaces, "127.0.0.1:0");
+    f.session->apply_settings(active);
+    REQUIRE(wait([&] { return f.session->listen_port() != 0; }));
+    f.handle.resume();
+    REQUIRE(wait([&] {
+        f.session->pop_alerts(&alerts);
+        return std::any_of(alerts.begin(), alerts.end(), [](const auto *alert) {
+            return alert->message().find("resolving web seed") != std::string::npos;
+        });
+    }));
+}
+
+TEST_CASE("Selected seed-to-download transition refreshes known seed candidacy", "[selected-recheck-dependency][selected-recheck-candidates]") {
+    Fixture f(lt::create_torrent::v1_only, false, false);
+    REQUIRE(QDir().mkpath(f.temp.path() + "/seed/fixture"));
+    for (const auto *name : {"A", "B", "C"})
+        REQUIRE(QFile::copy(f.temp.path() + "/fixture/" + name, f.temp.path() + "/seed/fixture/" + name));
+    auto config = settings();
+    config.set_str(lt::settings_pack::listen_interfaces, "127.0.0.1:0");
+    lt::session seed{lt::session_params(config)};
+    lt::add_torrent_params params;
+    params.ti = std::make_shared<lt::torrent_info>(*f.handle.torrent_file());
+    params.save_path = (f.temp.path() + "/seed").toStdString();
+    params.flags &= ~(lt::torrent_flags::paused | lt::torrent_flags::auto_managed);
+    const auto source = seed.add_torrent(params);
+    REQUIRE(wait([&] { return source.status().is_seeding && seed.listen_port(); }));
+    f.session->apply_settings(config);
+    REQUIRE(wait([&] { return f.session->listen_port() != 0; }));
+    f.handle.resume();
+    f.handle.connect_peer({lt::make_address("127.0.0.1"), std::uint16_t(seed.listen_port())});
+    REQUIRE(wait([&] { return f.handle.status().is_finished; }));
+    f.handle.pause();
+    REQUIRE(wait([&] { return bool(f.handle.status().flags & lt::torrent_flags::paused) && f.handle.status().num_peers == 0; }));
+    REQUIRE(f.handle.status().list_seeds == 1);
+    lt::settings_pack refresh;
+    refresh.set_int(lt::settings_pack::max_failcount, 4);
+    f.session->apply_settings(refresh);
+    REQUIRE(wait([&] { return f.handle.status().connect_candidates == 0; }));
+    f.prepare();
+    put(f.temp.path() + "/fixture/A", 8192, 'x');
+    lt::start_selected_recheck(f.handle, {1, {lt::piece_index_t(0)}});
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 1).phase == lt::selected_recheck_phase::complete; }));
+    lt::finish_selected_recheck(f.handle, 1, false);
+    const auto status = f.handle.status();
+    CHECK_FALSE(status.is_finished);
+    CHECK(bool(status.flags & lt::torrent_flags::paused));
+    REQUIRE(status.list_seeds == 1);
+    CHECK(status.connect_candidates == 1);
+    CHECK(int(status.queue_position) >= 0);
 }
 
 TEST_CASE("Correct selected pieces restore availability on read-only payloads", "[selected-recheck-dependency]") {
@@ -301,6 +389,45 @@ TEST_CASE("A skipped boundary fragment is checked through native partfile storag
     REQUIRE(f.handle.get_file_priorities()[1]==lt::dont_download);
     { std::lock_guard l(f.reads->mutex); REQUIRE(f.reads->writes==0); REQUIRE(f.reads->pieces==std::vector<lt::piece_index_t>{lt::piece_index_t(0)}); }
     lt::finish_selected_recheck(f.handle,2,false);
+}
+
+TEST_CASE("Storage fences reload persisted partfile maps before selected hashing", "[selected-recheck-dependency][selected-recheck-partmap]") {
+    const auto backend = GENERATE(0, 1, 2);
+    INFO("disk backend=" << backend);
+    Fixture f(lt::create_torrent::v1_only, false, false, true, 32768, false, backend);
+    std::vector<char> data(16384, 'a');
+    std::fill(data.begin() + 8192, data.end(), 'b');
+    f.handle.add_piece(lt::piece_index_t(0), data.data());
+    REQUIRE(wait([&] { return f.handle.have_piece(lt::piece_index_t(0)); }));
+    f.prepare(11);
+    lt::cancel_selected_recheck(f.handle, 11);
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 11).phase == lt::selected_recheck_phase::canceled; }));
+    lt::finish_selected_recheck(f.handle, 11, false);
+    const auto names = QDir(f.temp.path()).entryList({"*.parts"}, QDir::Files | QDir::Hidden);
+    REQUIRE(names.size() == 1);
+    QFile backing(f.temp.path() + '/' + names.first());
+    REQUIRE(backing.open(QIODevice::ReadWrite));
+    REQUIRE(backing.seek(8));
+    REQUIRE(backing.read(4) != QByteArray(4, char(0xff)));
+    REQUIRE(backing.seek(8));
+    REQUIRE(backing.write(QByteArray(4, char(0xff))) == 4);
+    backing.close();
+    REQUIRE(backing.open(QIODevice::ReadOnly));
+    const auto before = backing.readAll();
+    backing.close();
+    f.prepare(12);
+    { std::lock_guard l(f.reads->mutex); f.reads->pieces.clear(); f.reads->writes = 0; }
+    lt::start_selected_recheck(f.handle, {12, {lt::piece_index_t(0)}});
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 12).phase == lt::selected_recheck_phase::complete; }));
+    const auto result = lt::query_selected_recheck(f.handle, 12);
+    CHECK(result.passed.empty());
+    CHECK(result.failed == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
+    CHECK_FALSE(f.handle.have_piece(lt::piece_index_t(0)));
+    CHECK(bool(f.handle.status().flags & lt::torrent_flags::paused));
+    { std::lock_guard l(f.reads->mutex); CHECK(f.reads->writes == 0); CHECK(f.reads->pieces == std::vector<lt::piece_index_t>{lt::piece_index_t(0)}); }
+    REQUIRE(backing.open(QIODevice::ReadOnly));
+    CHECK(backing.readAll() == before);
+    lt::finish_selected_recheck(f.handle, 12, false);
 }
 
 TEST_CASE("An empty piece scope finishes without disk reads or changing availability", "[selected-recheck-dependency]") {

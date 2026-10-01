@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include "torrent/TorrentSettings.h"
 #include "torrent/ProxyTrust.h"
 #include "torrent/SocksUdpBootstrap.h"
@@ -3953,7 +3954,7 @@ RecheckRecord interruptedCheck(const QString &state, const Settings &settings, b
     REQUIRE_FALSE(error);
     REQUIRE(params.ti);
     REQUIRE(params.have_pieces.count() == 16);
-    RecheckRecord record{id, metadataIdentity(*params.ti), checkStorageIdentity(text(params.save_path)),
+    RecheckRecord record{id, metadataIdentity(*params.ti), checkStorageIdentity(text(params.save_path), *params.ti),
         41, 7, item["resumeGeneration"].toString().toULongLong() + 1,
         {0}, {0, 1, 2, 3, 4, 5, 6, 7}, sourceReadOnly};
     QString reason;
@@ -4575,6 +4576,7 @@ TEST_CASE("Large selected scopes keep owner admission bounded", "[selected-reche
 
 TEST_CASE("Adapter selected checks preserve skipped-file partfile mappings and priorities", "[selected-recheck-engine][selected-recheck-held]") {
     application();
+    const int replacePartfile = GENERATE(0, 1, 2);
     QTemporaryDir dir;
     REQUIRE(dir.isValid());
     const auto settings = isolated(dir.filePath("payload"));
@@ -4616,20 +4618,47 @@ TEST_CASE("Adapter selected checks preserve skipped-file partfile mappings and p
     const auto partfiles = QDir(settings.downloadPath).entryList({"*.parts"}, QDir::Files | QDir::Hidden);
     REQUIRE(partfiles.size() == 1);
     const auto partfile = QDir(settings.downloadPath).filePath(partfiles[0]);
-    const auto partBefore = hashFile(partfile);
     const auto sourceBefore = hashFile(dir.filePath("payload/boundary/A"));
     const auto priorities = TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).handle.get_file_priorities(); });
     engine.stop(id);
     REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userStopped; }));
+    if (replacePartfile == 2) {
+        QFile backing(partfile);
+        REQUIRE(backing.open(QIODevice::ReadOnly));
+        auto content = backing.readAll();
+        backing.close();
+        REQUIRE(content.size() > 1024);
+        REQUIRE(content.mid(8, 4) != QByteArray(4, char(0xff)));
+        // Mark the boundary piece absent on disk while retaining its old slot bytes.
+        content.replace(8, 4, QByteArray(4, char(0xff)));
+        REQUIRE(backing.open(QIODevice::WriteOnly | QIODevice::Truncate));
+        REQUIRE(backing.write(content) == content.size());
+        backing.close();
+    }
+    const auto partBefore = hashFile(partfile);
     disk.hold();
     engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
     REQUIRE(eventually([&] { return disk.held(); }));
+    if (replacePartfile == 1) {
+        const auto previousPartfile = dir.filePath("previous-partfile");
+        REQUIRE(QFile::rename(partfile, previousPartfile));
+        REQUIRE(QFile::copy(previousPartfile, partfile));
+    }
     disk.release();
     REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    if (replacePartfile == 1) {
+        CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+        CHECK_FALSE(jobSnapshot(engine, id).complete);
+        QString journalError;
+        CHECK(RecheckJournal(dir.filePath("state")).pending(id, &journalError));
+        CHECK_FALSE(engine.shutdownChecked());
+        return;
+    }
     REQUIRE(jobSnapshot(engine, id).fileCheck.files.size() == 1);
-    CHECK(jobSnapshot(engine, id).fileCheck.files[0].outcome == FileCheckOutcome::Verified);
+    CHECK(jobSnapshot(engine, id).fileCheck.files[0].outcome ==
+          (replacePartfile == 2 ? FileCheckOutcome::FailedPiece : FileCheckOutcome::Verified));
     CHECK(jobSnapshot(engine, id).stopped);
-    CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 3);
+    CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == (replacePartfile == 2 ? 2 : 3));
     CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).handle.get_file_priorities(); }) == priorities);
     CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
     CHECK(disk.writes() == 0);
@@ -4697,7 +4726,9 @@ TEST_CASE("Replacing selected payload under a stable root cannot publish an old 
             if (replaceDirectory) {
                 REQUIRE(QDir().rename(dir.filePath("payload/bundle"), dir.filePath("old-bundle")));
                 REQUIRE(QDir().mkpath(dir.filePath("payload/bundle")));
-                REQUIRE(QFile::copy(dir.filePath("old-bundle/b.bin"), dir.filePath("payload/bundle/b.bin")));
+                QFile unrelated(dir.filePath("payload/bundle/b.bin"));
+                REQUIRE(unrelated.open(QIODevice::WriteOnly));
+                REQUIRE(unrelated.write(QByteArray(131072, 'q')) == 131072);
             } else REQUIRE(QFile::rename(dir.filePath("payload/bundle/a.bin"), dir.filePath("old-a.bin")));
             QFile replacement(dir.filePath("payload/bundle/a.bin"));
             REQUIRE(replacement.open(QIODevice::WriteOnly));
@@ -4712,6 +4743,17 @@ TEST_CASE("Replacing selected payload under a stable root cannot publish an old 
             QString error;
             CHECK(RecheckJournal(state).pending(id, &error));
             CHECK_FALSE(engine.shutdownChecked());
+            if (replaceDirectory) {
+                TorrentEngine restored(state);
+                restored.configure(settings, {});
+                REQUIRE(eventually([&] { return !restored.jobs().isEmpty(); }));
+                CHECK_FALSE(jobSnapshot(restored, id).error.isEmpty());
+                CHECK_FALSE(jobSnapshot(restored, id).fileCheck.recoveryRequired);
+                restored.pause(id, false);
+                REQUIRE(TorrentEngineTestAccess::call(restored, [](auto &) { return true; }));
+                CHECK_FALSE(TorrentEngineTestAccess::active(restored));
+                CHECK(RecheckJournal(state).pending(id, &error));
+            }
         }
     }
 }

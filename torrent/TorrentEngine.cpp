@@ -255,12 +255,51 @@ QString checkStorageIdentity(const QString &root) {
     return {};
 #endif
 }
+QString checkStorageIdentity(const QString &root, const lt::torrent_info &metadata) {
+#ifndef Q_OS_WIN
+    const auto rootIdentity = checkStorageIdentity(root);
+    if (rootIdentity.isEmpty()) return {};
+    QSet<QString> ancestors;
+    for (const auto index : metadata.layout().file_range()) {
+        auto directory = QFileInfo(QDir(root).filePath(text(metadata.layout().file_path(index)))).absolutePath();
+        while (directory != root) {
+            if (!directory.startsWith(root + '/')) return {};
+            ancestors.insert(directory);
+            directory = QFileInfo(directory).absolutePath();
+        }
+    }
+    auto directories = ancestors.values();
+    std::sort(directories.begin(), directories.end());
+    QCryptographicHash hash(QCryptographicHash::Sha256);
+    hash.addData(rootIdentity.toUtf8());
+    for (const auto &directory : directories) {
+        struct stat info {};
+        auto value = directory.toUtf8() + '\n';
+        if (::lstat(QFile::encodeName(directory).constData(), &info) != 0) {
+            if (errno != ENOENT) return {};
+            value += "missing";
+        } else {
+            if (!S_ISDIR(info.st_mode)) return {};
+            value += QByteArray::number(quint64(info.st_dev)) + ':' + QByteArray::number(quint64(info.st_ino));
+        }
+        hash.addData(value + '\n');
+    }
+    return QString::fromLatin1(hash.result().toHex());
+#else
+    return {};
+#endif
+}
 QString checkPayloadIdentity(const QString &root, const lt::torrent_info &metadata, const RecheckPlan &plan) {
 #ifndef Q_OS_WIN
     QCryptographicHash hash(QCryptographicHash::Sha256);
     QSet<QString> seen;
-    for (int index : plan.affectedFiles) {
-        QString path = QDir(root).filePath(text(metadata.layout().file_path(lt::file_index_t(index))));
+    QStringList paths;
+    for (int index : plan.affectedFiles)
+        paths.append(QDir(root).filePath(text(metadata.layout().file_path(lt::file_index_t(index)))));
+    // The pinned default disk backend keys its partfile by the best native info hash.
+    const auto infoHash = metadata.info_hashes().get_best();
+    paths.append(QDir(root).filePath('.' + QString::fromLatin1(QByteArray(infoHash.data(), infoHash.size()).toHex()) + ".parts"));
+    for (QString path : paths) {
         bool payload = true;
         for (;;) {
             if (!seen.contains(path)) {
@@ -664,7 +703,7 @@ struct TorrentEngine::Impl {
         r.checkPayload.clear();
         r.notified = false;
         const auto metadata = r.handle.is_valid() ? r.handle.torrent_file() : r.resume.ti;
-        r.checkIdentity = checkStorageIdentity(r.savePath);
+        r.checkIdentity = metadata ? checkStorageIdentity(r.savePath, *metadata) : QString{};
         if (!metadata || !safeMetadata(*metadata, r.savePath) || r.checkIdentity.isEmpty() ||
             r.storageCollision || r.moving || r.selectionPending || r.checking || r.checkRecord) {
             failFileCheck(r, tr("Selected-file verification conflicts with another operation or unsafe storage."));
@@ -767,7 +806,7 @@ struct TorrentEngine::Impl {
                 failFileCheck(r, tr("Torrent metadata disappeared during verification; recovery remains required."));
                 changed = true; continue;
             }
-            if (checkStorageIdentity(r.savePath) != r.checkIdentity || !safeMetadata(*metadata, r.savePath) ||
+            if (checkStorageIdentity(r.savePath, *metadata) != r.checkIdentity || !safeMetadata(*metadata, r.savePath) ||
                 (r.checkStarted && checkPayloadIdentity(r.savePath, *metadata, *r.checkPlan) != r.checkPayload)) {
                 failFileCheck(r, tr("Torrent storage changed during verification; recovery remains required."));
                 changed = true; continue;
@@ -1080,8 +1119,8 @@ struct TorrentEngine::Impl {
         else for (const auto &file : r.fileCheck.files) selected.append(file.index);
         const auto plan = metadata ? planSelectedRecheck(*metadata, selected, r.revision) : RecheckPlanResult{};
         if (!metadata || !plan.plan || !safeMetadata(*metadata, r.savePath) ||
-            checkStorageIdentity(r.savePath).isEmpty() || (record &&
-            (record->metadataDigest != metadataIdentity(*metadata) || record->storageIdentity != checkStorageIdentity(r.savePath) ||
+            checkStorageIdentity(r.savePath, *metadata).isEmpty() || (record &&
+            (record->metadataDigest != metadataIdentity(*metadata) || record->storageIdentity != checkStorageIdentity(r.savePath, *metadata) ||
              record->sourceReadOnly != r.sourceReadOnly || record->pieces != plan.plan->pieces ||
              record->resumeGeneration < r.resumeSnapshotGeneration))) {
             block(tr("Interrupted verification metadata, scope or storage identity changed; recovery is blocked."));

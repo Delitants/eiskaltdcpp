@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import plistlib
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -175,14 +176,17 @@ def check(app, arch, floor, static_only):
     # Execute only a tiny ABI caller, never the application or a Torrent session.
     with tempfile.TemporaryDirectory(prefix="eiskalt-bundle-abi-") as work:
         work = Path(work)
-        source, probe = work / "abi.cpp", work / "abi"
+        staged = work / app.name
+        shutil.copytree(app, staged, symlinks=True)
+        source, probe = work / "abi.cpp", staged / main.relative_to(app)
         source.write_text("#include <cstdio>\nnamespace libtorrent { int eiskalt_selected_recheck_abi(); }\n"
                           "int main() { std::printf(\"%d\\n\", libtorrent::eiskalt_selected_recheck_abi()); }\n")
         args = ["xcrun", "clang++", "-arch", arch, "-mmacosx-version-min=" + floor,
-                source, library, "-o", probe]
+                source, staged / library.relative_to(app), "-o", probe]
         probe_paths = set(main_paths) | set(metadata[library][1]) | {library.parent}
         for path in sorted(probe_paths):
-            args.extend(("-Xlinker", "-rpath", "-Xlinker", str(path)))
+            staged_path = staged / path.relative_to(app) if inside(path, app) else path
+            args.extend(("-Xlinker", "-rpath", "-Xlinker", str(staged_path)))
         run(*args)
         env = {key: value for key, value in os.environ.items() if not key.startswith("DYLD_")}
         value = run(probe, env=env).strip()

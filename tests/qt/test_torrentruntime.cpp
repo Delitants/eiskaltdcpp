@@ -34,6 +34,7 @@
 #include <QTemporaryDir>
 #include <QTest>
 #include <QUdpSocket>
+#include <QUrlQuery>
 
 using namespace eiskalt::torrent;
 
@@ -109,11 +110,11 @@ struct IdleSocksProxy {
     }
 };
 
-bool waitFor(const std::function<bool()> &ready)
+bool waitFor(const std::function<bool()> &ready, int timeout = 10000)
 {
     QElapsedTimer elapsed;
     elapsed.start();
-    while (!ready() && elapsed.elapsed() < 10000)
+    while (!ready() && elapsed.elapsed() < timeout)
         QTest::qWait(10);
     return ready();
 }
@@ -744,5 +745,179 @@ TEST_CASE("Runtime follow global cannot publish a private torrent", "[qt][torren
     runtimeSetExcluded(f.engine(), id, true);
     runtimeSetExcluded(f.engine(), id, false);
     staysTrue([&] { return f.hidden(id); });
+}
+
+TEST_CASE("Runtime selected repair redownloads boundary data and restores sharing across restart",
+          "[qt][torrent][runtime][selected-recheck-runtime]") {
+    RuntimeFixture f;
+    if (!f.engine().supportsFileRecheck()) {
+        CHECK_FALSE(f.engine().previewFileRecheck("missing", {0}, 1).plan);
+        return;
+    }
+    QTcpServer tracker, reservation;
+    REQUIRE(tracker.listen(QHostAddress::LocalHost));
+    REQUIRE(reservation.listen(QHostAddress::LocalHost));
+    const auto seedPort = reservation.serverPort();
+    reservation.close();
+    int announces = 0;
+    QObject::connect(&tracker, &QTcpServer::newConnection, &tracker, [&] {
+        while (tracker.hasPendingConnections()) {
+            auto *socket = tracker.nextPendingConnection();
+            QObject::connect(socket, &QTcpSocket::readyRead, socket, [&, socket] {
+                const auto request = socket->property("request").toByteArray() + socket->readAll();
+                socket->setProperty("request", request);
+                if (!request.contains("\r\n\r\n") || socket->property("answered").toBool()) return;
+                socket->setProperty("answered", true);
+                ++announces;
+                const QUrl url("http://localhost" + QString::fromLatin1(request.split(' ').value(1)));
+                QByteArray peers;
+                if (QUrlQuery(url).queryItemValue("port").toUInt() != seedPort) {
+                    peers = QByteArray("\x7f\0\0\1", 4);
+                    peers.append(char(seedPort >> 8));
+                    peers.append(char(seedPort & 255));
+                }
+                const auto body = QByteArray("d8:intervali60e5:peers") +
+                    QByteArray::number(peers.size()) + ':' + peers + 'e';
+                socket->write("HTTP/1.1 200 OK\r\nContent-Length: " + QByteArray::number(body.size()) +
+                              "\r\nConnection: close\r\n\r\n" + body);
+                socket->disconnectFromHost();
+            });
+            QObject::connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
+        }
+    });
+    const auto source = f.profile.root + "/source";
+    REQUIRE(QDir().mkpath(source + "/fixture"));
+    const QStringList names{"A.bin", "B.bin", "C.bin"};
+    const QList<QByteArray> data{QByteArray(8192, 'a'), QByteArray(8192, 'b'), QByteArray(32768, 'c')};
+    QByteArray files, payload, pieces;
+    for (int i = 0; i < names.size(); ++i) {
+        RuntimeFixture::write(source + "/fixture/" + names[i], data[i]);
+        files += "d6:lengthi" + QByteArray::number(data[i].size()) + "e4:pathl5:" + names[i].toUtf8() + "ee";
+        payload += data[i];
+    }
+    for (int offset = 0; offset < payload.size(); offset += 16384)
+        pieces += QCryptographicHash::hash(payload.mid(offset, 16384), QCryptographicHash::Sha1);
+    const auto announce = QString("http://127.0.0.1:%1/announce").arg(tracker.serverPort()).toUtf8();
+    const auto info = QByteArray("d5:filesl") + files + "e4:name7:fixture12:piece lengthi16384e6:pieces" +
+        QByteArray::number(pieces.size()) + ':' + pieces + 'e';
+    const auto metadata = f.profile.root + "/boundary.torrent";
+    RuntimeFixture::write(metadata, "d8:announce" + QByteArray::number(announce.size()) + ':' + announce +
+                          "4:info" + info + 'e');
+    auto seedSettings = f.settings;
+    seedSettings.downloadPath = source;
+    seedSettings.proxyMode = ProxyMode::Direct;
+    seedSettings.listenPort = seedPort;
+    seedSettings.randomizePort = false;
+    TorrentEngine seed(f.profile.root + "/seed-state");
+    seed.configure(seedSettings, {});
+    const auto seedId = seed.seedCreated(metadata, source);
+    REQUIRE_FALSE(seedId.isEmpty());
+    REQUIRE(waitFor([&] { return !seed.jobs().isEmpty() && seed.jobs().first().complete; }));
+    const auto id = f.engine().add(metadata);
+    REQUIRE_FALSE(id.isEmpty());
+    f.engine().selectObservedJob(id);
+    using Records = std::map<std::string, dcpp::ShareManager::ManagedFilePtr>;
+    const auto records = [&](bool cache) {
+        Records result;
+        dcpp::Lock lock(f.shares().cs);
+        if (cache) {
+            const auto found = f.shares().managedVerifiedFiles.find(f.owner(id));
+            if (found != f.shares().managedVerifiedFiles.end())
+                for (const auto &file : found->second) result.emplace(file->realPath, file);
+        } else {
+            const auto found = f.shares().managedShares.find(f.owner(id));
+            if (found != f.shares().managedShares.end())
+                for (const auto &file : found->second.files) result.emplace(file->realPath, file);
+        }
+        return result;
+    };
+    int publicationPhase = 0;
+    const auto awaitShared = [&] {
+        ++publicationPhase;
+        // A disconnected loopback peer retains libtorrent's 60-second retry floor.
+        const auto ready = waitFor([&] { return f.job(id).complete && records(false).size() == 3 &&
+            f.runtime->dcMagnets({id}).size() == 3; }, publicationPhase == 2 ? 90000 : 10000);
+        const auto job = f.job(id);
+        INFO("phase=" << publicationPhase << " state=" << job.state.toStdString() <<
+             " complete=" << job.complete << " paused=" << job.paused << " peers=" << job.peers <<
+             " downloaded=" << job.downloaded << " announces=" << announces <<
+             " published=" << records(false).size() << " cached=" << records(true).size() <<
+             " error=" << job.error.toStdString() << " share=" << f.runtime->shareStatus(id).toStdString());
+        REQUIRE(ready);
+    };
+    const auto read = [](const QString &filePath) {
+        QFile file(filePath);
+        REQUIRE(file.open(QIODevice::ReadOnly));
+        return file.readAll();
+    };
+    awaitShared();
+    REQUIRE(announces > 0);
+    const auto original = records(false);
+    const auto root = f.settings.downloadPath + "/fixture/";
+    for (int i = 0; i < names.size(); ++i) REQUIRE(read(root + names[i]) == data[i]);
+    f.engine().stop(id);
+    REQUIRE(waitFor([&] { return f.job(id).stopped && f.job(id).peers == 0; }));
+    QTest::qWait(250);
+    const auto stoppedAnnounces = announces;
+    const auto stoppedListeners = f.engine().effectiveListeners();
+    RuntimeFixture::write(root + names[0], QByteArray(8192, 'x'));
+    QSignalSpy scoped(&f.engine(), &TorrentEngine::fileHashRecheckRequested);
+    QSignalSpy whole(&f.engine(), &TorrentEngine::hashRecheckRequested);
+    f.engine().recheckFiles(id, {0}, f.job(id).revision);
+    REQUIRE(scoped.size() == 1);
+    REQUIRE(whole.isEmpty());
+    const auto affected = scoped.first().at(1).toStringList();
+    REQUIRE(affected == QStringList{root + names[0], root + names[1]});
+    REQUIRE(records(false).empty());
+    REQUIRE(records(true).size() == 1);
+    REQUIRE(records(true).at((root + names[2]).toStdString()) == original.at((root + names[2]).toStdString()));
+    REQUIRE(waitFor([&] { const auto check = f.job(id).fileCheck; return check.token && !check.active; }));
+    const auto checked = f.job(id);
+    REQUIRE(checked.fileCheck.error.isEmpty());
+    REQUIRE(checked.fileCheck.files.size() == 1);
+    CHECK(checked.fileCheck.files.first().outcome == FileCheckOutcome::FailedPiece);
+    CHECK(checked.fileCheck.checkedBytes == 16384);
+    CHECK_FALSE(checked.complete);
+    CHECK(checked.stopped);
+    CHECK(checked.downloaded == 32768);
+    CHECK(f.runtime->dcMagnets({id}).isEmpty());
+    staysTrue([&] { return f.job(id).stopped && f.engine().effectiveListeners() == stoppedListeners &&
+        f.job(id).peers == 0 && f.job(id).downloadRate == 0 && f.job(id).uploadRate == 0 &&
+        announces == stoppedAnnounces; });
+    REQUIRE(read(root + names[0]) == QByteArray(8192, 'x'));
+    REQUIRE(read(root + names[1]) == data[1]);
+    REQUIRE(read(root + names[2]) == data[2]);
+
+    // Only explicit Resume permits the normal route to repair the failed shared piece.
+    f.engine().pause(id, false);
+    awaitShared();
+    const auto repaired = records(false);
+    for (int i = 0; i < names.size(); ++i) {
+        const auto key = (root + names[i]).toStdString();
+        REQUIRE(read(root + names[i]) == data[i]);
+        REQUIRE(repaired.at(key)->tth == original.at(key)->tth);
+        if (i < 2) REQUIRE(repaired.at(key) != original.at(key));
+        else REQUIRE(repaired.at(key) == original.at(key));
+    }
+    REQUIRE(f.runtime->shutdownChecked());
+    f.publications.reset();
+    f.runtime.reset();
+    f.context.shareManager_.reset();
+    f.context.shareManager_ = std::make_unique<dcpp::ShareManager>(f.context);
+    f.runtime = std::make_unique<TorrentRuntime>(f.context, &f.parent);
+    REQUIRE(records(true).size() == 3);
+    QSignalSpy statuses(f.runtime.get(), &TorrentRuntime::shareStatusChanged);
+    f.reload();
+    awaitShared();
+    const auto restored = records(false);
+    for (int i = 0; i < names.size(); ++i) {
+        const auto key = (root + names[i]).toStdString();
+        REQUIRE(restored.at(key)->tth == repaired.at(key)->tth);
+        REQUIRE(restored.at(key)->leaves == repaired.at(key)->leaves);
+    }
+    for (const auto &status : statuses)
+        CHECK(status.at(1).toString() != "Preparing DC++ sharing");
+    CHECK(f.job(id).fileCheck.token == 0);
+    CHECK(seed.shutdownChecked());
 }
 #endif

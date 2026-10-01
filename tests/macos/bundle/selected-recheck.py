@@ -90,6 +90,14 @@ class SelectedRecheckBundle(unittest.TestCase):
         result = self.invoke()
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_accepts_loader_relative_library_identity(self):
+        identity = "@loader_path/../Frameworks/" + self.library.name
+        run("install_name_tool", "-id", identity, self.library)
+        run("install_name_tool", "-change", "@rpath/" + self.library.name, identity, self.main)
+        self.assertEqual(run(self.main).returncode, 0)
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_accepts_reexported_extension_dependency(self):
         wrapper = self.contents / "Frameworks/wrapper.dylib"
         source = self.case / "wrapper.cpp"

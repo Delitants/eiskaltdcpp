@@ -84,11 +84,10 @@
  		bool has_picker() const
  		{
  			return m_picker.get() != nullptr;
-@@ -1897,6 +1905,14 @@
- 		// set to true if we've sent an event=completed to any tracker. This will
+@@ -1898,6 +1906,15 @@
  		// prevent us from sending it again to anyone
  		std::uint32_t m_complete_sent:1;
-+
+ 
 +		selected_recheck_status m_selected_status;
 +		std::vector<piece_index_t> m_selected_pieces;
 +		std::size_t m_selected_cursor = 0;
@@ -96,9 +95,11 @@
 +		bool m_selected_inflight = false;
 +		bool m_selected_cancel = false;
 +		bool m_selected_auto_managed = false;
- 
++		bool m_selected_was_finished = false;
++
  #if TORRENT_USE_ASSERTS
  		// set to true when torrent is start()ed. It may only be started once
+ 		bool m_was_started = false;
 --- a/src/torrent_handle.cpp
 +++ b/src/torrent_handle.cpp
 @@ -375,6 +375,18 @@
@@ -139,7 +140,7 @@
  			|| settings().get_int(settings_pack::suggest_mode)
  			== settings_pack::suggest_read_cache);
  
-@@ -2447,10 +2448,208 @@
+@@ -2447,10 +2448,220 @@
  		m_need_save_resume_data = need_save_resume_data;
  	}
  	catch (...) { handle_exception(); }
@@ -151,7 +152,7 @@
 +			if (!fs.pad_file_at(slice.file_index)) bytes += slice.size;
 +		return bytes;
 +	}
- 
++
 +	selected_recheck_status torrent::query_selected_recheck(std::uint64_t const token) const
 +	{
 +		if (token == m_selected_status.token) return m_selected_status;
@@ -176,6 +177,7 @@
 +			return;
 +		}
 +		m_selected_auto_managed = m_auto_managed;
++		m_selected_was_finished = is_finished();
 +		auto_managed(false);
 +		m_selected_active = true;
 +		m_selected_cancel = false;
@@ -228,7 +230,7 @@
 +		m_selected_status.phase = selected_recheck_phase::progress;
 +		selected_recheck_next();
 +	}
-+
+ 
 +	void torrent::selected_recheck_next()
 +	{
 +		if (m_abort || !m_selected_active || m_selected_inflight) return;
@@ -334,6 +336,17 @@
 +			&& phase != selected_recheck_phase::failed) return;
 +		m_selected_active = false;
 +		if (m_state == torrent_status::checking_files) files_checked();
++		if (!m_abort)
++		{
++			// Lost pieces need the normal seed-to-download bookkeeping, even while paused.
++			if (m_selected_was_finished && !is_finished()) resume_download();
++			if (m_peer_list)
++			{
++				torrent_state st = get_peer_list_state();
++				m_peer_list->recalculate_connect_candidates(&st);
++			}
++			update_want_peers();
++		}
 +		if (resume_network && !m_selected_status.error)
 +		{
 +			auto_managed(m_selected_auto_managed);
@@ -348,7 +361,7 @@
  
  		if (!valid_metadata()) return;
  
-@@ -7472,7 +7671,9 @@
+@@ -7472,7 +7683,9 @@
  		// for the piece
  		// bit 0: set if we have the piece
  		// bit 1: set if we have verified the piece (in seed mode)
@@ -359,7 +372,7 @@
  
  		// if we are checking, only save the have_pieces bitfield up to the piece
  		// we have actually checked. This allows us to resume the checking when we
-@@ -9813,6 +10014,7 @@
+@@ -9813,6 +10026,7 @@
  
  	void torrent::auto_managed(bool const a)
  	{
@@ -367,7 +380,7 @@
  		TORRENT_ASSERT(is_single_thread());
  		INVARIANT_CHECK;
  
-@@ -10291,6 +10493,7 @@
+@@ -10291,6 +10505,7 @@
  
  	void torrent::resume()
  	{
@@ -375,6 +388,15 @@
  		TORRENT_ASSERT(is_single_thread());
  		INVARIANT_CHECK;
  
+@@ -10843,7 +11058,7 @@
+ 
+ 	void torrent::maybe_connect_web_seeds()
+ 	{
+-		if (m_abort) return;
++		if (m_abort || is_paused() || m_selected_active || m_upload_mode) return;
+ 
+ 		// if we have everything we want we don't need to connect to any web-seed
+ 		if (m_web_seeds.empty()
 --- a/src/posix_storage.cpp
 +++ b/src/posix_storage.cpp
 @@ -46,7 +46,20 @@
@@ -399,6 +421,16 @@
  
  	filenames posix_storage::names() const
  	{
+@@ -291,6 +304,9 @@
+ 		{
+ 			error_code ignore;
+ 			m_part_file->flush_metadata(ignore);
++			// The drained storage fence must also discard stale piece-to-slot maps.
++			m_part_file.reset();
++			need_partfile();
+ 		}
+ 	}
+ 
 --- a/src/pread_storage.cpp
 +++ b/src/pread_storage.cpp
 @@ -55,6 +55,18 @@
@@ -420,6 +452,16 @@
  	}
  
  	pread_storage::~pread_storage()
+@@ -377,6 +389,9 @@
+ 		{
+ 			error_code ignore;
+ 			m_part_file->flush_metadata(ignore);
++			// The drained storage fence must also discard stale piece-to-slot maps.
++			m_part_file.reset();
++			need_partfile();
+ 		}
+ 
+ 		// make sure we don't have the files open
 --- a/src/mmap_storage.cpp
 +++ b/src/mmap_storage.cpp
 @@ -99,6 +99,18 @@
@@ -441,3 +483,38 @@
  
  #if TORRENT_HAVE_MAP_VIEW_OF_FILE
  		m_file_open_unmap_lock.reset(new std::mutex[files().num_files()]
+@@ -494,6 +506,9 @@
+ 		{
+ 			error_code ignore;
+ 			m_part_file->flush_metadata(ignore);
++			// The drained storage fence must also discard stale piece-to-slot maps.
++			m_part_file.reset();
++			need_partfile();
+ 		}
+ 
+ 		// make sure we don't have the files open
+--- a/include/libtorrent/aux_/peer_list.hpp
++++ b/include/libtorrent/aux_/peer_list.hpp
+@@ -182,6 +182,7 @@
+ 		void set_max_failcount(torrent_state* st);
+ 
+ 	private:
++		friend struct torrent;
+ 
+ 		void recalculate_connect_candidates(torrent_state* state);
+ 
+--- a/src/posix_disk_io.cpp
++++ b/src/posix_disk_io.cpp
+@@ -325,10 +325,9 @@
+ 				{ h(std::move(n), idx, error); });
+ 		}
+ 
+-		void async_stop_torrent(storage_index_t, std::function<void()> handler) override
++		void async_stop_torrent(storage_index_t storage, std::function<void()> handler) override
+ 		{
+-			if (!handler) return;
+-			post(m_ios, std::move(handler));
++			async_release_files(storage, std::move(handler));
+ 		}
+ 
+ 		void async_set_file_priority(storage_index_t const storage

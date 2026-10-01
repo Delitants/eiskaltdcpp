@@ -31,6 +31,8 @@ matching. Ordinary system-library builds can omit the feature.
 The extension exposes preparation, checking, cancellation, finalization and
 worker-thread snapshot APIs through `libtorrent/eiskalt_selected_recheck.hpp`.
 Preparation drains one torrent's writes and prevents peers from restarting it.
+Storage fences reload persisted partfile slot maps before fresh reads, so a
+cached map cannot authenticate bytes that a new session would not read.
 Start clears only requested piece availability and disk-cache state, then uses
 native disk hashing. v2 results compare fresh block Merkle roots with authenticated
 native nodes; absent hashes yield unavailable. Terminal results remain paused
@@ -39,6 +41,8 @@ active, resume snapshots retain the full conservative availability bitmap, not
 the unrelated full checker's sequential checked-piece prefix. Application callers
 must own the recovery journal, user intent and publication barriers before
 enabling UI.
+Finalization restores native download-queue bookkeeping and peer candidacy when
+a previously finished torrent loses pieces, without unpausing it.
 
 The patch also initializes skipped-file/partfile mappings through read-only
 metadata reads when a local checking handle bypasses normal resume verification.
@@ -82,9 +86,11 @@ headers and linked capability on every configure, including after header/prefix
 changes, before the application is built.
 
 On a matching native host, an isolated tiny caller verifies that the bundled
-library returns ABI 1. It loads that library and its initializers, not the
-application or a Torrent session; use only trusted build artifacts. The bundle
-is not modified. Cross-architecture inspection may use `--static-only`, which
+library returns ABI 1. It runs at the executable location in a temporary bundle
+copy, preserving loader-relative dependency identities. It loads that library
+and its initializers, not the application or a Torrent session; use only trusted
+build artifacts. The source bundle is not modified. Cross-architecture
+inspection may use `--static-only`, which
 explicitly leaves runtime ABI acceptance pending and is not a release pass.
 
 ```sh
@@ -93,8 +99,9 @@ ctest --test-dir BUILD -R eiskalt-macos-selected-recheck-bundle --output-on-fail
 ```
 
 Actual thin Mach-O fixtures cover absent/mismatched ABI, missing operations or
-consumer references, reexport chains, outside-Homebrew links/runpaths, unresolved
-relative dependencies, wrong CPU/newer OS and escaping symlinks. A fresh required
+consumer references, reexport chains, loader-relative identities, outside-Homebrew
+links/runpaths, unresolved relative dependencies, wrong CPU/newer OS and escaping
+symlinks. A fresh required
 CMake configure rejects mismatched header ABI and cannot reuse a stale success.
 Signing, source/patch provenance,
 full app-bundle audits and matching minimum-OS runtime tests remain separate
