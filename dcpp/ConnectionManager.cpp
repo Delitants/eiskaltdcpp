@@ -27,6 +27,7 @@
 #include "DownloadManager.h"
 #include "LogManager.h"
 #include "QueueManager.h"
+#include "ScopedFunctor.h"
 #include "UploadManager.h"
 #include "UserConnection.h"
 #include "DCPlusPlus.h"
@@ -59,6 +60,8 @@ ConnectionManager::ConnectionManager(DCContext& ctx) :
 }
 
 void ConnectionManager::listen() {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     disconnect();
     if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
         return;
@@ -92,6 +95,8 @@ ConnectionQueueItem::ConnectionQueueItem(const HintedUser &aUser, bool aDownload
  * @param aUser The user to connect to.
  */
 void ConnectionManager::getDownloadConnection(const HintedUser& aUser) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     dcassert((bool)aUser.user);
     {
         Lock l(cs);
@@ -105,6 +110,8 @@ void ConnectionManager::getDownloadConnection(const HintedUser& aUser) {
 }
 
 ConnectionQueueItem* ConnectionManager::getCQI(const HintedUser& user, bool download) {
+    if(!beginOperation()) return nullptr;
+    ScopedFunctor([this] { finishOperation(); });
     ConnectionQueueItem* cqi = new ConnectionQueueItem(user, download);
     if(download) {
         dcassert(find(downloads.begin(), downloads.end(), user.user) == downloads.end());
@@ -131,6 +138,8 @@ void ConnectionManager::putCQI(ConnectionQueueItem* cqi) {
 }
 
 UserConnection* ConnectionManager::getConnection(bool aNmdc, bool secure) {
+    if(!beginOperation()) return nullptr;
+    ScopedFunctor([this] { finishOperation(); });
     fprintf(stderr, "[CM::getConnection] new UserConnection (sizeof=%zu)\n", sizeof(UserConnection));
     UserConnection* uc = nullptr;
     try {
@@ -146,6 +155,7 @@ UserConnection* ConnectionManager::getConnection(bool aNmdc, bool secure) {
                 userConnections.size(), userConnections.capacity());
         try {
             userConnections.push_back(uc);
+            registeredConnections = userConnections.size();
         } catch (const std::bad_alloc&) {
             fprintf(stderr, "[CM::getConnection] bad_alloc in push_back\n");
             delete uc;
@@ -158,14 +168,19 @@ UserConnection* ConnectionManager::getConnection(bool aNmdc, bool secure) {
 }
 
 void ConnectionManager::putConnection(UserConnection* aConn) {
+    if(!beginOperation(true)) return;
+    ScopedFunctor([this] { finishOperation(); });
     aConn->removeListener(this);
     aConn->disconnect();
 
     Lock l(cs);
     userConnections.erase(remove(userConnections.begin(), userConnections.end(), aConn), userConnections.end());
+    registeredConnections = userConnections.size();
 }
 
 void ConnectionManager::on(TimerManagerListener::Second, uint64_t aTick) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     UserList passiveUsers;
     ConnectionQueueItem::List removed;
 
@@ -244,6 +259,8 @@ void ConnectionManager::on(TimerManagerListener::Second, uint64_t aTick) {
 }
 
 void ConnectionManager::on(TimerManagerListener::Minute, uint64_t aTick) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     Lock l(cs);
 
     for(auto& j : userConnections) {
@@ -330,6 +347,8 @@ int ConnectionManager::Server::run() {
  * It's always the other fellow that starts sending if he made the connection.
  */
 void ConnectionManager::accept(const Socket& sock, bool secure) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST) {
         Socket rejected;
         try { rejected.accept(sock); } catch(const SocketException&) { }
@@ -354,6 +373,7 @@ void ConnectionManager::accept(const Socket& sock, bool secure) {
         }
     }
     UserConnection* uc = getConnection(false, secure);
+    if(!uc) return;
     uc->setFlag(UserConnection::FLAG_INCOMING);
     uc->setState(UserConnection::STATE_SUPNICK);
     uc->setLastActivity(GET_TICK());
@@ -370,14 +390,15 @@ void ConnectionManager::nmdcConnect(const string& aServer, const string& aPort, 
 }
 
 void ConnectionManager::nmdcConnect(const string& aServer, const string& aPort, const string& localPort, BufferedSocket::NatRoles natRole, const string& aNick, const string& hubUrl, const string& encoding, bool secure) {
-    if(shuttingDown)
-        return;
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
 
     if (checkHubCCBlock(aServer, aPort, hubUrl))
         return;
 
     fprintf(stderr, "[CM::nmdcConnect] step 1: getConnection\n");
     UserConnection* uc = getConnection(true, secure);
+    if(!uc) return;
     fprintf(stderr, "[CM::nmdcConnect] step 2: setToken(%zu bytes)\n", aNick.size());
     try { uc->setToken(aNick); } catch (const std::bad_alloc&) {
         fprintf(stderr, "[CM::nmdcConnect] bad_alloc in setToken\n"); throw;
@@ -418,10 +439,11 @@ void ConnectionManager::adcConnect(const OnlineUser& aUser, const string &aPort,
 }
 
 void ConnectionManager::adcConnect(const OnlineUser& aUser, const string &aPort, const string &localPort, BufferedSocket::NatRoles natRole, const string& aToken, bool secure) {
-    if(shuttingDown)
-        return;
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
 
     UserConnection* uc = getConnection(false, secure);
+    if(!uc) return;
     uc->setToken(aToken);
     uc->setEncoding(Text::utf8);
     uc->setState(UserConnection::STATE_CONNECT);
@@ -454,6 +476,8 @@ void ConnectionManager::disconnect() {
 }
 
 void ConnectionManager::on(AdcCommand::SUP, UserConnection* aSource, const AdcCommand& cmd) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(aSource->getState() != UserConnection::STATE_SUPNICK) {
         // Already got this once, ignore...@todo fix support updates
         dcdebug("CM::onSUP %p sent sup twice\n", (void*)aSource);
@@ -506,6 +530,8 @@ void ConnectionManager::on(AdcCommand::STA, UserConnection*, const AdcCommand&) 
 }
 
 void ConnectionManager::on(UserConnectionListener::Connected, UserConnection* aSource) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     // incorrect check because aSource->getUser().get() == nullptr
     if(aSource->isSecure() && !aSource->isTrusted() && !CTX_BOOLSETTING(ALLOW_UNTRUSTED_CLIENTS)) {
         putConnection(aSource);
@@ -529,6 +555,8 @@ void ConnectionManager::on(UserConnectionListener::Connected, UserConnection* aS
 }
 
 void ConnectionManager::on(UserConnectionListener::MyNick, UserConnection* aSource, const string& aNick) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(aSource->getState() != UserConnection::STATE_SUPNICK) {
         // Already got this once, ignore...
         dcdebug("CM::onMyNick %p sent nick twice\n", (void*)aSource);
@@ -598,6 +626,8 @@ void ConnectionManager::on(UserConnectionListener::MyNick, UserConnection* aSour
 }
 
 void ConnectionManager::on(UserConnectionListener::CLock, UserConnection* aSource, const string& aLock, const string& aPk) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     (void)aPk;
 
     if(aSource->getState() != UserConnection::STATE_LOCK) {
@@ -620,6 +650,8 @@ void ConnectionManager::on(UserConnectionListener::CLock, UserConnection* aSourc
 }
 
 void ConnectionManager::on(UserConnectionListener::Direction, UserConnection* aSource, const string& dir, const string& num) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(aSource->getState() != UserConnection::STATE_DIRECTION) {
         dcdebug("CM::onDirection %p received direction twice, ignoring\n", (void*)aSource);
         return;
@@ -654,6 +686,8 @@ void ConnectionManager::on(UserConnectionListener::Direction, UserConnection* aS
 }
 
 void ConnectionManager::addDownloadConnection(UserConnection* uc) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     bool addConn = false;
     {
         Lock l(cs);
@@ -681,6 +715,8 @@ void ConnectionManager::addDownloadConnection(UserConnection* uc) {
 }
 
 void ConnectionManager::addUploadConnection(UserConnection* uc) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     dcassert(uc->isSet(UserConnection::FLAG_UPLOAD));
 
     bool addConn = false;
@@ -690,6 +726,7 @@ void ConnectionManager::addUploadConnection(UserConnection* uc) {
         auto i = find(uploads.begin(), uploads.end(), uc->getUser());
         if(i == uploads.end()) {
             ConnectionQueueItem* cqi = getCQI(uc->getHintedUser(), false);
+            if(!cqi) return;
 
             cqi->setState(ConnectionQueueItem::ACTIVE);
             uc->setFlag(UserConnection::FLAG_ASSOCIATED);
@@ -709,6 +746,8 @@ void ConnectionManager::addUploadConnection(UserConnection* uc) {
 }
 
 void ConnectionManager::on(UserConnectionListener::Key, UserConnection* aSource, const string&/* aKey*/) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(aSource->getState() != UserConnection::STATE_KEY) {
         dcdebug("CM::onKey Bad state, ignoring");
         return;
@@ -722,6 +761,8 @@ void ConnectionManager::on(UserConnectionListener::Key, UserConnection* aSource,
 }
 
 void ConnectionManager::on(AdcCommand::INF, UserConnection* aSource, const AdcCommand& cmd) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     if(aSource->getState() != UserConnection::STATE_INF) {
         aSource->send(AdcCommand(AdcCommand::SEV_FATAL, AdcCommand::ERROR_PROTOCOL_GENERIC, "Expecting INF"));
         aSource->disconnect();
@@ -799,6 +840,8 @@ void ConnectionManager::on(AdcCommand::INF, UserConnection* aSource, const AdcCo
 }
 
 void ConnectionManager::force(const UserPtr& aUser) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     Lock l(cs);
 
     auto i = find(downloads.begin(), downloads.end(), aUser);
@@ -882,11 +925,15 @@ bool ConnectionManager::checkHubCCBlock(const string& aServer, const string& aPo
 }
 
 void ConnectionManager::on(UserConnectionListener::Failed, UserConnection* aSource, const string& aError) {
+    if(!beginOperation(true)) return;
+    ScopedFunctor([this] { finishOperation(); });
     failed(aSource, aError, false);
 }
 
 void ConnectionManager::on(UserConnectionListener::ProtocolError, UserConnection* aSource, const string& aError) {
-    if(aError.compare(0, 7, "CTM2HUB", 7) == 0) {
+    if(!beginOperation(true)) return;
+    ScopedFunctor([this] { finishOperation(); });
+    if(!shuttingDown && aError.compare(0, 7, "CTM2HUB", 7) == 0) {
         {
             Lock l(cs);
             hubsBlockingCC.insert(Text::toLower(aSource->getRemoteIp()));
@@ -900,6 +947,8 @@ void ConnectionManager::on(UserConnectionListener::ProtocolError, UserConnection
 }
 
 void ConnectionManager::disconnect(const UserPtr& user) {
+    if(!beginOperation(true)) return;
+    ScopedFunctor([this] { finishOperation(); });
     Lock l(cs);
     for(auto uc: userConnections) {
         if(uc->getUser() == user)
@@ -908,6 +957,8 @@ void ConnectionManager::disconnect(const UserPtr& user) {
 }
 
 void ConnectionManager::disconnect(const UserPtr& user, int isDownload) {
+    if(!beginOperation(true)) return;
+    ScopedFunctor([this] { finishOperation(); });
     Lock l(cs);
     for(auto uc: userConnections) {
         if(uc->getUser() == user && uc->isSet(isDownload ? UserConnection::FLAG_DOWNLOAD : UserConnection::FLAG_UPLOAD)) {
@@ -918,8 +969,43 @@ void ConnectionManager::disconnect(const UserPtr& user, int isDownload) {
 }
 
 void ConnectionManager::shutdown() {
+    stopForShutdown();
+}
+
+void ConnectionManager::nmdcExpect(const string& aNick, const string& aMyNick, const string& aHubUrl) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    expectedConnections.add(aNick, aMyNick, aHubUrl);
+}
+
+bool ConnectionManager::beginOperation(bool cleanup) {
+    std::lock_guard<std::mutex> lock(shutdownMutex);
+    if(shuttingDown && (!cleanup || shutdownComplete)) return false;
+    ++operations;
+    return true;
+}
+
+void ConnectionManager::finishOperation() {
+    std::lock_guard<std::mutex> lock(shutdownMutex);
+    if(--operations == 0) shutdownChanged.notify_all();
+}
+
+void ConnectionManager::stopForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(shutdownMutex);
+        if(shuttingDown) {
+            shutdownChanged.wait(lock, [this] { return shutdownComplete; });
+            return;
+        }
+        shuttingDown = true;
+    }
     ctx().getTimerManager()->removeListener(this);
-    shuttingDown = true;
+    {
+        std::unique_lock<std::mutex> lock(shutdownMutex);
+        shutdownChanged.wait(lock, [this] { return operations == 0; });
+    }
+    // No creation can resume after admitted calls finish. Join listeners without
+    // a registry lock, then let existing failure cleanup retire peers.
     disconnect();
     {
         Lock l(cs);
@@ -927,20 +1013,18 @@ void ConnectionManager::shutdown() {
             j->disconnect(true);
         }
     }
-    // Wait until all connections have died out...
-    while(true) {
-        {
-            Lock l(cs);
-            if(userConnections.empty()) {
-                break;
-            }
-        }
-        Thread::sleep(50);
-    }
+    std::unique_lock<std::mutex> lock(shutdownMutex);
+    shutdownChanged.wait(lock, [this] {
+        return operations == 0 && registeredConnections == 0;
+    });
+    shutdownComplete = true;
+    shutdownChanged.notify_all();
 }
 
 // UserConnectionListener
 void ConnectionManager::on(UserConnectionListener::Supports, UserConnection* conn, const StringList& feat) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     for(auto& i: feat) {
         if(i == UserConnection::FEATURE_MINISLOTS) {
             conn->setFlag(UserConnection::FLAG_SUPPORTS_MINISLOTS);

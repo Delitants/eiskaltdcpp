@@ -30,6 +30,7 @@ add_executable(eiskaltdcpp-tests
     test_certificate_lifecycle.cpp
     test_dccontext.cpp
     test_client_shutdown.cpp
+    test_connectionmanager_shutdown.cpp
     test_directorylisting_metadata.cpp
     test_encoder.cpp
     test_string_tokenizer.cpp

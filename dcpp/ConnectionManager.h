@@ -20,6 +20,9 @@
 #pragma once
 
 #include <memory>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <unordered_map>
 #include <vector>
 
@@ -103,9 +106,7 @@ class ConnectionManager : public Speaker<ConnectionManagerListener>,
         public ContextAware
 {
 public:
-    void nmdcExpect(const string& aNick, const string& aMyNick, const string& aHubUrl) {
-        expectedConnections.add(aNick, aMyNick, aHubUrl);
-    }
+    void nmdcExpect(const string& aNick, const string& aMyNick, const string& aHubUrl);
 
     void nmdcConnect(const string& aServer, const string& aPort, const string& aMyNick, const string& hubUrl, const string& encoding, bool secure);
     void nmdcConnect(const string& aServer, const string& aPort, const string& localPort, BufferedSocket::NatRoles natRole, const string& aNick, const string& hubUrl, const string& encoding, bool secure);
@@ -119,6 +120,10 @@ public:
     void disconnect(const UserPtr& user, int isDownload);
 
     void shutdown();
+    // Fences CM producers/registry only; later transfer callbacks and socket
+    // resources still need draining with their dependencies alive. Never call
+    // from callbacks or under manager/listener locks; serialize raw/config users.
+    void stopForShutdown();
 
     /** Find a suitable port to listen on, and start doing it */
     void listen();
@@ -144,7 +149,7 @@ private:
         string port;
         string ip;
         bool secure;
-        bool die;
+        std::atomic<bool> die;
         DCContext& ctx_;
     };
 
@@ -170,7 +175,14 @@ private:
     Server* server;
     Server* secureServer;
 
-    bool shuttingDown;
+    std::atomic<bool> shuttingDown;
+    std::mutex shutdownMutex;
+    std::condition_variable shutdownChanged;
+    bool shutdownComplete = false;
+    size_t operations = 0;
+    std::atomic<size_t> registeredConnections{0};
+    bool beginOperation(bool cleanup = false);
+    void finishOperation();
 
 public:
     explicit ConnectionManager(DCContext& ctx);
