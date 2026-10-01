@@ -213,9 +213,22 @@ destruction must still be owner-serialized. Do not stop from a producer callback
 or under manager/listener locks. Uninterruptible I/O delays the barrier rather
 than granting installer consent. The existing DHT save API remains an unchecked
 legacy write, not installation authorization. No MainWindow/DCContext updater
-coordinator or Sparkle activation is added by this checkpoint. Hash/rechecker,
-active-transfer barriers, checked final persistence sequencing and actual
+coordinator or Sparkle activation is added by this checkpoint. Queue rechecker/
+mover and active-transfer barriers, checked final persistence sequencing and actual
 committed-normal-quit handoff remain required before removing `_Exit`.
+
+Hash checkpoint: `HashManager::stopForShutdown` closes new hash, rebuild, tree
+publication and timer-side-effect admission; cancels queued/current reads,
+drains real publication and timer callbacks, then joins the worker. Concurrent
+stop callers join the same barrier. Completed cache/tree evidence is retained
+for read-only access without invalidating entries or marking new use after stop.
+Canceled reads and early EOF are never finalized/published; normal fast/slow
+hashing still completes. Partial-work status and buffers are cleared on exit.
+This does not save the hash store or revoke the consent-bound proxy route.
+Startup/configuration, raw cache pointers and destruction remain owner-serialized;
+never stop from callbacks or under manager/listener locks. Legacy HashStore
+saving remains unchecked, not installer consent. Queue rechecker/mover and
+active transfers still need their barriers before coordinator/final persistence.
 
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.

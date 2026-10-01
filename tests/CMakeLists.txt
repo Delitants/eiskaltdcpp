@@ -38,6 +38,7 @@ add_executable(eiskaltdcpp-tests
     test_simplexml.cpp
     test_tigerhash.cpp
     test_hashbloom.cpp
+    test_hashmanager_shutdown.cpp
     test_wildcards.cpp
     test_compression.cpp
     test_simplexmlreader.cpp

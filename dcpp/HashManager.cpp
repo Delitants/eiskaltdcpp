@@ -177,8 +177,77 @@ void HashManager::StreamStore::deleteStream(const string& p_filePath)
 #endif //USE_XATTR
 }
 
-bool HashManager::checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp) {
+bool HashManager::beginOperation() {
+    std::lock_guard<std::mutex> lock(operationMutex);
+    if(shutdownRequested) return false;
+    ++operations;
+    return true;
+}
+
+void HashManager::finishOperation() {
+    std::lock_guard<std::mutex> lock(operationMutex);
+    if(--operations == 0) operationsChanged.notify_all();
+}
+
+void HashManager::stopForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(operationMutex);
+        if(shutdownRequested) {
+            operationsChanged.wait(lock, [this] { return shutdownComplete; });
+            return;
+        }
+        shutdownRequested = true;
+    }
+    // Wake paused reads before waiting for publication callbacks. No manager
+    // lock is held across the timer drain, operation drain or worker join.
+    hasher.shutdown();
+    ctx().getTimerManager()->removeListener(this);
+    {
+        std::unique_lock<std::mutex> lock(operationMutex);
+        operationsChanged.wait(lock, [this] { return operations == 0; });
+    }
+    hasher.join();
+    {
+        std::lock_guard<std::mutex> lock(operationMutex);
+        shutdownComplete = true;
+        operationsChanged.notify_all();
+    }
+}
+
+void HashManager::startup() {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    hasher.start();
     Lock l(cs);
+    store.load();
+}
+
+void HashManager::addTree(const TigerTree& tree) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    Lock l(cs);
+    store.addTree(tree);
+}
+
+void HashManager::doRebuild() {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    Lock l(cs);
+    store.rebuild();
+}
+
+void HashManager::on(TimerManagerListener::Minute, uint64_t) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    Lock l(cs);
+    store.save();
+}
+
+bool HashManager::checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp) {
+    const bool admitted = beginOperation();
+    ScopedFunctor([&] { if(admitted) finishOperation(); });
+    Lock l(cs);
+    if(!admitted) return store.checkTTH(aFileName, aSize, aTimeStamp, false);
 
     const TTHValue* tthold = getFileTTHif(Text::toLower(aFileName));
     const TTHValue* tth = getFileTTHif(aFileName);
@@ -199,18 +268,22 @@ bool HashManager::checkTTH(const string& aFileName, int64_t aSize, uint32_t aTim
 }
 
 TTHValue HashManager::getTTH(const string& aFileName, int64_t aSize) {
+    const bool admitted = beginOperation();
+    ScopedFunctor([&] { if(admitted) finishOperation(); });
     Lock l(cs);
-    const TTHValue* tth = store.getTTH(aFileName);
+    const TTHValue* tth = store.getTTH(aFileName, admitted);
     if (tth == NULL) {
-        hasher.hashFile(aFileName, aSize);
+        if(admitted) hasher.hashFile(aFileName, aSize);
         throw HashException();
     }
     return *tth;
 }
 
 const TTHValue* HashManager::getFileTTHif(const string& aFileName) {
+    const bool admitted = beginOperation();
+    ScopedFunctor([&] { if(admitted) finishOperation(); });
     Lock l(cs);
-    return store.getTTH(aFileName);
+    return store.getTTH(aFileName, admitted);
 }
 
 bool HashManager::getTree(const TTHValue& root, TigerTree& tt) {
@@ -224,6 +297,8 @@ int64_t HashManager::getBlockSize(const TTHValue& root) {
 }
 
 void HashManager::hashDone(const string& aFileName, uint32_t aTimeStamp, const TigerTree& tth, int64_t speed, int64_t size) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     try {
         Lock l(cs);
         store.addFile(aFileName, aTimeStamp, tth, true);
@@ -336,7 +411,7 @@ int64_t HashManager::HashStore::getBlockSize(const TTHValue& root) const {
     return i == treeIndex.end() ? 0 : i->second.getBlockSize();
 }
 
-bool HashManager::HashStore::checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp) {
+bool HashManager::HashStore::checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp, bool invalidate) {
     auto fname = Util::getFileName(aFileName), fpath = Util::getFilePath(aFileName);
     auto i = fileIndex.find(fpath);
     if (i != fileIndex.end()) {
@@ -345,8 +420,10 @@ bool HashManager::HashStore::checkTTH(const string& aFileName, int64_t aSize, ui
             FileInfo& fi = *j;
             auto ti = treeIndex.find(fi.getRoot());
             if (ti == treeIndex.end() || ti->second.getSize() != aSize || fi.getTimeStamp() != aTimeStamp) {
-                i->second.erase(j);
-                dirty = true;
+                if(invalidate) {
+                    i->second.erase(j);
+                    dirty = true;
+                }
                 return false;
             }
             return true;
@@ -355,7 +432,7 @@ bool HashManager::HashStore::checkTTH(const string& aFileName, int64_t aSize, ui
     return false;
 }
 
-const TTHValue* HashManager::HashStore::getTTH(const string& aFileName) {
+const TTHValue* HashManager::HashStore::getTTH(const string& aFileName, bool markUsed) {
     string fname = Util::getFileName(aFileName);
     string fpath = Util::getFilePath(aFileName);
 
@@ -363,7 +440,7 @@ const TTHValue* HashManager::HashStore::getTTH(const string& aFileName) {
     if (i != fileIndex.end()) {
         auto j = find(i->second.begin(), i->second.end(), fname);
         if (j != i->second.end()) {
-            j->setUsed(true);
+            if(markUsed) j->setUsed(true);
             return &(j->getRoot());
         }
     }
@@ -621,6 +698,7 @@ void HashManager::HashStore::createDataFile(const string& name) {
 
 void HashManager::Hasher::hashFile(const string& fileName, int64_t size) {
     Lock l(cs);
+    if(stop) return;
     if(w.emplace(fileName, size).second) {
         if(paused > 0)
             paused = 1 ;
@@ -631,6 +709,7 @@ void HashManager::Hasher::hashFile(const string& fileName, int64_t size) {
 
 bool HashManager::Hasher::pause() {
     Lock l(cs);
+    if(stop) return false;
     paused = 1;
     //    printf("pause::paused: %d\n", paused);fflush(stdout);
     return true;
@@ -643,6 +722,22 @@ void HashManager::Hasher::resume() {
         //        printf("resume::paused: %d\n", paused);fflush(stdout);
         s.signal();
     }
+}
+
+void HashManager::Hasher::shutdown() {
+    Lock l(cs);
+    stop = true;
+    rebuild = false;
+    w.clear();
+    paused = 0;
+    s.signal();
+}
+
+void HashManager::Hasher::scheduleRebuild() {
+    Lock l(cs);
+    if(stop) return;
+    rebuild = true;
+    s.signal();
 }
 
 bool HashManager::Hasher::isPaused() const {
@@ -675,15 +770,13 @@ void HashManager::Hasher::getStats(string& curFile, uint64_t& bytesLeft, size_t&
 }
 
 void HashManager::Hasher::instantPause() {
-    bool wait = false;
-    {
-        Lock l(cs);
-        if(paused > 0) {
-            wait = true;
+    for(;;) {
+        {
+            Lock l(cs);
+            if(stop || paused == 0) return;
         }
-    }
-    if(wait)
         s.wait();
+    }
 }
 
 #ifdef _WIN32
@@ -819,6 +912,7 @@ static void sigbus_handler(int signum)
 
 bool HashManager::Hasher::fastHash(const string& filename, uint8_t* , TigerTree& tth, int64_t size, CRC32Filter* xcrc32) {
     instantPause();
+    if(stop) return false;
 
     static StreamStore streamStore;
 
@@ -941,10 +1035,8 @@ bool HashManager::Hasher::fastHash(const string& filename, uint8_t* , TigerTree&
         dcdebug("Failed to reset old signal handler for SIGBUS\n");
     }
 
-    if (ok)
-        streamStore.saveTree(filename, tth);
-
-    return ok;
+    // hashDone persists only the finalized, admitted tree on every platform.
+    return ok && !stop;
 }
 
 #endif // !_WIN32
@@ -954,23 +1046,38 @@ int HashManager::Hasher::run() {
     bool virtualBuf = true;
     string fname;
     bool last = false;
+    ScopedFunctor([&] {
+        if(buf) {
+#ifdef _WIN32
+            if(virtualBuf) VirtualFree(buf, 0, MEM_RELEASE);
+            else
+#endif
+                delete [] buf;
+        }
+        Lock l(cs);
+        currentFile.clear();
+        currentSize = 0;
+        running = false;
+    });
     pause();
     for(;;) {
-
-        if (w.empty()) {
-            s.wait();
-        }
-
-        if(stop)
-            break;
-        if(rebuild) {
-            ctx().getHashManager()->doRebuild();
+        bool wait, rebuilding;
+        {
+            Lock l(cs);
+            if(stop) break;
+            wait = w.empty() && !rebuild;
+            rebuilding = rebuild;
             rebuild = false;
-            ctx().getLogManager()->message(_("Hash database rebuilt"));
+        }
+        if(wait) { s.wait(); continue; }
+        if(rebuilding) {
+            ctx().getHashManager()->doRebuild();
+            if(!stop) ctx().getLogManager()->message(_("Hash database rebuilt"));
             continue;
         }
         {
             Lock l(cs);
+            if(stop) break;
             if(!w.empty()) {
                 currentFile = fname = w.begin()->first;
                 currentSize = w.begin()->second;
@@ -980,9 +1087,10 @@ int HashManager::Hasher::run() {
                 last = true;
                 fname.clear();
             }
+            running = !fname.empty();
         }
-        running = true;
         instantPause();
+        if(stop) break;
 
         if(!fname.empty()) {
             int64_t size = File::getSize(fname);
@@ -1002,6 +1110,7 @@ int HashManager::Hasher::run() {
             }
             try {
                 File f(fname, File::READ, File::OPEN);
+                size = f.getSize();
                 int64_t bs = max(TigerTree::calcBlockSize(f.getSize(), 10), MIN_BLOCK_SIZE);
                 uint64_t start = GET_TICK();
                 uint32_t timestamp = f.getLastModified();
@@ -1022,6 +1131,7 @@ int HashManager::Hasher::run() {
 #else
                 if(!CTX_BOOLSETTING(FAST_HASH) || !fastHash(fname, 0, fastTTH, size, xcrc32)) {
 #endif
+                    if(stop) break;
                     tth = &slowTTH;
                     crc32 = CRC32Filter();
                     uint64_t lastRead = GET_TICK();
@@ -1038,6 +1148,7 @@ int HashManager::Hasher::run() {
                         } else {
                             lastRead = GET_TICK();
                         }
+                        if(stop) break;
                         n = f.read(buf, bufSize);
                         tth->update(buf, n);
                         if(xcrc32)
@@ -1053,6 +1164,10 @@ int HashManager::Hasher::run() {
                 }
 
                 f.close();
+                // A stop or early EOF must never promote an incomplete tree.
+                if(stop) break;
+                if(tth->getFileSize() != size)
+                    throw FileException(_("File size changed while hashing"));
                 tth->finalize();
                 uint64_t end = GET_TICK();
                 int64_t speed = 0;
@@ -1072,8 +1187,8 @@ int HashManager::Hasher::run() {
             Lock l(cs);
             currentFile.clear();
             currentSize = 0;
+            running = false;
         }
-        running = false;
         if(buf != NULL && (last || stop)) {
             if(virtualBuf) {
 #ifdef _WIN32
@@ -1113,6 +1228,8 @@ bool HashManager::isHashingPaused() const {
 }
 
 void HashManager::on(TimerManagerListener::Second, uint64_t tick) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     (void)tick;
     //fprintf(stdout,"%lld\n", tick); fflush(stdout);
     static bool firstcycle = true;

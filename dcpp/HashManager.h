@@ -21,6 +21,9 @@
 
 #include <functional>
 #include <map>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 #include "DCContext.h"
 #include "MerkleTree.h"
@@ -64,8 +67,7 @@ public:
         this->ctx().getTimerManager()->addListener(this);
     }
     virtual ~HashManager() {
-        ctx().getTimerManager()->removeListener(this);
-        hasher.join();
+        stopForShutdown();
     }
 
     /**
@@ -90,7 +92,7 @@ public:
     void addTree(const string& aFileName, uint32_t aTimeStamp, const TigerTree& tt) {
         hashDone(aFileName, aTimeStamp, tt, -1, -1);
     }
-    void addTree(const TigerTree& tree) { Lock l(cs); store.addTree(tree); }
+    void addTree(const TigerTree& tree);
 
     void getStats(string& curFile, uint64_t& bytesLeft, size_t& filesLeft) const {
         hasher.getStats(curFile, bytesLeft, filesLeft);
@@ -101,11 +103,14 @@ public:
      */
     void rebuild() { hasher.scheduleRebuild(); }
 
-    void startup() { hasher.start(); store.load(); }
+    void startup();
+
+    // Owner must not call this from callbacks or under manager/listener locks.
+    // Retains cache and does not save it; checked final persistence is separate.
+    void stopForShutdown();
 
     void shutdown() {
-        hasher.shutdown();
-        hasher.join();
+        stopForShutdown();
         Lock l(cs);
         store.save();
     }
@@ -143,8 +148,8 @@ private:
         virtual int run();
         bool fastHash(const string& fname, uint8_t* buf, TigerTree& tth, int64_t size, CRC32Filter* xcrc32);
         void getStats(string& curFile, uint64_t &bytesLeft, size_t& filesLeft) const;
-        void shutdown() { stop = true; if(paused){ s.signal(); resume();} s.signal(); }
-        void scheduleRebuild() { rebuild = true; if(paused) s.signal(); s.signal(); }
+        void shutdown();
+        void scheduleRebuild();
 
     private:
         // Case-sensitive (faster), it is rather unlikely that case changes, and if it does it's harmless.
@@ -153,7 +158,7 @@ private:
         mutable CriticalSection cs;
         Semaphore s;
 
-        bool stop;
+        std::atomic<bool> stop;
         bool running;
         unsigned paused;
         bool rebuild;
@@ -177,8 +182,8 @@ private:
 
         void rebuild();
 
-        bool checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp);
-        const TTHValue* getTTH(const string& aFileName);
+        bool checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp, bool invalidate = true);
+        const TTHValue* getTTH(const string& aFileName, bool markUsed = true);
 
         void addTree(const TigerTree& tt);
         bool getTree(const TTHValue& root, TigerTree& tth);
@@ -260,21 +265,22 @@ private:
     StreamStore m_streamstore;
 
     mutable CriticalSection cs;
+    std::mutex operationMutex;
+    std::condition_variable operationsChanged;
+    bool shutdownRequested = false;
+    bool shutdownComplete = false;
+    size_t operations = 0;
+    bool beginOperation();
+    void finishOperation();
 
     /** Single node tree where node = root, no storage in HashData.dat */
     static const int64_t SMALL_TREE = -1;
 
     void hashDone(const string& aFileName, uint32_t aTimeStamp, const TigerTree& tth, int64_t speed, int64_t size);
 
-    void doRebuild() {
-        Lock l(cs);
-        store.rebuild();
-    }
+    void doRebuild();
 
-    virtual void on(TimerManagerListener::Minute, uint64_t) {
-        Lock l(cs);
-        store.save();
-    }
+    void on(TimerManagerListener::Minute, uint64_t);
     void on(TimerManagerListener::Second, uint64_t);
 };
 
