@@ -602,6 +602,22 @@ int QueueManager::Rechecker::run() {
     return 0;
 }
 
+class QueueManager::ListMatcher : public dcpp::Thread {
+public:
+    ListMatcher(DCContext& ctx, const StringList& files_) : ctx_(ctx), files(files_) { }
+    DCContext& ctx() const { return ctx_; }
+    void requestStop() { stopped = true; }
+    bool readyToReap() const { return startComplete && completed; }
+    // Called under the owner's producerMutex, after Thread::start has returned.
+    void startupFinished(bool started) { startComplete = true; if(!started) completed = true; }
+    int run() override;
+private:
+    DCContext& ctx_;
+    StringList files;
+    std::atomic<bool> stopped{false}, completed{false};
+    bool startComplete = false;
+};
+
 QueueManager::QueueManager(DCContext& ctx) :
     ContextAware(ctx),
     lastSave(0),
@@ -621,10 +637,8 @@ QueueManager::QueueManager(DCContext& ctx) :
 }
 
 QueueManager::~QueueManager() {
+    stopProducersForShutdown();
     stopWorkersForShutdown();
-    ctx().getSearchManager()->removeListener(this);
-    ctx().getTimerManager()->removeListener(this);
-    ctx().getClientManager()->removeListener(this);
 
     if(!CTX_BOOLSETTING(KEEP_LISTS)) {
         string path = Util::getListPath();
@@ -640,6 +654,56 @@ QueueManager::~QueueManager() {
         std::sort(filelists.begin(), filelists.end());
         std::for_each(filelists.begin(), std::set_difference(filelists.begin(), filelists.end(),
                                                              protectedFileLists.begin(), protectedFileLists.end(), filelists.begin()), &File::deleteFile);
+    }
+}
+
+bool QueueManager::beginProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    const auto thread = std::this_thread::get_id();
+    // An admitted folder/list/load operation must finish its nested mutations;
+    // refusing those midway would consume intent without creating its jobs.
+    if(producerShutdownRequested && producerThreads.find(thread) == producerThreads.end())
+        return false;
+    ++producerThreads[thread];
+    ++producers;
+    return true;
+}
+
+void QueueManager::finishProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    auto thread = producerThreads.find(std::this_thread::get_id());
+    if(--thread->second == 0) producerThreads.erase(thread);
+    if(--producers == 0) producersChanged.notify_all();
+}
+
+void QueueManager::stopProducersForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(producerShutdownRequested) {
+            producersChanged.wait(lock, [this] { return producerShutdownComplete; });
+            return;
+        }
+        producerShutdownRequested = true;
+        for(auto& matcher: listMatchers) matcher->requestStop();
+    }
+    ctx().getSearchManager()->removeListener(this);
+    ctx().getTimerManager()->removeListener(this);
+    ctx().getClientManager()->removeListener(this);
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        producersChanged.wait(lock, [this] { return producers == 0; });
+    }
+    // Admitted startup/reaping is finished; no worker can be added now. Keep all
+    // dependencies alive while physical reads and final matcher callbacks drain.
+    for(auto& matcher: listMatchers) {
+        matcher->requestStop();
+        matcher->join();
+    }
+    listMatchers.clear();
+    {
+        std::lock_guard<std::mutex> lock(producerMutex);
+        producerShutdownComplete = true;
+        producersChanged.notify_all();
     }
 }
 
@@ -701,6 +765,8 @@ struct PartsInfoReqParam{
 };
 
 void QueueManager::on(TimerManagerListener::Minute, uint64_t aTick) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     string fn;
     string searchString;
     vector<const PartsInfoReqParam*> params;
@@ -789,6 +855,8 @@ void QueueManager::on(TimerManagerListener::Minute, uint64_t aTick) {
 }
 
 void QueueManager::addList(const HintedUser& aUser, int aFlags, const string& aInitialDir /* = Util::emptyString */) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     add(aInitialDir, -1, TTHValue(), aUser, QueueItem::FLAG_USER_LIST | aFlags);
 }
 
@@ -814,6 +882,8 @@ string QueueManager::getListPath(const HintedUser& user) {
 // NOTE: freedcpp: begin
 void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& root)
 {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     // Check if we're not downloading something already in our share
     if (CTX_BOOLSETTING(DONT_DL_ALREADY_SHARED))
     {
@@ -869,6 +939,8 @@ void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& roo
 void QueueManager::add(const string& aTarget, int64_t aSize, const TTHValue& root, const HintedUser& aUser,
                        int aFlags /* = 0 */, bool addBad /* = true */)
 {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     bool wantConnection = true;
 
     // Check that we're not downloading from ourselves...
@@ -963,6 +1035,8 @@ connect:
 }
 
 void QueueManager::readd(const string& target, const HintedUser& aUser) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(rejectPassiveRequest(aUser))
         return;
     bool wantConnection = false;
@@ -1049,6 +1123,8 @@ bool QueueManager::addSource(QueueItem* qi, const HintedUser& aUser, Flags::Mask
 }
 
 void QueueManager::addDirectory(const string& aDir, const HintedUser& aUser, const string& aTarget, QueueItem::Priority p /* = QueueItem::DEFAULT */) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(rejectPassiveRequest(aUser))
         return;
     bool needList;
@@ -1102,6 +1178,8 @@ void buildMap(const DirectoryListing::Directory* dir, TTHMap& tthMap) {
 }
 
 int QueueManager::matchListing(const DirectoryListing& dl) {
+    if(!beginProducer()) return 0;
+    ScopedFunctor([this] { finishProducer(); });
     int matches = 0;
 
     {
@@ -1161,6 +1239,8 @@ void QueueManager::getSizeInfo(int64_t& size, int64_t& pos, const string& target
 }
 
 void QueueManager::move(const string& aSource, const string& aTarget) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     string target = Util::validateFileName(aTarget);
     if(aSource == target)
         return;
@@ -1217,6 +1297,8 @@ StringList QueueManager::getTargets(const TTHValue& tth) {
 }
 
 Download* QueueManager::getDownload(UserConnection& aSource, bool supportsTrees) {
+    if(!beginProducer()) return nullptr;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
 
     UserPtr& u = aSource.getUser();
@@ -1304,6 +1386,8 @@ private:
 }
 
 void QueueManager::setFile(Download* d) {
+    if(!beginProducer()) throw QueueException("Queue is shutting down");
+    ScopedFunctor([this] { finishProducer(); });
     if(d->getType() == Transfer::TYPE_FILE) {
         Lock l(cs);
 
@@ -1559,8 +1643,11 @@ void QueueManager::putDownload(Download* aDownload, bool finished) {
         }
     }
 
-    for(auto& i: getConn) {
-        ctx().getConnectionManager()->getDownloadConnection(i);
+    if(!getConn.empty() && beginProducer()) {
+        ScopedFunctor([this] { finishProducer(); });
+        for(auto& i: getConn) {
+            ctx().getConnectionManager()->getDownloadConnection(i);
+        }
     }
 
     if(!fl_fname.empty()) {
@@ -1569,6 +1656,8 @@ void QueueManager::putDownload(Download* aDownload, bool finished) {
 }
 
 void QueueManager::processList(const string& name, const HintedUser& user, int flags) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     DirectoryListing dirList(ctx(), user);
     try {
         dirList.loadFile(name);
@@ -1601,6 +1690,8 @@ void QueueManager::processList(const string& name, const HintedUser& user, int f
 }
 
 void QueueManager::recheck(const string& aTarget) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(!beginWorkerOperation()) return;
     ScopedFunctor([this] { finishWorkerOperation(); });
     rechecker.add(aTarget);
@@ -1756,6 +1847,8 @@ void QueueManager::removeSource(const UserPtr& aUser, int reason) {
 }
 
 void QueueManager::setPriority(const string& aTarget, QueueItem::Priority p) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     HintedUserList getConn;
 
     {
@@ -1906,6 +1999,8 @@ private:
 };
 
 void QueueManager::loadQueue() {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     try {
         QueueLoader l(ctx());
         Util::migrate(getQueueFile());
@@ -2020,6 +2115,8 @@ void QueueLoader::endTag(const string& name) {
 }
 
 void QueueManager::noDeleteFileList(const string& path) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(!CTX_BOOLSETTING(KEEP_LISTS)) {
         protectedFileLists.push_back(path);
     }
@@ -2027,6 +2124,8 @@ void QueueManager::noDeleteFileList(const string& path) {
 
 // SearchManagerListener
 void QueueManager::on(SearchManagerListener::SR, const SearchResultPtr& sr) noexcept {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     bool added = false;
     bool wantConnection = false;
 
@@ -2064,6 +2163,8 @@ void QueueManager::on(SearchManagerListener::SR, const SearchResultPtr& sr) noex
 
 // ClientManagerListener
 void QueueManager::on(ClientManagerListener::UserConnected, const UserPtr& aUser) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     bool hasDown = false;
     {
         Lock l(cs);
@@ -2085,6 +2186,8 @@ void QueueManager::on(ClientManagerListener::UserConnected, const UserPtr& aUser
 }
 
 void QueueManager::on(ClientManagerListener::UserDisconnected, const UserPtr& aUser) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     for(int i = 0; i < QueueItem::LAST; ++i) {
         auto j = userQueue.getList(i).find(aUser);
@@ -2096,12 +2199,16 @@ void QueueManager::on(ClientManagerListener::UserDisconnected, const UserPtr& aU
 }
 
 void QueueManager::on(TimerManagerListener::Second, uint64_t aTick) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(dirty && ((lastSave + 10000) < aTick)) {
         saveQueue();
     }
 }
 
 bool QueueManager::handlePartialResult(const UserPtr& aUser, const string& hubHint, const TTHValue& tth, const QueueItem::PartialSource& partialSource, PartsInfo& outPartialInfo) {
+    if(!beginProducer()) return false;
+    ScopedFunctor([this] { finishProducer(); });
     bool wantConnection = false;
     dcassert(outPartialInfo.empty());
 
@@ -2178,6 +2285,8 @@ bool QueueManager::handlePartialResult(const UserPtr& aUser, const string& hubHi
 }
 
 bool QueueManager::handlePartialSearch(const TTHValue& tth, PartsInfo& _outPartsInfo) {
+    if(!beginProducer()) return false;
+    ScopedFunctor([this] { finishProducer(); });
     {
         Lock l(cs);
 
@@ -2390,40 +2499,53 @@ void QueueManager::logFinishedDownload(QueueItem* qi, Download*, bool crcChecked
     CTX_LOG(LogManager::FINISHED_DOWNLOAD, params, writeToFile);
 }
 
-class ListMatcher : public dcpp::Thread
-{
-public:
-    ListMatcher(DCContext& ctx, const StringList& files_) : ctx_(ctx), files(files_) { }
-    DCContext& ctx() const { return ctx_; }
-    int run() {
-        for (auto i = files.cbegin(); i != files.cend(); ++i) {
-            UserPtr u = DirectoryListing::getUserFromFilename(ctx(), *i);
-            if (!u)
-                continue;
-
-            HintedUser user(u, Util::emptyString);
-            DirectoryListing dl(ctx(), user);
-            try {
-                dl.loadFile(*i);
-                ctx().getLogManager()->message(str(F_("%1% : Matched %2% files") % Util::toString(ctx().getClientManager()->getNicks(user)) % ctx().getQueueManager()->matchListing(dl)));
-            } catch (const Exception&) { }
-        }
-        detach();  // prevent jthread destructor from self-joining
-        delete this;// Cleanup the thread object
-        return 0;
+int QueueManager::ListMatcher::run() {
+    ScopedFunctor([this] { completed = true; });
+    for(auto i = files.cbegin(); i != files.cend() && !stopped; ++i) {
+        UserPtr u = DirectoryListing::getUserFromFilename(ctx(), *i);
+        if(!u) continue;
+        HintedUser user(u, Util::emptyString);
+        DirectoryListing dl(ctx(), user);
+        try {
+            dl.loadFile(*i);
+            if(stopped) break;
+            ctx().getLogManager()->message(str(F_("%1% : Matched %2% files") % Util::toString(ctx().getClientManager()->getNicks(user)) % ctx().getQueueManager()->matchListing(dl)));
+        } catch(const Exception&) { }
     }
-private:
-    DCContext& ctx_;
-    StringList files;
-};
+    return 0;
+}
 
 void QueueManager::matchAllListings() {
-    ListMatcher* matcher = new ListMatcher(ctx(), File::findFiles(Util::getListPath(), "*.xml*"));
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
+    std::vector<std::unique_ptr<ListMatcher>> retired;
+    {
+        std::lock_guard<std::mutex> lock(producerMutex);
+        for(auto i = listMatchers.begin(); i != listMatchers.end();) {
+            if((*i)->readyToReap()) {
+                retired.push_back(std::move(*i));
+                i = listMatchers.erase(i);
+            } else ++i;
+        }
+    }
+    for(auto& matcher: retired) matcher->join();
+    auto pending = std::make_unique<ListMatcher>(ctx(), File::findFiles(Util::getListPath(), "*.xml*"));
+    auto* matcher = pending.get();
+    {
+        std::lock_guard<std::mutex> lock(producerMutex);
+        if(producerShutdownRequested) matcher->requestStop();
+        listMatchers.push_back(std::move(pending));
+    }
+    bool started = false;
+    ScopedFunctor([&] {
+        std::lock_guard<std::mutex> lock(producerMutex);
+        matcher->startupFinished(started);
+    });
     try {
         matcher->start();
+        started = true;
     } catch (const ThreadException&) {
         ///@todo add error message
-        delete matcher;
     }
 }
 

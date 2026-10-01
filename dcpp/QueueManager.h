@@ -22,6 +22,9 @@
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+#include <memory>
+#include <thread>
+#include <unordered_map>
 
 #include "ClientManagerListener.h"
 #include "CriticalSection.h"
@@ -114,6 +117,11 @@ public:
     // Workers only: other queue producers must be fenced separately by owner.
     // Never call from callbacks or under queue/listener locks. Retains queue data.
     void stopWorkersForShutdown();
+
+    // New-work phase only; accepted transfer/error cleanup and worker moves stay
+    // live. Retain dependencies through resource drain before stopping workers.
+    // Never from callbacks/manager locks; owner fences manual remove/raw/config.
+    void stopProducersForShutdown();
 
     void setPriority(const string& aTarget, QueueItem::Priority p);
 
@@ -283,6 +291,16 @@ private:
     friend class QueueLoader;
 
     mutable CriticalSection cs;
+    std::mutex producerMutex;
+    std::condition_variable producersChanged;
+    bool producerShutdownRequested = false;
+    bool producerShutdownComplete = false;
+    size_t producers = 0;
+    std::unordered_map<std::thread::id, size_t> producerThreads;
+    class ListMatcher;
+    std::vector<std::unique_ptr<ListMatcher>> listMatchers;
+    bool beginProducer();
+    void finishProducer();
     std::mutex workerMutex;
     std::condition_variable workersChanged;
     bool workerShutdownRequested = false;
@@ -307,7 +325,7 @@ private:
     StringList protectedFileLists;
     /** Sanity check for the target filename */
     static string checkTarget(const string& aTarget, bool checkExsistence);
-    /** Add a source to an existing queue item */
+    /** Add a source under an admitted parent (manual raw access is owner-serialized). */
     bool addSource(QueueItem* qi, const HintedUser& aUser, Flags::MaskType addBad, bool checkReachability = true);
     bool rejectPassiveRequest(const HintedUser& aUser, bool warn = true);
 
