@@ -18,6 +18,7 @@
 #pragma once
 
 #include "dcpp/TimerManager.h"
+#include <atomic>
 
 namespace dht
 {
@@ -29,12 +30,14 @@ namespace dht
     public:
         explicit TaskManager(DHT& dht);
         ~TaskManager(void);
+        void stopForShutdown();
 
         TaskManager(const TaskManager&) = delete;
         TaskManager& operator=(const TaskManager&) = delete;
 
     private:
         DHT& dht_;
+        std::atomic<bool> shutdownStopped { false };
 
         /** Time of publishing next file in queue */
         uint64_t nextPublishTime;

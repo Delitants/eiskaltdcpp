@@ -126,6 +126,7 @@ namespace dht
 
     DHT::~DHT(void) throw()
     {
+        stopForShutdown();
         // when DHT is disabled, we shouldn't try to perform exit cleanup
         if(bucket == nullptr) {
             indexMgr_.reset();
@@ -137,12 +138,47 @@ namespace dht
         indexMgr_.reset();
     }
 
+    DHT::Operation::Operation(DHT& value) : owner(value)
+    {
+        std::lock_guard lock(owner.operationMutex);
+        admitted = !owner.shutdownRequested.load();
+        if(admitted) ++owner.activeOperations;
+    }
+
+    DHT::Operation::~Operation()
+    {
+        if(!admitted) return;
+        std::lock_guard lock(owner.operationMutex);
+        if(--owner.activeOperations == 0) owner.operationsDone.notify_all();
+    }
+
+    void DHT::stopForShutdown()
+    {
+        {
+            std::lock_guard lock(operationMutex);
+            shutdownRequested.store(true);
+        }
+        // Listener barriers and worker joins must not hold the admission lock.
+        if(taskMgr_) taskMgr_->stopForShutdown();
+        if(bootstrapMgr_) bootstrapMgr_->stopForShutdown();
+        {
+            std::unique_lock lock(operationMutex);
+            operationsDone.wait(lock, [this] { return activeOperations == 0; });
+        }
+        socket.stopForShutdown();
+        {
+            Lock l(fwCheckCs);
+            firewallCheck.stop();
+        }
+        lastPacket = 0;
+    }
+
     /*
      * Starts DHT.
      */
     void DHT::start()
     {
-        if(!CTX_BOOLSETTING(USE_DHT))
+        if(isStopping() || !CTX_BOOLSETTING(USE_DHT))
             return;
 
         // start with global firewalled status
@@ -200,6 +236,8 @@ namespace dht
      */
     void DHT::dispatch(const string& aLine, const string& ip, const string& port, bool isUdpKeyValid)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         // check node's IP address
         if(!Utils::isGoodIPPort(ip, port))
         {
@@ -227,6 +265,7 @@ namespace dht
 
             // don't add node here, because it may block verified nodes when table becomes full of unverified nodes
             Node::Ptr node = createNode(CID(cid), ip, port, true, isUdpKeyValid);
+            if(!node) return;
 
             // all communication to this node will be encrypted with this key
             string udpKey;
@@ -284,6 +323,8 @@ namespace dht
      */
     void DHT::send(AdcCommand& cmd, const string& ip, const string& port, const CID& targetCID, const CID& udpKey)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         {
             // FW check
             Lock l(fwCheckCs);
@@ -297,11 +338,13 @@ namespace dht
      */
     Node::Ptr DHT::createNode(const CID& cid, const string& ip, const string& port, bool update, bool isUdpKeyValid)
     {
+        auto operation = admitOperation();
+        if(!operation) return {};
         // create user as offline (only TCP connected users will be online)
         UserPtr u = ctx_.getClientManager()->getUser(cid);
 
         Lock l(cs);
-        return bucket->createNode(u, ip, port, update, isUdpKeyValid);
+        return bucket ? bucket->createNode(u, ip, port, update, isUdpKeyValid) : Node::Ptr();
     }
 
     /*
@@ -309,6 +352,9 @@ namespace dht
      */
     bool DHT::addNode(const Node::Ptr& node, bool makeOnline)
     {
+        auto operation = admitOperation();
+        if(!operation) return false;
+        if(!node || !bucket) return false;
         bool isAcceptable = true;
         if(!node->isOnline())
         {
@@ -343,6 +389,8 @@ namespace dht
      */
     void DHT::checkExpiration(uint64_t aTick)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         {
             Lock l(cs);
             if(bucket->checkExpiration(aTick))
@@ -357,6 +405,8 @@ namespace dht
 
     void DHT::setRequestFWCheck()
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         if(CTX_SETTING(OUTGOING_CONNECTIONS) == SettingsManager::OUTGOING_GOST)
             return;
         const string localPort = getPort();
@@ -374,6 +424,8 @@ namespace dht
      */
     void DHT::findFile(const string& tth, const string& token)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         if(isConnected())
             getSearchManager().findFile(tth, token);
     }
@@ -383,6 +435,8 @@ namespace dht
      */
     void DHT::info(const string& ip, const string& port, uint32_t type, const CID& targetCID, const CID& udpKey)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         // TODO: what info is needed?
         AdcCommand cmd(AdcCommand::CMD_INF, AdcCommand::TYPE_UDP);
 
@@ -423,6 +477,8 @@ namespace dht
      */
     void DHT::connect(const OnlineUser& ou, const string& token)
     {
+        auto operation = admitOperation();
+        if(!operation) return;
         // this is DHT's node, so we can cast ou to Node
         getConnectionManager().connect((Node*)&ou, token);
     }
@@ -752,6 +808,7 @@ namespace dht
                     // create verified node, it's not big risk here and allows faster bootstrapping
                     // if this node already exists in our routing table, don't update it's ip/port for security reasons
                     Node::Ptr node = createNode(cid, i4, u4, false, true);
+                    if(!node) continue;
                     addNode(node, false);
                 }
 

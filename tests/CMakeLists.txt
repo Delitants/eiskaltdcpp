@@ -88,6 +88,7 @@ add_executable(eiskaltdcpp-tests
     test_format.cpp
     test_filteredfile.cpp
     test_dht_context.cpp
+    test_dht_shutdown.cpp
 )
 
 target_include_directories(eiskaltdcpp-tests PRIVATE

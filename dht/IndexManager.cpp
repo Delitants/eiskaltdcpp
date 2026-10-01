@@ -105,6 +105,8 @@ namespace dht
      */
     void IndexManager::publishNextFile()
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         File f;
         {
             Lock l(cs);
@@ -125,6 +127,8 @@ namespace dht
      */
     void IndexManager::loadIndexes(SimpleXML& xml)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         xml.resetCurrentChild();
         if(xml.findChild("Indexes"))
         {
@@ -195,6 +199,8 @@ namespace dht
      */
     void IndexManager::processPublishSourceRequest(const Node::Ptr& node, const AdcCommand& cmd)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         string tth;
         if(!cmd.getParam("TR", 1, tth))
             return; // nothing to identify a file?
@@ -220,6 +226,8 @@ namespace dht
      */
     void IndexManager::checkExpiration(uint64_t aTick)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         Lock l(cs);
 
         bool dirty = false;
@@ -251,9 +259,25 @@ namespace dht
             dht_.setDirty();
     }
 
+    void IndexManager::setPublish(bool value)
+    {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
+        publish.store(value);
+    }
+
+    void IndexManager::setNextPublishing()
+    {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
+        nextRepublishTime.store(GET_TICK() + REPUBLISH_TIME);
+    }
+
     /** Publishes shared file */
     void IndexManager::publishFile(const TTHValue& tth, int64_t size)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         if(size > MIN_PUBLISH_FILESIZE)
         {
             Lock l(cs);
@@ -266,6 +290,8 @@ namespace dht
      */
     void IndexManager::publishPartialFile(const TTHValue& tth)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         Lock l(cs);
         publishQueue.push_front(File(tth, 0, true));
     }

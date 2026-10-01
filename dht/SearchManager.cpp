@@ -99,6 +99,8 @@ namespace dht
      */
     void SearchManager::findNode(const CID& cid)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         if(isAlreadySearchingFor(cid.toBase32()))
             return;
 
@@ -115,6 +117,8 @@ namespace dht
      */
     void SearchManager::findFile(const string& tth, const string& token)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         // temporary fix to prevent UDP flood (search queue would be better here)
         if(GET_TICK() - lastSearchFile < 10000)
             return;
@@ -157,6 +161,8 @@ namespace dht
      */
     void SearchManager::findStore(const string& tth, int64_t size, bool partial)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         if(isAlreadySearchingFor(tth))
         {
             dht_.getIndexManager().decPublishing();
@@ -214,6 +220,8 @@ namespace dht
      */
     void SearchManager::processSearchRequest(const Node::Ptr& node, const AdcCommand& cmd)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         string token;
         if(!cmd.getParam("TO", 1, token))
             return; // missing search token?
@@ -319,6 +327,8 @@ namespace dht
      */
     void SearchManager::processSearchResult(const Node::Ptr& node, const AdcCommand& cmd)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         string token;
         if(!cmd.getParam("TO", 1, token))
             return; // missing search token?
@@ -363,6 +373,7 @@ namespace dht
 
                     // create user as offline (only TCP connected users will be online)
                     Node::Ptr source = dht_.createNode(cid, i4, u4, false, false);
+                    if(!source) continue;
 
                     if(partial)
                     {
@@ -427,6 +438,7 @@ namespace dht
                 // create unverified node
                 // if this node already exists in our routing table, don't update it's ip/port for security reasons
                 Node::Ptr node = dht_.createNode(cid, i4, u4, false, false);
+                if(!node) continue;
 
                 // node won't be accept for several reasons (invalid IP etc.)
                 // if routing table is full, node can be accept
@@ -474,6 +486,8 @@ namespace dht
      */
     void SearchManager::processSearches()
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         Lock l(cs);
 
         SearchMap::iterator it = searches.begin();
@@ -509,6 +523,8 @@ namespace dht
      */
     bool SearchManager::processSearchResults(const UserPtr& user, size_t slots)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return false;
         bool ok = false;
         uint64_t tick = GET_TICK();
 

@@ -27,6 +27,9 @@
 #include "dcpp/MerkleTree.h"
 #include "dcpp/TimerManager.h"
 #include <memory>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 namespace dcpp { class DCContext; }
 
@@ -81,6 +84,25 @@ namespace dht
         /** Starts DHT. */
         void start();
         void stop(bool exiting = false);
+
+        /** Owner-serialized terminal barrier; retains state for later persistence.
+         * Never call from a producer callback or while holding manager/listener locks. */
+        void stopForShutdown();
+        bool isStopping() const { return shutdownRequested.load(); }
+
+        class Operation
+        {
+        public:
+            explicit Operation(DHT& owner);
+            ~Operation();
+            Operation(const Operation&) = delete;
+            Operation& operator=(const Operation&) = delete;
+            explicit operator bool() const { return admitted; }
+        private:
+            DHT& owner;
+            bool admitted;
+        };
+        Operation admitOperation() { return Operation(*this); }
 
         const string& getPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getPort() : Util::emptyString; }
         string getAdvertisedPort() const { return CTX_BOOLSETTING(USE_DHT) ? socket.getAdvertisedPort() : Util::emptyString; }
@@ -200,6 +222,10 @@ namespace dht
         std::unique_ptr<ConnectionManager> connectionMgr_;
 
         dcpp::DCContext& ctx_;  ///< non-owning, set at construction
+        std::atomic<bool> shutdownRequested { false };
+        std::mutex operationMutex;
+        std::condition_variable operationsDone;
+        size_t activeOperations = 0;
     };
 
 }

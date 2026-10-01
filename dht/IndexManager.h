@@ -80,8 +80,8 @@ namespace dht
         void decPublishing() { publishing.fetch_sub(1, std::memory_order_relaxed); }
 
         /** Is publishing allowed? */
-        void setPublish(bool _publish) { publish = _publish; }
-        bool getPublish() const { return publish; }
+        void setPublish(bool _publish);
+        bool getPublish() const { return publish.load(); }
 
         /** Processes incoming request to publish file */
         void processPublishSourceRequest(const Node::Ptr& node, const AdcCommand& cmd);
@@ -96,10 +96,10 @@ namespace dht
         void publishPartialFile(const TTHValue& tth);
 
         /** Set time when our sharelist should be republished */
-        void setNextPublishing() { nextRepublishTime = GET_TICK() + REPUBLISH_TIME; }
+        void setNextPublishing();
 
         /** Is time when we should republish our sharelist? */
-        bool isTimeForPublishing() const { return GET_TICK() >= nextRepublishTime; }
+        bool isTimeForPublishing() const { return GET_TICK() >= nextRepublishTime.load(); }
 
     private:
 
@@ -114,13 +114,13 @@ namespace dht
         FileQueue publishQueue;
 
         /** Is publishing allowed? */
-        bool publish;
+        std::atomic<bool> publish;
 
         /** How many files is currently being published */
         std::atomic<long> publishing{0};
 
         /** Time when our sharelist should be republished */
-        uint64_t nextRepublishTime;
+        std::atomic<uint64_t> nextRepublishTime;
 
         /** Synchronizes access to tthList */
         mutable CriticalSection cs;

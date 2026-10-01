@@ -197,6 +197,26 @@ destroying their hash, DHT, client and queue dependencies. These APIs are not
 yet wired into MainWindow or a non-destructive whole-core coordinator; the
 proxy route needed for local handoff must still be preserved.
 
+DHT/bootstrap checkpoint: `DHT::stopForShutdown` closes shared admission for
+transport, dispatch, node, search, index and connection producers. It drains the
+timer and bootstrap HTTP sources, waits admitted calls, then joins UDP before
+closing its socket and clears ephemeral send/bootstrap queues. Routing nodes,
+indexes and sub-manager instances remain available for later persistence; the
+proxy route is not revoked. Repeated owner-serialized terminal stops are safe;
+ordinary stop/start remains reusable. Nullable node creation is checked at all
+internal callers, and index scheduling flags are atomic and fenced.
+Bootstrap HTTP callbacks are drained and detached; asynchronous BufferedSocket
+resource completion still requires the later whole-core resource drain.
+
+Manual configuration/lifecycle, raw manager users, read-only access and
+destruction must still be owner-serialized. Do not stop from a producer callback
+or under manager/listener locks. Uninterruptible I/O delays the barrier rather
+than granting installer consent. The existing DHT save API remains an unchecked
+legacy write, not installation authorization. No MainWindow/DCContext updater
+coordinator or Sparkle activation is added by this checkpoint. Hash/rechecker,
+active-transfer barriers, checked final persistence sequencing and actual
+committed-normal-quit handoff remain required before removing `_Exit`.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

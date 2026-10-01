@@ -43,11 +43,15 @@ namespace dht
      */
     void ConnectionManager::connect(const Node::Ptr& node, const string& token)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         ConnectionManager::connect(node, token, dht_.ctx().getCryptoManager()->TLSOk() && node->getUser()->isSet(User::TLS));
     }
 
     void ConnectionManager::connect(const Node::Ptr& node, const string& token, bool secure)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         // don't allow connection if we didn't proceed a handshake
         if(!node->isOnline())
         {
@@ -80,6 +84,8 @@ namespace dht
      */
     void ConnectionManager::connectToMe(const Node::Ptr& node, const AdcCommand& cmd)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         // don't allow connection if we didn't proceed a handshake
         if(!node->isOnline())
         {
@@ -129,6 +135,8 @@ namespace dht
      */
     void ConnectionManager::revConnectToMe(const Node::Ptr& node, const AdcCommand& cmd)
     {
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         // don't allow connection if we didn't proceed a handshake
         //if(!node->isOnline())
         //  return;

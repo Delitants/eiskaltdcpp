@@ -27,6 +27,7 @@
 #include "dcpp/HttpConnection.h"
 #include "dcpp/LogManager.h"
 #include "dcpp/SettingsManager.h"
+#include "dcpp/ScopedFunctor.h"
 #include <zlib.h>
 #include <algorithm>
 #include "dcpp/DCPlusPlus.h"
@@ -82,7 +83,36 @@ namespace dht
 
     BootstrapManager::~BootstrapManager(void)
     {
+        stopForShutdown();
+    }
+
+    bool BootstrapManager::beginOperation()
+    {
+        std::lock_guard lock(operationMutex);
+        if(shutdownStopped.load()) return false;
+        ++activeOperations;
+        return true;
+    }
+
+    void BootstrapManager::finishOperation()
+    {
+        std::lock_guard lock(operationMutex);
+        if(--activeOperations == 0) operationsDone.notify_all();
+    }
+
+    void BootstrapManager::stopForShutdown()
+    {
+        {
+            std::unique_lock lock(operationMutex);
+            shutdownStopped.store(true);
+            operationsDone.wait(lock, [this] { return activeOperations == 0; });
+        }
+        httpConnection.stopForShutdown();
         httpConnection.removeListener(this);
+        Lock l(cs);
+        nodesXML.clear();
+        bootstrapNodes.clear();
+        requestActive = false;
     }
 
     string BootstrapManager::getLastBootstrapRequestUrl() const
@@ -93,6 +123,10 @@ namespace dht
 
     void BootstrapManager::bootstrap()
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         vector<string> activeServers;
 
         {
@@ -128,6 +162,10 @@ namespace dht
 
     void BootstrapManager::on(HttpConnectionListener::Data, HttpConnection* conn, const uint8_t* buf, size_t len) throw()
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         bool abortRequest = false;
         bool responseTooLarge = false;
 
@@ -162,6 +200,10 @@ namespace dht
     #define BUFSIZE 16384
     void BootstrapManager::on(HttpConnectionListener::Complete, HttpConnection*, string const&) throw()
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         string compressedNodesXML;
 
         {
@@ -233,6 +275,10 @@ namespace dht
 
     void BootstrapManager::on(HttpConnectionListener::Failed, HttpConnection*, const string& aLine) throw()
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         {
             Lock l(cs);
             requestActive = false;
@@ -244,6 +290,10 @@ namespace dht
 
     void BootstrapManager::addBootstrapNode(const string& ip, const string& udpPort, const CID& targetCID, const UDPKey& udpKey)
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         BootstrapNode node = { ip, udpPort, targetCID, udpKey };
         Lock l(cs);
         bootstrapNodes.push_back(node);
@@ -251,6 +301,10 @@ namespace dht
 
     void BootstrapManager::process()
     {
+        if(!beginOperation()) return;
+        ScopedFunctor([this] { finishOperation(); });
+        auto operation = dht_.admitOperation();
+        if(!operation) return;
         BootstrapNode node;
 
         {

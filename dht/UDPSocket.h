@@ -89,6 +89,8 @@ namespace dht
 
         /** Disconnects UDP socket */
         void disconnect() throw();
+        /** Terminal transport stop; the DHT owner fences producers first. */
+        void stopForShutdown();
 
         /** Starts listening to UDP socket */
         void listen();
@@ -117,7 +119,8 @@ namespace dht
         DHT* dht_ = nullptr;
 
         /** Indicates to stop socket thread */
-        bool stop;
+        std::atomic<bool> stop;
+        std::atomic<bool> shutdownStopped { false };
 
         /** Port for communicating in this network */
         std::string port;

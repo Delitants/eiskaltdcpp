@@ -21,6 +21,9 @@
 #include "KBucket.h"
 #include "dcpp/CID.h"
 #include "dcpp/HttpConnection.h"
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 
 namespace dht
 {
@@ -32,6 +35,8 @@ namespace dht
     public:
         explicit BootstrapManager(DHT& dht);
         ~BootstrapManager(void);
+        /** Owner-serialized; never call from a producer callback or under locks. */
+        void stopForShutdown();
 
         BootstrapManager(const BootstrapManager&) = delete;
         BootstrapManager& operator=(const BootstrapManager&) = delete;
@@ -49,6 +54,12 @@ namespace dht
 
     private:
         DHT& dht_;
+        std::atomic<bool> shutdownStopped { false };
+        std::mutex operationMutex;
+        std::condition_variable operationsDone;
+        size_t activeOperations = 0;
+        bool beginOperation();
+        void finishOperation();
 
         mutable CriticalSection cs;
 

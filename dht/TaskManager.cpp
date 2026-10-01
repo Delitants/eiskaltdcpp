@@ -41,12 +41,20 @@ namespace dht
 
     TaskManager::~TaskManager(void)
     {
+        stopForShutdown();
+    }
+
+    void TaskManager::stopForShutdown()
+    {
+        shutdownStopped.store(true);
         dht_.ctx().getTimerManager()->removeListener(this);
     }
 
     // TimerManagerListener
     void TaskManager::on(TimerManagerListener::Second, uint64_t aTick) throw()
     {
+        auto operation = dht_.admitOperation();
+        if(!operation || shutdownStopped.load()) return;
         if(dht_.isConnected() && dht_.getNodesCount() >= K)
         {
             if(!dht_.isFirewalled() && dht_.getIndexManager().getPublish() && aTick >= nextPublishTime)
@@ -88,6 +96,8 @@ namespace dht
 
     void TaskManager::on(TimerManagerListener::Minute, uint64_t aTick) throw()
     {
+        auto operation = dht_.admitOperation();
+        if(!operation || shutdownStopped.load()) return;
         Utils::cleanFlood();
 
         // remove dead nodes

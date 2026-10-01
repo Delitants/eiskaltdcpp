@@ -83,9 +83,7 @@ namespace dht
 
     UDPSocket::~UDPSocket(void)
     {
-        disconnect();
-
-        for_each(sendQueue.begin(), sendQueue.end(), DeleteFunction());
+        stopForShutdown();
 
 #ifdef _DEBUG
         dcdebug("DHT stats, received: %ld bytes, sent: %ld bytes\n", receivedBytes, sentBytes);
@@ -100,15 +98,19 @@ namespace dht
         if(socket.get())
         {
             stop = true;
-            socket->disconnect();
-            port.clear();
-
             join();
-
             socket.reset();
-
-            stop = false;
+            port.clear();
         }
+    }
+
+    void UDPSocket::stopForShutdown()
+    {
+        shutdownStopped.store(true);
+        disconnect();
+        Lock l(cs);
+        for_each(sendQueue.begin(), sendQueue.end(), DeleteFunction());
+        sendQueue.clear();
     }
 
     /*
@@ -116,6 +118,7 @@ namespace dht
      */
     void UDPSocket::listen()
     {
+        if(shutdownStopped.load()) throw Exception("DHT UDP socket is shutting down");
         disconnect();
 
         try
@@ -134,11 +137,13 @@ namespace dht
                            : sm->get(SettingsManager::BIND_ADDRESS, true));
             port = socket->bind(Util::toString(sm->get(SettingsManager::DHT_PORT, true)), bindIp);
 
+            stop = false;
             start();
         }
         catch(...)
         {
             socket.reset();
+            port.clear();
             throw;
         }
     }
@@ -196,6 +201,8 @@ namespace dht
 
     void UDPSocket::checkIncoming()
     {
+        auto operation = dht_->admitOperation();
+        if(!operation || shutdownStopped.load() || stop.load()) return;
         if(socket->wait(delay, Socket::WAIT_READ) == Socket::WAIT_READ)
         {
             sockaddr_storage remoteAddr;
@@ -249,6 +256,8 @@ namespace dht
 
     void UDPSocket::checkOutgoing(uint64_t& timer)
     {
+        auto operation = dht_->admitOperation();
+        if(!operation || shutdownStopped.load() || stop.load()) return;
         std::unique_ptr<Packet> packet;
         uint64_t now = GET_TICK();
 
@@ -335,7 +344,7 @@ namespace dht
         // antiflood variables
         uint64_t timer = GET_TICK();
 
-        while(!stop)
+        while(!stop.load() && !dht_->isStopping())
         {
             try
             {
@@ -347,10 +356,12 @@ namespace dht
             }
             catch(const SocketException& e)
             {
+                auto operation = dht_->admitOperation();
+                if(!operation) break;
                 dcdebug("DHT::run Error: %s\n", e.getError().c_str());
 
                 bool failed = false;
-                while(!stop)
+                while(!stop.load() && !dht_->isStopping())
                 {
                     try
                     {
@@ -384,7 +395,7 @@ namespace dht
                         }
 
                         // Spin for 60 seconds
-                        for(int i = 0; i < 60 && !stop; ++i)
+                        for(int i = 0; i < 60 && !stop.load() && !dht_->isStopping(); ++i)
                         {
                             Thread::sleep(1000);
                         }
@@ -401,6 +412,8 @@ namespace dht
      */
     void UDPSocket::send(AdcCommand& cmd, const string& ip, const string& port, const CID& targetCID, const CID& udpKey)
     {
+        auto operation = dht_->admitOperation();
+        if(!operation || shutdownStopped.load()) return;
         // store packet for antiflooding purposes
         Utils::trackOutgoingPacket(ip, cmd);
 
@@ -413,6 +426,7 @@ namespace dht
         p->routeRevoked = dht_->ctx().getProxyRoute()->snapshot()->revoked;
 
         Lock l(cs);
+        if(shutdownStopped.load()) { delete p; return; }
         while(sendQueue.size() >= MAX_SEND_QUEUE_SIZE)
         {
             delete sendQueue.front();
