@@ -351,19 +351,23 @@ bool ShareManager::managedConflicts(const string& owner, const ManagedShare& can
 
 bool ShareManager::replaceManagedFiles(const string& owner, const string& virtualName, const StringList& absoluteFiles,
                                       std::function<bool()> externalCancelled, std::function<void()> hashingStarted) {
+    if(!beginProducer()) return false;
+    ScopedFunctor([this] { finishProducer(); });
     if(externalCancelled && externalCancelled()) return false;
     if(owner.empty() || !managedNameSafe(virtualName)) return false;
     auto token = std::make_shared<int>(0);
     {
         Lock l(cs);
-        if(externalCancelled && externalCancelled()) return false;
+        if(shutdownRequested || (externalCancelled && externalCancelled())) return false;
         if(absoluteFiles.empty()) {
-            removeManagedFiles(owner);
+            managedReplacements.erase(owner);
+            if(managedShares.erase(owner)) rebuildManagedDirectories();
             return true;
         }
         managedReplacements[owner] = token;
     }
     const auto cancelled = [&] {
+        if(shutdownRequested) return true;
         if(externalCancelled && externalCancelled()) return true;
         Lock l(cs);
         const auto i = managedReplacements.find(owner);
@@ -471,12 +475,16 @@ bool ShareManager::replaceManagedFiles(const string& owner, const string& virtua
 }
 
 void ShareManager::removeManagedFiles(const string& owner) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     managedReplacements.erase(owner);
     if(managedShares.erase(owner)) rebuildManagedDirectories();
 }
 
 void ShareManager::forgetManagedFileHashes(const string& owner) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     {
         Lock l(cs);
         // Also fence an in-flight replacement that captured the old cache.
@@ -492,6 +500,8 @@ void ShareManager::forgetManagedFileHashes(const string& owner) {
 }
 
 void ShareManager::forgetManagedFileHashes(const string& owner, const StringList& absoluteFiles) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(absoluteFiles.empty()) return;
     const set<string> affected(absoluteFiles.begin(), absoluteFiles.end());
     bool changed = false;
@@ -722,17 +732,39 @@ ShareManager::ShareManager(DCContext& ctx) : ContextAware(ctx), hits(0), xmlList
 }
 
 ShareManager::~ShareManager() {
+    stopForShutdown();
     ctx().getSettingsManager()->removeListener(this);
-    ctx().getTimerManager()->removeListener(this);
-    ctx().getQueueManager()->removeListener(this);
-    ctx().getHashManager()->removeListener(this);
-
-    join();
 
     if(bzXmlRef.get()) {
         bzXmlRef.reset();
         File::deleteFile(getBZXmlFile());
     }
+}
+
+bool ShareManager::beginProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(shutdownRequested) return false;
+    ++producers;
+    return true;
+}
+
+void ShareManager::finishProducer() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    if(--producers == 0) producersChanged.notify_all();
+}
+
+void ShareManager::stopForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        shutdownRequested = true;
+        producersChanged.wait(lock, [this] { return producers == 0; });
+    }
+    // Speaker removal drains callbacks; don't hold cs or producerMutex across
+    // these barriers or the worker join. Keep Settings Save until destruction.
+    ctx().getTimerManager()->removeListener(this);
+    ctx().getQueueManager()->removeListener(this);
+    ctx().getHashManager()->removeListener(this);
+    join();
 }
 
 ShareManager::Directory::Directory(const string& aName, const ShareManager::Directory::Ptr& aParent) :
@@ -995,6 +1027,7 @@ bool ShareManager::hasVirtual(const string& virtualName) const {
 }
 
 void ShareManager::load(SimpleXML& aXml) {
+    if(shutdownRequested) return;
     Lock l(cs);
     ++manualSharesGeneration;
 
@@ -1151,6 +1184,7 @@ void ShareManager::save(SimpleXML& aXml) {
 }
 
 void ShareManager::addDirectory(const string& realPath, const string& virtualName) {
+    if(shutdownRequested) return;
     if(realPath.empty() || virtualName.empty()) {
         throw ShareException(_("No directory specified"));
     }
@@ -1268,6 +1302,7 @@ void ShareManager::Directory::merge(const Directory::Ptr& source) {
 }
 
 void ShareManager::removeDirectory(const string& realPath) {
+    if(shutdownRequested) return;
     if(realPath.empty())
         return;
 
@@ -1308,6 +1343,7 @@ void ShareManager::removeDirectory(const string& realPath) {
 }
 
 void ShareManager::renameDirectory(const string& realPath, const string& virtualName) {
+    if(shutdownRequested) return;
     removeDirectory(realPath);
     addDirectory(realPath, virtualName);
 }
@@ -1349,7 +1385,8 @@ size_t ShareManager::getSharedFiles() const {
     return std::count_if(tthIndex.begin(), tthIndex.end(), [](const auto& i) { return i.second->available(); });
 }
 
-ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const Directory::Ptr& aParent) {
+ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const Directory::Ptr& aParent, bool cancellable) {
+    if(cancellable && shutdownRequested) return {};
     auto dir = Directory::create(Util::getLastDir(aName), aParent);
     const auto directoryObservation = observeSharePath(aName, true);
 
@@ -1365,6 +1402,7 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
     //for(FileFindIter i(aName + "*"); i != end; ++i) {
     for(FileFindIter i(aName); i != end; ++i) {
 #endif
+        if(cancellable && shutdownRequested) return {};
         string name = i->getFileName();
         if(name.empty()) {
             ctx().getLogManager()->message(str(F_("Invalid file name found while hashing folder %1%") % Util::addBrackets(aName)));
@@ -1396,7 +1434,9 @@ ShareManager::Directory::Ptr ShareManager::buildTree(const string& aName, const 
             if((::strcmp(newName.c_str(), CTX_SETTING(TEMP_DOWNLOAD_DIRECTORY).c_str()) != 0)
                     && (::strcmp(newName.c_str(), Util::getPath(Util::PATH_USER_CONFIG).c_str()) != 0)
                     && (::strcmp(newName.c_str(), CTX_SETTING(LOG_DIRECTORY).c_str()) != 0)) {
-                dir->directories[name] = buildTree(newName, dir);
+                auto child = buildTree(newName, dir, cancellable);
+                if(!child) return {};
+                dir->directories[name] = std::move(child);
             }
         } else {
             // Not a directory, assume it's a file...make sure we're not sharing the settings file...
@@ -1529,10 +1569,14 @@ void ShareManager::updateIndices(Directory& dir, const decltype(std::declval<Dir
 }
 
 void ShareManager::refresh(bool dirs /* = false */, bool aUpdate /* = true */, bool block /* = false */) {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(refreshing.exchange(true) == true) {
         ctx().getLogManager()->message(_("File list refresh in progress, please wait for it to finish before trying to refresh again"));
         return;
     }
+    bool started = false;
+    auto resetRefreshing = makeScopedFunctor([this, &started] { if(!started) refreshing = false; });
     ctx().getUploadManager()->updateLimits();
 
     update = aUpdate;
@@ -1545,6 +1589,7 @@ void ShareManager::refresh(bool dirs /* = false */, bool aUpdate /* = true */, b
     }
     try {
         start();
+        started = true;
         if(block && !cached) {
             join();
         } else {
@@ -1565,6 +1610,8 @@ StringPairList ShareManager::getDirectories() const {
 }
 
 int ShareManager::run() {
+    ScopedFunctor([this] { refreshDirs = false; refreshing = false; });
+    if(shutdownRequested) return 0;
     StringPairList dirs;
     uint64_t generation;
     {
@@ -1582,8 +1629,10 @@ int ShareManager::run() {
 
         DirList newDirs;
         for(auto& i: dirs) {
+            if(shutdownRequested) return 0;
             if (checkHidden(i.second)) {
-                auto dp = buildTree(i.second, Directory::Ptr());
+                auto dp = buildTree(i.second, Directory::Ptr(), true);
+                if(!dp) return 0;
                 dp->setName(i.first);
                 newDirs.emplace_back(dp);
             }
@@ -1594,7 +1643,7 @@ int ShareManager::run() {
             Lock l(cs);
             // A removed/renamed manual root must not return from an older scan,
             // especially after its virtual name has been reused by managed files.
-            if(generation == manualSharesGeneration) {
+            if(!shutdownRequested && generation == manualSharesGeneration) {
                 directories.clear();
                 for(auto& i: newDirs) {
                     merge(i);
@@ -1610,13 +1659,12 @@ int ShareManager::run() {
             _("File list refresh discarded because shared directories changed"));
     }
 
-    if(update) {
+    if(update && !shutdownRequested) {
         ctx().getClientManager()->infoUpdated();
     }
-    refreshing = false;
 #ifdef WITH_DHT
     dht::DHT* dhtInst = ctx().getDHT();
-    if(dhtInst && dhtInst->getIndexManager().isTimeForPublishing())
+    if(!shutdownRequested && dhtInst && dhtInst->getIndexManager().isTimeForPublishing())
         dhtInst->getIndexManager().setNextPublishing();
 #endif
     return 0;
@@ -2230,6 +2278,8 @@ ShareManager::Directory::Ptr ShareManager::getDirectory(const string& fname) {
 }
 
 void ShareManager::on(QueueManagerListener::FileMoved, const string& realPath) noexcept {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     if(CTX_BOOLSETTING(ADD_FINISHED_INSTANTLY)) {
         // Check if finished download is supposed to be shared
         Lock l(cs);
@@ -2248,6 +2298,8 @@ void ShareManager::on(QueueManagerListener::FileMoved, const string& realPath) n
 }
 
 void ShareManager::on(HashManagerListener::TTHDone, const string& realPath, const TTHValue& root) noexcept {
+    if(!beginProducer()) return;
+    ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     Directory::Ptr d = getDirectory(realPath);
     if(d) {
@@ -2274,6 +2326,7 @@ void ShareManager::on(HashManagerListener::TTHDone, const string& realPath, cons
 }
 
 void ShareManager::on(TimerManagerListener::Minute, uint64_t tick) {
+    if(shutdownRequested) return;
     if (CTX_SETTING(AUTO_REFRESH_TIME) > 0) {
         if(lastFullUpdate + CTX_SETTING(AUTO_REFRESH_TIME) * 60 * 1000 <= tick) {
             refresh(true, true);

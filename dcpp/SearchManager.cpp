@@ -32,6 +32,7 @@
 #include "StringTokenizer.h"
 #include "FinishedManager.h"
 #include "DCPlusPlus.h"
+#include "ScopedFunctor.h"
 #ifndef _WIN32
 #include <netdb.h>
 #endif
@@ -74,11 +75,31 @@ SearchManager::SearchManager(DCContext& ctx) :
 }
 
 SearchManager::~SearchManager() {
-    if(socket.get()) {
-        stop = true;
-        socket->disconnect();
-        join();
+    stopForShutdown();
+}
+
+bool SearchManager::beginOperation() {
+    std::lock_guard<std::mutex> lock(operationMutex);
+    if(shutdownRequested) return false;
+    ++operations;
+    return true;
+}
+
+void SearchManager::finishOperation() {
+    std::lock_guard<std::mutex> lock(operationMutex);
+    if(--operations == 0) operationsChanged.notify_all();
+}
+
+void SearchManager::stopForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(operationMutex);
+        shutdownRequested = true;
+        operationsChanged.wait(lock, [this] { return operations == 0; });
     }
+    // No lifecycle lock across callbacks or thread joins. The queue exists
+    // independently of the listener, including passive/no-listener sessions.
+    disconnectListener();
+    queue.shutdown();
 }
 
 string SearchManager::normalizeWhitespace(const string& aString){
@@ -92,16 +113,22 @@ string SearchManager::normalizeWhitespace(const string& aString){
 }
 
 void SearchManager::search(const string& aName, int64_t aSize, TypeModes aTypeMode /* = TYPE_ANY */, SizeModes aSizeMode /* = SIZE_ATLEAST */, const string& aToken /* = Util::emptyString */, void* aOwner /* = NULL */) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     ctx().getClientManager()->search(aSizeMode, aSize, aTypeMode, normalizeWhitespace(aName), aToken, aOwner);
 }
 
 uint64_t SearchManager::search(StringList& who, const string& aName, int64_t aSize /* = 0 */, TypeModes aTypeMode /* = TYPE_ANY */, SizeModes aSizeMode /* = SIZE_ATLEAST */, const string& aToken /* = Util::emptyString */, const StringList& aExtList, void* aOwner /* = NULL */) {
+    if(!beginOperation()) return 0;
+    ScopedFunctor([this] { finishOperation(); });
     return ctx().getClientManager()->search(who, aSizeMode, aSize, aTypeMode, normalizeWhitespace(aName), aToken, aExtList, aOwner);
 }
 
 void SearchManager::listen() {
-
-    disconnect();
+    if(!beginOperation()) throw Exception("Search manager is shutting down");
+    ScopedFunctor([this] { finishOperation(); });
+    disconnectListener();
+    stop = false;
 
     try {
         socket.reset(new Socket);
@@ -117,23 +144,27 @@ void SearchManager::listen() {
         start();
     } catch(...) {
         socket.reset();
+        port.clear();
         throw;
     }
 }
 
 void SearchManager::disconnect() {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
+    disconnectListener();
+}
+
+void SearchManager::disconnectListener() {
+    stop = true;
     if(socket.get()) {
-        stop = true;
-        queue.shutdown();
-        socket->disconnect();
-        port.clear();
-
+        // The receiver uses a bounded wait; don't close or replace its socket
+        // concurrently with read/rebind. Ordinary reconnect keeps queue alive.
         join();
-
+        socket->disconnect();
         socket.reset();
-
-        stop = false;
     }
+    port.clear();
 }
 
 #define BUFSIZE 8192
@@ -361,11 +392,15 @@ int SearchManager::UdpQueue::run() {
 }
 
 void SearchManager::onData(const uint8_t* buf, size_t aLen, const string& remoteIp) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     string x((char*)buf, aLen);
     queue.addResult(x, remoteIp);
 }
 
 void SearchManager::onRES(const AdcCommand& cmd, const UserPtr& from, const string& remoteIp) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     int freeSlots = -1;
     int64_t size = -1;
     string file;
@@ -407,6 +442,8 @@ void SearchManager::onRES(const AdcCommand& cmd, const UserPtr& from, const stri
 }
 
 void SearchManager::onPSR(const AdcCommand& cmd, UserPtr from, const string& remoteIp) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
 
     string udpPort4;
     string udpPort6;
@@ -486,6 +523,8 @@ void SearchManager::onPSR(const AdcCommand& cmd, UserPtr from, const string& rem
 }
 
 void SearchManager::respond(const AdcCommand& adc, const CID& from,  bool isUdpActive, const string& hubIpPort) {
+    if(!beginOperation()) return;
+    ScopedFunctor([this] { finishOperation(); });
     // Filter own searches
     if(from == ctx().getClientManager()->getMe()->getCID())
         return;

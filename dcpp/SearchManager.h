@@ -19,6 +19,10 @@
 
 #pragma once
 
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
+
 #include "SettingsManager.h"
 #include "Socket.h"
 #include "User.h"
@@ -82,6 +86,10 @@ public:
 
     void listen();
     void disconnect();
+    // Terminal producer barrier; keeps the manager/listeners alive. Owner must
+    // serialize listener configuration, stop and destruction, and never stop
+    // from a result/receiver callback or while holding listener/manager locks.
+    void stopForShutdown();
     void onSearchResult(const string& aLine) {
         onData((const uint8_t*)aLine.data(), aLine.length(), Util::emptyString);
     }
@@ -130,7 +138,14 @@ private:
     CriticalSection cs;
     std::unique_ptr<Socket> socket;
     string port;
-    bool stop;
+    std::atomic<bool> stop;
+    std::mutex operationMutex;
+    std::condition_variable operationsChanged;
+    bool shutdownRequested = false;
+    size_t operations = 0;
+    bool beginOperation();
+    void finishOperation();
+    void disconnectListener();
 public:
     explicit SearchManager(DCContext& ctx);
     virtual ~SearchManager();

@@ -19,6 +19,9 @@
 #pragma once
 
 #include <functional>
+#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <list>
 #include <map>
 #include <memory>
@@ -117,6 +120,11 @@ public:
     TTHValue getTTH(const string& virtualFile) const;
 
     void refresh(bool dirs = false, bool aUpdate = true, bool block = false);
+    // Terminal refresh/publication barrier, not share retraction. Owner must
+    // serialize manual changes, settings reload, stop and destruction. Never
+    // stop from a producer/listener callback or while holding manager locks.
+    // Existing shares and the Settings Save listener survive for the checkpoint.
+    void stopForShutdown();
     void setDirty() { xmlDirty = true; }
 
     void search(SearchResultList& l, const string& aString, int aSearchType, int64_t aSize, int aFileType, Client* aClient, StringList::size_type maxResults);
@@ -337,6 +345,12 @@ private:
     int listN;
 
     Atomic<bool,memory_ordering_strong> refreshing;
+    std::atomic<bool> shutdownRequested{false};
+    std::mutex producerMutex;
+    std::condition_variable producersChanged;
+    size_t producers = 0;
+    bool beginProducer();
+    void finishProducer();
 
     uint64_t lastXmlUpdate;
     uint64_t lastFullUpdate;
@@ -382,7 +396,7 @@ private:
 
     Directory::File::Set::const_iterator findFile(const string& virtualFile) const;
 
-    Directory::Ptr buildTree(const string& aName, const Directory::Ptr& aParent);
+    Directory::Ptr buildTree(const string& aName, const Directory::Ptr& aParent, bool cancellable = false);
     bool checkHidden(const string& aName) const;
 
     void rebuildIndices();

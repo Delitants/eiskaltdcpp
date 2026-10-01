@@ -1,6 +1,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "stdinc.h"
+#define private public
+#include "DCContext.h"
+#undef private
 #include "TestContext.h"
 #include "SettingsManager.h"
 #include "Socket.h"
@@ -12,6 +15,8 @@
 #include "TimerManager.h"
 #include "AdcCommand.h"
 #include "ClientManager.h"
+#include "FavoriteManager.h"
+#include "ScopedFunctor.h"
 #define private public
 #include "SearchManager.h"
 #undef private
@@ -20,10 +25,27 @@
 #include <cstdlib>
 #include <atomic>
 #include <thread>
+#include <future>
 
 using namespace dcpp;
 
 namespace {
+template<class Manager> void stopSearch(Manager& manager) {
+    if constexpr(requires { manager.stopForShutdown(); }) manager.stopForShutdown();
+    else manager.disconnect();
+}
+
+template<class Manager> void lateSearchWork(Manager& manager, const UserPtr& user) {
+    if constexpr(requires { manager.stopForShutdown(); }) {
+        manager.onPSR(AdcCommand(AdcCommand::CMD_PSR, AdcCommand::TYPE_UDP), user);
+        manager.respond(AdcCommand(AdcCommand::CMD_SCH, AdcCommand::TYPE_UDP), user->getCID(), true, "");
+        manager.search("ignored", 0, SearchManager::TYPE_ANY, SearchManager::SIZE_DONTCARE, "");
+        StringList hubs;
+        CHECK(manager.search(hubs, "ignored", 0, SearchManager::TYPE_ANY,
+            SearchManager::SIZE_DONTCARE, "", {}) == 0);
+    }
+}
+
 // A broken join must fail the runner rather than leave CI hanging indefinitely.
 struct ShutdownDeadline {
     Semaphore finished;
@@ -35,6 +57,41 @@ struct ShutdownDeadline {
         }
     }};
     ~ShutdownDeadline() { finished.signal(); watchdog.join(); }
+};
+
+struct SearchFixture {
+    ShutdownDeadline deadline;
+    test::TestContext fixture;
+    UserPtr user;
+    SearchFixture() {
+        auto& context = *fixture.ownedCtx;
+        context.timerManager_ = std::make_unique<TimerManager>(context);
+        context.clientManager_ = std::make_unique<ClientManager>(context);
+        context.favoriteManager_ = std::make_unique<FavoriteManager>(context);
+        context.searchManager_ = std::make_unique<SearchManager>(context);
+        context.getSettingsManager()->set(SettingsManager::UDP_PORT, 0);
+        context.getSettingsManager()->set(SettingsManager::BIND_ADDRESS, "127.0.0.1");
+        context.getSettingsManager()->set(SettingsManager::BIND_IFACE, false);
+        context.getSettingsManager()->set(SettingsManager::USE_IPV6, false);
+        user = context.getClientManager()->getUser(CID(string(39, 'B')));
+    }
+    SearchManager& search() { return *fixture.ownedCtx->getSearchManager(); }
+    AdcCommand result() {
+        AdcCommand command(AdcCommand::CMD_RES, AdcCommand::TYPE_UDP);
+        command.addParam("FNtest.bin").addParam("SI1").addParam("SL1")
+            .addParam("TR" + string(39, 'A'));
+        return command;
+    }
+};
+
+struct ResultListener : SearchManagerListener {
+    Semaphore received;
+    std::atomic<unsigned> count{0};
+    std::function<void()> first;
+    void on(SR, const SearchResultPtr&) noexcept override {
+        if(count.fetch_add(1) == 0 && first) first();
+        received.signal();
+    }
 };
 }
 
@@ -107,4 +164,77 @@ TEST_CASE("UDP search queue joins while producers are active", "[searchmanager][
         queue.addResult("", "127.0.0.1");
         CHECK(queue.resultList.size() == remaining);
     }
+}
+
+TEST_CASE("Terminal search stop joins the queue without a UDP listener", "[searchmanager][shutdown][search-stop]") {
+    SearchFixture f;
+    auto& search = f.search();
+    REQUIRE(search.queue.joinable());
+    stopSearch(search);
+    CHECK_FALSE(search.queue.joinable());
+    CHECK_FALSE(search.joinable());
+    CHECK(search.getPort().empty());
+    CHECK_THROWS_AS(search.listen(), Exception);
+    stopSearch(search);
+    CHECK_FALSE(search.queue.joinable());
+    const auto remaining = search.queue.resultList.size();
+    search.onSearchResult("ignored");
+    CHECK(search.queue.resultList.size() == remaining);
+}
+
+TEST_CASE("Ordinary search disconnect permits real UDP results after relisten", "[searchmanager][shutdown][search-stop]") {
+    SearchFixture f;
+    auto& search = f.search();
+    ResultListener listener;
+    search.addListener(&listener);
+    ScopedFunctor([&] { search.removeListener(&listener); });
+    Socket sender;
+    sender.create(Socket::TYPE_UDP);
+    const auto packet = f.result().toString(f.user->getCID());
+    for(int pass = 0; pass < 2; ++pass) {
+        search.listen();
+        REQUIRE_FALSE(search.getPort().empty());
+        sender.writeTo("127.0.0.1", search.getPort(), packet);
+        CHECK(listener.received.wait(2000));
+        if(pass == 0) {
+            search.disconnect();
+            CHECK_FALSE(search.joinable());
+        }
+        CHECK(search.queue.joinable());
+    }
+    CHECK(listener.count.load() == 2);
+    stopSearch(search);
+    CHECK_FALSE(search.queue.joinable());
+    CHECK_FALSE(search.joinable());
+    CHECK(search.getPort().empty());
+    CHECK_FALSE(search.socket);
+}
+
+TEST_CASE("Terminal search stop drains direct result callbacks and rejects late work", "[searchmanager][shutdown][search-stop]") {
+    SearchFixture f;
+    auto& search = f.search();
+    ResultListener listener;
+    Semaphore entered, release;
+    listener.first = [&] { entered.signal(); release.wait(); };
+    search.addListener(&listener);
+    ScopedFunctor([&] { search.removeListener(&listener); });
+    const auto command = f.result();
+    auto callback = std::async(std::launch::async, [&] { search.onRES(command, f.user); });
+    auto unblocked = makeScopedFunctor([&] { release.signal(); });
+    REQUIRE(entered.wait(2000));
+    Semaphore stopping;
+    auto stop = std::async(std::launch::async, [&] { stopping.signal(); stopSearch(search); });
+    stopping.wait();
+    CHECK(stop.wait_for(std::chrono::milliseconds(50)) == std::future_status::timeout);
+    release.signal();
+    callback.get();
+    stop.get();
+    CHECK_FALSE(search.queue.joinable());
+    search.onRES(command, f.user);
+    f.fixture.ownedCtx->favoriteManager_.reset();
+    f.fixture.ownedCtx->clientManager_.reset();
+    // Late work must be rejected before touching managers that can now be stopped.
+    lateSearchWork(search, f.user);
+    CHECK(listener.count.load() == 1);
+    stopSearch(search);
 }

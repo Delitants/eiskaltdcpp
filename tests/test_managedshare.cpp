@@ -23,6 +23,8 @@
 #include "FilteredFile.h"
 #include "SimpleXML.h"
 #include "DirectoryListing.h"
+#include "Semaphore.h"
+#include "ScopedFunctor.h"
 
 #include <filesystem>
 #include <fstream>
@@ -38,6 +40,24 @@ using namespace dcpp;
 namespace fs = std::filesystem;
 
 namespace {
+template<class Manager> void stopShares(Manager& manager) {
+    if constexpr(requires { manager.stopForShutdown(); }) manager.stopForShutdown();
+}
+
+struct ShareStopDeadline {
+    std::atomic<const char*> stage;
+    Semaphore finished;
+    std::thread watchdog{[this] {
+        if(!finished.wait(15000)) {
+            std::fprintf(stderr, "Share producer stop fixture exceeded 15 seconds: %s\n", stage.load());
+            std::fflush(stderr);
+            std::_Exit(EXIT_FAILURE);
+        }
+    }};
+    explicit ShareStopDeadline(const char* initialStage) : stage(initialStage) {}
+    ~ShareStopDeadline() { finished.signal(); watchdog.join(); }
+};
+
 struct ManagedShareFixture {
     DCContext context;
     DCContext* previous = getContext();
@@ -172,6 +192,141 @@ struct DuringRefresh : LogManagerListener {
         try { callback(); } catch(...) { error = std::current_exception(); }
     }
 };
+}
+
+TEST_CASE("Terminal share stop cancels refresh but retains shares and settings serialization", "[managedshare][shutdown][share-stop]") {
+    ShareStopDeadline deadline("refresh fixture construction");
+    ManagedShareFixture f;
+    const auto root = (f.temp / "manual").string() + PATH_SEPARATOR;
+    f.manual("manual/old.txt", "existing share", 1700000000);
+    f.shares().addDirectory(root, "Manual");
+    SECTION("uncached startup") {}
+    SECTION("cached startup") { f.cache(f.list()); }
+    deadline.stage = "initial blocking refresh";
+    f.shares().refresh(true, false, true);
+    // Cached startup deliberately returns early even with block=true. Join the
+    // actual worker before installing a listener that will hold the next scan.
+    f.shares().join();
+    REQUIRE(f.list().find("old.txt") != string::npos);
+    const auto next = f.file("manual/new.txt", "unpublished");
+    // Seed hash evidence without TTHDone: that event would intentionally publish
+    // the file before the refresh whose late commit this fixture is testing.
+    TigerTree tree(HashManager::MIN_BLOCK_SIZE);
+    const string payload = "unpublished";
+    tree.update(payload.data(), payload.size()); tree.finalize();
+    File input(next, File::READ, File::OPEN);
+    f.context.getHashManager()->store.addFile(next, input.getLastModified(), tree, true);
+    REQUIRE(f.list().find("new.txt") == string::npos);
+    Semaphore entered, release;
+    DuringRefresh blocked(*f.context.getLogManager(), [&] { entered.signal(); release.wait(); });
+    deadline.stage = "starting held refresh";
+    f.shares().refresh(true, true);
+    auto unblocked = makeScopedFunctor([&] { release.signal(); });
+    REQUIRE(entered.wait(2000));
+    Semaphore stopping;
+    auto stop = std::async(std::launch::async, [&] { stopping.signal(); stopShares(f.shares()); });
+    stopping.wait();
+    deadline.stage = "draining held refresh";
+    CHECK(stop.wait_for(std::chrono::milliseconds(50)) == std::future_status::timeout);
+    release.signal();
+    stop.get();
+    deadline.stage = "saving retained shares";
+    CHECK_FALSE(f.shares().isRefreshing());
+    CHECK(f.list().find("old.txt") != string::npos);
+    CHECK(f.list().find("new.txt") == string::npos);
+    f.shares().refresh(true, true, true);
+    CHECK_FALSE(f.shares().isRefreshing());
+    CHECK(f.list().find("new.txt") == string::npos);
+    f.shares().removeDirectory(root);
+    CHECK(f.shares().getDirectories().size() == 1);
+    SimpleXML reloaded;
+    reloaded.addTag("DCPlusPlus"); reloaded.stepIn();
+    reloaded.addTag("Share");
+    f.context.getSettingsManager()->fire(SettingsManagerListener::Load(), reloaded);
+    CHECK(f.shares().getDirectories().size() == 1);
+    const auto config = (f.temp / "config/stopped.xml").string();
+    REQUIRE(f.context.getSettingsManager()->saveChecked(config));
+    File saved(config, File::READ, File::OPEN);
+    const auto xml = saved.read();
+    CHECK(xml.find("Virtual=\"Manual\"") != string::npos);
+    CHECK(xml.find(root) != string::npos);
+    stopShares(f.shares());
+    deadline.stage = "refresh fixture teardown";
+}
+
+TEST_CASE("Terminal share stop drains managed hashing without replacing published data", "[managedshare][shutdown][share-stop]") {
+    ShareStopDeadline deadline("managed fixture construction");
+    ManagedShareFixture f;
+    const auto old = f.file("old/old.txt", "already shared");
+    REQUIRE(f.shares().replaceManagedFiles("job", "Managed", {old}));
+    const auto hashes = f.shares().getManagedFileHashes("job");
+    const auto next = f.file("next/new.txt", "must not be published");
+    deadline.stage = "starting held managed hash";
+    Semaphore entered, release;
+    auto replacement = std::async(std::launch::async, [&] {
+        return f.shares().replaceManagedFiles("job", "Managed", {next}, {},
+            [&] { entered.signal(); release.wait(); });
+    });
+    auto unblocked = makeScopedFunctor([&] { release.signal(); });
+    REQUIRE(entered.wait(2000));
+    Semaphore stopping;
+    auto stop = std::async(std::launch::async, [&] { stopping.signal(); stopShares(f.shares()); });
+    stopping.wait();
+    deadline.stage = "draining held managed hash";
+    CHECK(stop.wait_for(std::chrono::milliseconds(50)) == std::future_status::timeout);
+    release.signal();
+    CHECK_FALSE(replacement.get());
+    stop.get();
+    deadline.stage = "checking retained managed files";
+    CHECK(f.list().find("old.txt") != string::npos);
+    CHECK(f.list().find("new.txt") == string::npos);
+    CHECK(f.shares().getManagedFileHashes("job") == hashes);
+    f.shares().forgetManagedFileHashes("job");
+    f.shares().forgetManagedFileHashes("job", {old});
+    CHECK(f.shares().getManagedFileHashes("job") == hashes);
+    CHECK_FALSE(f.shares().replaceManagedFiles("job", "Managed", {next}));
+    f.shares().removeManagedFiles("job");
+    CHECK(f.list().find("old.txt") != string::npos);
+    stopShares(f.shares());
+    deadline.stage = "managed fixture teardown";
+}
+
+TEST_CASE("Terminal share stop drains hash listener dispatch and prevents later updates", "[managedshare][shutdown][share-stop]") {
+    ShareStopDeadline deadline("hash-listener fixture construction");
+    ManagedShareFixture f;
+    const auto path = f.manual("manual/old.txt", "existing", 1700000000);
+    f.shares().addDirectory((f.temp / "manual").string() + PATH_SEPARATOR, "Manual");
+    struct BlockedHash : HashManagerListener {
+        Semaphore entered, release;
+        std::atomic<bool> first{true};
+        void on(TTHDone, const string&, const TTHValue&) noexcept override {
+            if(first.exchange(false)) { entered.signal(); release.wait(); }
+        }
+    } blocked;
+    auto& hash = *f.context.getHashManager();
+    hash.addListener(&blocked);
+    deadline.stage = "starting held hash listener";
+    ScopedFunctor([&] { hash.removeListener(&blocked); });
+    auto callback = std::async(std::launch::async, [&] {
+        hash.fire(HashManagerListener::TTHDone(), path, TTHValue(string(39, 'B')));
+    });
+    auto unblocked = makeScopedFunctor([&] { blocked.release.signal(); });
+    REQUIRE(blocked.entered.wait(2000));
+    Semaphore stopping;
+    auto stop = std::async(std::launch::async, [&] { stopping.signal(); stopShares(f.shares()); });
+    stopping.wait();
+    deadline.stage = "draining held hash listener";
+    CHECK(stop.wait_for(std::chrono::milliseconds(50)) == std::future_status::timeout);
+    blocked.release.signal();
+    callback.get(); stop.get();
+    deadline.stage = "checking stopped hash dispatch";
+    const auto before = f.list();
+    hash.fire(HashManagerListener::TTHDone(), path, TTHValue(string(39, 'C')));
+    CHECK(f.list() == before);
+    f.context.getQueueManager()->fire(QueueManagerListener::FileMoved(), path);
+    CHECK(f.list() == before);
+    stopShares(f.shares());
+    deadline.stage = "hash-listener fixture teardown";
 }
 
 TEST_CASE("Manual share dates round trip through full and partial lists", "[share-dates]") {

@@ -178,6 +178,25 @@ and search creation first, stop all other producers, then drain socket resources
 This API is not yet activated by MainWindow or DCContext, and is not committed
 quit or whole-core quiescence. Preserve `_Exit` and do not arm the installer yet.
 
+Search/share checkpoint: terminal `SearchManager::stopForShutdown` rejects new
+search/result/reply work, drains admitted direct callbacks, then joins its UDP
+listener and queue even if no listener was opened. Ordinary disconnect retains
+the queue for relisten, and the receiver stop flag is atomic. Listener
+configuration, terminal stop and destruction remain owner-serialized; do not
+stop from a callback or under listener/manager locks.
+
+`ShareManager::stopForShutdown` closes refresh/managed-publication admission,
+cooperatively cancels scans and managed hashing, drains admitted producers and
+timer/queue/hash callbacks, and joins refresh without holding manager locks.
+Existing shares, reusable hash evidence and the Settings Save listener survive
+for the final checked persistence checkpoint. Manual mutations/settings reload,
+stop and destruction remain owner-serialized; late mutations cannot revive the
+manager. File I/O is not forcibly interrupted, so a stalled worker delays quit
+rather than granting installation consent. Stop publication/refresh before
+destroying their hash, DHT, client and queue dependencies. These APIs are not
+yet wired into MainWindow or a non-destructive whole-core coordinator; the
+proxy route needed for local handoff must still be preserved.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.
