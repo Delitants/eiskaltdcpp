@@ -396,6 +396,9 @@ if (APPLE)
     set_target_properties (${PROJECT_NAME} PROPERTIES
         MACOSX_RPATH ON
         INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks;@loader_path/../../Frameworks")
+    # macdeployqt must also resolve dependencies in an already normalized bundle.
+    set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY BUILD_RPATH
+        "@executable_path/../Frameworks")
 elseif (HAIKU)
     target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp be)
 else (APPLE)
@@ -622,12 +625,22 @@ if(APPLE)
         if(EISKALT_MACOS_DEPS_PREFIX)
             list(APPEND _deploy_library_paths "${EISKALT_MACOS_DEPS_PREFIX}/lib")
         endif()
+        set(_deploy_torrent_args)
+        if(USE_TORRENT AND TARGET LibtorrentRasterbar::torrent-rasterbar)
+            get_target_property(_torrent_type LibtorrentRasterbar::torrent-rasterbar TYPE)
+            if(_torrent_type STREQUAL "SHARED_LIBRARY")
+                list(APPEND _deploy_torrent_args
+                    "-DTORRENT_LIBRARY=$<TARGET_FILE:LibtorrentRasterbar::torrent-rasterbar>"
+                    "-DTORRENT_SONAME=$<TARGET_SONAME_FILE_NAME:LibtorrentRasterbar::torrent-rasterbar>")
+            endif()
+        endif()
         add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Running macdeployqt..."
             COMMAND ${CMAKE_COMMAND}
                     "-DMACDEPLOYQT=${MACDEPLOYQT_EXECUTABLE}"
                     "-DAPP_BUNDLE=$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"
                     "-DLIBRARY_PATHS=${_deploy_library_paths}"
+                    ${_deploy_torrent_args}
                     -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/deploy_macos.cmake"
             VERBATIM
         )
@@ -724,7 +737,8 @@ if(APPLE)
     # Catalog-only updates must refresh the POST_BUILD bundle resources/signature.
     set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS ${TRANSLATIONS_BINARY})
     set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY LINK_DEPENDS
-        "${CMAKE_SOURCE_DIR}/macos/normalize-bundle-dylib-ids.sh")
+        "${CMAKE_SOURCE_DIR}/macos/normalize-bundle-dylib-ids.sh"
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/deploy_macos.cmake")
     add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
         COMMAND /bin/sh "${CMAKE_SOURCE_DIR}/macos/normalize-bundle-dylib-ids.sh"
                 "$<TARGET_BUNDLE_DIR:eiskaltdcpp-qt>"

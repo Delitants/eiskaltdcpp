@@ -119,7 +119,9 @@ def check(app, arch, floor, static_only):
     for binary in sorted(binaries):
         release.check_binary(binary, arch, floor)
         loads, paths, identity = commands(binary)
-        if identity and not identity.startswith(("@rpath/", "@loader_path/")):
+        if identity and identity.startswith(("@loader_path/", "@executable_path/")):
+            expand(identity, binary, main, app, "library identity")
+        elif identity and not identity.startswith("@rpath/"):
             raise ValueError(f"{binary}: external or nonrelocatable library identity: {identity}")
         metadata[binary] = (loads, tuple(expand(path, binary, main, app, "runpath") for path in paths))
     # Retain dyld's inherited runpaths, but validate every binary, including orphans.

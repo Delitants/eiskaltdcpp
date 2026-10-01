@@ -90,6 +90,23 @@ class SelectedRecheckBundle(unittest.TestCase):
         result = self.invoke()
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_deployment_preserves_exact_linked_provider(self):
+        shutil.copy2(self.work / "missing.dylib", self.library)
+        deploy = self.case / "macdeployqt"
+        # Model macdeployqt's skip-existing behavior with a competing provider.
+        deploy.write_text('#!/bin/sh\nset -eu\n'
+                          'target="$1/Contents/Frameworks/libtorrent-rasterbar.2.1.dylib"\n'
+                          f'[ -e "$target" ] || cp "{self.work / "missing.dylib"}" "$target"\n')
+        deploy.chmod(0o755)
+        run("cmake", "-DMACDEPLOYQT=" + str(deploy), "-DAPP_BUNDLE=" + str(self.app),
+            "-DTORRENT_LIBRARY=" + str(self.work / "good.dylib"),
+            "-DTORRENT_SONAME=" + self.library.name,
+            "-P", ROOT / "eiskaltdcpp-qt/cmake/deploy_macos.cmake")
+        self.assertEqual(self.library.read_bytes(), (self.work / "good.dylib").read_bytes())
+        self.assertEqual(run(self.main).returncode, 0)
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_accepts_loader_relative_library_identity(self):
         identity = "@loader_path/../Frameworks/" + self.library.name
         run("install_name_tool", "-id", identity, self.library)
@@ -97,6 +114,19 @@ class SelectedRecheckBundle(unittest.TestCase):
         self.assertEqual(run(self.main).returncode, 0)
         result = self.invoke()
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_accepts_executable_relative_library_identity(self):
+        identity = "@executable_path/../Frameworks/" + self.library.name
+        run("install_name_tool", "-id", identity, self.library)
+        run("install_name_tool", "-change", "@rpath/" + self.library.name, identity, self.main)
+        self.assertEqual(run(self.main).returncode, 0)
+        result = self.invoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_rejects_escaping_executable_relative_library_identity(self):
+        identity = "@executable_path/../../../outside.dylib"
+        run("install_name_tool", "-id", identity, self.library)
+        self.rejected("library identity escapes bundle")
 
     def test_accepts_reexported_extension_dependency(self):
         wrapper = self.contents / "Frameworks/wrapper.dylib"

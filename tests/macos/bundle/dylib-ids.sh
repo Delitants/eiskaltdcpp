@@ -22,6 +22,21 @@ test "$(shasum -a 256 "$libs/libfixture.dylib")" = "$first"
 /bin/sh "$root/macos/check-bundle-external-links.sh" "$app"
 printf 'PASS absolute ID normalized, relative library/plugin untouched, idempotent\n'
 
+xcrun clang -dynamiclib "$work/library.c" -Wl,-install_name,@rpath/librunpaths.dylib \
+    '-Wl,-rpath,/opt/homebrew/a path folder/lib' -Wl,-rpath,@loader_path \
+    -Wl,-rpath,@loader_path/../../../../lib -o "$libs/librunpaths.dylib"
+cp "$libs/librunpaths.dylib" "$app/Contents/PlugIns/platforms/librunpaths.dylib"
+/bin/sh "$root/macos/normalize-bundle-dylib-ids.sh" "$app"
+for binary in "$libs/librunpaths.dylib" "$app/Contents/PlugIns/platforms/librunpaths.dylib"; do
+    paths=$(otool -l "$binary" | awk '/cmd LC_RPATH/{p=1;next} p && /^[[:space:]]*path /{sub(/^[[:space:]]*path /,"");sub(/ \(offset.*$/,"");print;p=0}')
+    test "$paths" = '@loader_path'
+done
+first=$(shasum -a 256 "$libs/librunpaths.dylib")
+/bin/sh "$root/macos/normalize-bundle-dylib-ids.sh" "$app"
+test "$(shasum -a 256 "$libs/librunpaths.dylib")" = "$first"
+test "$(shasum -a 256 "$app/Contents/PlugIns/platforms/libqcocoa.dylib")" = "$plugin_before"
+printf 'PASS external library/plugin runpaths removed, relative paths/plugin preserved, idempotent\n'
+
 framework_app="$work/Framework App.app"
 framework="$framework_app/Contents/Frameworks/Fixture.framework/Versions/A/Fixture"
 mkdir -p "$(dirname "$framework")/Resources"

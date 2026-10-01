@@ -40,6 +40,7 @@
         "USE_QT6": "ON",
         "USE_GTK3": "OFF",
         "USE_TORRENT": "ON",
+        "EISKALT_REQUIRE_SELECTED_RECHECK": "ON",
         "WITH_DHT": "ON",
         "BUILD_TESTS": "ON"
       }

@@ -19,7 +19,7 @@ Current-host native Cocoa light/dark, resize, cancellation and priority checks p
 Task 6 controls and all 25 verification catalogs are complete locally. The full
 translation audit and compiled-catalog/native controls checks pass. Current full
 Qt passes 548 cases with 8 external-GOST cases explicitly skipped, no failures.
-Task 7 is in progress: its registered actual-Mach-O audit fixtures pass, including
+Task 7's local package/review gates pass: registered actual-Mach-O fixtures cover
 ABI/symbol/dependency/CPU/OS rejection and a fresh required header-pair configure.
 Capability reconfiguration cannot reuse a stale success. An exact-current-pin
 arm64 dependency rebuild passes native 17 / 586 and backend 152 / 18,430 tests,
@@ -27,9 +27,14 @@ with actual loader readback. The Qt repair/redownload/sharing-cache restart
 scenario passes 1 / 148; full Qt, native Cocoa controls and core/DC-only matrices
 pass. Independent review findings are resolved with storage-race, partfile-map,
 paused-discovery, repair-scheduling and loader-relative regressions. These are
-current-host isolated fixtures, not self-contained app or minimum-OS proof.
-Both real CPU/OS bundles and matching minimum-OS acceptance remain. No app is
-installed.
+current-host isolated fixtures, not minimum-OS proof. Both complete app bundles
+are built and audited: 84 thin arm64 binaries targeting macOS26 and 40 thin
+x86_64 binaries targeting macOS14, with the exact maintained native provider
+and matching patched Cocoa plugins. Native ARM and Rosetta Intel bundled ABI
+probes return 1; version-only Cocoa launches pass with private dependency
+prefixes denied. Rosetta and version-only probes are not native minimum-OS or
+full live-session acceptance. Those gates, final signing/notices, updater and
+installation/publication remain pending. No app is installed.
 
 ## Global Constraints
 
@@ -167,9 +172,9 @@ runtime/native Qt scenario acceptance remains in Task 7.
 - [x] Add audit negative fixtures for missing extension symbol, wrong header/library pair, outside-Homebrew dylib, wrong architecture and too-new deployment target. Record RED, then implement the smallest audit changes and run to GREEN.
 - [x] Run current-source core, Torrent, Qt and DC-only builds/suites serially. Use the selected-recheck build tree for patched-dependent tests and record CMake cache, source/archive/patch hashes and binary paths. Never report old system-library test results as extension coverage.
 - [x] Exercise a local peer download, selected check with injected corruption, permitted redownload and restart. Also verify a stopped/read-only check remains network-inactive and other jobs continue. Keep real user torrents/profile out of fixtures.
-- [ ] Build/audit the two approved CPU/OS flavors. Runtime-test on matching machines/OS where available; otherwise explicitly retain those gates as pending. Compilation/cross-architecture inspection does not prove native minimum-OS behavior.
+- [x] Build/audit the two approved CPU/OS flavors. Current-host ARM and Rosetta Intel ABI/version probes pass; native Intel/macOS14 and Apple Silicon/macOS26 machines are unavailable, so minimum-OS and full live-session acceptance remain pending. Compilation/cross-architecture inspection does not prove native minimum-OS behavior.
 - [x] Request independent review of the extension, journal/state machine and publication/cache boundaries. If no reviewer tool is available, report independent review pending rather than impersonate a fresh reviewer. Resolve findings and rerun affected tests.
-- [ ] Commit explicit packaging/doc changes only. Record remaining installation/release gates and return to the separate updater backlog. Do not push, install or publish merely because this feature's tests pass.
+- [x] Checkpoint explicit packaging/doc changes only after the local audit/regression gates. Remaining minimum-OS, live-session, updater, installation and publication gates are recorded above. Do not push, install or publish merely because this feature's tests pass.
 
 ## Verification Commands And Evidence
 
