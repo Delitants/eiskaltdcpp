@@ -1,6 +1,9 @@
 include(CheckCXXSourceCompiles)
 option(EISKALT_REQUIRE_SELECTED_RECHECK "Require the maintained libtorrent recheck extension" OFF)
 set(CMAKE_REQUIRED_LIBRARIES LibtorrentRasterbar::torrent-rasterbar)
+# Cached successes otherwise survive changed headers or a different library prefix.
+unset(EISKALT_SELECTED_RECHECK_AVAILABLE CACHE)
+unset(EISKALT_SELECTED_RECHECK_AVAILABLE)
 check_cxx_source_compiles("#include <libtorrent/eiskalt_selected_recheck.hpp>
 static_assert(LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI == 1);
 int main() { return libtorrent::eiskalt_selected_recheck_abi() != 1; }"

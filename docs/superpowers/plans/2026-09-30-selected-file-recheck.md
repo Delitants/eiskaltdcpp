@@ -19,7 +19,13 @@ Current-host native Cocoa light/dark, resize, cancellation and priority checks p
 Task 6 controls and all 25 verification catalogs are complete locally. The full
 translation audit and compiled-catalog/native controls checks pass. Current full
 Qt passes 547 cases with 8 external-GOST cases explicitly skipped, no failures.
-Task 7 integration/package/review acceptance remains. No app is installed.
+Task 7 is in progress: its registered actual-Mach-O audit fixtures pass, including
+ABI/symbol/dependency/CPU/OS rejection and a fresh required header-pair configure.
+Capability reconfiguration cannot reuse a stale success. An exact-current-pin
+arm64 dependency rebuild passes native 14 / 434 and backend 152 / 18,361 tests,
+with actual loader readback; it is not a self-contained app or minimum-OS proof.
+Integrated repair/restart, reproducible current-pin consumer matrices, both real
+CPU/OS bundles and independent review remain. No app is installed.
 
 ## Global Constraints
 
@@ -154,7 +160,7 @@ runtime/native Qt scenario acceptance remains in Task 7.
 
 **Interfaces:** `EISKALT_REQUIRE_SELECTED_RECHECK=ON` requires extension capability at configure/link time. Audit takes a bundle path, expected architecture and deployment floor; fails on missing/mismatched ABI, wrong CPU, newer floor or dependencies outside the bundle/system allowlist. Ordinary unpatched dev builds keep capability OFF with explicit UI explanation.
 
-- [ ] Add audit negative fixtures for missing extension symbol, wrong header/library pair, outside-Homebrew dylib, wrong architecture and too-new deployment target. Record RED, then implement the smallest audit changes and run to GREEN.
+- [x] Add audit negative fixtures for missing extension symbol, wrong header/library pair, outside-Homebrew dylib, wrong architecture and too-new deployment target. Record RED, then implement the smallest audit changes and run to GREEN.
 - [ ] Run current-source core, Torrent, Qt and DC-only builds/suites serially. Use the selected-recheck build tree for patched-dependent tests and record CMake cache, source/archive/patch hashes and binary paths. Never report old system-library test results as extension coverage.
 - [ ] Exercise a local peer download, selected check with injected corruption, permitted redownload and restart. Also verify a stopped/read-only check remains network-inactive and other jobs continue. Keep real user torrents/profile out of fixtures.
 - [ ] Build/audit the two approved CPU/OS flavors. Runtime-test on matching machines/OS where available; otherwise explicitly retain those gates as pending. Compilation/cross-architecture inspection does not prove native minimum-OS behavior.

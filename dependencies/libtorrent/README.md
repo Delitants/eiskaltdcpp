@@ -58,7 +58,44 @@ partfiles, empty scopes, pre-finalization checkpoint bits and a concurrent
 loopback transfer. The unpatched-library test must fail rather than silently
 skip missing capability.
 
-This dependency checkpoint does not itself enable the application feature.
-Separate journal/engine/UI integration, upstream patch review and native Intel
-macOS14+/Apple Silicon macOS26+ package acceptance remain required. Host-linked
-Homebrew dependencies are development evidence, not minimum-OS release proof.
+The application journal, lifecycle, scoped DC hash invalidation and translated
+native controls are implemented locally. Integrated repair/restart acceptance,
+independent patch review and native Intel macOS14+/Apple Silicon macOS26+ package
+acceptance remain required. Host-linked Homebrew dependencies are development
+evidence, not minimum-OS release proof; the user's installed app is unchanged.
+
+## Bundle Audit
+
+After dependency normalization, audit a trusted, locally built bundle:
+
+```sh
+tools/dependencies/audit-selected-recheck.sh \
+  'Work/staging/EiskaltDC++.app' arm64 26.0
+```
+
+The audit checks every Mach-O file for one matching CPU and an acceptable
+deployment floor. It rejects escaping symlinks, external/nonrelocatable install
+names, external runpaths and unresolved relative dependencies. The application
+must reference the extension ABI and all five operations exported by the single
+bundled libtorrent. Required CMake configuration separately rechecks matching
+headers and linked capability on every configure, including after header/prefix
+changes, before the application is built.
+
+On a matching native host, an isolated tiny caller verifies that the bundled
+library returns ABI 1. It loads that library and its initializers, not the
+application or a Torrent session; use only trusted build artifacts. The bundle
+is not modified. Cross-architecture inspection may use `--static-only`, which
+explicitly leaves runtime ABI acceptance pending and is not a release pass.
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 tests/macos/bundle/selected-recheck.py "$PWD"
+ctest --test-dir BUILD -R eiskalt-macos-selected-recheck-bundle --output-on-failure
+```
+
+Actual thin Mach-O fixtures cover absent/mismatched ABI, missing operations or
+consumer references, reexport chains, outside-Homebrew links/runpaths, unresolved
+relative dependencies, wrong CPU/newer OS and escaping symlinks. A fresh required
+CMake configure rejects mismatched header ABI and cannot reuse a stale success.
+Signing, source/patch provenance,
+full app-bundle audits and matching minimum-OS runtime tests remain separate
+release gates; neither fixtures nor cross-inspection substitute for them.

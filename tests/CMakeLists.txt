@@ -122,6 +122,11 @@ if (APPLE)
     add_test(NAME eiskalt-macos-release-profiles
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/release-profiles.py"
                 "${CMAKE_SOURCE_DIR}")
+    add_test(NAME eiskalt-macos-selected-recheck-bundle
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/selected-recheck.py"
+                "${CMAKE_SOURCE_DIR}")
+    set_tests_properties(eiskalt-macos-selected-recheck-bundle PROPERTIES
+        ENVIRONMENT "PYTHONDONTWRITEBYTECODE=1")
 endif ()
 
 if (USE_TORRENT)
