@@ -24,6 +24,7 @@
 #include <QLayout>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QLocale>
 #include <QMessageBox>
 #include <QMenu>
 #include <QProgressBar>
@@ -446,6 +447,52 @@ TEST_CASE("Selected-check controls load the shipped Ukrainian catalog", "[qt][se
     TorrentWindowTestAccess::fileCheck(window, job);
     CHECK(control<QLabel>(window, "torrentFileCheckNotice")->text().startsWith(QString::fromUtf8("Повторна перевірка вибраних файлів...")));
     CHECK_FALSE(control<QProgressBar>(window, "torrentFileCheckProgress")->accessibleName().isEmpty());
+}
+
+TEST_CASE("Every shipped verification catalog loads context messages and translated controls", "[qt][selected-recheck-ui][selected-recheck-i18n]")
+{
+    const auto language = QString::fromLatin1(GENERATE("be", "bg", "cs", "da", "de", "el", "en", "es", "eu", "fr", "hu", "ie", "it", "ka", "pl", "pt_BR", "ru", "sk", "sr", "sr@latin", "sv_SE", "tr", "uk", "vi", "zh_CN"));
+    CAPTURE(language);
+    const auto directory = qEnvironmentVariable("EISKALT_SELECTED_RECHECK_TRANSLATIONS");
+    if (directory.isEmpty()) {
+        WARN("Set EISKALT_SELECTED_RECHECK_TRANSLATIONS to exercise compiled catalogs");
+        return;
+    }
+    QTranslator translator;
+    REQUIRE(translator.load(QDir(directory).filePath(language + ".qm")));
+    for (const auto &[context, source] : QList<QPair<const char *, const char *>>{
+             {"RecheckJournal", "Cannot atomically persist Torrent verification recovery record."},
+             {"SelectedRecheck", "Torrent padding is not a selectable file."},
+             {"TorrentWindow", "Only affected pieces are read; these shared boundary pieces also touch neighboring files:"},
+             {"eiskalt::torrent::TorrentEngine", "Verification was interrupted. Recheck the selected original files; repair downloads are forbidden."}})
+        REQUIRE_FALSE(translator.translate(context, source).isEmpty());
+    const auto summary = translator.translate("TorrentWindow", "Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.");
+    for (int i = 1; i <= 4; ++i) CHECK(summary.contains(QStringLiteral("%%1").arg(i)));
+    ApplicationInputStyle appearance(0);
+    qApp->installTranslator(&translator);
+    struct Restore { QTranslator *translator; ~Restore() { qApp->removeTranslator(translator); } } restore{&translator};
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = selectedCheckFixture(dir, engine);
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    window.selectJob(id);
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    CHECK(files->headerItem()->text(3) == translator.translate("TorrentWindow", "Verification"));
+    CHECK(control<QAction>(window, "torrentRecheckFiles")->text() == translator.translate("TorrentWindow", "Recheck selected files..."));
+    auto job = engine.jobs().first();
+    job.fileCheck = {42, true, false, 8192, 16384, {{0, FileCheckOutcome::Pending, {}}}, {}};
+    TorrentWindowTestAccess::fileCheck(window, job);
+    CHECK(control<QLabel>(window, "torrentFileCheckNotice")->text() ==
+          translator.translate("TorrentWindow", "Rechecking selected files... %1%").arg(QLocale().toString(50.0, 'f', 1)));
+    CHECK(control<QProgressBar>(window, "torrentFileCheckProgress")->accessibleName() ==
+          translator.translate("TorrentWindow", "Selected-file verification progress"));
+    const auto screenshots = qEnvironmentVariable("EISKALT_SELECTED_RECHECK_SCREENSHOTS");
+    if (!screenshots.isEmpty() && QStringList{"de", "ru", "zh_CN", "ka"}.contains(language)) {
+        window.resize(1000, 700);
+        window.show();
+        QTest::qWait(20);
+        REQUIRE(window.grab().save(QDir(screenshots).filePath("selected-locale-" + language + ".png")));
+    }
 }
 
 TEST_CASE("Files context menu retains multi-selection and uses native action availability", "[qt][selected-recheck-ui]")

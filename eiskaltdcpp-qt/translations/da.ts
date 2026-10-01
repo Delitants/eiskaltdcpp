@@ -6234,6 +6234,70 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <source>Verification</source>
             <translation>Kontrol</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Berørt stykke mangler eller er beskadiget</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Anvend filvalg og prioritetsændringer før kontrol.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Annulleret</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Kunne ikke kontrollere</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Kunne ikke kontrollere: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Filer: %1. Kontrollerede stykker: %2/%3. Stykker, der kræver kontrol eller download: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Kun berørte stykker læses; disse delte grænsestykker berører også nabofiler:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Afventer</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Kontrollerer valgte filer igen (ingen datastykker).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Vælg filer i én Torrent.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontrol af valgte filer er ikke tilgængelig i denne udgave.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Fremdrift for kontrol af valgte filer</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent-valget er ændret; vælg filerne igen.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Ikke-kontrollerede berørte stykker forbliver utilgængelige efter annullering.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Kontrolleret</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Kontrollér %1 valgte filer, som omfatter %2 stykker? Ingen filer slettes eller prioriteter ændres.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10118,6 +10182,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Genkontrol er ikke tilgængelig. Genoptag først torrenten.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Et berørt stykke mangler eller er beskadiget; delte grænser kan omfatte nabofiler.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>En anden kontrol kan ikke starte under kontrol af valgte filer.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Annullerer kontrol af valgte filer</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Kontrolpunktet for den afbrudte kontrol kan ikke gemmes; gendannelse er fortsat blokeret.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Resultatet af kontrol af valgte filer kan ikke bekræftes varigt; gendannelse er stadig nødvendig.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Resultatet af kontrol af valgte filer kan ikke gemmes; gendannelse er stadig nødvendig.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>En udelukkende lokal Torrent-kontrol kan ikke forberedes.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Torrent-metadata kan ikke gemmes før filkontrol.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Valget af kontrolgendannelse kan ikke gemmes; Torrent forbliver sat på pause.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Kontrollerer valgte filer... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Filvalg og prioriteter kan ikke ændres under kontrol af valgte filer.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Den afbrudte kontrol efterlod berørte stykker utilgængelige.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Metadata, omfang eller lageridentitet for den afbrudte kontrol er ændret; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Ugyldig gendannelsestilstand for valgte filer; jobbet blev sprunget over.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Ugyldig kontrolgeneration i Torrents genoptagelsestilstand; jobbet blev sprunget over.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Tidsgrænsen for afslutning af lokale kontroloperationer er overskredet; Torrent kræver gendannelse.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Kontrollér alle filer fra den afbrudte operation igen, før du kontrollerer et andet udvalg.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Kontrollér originalfilerne igen før genoptagelse; gendannelsesdownloads må ikke ændre skrivebeskyttede kilder.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Det nødvendige lager eller de autentificerede hashværdier var utilgængelige.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Ret gendannelses- eller lagerfejl i Torrent før filkontrol.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontrol af valgte filer er ikke tilgængelig i denne udgave.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Kontrol af valgte filer er i konflikt med en anden operation eller usikkert lager.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Kontrol af valgte filer er i konflikt med en anden operation.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Kontrol af valgte filer stødte på en lager- eller metadatafejl.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Torrent-valget blev ændret, før kontrollen kunne starte.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent-valget er ændret; vælg filerne igen.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrent-motoren kan ikke acceptere annullering.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Torrent-metadata forsvandt under kontrol; gendannelse er stadig nødvendig.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Torrent-metadata eller filvalg er utilgængeligt.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Identiteten af Torrent-data kunne ikke valideres før kontrol.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Fjernelse af Torrent afventer kontrolgendannelse; ingen data blev slettet.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Torrent-lageret blev ændret under kontrol; gendannelse er stadig nødvendig.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Torrents kontrolgeneration er opbrugt.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Torrents kontrolgeneration er opbrugt; fjern og tilføj jobbet igen uden at slette data.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Ikke-kontrollerede berørte stykker forbliver utilgængelige efter annullering.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Tidsgrænsen for afslutning af kontroloperationer er overskredet; Torrent forbliver sat på pause og kræver gendannelse.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Kontrollen blev afbrudt. Kontrollér de valgte filer igen, eller genoptag udtrykkeligt for at hente utilgængelige stykker igen.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Kontrollen blev afbrudt. Kontrollér de valgte originalfiler igen; reparationsdownloads er forbudt.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10278,4 +10494,90 @@ SHA-256: %4</translation>
         <translation>Generering af certifikatet mislykkedes. Eksisterende filer og indstillinger blev ikke ændret.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>En uafsluttet Torrent-kontrol kræver allerede gendannelse.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Gendannelsesposten for Torrent-kontrol kan ikke gemmes atomisk.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Privat lager til journalen for Torrent-kontrol kan ikke oprettes.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Den størrelsesbegrænsede post for Torrent-kontrol kan ikke læses; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Gendannelsesposten for Torrent-kontrol kan ikke fjernes; gendannelse er stadig nødvendig.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Ugyldig journalmappe til Torrent-kontrol.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Ugyldig journalidentitet for Torrent-kontrol.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Ugyldig post for Torrent-kontrol; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Ugyldigt gendannelsesomfang for Torrent-kontrol.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Journallageret til Torrent-kontrol er utilgængeligt; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Journallageret til Torrent-kontrol er omdirigeret eller ugyldigt; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Posten for Torrent-kontrol overskrider størrelsesgrænsen.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Posten for Torrent-kontrol er omdirigeret eller ugyldig; gendannelse er blokeret.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Gendannelsesposten for Torrent-kontrol mangler.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Resultatgenerationen for Torrent-kontrol svarer ikke til den varigt gemte tilstand.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Vælg mindst én fil, der skal kontrolleres.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Den valgte fil findes ikke længere i Torrent-metadata.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Torrent-metadata har et ugyldigt interval af stykker til kontrol.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Torrent-metadata er ikke tilgængelige til filkontrol.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Torrent-udfyldning er ikke en fil, der kan vælges.</translation>
+        </message>
+    </context>
 </TS>

@@ -6352,6 +6352,70 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Verification</source>
             <translation>Проверка</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Затронутая часть отсутствует или повреждена</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Примените выбор файлов и изменения приоритетов перед проверкой.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Отменено</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Не удалось проверить</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Не удалось проверить: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Файлов: %1. Проверено частей: %2/%3. Частей, требующих проверки или загрузки: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Читаются только затронутые части; эти общие граничные части также затрагивают соседние файлы:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Ожидание</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Повторная проверка выбранных файлов (без частей данных).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Выберите файлы в одном торренте.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Проверка выбранных файлов недоступна в этой сборке.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Ход проверки выбранных файлов</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Выбор торрента изменился; выберите файлы заново.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Непроверенные затронутые части остаются недоступными после отмены.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Проверено</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Проверить выбранные файлы (%1), охватывающие части (%2)? Файлы не удаляются, приоритеты не изменяются.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10448,6 +10512,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Перепроверка недоступна. Сначала возобновите торрент.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Затронутая часть отсутствует или повреждена; общие границы могут включать соседние файлы.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Нельзя начать другую проверку во время проверки выбранных файлов.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Отмена проверки выбранных файлов</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Невозможно сохранить контрольное состояние прерванной проверки; восстановление остаётся заблокированным.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Невозможно надёжно зафиксировать проверку выбранных файлов; восстановление по-прежнему необходимо.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Невозможно сохранить проверку выбранных файлов; восстановление по-прежнему необходимо.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Невозможно подготовить исключительно локальную проверку торрента.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Невозможно сохранить метаданные торрента перед проверкой файлов.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Невозможно сохранить выбор способа восстановления проверки; торрент остаётся приостановленным.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Проверка выбранных файлов... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Выбор файлов и приоритеты нельзя изменять во время проверки выбранных файлов.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>После прерванной проверки затронутые части остались недоступными.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Метаданные, область или идентичность хранилища прерванной проверки изменились; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Недопустимое состояние восстановления выбранных файлов; задание пропущено.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Недопустимое поколение проверки в состоянии возобновления торрента; задание пропущено.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Истекло время ожидания завершения локальных операций проверки; торрент требует восстановления.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Повторно проверьте все файлы прерванной операции перед проверкой другого выбора.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Повторно проверьте исходные файлы перед возобновлением; загрузки для восстановления не могут изменять источники только для чтения.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Необходимое хранилище или аутентифицированные хеши были недоступны.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Устраните ошибки восстановления или хранилища торрента перед проверкой файлов.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Проверка выбранных файлов недоступна в этой сборке.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Проверка выбранных файлов конфликтует с другой операцией или небезопасным хранилищем.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Проверка выбранных файлов конфликтует с другой операцией.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>При проверке выбранных файлов возникла ошибка хранилища или метаданных.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Выбор торрента изменился до начала проверки.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Выбор торрента изменился; выберите файлы заново.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Торрент-движок не может принять отмену.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Метаданные торрента исчезли во время проверки; восстановление по-прежнему необходимо.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Метаданные торрента или выбор файлов недоступны.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Не удалось подтвердить идентичность данных торрента перед проверкой.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Удаление торрента ожидает восстановления проверки; никакие данные не удалены.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Хранилище торрента изменилось во время проверки; восстановление по-прежнему необходимо.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Поколение проверки торрента исчерпано.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Поколение проверки торрента исчерпано; удалите и добавьте задание заново без удаления данных.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Непроверенные затронутые части остаются недоступными после отмены.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Истекло время ожидания завершения операций проверки; торрент остаётся приостановленным и требует восстановления.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Проверка прервана. Повторно проверьте выбранные файлы или явно возобновите задание для повторной загрузки недоступных частей.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Проверка прервана. Повторно проверьте выбранные исходные файлы; загрузки для исправления запрещены.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10608,4 +10824,90 @@ SHA-256: %4</translation>
         <translation>Не удалось создать сертификат. Существующие файлы и настройки не изменены.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Незавершённая проверка торрента уже требует восстановления.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Невозможно атомарно сохранить запись восстановления проверки торрента.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Невозможно создать закрытое хранилище журнала проверки торрента.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Невозможно прочитать ограниченную по размеру запись проверки торрента; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Невозможно удалить запись восстановления проверки торрента; восстановление по-прежнему необходимо.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Недопустимый каталог журнала проверки торрента.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Недопустимая идентичность журнала проверки торрента.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Недопустимая запись проверки торрента; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Недопустимая область восстановления проверки торрента.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Хранилище журнала проверки торрента недоступно; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Хранилище журнала проверки торрента перенаправлено или недопустимо; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Запись проверки торрента превышает ограничение размера.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Запись проверки торрента перенаправлена или недопустима; восстановление заблокировано.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Запись восстановления проверки торрента отсутствует.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Поколение результата проверки торрента не соответствует надёжно сохранённому состоянию.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Выберите хотя бы один файл для проверки.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Выбранный файл больше не присутствует в метаданных торрента.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Метаданные торрента содержат недопустимый диапазон частей для проверки.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Метаданные торрента недоступны для проверки файлов.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Заполнение торрента не является выбираемым файлом.</translation>
+        </message>
+    </context>
 </TS>

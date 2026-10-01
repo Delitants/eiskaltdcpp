@@ -6351,6 +6351,70 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <source>Verification</source>
             <translation>Doğrulama</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Etkilenen parça eksik veya bozuk</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Doğrulamadan önce dosya seçimini ve öncelik değişikliklerini uygulayın.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>İptal edildi</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Doğrulanamadı</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Doğrulanamadı: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Dosyalar: %1. Doğrulanan parçalar: %2/%3. Doğrulama veya indirme gereken parçalar: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Yalnızca etkilenen parçalar okunur; bu paylaşılan sınır parçaları komşu dosyalara da uzanır:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Beklemede</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Seçili dosyalar yeniden doğrulanıyor (veri parçası yok).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Tek bir Torrent içindeki dosyaları seçin.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Bu derlemede seçili dosya doğrulaması kullanılamıyor.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Seçili dosya doğrulama ilerlemesi</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent seçimi değişti; dosyaları yeniden seçin.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Doğrulanmamış etkilenen parçalar iptalden sonra kullanılamaz durumda kalır.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Doğrulandı</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>%2 parçayı kapsayan %1 seçili dosya doğrulansın mı? Dosyalar silinmez veya öncelikler değiştirilmez.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10433,6 +10497,158 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Yeniden denetim kullanılamıyor. Önce torrenti sürdürün.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Etkilenen bir parça eksik veya bozuk; paylaşılan sınırlar komşu dosyaları içerebilir.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Seçili dosya doğrulaması sırasında başka bir doğrulama başlatılamaz.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Seçili dosya doğrulaması iptal ediliyor</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Kesilen doğrulamanın kontrol noktası kaydedilemiyor; kurtarma engelli kalıyor.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Seçili dosya doğrulaması kalıcı olarak onaylanamıyor; kurtarma hâlâ gerekli.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Seçili dosya doğrulaması saklanamıyor; kurtarma hâlâ gerekli.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Yalnızca yerel Torrent doğrulama hazırlanamaz.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Dosya doğrulamasından önce Torrent üst verileri kaydedilemiyor.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Doğrulama kurtarma seçimi kaydedilemiyor; Torrent duraklatılmış durumda kalıyor.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Seçili dosyalar doğrulanıyor... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Seçili dosya doğrulaması sırasında dosya seçimi ve öncelikler değiştirilemez.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Kesilen doğrulama, etkilenen parçaları kullanılamaz durumda bıraktı.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Kesilen doğrulamanın üst verileri, kapsamı veya depolama kimliği değişti; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Geçersiz seçili dosya kurtarma durumu; iş atlandı.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Torrent devam durumunda geçersiz doğrulama nesli; iş atlandı.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Yerel doğrulama işlemlerinin tamamlanması beklenirken zaman aşımı oluştu; Torrent kurtarma gerektiriyor.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Başka bir seçimi doğrulamadan önce kesilen işlemin tüm dosyalarını yeniden doğrulayın.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Devam etmeden önce özgün dosyaları yeniden doğrulayın; kurtarma indirmeleri salt okunur kaynakları değiştiremez.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Gerekli depolama veya kimliği doğrulanmış karma değerleri mevcut değildi.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Dosya doğrulamasından önce Torrent kurtarma veya depolama hatalarını giderin.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Bu derlemede seçili dosya doğrulaması kullanılamıyor.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Seçili dosya doğrulaması başka bir işlemle veya güvenli olmayan depolamayla çakışıyor.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Seçili dosya doğrulaması başka bir işlemle çakışıyor.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Seçili dosya doğrulaması bir depolama veya üst veri hatasıyla karşılaştı.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Doğrulama başlamadan önce Torrent seçimi değişti.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent seçimi değişti; dosyaları yeniden seçin.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrent arka ucu iptal isteğini kabul edemiyor.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Doğrulama sırasında Torrent üst verileri kayboldu; kurtarma hâlâ gerekli.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Torrent üst verileri veya dosya seçimi mevcut değil.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Doğrulamadan önce Torrent verilerinin kimliği doğrulanamadı.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Torrent kaldırma işlemi doğrulama kurtarmasını bekliyor; hiçbir veri silinmedi.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Doğrulama sırasında Torrent depolaması değişti; kurtarma hâlâ gerekli.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Torrent doğrulama nesli tükendi.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Torrent doğrulama nesli tükendi; verileri silmeden işi kaldırıp yeniden ekleyin.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Doğrulanmamış etkilenen parçalar iptalden sonra kullanılamaz durumda kalır.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Doğrulama işlemlerinin tamamlanması beklenirken zaman aşımı oluştu; Torrent duraklatılmış durumda kalıyor ve kurtarma gerektiriyor.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Doğrulama kesildi. Seçili dosyaları yeniden doğrulayın veya kullanılamayan parçaları yeniden indirmek için açıkça devam edin.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Doğrulama kesildi. Seçili özgün dosyaları yeniden doğrulayın; onarım indirmeleri yasaktır.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10593,4 +10809,90 @@ SHA-256: %4</translation>
         <translation>Sertifika oluşturulamadı. Mevcut dosyalar ve ayarlar değiştirilmedi.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Tamamlanmamış bir Torrent doğrulama işlemi zaten kurtarma gerektiriyor.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Torrent doğrulama kurtarma kaydı atomik olarak saklanamıyor.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Torrent doğrulama günlüğü için özel depolama oluşturulamıyor.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Boyutu sınırlı Torrent doğrulama kaydı okunamıyor; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Torrent doğrulama kurtarma kaydı kaldırılamıyor; kurtarma hâlâ gerekli.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Geçersiz Torrent doğrulama günlüğü dizini.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Geçersiz Torrent doğrulama günlüğü kimliği.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Geçersiz Torrent doğrulama kaydı; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Geçersiz Torrent doğrulama kurtarma kapsamı.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Torrent doğrulama günlüğü depolamasına erişilemiyor; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrent doğrulama günlüğü depolaması yönlendirilmiş veya geçersiz; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Torrent doğrulama kaydı boyut sınırını aşıyor.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrent doğrulama kaydı yönlendirilmiş veya geçersiz; kurtarma engellendi.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Torrent doğrulama kurtarma kaydı eksik.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Torrent doğrulama sonuç nesli kalıcı olarak saklanan durumla eşleşmiyor.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Doğrulamak için en az bir dosya seçin.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Seçili dosya artık Torrent üst verilerinde bulunmuyor.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Torrent üst verilerinde geçersiz bir doğrulama parçası aralığı var.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Dosya doğrulaması için Torrent üst verileri mevcut değil.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Torrent dolgu verisi seçilebilir bir dosya değildir.</translation>
+        </message>
+    </context>
 </TS>

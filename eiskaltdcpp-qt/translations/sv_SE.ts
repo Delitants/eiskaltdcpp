@@ -6351,6 +6351,70 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <source>Verification</source>
             <translation>Verifiering</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Berörd del saknas eller är skadad</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Verkställ filval och prioritetsändringar före kontroll.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Avbruten</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Kunde inte kontrollera</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Kunde inte kontrollera: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Filer: %1. Kontrollerade delar: %2/%3. Delar som behöver kontroll eller hämtning: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Endast berörda delar läses; dessa delade gränsdelar berör även angränsande filer:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Väntar</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Kontrollerar valda filer igen (inga datadelar).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Välj filer i en enda Torrent.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontroll av valda filer är inte tillgänglig i denna version.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Förlopp för kontroll av valda filer</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent-valet har ändrats; välj filerna igen.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Okontrollerade berörda delar förblir otillgängliga efter avbrott.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Kontrollerad</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Kontrollera %1 valda filer som omfattar %2 delar? Inga filer tas bort och inga prioriteter ändras.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10429,6 +10493,158 @@ stänga hans slott, men om användaren återkommer inom
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Omkontroll är inte tillgänglig. Återuppta torrenten först.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>En berörd del saknas eller är skadad; delade gränser kan omfatta angränsande filer.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>En annan kontroll kan inte starta under kontroll av valda filer.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Avbryter kontroll av valda filer</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Kontrollpunkten för den avbrutna kontrollen kan inte sparas; återställning förblir blockerad.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Resultatet av kontroll av valda filer kan inte bekräftas beständigt; återställning krävs fortfarande.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Resultatet av kontroll av valda filer kan inte sparas; återställning krävs fortfarande.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>En helt lokal Torrent-kontroll kan inte förberedas.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Torrent-metadata kan inte sparas före filkontroll.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Valet för återställning av kontrollen kan inte sparas; Torrent förblir pausad.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Kontrollerar valda filer... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Filval och prioriteter kan inte ändras under kontroll av valda filer.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Den avbrutna kontrollen lämnade berörda delar otillgängliga.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Metadata, omfattning eller lagringsidentitet för den avbrutna kontrollen har ändrats; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Ogiltigt återställningstillstånd för valda filer; jobbet hoppades över.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Ogiltig kontrollgeneration i Torrents återupptagningstillstånd; jobbet hoppades över.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Tidsgränsen för att avsluta lokala kontrolloperationer överskreds; Torrent kräver återställning.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Kontrollera alla filer från den avbrutna operationen igen innan du kontrollerar ett annat urval.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Kontrollera originalfilerna igen innan du återupptar; återställningshämtningar får inte ändra skrivskyddade källor.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Nödvändig lagring eller autentiserade hashvärden var inte tillgängliga.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Åtgärda återställnings- eller lagringsfel i Torrent före filkontroll.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontroll av valda filer är inte tillgänglig i denna version.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Kontroll av valda filer står i konflikt med en annan operation eller osäker lagring.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Kontroll av valda filer står i konflikt med en annan operation.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Kontroll av valda filer stötte på ett lagrings- eller metadatafel.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Torrent-valet ändrades innan kontrollen kunde starta.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent-valet har ändrats; välj filerna igen.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrent-motorn kan inte acceptera avbrott.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Torrent-metadata försvann under kontroll; återställning krävs fortfarande.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Torrent-metadata eller filval är inte tillgängligt.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Identiteten för Torrent-data kunde inte valideras före kontroll.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Borttagning av Torrent väntar på kontrollåterställning; inga data togs bort.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Torrent-lagringen ändrades under kontroll; återställning krävs fortfarande.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Torrents kontrollgeneration är förbrukad.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Torrents kontrollgeneration är förbrukad; ta bort och lägg till jobbet igen utan att radera data.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Okontrollerade berörda delar förblir otillgängliga efter avbrott.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Tidsgränsen för att avsluta kontrolloperationer överskreds; Torrent förblir pausad och kräver återställning.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Kontrollen avbröts. Kontrollera de valda filerna igen eller återuppta uttryckligen för att hämta otillgängliga delar igen.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Kontrollen avbröts. Kontrollera de valda originalfilerna igen; reparationshämtningar är förbjudna.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10589,4 +10805,90 @@ SHA-256: %4</translation>
         <translation>Det gick inte att generera certifikatet. Befintliga filer och inställningar ändrades inte.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>En ofullständig Torrent-kontroll kräver redan återställning.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Återställningsposten för Torrent-kontroll kan inte sparas atomärt.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Privat lagring för journalen för Torrent-kontroll kan inte skapas.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Den storleksbegränsade posten för Torrent-kontroll kan inte läsas; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Återställningsposten för Torrent-kontroll kan inte tas bort; återställning krävs fortfarande.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Ogiltig journalkatalog för Torrent-kontroll.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Ogiltig journalidentitet för Torrent-kontroll.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Ogiltig post för Torrent-kontroll; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Ogiltig återställningsomfattning för Torrent-kontroll.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Journallagringen för Torrent-kontroll är otillgänglig; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Journallagringen för Torrent-kontroll är omdirigerad eller ogiltig; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Posten för Torrent-kontroll överskrider storleksgränsen.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Posten för Torrent-kontroll är omdirigerad eller ogiltig; återställning är blockerad.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Återställningsposten för Torrent-kontroll saknas.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Resultatgenerationen för Torrent-kontroll motsvarar inte det beständigt sparade tillståndet.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Välj minst en fil att kontrollera.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Den valda filen finns inte längre i Torrent-metadata.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Torrent-metadata har ett ogiltigt intervall av delar för kontroll.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Torrent-metadata är inte tillgängliga för filkontroll.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Torrent-utfyllnad är inte en valbar fil.</translation>
+        </message>
+    </context>
 </TS>

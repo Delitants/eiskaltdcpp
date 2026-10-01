@@ -6333,6 +6333,70 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Verification</source>
             <translation>Επαλήθευση</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Το επηρεαζόμενο τμήμα λείπει ή είναι κατεστραμμένο</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Εφαρμόστε την επιλογή αρχείων και τις αλλαγές προτεραιότητας πριν από την επαλήθευση.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Ακυρώθηκε</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Δεν ήταν δυνατή η επαλήθευση</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Δεν ήταν δυνατή η επαλήθευση: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Αρχεία: %1. Επαληθευμένα τμήματα: %2/%3. Τμήματα που χρειάζονται επαλήθευση ή λήψη: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Διαβάζονται μόνο τα επηρεαζόμενα τμήματα· αυτά τα κοινά οριακά τμήματα αγγίζουν επίσης γειτονικά αρχεία:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Σε αναμονή</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Νέα επαλήθευση επιλεγμένων αρχείων (χωρίς τμήματα δεδομένων).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Επιλέξτε αρχεία σε ένα μόνο Torrent.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Η επαλήθευση επιλεγμένων αρχείων δεν είναι διαθέσιμη σε αυτή την έκδοση.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Πρόοδος επαλήθευσης επιλεγμένων αρχείων</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Η επιλογή του Torrent άλλαξε· επιλέξτε ξανά τα αρχεία.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Τα μη επαληθευμένα επηρεαζόμενα τμήματα παραμένουν μη διαθέσιμα μετά την ακύρωση.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Επαληθεύτηκε</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Να επαληθευτούν %1 επιλεγμένα αρχεία που καλύπτουν %2 τμήματα; Δεν διαγράφονται αρχεία ούτε αλλάζουν προτεραιότητες.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10257,6 +10321,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Ο επανέλεγχος δεν είναι διαθέσιμος. Συνεχίστε πρώτα το torrent.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Ένα επηρεαζόμενο τμήμα λείπει ή είναι κατεστραμμένο· τα κοινά όρια μπορεί να περιλαμβάνουν γειτονικά αρχεία.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Δεν μπορεί να ξεκινήσει άλλη επαλήθευση κατά την επαλήθευση επιλεγμένων αρχείων.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Ακύρωση επαλήθευσης επιλεγμένων αρχείων</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Δεν είναι δυνατή η αποθήκευση σημείου ελέγχου της διακοπείσας επαλήθευσης· η ανάκτηση παραμένει αποκλεισμένη.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Δεν είναι δυνατή η μόνιμη επιβεβαίωση της επαλήθευσης επιλεγμένων αρχείων· η ανάκτηση παραμένει απαραίτητη.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Δεν είναι δυνατή η αποθήκευση της επαλήθευσης επιλεγμένων αρχείων· η ανάκτηση παραμένει απαραίτητη.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Δεν είναι δυνατή η προετοιμασία αποκλειστικά τοπικής επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Δεν είναι δυνατή η αποθήκευση μεταδεδομένων του Torrent πριν από την επαλήθευση αρχείων.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Δεν είναι δυνατή η αποθήκευση της επιλογής ανάκτησης της επαλήθευσης· το Torrent παραμένει σε παύση.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Επαλήθευση επιλεγμένων αρχείων... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Η επιλογή αρχείων και οι προτεραιότητες δεν μπορούν να αλλάξουν κατά την επαλήθευση επιλεγμένων αρχείων.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Η διακοπείσα επαλήθευση άφησε τα επηρεαζόμενα τμήματα μη διαθέσιμα.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Τα μεταδεδομένα, το εύρος ή η ταυτότητα αποθήκευσης της διακοπείσας επαλήθευσης άλλαξαν· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Μη έγκυρη κατάσταση ανάκτησης επιλεγμένων αρχείων· η εργασία παραλείφθηκε.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Μη έγκυρη γενιά επαλήθευσης στην κατάσταση συνέχισης του Torrent· η εργασία παραλείφθηκε.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Έληξε ο χρόνος αναμονής για την ολοκλήρωση των τοπικών εργασιών επαλήθευσης· το Torrent απαιτεί ανάκτηση.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Επαληθεύστε ξανά όλα τα αρχεία της διακοπείσας εργασίας πριν επαληθεύσετε άλλη επιλογή.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Επαληθεύστε ξανά τα αρχικά αρχεία πριν από τη συνέχιση· οι λήψεις ανάκτησης δεν μπορούν να τροποποιήσουν πηγές μόνο για ανάγνωση.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Ο απαιτούμενος χώρος αποθήκευσης ή οι αυθεντικοποιημένες τιμές κατακερματισμού δεν ήταν διαθέσιμα.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Επιλύστε σφάλματα ανάκτησης ή αποθήκευσης του Torrent πριν από την επαλήθευση αρχείων.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Η επαλήθευση επιλεγμένων αρχείων δεν είναι διαθέσιμη σε αυτή την έκδοση.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Η επαλήθευση επιλεγμένων αρχείων συγκρούεται με άλλη εργασία ή μη ασφαλή αποθήκευση.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Η επαλήθευση επιλεγμένων αρχείων συγκρούεται με άλλη εργασία.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Η επαλήθευση επιλεγμένων αρχείων αντιμετώπισε σφάλμα αποθήκευσης ή μεταδεδομένων.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Η επιλογή του Torrent άλλαξε πριν ξεκινήσει η επαλήθευση.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Η επιλογή του Torrent άλλαξε· επιλέξτε ξανά τα αρχεία.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Ο μηχανισμός Torrent δεν μπορεί να αποδεχτεί την ακύρωση.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Τα μεταδεδομένα του Torrent εξαφανίστηκαν κατά την επαλήθευση· η ανάκτηση παραμένει απαραίτητη.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Τα μεταδεδομένα του Torrent ή η επιλογή αρχείων δεν είναι διαθέσιμα.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Δεν ήταν δυνατή η επικύρωση της ταυτότητας των δεδομένων του Torrent πριν από την επαλήθευση.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Η αφαίρεση του Torrent περιμένει την ανάκτηση της επαλήθευσης· δεν διαγράφηκαν δεδομένα.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Ο χώρος αποθήκευσης του Torrent άλλαξε κατά την επαλήθευση· η ανάκτηση παραμένει απαραίτητη.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Η γενιά επαλήθευσης του Torrent έχει εξαντληθεί.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Η γενιά επαλήθευσης του Torrent έχει εξαντληθεί· αφαιρέστε και προσθέστε ξανά την εργασία χωρίς να διαγράψετε δεδομένα.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Τα μη επαληθευμένα επηρεαζόμενα τμήματα παραμένουν μη διαθέσιμα μετά την ακύρωση.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Έληξε ο χρόνος αναμονής για την ολοκλήρωση των εργασιών επαλήθευσης· το Torrent παραμένει σε παύση και απαιτεί ανάκτηση.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Η επαλήθευση διακόπηκε. Επαληθεύστε ξανά τα επιλεγμένα αρχεία ή συνεχίστε ρητά για νέα λήψη των μη διαθέσιμων τμημάτων.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Η επαλήθευση διακόπηκε. Επαληθεύστε ξανά τα επιλεγμένα αρχικά αρχεία· οι λήψεις επισκευής απαγορεύονται.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10417,4 +10633,90 @@ SHA-256: %4</translation>
         <translation>Η δημιουργία του πιστοποιητικού απέτυχε. Τα υπάρχοντα αρχεία και οι ρυθμίσεις δεν άλλαξαν.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Μια ημιτελής επαλήθευση Torrent απαιτεί ήδη ανάκτηση.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Δεν είναι δυνατή η ατομική αποθήκευση της εγγραφής ανάκτησης της επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Δεν είναι δυνατή η δημιουργία ιδιωτικού χώρου αποθήκευσης του ημερολογίου επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Δεν είναι δυνατή η ανάγνωση της εγγραφής επαλήθευσης Torrent με περιορισμένο μέγεθος· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Δεν είναι δυνατή η αφαίρεση της εγγραφής ανάκτησης της επαλήθευσης Torrent· η ανάκτηση παραμένει απαραίτητη.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Μη έγκυρος κατάλογος ημερολογίου επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Μη έγκυρη ταυτότητα ημερολογίου επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Μη έγκυρη εγγραφή επαλήθευσης Torrent· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Μη έγκυρο εύρος ανάκτησης της επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Ο χώρος αποθήκευσης του ημερολογίου επαλήθευσης Torrent είναι απρόσιτος· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Ο χώρος αποθήκευσης του ημερολογίου επαλήθευσης Torrent έχει ανακατευθυνθεί ή δεν είναι έγκυρος· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Η εγγραφή επαλήθευσης Torrent υπερβαίνει το όριο μεγέθους της.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Η εγγραφή επαλήθευσης Torrent έχει ανακατευθυνθεί ή δεν είναι έγκυρη· η ανάκτηση έχει αποκλειστεί.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Λείπει η εγγραφή ανάκτησης της επαλήθευσης Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Η γενιά του αποτελέσματος επαλήθευσης Torrent δεν αντιστοιχεί στη μόνιμα αποθηκευμένη κατάσταση.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Επιλέξτε τουλάχιστον ένα αρχείο για επαλήθευση.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Το επιλεγμένο αρχείο δεν υπάρχει πλέον στα μεταδεδομένα του Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Τα μεταδεδομένα του Torrent περιέχουν μη έγκυρο εύρος τμημάτων για επαλήθευση.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Τα μεταδεδομένα του Torrent δεν είναι διαθέσιμα για επαλήθευση αρχείων.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Τα δεδομένα συμπλήρωσης του Torrent δεν είναι επιλέξιμο αρχείο.</translation>
+        </message>
+    </context>
 </TS>

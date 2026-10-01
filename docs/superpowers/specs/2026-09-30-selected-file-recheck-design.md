@@ -7,8 +7,10 @@ engine subprocess-exit recovery. Affected payload identities fence replaced file
 and directories; scoped DC hash invalidation preserves unrelated records across
 restart. Native Files controls are implemented in isolated maintained-extension
 development builds, with current-host native Cocoa light/dark, resize and cancel
-checks passing. Full localization and integration/package/review gates remain
-pending. These controls are not installed in the user's app.
+checks passing. Verification messages are translated in all 25 shipped catalogs;
+full extraction/format coverage and real compiled Qt controls/accessibility checks
+pass. Integration/package/review gates remain pending. These controls are not
+installed in the user's app.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit

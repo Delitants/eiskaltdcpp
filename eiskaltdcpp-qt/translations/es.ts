@@ -6350,6 +6350,70 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
             <source>Verification</source>
             <translation>Verificación</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Pieza afectada ausente o dañada</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Aplique la selección de archivos y los cambios de prioridad antes de verificar.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Cancelado</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>No se pudo verificar</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>No se pudo verificar: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Archivos: %1. Piezas verificadas: %2/%3. Piezas que necesitan verificación o descarga: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Solo se leen las piezas afectadas; estas piezas compartidas en los límites también abarcan archivos vecinos:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Pendiente</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Verificando de nuevo los archivos seleccionados (sin piezas de datos).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Seleccione archivos de un único Torrent.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>La verificación de archivos seleccionados no está disponible en esta compilación.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Progreso de verificación de los archivos seleccionados</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>La selección del Torrent ha cambiado; seleccione los archivos de nuevo.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Las piezas afectadas sin verificar siguen sin estar disponibles tras la cancelación.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Verificado</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>¿Verificar %1 archivo(s) seleccionado(s), que abarcan %2 pieza(s)? No se eliminarán archivos ni se cambiarán prioridades.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10470,6 +10534,158 @@ volverá a conceder un slot a dicho usuario.</translation>
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Recomprobación no disponible. Reanude primero el torrent.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Una pieza afectada falta o está dañada; los límites compartidos pueden incluir archivos vecinos.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>No se puede iniciar otra verificación durante la verificación de los archivos seleccionados.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Cancelando la verificación de los archivos seleccionados</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>No se puede guardar un punto de control de la verificación interrumpida; la recuperación sigue bloqueada.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>No se puede confirmar de forma duradera la verificación de los archivos seleccionados; sigue siendo necesaria la recuperación.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>No se puede guardar la verificación de los archivos seleccionados; sigue siendo necesaria la recuperación.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>No se puede preparar una verificación del Torrent exclusivamente local.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>No se pueden guardar los metadatos del Torrent antes de verificar los archivos.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>No se puede guardar la opción de recuperación de la verificación; el Torrent sigue en pausa.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Verificando los archivos seleccionados... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>La selección de archivos y las prioridades no pueden cambiar durante la verificación de los archivos seleccionados.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>La verificación interrumpida dejó las piezas afectadas sin disponibilidad.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Han cambiado los metadatos, el alcance o la identidad del almacenamiento de la verificación interrumpida; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Estado de recuperación de archivos seleccionados no válido; se omitió la tarea.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Generación de verificación no válida en el estado de reanudación del Torrent; se omitió la tarea.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Se agotó el tiempo de espera para finalizar las operaciones de verificación local; el Torrent requiere recuperación.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Verifique de nuevo todos los archivos de la operación interrumpida antes de verificar otra selección.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Verifique de nuevo los archivos originales antes de reanudar; las descargas de recuperación no pueden modificar las fuentes de solo lectura.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>El almacenamiento necesario o los hashes autenticados no estaban disponibles.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Resuelva los errores de recuperación o almacenamiento del Torrent antes de verificar los archivos.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>La verificación de archivos seleccionados no está disponible en esta compilación.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>La verificación de archivos seleccionados entra en conflicto con otra operación o con un almacenamiento inseguro.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>La verificación de archivos seleccionados entra en conflicto con otra operación.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>La verificación de archivos seleccionados encontró un error de almacenamiento o metadatos.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>La selección del Torrent cambió antes de que pudiera comenzar la verificación.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>La selección del Torrent ha cambiado; seleccione los archivos de nuevo.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>El motor Torrent no puede aceptar la cancelación.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Los metadatos del Torrent desaparecieron durante la verificación; sigue siendo necesaria la recuperación.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Los metadatos del Torrent o la selección de archivos no están disponibles.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>No se pudo validar la identidad de los datos del Torrent antes de verificar.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>La eliminación del Torrent espera a la recuperación de la verificación; no se eliminó ningún dato.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>El almacenamiento del Torrent cambió durante la verificación; sigue siendo necesaria la recuperación.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Se ha agotado la generación de verificación del Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Se ha agotado la generación de verificación del Torrent; elimine y añada de nuevo la tarea sin eliminar los datos.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Las piezas afectadas sin verificar siguen sin estar disponibles tras la cancelación.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Se agotó el tiempo de espera para finalizar las operaciones de verificación; el Torrent sigue en pausa y requiere recuperación.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>La verificación se interrumpió. Verifique de nuevo los archivos seleccionados o reanude explícitamente para volver a descargar las piezas no disponibles.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>La verificación se interrumpió. Verifique de nuevo los archivos originales seleccionados; las descargas de reparación están prohibidas.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10630,4 +10846,90 @@ SHA-256: %4</translation>
         <translation>No se pudo generar el certificado. No se han modificado los archivos ni la configuración existentes.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Una verificación de Torrent sin finalizar ya requiere recuperación.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>No se puede guardar atómicamente el registro de recuperación de la verificación del Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>No se puede crear el almacenamiento privado del diario de verificación del Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>No se puede leer el registro de verificación del Torrent con un tamaño limitado; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>No se puede eliminar el registro de recuperación de la verificación del Torrent; sigue siendo necesaria la recuperación.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Directorio del diario de verificación del Torrent no válido.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Identidad del diario de verificación del Torrent no válida.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Registro de verificación del Torrent no válido; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Alcance de recuperación de la verificación del Torrent no válido.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>El almacenamiento del diario de verificación del Torrent es inaccesible; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>El almacenamiento del diario de verificación del Torrent está redirigido o no es válido; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>El registro de verificación del Torrent supera su límite de tamaño.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>El registro de verificación del Torrent está redirigido o no es válido; la recuperación está bloqueada.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Falta el registro de recuperación de la verificación del Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>La generación del resultado de verificación del Torrent no coincide con el estado guardado de forma duradera.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Seleccione al menos un archivo para verificar.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>El archivo seleccionado ya no está presente en los metadatos del Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Los metadatos del Torrent tienen un intervalo de piezas de verificación no válido.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Los metadatos del Torrent no están disponibles para verificar los archivos.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>El relleno del Torrent no es un archivo seleccionable.</translation>
+        </message>
+    </context>
 </TS>

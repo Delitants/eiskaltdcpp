@@ -6340,6 +6340,70 @@ Přidáno ke sdílení v režimu pouze pro čtení. U zdrojových souborů se ov
             <source>Verification</source>
             <translation>Ověření</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Dotčený díl chybí nebo je poškozený</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Před kontrolou použijte výběr souborů a změny priorit.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Zrušeno</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Nelze ověřit</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Nelze ověřit: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Soubory: %1. Zkontrolované díly: %2/%3. Díly vyžadující kontrolu nebo stažení: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Čtou se pouze dotčené díly; tyto sdílené hraniční díly zasahují i do sousedních souborů:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Čeká</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Opětovná kontrola vybraných souborů (bez datových dílů).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Vyberte soubory v jednom Torrentu.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontrola vybraných souborů není v tomto sestavení dostupná.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Průběh kontroly vybraných souborů</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Výběr Torrentu se změnil; vyberte soubory znovu.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Nezkontrolované dotčené díly zůstávají po zrušení nedostupné.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Ověřeno</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Ověřit %1 vybraných souborů zahrnujících %2 dílů? Žádné soubory nebudou smazány ani priority změněny.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10413,6 +10477,158 @@ pokud se uživatel vrátí do 10 minut, EiskaltDC++ mu tyto sloty navrátí.</tr
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Opětovná kontrola není dostupná. Nejprve obnovte torrent.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Dotčený díl chybí nebo je poškozený; sdílené hranice mohou zahrnovat sousední soubory.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Během kontroly vybraných souborů nelze spustit další kontrolu.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Rušení kontroly vybraných souborů</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Nelze uložit kontrolní bod přerušené kontroly; obnovení zůstává blokováno.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Nelze trvale potvrdit kontrolu vybraných souborů; obnovení je stále nutné.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Nelze uložit kontrolu vybraných souborů; obnovení je stále nutné.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Nelze připravit výhradně místní kontrolu Torrentu.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Nelze uložit metadata Torrentu před kontrolou souborů.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Nelze uložit volbu obnovení kontroly; Torrent zůstává pozastavený.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Kontrola vybraných souborů... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Výběr souborů a priority nelze měnit během kontroly vybraných souborů.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Přerušená kontrola zanechala dotčené díly nedostupné.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Metadata, rozsah nebo identita úložiště přerušené kontroly se změnily; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Neplatný stav obnovení vybraných souborů; úloha byla přeskočena.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Neplatná generace kontroly ve stavu obnovení Torrentu; úloha byla přeskočena.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Vypršel časový limit pro dokončení místních kontrolních operací; Torrent vyžaduje obnovení.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Před kontrolou jiného výběru znovu zkontrolujte všechny soubory přerušené operace.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Před pokračováním znovu zkontrolujte původní soubory; stahování pro obnovení nesmí měnit zdroje pouze pro čtení.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Potřebné úložiště nebo ověřené hashe nebyly dostupné.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Před kontrolou souborů vyřešte chyby obnovení nebo úložiště Torrentu.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Kontrola vybraných souborů není v tomto sestavení dostupná.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Kontrola vybraných souborů koliduje s jinou operací nebo nebezpečným úložištěm.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Kontrola vybraných souborů koliduje s jinou operací.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Při kontrole vybraných souborů došlo k chybě úložiště nebo metadat.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Výběr Torrentu se změnil před zahájením kontroly.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Výběr Torrentu se změnil; vyberte soubory znovu.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrentový modul nemůže přijmout zrušení.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Metadata Torrentu během kontroly zmizela; obnovení je stále nutné.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Metadata Torrentu nebo výběr souborů nejsou dostupné.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Identitu dat Torrentu se před kontrolou nepodařilo ověřit.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Odstranění Torrentu čeká na obnovení kontroly; žádná data nebyla smazána.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Úložiště Torrentu se během kontroly změnilo; obnovení je stále nutné.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Generace kontroly Torrentu je vyčerpána.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Generace kontroly Torrentu je vyčerpána; odeberte a znovu přidejte úlohu bez smazání dat.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Nezkontrolované dotčené díly zůstávají po zrušení nedostupné.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Vypršel časový limit pro dokončení kontrolních operací; Torrent zůstává pozastavený a vyžaduje obnovení.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Kontrola byla přerušena. Znovu zkontrolujte vybrané soubory nebo výslovně pokračujte, aby se nedostupné díly stáhly znovu.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Kontrola byla přerušena. Znovu zkontrolujte vybrané původní soubory; stahování pro opravu je zakázáno.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10573,4 +10789,90 @@ SHA-256: %4</translation>
         <translation>Generování certifikátu selhalo. Stávající soubory a nastavení nebyly změněny.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Nedokončená kontrola Torrentu již vyžaduje obnovení.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Nelze atomicky uložit záznam obnovení kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Nelze vytvořit soukromé úložiště deníku kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Nelze přečíst velikostně omezený záznam kontroly Torrentu; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Nelze odstranit záznam obnovení kontroly Torrentu; obnovení je stále nutné.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Neplatný adresář deníku kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Neplatná identita deníku kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Neplatný záznam kontroly Torrentu; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Neplatný rozsah obnovení kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Úložiště deníku kontroly Torrentu není přístupné; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Úložiště deníku kontroly Torrentu je přesměrované nebo neplatné; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Záznam kontroly Torrentu překračuje limit velikosti.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Záznam kontroly Torrentu je přesměrovaný nebo neplatný; obnovení je blokováno.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Chybí záznam obnovení kontroly Torrentu.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Generace výsledku kontroly Torrentu neodpovídá trvale uloženému stavu.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Vyberte alespoň jeden soubor ke kontrole.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Vybraný soubor již není v metadatech Torrentu.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Metadata Torrentu obsahují neplatný rozsah dílů ke kontrole.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Metadata Torrentu nejsou k dispozici pro kontrolu souborů.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Výplň Torrentu není soubor, který lze vybrat.</translation>
+        </message>
+    </context>
 </TS>

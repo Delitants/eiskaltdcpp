@@ -6297,6 +6297,70 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Verification</source>
             <translation>შემოწმება</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>დაზიანებული ან დაკარგული შესაბამისი ნაწილი</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>შემოწმებამდე გამოიყენეთ ფაილების არჩევისა და პრიორიტეტების ცვლილებები.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>გაუქმებულია</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>შემოწმება ვერ მოხერხდა</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>შემოწმება ვერ მოხერხდა: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>ფაილები: %1. შემოწმებული ნაწილები: %2/%3. ნაწილები, რომლებიც შემოწმებას ან ჩამოტვირთვას საჭიროებს: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>იკითხება მხოლოდ შესაბამისი ნაწილები; ეს საერთო სასაზღვრო ნაწილები მეზობელ ფაილებსაც ეხება:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>მოლოდინშია</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>არჩეული ფაილები ხელახლა მოწმდება (მონაცემთა ნაწილების გარეშე).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>აირჩიეთ ფაილები ერთ ტორენტში.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>ამ აგებაში არჩეული ფაილების შემოწმება მიუწვდომელია.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>არჩეული ფაილების შემოწმების მიმდინარეობა</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>ტორენტის არჩევანი შეიცვალა; ფაილები ხელახლა აირჩიეთ.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>შეუმოწმებელი შესაბამისი ნაწილები გაუქმების შემდეგ მიუწვდომელი რჩება.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>შემოწმებულია</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>შემოწმდეს %1 არჩეული ფაილი, რომელიც %2 ნაწილს მოიცავს? ფაილები არ წაიშლება და პრიორიტეტები არ შეიცვლება.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10245,6 +10309,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>ხელახალი შემოწმება მიუწვდომელია. ჯერ განაახლეთ ტორენტი.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>შესაბამისი ნაწილი აკლია ან დაზიანებულია; საერთო საზღვრები შეიძლება მეზობელ ფაილებსაც მოიცავდეს.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>არჩეული ფაილების შემოწმებისას სხვა ხელახალი შემოწმება ვერ დაიწყება.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>არჩეული ფაილების შემოწმება უქმდება</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>შეწყვეტილი შემოწმების საკონტროლო მდგომარეობის შენახვა შეუძლებელია; აღდგენა დაბლოკილი რჩება.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>არჩეული ფაილების შემოწმების საბოლოოდ დაფიქსირება შეუძლებელია; აღდგენა კვლავ საჭიროა.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>არჩეული ფაილების შემოწმების შენახვა შეუძლებელია; აღდგენა კვლავ საჭიროა.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>მხოლოდ ადგილობრივი ტორენტის შემოწმების მომზადება შეუძლებელია.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>ფაილების შემოწმებამდე ტორენტის მეტამონაცემების შენახვა შეუძლებელია.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>შემოწმების აღდგენის არჩევანის შენახვა შეუძლებელია; ტორენტი შეჩერებული რჩება.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>არჩეული ფაილები მოწმდება... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>არჩეული ფაილების შემოწმებისას ფაილების არჩევანი და პრიორიტეტები ვერ შეიცვლება.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>შეწყვეტილმა შემოწმებამ შესაბამისი ნაწილები მიუწვდომელი დატოვა.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>შეწყვეტილი შემოწმების მეტამონაცემები, ფარგლები ან საცავის იდენტობა შეიცვალა; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>არჩეული ფაილების აღდგენის მდგომარეობა არასწორია; დავალება გამოტოვებულია.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>ტორენტის გაგრძელების მდგომარეობაში შემოწმების თაობა არასწორია; დავალება გამოტოვებულია.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>ადგილობრივი შემოწმების ოპერაციების დასრულების მოლოდინის დრო ამოიწურა; ტორენტი აღდგენას საჭიროებს.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>სხვა არჩევანის შემოწმებამდე ხელახლა შეამოწმეთ შეწყვეტილი ოპერაციის ყველა ფაილი.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>გაგრძელებამდე ხელახლა შეამოწმეთ საწყისი ფაილები; აღდგენისთვის ჩამოტვირთვა მხოლოდ წაკითხვად წყაროებს ვერ შეცვლის.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>საჭირო საცავი ან ავთენტიფიცირებული ჰეშები მიუწვდომელი იყო.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>ფაილების შემოწმებამდე მოაგვარეთ ტორენტის აღდგენის ან საცავის შეცდომები.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>ამ აგებაში არჩეული ფაილების შემოწმება მიუწვდომელია.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>არჩეული ფაილების შემოწმება სხვა ოპერაციას ან არასაიმედო საცავს ეწინააღმდეგება.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>არჩეული ფაილების შემოწმება სხვა ოპერაციას ეწინააღმდეგება.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>არჩეული ფაილების შემოწმებისას საცავის ან მეტამონაცემების შეცდომა მოხდა.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>ტორენტის არჩევანი შემოწმების დაწყებამდე შეიცვალა.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>ტორენტის არჩევანი შეიცვალა; ფაილები ხელახლა აირჩიეთ.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>ტორენტის ძრავა გაუქმების მოთხოვნას ვერ იღებს.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>შემოწმებისას ტორენტის მეტამონაცემები გაქრა; აღდგენა კვლავ საჭიროა.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>ტორენტის მეტამონაცემები ან ფაილების არჩევანი მიუწვდომელია.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>შემოწმებამდე ტორენტის მონაცემთა იდენტობის დადასტურება ვერ მოხერხდა.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>ტორენტის წაშლა შემოწმების აღდგენას ელოდება; მონაცემები არ წაშლილა.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>შემოწმებისას ტორენტის საცავი შეიცვალა; აღდგენა კვლავ საჭიროა.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>ტორენტის შემოწმების თაობების რიცხვები ამოიწურა.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>ტორენტის შემოწმების თაობების რიცხვები ამოიწურა; დავალება წაშალეთ და ხელახლა დაამატეთ მონაცემების წაშლის გარეშე.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>შეუმოწმებელი შესაბამისი ნაწილები გაუქმების შემდეგ მიუწვდომელი რჩება.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>შემოწმების ოპერაციების დასრულების მოლოდინის დრო ამოიწურა; ტორენტი შეჩერებული რჩება და აღდგენას საჭიროებს.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>შემოწმება შეწყდა. ხელახლა შეამოწმეთ არჩეული ფაილები ან აშკარად განაგრძეთ მიუწვდომელი ნაწილების ხელახლა ჩამოსატვირთად.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>შემოწმება შეწყდა. ხელახლა შეამოწმეთ არჩეული საწყისი ფაილები; აღდგენისთვის ჩამოტვირთვა აკრძალულია.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10405,4 +10621,90 @@ SHA-256: %4</translation>
         <translation>სერტიფიკატის გენერაცია ვერ მოხერხდა. არსებული ფაილები და პარამეტრები არ შეცვლილა.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>დაუსრულებელი ტორენტის შემოწმება უკვე საჭიროებს აღდგენას.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>ტორენტის შემოწმების აღდგენის ჩანაწერის ატომურად შენახვა შეუძლებელია.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>ტორენტის შემოწმების ჟურნალისთვის კერძო საცავის შექმნა შეუძლებელია.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>ტორენტის შემოწმების ზომით შეზღუდული ჩანაწერის წაკითხვა შეუძლებელია; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>ტორენტის შემოწმების აღდგენის ჩანაწერის წაშლა შეუძლებელია; აღდგენა კვლავ საჭიროა.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>ტორენტის შემოწმების ჟურნალის საქაღალდე არასწორია.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>ტორენტის შემოწმების ჟურნალის იდენტობა არასწორია.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>ტორენტის შემოწმების ჩანაწერი არასწორია; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>ტორენტის შემოწმების აღდგენის ფარგლები არასწორია.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>ტორენტის შემოწმების ჟურნალის საცავი მიუწვდომელია; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>ტორენტის შემოწმების ჟურნალის საცავი გადამისამართებულია ან არასწორია; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>ტორენტის შემოწმების ჩანაწერი ზომის ზღვარს აჭარბებს.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>ტორენტის შემოწმების ჩანაწერი გადამისამართებულია ან არასწორია; აღდგენა დაბლოკილია.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>ტორენტის შემოწმების აღდგენის ჩანაწერი აკლია.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>ტორენტის შემოწმების შედეგის თაობა არ ემთხვევა მდგრადად შენახულ მდგომარეობას.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>შესამოწმებლად აირჩიეთ მინიმუმ ერთი ფაილი.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>არჩეული ფაილი ტორენტის მეტამონაცემებში აღარ არის.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>ტორენტის მეტამონაცემები შემოწმების ნაწილების არასწორ დიაპაზონს შეიცავს.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>ფაილების შესამოწმებლად ტორენტის მეტამონაცემები მიუწვდომელია.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>ტორენტის შემავსებელი მონაცემები ასარჩევი ფაილი არ არის.</translation>
+        </message>
+    </context>
 </TS>

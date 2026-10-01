@@ -6327,6 +6327,70 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
             <source>Verification</source>
             <translation>Provera</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Obuhvaćeni deo nedostaje ili je oštećen</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Primenite izbor datoteka i promene prioriteta pre provere.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Otkazano</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Nije moguće proveriti</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Nije moguće proveriti: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Datoteke: %1. Provereni delovi: %2/%3. Delovi koji zahtevaju proveru ili preuzimanje: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Čitaju se samo obuhvaćeni delovi; ovi zajednički granični delovi obuhvataju i susedne datoteke:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Na čekanju</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Ponovna provera izabranih datoteka (bez delova podataka).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Izaberite datoteke u jednom torentu.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Provera izabranih datoteka nije dostupna u ovoj verziji.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Napredak provere izabranih datoteka</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Izbor torenta je promenjen; ponovo izaberite datoteke.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Neprovereni obuhvaćeni delovi ostaju nedostupni posle otkazivanja.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Provereno</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Proveriti %1 izabranih datoteka koje obuhvataju %2 delova? Datoteke neće biti obrisane niti prioriteti promenjeni.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10400,6 +10464,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</trans
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Ponovna provera nije dostupna. Prvo nastavite torent.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Obuhvaćeni deo nedostaje ili je oštećen; zajedničke granice mogu obuhvatati susedne datoteke.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Druga provera ne može početi tokom provere izabranih datoteka.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Otkazivanje provere izabranih datoteka</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Nije moguće sačuvati kontrolno stanje prekinute provere; oporavak ostaje blokiran.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Nije moguće trajno potvrditi proveru izabranih datoteka; oporavak je i dalje potreban.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Nije moguće sačuvati proveru izabranih datoteka; oporavak je i dalje potreban.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Nije moguće pripremiti isključivo lokalnu proveru torenta.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Nije moguće sačuvati metapodatke torenta pre provere datoteka.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Nije moguće sačuvati izbor oporavka provere; torent ostaje pauziran.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Provera izabranih datoteka... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Izbor datoteka i prioriteti ne mogu se menjati tokom provere izabranih datoteka.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Prekinuta provera ostavila je obuhvaćene delove nedostupnim.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Metapodaci, opseg ili identitet skladišta prekinute provere su promenjeni; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Neispravno stanje oporavka izabranih datoteka; zadatak je preskočen.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Neispravna generacija provere u stanju nastavka torenta; zadatak je preskočen.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Isteklo je vreme čekanja na završetak lokalnih operacija provere; torent zahteva oporavak.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Ponovo proverite sve datoteke prekinute operacije pre provere drugog izbora.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Ponovo proverite izvorne datoteke pre nastavka; preuzimanja za oporavak ne mogu menjati izvore samo za čitanje.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Potrebno skladište ili autentifikovani heševi nisu bili dostupni.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Rešite greške oporavka ili skladišta torenta pre provere datoteka.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Provera izabranih datoteka nije dostupna u ovoj verziji.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Provera izabranih datoteka je u sukobu sa drugom operacijom ili nebezbednim skladištem.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Provera izabranih datoteka je u sukobu sa drugom operacijom.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Provera izabranih datoteka naišla je na grešku skladišta ili metapodataka.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Izbor torenta je promenjen pre početka provere.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Izbor torenta je promenjen; ponovo izaberite datoteke.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torent mehanizam ne može prihvatiti otkazivanje.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Metapodaci torenta su nestali tokom provere; oporavak je i dalje potreban.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Metapodaci torenta ili izbor datoteka nisu dostupni.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Identitet podataka torenta nije mogao biti potvrđen pre provere.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Uklanjanje torenta čeka oporavak provere; nikakvi podaci nisu obrisani.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Skladište torenta je promenjeno tokom provere; oporavak je i dalje potreban.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Generacija provere torenta je iscrpljena.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Generacija provere torenta je iscrpljena; uklonite i ponovo dodajte zadatak bez brisanja podataka.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Neprovereni obuhvaćeni delovi ostaju nedostupni posle otkazivanja.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Isteklo je vreme čekanja na završetak operacija provere; torent ostaje pauziran i zahteva oporavak.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Provera je prekinuta. Ponovo proverite izabrane datoteke ili izričito nastavite da biste ponovo preuzeli nedostupne delove.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Provera je prekinuta. Ponovo proverite izabrane izvorne datoteke; preuzimanja za popravku su zabranjena.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10560,4 +10776,90 @@ SHA-256: %4</translation>
         <translation>Generisanje sertifikata nije uspelo. Postojeće datoteke i podešavanja nisu promenjeni.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Nedovršena provera torenta već zahteva oporavak.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Nije moguće atomski sačuvati zapis za oporavak provere torenta.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Nije moguće napraviti privatno skladište dnevnika provere torenta.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Nije moguće pročitati zapis provere torenta sa ograničenom veličinom; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Nije moguće ukloniti zapis za oporavak provere torenta; oporavak je i dalje potreban.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Neispravan direktorijum dnevnika provere torenta.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Neispravan identitet dnevnika provere torenta.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Neispravan zapis provere torenta; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Neispravan opseg oporavka provere torenta.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Skladište dnevnika provere torenta nije dostupno; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Skladište dnevnika provere torenta je preusmereno ili neispravno; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Zapis provere torenta premašuje ograničenje veličine.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Zapis provere torenta je preusmeren ili neispravan; oporavak je blokiran.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Nedostaje zapis za oporavak provere torenta.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Generacija rezultata provere torenta ne odgovara trajno sačuvanom stanju.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Izaberite bar jednu datoteku za proveru.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Izabrana datoteka više nije u metapodacima torenta.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Metapodaci torenta sadrže neispravan opseg delova za proveru.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Metapodaci torenta nisu dostupni za proveru datoteka.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Popuna torenta nije datoteka koja se može izabrati.</translation>
+        </message>
+    </context>
 </TS>

@@ -6242,6 +6242,70 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <source>Verification</source>
             <translation>Egiaztapena</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Eragindako zatia falta da edo hondatuta dago</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Aplikatu fitxategi-hautaketaren eta lehentasunen aldaketak egiaztatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Bertan behera utzita</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Ezin izan da egiaztatu</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Ezin izan da egiaztatu: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Fitxategiak: %1. Egiaztatutako zatiak: %2/%3. Egiaztatu edo deskargatu beharreko zatiak: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Eragindako zatiak soilik irakurtzen dira; mugako zati partekatu hauek ondoko fitxategiak ere ukitzen dituzte:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Zain</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Hautatutako fitxategiak berriro egiaztatzen (datu-zatirik ez).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Hautatu Torrent bakar bateko fitxategiak.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Hautatutako fitxategiak egiaztatzea ez dago erabilgarri konpilazio honetan.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Hautatutako fitxategien egiaztapenaren aurrerapena</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrentaren hautaketa aldatu da; hautatu fitxategiak berriro.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Egiaztatu gabeko eragindako zatiak erabiltezin geratzen dira bertan behera utzi ondoren.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Egiaztatuta</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Egiaztatu hautatutako %1 fitxategi, %2 zati hartzen dituztenak? Ez da fitxategirik ezabatzen edo lehentasunik aldatzen.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10150,6 +10214,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Ezin da berriz egiaztatu. Berrekin torrentari lehenik.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Eragindako zati bat falta da edo hondatuta dago; muga partekatuek ondoko fitxategiak har ditzakete.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Ezin da beste egiaztapenik hasi hautatutako fitxategiak egiaztatzen ari diren bitartean.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Hautatutako fitxategien egiaztapena bertan behera uzten</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Ezin da etendako egiaztapenaren kontrol-puntua gorde; berreskuratzeak blokeatuta jarraitzen du.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Ezin da hautatutako fitxategien egiaztapena behin betiko finkatu; berreskuratzea beharrezkoa da oraindik.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Ezin da hautatutako fitxategien egiaztapena gorde; berreskuratzea beharrezkoa da oraindik.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Ezin da tokiko Torrent-egiaztapena prestatu.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Ezin dira Torrentaren metadatuak gorde fitxategiak egiaztatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Ezin da egiaztapenaren berreskuratze-aukera gorde; Torrentak pausatuta jarraitzen du.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Hautatutako fitxategiak egiaztatzen... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Fitxategi-hautaketa eta lehentasunak ezin dira aldatu hautatutako fitxategiak egiaztatzen ari diren bitartean.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Etendako egiaztapenak eragindako zatiak erabiltezin utzi ditu.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Etendako egiaztapenaren metadatuak, eremua edo biltegiratze-identitatea aldatu dira; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Hautatutako fitxategien berreskuratze-egoera baliogabea; lana saltatu da.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Egiaztapen-belaunaldi baliogabea Torrentaren jarraipen-egoeran; lana saltatu da.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Tokiko egiaztapen-eragiketak amaitzeko itxaronaldia agortu da; Torrentak berreskuratzea behar du.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Egiaztatu berriro etendako eragiketako fitxategi guztiak beste hautaketa bat egiaztatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Egiaztatu berriro jatorrizko fitxategiak jarraitu aurretik; berreskuratze-deskargek ezin dituzte irakurtzeko soilik diren iturriak aldatu.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Beharrezko biltegiratzea edo autentifikatutako hashak ez zeuden eskuragarri.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Konpondu Torrentaren berreskuratze- edo biltegiratze-erroreak fitxategiak egiaztatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Hautatutako fitxategiak egiaztatzea ez dago erabilgarri konpilazio honetan.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Hautatutako fitxategien egiaztapenak beste eragiketa batekin edo biltegiratze ez-seguruarekin gatazka du.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Hautatutako fitxategien egiaztapenak beste eragiketa batekin gatazka du.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Hautatutako fitxategien egiaztapenak biltegiratze- edo metadatu-errorea aurkitu du.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Torrentaren hautaketa aldatu da egiaztapena hasi aurretik.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrentaren hautaketa aldatu da; hautatu fitxategiak berriro.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrentaren motorrak ezin du bertan behera uzteko eskaera onartu.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Torrentaren metadatuak desagertu dira egiaztapenean; berreskuratzea beharrezkoa da oraindik.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Torrentaren metadatuak edo fitxategi-hautaketa ez daude eskuragarri.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Ezin izan da Torrentaren datuen identitatea balioztatu egiaztatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Torrenta kentzea egiaztapenaren berreskuratzearen zain dago; ez da daturik ezabatu.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Torrentaren biltegiratzea aldatu da egiaztapenean; berreskuratzea beharrezkoa da oraindik.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Torrentaren egiaztapen-belaunaldiak agortu dira.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Torrentaren egiaztapen-belaunaldiak agortu dira; kendu eta gehitu lana berriro datuak ezabatu gabe.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Egiaztatu gabeko eragindako zatiak erabiltezin geratzen dira bertan behera utzi ondoren.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Egiaztapen-eragiketak amaitzeko itxaronaldia agortu da; Torrentak pausatuta jarraitzen du eta berreskuratzea behar du.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Egiaztapena eten da. Egiaztatu berriro hautatutako fitxategiak, edo jarraitu berariaz erabiltezin diren zatiak berriro deskargatzeko.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Egiaztapena eten da. Egiaztatu berriro hautatutako jatorrizko fitxategiak; konpontzeko deskargak debekatuta daude.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10310,4 +10526,90 @@ SHA-256: %4</translation>
         <translation>Ezin izan da ziurtagiria sortu. Lehendik dauden fitxategiak eta ezarpenak ez dira aldatu.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Amaitu gabeko Torrent-egiaztapen batek berreskuratzea behar du dagoeneko.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Torrentaren egiaztapenaren berreskuratze-erregistroa ezin da atomikoki gorde.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Ezin da biltegiratze pribatua sortu Torrentaren egiaztapenaren egunkarirako.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Ezin da tamaina mugatuko Torrentaren egiaztapenaren erregistroa irakurri; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Ezin da Torrentaren egiaztapenaren berreskuratze-erregistroa kendu; berreskuratzea beharrezkoa da oraindik.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Torrentaren egiaztapenaren egunkari-direktorio baliogabea.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Torrentaren egiaztapenaren egunkari-identitate baliogabea.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Torrentaren egiaztapenaren erregistro baliogabea; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Torrentaren egiaztapenaren berreskuratze-eremu baliogabea.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Torrentaren egiaztapenaren egunkariaren biltegiratzea ez dago eskuragarri; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrentaren egiaztapenaren egunkariaren biltegiratzea birbideratuta dago edo baliogabea da; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Torrentaren egiaztapenaren erregistroak tamaina-muga gainditzen du.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrentaren egiaztapenaren erregistroa birbideratuta dago edo baliogabea da; berreskuratzea blokeatuta dago.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Torrentaren egiaztapenaren berreskuratze-erregistroa falta da.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Torrentaren egiaztapenaren emaitzaren belaunaldia ez dator bat iraunkorki gordetako egoerarekin.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Hautatu gutxienez fitxategi bat egiaztatzeko.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Hautatutako fitxategia jada ez dago Torrentaren metadatuetan.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Torrentaren metadatuek egiaztapen-zati tarte baliogabea dute.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Torrentaren metadatuak ez daude eskuragarri fitxategiak egiaztatzeko.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Torrentaren betegarri-datuak ez dira hauta daitekeen fitxategi bat.</translation>
+        </message>
+    </context>
 </TS>

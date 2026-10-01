@@ -6343,6 +6343,70 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <source>Verification</source>
             <translation>Ellenőrzés</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Érintett darab hiányzik vagy sérült</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Ellenőrzés előtt alkalmazza a fájlkiválasztás és a prioritások módosításait.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Megszakítva</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Nem ellenőrizhető</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Nem ellenőrizhető: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Fájlok: %1. Ellenőrzött darabok: %2/%3. Ellenőrzést vagy letöltést igénylő darabok: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Csak az érintett darabok lesznek beolvasva; ezek a közös határdarabok szomszédos fájlokat is érintenek:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Függőben</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Kiválasztott fájlok újraellenőrzése (nincsenek adatdarabok).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Egyetlen Torrent fájljait válassza ki.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>A kiválasztott fájlok ellenőrzése nem érhető el ebben a kiadásban.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Kiválasztott fájlok ellenőrzésének előrehaladása</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>A Torrent-kiválasztás megváltozott; válassza ki újra a fájlokat.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>A nem ellenőrzött érintett darabok megszakítás után is elérhetetlenek maradnak.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Ellenőrizve</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Ellenőrzi a(z) %1 kiválasztott fájlt, amely %2 darabot érint? Fájlok nem törlődnek, és a prioritások nem változnak.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10407,6 +10471,158 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Az újraellenőrzés nem érhető el. Előbb folytassa a torrentet.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Egy érintett darab hiányzik vagy sérült; a közös határok szomszédos fájlokat is érinthetnek.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>A kiválasztott fájlok ellenőrzése közben nem indítható másik újraellenőrzés.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Kiválasztott fájlok ellenőrzésének megszakítása</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>A megszakított ellenőrzés állapota nem rögzíthető; a helyreállítás blokkolva marad.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>A kiválasztott fájlok ellenőrzése nem véglegesíthető; a helyreállítás továbbra is szükséges.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>A kiválasztott fájlok ellenőrzése nem tárolható; a helyreállítás továbbra is szükséges.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Nem készíthető elő kizárólag helyi Torrent-ellenőrzés.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>A Torrent metaadatai nem menthetők a fájlellenőrzés előtt.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Az ellenőrzés helyreállítási választása nem menthető; a Torrent szüneteltetve marad.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Kiválasztott fájlok ellenőrzése... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>A kiválasztott fájlok ellenőrzése közben a fájlkiválasztás és a prioritások nem módosíthatók.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>A megszakított ellenőrzés az érintett darabokat elérhetetlenül hagyta.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>A megszakított ellenőrzés metaadatai, hatóköre vagy tárhelyazonosítója megváltozott; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Érvénytelen kiválasztottfájl-helyreállítási állapot; a feladat kimaradt.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Érvénytelen ellenőrzési generáció a Torrent folytatási állapotában; a feladat kimaradt.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>A helyi ellenőrzési műveletek befejezésére várás időkorlátja lejárt; a Torrent helyreállítást igényel.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Másik kiválasztás ellenőrzése előtt ellenőrizze újra a megszakított művelet összes fájlját.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Folytatás előtt ellenőrizze újra az eredeti fájlokat; a helyreállítási letöltések nem módosíthatnak csak olvasható forrásokat.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>A szükséges tárhely vagy a hitelesített hashértékek nem voltak elérhetők.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>A fájlellenőrzés előtt oldja meg a Torrent helyreállítási vagy tárhelyhibáit.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>A kiválasztott fájlok ellenőrzése nem érhető el ebben a kiadásban.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>A kiválasztott fájlok ellenőrzése másik művelettel vagy nem biztonságos tárhellyel ütközik.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>A kiválasztott fájlok ellenőrzése másik művelettel ütközik.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>A kiválasztott fájlok ellenőrzése tárhely- vagy metaadathibába ütközött.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>A Torrent-kiválasztás megváltozott, mielőtt az ellenőrzés elindulhatott volna.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>A Torrent-kiválasztás megváltozott; válassza ki újra a fájlokat.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>A Torrent háttérrendszere nem tudja fogadni a megszakítási kérést.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>A Torrent metaadatai eltűntek ellenőrzés közben; a helyreállítás továbbra is szükséges.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>A Torrent metaadatai vagy a fájlkiválasztás nem érhetők el.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>A Torrent adatainak azonossága nem volt ellenőrizhető az ellenőrzés előtt.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>A Torrent eltávolítása az ellenőrzés helyreállítására vár; adatok nem törlődtek.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>A Torrent tárhelye megváltozott ellenőrzés közben; a helyreállítás továbbra is szükséges.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>A Torrent ellenőrzési generációszámai elfogytak.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>A Torrent ellenőrzési generációszámai elfogytak; adatok törlése nélkül távolítsa el, majd adja hozzá újra a feladatot.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>A nem ellenőrzött érintett darabok megszakítás után is elérhetetlenek maradnak.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Az ellenőrzési műveletek befejezésére várás időkorlátja lejárt; a Torrent szüneteltetve marad, és helyreállítást igényel.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Az ellenőrzés megszakadt. Ellenőrizze újra a kiválasztott fájlokat, vagy kifejezetten folytassa a hiányzó darabok újraletöltéséhez.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Az ellenőrzés megszakadt. Ellenőrizze újra a kiválasztott eredeti fájlokat; a javító letöltések tilosak.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10567,4 +10783,90 @@ SHA-256: %4</translation>
         <translation>A tanúsítvány létrehozása sikertelen. A meglévő fájlok és beállítások nem változtak.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Egy befejezetlen Torrent-ellenőrzés már helyreállítást igényel.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>A Torrent-ellenőrzés helyreállítási rekordja nem tárolható atomikusan.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Nem hozható létre privát tárhely a Torrent-ellenőrzés naplójához.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>A korlátozott méretű Torrent-ellenőrzés rekordja nem olvasható; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>A Torrent-ellenőrzés helyreállítási rekordja nem távolítható el; a helyreállítás továbbra is szükséges.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Érvénytelen Torrent-ellenőrzés naplókönyvtár.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Érvénytelen Torrent-ellenőrzés naplóazonosító.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Érvénytelen Torrent-ellenőrzés rekord; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Érvénytelen Torrent-ellenőrzés helyreállítási hatókör.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>A Torrent-ellenőrzés naplótárhelye nem érhető el; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>A Torrent-ellenőrzés naplótárhelye átirányított vagy érvénytelen; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>A Torrent-ellenőrzés rekordja túllépi a méretkorlátot.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>A Torrent-ellenőrzés rekordja átirányított vagy érvénytelen; a helyreállítás blokkolva van.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Hiányzik a Torrent-ellenőrzés helyreállítási rekordja.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>A Torrent-ellenőrzés eredményének generációja nem egyezik a tartósan tárolt állapottal.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Válasszon ki legalább egy ellenőrizendő fájlt.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>A kiválasztott fájl már nem szerepel a Torrent metaadataiban.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>A Torrent metaadatai érvénytelen ellenőrzési darabtartományt tartalmaznak.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>A Torrent metaadatai nem érhetők el a fájlellenőrzéshez.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>A Torrent kitöltőadatai nem választhatók ki fájlként.</translation>
+        </message>
+    </context>
 </TS>

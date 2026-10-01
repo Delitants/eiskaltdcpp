@@ -6247,6 +6247,70 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Verification</source>
             <translation>Xác minh</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>Mảnh bị ảnh hưởng bị thiếu hoặc hỏng</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>Áp dụng lựa chọn tệp và thay đổi độ ưu tiên trước khi kiểm tra.</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>Đã hủy</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>Không thể kiểm tra</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>Không thể kiểm tra: %1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>Tệp: %1. Mảnh đã kiểm tra: %2/%3. Mảnh cần kiểm tra hoặc tải xuống: %4.</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>Chỉ đọc các mảnh bị ảnh hưởng; những mảnh dùng chung ở ranh giới này cũng liên quan đến các tệp lân cận:</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>Đang chờ</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>Đang kiểm tra lại các tệp đã chọn (không có mảnh dữ liệu).</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>Chọn các tệp trong một Torrent.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Bản dựng này không hỗ trợ kiểm tra các tệp đã chọn.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>Tiến trình kiểm tra các tệp đã chọn</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Lựa chọn Torrent đã thay đổi; hãy chọn lại các tệp.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Các mảnh bị ảnh hưởng chưa được kiểm tra vẫn không khả dụng sau khi hủy.</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>Đã kiểm tra</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>Kiểm tra %1 tệp đã chọn, bao gồm %2 mảnh? Không tệp nào bị xóa và không độ ưu tiên nào bị thay đổi.</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10139,6 +10203,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>Không thể kiểm tra lại. Hãy tiếp tục torrent trước.</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>Một mảnh bị ảnh hưởng bị thiếu hoặc hỏng; ranh giới dùng chung có thể bao gồm các tệp lân cận.</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>Không thể bắt đầu lần kiểm tra khác khi đang kiểm tra các tệp đã chọn.</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>Đang hủy kiểm tra các tệp đã chọn</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>Không thể lưu điểm kiểm soát của lần kiểm tra bị gián đoạn; khôi phục vẫn bị chặn.</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>Không thể xác nhận bền vững kết quả kiểm tra các tệp đã chọn; vẫn cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>Không thể lưu kết quả kiểm tra các tệp đã chọn; vẫn cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>Không thể chuẩn bị kiểm tra Torrent chỉ trên máy cục bộ.</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>Không thể lưu siêu dữ liệu Torrent trước khi kiểm tra tệp.</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>Không thể lưu lựa chọn khôi phục kiểm tra; Torrent vẫn tạm dừng.</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>Đang kiểm tra các tệp đã chọn... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>Không thể thay đổi lựa chọn tệp và độ ưu tiên trong khi kiểm tra các tệp đã chọn.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>Lần kiểm tra bị gián đoạn khiến các mảnh bị ảnh hưởng không khả dụng.</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>Siêu dữ liệu, phạm vi hoặc danh tính vùng lưu trữ của lần kiểm tra bị gián đoạn đã thay đổi; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>Trạng thái khôi phục tệp đã chọn không hợp lệ; đã bỏ qua tác vụ.</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Thế hệ kiểm tra trong trạng thái tiếp tục của Torrent không hợp lệ; đã bỏ qua tác vụ.</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>Hết thời gian chờ hoàn tất các thao tác kiểm tra cục bộ; Torrent cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>Kiểm tra lại tất cả tệp của thao tác bị gián đoạn trước khi kiểm tra lựa chọn khác.</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>Kiểm tra lại các tệp gốc trước khi tiếp tục; tải xuống để khôi phục không được sửa đổi nguồn chỉ đọc.</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>Vùng lưu trữ cần thiết hoặc các giá trị băm đã xác thực không khả dụng.</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>Giải quyết lỗi khôi phục hoặc lưu trữ Torrent trước khi kiểm tra tệp.</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>Bản dựng này không hỗ trợ kiểm tra các tệp đã chọn.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>Việc kiểm tra các tệp đã chọn xung đột với thao tác khác hoặc vùng lưu trữ không an toàn.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>Việc kiểm tra các tệp đã chọn xung đột với thao tác khác.</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>Việc kiểm tra các tệp đã chọn gặp lỗi lưu trữ hoặc siêu dữ liệu.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>Lựa chọn Torrent đã thay đổi trước khi bắt đầu kiểm tra.</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Lựa chọn Torrent đã thay đổi; hãy chọn lại các tệp.</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Bộ máy Torrent không thể chấp nhận yêu cầu hủy.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>Siêu dữ liệu Torrent biến mất trong khi kiểm tra; vẫn cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Siêu dữ liệu Torrent hoặc lựa chọn tệp không khả dụng.</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>Không thể xác nhận danh tính dữ liệu Torrent trước khi kiểm tra.</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Việc xóa Torrent đang chờ khôi phục kiểm tra; chưa xóa dữ liệu nào.</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>Vùng lưu trữ Torrent thay đổi trong khi kiểm tra; vẫn cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Thế hệ kiểm tra Torrent đã cạn.</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Thế hệ kiểm tra Torrent đã cạn; hãy xóa rồi thêm lại tác vụ mà không xóa dữ liệu.</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>Các mảnh bị ảnh hưởng chưa được kiểm tra vẫn không khả dụng sau khi hủy.</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>Hết thời gian chờ hoàn tất các thao tác kiểm tra; Torrent vẫn tạm dừng và cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>Kiểm tra bị gián đoạn. Kiểm tra lại các tệp đã chọn hoặc chủ động tiếp tục để tải lại các mảnh không khả dụng.</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>Kiểm tra bị gián đoạn. Kiểm tra lại các tệp gốc đã chọn; không được tải xuống để sửa chữa.</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10299,4 +10515,90 @@ SHA-256: %4</translation>
         <translation>Không thể tạo chứng chỉ. Các tệp và cài đặt hiện có không bị thay đổi.</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>Một lần kiểm tra Torrent chưa hoàn tất đã cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>Không thể lưu nguyên tử bản ghi khôi phục kiểm tra Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>Không thể tạo vùng lưu trữ riêng cho nhật ký kiểm tra Torrent.</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>Không thể đọc bản ghi kiểm tra Torrent có giới hạn kích thước; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>Không thể xóa bản ghi khôi phục kiểm tra Torrent; vẫn cần khôi phục.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Thư mục nhật ký kiểm tra Torrent không hợp lệ.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Danh tính nhật ký kiểm tra Torrent không hợp lệ.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Bản ghi kiểm tra Torrent không hợp lệ; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Phạm vi khôi phục kiểm tra Torrent không hợp lệ.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>Không thể truy cập vùng lưu trữ nhật ký kiểm tra Torrent; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Vùng lưu trữ nhật ký kiểm tra Torrent bị chuyển hướng hoặc không hợp lệ; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Bản ghi kiểm tra Torrent vượt quá giới hạn kích thước.</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Bản ghi kiểm tra Torrent bị chuyển hướng hoặc không hợp lệ; khôi phục bị chặn.</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Thiếu bản ghi khôi phục kiểm tra Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Thế hệ kết quả kiểm tra Torrent không khớp với trạng thái đã được lưu bền vững.</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>Chọn ít nhất một tệp để kiểm tra.</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>Tệp đã chọn không còn trong siêu dữ liệu Torrent.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Siêu dữ liệu Torrent có phạm vi mảnh kiểm tra không hợp lệ.</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>Không có siêu dữ liệu Torrent để kiểm tra tệp.</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Dữ liệu đệm của Torrent không phải là tệp có thể chọn.</translation>
+        </message>
+    </context>
 </TS>

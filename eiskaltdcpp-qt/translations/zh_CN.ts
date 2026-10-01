@@ -6314,6 +6314,70 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Verification</source>
             <translation>校验</translation>
         </message>
+        <message>
+            <source>Affected piece missing or corrupt</source>
+            <translation>受影响的分块缺失或损坏</translation>
+        </message>
+        <message>
+            <source>Apply file selection and priority changes before verification.</source>
+            <translation>请在校验前应用文件选择和优先级更改。</translation>
+        </message>
+        <message>
+            <source>Canceled</source>
+            <translation>已取消</translation>
+        </message>
+        <message>
+            <source>Could not verify</source>
+            <translation>无法校验</translation>
+        </message>
+        <message>
+            <source>Could not verify: %1</source>
+            <translation>无法校验：%1</translation>
+        </message>
+        <message>
+            <source>Files: %1. Pieces checked: %2/%3. Pieces needing verification or download: %4.</source>
+            <translation>文件：%1。已校验分块：%2/%3。需要校验或下载的分块：%4。</translation>
+        </message>
+        <message>
+            <source>Only affected pieces are read; these shared boundary pieces also touch neighboring files:</source>
+            <translation>仅读取受影响的分块；这些共享的边界分块也涉及相邻文件：</translation>
+        </message>
+        <message>
+            <source>Pending</source>
+            <translation>等待中</translation>
+        </message>
+        <message>
+            <source>Rechecking selected files (no payload pieces).</source>
+            <translation>正在重新校验所选文件（无数据分块）。</translation>
+        </message>
+        <message>
+            <source>Select files in one Torrent.</source>
+            <translation>请在同一个 Torrent 中选择文件。</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>此构建版本不支持所选文件校验。</translation>
+        </message>
+        <message>
+            <source>Selected-file verification progress</source>
+            <translation>所选文件校验进度</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent 选择已更改；请重新选择文件。</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>取消后，未校验的受影响分块仍不可用。</translation>
+        </message>
+        <message>
+            <source>Verified</source>
+            <translation>已校验</translation>
+        </message>
+        <message>
+            <source>Verify %1 selected file(s), covering %2 piece(s)? No files are deleted or priorities changed.</source>
+            <translation>校验 %1 个所选文件，涵盖 %2 个分块？不会删除文件或更改优先级。</translation>
+        </message>
     </context>
     <context>
         <name>TransferView</name>
@@ -10206,6 +10270,158 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <source>Recheck unavailable. Resume the Torrent first.</source>
             <translation>无法重新校验。请先恢复种子。</translation>
         </message>
+        <message>
+            <source>An affected piece is missing or corrupt; shared boundaries may include neighboring files.</source>
+            <translation>受影响的分块缺失或损坏；共享边界可能包含相邻文件。</translation>
+        </message>
+        <message>
+            <source>Another recheck cannot start during selected-file verification.</source>
+            <translation>所选文件校验 期间无法启动另一项校验。</translation>
+        </message>
+        <message>
+            <source>Canceling selected-file verification</source>
+            <translation>正在取消所选文件校验</translation>
+        </message>
+        <message>
+            <source>Cannot checkpoint interrupted verification; recovery remains blocked.</source>
+            <translation>无法保存已中断校验的检查点；恢复仍被阻止。</translation>
+        </message>
+        <message>
+            <source>Cannot commit selected-file verification; recovery remains required.</source>
+            <translation>无法持久提交所选文件校验结果；仍需要恢复。</translation>
+        </message>
+        <message>
+            <source>Cannot persist selected-file verification; recovery remains required.</source>
+            <translation>无法保存所选文件校验结果；仍需要恢复。</translation>
+        </message>
+        <message>
+            <source>Cannot prepare local-only Torrent verification.</source>
+            <translation>无法准备仅在本地进行的 Torrent 校验。</translation>
+        </message>
+        <message>
+            <source>Cannot save Torrent metadata before file verification.</source>
+            <translation>无法在文件校验前保存 Torrent 元数据。</translation>
+        </message>
+        <message>
+            <source>Cannot save the verification recovery choice; the Torrent remains paused.</source>
+            <translation>无法保存校验恢复选项；Torrent 保持暂停。</translation>
+        </message>
+        <message>
+            <source>Checking selected files... %1%</source>
+            <translation>正在校验所选文件... %1%</translation>
+        </message>
+        <message>
+            <source>File selection and priorities cannot change during selected-file verification.</source>
+            <translation>所选文件校验 期间无法更改文件选择和优先级。</translation>
+        </message>
+        <message>
+            <source>Interrupted verification left affected pieces unavailable.</source>
+            <translation>已中断的校验使受影响的分块保持不可用。</translation>
+        </message>
+        <message>
+            <source>Interrupted verification metadata, scope or storage identity changed; recovery is blocked.</source>
+            <translation>已中断校验的元数据、范围或存储标识发生变化；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Invalid selected-file recovery state; the job was skipped.</source>
+            <translation>所选文件恢复状态无效；已跳过任务。</translation>
+        </message>
+        <message>
+            <source>Invalid verification generation in Torrent resume state; the job was skipped.</source>
+            <translation>Torrent 恢复状态中的校验代次无效；已跳过任务。</translation>
+        </message>
+        <message>
+            <source>Local verification drain timed out; the Torrent requires recovery.</source>
+            <translation>等待本地校验操作完成超时；Torrent 需要恢复。</translation>
+        </message>
+        <message>
+            <source>Recheck all files from the interrupted operation before checking a different selection.</source>
+            <translation>请先重新校验已中断操作的所有文件，再校验其他选择。</translation>
+        </message>
+        <message>
+            <source>Recheck the original files before resuming; recovery downloads cannot modify read-only sources.</source>
+            <translation>请在继续前重新校验原始文件；恢复下载不得修改只读源文件。</translation>
+        </message>
+        <message>
+            <source>Required storage or authenticated hashes were unavailable.</source>
+            <translation>所需存储或已认证的哈希值不可用。</translation>
+        </message>
+        <message>
+            <source>Resolve Torrent recovery or storage errors before file verification.</source>
+            <translation>请在文件校验前解决 Torrent 恢复或存储错误。</translation>
+        </message>
+        <message>
+            <source>Selected-file checking is not available in this build.</source>
+            <translation>此构建版本不支持所选文件校验。</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation or unsafe storage.</source>
+            <translation>所选文件校验 与其他操作或不安全的存储冲突。</translation>
+        </message>
+        <message>
+            <source>Selected-file verification conflicts with another operation.</source>
+            <translation>所选文件校验 与其他操作冲突。</translation>
+        </message>
+        <message>
+            <source>Selected-file verification encountered a storage or metadata error.</source>
+            <translation>所选文件校验 遇到存储或元数据错误。</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed before verification could start.</source>
+            <translation>校验开始前，Torrent 选择已更改。</translation>
+        </message>
+        <message>
+            <source>The Torrent selection changed; select the files again.</source>
+            <translation>Torrent 选择已更改；请重新选择文件。</translation>
+        </message>
+        <message>
+            <source>Torrent backend cannot accept cancellation.</source>
+            <translation>Torrent 后端无法接受取消请求。</translation>
+        </message>
+        <message>
+            <source>Torrent metadata disappeared during verification; recovery remains required.</source>
+            <translation>校验期间 Torrent 元数据消失；仍需要恢复。</translation>
+        </message>
+        <message>
+            <source>Torrent metadata or file selection is unavailable.</source>
+            <translation>Torrent 元数据或文件选择不可用。</translation>
+        </message>
+        <message>
+            <source>Torrent payload identity could not be validated before verification.</source>
+            <translation>无法在校验前验证 Torrent 数据的标识。</translation>
+        </message>
+        <message>
+            <source>Torrent removal waits for verification recovery; no data was deleted.</source>
+            <translation>Torrent 删除正在等待校验恢复；未删除任何数据。</translation>
+        </message>
+        <message>
+            <source>Torrent storage changed during verification; recovery remains required.</source>
+            <translation>校验期间 Torrent 存储发生变化；仍需要恢复。</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted.</source>
+            <translation>Torrent 校验代次已耗尽。</translation>
+        </message>
+        <message>
+            <source>Torrent verification generation is exhausted; remove and add the job again without deleting data.</source>
+            <translation>Torrent 校验代次已耗尽；请在不删除数据的情况下移除任务并重新添加。</translation>
+        </message>
+        <message>
+            <source>Unchecked affected pieces remain unavailable after cancellation.</source>
+            <translation>取消后，未校验的受影响分块仍不可用。</translation>
+        </message>
+        <message>
+            <source>Verification drain timed out; the Torrent remains paused and requires recovery.</source>
+            <translation>等待校验操作完成超时；Torrent 保持暂停并需要恢复。</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected files or explicitly resume to redownload unavailable pieces.</source>
+            <translation>校验已中断。请重新校验所选文件，或明确选择继续以重新下载不可用的分块。</translation>
+        </message>
+        <message>
+            <source>Verification was interrupted. Recheck the selected original files; repair downloads are forbidden.</source>
+            <translation>校验已中断。请重新校验所选原始文件；禁止修复下载。</translation>
+        </message>
     </context>
     <context>
         <name>ChatFormatBar</name>
@@ -10366,4 +10582,90 @@ SHA-256：%4</translation>
         <translation>证书生成失败。现有文件和设置未更改。</translation>
     </message>
 </context>
+    <context>
+        <name>RecheckJournal</name>
+        <message>
+            <source>An unfinished Torrent verification already requires recovery.</source>
+            <translation>尚未完成的 Torrent 校验 已需要恢复。</translation>
+        </message>
+        <message>
+            <source>Cannot atomically persist Torrent verification recovery record.</source>
+            <translation>无法原子保存 Torrent 校验 的恢复记录。</translation>
+        </message>
+        <message>
+            <source>Cannot create private Torrent verification journal storage.</source>
+            <translation>无法创建 Torrent 校验 日志的私有存储。</translation>
+        </message>
+        <message>
+            <source>Cannot read bounded Torrent verification record; recovery is blocked.</source>
+            <translation>无法读取有大小限制的 Torrent 校验 记录；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Cannot remove Torrent verification recovery record; recovery remains required.</source>
+            <translation>无法删除 Torrent 校验 恢复记录；仍需要恢复。</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal directory.</source>
+            <translation>Torrent 校验 日志目录无效。</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification journal identity.</source>
+            <translation>Torrent 校验 日志标识无效。</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification record; recovery is blocked.</source>
+            <translation>Torrent 校验 记录无效；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Invalid Torrent verification recovery scope.</source>
+            <translation>Torrent 校验 恢复范围无效。</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is inaccessible; recovery is blocked.</source>
+            <translation>无法访问 Torrent 校验 日志存储；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Torrent verification journal storage is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrent 校验 日志存储已被重定向或无效；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Torrent verification record exceeds its size limit.</source>
+            <translation>Torrent 校验 记录超过大小限制。</translation>
+        </message>
+        <message>
+            <source>Torrent verification record is redirected or invalid; recovery is blocked.</source>
+            <translation>Torrent 校验 记录已被重定向或无效；恢复已被阻止。</translation>
+        </message>
+        <message>
+            <source>Torrent verification recovery record is missing.</source>
+            <translation>Torrent 校验 恢复记录缺失。</translation>
+        </message>
+        <message>
+            <source>Torrent verification result generation is not durably matched.</source>
+            <translation>Torrent 校验 结果的代次与持久保存的状态不匹配。</translation>
+        </message>
+    </context>
+    <context>
+        <name>SelectedRecheck</name>
+        <message>
+            <source>Select at least one file to verify.</source>
+            <translation>请至少选择一个要校验的文件。</translation>
+        </message>
+        <message>
+            <source>The selected file is no longer present in Torrent metadata.</source>
+            <translation>所选文件已不在 Torrent 元数据中。</translation>
+        </message>
+        <message>
+            <source>Torrent metadata has an invalid verification piece range.</source>
+            <translation>Torrent 元数据中的校验分块范围无效。</translation>
+        </message>
+        <message>
+            <source>Torrent metadata is not available for file verification.</source>
+            <translation>无法获取用于文件校验的 Torrent 元数据。</translation>
+        </message>
+        <message>
+            <source>Torrent padding is not a selectable file.</source>
+            <translation>Torrent 填充数据不是可选择的文件。</translation>
+        </message>
+    </context>
 </TS>

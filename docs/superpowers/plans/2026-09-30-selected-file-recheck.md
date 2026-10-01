@@ -16,8 +16,10 @@ Scoped DC hash invalidation preserves unaffected cache evidence across restart.
 Native Files controls are implemented locally in maintained-extension development
 builds, with stable multi-selection, scope confirmation, progress and cancellation.
 Current-host native Cocoa light/dark, resize, cancellation and priority checks pass.
-Task 6 remains in progress: full localization is still required, followed by Task 7
-integration/package/review acceptance. No app is installed.
+Task 6 controls and all 25 verification catalogs are complete locally. The full
+translation audit and compiled-catalog/native controls checks pass. Current full
+Qt passes 547 cases with 8 external-GOST cases explicitly skipped, no failures.
+Task 7 integration/package/review acceptance remains. No app is installed.
 
 ## Global Constraints
 
@@ -144,7 +146,7 @@ runtime/native Qt scenario acceptance remains in Task 7.
 - [x] Add `[selected-recheck-ui]` tests for multi-selection, sorting between confirmation and execution, unapplied edits, disappearing job, missing capability, disabled conflicts and cancel availability. Run Qt filter to RED.
 - [x] Implement native context actions, scope/boundary confirmation, status `Rechecking selected files... %1%`, progress and outcomes; retain normal file priorities and download checkboxes. Show zero-piece checks without a bogus percentage. Confirm canceled unchecked pieces need verification/download before reuse.
 - [x] Revalidate revision and metadata indices at execution. Render failed boundary pieces without falsely accusing one particular file. Full Recheck and Finder remain distinct actions.
-- [ ] Run focused Qt tests to GREEN, catalog/extraction audit, then native Cocoa light/dark screenshots and responsive resize/cancel checks on fixtures. Verify translated strings and accessibility names; commit as `Expose selected-file checks in torrent details`.
+- [x] Run focused Qt tests to GREEN, catalog/extraction audit, then native Cocoa light/dark screenshots and responsive resize/cancel checks on fixtures. Verify translated strings and accessibility names; commit as `Expose selected-file checks in torrent details`.
 
 ### Task 7: Package, Review And Accept
 
