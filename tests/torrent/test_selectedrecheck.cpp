@@ -92,6 +92,22 @@ TEST_CASE("Last partial pieces count only their actual payload once", "[selected
     REQUIRE(result.plan->totalBytes==18000);
 }
 
+TEST_CASE("Disjoint selected ranges count only overlapping boundary fragments", "[selected-recheck-plan]")
+{
+    lt::file_storage files;
+    files.add_file("sparse/A",8192);
+    files.add_file("sparse/B",40960);
+    files.add_file("sparse/C",8192);
+    files.add_file("sparse/D",24576);
+    auto ti=metadata(files);
+    const auto result=planSelectedRecheck(*ti,{2,0,2},11);
+    REQUIRE(result.plan.has_value());
+    REQUIRE(result.plan->selectedFiles==QList<int>{0,2});
+    REQUIRE(result.plan->pieces==QList<int>{0,3});
+    REQUIRE(result.plan->affectedFiles==QList<int>{0,1,2,3});
+    REQUIRE(result.plan->totalBytes==32768);
+}
+
 TEST_CASE("v2 and hybrid padding does not pull in unrelated real files", "[selected-recheck-plan]")
 {
     const auto kind=GENERATE(0,1);

@@ -37,6 +37,7 @@
 #include <libtorrent/torrent_status.hpp>
 #include <libtorrent/write_resume_data.hpp>
 #include <algorithm>
+#include <cerrno>
 #include <chrono>
 #include <condition_variable>
 #include <deque>
@@ -254,6 +255,48 @@ QString checkStorageIdentity(const QString &root) {
     return {};
 #endif
 }
+QString checkPayloadIdentity(const QString &root, const lt::torrent_info &metadata, const RecheckPlan &plan) {
+#ifndef Q_OS_WIN
+    QCryptographicHash hash(QCryptographicHash::Sha256);
+    QSet<QString> seen;
+    for (int index : plan.affectedFiles) {
+        QString path = QDir(root).filePath(text(metadata.layout().file_path(lt::file_index_t(index))));
+        bool payload = true;
+        for (;;) {
+            if (!seen.contains(path)) {
+                seen.insert(path);
+                struct stat info {};
+                QByteArray value = path.toUtf8() + '\n';
+                if (::lstat(QFile::encodeName(path).constData(), &info) != 0) {
+                    if (errno != ENOENT) return {};
+                    value += "missing";
+                } else {
+                    if (S_ISLNK(info.st_mode) || (payload ? !S_ISREG(info.st_mode) : !S_ISDIR(info.st_mode))) return {};
+                    value += QByteArray::number(quint64(info.st_dev)) + ':' + QByteArray::number(quint64(info.st_ino));
+                    if (payload) {
+#ifdef Q_OS_DARWIN
+                        const auto modified = info.st_mtimespec, changed = info.st_ctimespec;
+#else
+                        const auto modified = info.st_mtim, changed = info.st_ctim;
+#endif
+                        value += ':' + QByteArray::number(info.st_size) + ':' + QByteArray::number(modified.tv_sec) + ':' +
+                            QByteArray::number(modified.tv_nsec) + ':' + QByteArray::number(changed.tv_sec) + ':' + QByteArray::number(changed.tv_nsec);
+                    }
+                }
+                hash.addData(value + '\n');
+            }
+            if (path == root) break;
+            const auto parent = QFileInfo(path).absolutePath();
+            if (parent == path) return {};
+            path = parent;
+            payload = false;
+        }
+    }
+    return QString::fromLatin1(hash.result().toHex());
+#else
+    return {};
+#endif
+}
 }
 
 struct TorrentEngine::Impl {
@@ -279,7 +322,7 @@ struct TorrentEngine::Impl {
         std::optional<RecheckPlan> checkPlan;
         std::optional<RecheckRecord> checkRecord;
         std::unique_ptr<lt::session> checkSession;
-        QString checkIdentity;
+        QString checkIdentity, checkPayload;
         bool checkStarted = false, checkTerminal = false, checkSaveRequested = false;
         bool deferred = false, sourceReadOnly = false;
         qint64 observedUpload = 0, uploadBaseline = 0, lastPayloadUpload = 0;
@@ -617,6 +660,7 @@ struct TorrentEngine::Impl {
         for (int index : plan.selectedFiles) r.fileCheck.files.append({index, FileCheckOutcome::Pending, {}});
         r.checkPlan = std::move(plan);
         r.checkStarted = r.checkTerminal = r.checkSaveRequested = false;
+        r.checkPayload.clear();
         r.notified = false;
         const auto metadata = r.handle.is_valid() ? r.handle.torrent_file() : r.resume.ti;
         r.checkIdentity = checkStorageIdentity(r.savePath);
@@ -720,7 +764,8 @@ struct TorrentEngine::Impl {
                 failFileCheck(r, tr("Torrent metadata disappeared during verification; recovery remains required."));
                 changed = true; continue;
             }
-            if (checkStorageIdentity(r.savePath) != r.checkIdentity || !safeMetadata(*metadata, r.savePath)) {
+            if (checkStorageIdentity(r.savePath) != r.checkIdentity || !safeMetadata(*metadata, r.savePath) ||
+                (r.checkStarted && checkPayloadIdentity(r.savePath, *metadata, *r.checkPlan) != r.checkPayload)) {
                 failFileCheck(r, tr("Torrent storage changed during verification; recovery remains required."));
                 changed = true; continue;
             }
@@ -735,6 +780,14 @@ struct TorrentEngine::Impl {
             if (native.token != r.fileCheck.token) continue;
             if (native.phase == lt::selected_recheck_phase::quiesced && !r.checkStarted) {
                 if (!r.fileCheck.error.isEmpty()) { failFileCheck(r, r.fileCheck.error); changed = true; continue; }
+                // Cached writes are drained now. Bind all actual boundary files
+                // before reads, so a renamed/replaced inode cannot yield trust
+                // for a different path through an older open descriptor.
+                r.checkPayload = checkPayloadIdentity(r.savePath, *metadata, *r.checkPlan);
+                if (r.checkPayload.isEmpty()) {
+                    failFileCheck(r, tr("Torrent payload identity could not be validated before verification."));
+                    changed = true; continue;
+                }
                 RecheckRecord record{id, metadataIdentity(*metadata), r.checkIdentity, r.fileCheck.token,
                     r.revision, r.resumeGeneration, r.checkPlan->selectedFiles, r.checkPlan->pieces, r.sourceReadOnly};
                 QString error;
@@ -811,6 +864,8 @@ struct TorrentEngine::Impl {
         nextBootstrapRetry = Clock::time_point::max();
         closing = true;
         const bool checksOk = drainFileChecks();
+        if (!checksOk) for (auto &[id, r] : records) if (r.fileCheck.active)
+            failFileCheck(r, tr("Verification drain timed out; the Torrent remains paused and requires recovery."));
         if (!session) {
             for (auto &[id, r] : records) if (r.checkSession) {
                 if (r.fileCheck.active)

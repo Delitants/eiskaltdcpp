@@ -34,6 +34,9 @@
 #include <atomic>
 #include <libtorrent/magnet_uri.hpp>
 #include "LocalSocksProxy.h"
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+#include "SelectedRecheckDisk.h"
+#endif
 
 namespace eiskalt::torrent {
 struct TorrentEngineTestAccess {
@@ -4255,5 +4258,434 @@ TEST_CASE("Engine selected-check process boundary fixture", "[.selected-recheck-
         std::_Exit(73);
     });
     FAIL("Did not reach the requested abrupt-exit boundary");
+}
+
+namespace {
+struct EngineDiskProbe {
+    std::shared_ptr<selected_recheck_test::Reads> reads = std::make_shared<selected_recheck_test::Reads>();
+    std::function<void()> release;
+
+    explicit EngineDiskProbe(TorrentEngine &engine) {
+        release = TorrentEngineTestAccess::call(engine, [r = reads](auto &d) -> std::function<void()> {
+            if (!d.records.empty() || d.session) throw std::runtime_error("disk probe needs an unused route");
+            lt::session_params params(sessionSettings(d.config, d.proxy));
+            params.disk_io_constructor = [r](lt::io_context &io, lt::settings_interface const &s, lt::counters &c) {
+                return std::make_unique<selected_recheck_test::CountingDisk>(lt::default_disk_io_constructor(io, s, c), r);
+            };
+            d.session = std::make_unique<lt::session>(std::move(params));
+            d.peerPolicy = std::make_shared<PeerPolicy>(d.config, d.countryLookup);
+            d.session->add_extension([policy = d.peerPolicy](const lt::torrent_handle &, lt::client_data_t) {
+                return std::make_shared<SecurityTorrentPlugin>(policy);
+            });
+            const auto executor = d.session->get_context().get_executor();
+            return [executor, r] { boost::asio::post(executor, [r] { r->release(); }); };
+        });
+    }
+    ~EngineDiskProbe() { if (held()) release(); }
+    void hold(lt::error_code error = {}) {
+        std::lock_guard lock(reads->mutex);
+        reads->pieces.clear();
+        reads->writes = 0;
+        reads->hashError = error;
+        reads->holdHashes = true;
+    }
+    bool held() const {
+        std::lock_guard lock(reads->mutex);
+        return reads->pending.size() == 1;
+    }
+    std::vector<lt::piece_index_t> pieces() const {
+        std::lock_guard lock(reads->mutex);
+        return reads->pieces;
+    }
+    int writes() const { std::lock_guard lock(reads->mutex); return reads->writes; }
+};
+}
+
+TEST_CASE("Held adapter checks honor cancellation and newer activity intent", "[selected-recheck-engine][selected-recheck-held]") {
+    application();
+    for (int action : {0, 1, 2, 3}) {
+        DYNAMIC_SECTION("cancel=0 pause=1 stop=2 resume=3 action=" << action) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            TorrentEngine engine(state);
+            engine.configure(settings, {});
+            EngineDiskProbe disk(engine);
+            const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            if (action == 3) {
+                engine.pause(id, true);
+                REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userPaused; }));
+            }
+            const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+            disk.hold();
+            engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+            REQUIRE(eventually([&] { return disk.held(); }));
+            const auto token = jobSnapshot(engine, id).fileCheck.token;
+            CHECK_FALSE(jobSnapshot(engine, id).complete);
+            CHECK(jobSnapshot(engine, id).fileCheck.active);
+            CHECK(jobSnapshot(engine, id).fileCheck.checkedBytes == 0);
+            CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 8);
+            if (action == 0) engine.cancelFileRecheck(id, token);
+            else if (action == 1) engine.pause(id, true);
+            else if (action == 2) engine.stop(id);
+            else engine.pause(id, false);
+            REQUIRE(TorrentEngineTestAccess::call(engine, [id, action](auto &d) {
+                const auto &r = d.records.at(id);
+                return action == 0 ? r.fileCheck.canceling : r.userPaused == (action != 3);
+            }));
+            CHECK(jobSnapshot(engine, id).fileCheck.active);
+            CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
+            disk.release();
+            REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+            const auto job = jobSnapshot(engine, id);
+            REQUIRE(job.fileCheck.files.size() == 1);
+            CHECK(job.fileCheck.error.isEmpty());
+            CHECK(job.fileCheck.files[0].outcome == ((action == 0 || action == 2) ? FileCheckOutcome::Canceled : FileCheckOutcome::Verified));
+            CHECK(job.stopped == (action == 2));
+            const auto native = TorrentEngineTestAccess::status(engine, id);
+            CHECK(native.num_pieces == ((action == 0 || action == 2) ? 9 : 16));
+            if (action == 1 || action == 2) CHECK(bool(native.flags & lt::torrent_flags::paused));
+            else REQUIRE(eventually([&] { return !bool(TorrentEngineTestAccess::status(engine, id).flags & lt::torrent_flags::paused); }));
+            CHECK(disk.pieces().size() == ((action == 0 || action == 2) ? 1 : 8));
+            CHECK(disk.writes() == 0);
+            CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+            QString error;
+            CHECK_FALSE(RecheckJournal(state).pending(id, &error));
+            CHECK(error.isEmpty());
+            CHECK(engine.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Adapter teardown waits for held checks without restoring unchecked trust", "[selected-recheck-engine][selected-recheck-held]") {
+    application();
+    for (int action : {0, 1, 2}) {
+        DYNAMIC_SECTION("configure=0 remove=1 shutdown=2 action=" << action) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            TorrentEngine engine(state);
+            engine.configure(settings, {});
+            EngineDiskProbe disk(engine);
+            const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+            disk.hold();
+            engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+            REQUIRE(eventually([&] { return disk.held(); }));
+            std::atomic_bool delivered = false;
+            std::jthread late([release = disk.release, &delivered] {
+                std::this_thread::sleep_for(300ms);
+                delivered = true;
+                release();
+            });
+            if (action == 0) {
+                settings.uploadLimitKiB = 91;
+                const auto epoch = engine.configure(settings, {});
+                REQUIRE(TorrentEngineTestAccess::call(engine, [epoch, id](auto &d) {
+                    return d.listenerEpoch == epoch && d.records.at(id).handle.is_valid();
+                }));
+                CHECK(delivered.load());
+                CHECK_FALSE(jobSnapshot(engine, id).fileCheck.active);
+                CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 9);
+            } else if (action == 1) {
+                engine.remove(id, false);
+                REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return !d.records.contains(id); }));
+                CHECK(delivered.load());
+                CHECK(engine.jobs().isEmpty());
+            } else {
+                CHECK(engine.shutdownChecked());
+                CHECK(delivered.load());
+                const auto saved = savedJob(dir.filePath("state/jobs.json"), id);
+                const auto bytes = QByteArray::fromBase64(saved["resume"].toString().toLatin1());
+                lt::error_code error;
+                const auto params = lt::read_resume_data(lt::span<const char>(bytes.constData(), bytes.size()), error);
+                REQUIRE_FALSE(error);
+                CHECK(params.have_pieces.count() == 9);
+            }
+            CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
+            CHECK(disk.writes() == 0);
+            CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+            QString error;
+            CHECK_FALSE(RecheckJournal(state).pending(id, &error));
+            CHECK(error.isEmpty());
+            CHECK(engine.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Selected-check disk errors are explicit and cannot resume or write sources", "[selected-recheck-engine][selected-recheck-held]") {
+    application();
+    for (const auto code : {boost::system::errc::permission_denied, boost::system::errc::no_space_on_device}) {
+        DYNAMIC_SECTION("error=" << int(code)) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            TorrentEngine engine(dir.filePath("state"));
+            engine.configure(settings, {});
+            EngineDiskProbe disk(engine);
+            const auto id = engine.seedCreated(fixture(settings.downloadPath, lt::create_torrent::v1_only, true), settings.downloadPath);
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+            disk.hold(make_error_code(code));
+            engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+            REQUIRE(eventually([&] { return disk.held(); }));
+            disk.release();
+            REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+            const auto job = jobSnapshot(engine, id);
+            CHECK_FALSE(job.fileCheck.error.isEmpty());
+            CHECK_FALSE(job.error.isEmpty());
+            CHECK_FALSE(job.complete);
+            CHECK(job.paused);
+            REQUIRE(job.fileCheck.files.size() == 1);
+            CHECK(job.fileCheck.files[0].outcome == FileCheckOutcome::Unavailable);
+            CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 8);
+            CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0), lt::piece_index_t(1),
+                lt::piece_index_t(2), lt::piece_index_t(3), lt::piece_index_t(4), lt::piece_index_t(5),
+                lt::piece_index_t(6), lt::piece_index_t(7)});
+            CHECK(disk.writes() == 0);
+            CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+            CHECK(engine.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Large selected scopes keep owner admission bounded", "[selected-recheck-engine][selected-recheck-responsive]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    REQUIRE(QDir().mkpath(settings.downloadPath));
+    std::vector<lt::create_file_entry> entries;
+    QList<int> selected;
+    for (int i = 0; i < 10000; ++i) {
+        entries.emplace_back("bulk/" + std::to_string(i) + ".bin", 50 * 16384);
+        selected.append(i);
+    }
+    lt::create_torrent maker(entries, 16384, lt::create_torrent::v1_only);
+    for (int p = 0; p < 500000; ++p) maker.set_hash(lt::piece_index_t(p), lt::sha1_hash(std::string(20, 'h')));
+    const auto bytes = lt::bencode(maker.generate());
+    const auto input = dir.filePath("bulk.torrent");
+    QFile file(input);
+    REQUIRE(file.open(QIODevice::WriteOnly));
+    REQUIRE(file.write(bytes.data(), bytes.size()) == qint64(bytes.size()));
+    file.close();
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(input, {}, {}, true);
+    REQUIRE(eventually([&] { return engine.files(id).size() == 10000; }, 20000));
+    QElapsedTimer elapsed;
+    elapsed.start();
+    engine.recheckFiles(id, selected, jobSnapshot(engine, id).revision);
+    const auto admissionMs = elapsed.elapsed();
+    INFO("owner admission ms=" << admissionMs);
+    UNSCOPED_INFO("owner admission ms=" << admissionMs);
+    CHECK(admissionMs < 50);
+    engine.stop(id);
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Adapter selected checks preserve skipped-file partfile mappings and priorities", "[selected-recheck-engine][selected-recheck-held]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    REQUIRE(QDir().mkpath(dir.filePath("payload/boundary")));
+    std::vector<lt::create_file_entry> entries;
+    for (const auto &entry : {std::pair{"A", 8192}, std::pair{"B", 8192}, std::pair{"C", 32768}}) {
+        const auto path = dir.filePath("payload/boundary/" + QString::fromLatin1(entry.first));
+        QFile file(path);
+        REQUIRE(file.open(QIODevice::WriteOnly));
+        REQUIRE(file.write(QByteArray(entry.second, entry.first[0])) == entry.second);
+        entries.emplace_back("boundary/" + std::string(entry.first), entry.second);
+    }
+    lt::create_torrent maker(entries, 16384, lt::create_torrent::v1_only);
+    lt::error_code error;
+    lt::set_piece_hashes(maker, settings.downloadPath.toStdString(), error);
+    REQUIRE_FALSE(error);
+    const auto bytes = lt::bencode(maker.generate());
+    const auto input = dir.filePath("boundary.torrent");
+    QFile file(input);
+    REQUIRE(file.open(QIODevice::WriteOnly));
+    REQUIRE(file.write(bytes.data(), bytes.size()) == qint64(bytes.size()));
+    file.close();
+    REQUIRE(QFile::remove(dir.filePath("payload/boundary/B")));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    EngineDiskProbe disk(engine);
+    const auto id = engine.add(input, {}, {0, 2});
+    REQUIRE(eventually([&] { return engine.files(id).size() == 3 && !jobSnapshot(engine, id).checking; }));
+    // Feed one legitimate prior-download piece into native storage before the
+    // operation under test. B's skipped fragment belongs in the native partfile.
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        QByteArray block(16384, 'A');
+        std::fill(block.begin() + 8192, block.end(), 'B');
+        d.records.at(id).handle.add_piece(lt::piece_index_t(0), block.constData());
+        return true;
+    }));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    CHECK_FALSE(QFile::exists(dir.filePath("payload/boundary/B")));
+    const auto partfiles = QDir(settings.downloadPath).entryList({"*.parts"}, QDir::Files | QDir::Hidden);
+    REQUIRE(partfiles.size() == 1);
+    const auto partfile = QDir(settings.downloadPath).filePath(partfiles[0]);
+    const auto partBefore = hashFile(partfile);
+    const auto sourceBefore = hashFile(dir.filePath("payload/boundary/A"));
+    const auto priorities = TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).handle.get_file_priorities(); });
+    engine.stop(id);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).userStopped; }));
+    disk.hold();
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(eventually([&] { return disk.held(); }));
+    disk.release();
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+    REQUIRE(jobSnapshot(engine, id).fileCheck.files.size() == 1);
+    CHECK(jobSnapshot(engine, id).fileCheck.files[0].outcome == FileCheckOutcome::Verified);
+    CHECK(jobSnapshot(engine, id).stopped);
+    CHECK(TorrentEngineTestAccess::status(engine, id).num_pieces == 3);
+    CHECK(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.at(id).handle.get_file_priorities(); }) == priorities);
+    CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
+    CHECK(disk.writes() == 0);
+    CHECK_FALSE(QFile::exists(dir.filePath("payload/boundary/B")));
+    CHECK(hashFile(partfile) == partBefore);
+    CHECK(hashFile(dir.filePath("payload/boundary/A")) == sourceBefore);
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Another adapter job transfers while the chosen job waits for disk", "[selected-recheck-engine][selected-recheck-held]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    EngineDiskProbe disk(engine);
+    const auto chosen = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, chosen).complete; }));
+    const auto otherMetadata = fixture(settings.downloadPath, lt::create_torrent::v1_only, false, {}, true, {"other/payload.bin"});
+    const auto other = engine.add(otherMetadata);
+    REQUIRE(eventually([&] { return jobSnapshot(engine, other).complete; }));
+    disk.hold();
+    engine.recheckFiles(chosen, {0}, jobSnapshot(engine, chosen).revision);
+    REQUIRE(eventually([&] { return disk.held(); }));
+    auto peerSettings = sessionSettings(isolated(dir.filePath("download")), {});
+    peerSettings.set_str(lt::settings_pack::listen_interfaces, "127.0.0.1:0");
+    lt::session peer{lt::session_params(peerSettings)};
+    auto params = lt::load_torrent_file(otherMetadata.toStdString());
+    params.save_path = dir.filePath("download").toStdString();
+    params.flags &= ~(lt::torrent_flags::paused | lt::torrent_flags::auto_managed);
+    const auto download = peer.add_torrent(params);
+    REQUIRE(eventually([&] { return download.status().state == lt::torrent_status::downloading; }));
+    download.connect_peer({lt::make_address("127.0.0.1"), static_cast<unsigned short>(TorrentEngineTestAccess::port(engine))});
+    REQUIRE(eventually([&] { return download.status().is_seeding; }));
+    REQUIRE(eventually([&] { return hashFile(dir.filePath("download/other/payload.bin")) == hashFile(dir.filePath("payload/other/payload.bin")); }));
+    CHECK(jobSnapshot(engine, chosen).fileCheck.active);
+    CHECK(jobSnapshot(engine, chosen).fileCheck.checkedBytes == 0);
+    CHECK(TorrentEngineTestAccess::status(engine, chosen).num_peers == 0);
+    CHECK(TorrentEngineTestAccess::status(engine, other).total_payload_upload > 0);
+    CHECK(disk.pieces() == std::vector<lt::piece_index_t>{lt::piece_index_t(0)});
+    CHECK(disk.writes() == 0);
+    disk.release();
+    REQUIRE(eventually([&] { return !jobSnapshot(engine, chosen).fileCheck.active; }));
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Replacing selected payload under a stable root cannot publish an old descriptor result", "[selected-recheck-engine][selected-recheck-held][selected-recheck-identity]") {
+    application();
+    for (bool replaceDirectory : {false, true}) {
+        DYNAMIC_SECTION("directory=" << replaceDirectory) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            const auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            TorrentEngine engine(state);
+            engine.configure(settings, {});
+            EngineDiskProbe disk(engine);
+            const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            const auto identity = checkStorageIdentity(jobSnapshot(engine, id).savePath);
+            disk.hold();
+            engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+            REQUIRE(eventually([&] { return disk.held(); }));
+            if (replaceDirectory) {
+                REQUIRE(QDir().rename(dir.filePath("payload/bundle"), dir.filePath("old-bundle")));
+                REQUIRE(QDir().mkpath(dir.filePath("payload/bundle")));
+                REQUIRE(QFile::copy(dir.filePath("old-bundle/b.bin"), dir.filePath("payload/bundle/b.bin")));
+            } else REQUIRE(QFile::rename(dir.filePath("payload/bundle/a.bin"), dir.filePath("old-a.bin")));
+            QFile replacement(dir.filePath("payload/bundle/a.bin"));
+            REQUIRE(replacement.open(QIODevice::WriteOnly));
+            REQUIRE(replacement.write(QByteArray(131072, 'z')) == 131072);
+            replacement.close();
+            CHECK(checkStorageIdentity(jobSnapshot(engine, id).savePath) == identity);
+            disk.release();
+            REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+            CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+            CHECK_FALSE(jobSnapshot(engine, id).complete);
+            CHECK(jobSnapshot(engine, id).paused);
+            QString error;
+            CHECK(RecheckJournal(state).pending(id, &error));
+            CHECK_FALSE(engine.shutdownChecked());
+        }
+    }
+}
+
+TEST_CASE("Overdue disk completions retain recovery and block teardown success", "[selected-recheck-engine][selected-recheck-timeout]") {
+    application();
+    for (int action : {0, 1, 2}) {
+        DYNAMIC_SECTION("configure=0 remove=1 shutdown=2 action=" << action) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            auto settings = isolated(dir.filePath("payload"));
+            const auto state = dir.filePath("state");
+            QString id;
+            {
+                TorrentEngine engine(state);
+                engine.configure(settings, {});
+                EngineDiskProbe disk(engine);
+                id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+                REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+                const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+                disk.hold();
+                engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+                REQUIRE(eventually([&] { return disk.held(); }));
+                if (action == 0) {
+                    settings.uploadLimitKiB = 92;
+                    const auto epoch = engine.configure(settings, {});
+                    REQUIRE(TorrentEngineTestAccess::call(engine, [id, epoch](auto &d) {
+                        return d.listenerEpoch == epoch && d.records.contains(id) && !d.records.at(id).handle.is_valid();
+                    }));
+                    CHECK_FALSE(jobSnapshot(engine, id).error.isEmpty());
+                    CHECK_FALSE(jobSnapshot(engine, id).fileCheck.error.isEmpty());
+                    CHECK(jobSnapshot(engine, id).paused);
+                    CHECK_FALSE(disk.held());
+                } else if (action == 1) {
+                    engine.remove(id, true);
+                    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) { return d.records.contains(id); }));
+                    CHECK_FALSE(jobSnapshot(engine, id).error.isEmpty());
+                    CHECK(jobSnapshot(engine, id).paused);
+                    CHECK(QFile::exists(dir.filePath("payload/bundle/a.bin")));
+                    CHECK(disk.held());
+                    disk.release();
+                }
+                CHECK_FALSE(engine.shutdownChecked());
+                CHECK_FALSE(disk.held());
+                CHECK(disk.writes() == 0);
+                CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+                QString error;
+                CHECK(RecheckJournal(state).pending(id, &error));
+                CHECK(error.isEmpty());
+            }
+            TorrentEngine restored(state);
+            restored.configure(settings, {});
+            REQUIRE(eventually([&] { return !restored.jobs().isEmpty(); }));
+            CHECK(jobSnapshot(restored, id).fileCheck.recoveryRequired);
+            CHECK(jobSnapshot(restored, id).paused);
+            CHECK_FALSE(TorrentEngineTestAccess::active(restored));
+            CHECK(TorrentEngineTestAccess::call(restored, [id](auto &d) { return d.records.at(id).resume.have_pieces.count(); }) == 8);
+            CHECK(restored.shutdownChecked());
+        }
+    }
 }
 #endif

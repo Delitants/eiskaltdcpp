@@ -10,10 +10,10 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-30-selected-file-recheck-design.md`
 
-Status: approved for Native inline execution on 2026-09-30. Tasks 1-3 are complete;
-Task 4 has local generation-fenced admission, journaled native checking and
-restart recovery. Its extended I/O/interleaving acceptance, later milestones and
-installation/release acceptance remain pending. No Files UI action is enabled.
+Status: approved for Native inline execution on 2026-09-30. Tasks 1-4 are complete
+locally, including held-I/O/fault acceptance and conservative restart recovery.
+Scoped DC hash invalidation, native Files controls and integration/package/review
+acceptance remain pending. No Files UI action is enabled or app installed.
 
 ## Global Constraints
 
@@ -96,9 +96,11 @@ Valid interrupted scopes are conservatively checkpointed and remain paused;
 malformed or changed storage identities block the job. Real engine subprocess
 exits cover journal/result/finalization boundaries. The maintained dependency
 now saves the full conservative piece bitmap during selected checks rather
-than using the full checker's sequential prefix. Task 4 still needs extended
-held-I/O/cancellation, source-write and fault-interleaving acceptance; no UI
-activation, application installation or release proof is claimed.
+than using the full checker's sequential prefix. Extended held-I/O, partfile,
+source-write, independent transfer, payload-replacement and timeout acceptance
+pass. Maximum-scope owner admission fell from 71/73 ms to 2 ms. Focused adapter
+tests pass 30 cases / 750 assertions; the full backend passes 149 / 18,238 and
+native dependency tests pass 14 / 434. No UI, install or release proof is claimed.
 
 **Files:** Modify `torrent/TorrentEngine.h`, `torrent/TorrentEngine.cpp`, `torrent/TorrentTypes.h`, `tests/torrent/test_torrent.cpp`; use Tasks 1-3 components without reimplementing hashing.
 
@@ -107,9 +109,9 @@ activation, application installation or release proof is claimed.
 - [x] Add `[selected-recheck-engine]` tests to the existing private engine-probe translation unit. Assert stale revisions and invalid indices reject before storage invalidation, user priorities remain identical, completion progress stays separate, and requests for conflicting operations return visible reasons. Run RED.
 - [x] Implement validated admission, synchronous publication cancellation, worker preparation, journal begin, scoped invalidation and start in that order. Take no backend mutex while calling direct publication slots. Poll extension snapshots with bounded existing refresh cadence, reject stale tokens and keep the GUI responsive.
 - [x] Commit final resume state with matching generation before journal finish and restoring activity. Gate every save-resume reply by generation; never assign an older snapshot over a completed check. Missing/corrupt pieces become unavailable and redownload only under permitted activity.
-- [ ] Implement stopped local-only checking and source-read-only protection proven by Task 1; prepare must never advertise stale seed state. Cancel drains reads and conservatively invalidates unchecked affected pieces. Pause changes subsequent activity intent; Stop cancels and wins over old running state; moves/selection/priority changes reject during the check.
+- [x] Implement stopped local-only checking and source-read-only protection proven by Task 1; prepare must never advertise stale seed state. Cancel drains reads and conservatively invalidates unchecked affected pieces. Pause changes subsequent activity intent; Stop cancels and wins over old running state; moves/selection/priority changes reject during the check.
 - [x] Reconcile pending journals before normal `start`, completion or DC publication. Interrupted jobs remain paused, affected pieces untrusted, unrelated pieces intact. Offer recheck or explicit resume/redownload except read-only sources, which permit recheck only. Corrupt journal/unsafe paths block the job.
-- [ ] Test same-size replacement, moved/symlinked ancestor, delayed alerts, second-job traffic, configure/remove/shutdown during checks, disk-full, permission denial, cancellation, and restart. Verify zero source writes and zero direct-route fallback. Run `eiskalt-torrent-tests '[selected-recheck-engine]'` then the full backend suite; require zero failures. Commit as `Integrate selective checks with torrent lifecycle`.
+- [x] Test same-size replacement, moved/symlinked ancestor, delayed alerts, second-job traffic, configure/remove/shutdown during checks, disk-full, permission denial, cancellation, and restart. Verify zero source writes and zero direct-route fallback. Run `eiskalt-torrent-tests '[selected-recheck-engine]'` then the full backend suite; require zero failures. Commit as `Integrate selective checks with torrent lifecycle`.
 
 ### Task 5: Preserve Unrelated DC Hashes
 

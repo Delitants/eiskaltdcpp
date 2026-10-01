@@ -4,6 +4,7 @@
 #include <libtorrent/file_storage.hpp>
 #include <libtorrent/torrent_info.hpp>
 #include <algorithm>
+#include <vector>
 
 namespace eiskalt::torrent {
 namespace {
@@ -27,7 +28,8 @@ RecheckPlanResult planSelectedRecheck(const libtorrent::torrent_info &metadata,
     if(files.isEmpty())
         return {{},SelectedRecheckText::tr("Select at least one file to verify.")};
     const auto& fs=metadata.layout();
-    QSet<int> selected, pieces, affected;
+    QSet<int> selected;
+    std::vector<std::pair<int, int>> ranges;
     for(const int index : files) {
         if(index<0 || index>=fs.num_files())
             return {{},SelectedRecheckText::tr("The selected file is no longer present in Torrent metadata.")};
@@ -40,23 +42,41 @@ RecheckPlanResult planSelectedRecheck(const libtorrent::torrent_info &metadata,
         const int last=static_cast<int>(fs.last_piece_index_at_file(file));
         if(first<0 || last<first || last>=metadata.num_pieces())
             return {{},SelectedRecheckText::tr("Torrent metadata has an invalid verification piece range.")};
-        for(int piece=first;piece<=last;++piece) pieces.insert(piece);
+        ranges.emplace_back(first,last);
+    }
+    std::sort(ranges.begin(),ranges.end());
+    std::vector<std::pair<int, int>> merged;
+    for(const auto& range : ranges) {
+        if(merged.empty() || range.first>merged.back().second+1) merged.push_back(range);
+        else merged.back().second=std::max(merged.back().second,range.second);
     }
     RecheckPlan plan;
     plan.revision=revision;
     plan.selectedFiles=sorted(selected);
-    plan.pieces=sorted(pieces);
-    for(const int index : plan.pieces) {
-        if(index<0 || index>=metadata.num_pieces())
-            return {{},SelectedRecheckText::tr("Torrent metadata has an invalid verification piece range.")};
-        const auto piece=lt::piece_index_t(index);
-        for(const auto& slice : fs.map_block(piece,0,fs.piece_size(piece))) {
-            if(fs.pad_file_at(slice.file_index) || slice.size==0) continue;
-            affected.insert(static_cast<int>(slice.file_index));
-            plan.totalBytes+=slice.size;
+    qsizetype pieceCount=0;
+    for(const auto& range : merged) pieceCount+=range.second-range.first+1;
+    plan.pieces.reserve(pieceCount);
+    for(const auto& range : merged)
+        for(int p=range.first;p<=range.second;++p) plan.pieces.append(p);
+
+    // File offsets are ordered in the native layout. Intersect merged byte
+    // ranges once, instead of allocating and mapping every individual piece.
+    std::size_t cursor=0;
+    const qint64 pieceLength=fs.piece_length();
+    for(const auto file : fs.file_range()) {
+        if(fs.pad_file_at(file) || fs.file_size(file)==0) continue;
+        const qint64 begin=fs.file_offset(file), end=begin+fs.file_size(file);
+        while(cursor<merged.size() && (qint64(merged[cursor].second)+1)*pieceLength<=begin) ++cursor;
+        qint64 bytes=0;
+        for(auto r=cursor;r<merged.size() && qint64(merged[r].first)*pieceLength<end;++r) {
+            const auto first=std::max(begin,qint64(merged[r].first)*pieceLength);
+            const auto last=std::min(end,(qint64(merged[r].second)+1)*pieceLength);
+            bytes+=std::max<qint64>(0,last-first);
         }
+        if(bytes==0) continue;
+        plan.affectedFiles.append(static_cast<int>(file));
+        plan.totalBytes+=bytes;
     }
-    plan.affectedFiles=sorted(affected);
     return {std::move(plan),{}};
 }
 

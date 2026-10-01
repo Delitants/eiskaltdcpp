@@ -1,11 +1,11 @@
 # Selected-File Torrent Rechecking
 
 Status: specification and implementation plan approved on 2026-09-30. Native
-dependency, scope-planner and recovery-journal components are complete locally;
-native resume replies have a persisted generation fence. Local backend admission,
-journaled native checking and conservative restart recovery exist, including
-engine subprocess-exit tests. Extended lifecycle/fault acceptance and scoped DC
-hash invalidation remain pending; selected-check UI integration is not enabled.
+dependency, scope planner, recovery journal and backend lifecycle are complete
+locally, including generation-fenced checkpoints, held-I/O/fault acceptance and
+engine subprocess-exit recovery. Affected payload identities fence replaced files
+and directories. Scoped DC hash invalidation and later native UI/integration/
+package/review acceptance remain pending; selected-check UI is not enabled.
 
 The maintainer requested individual-file rechecking after visible whole-torrent
 recheck progress and Finder access. Those UI prerequisites exist in local commit
