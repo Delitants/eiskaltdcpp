@@ -19,6 +19,7 @@
 #include "stdinc.h"
 
 #include "ClientManager.h"
+#include "ScopedFunctor.h"
 
 #include "AdcHub.h"
 #include "ConnectionManager.h"
@@ -51,28 +52,58 @@ ClientManager::~ClientManager() {
 }
 
 Client* ClientManager::getClient(const string& aHubURL) {
-    Client* c;
-    if(Util::strnicmp("adc://", aHubURL.c_str(), 6) == 0) {
-        c = new AdcHub(ctx(), aHubURL, false);
-    } else if(Util::strnicmp("adcs://", aHubURL.c_str(), 7) == 0) {
-        c = new AdcHub(ctx(), aHubURL, true);
-    } else if(Util::strnicmp("nmdcs://", aHubURL.c_str(), 8) == 0) {
-        c = new NmdcHub(ctx(), aHubURL, true);
-    } else {
-        c = new NmdcHub(ctx(), aHubURL, false);
-    }
-
     {
-        Lock l(cs);
-        clients.push_back(c);
+        std::lock_guard<std::mutex> lock(clientLifecycleMutex);
+        if(clientLifecycle != ClientLifecycle::Running)
+            throw Exception("Client manager is shutting down");
+        ++clientOperations;
+    }
+    auto admitted = makeScopedFunctor([this] { finishClientOperation(); });
+    auto destroy = [](Client* client) { delete client; };
+    std::unique_ptr<Client, decltype(destroy)> c(nullptr, destroy);
+    if(Util::strnicmp("adc://", aHubURL.c_str(), 6) == 0) {
+        c.reset(new AdcHub(ctx(), aHubURL, false));
+    } else if(Util::strnicmp("adcs://", aHubURL.c_str(), 7) == 0) {
+        c.reset(new AdcHub(ctx(), aHubURL, true));
+    } else if(Util::strnicmp("nmdcs://", aHubURL.c_str(), 8) == 0) {
+        c.reset(new NmdcHub(ctx(), aHubURL, true));
+    } else {
+        c.reset(new NmdcHub(ctx(), aHubURL, false));
     }
 
     c->addListener(this);
+    {
+        Lock l(cs);
+        clients.push_back(c.get());
+    }
 
-    return c;
+    return c.release();
 }
 
 void ClientManager::putClient(Client* aClient) {
+    if(!aClient) return;
+    {
+        std::lock_guard<std::mutex> lock(clientLifecycleMutex);
+        if(!releasingClients.insert(aClient).second) return;
+        if(clientLifecycle == ClientLifecycle::Stopping) {
+            try { deferredClientReleases.push_back(aClient); }
+            catch(...) { releasingClients.erase(aClient); throw; }
+            return;
+        }
+        ++clientOperations;
+    }
+    auto admitted = makeScopedFunctor([this, aClient] { finishClientOperation(aClient); });
+    releaseClient(aClient);
+}
+
+void ClientManager::finishClientOperation(Client* released) {
+    std::lock_guard<std::mutex> lock(clientLifecycleMutex);
+    if(released) releasingClients.erase(released);
+    --clientOperations;
+    clientLifecycleChanged.notify_all();
+}
+
+void ClientManager::releaseClient(Client* aClient) {
     fire(ClientManagerListener::ClientDisconnected(), aClient);
     aClient->removeListeners();
 
@@ -82,6 +113,58 @@ void ClientManager::putClient(Client* aClient) {
     }
     aClient->shutdown();
     delete aClient;
+}
+
+void ClientManager::stopForShutdown() {
+    {
+        std::unique_lock<std::mutex> lock(clientLifecycleMutex);
+        clientLifecycleChanged.wait(lock, [this] {
+            return clientLifecycle != ClientLifecycle::Stopping;
+        });
+        if(clientLifecycle == ClientLifecycle::Stopped) {
+            if(clientStopFailure) std::rethrow_exception(clientStopFailure);
+            return;
+        }
+        clientLifecycle = ClientLifecycle::Stopping;
+        clientLifecycleChanged.wait(lock, [this] { return clientOperations == 0; });
+    }
+
+    std::exception_ptr failure;
+    try {
+        ctx().getTimerManager()->removeListener(this);
+        Client::List snapshot;
+        {
+            Lock lock(cs);
+            snapshot = clients;
+        }
+        // Admission is closed and releases are deferred, so raw clients stay
+        // alive across these barriers without holding a registry lock.
+        for(auto* client : snapshot) {
+            try { client->stopForShutdown(); }
+            catch(...) { if(!failure) failure = std::current_exception(); }
+        }
+    } catch(...) { failure = std::current_exception(); }
+
+    for(;;) {
+        Client::List releases;
+        {
+            std::lock_guard<std::mutex> lock(clientLifecycleMutex);
+            if(deferredClientReleases.empty()) {
+                clientStopFailure = failure;
+                clientLifecycle = ClientLifecycle::Stopped;
+                clientLifecycleChanged.notify_all();
+                break;
+            }
+            releases.swap(deferredClientReleases);
+        }
+        for(auto* client : releases) {
+            try { releaseClient(client); }
+            catch(...) { if(!failure) failure = std::current_exception(); }
+            std::lock_guard<std::mutex> lock(clientLifecycleMutex);
+            releasingClients.erase(client);
+        }
+    }
+    if(failure) std::rethrow_exception(failure);
 }
 
 size_t ClientManager::getUserCount() const {

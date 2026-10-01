@@ -34,6 +34,10 @@ template<class Hub> void stopHub(Hub& hub) {
     else hub.shutdown();
 }
 
+template<class Manager> void stopRegistry(Manager& manager) {
+    if constexpr(requires { manager.stopForShutdown(); }) manager.stopForShutdown();
+}
+
 template<class SocketType> bool drained(uint32_t timeout) {
     if constexpr(requires { SocketType::waitShutdown(timeout); })
         return SocketType::waitShutdown(timeout);
@@ -72,10 +76,127 @@ struct HubFixture {
         hub = context.getClientManager()->getClient(url);
     }
     ~HubFixture() {
-        fixture.ownedCtx->getClientManager()->putClient(hub);
+        if(hub) fixture.ownedCtx->getClientManager()->putClient(hub);
         BufferedSocket::waitShutdown();
     }
 };
+}
+
+TEST_CASE("Terminal registry stop retains clients and rejects late creation", "[hub-shutdown][client-registry-stop]") {
+    HubFixture fixture("adc://127.0.0.1:1");
+    auto& manager = *fixture.fixture.ownedCtx->getClientManager();
+    auto* second = manager.getClient("dchub://127.0.0.1:1");
+    stopRegistry(manager);
+    CHECK(manager.getClients().size() == 2);
+    Client* late = nullptr;
+    CHECK_THROWS_AS(late = manager.getClient("adc://127.0.0.1:2"), Exception);
+    if(late) manager.putClient(late);
+    fixture.hub->connect();
+    second->connect();
+    CHECK(fixture.hub->sock == nullptr);
+    CHECK(second->sock == nullptr);
+    stopRegistry(manager);
+    manager.putClient(second);
+    CHECK(manager.getClients().size() == 1);
+}
+
+TEST_CASE("Registry stop waits for an admitted client release without holding registry locks", "[hub-shutdown][client-registry-stop]") {
+    HubFixture fixture("adc://127.0.0.1:1");
+    auto& manager = *fixture.fixture.ownedCtx->getClientManager();
+    struct Listener : ClientManagerListener {
+        Semaphore entered, release;
+        std::atomic<bool> registryRead{false};
+        ClientManager& manager;
+        explicit Listener(ClientManager& owner) : manager(owner) { }
+        void on(ClientDisconnected, Client*) override {
+            entered.signal();
+            release.wait();
+            // A callback taking the registry lock must not deadlock the stop.
+            registryRead = manager.getUserCount() == 0;
+        }
+    } listener(manager);
+    manager.addListener(&listener);
+    auto* released = fixture.hub;
+    fixture.hub = nullptr;
+    auto releasing = std::async(std::launch::async, [&] { manager.putClient(released); });
+    REQUIRE(listener.entered.wait(3000));
+    Semaphore stopping;
+    auto stopped = std::async(std::launch::async, [&] { stopping.signal(); stopRegistry(manager); });
+    REQUIRE(stopping.wait(3000));
+    const auto result = stopped.wait_for(50ms);
+    listener.release.signal();
+    releasing.get();
+    REQUIRE(stopped.wait_for(3s) == std::future_status::ready);
+    stopped.get();
+    manager.removeListener(&listener);
+    CHECK(result == std::future_status::timeout);
+    CHECK(listener.registryRead.load());
+    CHECK(manager.getClients().empty());
+}
+
+TEST_CASE("Registry stop defers release during a hub callback and concurrent stops join", "[hub-shutdown][client-registry-stop]") {
+    for(const auto* protocol : {"adc", "dchub"}) {
+        Socket acceptor;
+        acceptor.create(Socket::TYPE_TCP, AF_INET);
+        acceptor.bind("0", "127.0.0.1");
+        acceptor.listen();
+        HubFixture fixture(string(protocol) + "://127.0.0.1:" + acceptor.getLocalPort());
+        auto& manager = *fixture.fixture.ownedCtx->getClientManager();
+        struct Listener : ClientListener {
+            Semaphore entered, release;
+            void on(Connected, Client*) override { entered.signal(); release.wait(); }
+        } listener;
+        struct RegistryListener : ClientManagerListener {
+            std::atomic<int> releases{0};
+            void on(ClientDisconnected, Client*) override { ++releases; }
+        } registryListener;
+        manager.addListener(&registryListener);
+        fixture.hub->addListener(&listener);
+        fixture.hub->connect();
+        REQUIRE(acceptor.wait(3000, Socket::WAIT_READ) & Socket::WAIT_READ);
+        Socket peer;
+        peer.accept(acceptor);
+        REQUIRE(listener.entered.wait(3000));
+        Semaphore stopping;
+        auto stopped = std::async(std::launch::async, [&] { stopping.signal(); stopRegistry(manager); });
+        REQUIRE(stopping.wait(3000));
+        // Wait until terminal admission is observable, not just thread entry.
+        bool admissionClosed = false;
+        int earlyCreations = 0;
+        const auto deadline = std::chrono::steady_clock::now() + 1s;
+        while(std::chrono::steady_clock::now() < deadline) {
+            try {
+                auto* late = manager.getClient("adc://127.0.0.1:1");
+                ++earlyCreations;
+                manager.putClient(late);
+            } catch(const Exception&) { admissionClosed = true; break; }
+            Thread::sleep(1);
+        }
+        Semaphore joining;
+        auto anotherStop = std::async(std::launch::async, [&] { joining.signal(); stopRegistry(manager); });
+        REQUIRE(joining.wait(3000));
+        const auto previousNotifications = registryListener.releases.load();
+        auto* released = fixture.hub;
+        fixture.hub = nullptr;
+        auto releasing = std::async(std::launch::async, [&] { manager.putClient(released); });
+        const auto releaseResult = releasing.wait_for(50ms);
+        const auto stopResult = stopped.wait_for(0ms);
+        const auto secondResult = anotherStop.wait_for(50ms);
+        const auto notifications = registryListener.releases.load();
+        listener.release.signal();
+        releasing.get();
+        stopped.get();
+        anotherStop.get();
+        manager.removeListener(&registryListener);
+        CHECK(admissionClosed);
+        CHECK(releaseResult == std::future_status::ready);
+        CHECK(stopResult == std::future_status::timeout);
+        CHECK(secondResult == std::future_status::timeout);
+        CHECK(notifications == previousNotifications);
+        CHECK(registryListener.releases.load() == earlyCreations + 1);
+        CHECK(manager.getClients().empty());
+        CHECK(drained<BufferedSocket>(3000));
+    }
 }
 
 TEST_CASE("Stopped reconnect gates cannot be reopened by late completion or reset", "[hub-shutdown]") {

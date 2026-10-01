@@ -29,6 +29,11 @@
 #include "Socket.h"
 #include "TimerManager.h"
 
+#include <condition_variable>
+#include <exception>
+#include <mutex>
+#include <set>
+
 namespace dcpp {
 
 class UserCommand;
@@ -38,8 +43,15 @@ class ClientManager : public Speaker<ClientManagerListener>,
         private TimerManagerListener, public ContextAware
 {
 public:
+    /// Throws Exception when terminal shutdown has closed client admission.
     Client* getClient(const string& aHubURL);
     void putClient(Client* aClient);
+    /// Terminal, non-destructive hub stop. Drains admitted registry operations
+    /// and callbacks; releases arriving during the stop are deferred until then.
+    /// Keep this manager alive and serialize manual Client operations with stop.
+    /// Never call from a callback or while holding registry/listener locks.
+    /// Socket resource destruction still requires BufferedSocket::waitShutdown.
+    void stopForShutdown();
 
     size_t getUserCount() const;
     int64_t getAvailable() const;
@@ -190,6 +202,18 @@ private:
 
     Client::List clients;
     mutable CriticalSection cs;
+
+    enum class ClientLifecycle { Running, Stopping, Stopped };
+    std::mutex clientLifecycleMutex;
+    std::condition_variable clientLifecycleChanged;
+    ClientLifecycle clientLifecycle = ClientLifecycle::Running;
+    size_t clientOperations = 0;
+    std::set<Client*> releasingClients;
+    Client::List deferredClientReleases;
+    std::exception_ptr clientStopFailure;
+
+    void finishClientOperation(Client* released = nullptr);
+    void releaseClient(Client* client);
 
     UserMap users;
     OnlineMap onlineUsers;
