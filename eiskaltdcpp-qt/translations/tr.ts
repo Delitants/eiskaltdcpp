@@ -3020,6 +3020,10 @@ Downloaded: %3 Uploaded: %4</source>
             <source>Public Hubs</source>
             <translation>Herkese Açık Hub'lar</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hublar: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7731,6 +7735,14 @@ etkinleştirildiyse, dosya arama diyaloğu açılmadan indirilecektir.</translat
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Hubları filtrele</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Filtreyi temizle</translation>
         </message>
     </context>
     <context>

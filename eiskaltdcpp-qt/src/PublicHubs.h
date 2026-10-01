@@ -85,6 +85,7 @@ private:
 
     void updateList();
     void updateStatusText();
+    void updateHubCount();
     QString statusText;
 
     dcpp::HubEntryList entries;

@@ -3016,6 +3016,10 @@ Letöltve: %3 Feltöltve: %4</translation>
             <source>Public Hubs</source>
             <translation>Publikus hubok</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hubok: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7723,6 +7727,14 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Hubok szűrése</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Szűrő törlése</translation>
         </message>
     </context>
     <context>

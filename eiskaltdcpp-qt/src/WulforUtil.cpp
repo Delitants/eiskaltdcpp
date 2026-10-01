@@ -733,6 +733,9 @@ static QString countryCodeFromLabel(QString label)
 
     const QString normalized = label.simplified().toLower();
     static const QHash<QString, QString> aliases = {
+        {QStringLiteral("antarctica"), QStringLiteral("AQ")},
+        {QStringLiteral("bosnia and herzegovina"), QStringLiteral("BA")},
+        {QStringLiteral("bosnia & herzegovina"), QStringLiteral("BA")},
         {QStringLiteral("russian federation"), QStringLiteral("RU")},
         {QStringLiteral("czech republic"), QStringLiteral("CZ")},
         {QStringLiteral("united kingdom"), QStringLiteral("GB")},

@@ -2951,6 +2951,10 @@ Downloaded: %3 Uploaded: %4</source>
             <source>Public Hubs</source>
             <translation type="unfinished" />
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hub: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7622,6 +7626,14 @@ in options, file will be downloaded without opening search dialog.</source>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Lọc hub</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Xóa bộ lọc</translation>
         </message>
     </context>
     <context>

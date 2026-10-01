@@ -2996,6 +2996,10 @@ Pobrano: %3 Wysłano: %4</translation>
             <source>Public Hubs</source>
             <translation>Huby publiczne</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Huby: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7703,6 +7707,14 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Filtruj huby</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Wyczyść filtr</translation>
         </message>
     </context>
     <context>

@@ -243,6 +243,9 @@ void PublicHubModel::sort(int column, Qt::SortOrder order) {
 }
 
 void PublicHubModel::clearModel(){
+    if (rootItem->childItems.isEmpty())
+        return;
+
     emit layoutAboutToBeChanged();
 
     beginRemoveRows(QModelIndex(), 0, rootItem->childCount()-1);

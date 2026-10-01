@@ -2946,6 +2946,10 @@ Downloaded: %3 Uploaded: %4</source>
             <source>Public Hubs</source>
             <translation type="unfinished" />
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hubak: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7617,6 +7621,14 @@ in options, file will be downloaded without opening search dialog.</source>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Hubak iragazi</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Iragazkia garbitu</translation>
         </message>
     </context>
     <context>

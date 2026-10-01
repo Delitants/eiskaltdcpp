@@ -14,6 +14,23 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_public_hub_filter_and_counter_are_translated(self):
+        captions = {("PublicHubs", "Hubs: %1 / %2"),
+                    ("UIPublicHubs", "Filter hubs"),
+                    ("UIPublicHubs", "Clear filter")}
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            for key in captions:
+                with self.subTest(language=path.stem, caption=key[1]):
+                    translation = entries.get(key)
+                    self.assertIsNotNone(translation)
+                    self.assertNotIn(translation.get("type"), {"unfinished", "obsolete", "vanished"})
+                    self.assertTrue("".join(translation.itertext()).strip())
+                    self.assertEqual(Counter(re.findall(r"%[12]", key[1])),
+                                     Counter(re.findall(r"%[12]", "".join(translation.itertext()))))
+
     def test_selected_file_verification_controls_are_translated(self):
         captions = {"Recheck selected files...", "Cancel file check", "Verification",
                     "Rechecking selected files... %1%", "Canceling selected-file check..."}

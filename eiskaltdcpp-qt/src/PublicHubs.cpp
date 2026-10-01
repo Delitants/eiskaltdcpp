@@ -11,7 +11,6 @@
  */
 
 #include "PublicHubs.h"
-#include "ViewLayout.h"
 #include "dcpp/DCPlusPlus.h"
 #include "MainWindow.h"
 #include "WulforSettings.h"
@@ -38,9 +37,14 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 
     setUnload(false);
 
-    model = new PublicHubModel();
+    model = new PublicHubModel(this);
+    proxy = new PublicHubProxyModel();
+    proxy->setParent(this);
+    proxy->setDynamicSortFilter(true);
+    proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    proxy->setSourceModel(model);
 
-    treeView->setModel(model);
+    treeView->setModel(proxy);
     treeView->setItemDelegate(new AutoToolTipDelegate(treeView));
     treeView->setCursor(Qt::ArrowCursor);
     treeView->viewport()->setCursor(Qt::ArrowCursor);
@@ -61,7 +65,15 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 
     comboBox_FILTER->setCurrentIndex(COLUMN_PHUB_DESC);
 
-    frame->hide();
+    proxy->setFilterKeyColumn(comboBox_FILTER->currentIndex());
+    connect(lineEdit_FILTER, &QLineEdit::textChanged, proxy, &QSortFilterProxyModel::setFilterFixedString);
+    connect(comboBox_FILTER, qOverload<int>(&QComboBox::currentIndexChanged), this, &PublicHubs::slotFilterColumnChanged);
+    for (QAbstractItemModel *itemModel : {static_cast<QAbstractItemModel *>(model),
+                                        static_cast<QAbstractItemModel *>(proxy)}) {
+        connect(itemModel, &QAbstractItemModel::rowsInserted, this, &PublicHubs::updateHubCount);
+        connect(itemModel, &QAbstractItemModel::rowsRemoved, this, &PublicHubs::updateHubCount);
+        connect(itemModel, &QAbstractItemModel::modelReset, this, &PublicHubs::updateHubCount);
+    }
 
     entries = dcCtx().getFavoriteManager()->getPublicHubs();
 
@@ -76,7 +88,7 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     treeView->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    toolButton_CLOSEFILTER->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
+    toolButton_CLOSEFILTER->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITCLEAR));
     pushButton_REFRESH->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiRELOAD));
     pushButton_REFRESH->setAutoDefault(false);
 
@@ -88,7 +100,7 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
     connect(treeView, &QTreeView::customContextMenuRequested, this, &PublicHubs::slotContextMenu);
     connect(treeView, &QTreeView::doubleClicked, this, &PublicHubs::slotDoubleClicked);
     connect(treeView->header(), &QHeaderView::customContextMenuRequested, this, &PublicHubs::slotHeaderMenu);
-    connect(toolButton_CLOSEFILTER, &QToolButton::clicked, this, &PublicHubs::slotFilter);
+    connect(toolButton_CLOSEFILTER, &QToolButton::clicked, lineEdit_FILTER, &QLineEdit::clear);
     connect(comboBox_HUBS, qOverload<int>(&QComboBox::activated), this, &PublicHubs::slotHubChanged);
     connect(pushButton_REFRESH, &QPushButton::clicked, this, &PublicHubs::slotRefresh);
     connect(qtCtx()->settings(), &WulforSettings::strValueChanged, this, &PublicHubs::slotSettingsChanged);
@@ -101,9 +113,6 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 PublicHubs::~PublicHubs(){
     qtCtx()->settings()->setVar(WS_PUBLICHUBS_STATE, treeView->header()->saveState());
     
-    delete model;
-    delete proxy;
-
     dcCtx().getFavoriteManager()->removeListener(this);
 }
 
@@ -113,10 +122,8 @@ bool PublicHubs::eventFilter(QObject *obj, QEvent *e){
     if (e->type() == QEvent::KeyRelease){
         QKeyEvent *k_e = reinterpret_cast<QKeyEvent*>(e);
 
-        if (static_cast<LineEdit*>(obj) == lineEdit_FILTER && k_e->key() == Qt::Key_Escape){
+        if (obj == lineEdit_FILTER && k_e->key() == Qt::Key_Escape){
             lineEdit_FILTER->clear();
-
-            requestFilter();
 
             return true;
         }
@@ -141,6 +148,12 @@ void PublicHubs::updateStatusText() {
         statusText, Qt::ElideRight, label_STATUS->contentsRect().width()));
 }
 
+void PublicHubs::updateHubCount() {
+    const QString text = tr("Hubs: %1 / %2").arg(proxy->rowCount()).arg(model->rowCount());
+    label_HUBCOUNT->setText(text);
+    label_HUBCOUNT->setAccessibleName(text);
+}
+
 void PublicHubs::updateList(){
     if (!model)
         return;
@@ -161,6 +174,7 @@ void PublicHubs::updateList(){
     }
 
     treeView->resizeColumnToContents(COLUMN_PHUB_COUNTRY);
+    updateHubCount();
 }
 
 void PublicHubs::onFinished(const QString &stat){
@@ -260,34 +274,9 @@ void PublicHubs::slotDoubleClicked(const QModelIndex &index){
 }
 
 void PublicHubs::slotFilter(){
-    if (frame->isVisible()){
-        view_layout::setModelPreservingHeader(treeView, model);
-
-        disconnect(lineEdit_FILTER, &QLineEdit::textChanged, proxy, &QSortFilterProxyModel::setFilterFixedString);
-
-        delete proxy;
-        proxy = nullptr;
-    }
-    else {
-        proxy = new PublicHubProxyModel();
-        proxy->setDynamicSortFilter(true);
-        proxy->setFilterFixedString(lineEdit_FILTER->text());
-        proxy->setFilterCaseSensitivity(Qt::CaseInsensitive);
-        proxy->setFilterKeyColumn(comboBox_FILTER->currentIndex());
-        proxy->setSourceModel(model);
-
-        view_layout::setModelPreservingHeader(treeView, proxy);
-
-        connect(lineEdit_FILTER, &QLineEdit::textChanged, proxy, &QSortFilterProxyModel::setFilterFixedString);
-        connect(comboBox_FILTER, qOverload<int>(&QComboBox::currentIndexChanged), this, &PublicHubs::slotFilterColumnChanged);
-
-        lineEdit_FILTER->setFocus();
-
-        if (!lineEdit_FILTER->text().isEmpty())
-            lineEdit_FILTER->selectAll();
-    }
-
-    frame->setVisible(!frame->isVisible());
+    lineEdit_FILTER->setFocus(Qt::ShortcutFocusReason);
+    if (!lineEdit_FILTER->text().isEmpty())
+        lineEdit_FILTER->selectAll();
 }
 
 void PublicHubs::slotHubChanged(int pos){
@@ -317,8 +306,10 @@ void PublicHubs::slotFilterColumnChanged(){
 }
 
 void PublicHubs::slotSettingsChanged(const QString &key, const QString&){
-    if (key == WS_TRANSLATION_FILE)
+    if (key == WS_TRANSLATION_FILE) {
         retranslateUi(this);
+        updateHubCount();
+    }
 }
 
 void PublicHubs::on(DownloadStarting, const std::string& l) noexcept{

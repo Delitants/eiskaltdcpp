@@ -3001,6 +3001,10 @@ Téléchargé: %3 Envoyé: %4</translation>
             <source>Public Hubs</source>
             <translation>Serveurs publics</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hubs : %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7711,6 +7715,14 @@ de sources alternatives est activée, le fichier sera téléchargé sans ouvrir 
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Filtrer les hubs</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Effacer le filtre</translation>
         </message>
     </context>
     <context>

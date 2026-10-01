@@ -3015,6 +3015,10 @@ Scaricato: %3 Caricato: %4</translation>
             <source>Public Hubs</source>
             <translation>Hub pubblici</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hub: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7721,6 +7725,14 @@ nelle opzioni, il file sarà scaricato senza aprire una finestra di ricerca.</tr
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Filtra hub</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Cancella filtro</translation>
         </message>
     </context>
     <context>

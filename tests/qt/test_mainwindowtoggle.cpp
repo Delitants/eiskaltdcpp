@@ -40,6 +40,7 @@
 #include <QDockWidget>
 #include <QElapsedTimer>
 #include <QFile>
+#include <QFrame>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QLabel>
@@ -48,7 +49,9 @@
 #include <QPointer>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QSignalSpy>
 #include <QStandardItemModel>
+#include <QStyleHints>
 #include <QTemporaryDir>
 #include <QTabBar>
 #include <QTest>
@@ -212,6 +215,182 @@ TEST_CASE("Public hubs keeps its source selector in a compact footer", "[qt][mai
               < sources->mapTo(&hubs, QPoint()).x());
     }
     CHECK_FALSE(fixture.core->getFavoriteManager()->isDownloading());
+}
+
+TEST_CASE("Public hubs keeps an available filter and live visible hub count", "[qt][mainwindow][public-hubs]")
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    struct RestoreScheme {
+        bool requested = false;
+        ~RestoreScheme() { if (requested) qApp->styleHints()->unsetColorScheme(); }
+    } appearance;
+    const auto scheme = qEnvironmentVariable("EISKALT_QA_PUBLIC_HUBS_SCHEME");
+    if (!scheme.isEmpty()) {
+        REQUIRE((scheme == "light" || scheme == "dark"));
+        const auto desired = scheme == "dark" ? Qt::ColorScheme::Dark : Qt::ColorScheme::Light;
+        appearance.requested = true;
+        qApp->styleHints()->setColorScheme(desired);
+        QTest::qWait(50);
+        REQUIRE(qApp->styleHints()->colorScheme() == desired);
+    }
+#endif
+    IsolatedMainWindow fixture;
+    fixture.core->getSettingsManager()->set(dcpp::SettingsManager::HUBLIST_SERVERS,
+                                           "qa://offline-only");
+    PublicHubs hubs(*fixture.core);
+    hubs.resize(900, 550);
+    hubs.show();
+    QTest::qWait(30);
+    auto *frame = child<QFrame>(&hubs, "frame");
+    CHECK(frame->isVisible());
+    auto *count = child<QLabel>(&hubs, "label_HUBCOUNT");
+    auto *filter = child<QLineEdit>(&hubs, "lineEdit_FILTER");
+    auto *column = child<QComboBox>(&hubs, "comboBox_FILTER");
+    auto *table = child<QTreeView>(&hubs, "treeView");
+    auto *proxy = qobject_cast<PublicHubProxyModel *>(table->model());
+    REQUIRE(proxy);
+    auto *source = qobject_cast<PublicHubModel *>(proxy->sourceModel());
+    REQUIRE(source);
+    CHECK(count->text() == "Hubs: 0 / 0");
+
+    const auto add = [source](const QString &name, const QString &description,
+                             const QString &country = QStringLiteral("Ukraine")) {
+        source->addResult({name, description, 12, "dchub://offline.invalid", country,
+                           qlonglong(1024), 0, 0, 0, 0, 0.0, ""}, nullptr);
+    };
+    add("Alpha", "Music");
+    add("Beta", "Films");
+    add("Gamma", "Music and films");
+    CHECK(count->text() == "Hubs: 3 / 3");
+    filter->setText("mUsIc");
+    CHECK(table->model()->rowCount() == 2);
+    CHECK(count->text() == "Hubs: 2 / 3");
+    column->setCurrentIndex(COLUMN_PHUB_NAME);
+    CHECK(table->model()->rowCount() == 0);
+    CHECK(count->text() == "Hubs: 0 / 3");
+    filter->setText("ALPHA");
+    CHECK(count->text() == "Hubs: 1 / 3");
+    CHECK(table->model()->index(0, COLUMN_PHUB_NAME).data().toString() == "Alpha");
+
+    table->header()->resizeSection(COLUMN_PHUB_DESC, 233);
+    table->sortByColumn(COLUMN_PHUB_NAME, Qt::DescendingOrder);
+    hubs.requestFilter();
+    hubs.requestFilter();
+    CHECK(frame->isVisible());
+    CHECK(filter->hasFocus());
+    CHECK(filter->selectedText() == "ALPHA");
+    CHECK(table->header()->sectionSize(COLUMN_PHUB_DESC) == 233);
+    CHECK(table->header()->sortIndicatorOrder() == Qt::DescendingOrder);
+    QTest::keyClick(filter, Qt::Key_Escape);
+    CHECK(frame->isVisible());
+    CHECK(filter->text().isEmpty());
+    CHECK(count->text() == "Hubs: 3 / 3");
+    filter->setText("Beta");
+    QTest::mouseClick(child<QToolButton>(&hubs, "toolButton_CLOSEFILTER"), Qt::LeftButton);
+    CHECK(frame->isVisible());
+    CHECK(filter->text().isEmpty());
+    CHECK(count->text() == "Hubs: 3 / 3");
+
+    filter->setText("ALPHA");
+    source->clearModel();
+    CHECK(count->text() == "Hubs: 0 / 0");
+    add("Alpha refreshed", "Music");
+    add("Other", "Music");
+    CHECK(filter->text() == "ALPHA");
+    CHECK(count->text() == "Hubs: 1 / 2");
+    source->clearModel();
+    source->clearModel();
+    CHECK(count->text() == "Hubs: 0 / 0");
+    for (int width : {900, 500, 360}) {
+        hubs.resize(width, 550);
+        QTest::qWait(30);
+        INFO("Requested width " << width << ", actual " << hubs.width());
+        CHECK(hubs.width() == width);
+        CHECK(filter->isVisible());
+        CHECK(count->isVisible());
+        CHECK(count->mapTo(&hubs, count->rect().bottomRight()).x() < width);
+        CHECK(filter->width() >= 40);
+    }
+    const auto capture = qEnvironmentVariable("EISKALT_QA_PUBLIC_HUBS_IMAGE");
+    if (!capture.isEmpty()) {
+        filter->clear();
+        add("Antarctic hub", "Music", "Antarctica");
+        add("Bosnian hub", "Films", "Bosnia and Herzegovina");
+        hubs.resize(900, 550);
+        QTest::qWait(30);
+        REQUIRE(hubs.grab().save(capture));
+    }
+    CHECK_FALSE(fixture.core->getFavoriteManager()->isDownloading());
+}
+
+TEST_CASE("Empty public hub refresh emits no invalid removal range", "[qt][mainwindow][public-hubs]")
+{
+    PublicHubModel model;
+    QSignalSpy removals(&model, &QAbstractItemModel::rowsAboutToBeRemoved);
+    model.clearModel();
+    CHECK(removals.isEmpty());
+    model.addResult({"Hub", "", 1, "dchub://offline.invalid", "Ukraine",
+                     qlonglong(0), 0, 0, 0, 0, 0.0, ""}, nullptr);
+    model.clearModel();
+    REQUIRE(removals.count() == 1);
+    CHECK(removals.at(0).at(1).toInt() == 0);
+    CHECK(removals.at(0).at(2).toInt() == 0);
+    model.clearModel();
+    CHECK(removals.count() == 1);
+}
+
+TEST_CASE("Public hub captions load and refresh from compiled catalogs", "[.public-hubs-i18n][qt]")
+{
+    const QString directory = qEnvironmentVariable("EISKALT_QA_PUBLIC_HUBS_QMS");
+    REQUIRE_FALSE(directory.isEmpty());
+    IsolatedMainWindow fixture;
+    fixture.core->getSettingsManager()->set(dcpp::SettingsManager::HUBLIST_SERVERS,
+                                           "qa://offline-only");
+    PublicHubs hubs(*fixture.core);
+    hubs.resize(600, 550);
+    hubs.show();
+    auto *count = child<QLabel>(&hubs, "label_HUBCOUNT");
+    auto *filter = child<QLineEdit>(&hubs, "lineEdit_FILTER");
+    auto *clear = child<QToolButton>(&hubs, "toolButton_CLOSEFILTER");
+    const QStringList catalogs = QDir(directory).entryList({"*.qm"}, QDir::Files);
+    REQUIRE(catalogs.size() == 25);
+    for (const auto &catalog : catalogs) {
+        INFO(catalog.toStdString());
+        QTranslator translator;
+        REQUIRE(translator.load(directory + '/' + catalog));
+        REQUIRE(QCoreApplication::installTranslator(&translator));
+        REQUIRE(QMetaObject::invokeMethod(&hubs, "slotSettingsChanged",
+            Q_ARG(QString, WS_TRANSLATION_FILE), Q_ARG(QString, catalog)));
+        const auto translatedCount = translator.translate("PublicHubs", "Hubs: %1 / %2");
+        REQUIRE_FALSE(translatedCount.isEmpty());
+        CHECK(count->text() == translatedCount.arg(0).arg(0));
+        CHECK(count->accessibleName() == count->text());
+        const auto translatedFilter = translator.translate("UIPublicHubs", "Filter hubs");
+        REQUIRE_FALSE(translatedFilter.isEmpty());
+        CHECK(filter->placeholderText() == translatedFilter);
+        CHECK(clear->toolTip() == translator.translate("UIPublicHubs", "Clear filter"));
+        QCoreApplication::removeTranslator(&translator);
+    }
+}
+
+TEST_CASE("Country labels display Antarctica and Bosnia flags", "[qt][mainwindow][public-hubs][country-flags]")
+{
+    CHECK(WulforUtil::flaggedCountryLabel("Antarctica")
+          == QStringLiteral("\U0001F1E6\U0001F1F6 Antarctica"));
+    CHECK(WulforUtil::flaggedCountryLabel("  ANTARCTICA  ")
+          == QStringLiteral("\U0001F1E6\U0001F1F6 ANTARCTICA"));
+    CHECK(WulforUtil::flaggedCountryLabel("Bosnia and Herzegovina")
+          == QStringLiteral("\U0001F1E7\U0001F1E6 Bosnia and Herzegovina"));
+    CHECK(WulforUtil::flaggedCountryLabel("Bosnia & Herzegovina")
+          == QStringLiteral("\U0001F1E7\U0001F1E6 Bosnia & Herzegovina"));
+    CHECK(WulforUtil::flaggedCountryLabel("Antarctica", "AQ")
+          == QStringLiteral("\U0001F1E6\U0001F1F6 Antarctica"));
+    CHECK(WulforUtil::flaggedCountryLabel("Unknown country") == "Unknown country");
+    PublicHubModel model;
+    model.addResult({"Antarctic hub", "", 1, "dchub://offline.invalid", "Antarctica",
+                     qlonglong(0), 0, 0, 0, 0, 0.0, ""}, nullptr);
+    CHECK(model.index(0, COLUMN_PHUB_COUNTRY).data().toString()
+          == QStringLiteral("\U0001F1E6\U0001F1F6 Antarctica"));
 }
 
 TEST_CASE("Remote file rows retain scalable extension icons", "[qt][mainwindow][file-extension-icons]")

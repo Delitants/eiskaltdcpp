@@ -447,6 +447,10 @@ if (BUILD_TESTS AND USE_TORRENT)
         COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[hub-selection]")
     set_tests_properties(eiskalt-hub-user-selection PROPERTIES
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 90)
+    add_test(NAME eiskalt-public-hubs
+        COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests> "[public-hubs],[public-hubs-footer]")
+    set_tests_properties(eiskalt-public-hubs PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 90)
     foreach (_ui_layout IN ITEMS multiline singleline sidebar)
         add_test(NAME eiskalt-ui-followup-${_ui_layout}
             COMMAND $<TARGET_FILE:eiskalt-mainwindow-toggle-tests>

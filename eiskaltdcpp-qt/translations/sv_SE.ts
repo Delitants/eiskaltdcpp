@@ -3020,6 +3020,10 @@ Nedladdat: %3 Uppladdat: %4</translation>
             <source>Public Hubs</source>
             <translation>Publika hubbar</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Hubbar: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7732,6 +7736,14 @@ aktiverad i inställningarna, kommer filen att laddas ned utan att sökfönstret
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Filtrera hubbar</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Rensa filter</translation>
         </message>
     </context>
     <context>

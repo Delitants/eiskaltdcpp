@@ -3013,6 +3013,10 @@ Staženo: %3 Odesláno: %4</translation>
             <source>Public Hubs</source>
             <translation>Veřejné huby</translation>
         </message>
+        <message>
+            <source>Hubs: %1 / %2</source>
+            <translation>Huby: %1 / %2</translation>
+        </message>
     </context>
     <context>
         <name>PublicHubsList</name>
@@ -7720,6 +7724,14 @@ hledáni alternativ, soubor se stáhne bez otevření dialogu pro hledání.</tr
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Filter hubs</source>
+            <translation>Filtrovat huby</translation>
+        </message>
+        <message>
+            <source>Clear filter</source>
+            <translation>Vymazat filtr</translation>
         </message>
     </context>
     <context>
