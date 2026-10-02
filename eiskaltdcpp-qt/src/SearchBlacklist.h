@@ -42,7 +42,8 @@ public:
 
     bool ok(const QString &exp, Argument type);
     QList<QString> getList(Argument arg) const { return (list[arg]); }
-    void setList(Argument arg, const QList<QString> &l) { list[arg] = l; }
+    void setList(Argument arg, const QList<QString> &l) { if (!quitPrepared) list[arg] = l; }
+    [[nodiscard]] bool saveForQuitChecked();
 
 private:
     friend class QtContext;  // QtContext owns and constructs us
@@ -51,4 +52,5 @@ private:
     void saveLists();
 
     QList<QString> list[2];
+    bool quitPrepared = false, quitSaved = false;
 };

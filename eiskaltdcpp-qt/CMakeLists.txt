@@ -68,6 +68,7 @@ list(APPEND SRCS src/updates/UpdateFeedVerifier.cpp)
 list(APPEND SRCS src/updates/UnsupportedUpdateBackend.cpp)
 list(APPEND SRCS src/updates/UpdateLoopbackBridge.cpp)
 list(APPEND SRCS src/updates/UpdatePolicy.cpp src/updates/UpdateController.cpp)
+list(APPEND SRCS src/updates/ApplicationQuitCoordinator.cpp)
 
 if (NOT HAIKU)
     list (APPEND SRCS src/qtsingleapp/qtsinglecoreapplication.cpp)
@@ -413,6 +414,7 @@ if (BUILD_TESTS AND USE_TORRENT)
     add_executable(eiskalt-mainwindow-toggle-tests
         ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_mainwindowtoggle.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/applicationquit_fixture_access.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_chatformatbar.cpp
         ${M_SRCS} ${U_SRCS} ${_toggle_gui_sources} ${HDRS} ${MOC_HDRS})
     target_compile_definitions(eiskalt-mainwindow-toggle-tests PRIVATE CHAT_FORMAT_REAL_EDITOR)

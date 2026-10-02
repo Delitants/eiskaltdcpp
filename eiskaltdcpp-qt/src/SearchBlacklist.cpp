@@ -16,6 +16,8 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QSaveFile>
+#include <QThread>
 
 #include "dcpp/Util.h"
 
@@ -66,6 +68,7 @@ void SearchBlacklist::loadLists(){
 }
 
 void SearchBlacklist::saveLists(){
+    if (quitPrepared) return;
     const QString &config = _q(Util::getPath(Util::PATH_USER_CONFIG)) + "searchblacklist";
     QFile f(config);
 
@@ -81,6 +84,19 @@ void SearchBlacklist::saveLists(){
         stream << "TTH:" << line << "\n";
 
     f.close();
+}
+
+bool SearchBlacklist::saveForQuitChecked() {
+    if (QThread::currentThread() != thread()) return false;
+    if (quitPrepared) return quitSaved;
+    quitPrepared = true;
+    QString text;
+    for (const auto& line : list[NAME]) text += "NAME:" + line + '\n';
+    for (const auto& line : list[TTH]) text += "TTH:" + line + '\n';
+    const auto data = text.toUtf8();
+    QSaveFile file(_q(Util::getPath(Util::PATH_USER_CONFIG)) + "searchblacklist");
+    quitSaved = file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit();
+    return quitSaved;
 }
 
 bool SearchBlacklist::ok(const QString &exp, Argument type){

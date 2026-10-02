@@ -25,6 +25,8 @@
 #include "dcpp/User.h"
 #include "dcpp/CID.h"
 #include "dcpp/DCPlusPlus.h"
+#include <QSaveFile>
+#include <QThread>
 
 using namespace dcpp;
 
@@ -90,6 +92,7 @@ AntiSpam::~AntiSpam() {
 }
 
 void AntiSpam::slotObjectChangeState(QString obj, AntiSpamObjectState from, AntiSpamObjectState to) {
+    if (quitPrepared) return;
     if (from == to)
         return;
 
@@ -147,6 +150,7 @@ bool AntiSpam::isInSandBox(const QString &obj_cid) const {
 }
 
 void AntiSpam::checkUser(const QString &cid, const QString &msg, const QString &hubUrl){
+    if (quitPrepared) return;
     UserPtr user = dcCtx().getClientManager()->findUser(CID(_tq(cid)));
 
     if (!user->isOnline()){
@@ -199,6 +203,7 @@ void AntiSpam::checkUser(const QString &cid, const QString &msg, const QString &
 }
 
 void AntiSpam::move(const QString &obj, AntiSpamObjectState state) {
+    if (quitPrepared) return;
     if (isInAny(obj)) {
         AntiSpamObjectState from;
 
@@ -237,32 +242,39 @@ inline void AntiSpam::remFromList(QList<QString> &from, const QList<QString> &wh
 }
 
 void AntiSpam::log(const QString &log_msg) {
+    if (quitPrepared) return;
     log_stream << QString("[%1] ").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss"))
                << log_msg
                << "\n";
 }
 
 void AntiSpam::addToBlack(const QList<QString> &list) {
+    if (quitPrepared) return;
     addToList(black_list, list);
 }
 
 void AntiSpam::addToGray(const QList<QString> &list) {
+    if (quitPrepared) return;
     addToList(gray_list, list);
 }
 
 void AntiSpam::addToWhite(const QList<QString> &list) {
+    if (quitPrepared) return;
     addToList(white_list, list);
 }
 
 void AntiSpam::remFromBlack(const QList<QString> &list) {
+    if (quitPrepared) return;
     remFromList(black_list, list);
 }
 
 void AntiSpam::remFromGray(const QList<QString> &list) {
+    if (quitPrepared) return;
     remFromList(gray_list, list);
 }
 
 void AntiSpam::remFromWhite(const QList<QString> &list) {
+    if (quitPrepared) return;
     remFromList(white_list, list);
 }
 
@@ -279,6 +291,7 @@ QList<QString> AntiSpam::getWhite() {
 }
 
 void AntiSpam::loadLists() {
+    if (quitPrepared) return;
     if (!gray_list.empty() ||
             !black_list.empty() ||
             !white_list.empty()) {
@@ -290,6 +303,7 @@ void AntiSpam::loadLists() {
 }
 
 void AntiSpam::saveLists() {
+    if (quitPrepared) return;
     saveBlack();
     saveGray();
     saveWhite();
@@ -359,6 +373,7 @@ void AntiSpam::saveFile(const QString &path, QList<QString> &list) {
 }
 
 void AntiSpam::loadSettings() {
+    if (quitPrepared) return;
     QFile file(QString::fromStdString(Util::getPath(Util::PATH_USER_CONFIG)) + "antispam");
 
     if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -415,6 +430,7 @@ void AntiSpam::loadSettings() {
 }
 
 void AntiSpam::saveSettings() {
+    if (quitPrepared) return;
     QFile file(QString::fromStdString(Util::getPath(Util::PATH_USER_CONFIG)) + "antispam");
 
     if (!file.open(QIODevice::WriteOnly))
@@ -435,7 +451,34 @@ void AntiSpam::saveSettings() {
     file.close();
 }
 
+bool AntiSpam::saveForQuitChecked() {
+    if (QThread::currentThread() != thread()) return false;
+    if (quitPrepared) return quitSaved;
+    quitPrepared = true;
+    const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
+    const auto save = [&](const QString& name, const QString& text) {
+        QSaveFile file(root + name);
+        const auto data = text.toUtf8();
+        return file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit();
+    };
+    const auto lines = [](const QList<QString>& list) {
+        QString text;
+        for (const auto& item : list) text += item + '\n';
+        return text;
+    };
+    QString words;
+    for (const auto& key : keys) words += key.toUpper() + '|';
+    bool saved = save("antispam", "|ANTISPAM_PHRASE|" + phrase + "\n|ANTISPAM_KEY|" + words +
+                                "\n|ATTEMPTS|" + QString::number(try_count) + '\n');
+    saved = save("blacklist", lines(black_list)) && saved;
+    saved = save("graylist", lines(gray_list)) && saved;
+    saved = save("whitelist", lines(white_list)) && saved;
+    quitSaved = saved;
+    return saved;
+}
+
 void AntiSpam::setPhrase(const QString &phrase_) {
+    if (quitPrepared) return;
     if (phrase.isEmpty())
         phrase = "5+5=?";
     else
@@ -443,6 +486,7 @@ void AntiSpam::setPhrase(const QString &phrase_) {
 }
 
 void AntiSpam::setKeys(const QList<QString> &keys) {
+    if (quitPrepared) return;
     if (keys.empty())
         return;
 
@@ -459,24 +503,29 @@ QString AntiSpam::getPhrase() const {
 }
 
 void AntiSpam::clearAll() {
+    if (quitPrepared) return;
     clearBlack();
     clearGray();
     clearWhite();
 }
 
 void AntiSpam::clearBlack() {
+    if (quitPrepared) return;
     black_list.clear();
 }
 
 void AntiSpam::clearGray() {
+    if (quitPrepared) return;
     gray_list.clear();
 }
 
 void AntiSpam::clearWhite() {
+    if (quitPrepared) return;
     white_list.clear();
 }
 
 void AntiSpam::setAttempts(int i){
+    if (quitPrepared) return;
     try_count = i < 0?try_count:i;
 }
 

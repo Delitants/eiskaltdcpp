@@ -78,6 +78,25 @@
 #include <atomic>
 #include <future>
 #include "dcpp/ScopedFunctor.h"
+#include "dcpp/BufferedSocket.h"
+#include "dcpp/Semaphore.h"
+#include "dcpp/HashManager.h"
+#include "dcpp/DownloadManager.h"
+#include "dcpp/QueueManager.h"
+#include "dcpp/File.h"
+#include "SearchBlacklist.h"
+#include "Antispam.h"
+#include "updates/UpdateBackend.h"
+#include "updates/UpdateController.h"
+#include <QProcess>
+#include <QProcessEnvironment>
+#include <QXmlStreamReader>
+#if __has_include("updates/ApplicationQuitCoordinator.h")
+#include "updates/ApplicationQuitCoordinator.h"
+#define HAS_APPLICATION_QUIT_COORDINATOR 1
+#endif
+void installQuitFixtureTransport(dcpp::BufferedSocket*, std::unique_ptr<dcpp::Socket>);
+bool startQuitFixtureDownload(dcpp::DCContext&, dcpp::Socket&, const std::string&, const std::string&);
 
 namespace {
 template<class T> bool guiFence(T& owner) {
@@ -88,6 +107,35 @@ template<class T> bool hubFence(T& owner) {
     if constexpr(requires { owner.prepareForQuit(); }) return owner.prepareForQuit();
     else return false;
 }
+template<class T> bool auxiliarySave(T& owner) {
+    if constexpr(requires { owner.saveForQuitChecked(); }) return owner.saveForQuitChecked();
+    else return false;
+}
+struct QuitBackend : updates::UpdateBackend {
+    dcpp::DCContext& core;
+    int fences = 0, installs = 0, checks = 0;
+    quint64 operation = 0;
+    bool fenceResult = true, routeWasRunning = false;
+    explicit QuitBackend(dcpp::DCContext& c) : core(c) {}
+    void check(quint64 op, updates::Channel, updates::CheckKind) override { ++checks; operation = op; }
+    void download(quint64 op, const updates::UpdateOffer&) override { operation = op; }
+    void cancel() override {}
+    void revokeInstallConsent() override {}
+    void armInstallOnQuit(const updates::UpdateOffer&, bool) override { ++installs; }
+    bool stopWorkersForQuit() override {
+        ++fences; routeWasRunning = !core.getProxyRoute()->snapshot()->revoked->load(); return fenceResult;
+    }
+};
+#ifndef HAS_APPLICATION_QUIT_COORDINATOR
+struct ApplicationQuitCoordinator {
+    enum class Status { NotAdmitted, Ready, Refused };
+    struct Result { Status status; const char* component; };
+    ApplicationQuitCoordinator(QtContext&, updates::UpdateController*) {}
+    Result prepare(uint32_t) { return {Status::NotAdmitted, "Missing coordinator"}; }
+};
+#else
+using ApplicationQuitCoordinator = updates::ApplicationQuitCoordinator;
+#endif
 bool waitFor(const std::function<bool()> &ready)
 {
     QElapsedTimer elapsed;
@@ -191,6 +239,269 @@ struct IsolatedMainWindow {
         else qputenv("XDG_CONFIG_HOME", previousConfig);
     }
 };
+
+TEST_CASE("Application quit aggregates real GUI hub Torrent and core saves without install", "[qt][application-quit]") {
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
+    f.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"retained-rule"});
+    f.gui->antiSpam()->setPhrase("initialize"); f.gui->antiSpam()->setPhrase("retained-question");
+    f.gui->antiSpam()->addToBlack({"blocked-fixture"});
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    updater.checkNow();
+    updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, 2, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    auto* runtime = f.gui->mainWindow()->findChild<TorrentRuntime*>(); REQUIRE(runtime);
+    auto* engine = runtime->engine(); REQUIRE(engine);
+    const auto id = engine->add("magnet:?xt=urn:btih:0123456789012345678901234567890123456789&dn=isolated-active-job");
+    REQUIRE_FALSE(id.isEmpty());
+    REQUIRE(waitFor([&] { return !engine->jobs().isEmpty() && !engine->jobs().front().paused; }));
+    f.gui->mainWindow()->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>(); REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
+    const auto route = f.core->getProxyRoute()->snapshot();
+    QFile hashed(f.home.filePath("hashed.bin")); REQUIRE(hashed.open(QIODevice::WriteOnly));
+    REQUIRE(hashed.write("fixture-bytes") == 13); hashed.close();
+    dcpp::TigerTree tree(1024); tree.update("fixture-bytes", 13); tree.finalize();
+    dcpp::File input(hashed.fileName().toStdString(), dcpp::File::READ, dcpp::File::OPEN);
+    f.core->getHashManager()->addTree(hashed.fileName().toStdString(), input.getLastModified(), tree);
+    const auto part = f.home.filePath("partial.part"), target = f.home.filePath("partial.bin");
+    dcpp::Socket peer;
+    REQUIRE(startQuitFixtureDownload(*f.core, peer, part.toStdString(), target.toStdString()));
+    bool late = false, unrelatedDelivered = false;
+    QMetaObject::invokeMethod(f.gui->mainWindow(), [&] { late = true; }, Qt::QueuedConnection);
+    QObject unrelated;
+    QMetaObject::invokeMethod(&unrelated, [&] { unrelatedDelivered = true; }, Qt::QueuedConnection);
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    CHECK(std::async(std::launch::async, [&] { return coordinator.prepare(3000).status; }).get() ==
+          ApplicationQuitCoordinator::Status::NotAdmitted);
+    QDialog modal(f.gui->mainWindow()); modal.setModal(true); modal.show();
+    QCoreApplication::processEvents(); late = false;
+    CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::NotAdmitted);
+    CHECK(backend.fences == 0); CHECK_FALSE(route->revoked->load());
+    modal.hide();
+    unrelatedDelivered = false;
+    QMetaObject::invokeMethod(&unrelated, [&] { unrelatedDelivered = true; }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(f.gui->mainWindow(), [&] { late = true; }, Qt::QueuedConnection);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
+    CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); CHECK(backend.installs == 0);
+    CHECK(route->revoked->load()); CHECK(f.core->isRunning());
+    CHECK(f.core->getClientManager()->getClients().empty());
+    CHECK(f.core->getDownloadManager()->getDownloadCount() == 0);
+    CHECK(f.core->getQueueManager()->getPos(target.toStdString()) == 128 * 1024);
+    CHECK(QFileInfo(part).size() == 192 * 1024);
+    QFile queue(f.home.filePath("Queue.xml")); REQUIRE(queue.open(QIODevice::ReadOnly));
+    QXmlStreamReader xml(queue.readAll());
+    qint64 savedBytes = 0; bool savedTarget = false;
+    while (!xml.atEnd()) {
+        xml.readNext();
+        if (!xml.isStartElement()) continue;
+        if (xml.name() == u"Download") {
+            CHECK(xml.attributes().value("Target") == target);
+            CHECK(xml.attributes().value("TempTarget") == part);
+            savedTarget = true;
+        }
+        if (xml.name() == u"Segment") savedBytes += xml.attributes().value("Size").toLongLong();
+    }
+    CHECK_FALSE(xml.hasError()); CHECK(savedTarget); CHECK(savedBytes == 128 * 1024);
+    REQUIRE(hub); CHECK_FALSE(hub->isEnabled());
+    CHECK(QFile::exists(f.home.filePath("DCPlusPlus.xml")));
+    CHECK(QFile::exists(f.home.filePath("HashIndex.xml")));
+    CHECK(QFile::exists(f.home.filePath("torrent/state/jobs.json")));
+    QCoreApplication::processEvents(); CHECK_FALSE(late); CHECK(unrelatedDelivered);
+    updater.checkNow(); CHECK(backend.checks == 1);
+    CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
+    CHECK(backend.fences == 1); CHECK(backend.installs == 0);
+}
+
+TEST_CASE("Application quit retains an earlier updater or GUI refusal after core succeeds", "[qt][application-quit]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
+    QString component;
+    SECTION("updater") { backend.fenceResult = false; component = "Updater"; }
+    SECTION("GUI") {
+        REQUIRE(f.gui->settings()->saveChecked());
+        REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config)); component = "GUI";
+    }
+    auto* hash = f.core->getHashManager(); QPointer<MainWindow> window = f.gui->mainWindow();
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    const auto result = coordinator.prepare(3000);
+    REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK(QString(result.component) == component);
+    CHECK(f.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
+    CHECK(f.core->getHashManager() == hash); REQUIRE(window); CHECK_FALSE(window->isEnabled());
+    CHECK(backend.routeWasRunning); CHECK(backend.installs == 0);
+    if(QFileInfo(config).isDir()) REQUIRE(QDir(config).removeRecursively());
+    backend.fenceResult = true;
+    CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK(backend.fences == 1);
+}
+
+TEST_CASE("Application quit rejects updater parents nested under retained GUI roots", "[qt][application-quit][application-quit-order]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    auto* container = new QObject(f.gui->mainWindow());
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)},
+        QDateTime::currentDateTimeUtc, container);
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::NotAdmitted);
+    CHECK(backend.fences == 0); CHECK(f.gui->mainWindow()->isEnabled());
+    CHECK_FALSE(f.core->getProxyRoute()->snapshot()->revoked->load());
+}
+
+TEST_CASE("GUI refusal delays auxiliary snapshot reads until core callback drain", "[qt][application-quit][application-quit-order]") {
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist();
+    struct SaveObserver : dcpp::SettingsManagerListener {
+        QString path;
+        bool beforeAuxiliary = false;
+        void on(Save, dcpp::SimpleXML&) override { beforeAuxiliary = !QFile::exists(path); }
+    } observer;
+    observer.path = f.home.filePath("searchblacklist");
+    f.core->getSettingsManager()->addListener(&observer);
+    auto remove = dcpp::makeScopedFunctor([&] { f.core->getSettingsManager()->removeListener(&observer); });
+    REQUIRE(f.gui->settings()->saveChecked());
+    const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
+    REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config));
+    ApplicationQuitCoordinator coordinator(*f.gui);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK(observer.beforeAuxiliary);
+    CHECK(QFile::exists(observer.path));
+    REQUIRE(QDir(config).removeRecursively());
+}
+
+TEST_CASE("Auxiliary GUI quit snapshots freeze intent and refuse persistence failures", "[qt][application-quit][auxiliary-quit]") {
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
+    auto* search = f.gui->searchBlacklist(); auto* spam = f.gui->antiSpam();
+    search->setList(SearchBlacklist::NAME, {"fixture-rule"});
+    spam->setPhrase("initialize"); spam->setPhrase("fixture-question"); spam->addToBlack({"blocked-fixture"});
+    SECTION("saved terminal intent") {
+        CHECK_FALSE(std::async(std::launch::async, [&] { return auxiliarySave(*search); }).get());
+        CHECK_FALSE(std::async(std::launch::async, [&] { return auxiliarySave(*spam); }).get());
+        REQUIRE(auxiliarySave(*search)); REQUIRE(auxiliarySave(*spam));
+        const auto read = [&](const QString& name) {
+            QFile file(f.home.filePath(name)); REQUIRE(file.open(QIODevice::ReadOnly)); return file.readAll();
+        };
+        CHECK(read("searchblacklist") == "NAME:fixture-rule\n");
+        CHECK(read("antispam") == "|ANTISPAM_PHRASE|fixture-question\n|ANTISPAM_KEY|\n|ATTEMPTS|0\n");
+        CHECK(read("blacklist") == "blocked-fixture\n");
+        CHECK(read("graylist").isEmpty()); CHECK(read("whitelist").isEmpty());
+        search->setList(SearchBlacklist::NAME, {"late-rule"});
+        spam->setPhrase("late-question"); spam->clearBlack();
+        CHECK(search->getList(SearchBlacklist::NAME) == QList<QString>{"fixture-rule"});
+        CHECK(spam->getPhrase() == "fixture-question");
+        CHECK(spam->getBlack() == QList<QString>{"blocked-fixture"});
+        CHECK(auxiliarySave(*search)); CHECK(auxiliarySave(*spam));
+    }
+    SECTION("failed terminal intent") {
+        const auto searchFile = f.home.filePath("searchblacklist");
+        const auto spamFile = f.home.filePath("antispam");
+        REQUIRE(QDir().mkpath(searchFile)); REQUIRE(QDir().mkpath(spamFile));
+        CHECK_FALSE(auxiliarySave(*search)); CHECK_FALSE(auxiliarySave(*spam));
+        CHECK(QFile::exists(f.home.filePath("blacklist")));
+        REQUIRE(QDir(searchFile).removeRecursively()); REQUIRE(QDir(spamFile).removeRecursively());
+        CHECK_FALSE(auxiliarySave(*search)); CHECK_FALSE(auxiliarySave(*spam));
+        CHECK_FALSE(QFile::exists(searchFile)); CHECK_FALSE(QFile::exists(spamFile));
+    }
+}
+
+TEST_CASE("Application quit refuses auxiliary save failure even after a ready core", "[qt][application-quit]") {
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
+    const auto blocked = f.home.filePath("searchblacklist");
+    REQUIRE(QDir().mkpath(blocked));
+    ApplicationQuitCoordinator coordinator(*f.gui);
+    const auto result = coordinator.prepare(3000);
+    REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK(QString(result.component) == "Search blacklist");
+    CHECK(result.core.status == dcpp::DCContext::ShutdownStatus::Ready);
+    CHECK(f.core->isRunning()); CHECK_FALSE(f.gui->mainWindow()->isEnabled());
+    CHECK(QFile::exists(f.home.filePath("antispam")));
+    CHECK(QFile::exists(f.home.filePath("DCPlusPlus.xml")));
+    REQUIRE(QDir(blocked).removeRecursively());
+    CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK_FALSE(QFile::exists(blocked));
+}
+
+TEST_CASE("Application quit keeps failed core owners in an isolated child process", "[qt][application-quit]") {
+    for(const auto& mode : {QString("snapshot"), QString("socket"), QString("both")}) {
+        QProcess child; auto env = QProcessEnvironment::systemEnvironment();
+        env.insert("EISKALT_QUIT_CHILD", mode); child.setProcessEnvironment(env);
+        child.start(QCoreApplication::applicationFilePath(), {"[application-quit-child]"});
+        REQUIRE(child.waitForStarted());
+        const bool finished = child.waitForFinished(30000);
+        if(!finished) { child.kill(); child.waitForFinished(); }
+        INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
+        REQUIRE(finished); CHECK(child.exitStatus() == QProcess::NormalExit); CHECK(child.exitCode() == 0);
+    }
+}
+
+TEST_CASE("Application quit failed-core child fixture", "[.][application-quit-child]") {
+    const auto mode = qEnvironmentVariable("EISKALT_QUIT_CHILD");
+    REQUIRE((mode == "snapshot" || mode == "socket" || mode == "both"));
+    std::set_terminate([] { std::_Exit(81); });
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
+    auto* core = f.core.get(); auto* hash = core->getHashManager();
+    QPointer<MainWindow> window = f.gui->mainWindow();
+    QuitBackend backend(*core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    dcpp::Semaphore entered, release;
+    auto drain = dcpp::makeScopedFunctor([&] {
+        release.signal(); dcpp::BufferedSocket::waitShutdown(3000);
+    });
+    if(mode == "both") {
+        REQUIRE(f.gui->settings()->saveChecked());
+        const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
+        REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config));
+    }
+    if(mode == "snapshot") REQUIRE(QDir().mkpath(f.home.filePath("Favorites.xml.tmp")));
+    else {
+        struct SlowTransport : dcpp::Socket {
+            dcpp::Semaphore& entered; dcpp::Semaphore& release;
+            SlowTransport(dcpp::Semaphore& a, dcpp::Semaphore& b) : entered(a), release(b) {}
+            ~SlowTransport() override { entered.signal(); release.wait(); }
+        };
+        auto* socket = dcpp::BufferedSocket::getSocket('\n', *core);
+        auto transport = std::make_unique<SlowTransport>(entered, release);
+        transport->create(dcpp::Socket::TYPE_TCP, AF_INET);
+        installQuitFixtureTransport(socket, std::move(transport)); dcpp::BufferedSocket::putSocket(socket);
+        REQUIRE(entered.wait(3000));
+    }
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    const auto result = coordinator.prepare(mode == "snapshot" ? 3000 : 25);
+    REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
+    REQUIRE(f.core.get() == core); REQUIRE(core->isRunning()); REQUIRE(core->getHashManager() == hash);
+    REQUIRE(window); REQUIRE_FALSE(window->isEnabled()); REQUIRE(backend.installs == 0);
+    if(mode == "snapshot") {
+        REQUIRE(QString(result.component) == "Favorites");
+        REQUIRE(QDir(f.home.filePath("Favorites.xml.tmp")).removeRecursively());
+    } else {
+        REQUIRE(result.core.status == dcpp::DCContext::ShutdownStatus::SocketTimedOut);
+        REQUIRE(QString(result.component) == (mode == "both" ? "GUI" : "Buffered sockets"));
+        if(mode == "both") {
+            REQUIRE_FALSE(QFile::exists(f.home.filePath("searchblacklist")));
+            REQUIRE_FALSE(QFile::exists(f.home.filePath("antispam")));
+        }
+        release.signal(); REQUIRE(dcpp::BufferedSocket::waitShutdown(3000));
+    }
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    REQUIRE_FALSE(window->close()); REQUIRE(window);
+    // Deliberately retain the entire failed context/GUI until OS test-process exit.
+    std::fflush(stdout); std::fflush(stderr); std::_Exit(0);
+}
 
 TEST_CASE("Hub registration is delivered on the GUI owner thread", "[qt][hub-quit-fence]") {
     IsolatedMainWindow f;

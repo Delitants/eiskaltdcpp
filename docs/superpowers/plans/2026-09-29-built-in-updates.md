@@ -686,10 +686,33 @@ work, deletion, reconnect, redirect and manual command paths stay fenced. Hub
 registration is delivered on the GUI thread rather than mutating its registry
 from a socket worker. This receipt is not physical core socket-drain proof.
 
-This GUI preparation API is not connected to normal quit yet and does not
-authorize installation. Checked application
-aggregation, full active-transfer shutdown/failure-retention tests, native
-installer acceptance/recovery and replacement of the macOS emergency exit
-remain pending. Keep the existing exit path and fail-closed installer unchanged
-until those integration gates pass; do not infer whole-application quiescence
-from this bounded GUI worker receipt.
+These preparation APIs are not connected to normal quit yet and do not
+authorize installation. Native installer acceptance/recovery and replacement
+of the macOS emergency exit remain pending. Keep the existing exit path and
+fail-closed installer unchanged until those integration gates pass.
+
+Checked application aggregation checkpoint (Task 5 remains in progress):
+`ApplicationQuitCoordinator` rejects foreign-owner, modal/popup and unsupported
+contexts before admission, fences updater workers before intentional core proxy
+retirement, and combines real GUI/Torrent/core persistence receipts. The first
+admitted refusal is permanent; a later successful save cannot grant installation
+permission. The application must retain the entire context and GUI on refusal.
+The coordinator borrows owners and never destroys them or commits update consent.
+
+Search blacklist and anti-spam rules/lists now have checked atomic final saves
+and terminal mutation guards. Their separate QtContext-owned roots are covered
+by the GUI event fence. After a GUI refusal, auxiliary snapshots wait for a
+successful core callback drain; if both barriers fail, those owners remain
+untouched. All independent final saves are attempted without replacing an
+earlier failure. Legacy destructor saves cannot silently rewrite prepared state.
+
+Isolated tests use a real MainWindow, hub client, active Torrent worker, checked
+core and a controlled DownloadManager transfer on an accepted loopback socket.
+They verify partial-file and serialized queue progress, retained owners, updater
+ordering, terminal failure and unrelated QObject delivery. Core persistence and
+socket-drain failures run in child fixtures that deliberately retain failed
+owners until test-process exit, not through forbidden failed-context destruction.
+This is not live peer payload, native installer, crash/recovery, physical
+power-loss, minimum-OS or independent whole-updater review proof. Next is actual
+native installer acceptance/handoff and ordinary committed-quit integration,
+not another audit of the completed preparation prerequisites.

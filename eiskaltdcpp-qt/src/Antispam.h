@@ -50,6 +50,8 @@ public:
     void saveSettings();
     void loadLists();
     void saveLists();
+    // Called after hub callback retirement; freezes intent and checks every file.
+    [[nodiscard]] bool saveForQuitChecked();
 
     QString getPhrase() const;
     void setPhrase(const QString &phrase_);
@@ -108,6 +110,7 @@ private:
     QFile log_file;
 
     int try_count;
+    bool quitPrepared = false, quitSaved = false;
 
     AntiSpamObjectState state;//used only by operator<<
 

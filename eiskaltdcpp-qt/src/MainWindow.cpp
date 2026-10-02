@@ -957,6 +957,8 @@ bool MainWindow::stopWorkersForQuit() {
 
     QList<QObject*> roots{this};
     if (ctx->notification()) roots.append(ctx->notification());
+    if (ctx->searchBlacklist()) roots.append(ctx->searchBlacklist());
+    if (ctx->antiSpam()) roots.append(ctx->antiSpam());
     for (auto* arena : d->menuWidgetsHash)
         if (auto* widget = arena->getWidget(); widget && !roots.contains(widget)) roots.append(widget);
     qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
