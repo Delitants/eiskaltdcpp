@@ -157,6 +157,13 @@ Check failed(const Failure& error) { return {error.status, error.message, error.
 
 Failure gostFailure(const dcpp::SocketException& error, const Budget& budget, bool udp) {
     budget.left();
+    // Socket waits have their own rounded millisecond budget and can time out
+    // just before the outer deadline. That is not a certificate/tunnel failure.
+    const auto message = QString::fromStdString(error.getError());
+    if (message.endsWith(QString::fromUtf8(_("Connection timeout"))) ||
+        message.endsWith(QString::fromUtf8(_("SOCKS TLS handshake timed out"))) ||
+        message.endsWith(QStringLiteral("GOST proxy connection timed out")))
+        return {Status::TimedOut, text("Test deadline exceeded")};
     using Stage = dcpp::SocketException::ProxyStage;
     switch (error.getProxyStage()) {
     case Stage::Negotiation:

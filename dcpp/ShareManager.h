@@ -125,6 +125,9 @@ public:
     // stop from a producer/listener callback or while holding manager locks.
     // Existing shares and the Settings Save listener survive for the checkpoint.
     void stopForShutdown();
+    // Required invalidations only, not optional cache regeneration. Accepted
+    // failure is sticky; drain all producers before using it for update consent.
+    bool managedCacheRevocationsSucceeded() const { return !managedCacheRevocationFailed.load(); }
     void setDirty() { xmlDirty = true; }
 
     void search(SearchResultList& l, const string& aString, int aSearchType, int64_t aSize, int aFileType, Client* aClient, StringList::size_type maxResults);
@@ -376,6 +379,7 @@ private:
     void loadManagedHashCache();
     void saveManagedHashCache(bool invalidatePrevious = false);
     std::mutex managedCacheIoMutex;
+    std::atomic_bool managedCacheRevocationFailed{false};
     using ManagedHashSnapshots = map<string, ManagedFileHashes>;
     mutable std::mutex managedHashMutex;
     std::shared_ptr<const ManagedHashSnapshots> managedHashSnapshots;

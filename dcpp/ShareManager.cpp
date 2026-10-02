@@ -615,16 +615,14 @@ void ShareManager::saveManagedHashCache(bool invalidatePrevious) {
     // Serialize writers before taking the snapshot so an older write cannot win.
     std::unique_lock ioLock(managedCacheIoMutex);
     std::filesystem::path staging;
+    bool revoked = !invalidatePrevious;
     try {
         const auto path = managedCachePath();
         if(invalidatePrevious) {
             std::error_code error;
             std::filesystem::remove(std::filesystem::u8path(path), error);
-            if(error) {
-                ioLock.unlock();
-                ctx().getLogManager()->message(_("Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."));
-                return;
-            }
+            if(error) throw std::filesystem::filesystem_error("Cannot revoke managed hash cache", std::filesystem::u8path(path), error);
+            revoked = true;
         }
         string body;
         {
@@ -665,11 +663,16 @@ void ShareManager::saveManagedHashCache(bool invalidatePrevious) {
 #endif
     } catch(...) {
         // Sharing still works if the optional cache cannot be written.
+        if(!revoked) managedCacheRevocationFailed.store(true);
     }
     if(!staging.empty()) {
         std::error_code error;
         std::filesystem::remove(staging / "cache", error);
         std::filesystem::remove(staging, error);
+    }
+    if(!revoked) {
+        ioLock.unlock();
+        ctx().getLogManager()->message(_("Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."));
     }
 }
 

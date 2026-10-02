@@ -192,6 +192,34 @@ TEST_CASE("GOST diagnostic timeout and cancellation leave the UI responsive", "[
     REQUIRE(ticks >= 3);
 }
 
+TEST_CASE("GOST rounded socket deadlines remain timeouts", "[qt][proxytestrunner][gost][routing][gost-native]") {
+    // Vary short deadlines to exercise socket millisecond rounding without
+    // relaxing certificate validation or depending on a remote proxy.
+    for (int attempt = 0; attempt < 64; ++attempt) {
+        proxy_test::GostOptions options;
+        options.stallTls = true;
+        proxy_test::GostServer server(options);
+        server.start();
+        Socket::StreamProxyConfig config;
+        config.type = Socket::StreamProxyConfig::Gost;
+        config.host = "127.0.0.1";
+        config.port = server.port();
+        config.user = "fixture-user";
+        config.password = "fixture-secret";
+        config.caPem = server.ca.pem;
+        ProxyTestRunner runner;
+        ProxyTestRunner::Result result;
+        bool done = false;
+        QObject::connect(&runner, &ProxyTestRunner::finished, &runner, [&](auto value) { result = value; done = true; });
+        REQUIRE(runner.start(config, false, 30 + attempt % 11));
+        REQUIRE(pumpUntil([&] { return done; }, 1500));
+        server.requestStop();
+        server.join();
+        INFO("attempt=" << attempt << " result=" << result.tcp.message.toStdString());
+        REQUIRE(result.tcp.status == Status::TimedOut);
+    }
+}
+
 TEST_CASE("GOST UDP success requires a matching tunneled DNS response", "[qt][proxytestrunner][gost][routing]") {
     int mode = 0;
     SECTION("matching reply") {}

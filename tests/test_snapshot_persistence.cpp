@@ -15,6 +15,7 @@
 #include "HashManager.h"
 #include "ClientManager.h"
 #include "QueueManager.h"
+#include "FavoriteManager.h"
 #ifdef WITH_DHT
 #include "dht/DHT.h"
 #include "dht/KBucket.h"
@@ -40,6 +41,10 @@ template<class M> bool saveHash(M& m) {
 template<class M> bool saveUsers(M& m) {
     if constexpr(requires { m.saveUsersChecked(); }) return m.saveUsersChecked();
     else { m.saveUsers(); return true; }
+}
+template<class M> bool saveFavorites(M& m) {
+    if constexpr(requires { m.saveChecked(); }) return m.saveChecked();
+    else { m.save(); return true; }
 }
 #ifdef WITH_DHT
 template<class M> bool saveDht(M& m) {
@@ -76,6 +81,7 @@ struct DenyReplace {
 struct Fixture {
     test::TestContext fixture;
     Fixture() {
+        REQUIRE(fs::equivalent(fs::u8path(Util::getPath(Util::PATH_USER_CONFIG)), fixture.tmpDir));
         auto& c = context();
         c.timerManager_ = std::make_unique<TimerManager>(c);
         c.hashManager_ = std::make_unique<HashManager>(c);
@@ -103,6 +109,26 @@ struct Fixture {
         c.searchManager_ = std::make_unique<SearchManager>(c);
         c.queueManager_ = std::make_unique<QueueManager>(c);
     }
+    FavoriteManager& favorites() {
+        if(!context().favoriteManager_)
+            context().favoriteManager_ = std::make_unique<FavoriteManager>(context());
+        return *context().getFavoriteManager();
+    }
+    void favorite(const string& name) {
+        auto& manager = favorites();
+        auto hub = new FavoriteHubEntry(context());
+        hub->setName(name); hub->setServer("adc://fixture.test"); hub->setGroup("Private & group");
+        hub->setConnect(false); hub->setPassword("fixture-only<&>");
+        manager.favoriteHubs.push_back(hub);
+        manager.favHubGroups["Private & group"] = {true, false};
+        manager.favoriteDirs.emplace_back(path("Downloads") + PATH_SEPARATOR, "Files & more");
+        manager.userCommands.emplace_back(1, UserCommand::TYPE_RAW, UserCommand::CONTEXT_HUB, 0,
+            "Saved & command", "literal<&>", "", "adc://fixture.test");
+        manager.userCommands.emplace_back(2, UserCommand::TYPE_RAW, UserCommand::CONTEXT_HUB,
+            UserCommand::FLAG_NOSAVE, "Transient", "not persisted", "", "adc://fixture.test");
+        const auto user = users().getUser(CID(string(39, 'B')));
+        manager.users.emplace(user->getCID(), FavoriteUser(user, "Nick & name", "adc://fixture.test"));
+    }
 #ifdef WITH_DHT
     dht::DHT& network() { return *context().getDHT(); }
     void routing() { network().bucket = new dht::KBucket(network()); }
@@ -115,7 +141,83 @@ struct Fixture {
 };
 }
 
+TEST_CASE("Checked Favorites reloads hubs groups users commands and directories", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original & hub"); f.favorites().stopForShutdown();
+    REQUIRE(saveFavorites(f.favorites()));
+    f.context().favoriteManager_.reset(); f.favorites().load();
+    REQUIRE(f.favorites().favoriteHubs.size() == 1);
+    CHECK(f.favorites().favoriteHubs.front()->getName() == "Original & hub");
+    CHECK(f.favorites().favoriteHubs.front()->getPassword() == "fixture-only<&>");
+    CHECK(f.favorites().favHubGroups.at("Private & group").priv);
+    REQUIRE(f.favorites().favoriteDirs.size() == 1);
+    CHECK(f.favorites().favoriteDirs.front().second == "Files & more");
+    CHECK(f.favorites().findUserCommand("Saved & command", "adc://fixture.test") != -1);
+    CHECK(f.favorites().findUserCommand("Transient", "adc://fixture.test") == -1);
+    REQUIRE(f.favorites().users.size() == 1);
+    CHECK(f.favorites().users.begin()->second.getNick() == "Nick & name");
+}
+
+TEST_CASE("Checked Favorites staging refusal retains old snapshot and retries", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original"); REQUIRE(saveFavorites(f.favorites()));
+    const auto target = f.path("Favorites.xml"), previous = read(target);
+    f.favorites().favoriteHubs.front()->setName("Updated"); fs::create_directory(target + ".tmp");
+    CHECK_FALSE(saveFavorites(f.favorites())); CHECK(read(target) == previous);
+    fs::remove(target + ".tmp"); REQUIRE(saveFavorites(f.favorites()));
+    f.context().favoriteManager_.reset(); f.favorites().load();
+    REQUIRE(f.favorites().favoriteHubs.size() == 1);
+    CHECK(f.favorites().favoriteHubs.front()->getName() == "Updated");
+}
+
+TEST_CASE("Checked Favorites replacement refusal retains old snapshot and retries", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original"); REQUIRE(saveFavorites(f.favorites()));
+    const auto target = f.path("Favorites.xml"), previous = read(target);
+    f.favorites().favoriteHubs.front()->setName("Updated"); write(target + ".tmp", "staging");
+    {
+        DenyReplace deny(target);
+        CHECK_FALSE(saveFavorites(f.favorites())); CHECK(read(target) == previous);
+        CHECK(read(target + ".tmp").find("Updated") != string::npos);
+    }
+    REQUIRE(saveFavorites(f.favorites()));
+    f.context().favoriteManager_.reset(); f.favorites().load();
+    REQUIRE(f.favorites().favoriteHubs.size() == 1);
+    CHECK(f.favorites().favoriteHubs.front()->getName() == "Updated");
+}
+
+TEST_CASE("Checked Favorites cannot certify a loading-time skipped save", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original"); REQUIRE(saveFavorites(f.favorites()));
+    const auto target = f.path("Favorites.xml"), previous = read(target);
+    f.favorites().favoriteHubs.front()->setName("Updated"); f.favorites().dontSave = true;
+    CHECK_FALSE(saveFavorites(f.favorites())); f.favorites().save();
+    CHECK(read(target) == previous);
+    f.favorites().dontSave = false; REQUIRE(saveFavorites(f.favorites()));
+}
+
+TEST_CASE("Concurrent checked Favorites snapshots serialize their staging file", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original");
+    auto a = std::async(std::launch::async, [&] { return saveFavorites(f.favorites()); });
+    auto b = std::async(std::launch::async, [&] { return saveFavorites(f.favorites()); });
+    CHECK(a.get()); CHECK(b.get());
+    f.context().favoriteManager_.reset(); f.favorites().load();
+    REQUIRE(f.favorites().favoriteHubs.size() == 1);
+    CHECK(f.favorites().favoriteHubs.front()->getName() == "Original");
+}
+
 #ifndef _WIN32
+TEST_CASE("Checked Favorites native write refusal cannot replace the saved snapshot", "[snapshot-save][favorites-save]") {
+    Fixture f; f.favorite("Original"); REQUIRE(saveFavorites(f.favorites()));
+    const auto target = f.path("Favorites.xml"), previous = read(target);
+    f.favorites().favoriteHubs.front()->setName("Updated");
+    const auto child = fork(); REQUIRE(child >= 0);
+    if(child == 0) {
+        std::signal(SIGXFSZ, SIG_IGN);
+        rlimit limit{16, 16}; if(setrlimit(RLIMIT_FSIZE, &limit)) std::_Exit(3);
+        std::_Exit(saveFavorites(f.favorites()) ? 1 : 0);
+    }
+    int status = 0; REQUIRE(waitpid(child, &status, 0) == child);
+    REQUIRE(WIFEXITED(status)); CHECK(WEXITSTATUS(status) == 0);
+    CHECK(read(target) == previous); REQUIRE(saveFavorites(f.favorites()));
+}
+
 TEST_CASE("Snapshot buffered flush failure cannot replace a valid previous file", "[snapshot-save][snapshot-flush]") {
     Fixture f; string name, root; std::function<bool()> save;
     SECTION("hash index") {

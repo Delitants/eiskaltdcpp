@@ -32,7 +32,10 @@
 #include <atomic>
 #include <thread>
 #ifndef _WIN32
+#include <csignal>
 #include <sys/resource.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #include <utime.h>
 #endif
 
@@ -42,6 +45,11 @@ namespace fs = std::filesystem;
 namespace {
 template<class Manager> void stopShares(Manager& manager) {
     if constexpr(requires { manager.stopForShutdown(); }) manager.stopForShutdown();
+}
+template<class Manager> bool revocationsSucceeded(const Manager& manager) {
+    if constexpr(requires { manager.managedCacheRevocationsSucceeded(); })
+        return manager.managedCacheRevocationsSucceeded();
+    else return true;
 }
 
 struct ShareStopDeadline {
@@ -79,6 +87,7 @@ struct ManagedShareFixture {
         overrides[Util::PATH_HUB_LISTS] = (temp / "hubs").string() + PATH_SEPARATOR;
         overrides[Util::PATH_NOTEPAD] = (temp / "notepad.txt").string();
         Util::initialize(overrides);
+        REQUIRE(fs::equivalent(fs::u8path(Util::getPath(Util::PATH_USER_CONFIG)), temp / "config"));
         context.startupMinimal();
         setContext(&context);
         context.timerManager_ = std::make_unique<TimerManager>(context);
@@ -815,6 +824,103 @@ template<class Manager> void forgetSelectedHashes(Manager& manager, const string
     else manager.forgetManagedFileHashes(owner);
 }
 }
+
+TEST_CASE("Managed cache revocation refusal remains visible after stop and later writes", "[managedshare][managedcache-revocation]") {
+    ManagedShareFixture f;
+    const auto a = f.file("payload/A.bin"), b = f.file("payload/B.bin");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:revocation", "Cached", {a, b}));
+    const auto cache = f.temp / "config" / "ManagedHashes-v1.bin";
+    const auto previous = File(cache.string(), File::READ, File::OPEN).read();
+    bool scoped = false;
+    SECTION("full owner") { }
+    SECTION("selected file") { scoped = true; }
+    CHECK(revocationsSucceeded(f.shares()));
+    f.shares().removeManagedFiles("torrent:revocation");
+    {
+#ifdef _WIN32
+        File held(cache.string(), File::READ, File::OPEN);
+#else
+        const auto perms = fs::status(cache.parent_path()).permissions();
+        fs::permissions(cache.parent_path(), fs::perms::owner_read | fs::perms::owner_exec);
+        ScopedFunctor([&] { std::error_code error; fs::permissions(cache.parent_path(), perms, error); });
+#endif
+        if(scoped) forgetSelectedHashes(f.shares(), "torrent:revocation", {a});
+        else f.shares().forgetManagedFileHashes("torrent:revocation");
+        CHECK_FALSE(revocationsSucceeded(f.shares()));
+        CHECK(File(cache.string(), File::READ, File::OPEN).read() == previous);
+    }
+    f.shares().saveManagedHashCache(true);
+    CHECK_FALSE(revocationsSucceeded(f.shares()));
+    stopShares(f.shares()); CHECK_FALSE(revocationsSucceeded(f.shares()));
+    f.context.shareManager_.reset(); f.context.shareManager_ = std::make_unique<ShareManager>(f.context);
+    CHECK(revocationsSucceeded(f.shares()));
+    CHECK(f.shares().managedShares.empty());
+    if(scoped) {
+        REQUIRE(f.shares().managedVerifiedFiles.at("torrent:revocation").size() == 1);
+        CHECK(f.shares().managedVerifiedFiles.at("torrent:revocation").front()->realPath == b);
+    } else CHECK(f.shares().managedVerifiedFiles.empty());
+}
+
+#ifndef _WIN32
+TEST_CASE("Managed cache optional generation refusal is not a revocation failure", "[managedshare][managedcache-revocation]") {
+    ManagedShareFixture f; const auto a = f.file("payload/A.bin"), b = f.file("payload/B.bin");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:revocation", "Cached", {a, b}));
+    const auto cache = f.temp / "config" / "ManagedHashes-v1.bin";
+    f.shares().removeManagedFiles("torrent:revocation");
+    // No fixture workers exist; only the disposable child gets a zero write
+    // limit. Unlink succeeds, then optional regenerated cache output fails.
+    const auto child = fork(); REQUIRE(child >= 0);
+    if(child == 0) {
+        std::signal(SIGXFSZ, SIG_IGN);
+        rlimit limit{0, 0}; if(setrlimit(RLIMIT_FSIZE, &limit)) std::_Exit(3);
+        f.shares().forgetManagedFileHashes("torrent:revocation");
+        stopShares(f.shares());
+        std::_Exit(revocationsSucceeded(f.shares()) && !fs::exists(cache) ? 0 : 4);
+    }
+    int status = 0; REQUIRE(waitpid(child, &status, 0) == child);
+    REQUIRE(WIFEXITED(status)); CHECK(WEXITSTATUS(status) == 0);
+    CHECK_FALSE(fs::exists(cache)); stopShares(f.shares());
+    f.context.shareManager_.reset(); f.context.shareManager_ = std::make_unique<ShareManager>(f.context);
+    CHECK(f.shares().managedVerifiedFiles.empty());
+}
+#endif
+
+TEST_CASE("Managed cache missing or unchanged revocations remain nonfatal", "[managedshare][managedcache-revocation]") {
+    ManagedShareFixture f; CHECK(revocationsSucceeded(f.shares()));
+    f.shares().forgetManagedFileHashes("absent");
+    f.shares().saveManagedHashCache(true);
+    stopShares(f.shares()); CHECK(revocationsSucceeded(f.shares()));
+}
+
+#ifndef _WIN32
+TEST_CASE("Managed cache revocation warning exposes failure outside its IO lock", "[managedshare][managedcache-revocation]") {
+    ManagedShareFixture f; const auto a = f.file("payload/A.bin");
+    REQUIRE(f.shares().replaceManagedFiles("torrent:revocation", "Cached", {a}));
+    struct Probe : LogManagerListener {
+        ShareManager& shares;
+        unsigned calls = 0;
+        bool failed = false, ioAvailable = false;
+        explicit Probe(ShareManager& shares) : shares(shares) { }
+        void on(Message, time_t, const string&) noexcept override {
+            ++calls;
+            failed = !revocationsSucceeded(shares);
+            // Probe from another thread; never recursively lock an owned mutex.
+            ioAvailable = std::async(std::launch::async, [&] {
+                std::unique_lock lock(shares.managedCacheIoMutex, std::try_to_lock);
+                return lock.owns_lock();
+            }).get();
+        }
+    } probe(f.shares());
+    f.context.getLogManager()->addListener(&probe);
+    ScopedFunctor([&] { f.context.getLogManager()->removeListener(&probe); });
+    const auto config = f.temp / "config";
+    const auto permissions = fs::status(config).permissions();
+    fs::permissions(config, fs::perms::owner_read | fs::perms::owner_exec);
+    ScopedFunctor([&] { std::error_code error; fs::permissions(config, permissions, error); });
+    f.shares().forgetManagedFileHashes("torrent:revocation");
+    CHECK(probe.calls == 1); CHECK(probe.failed); CHECK(probe.ioAvailable);
+}
+#endif
 
 TEST_CASE("Scoped rechecks persist only affected hash removal and keep unrelated files reusable", "[managedshare][selected-recheck-sharing]") {
     ManagedShareFixture f;

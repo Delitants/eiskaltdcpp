@@ -314,10 +314,12 @@ bool FavoriteManager::onHttpFinished(bool fromHttp) {
 }
 
 void FavoriteManager::save() {
-    if(dontSave)
-        return;
+    (void)saveChecked();
+}
 
+bool FavoriteManager::saveChecked() {
     Lock l(cs);
+    if(dontSave) return false;
     try {
         SimpleXML xml;
 
@@ -397,12 +399,14 @@ void FavoriteManager::save() {
         File f(fname + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
         f.write(SimpleXML::utf8Header);
         f.write(xml.toXML());
+        f.flush();
         f.close();
-        File::deleteFile(fname);
-        File::renameFile(fname + ".tmp", fname);
+        File::replaceFile(fname + ".tmp", fname);
+        return true;
 
     } catch(const Exception& e) {
         dcdebug("FavoriteManager::save: %s\n", e.getError().c_str());
+        return false;
     }
 }
 

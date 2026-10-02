@@ -518,3 +518,27 @@ targets rebuilt-j2, suites serial, source/profile/executable hashes unchanged
 after resumed QA. Bounded inline author review completed; independent whole-
 updater review, mandatory remaining writers and aggregate normal-quit wiring
 are still required. Task5 remains IN PROGRESS with original BASE retained.
+
+Required-writer continuation: `FavoriteManager::saveChecked()` serializes the
+final snapshot with existing saves, flushes/closes staging and atomically
+replaces Favorites.xml without delete-first. It reports loading-time skips
+and write/replace failures as false; ordinary void `save()` remains compatible.
+Owner must first quiesce UI and accepted callbacks; this is not their barrier.
+
+`ShareManager::managedCacheRevocationsSucceeded()` reports only mandatory
+accepted saved-cache invalidations. Unlink precedes optional regeneration as
+before; a failed required unlink latches false until manager replacement.
+Later successful optional writes/retries cannot erase that failure. Missing
+cache and regeneration-only failure are nonfatal. The existing warning is
+delivered after releasing cache I/O serialization, with the failure already
+latched. Final owner must drain producers before using this outcome for consent.
+No aggregate core/conditional-writer/normal-quit/installer activation is implied.
+
+Supplemental final-QA correction: GOST diagnostics now recognize specific native
+socket timeout reasons before certificate/auth/tunnel stage classification. The
+native socket's independently rounded millisecond budget can expire while the
+outer deadline still has more than a millisecond left. A real disposable stalled
+TLS regression reproduced the misleading certificate failure before the fix;
+cancellation still takes precedence and trust/auth/REP results remain distinct.
+No TLS verification, route or direct-fallback policy is relaxed. Temporary trace
+removed; full final Qt validation and repeated deadline cases required.

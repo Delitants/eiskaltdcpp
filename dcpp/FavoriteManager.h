@@ -113,6 +113,9 @@ public:
 
     void load();
     void save();
+    // Final snapshot only; owner must first quiesce UI and accepted callbacks.
+    // A loading-time skip is not persistence success. Failed saves can retry.
+    bool saveChecked();
 
 private:
     FavoriteHubEntryList favoriteHubs;
