@@ -147,6 +147,8 @@ bool IPFilter::addToRules(const std::string &exp, eDIRECTION direction) {
     if (!ParseString(exp, exp_ip, exp_mask, act))
         return false;
 
+    Lock lock(cs);
+    stateInitialized = true;
     IPFilterElem *el = nullptr;
 
     if (list_ip.find(exp_ip) != list_ip.end()) {
@@ -198,6 +200,7 @@ bool IPFilter::addToRules(const std::string &exp, eDIRECTION direction) {
 }
 
 void IPFilter::remFromRules(string exp, eTableAction act) {
+    Lock lock(cs);
 
     string str_ip;
     uint32_t exp_ip;
@@ -248,6 +251,7 @@ void IPFilter::remFromRules(string exp, eTableAction act) {
 }
 
 void IPFilter::changeRuleDirection(string exp, eDIRECTION direction, eTableAction act) {
+    Lock lock(cs);
     string str_ip;
     size_t pos = exp.find("/");
 #ifdef _DEBUG_IPFILTER
@@ -271,6 +275,7 @@ void IPFilter::changeRuleDirection(string exp, eDIRECTION direction, eTableActio
 }
 
 bool IPFilter::OK(const string &exp, eDIRECTION direction){
+    Lock lock(cs);
 #ifdef _DEBUG_IPFILTER
     fprintf(stdout,"ipfilter::OK(%s,%i)\n",exp.c_str(),(int)direction);fflush(stdout);
 #endif
@@ -323,6 +328,7 @@ bool IPFilter::OK(const string &exp, eDIRECTION direction){
 }
 
 void IPFilter::step(uint32_t ip, eTableAction act, bool down){
+    Lock lock(cs);
     IPFilterElem *el = nullptr;
 
     IPHash::const_iterator it = list_ip.find(ip);
@@ -409,10 +415,13 @@ void IPFilter::moveRuleDown(uint32_t ip, eTableAction act){
 }
 
 void IPFilter::loadList() {
+    Lock lock(cs);
     const string &&fileNameFull = Util::getPath(Util::PATH_USER_CONFIG) + "ipfilter";
 
-    if (!Util::fileExists(fileNameFull))
+    if (!Util::fileExists(fileNameFull)) {
+        stateInitialized = true;
         return;
+    }
 
     File file(fileNameFull, File::READ, File::OPEN);
     const string fileData = file.read();
@@ -454,8 +463,25 @@ void IPFilter::loadList() {
 }
 
 void IPFilter::saveList(){
+    Lock lock(cs);
+    stateInitialized = true;
+    writeListSnapshot();
+}
+
+bool IPFilter::saveListChecked() {
+    Lock lock(cs);
+    if(!stateInitialized) return true;
+    try {
+        writeListSnapshot();
+        return true;
+    } catch(const Exception&) {
+        return false;
+    }
+}
+
+void IPFilter::writeListSnapshot() {
     string file= Util::getPath(Util::PATH_USER_CONFIG) + "ipfilter";
-    File f(file, File::WRITE, File::CREATE | File::TRUNCATE);
+    File f(file + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
     f.write(signature+"\n");
 
     for (size_t i = 0; i < rules.size(); ++i) {
@@ -471,10 +497,13 @@ void IPFilter::saveList(){
         ss << MaskToCIDR(el->mask); ss >> prefix1;
         f.write(prefix + Uint32ToString(el->ip).c_str() + "/" + prefix1.c_str() + "\n");
     }
+    f.flush();
     f.close();
+    File::replaceFile(file + ".tmp", file);
 }
 
 void IPFilter::exportTo(string path, string& error) {
+    Lock lock(cs);
     string file = Util::getPath(Util::PATH_USER_CONFIG) + "ipfilter";
     saveList();
     if (!Util::fileExists(path)) {
@@ -494,6 +523,7 @@ void IPFilter::exportTo(string path, string& error) {
 }
 
 void IPFilter::importFrom(string path, string& error) {
+    Lock lock(cs);
     if (!Util::fileExists(path)) {
         error = "Nothing to export.";
         fprintf(stdout,"Nothing to export.");fflush(stdout);
@@ -520,14 +550,18 @@ void IPFilter::importFrom(string path, string& error) {
 }
 
 const IPList &IPFilter::getRules() {
+    Lock lock(cs);
     return rules;
 }
 
 const IPHash &IPFilter::getHash() {
+    Lock lock(cs);
     return list_ip;
 }
 
 void IPFilter::clearRules() {
+    Lock lock(cs);
+    stateInitialized = true;
     list_ip.clear();
     rules.clear();
 }
@@ -537,6 +571,7 @@ void IPFilter::load() {
 }
 
 void IPFilter::shutdown() {
+    Lock lock(cs);
     saveList();
     clearRules();
 }

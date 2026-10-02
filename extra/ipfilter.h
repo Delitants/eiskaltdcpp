@@ -16,6 +16,7 @@
 
 #include "dcpp/stdinc.h"
 #include "dcpp/DCContext.h"
+#include "dcpp/CriticalSection.h"
 
 enum eDIRECTION {
     eDIRECTION_IN = 0,
@@ -55,7 +56,11 @@ public:
     void shutdown();
     void loadList();
     void saveList();
+    // Final snapshot only: quiesce GUI borrowers and network readers first.
+    // Uninitialized rules are not a snapshot of a disabled saved rule file.
+    bool saveListChecked();
 
+    // Borrowed UI state, not lifetime-safe snapshots across edits/shutdown.
     const IPList &getRules();
     const IPHash &getHash ();
 
@@ -75,6 +80,9 @@ public:
     void step(uint32_t, eTableAction, bool down = true);
 
 private:
+    void writeListSnapshot(); // caller holds cs
+    dcpp::CriticalSection cs;
+    bool stateInitialized = false;
     IPHash list_ip;
     IPList rules;
 };

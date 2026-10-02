@@ -16,6 +16,7 @@
 #include "ClientManager.h"
 #include "QueueManager.h"
 #include "FavoriteManager.h"
+#include "extra/ipfilter.h"
 #ifdef WITH_DHT
 #include "dht/DHT.h"
 #include "dht/KBucket.h"
@@ -45,6 +46,21 @@ template<class M> bool saveUsers(M& m) {
 template<class M> bool saveFavorites(M& m) {
     if constexpr(requires { m.saveChecked(); }) return m.saveChecked();
     else { m.save(); return true; }
+}
+template<class M> bool saveFilter(M& m) {
+    if constexpr(requires { m.saveListChecked(); }) return m.saveListChecked();
+    else { try { m.saveList(); return true; } catch(const Exception&) { return false; } }
+}
+template<class M> bool filterOperationSerialized(M& m, const std::function<void()>& operation) {
+    if constexpr(requires { m.cs; }) {
+        std::unique_lock lock(m.cs);
+        std::promise<void> started;
+        auto work = std::async(std::launch::async, [&] { started.set_value(); operation(); });
+        started.get_future().wait();
+        const bool blocked = work.wait_for(std::chrono::milliseconds(60)) == std::future_status::timeout;
+        lock.unlock(); work.get();
+        return blocked;
+    } else { operation(); return false; }
 }
 #ifdef WITH_DHT
 template<class M> bool saveDht(M& m) {
@@ -109,6 +125,18 @@ struct Fixture {
         c.searchManager_ = std::make_unique<SearchManager>(c);
         c.queueManager_ = std::make_unique<QueueManager>(c);
     }
+    IPFilter& filter() {
+        if(!context().ipFilter_) context().ipFilter_ = std::make_unique<IPFilter>(context());
+        return *context().ipFilter_;
+    }
+    void filterRules() {
+        REQUIRE(filter().addToRules("192.0.2.1/32", eDIRECTION_IN));
+        REQUIRE(filter().addToRules("!192.0.2.2/32", eDIRECTION_IN));
+        REQUIRE(filter().addToRules("198.51.100.1/32", eDIRECTION_OUT));
+        REQUIRE(filter().addToRules("!198.51.100.2/32", eDIRECTION_OUT));
+        REQUIRE(filter().addToRules("203.0.113.0/24", eDIRECTION_BOTH));
+        REQUIRE(filter().addToRules("!203.0.114.0/24", eDIRECTION_BOTH));
+    }
     FavoriteManager& favorites() {
         if(!context().favoriteManager_)
             context().favoriteManager_ = std::make_unique<FavoriteManager>(context());
@@ -140,6 +168,156 @@ struct Fixture {
 #endif
 };
 }
+
+TEST_CASE("Checked IPFilter reloads all ordered rule kinds without enabling filtering", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules();
+    CHECK_FALSE(f.context().getSettingsManager()->getBool(SettingsManager::IPFILTER));
+    const auto pointers = f.filter().getRules();
+    std::vector<IPFilterElem> expected;
+    for(const auto* rule : pointers) expected.push_back(*rule);
+    REQUIRE(saveFilter(f.filter()));
+    CHECK(f.filter().getRules() == pointers);
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    const auto& actual = f.filter().getRules();
+    REQUIRE(actual.size() == expected.size());
+    for(size_t i = 0; i < actual.size(); ++i) {
+        CHECK(actual[i]->ip == expected[i].ip); CHECK(actual[i]->mask == expected[i].mask);
+        CHECK(actual[i]->direction == expected[i].direction); CHECK(actual[i]->action == expected[i].action);
+    }
+    CHECK_FALSE(f.context().getSettingsManager()->getBool(SettingsManager::IPFILTER));
+}
+
+TEST_CASE("Checked unused IPFilter leaves absent or previously saved rules alone", "[snapshot-save][ipfilter-save]") {
+    Fixture f; const auto target = f.path("ipfilter");
+    bool existing = false;
+    const string previous = "$EISKALTDC IPFILTERLIST$\n|D_BOTH|:!192.0.2.0/24\n";
+    SECTION("absent file") { }
+    SECTION("disabled saved rules") { existing = true; write(target, previous); }
+    REQUIRE(saveFilter(f.filter()));
+    CHECK_FALSE(fs::exists(target + ".tmp"));
+    CHECK(fs::exists(target) == existing);
+    if(existing) CHECK(read(target) == previous);
+    CHECK(f.filter().getRules().empty());
+}
+
+TEST_CASE("Checked explicit empty IPFilter snapshot cannot revive old rules", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules(); REQUIRE(saveFilter(f.filter()));
+    f.filter().clearRules(); REQUIRE(saveFilter(f.filter()));
+    CHECK(read(f.path("ipfilter")) == "$EISKALTDC IPFILTERLIST$\n");
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    CHECK(f.filter().getRules().empty());
+}
+
+TEST_CASE("Checked IPFilter retains explicit initialization of an empty list", "[snapshot-save][ipfilter-save]") {
+    Fixture f; const auto target = f.path("ipfilter");
+    SECTION("load requested for absent rule file") {
+        f.filter().loadList();
+        REQUIRE(saveFilter(f.filter()));
+        REQUIRE(fs::exists(target));
+        CHECK(read(target) == "$EISKALTDC IPFILTERLIST$\n");
+    }
+    SECTION("explicit clear without loading previous rules") {
+        write(target, "$EISKALTDC IPFILTERLIST$\n|D_IN|:!192.0.2.0/24\n");
+        f.filter().clearRules();
+        REQUIRE(saveFilter(f.filter()));
+        CHECK(read(target) == "$EISKALTDC IPFILTERLIST$\n");
+    }
+    SECTION("explicit ordinary empty save remains initialized") {
+        f.filter().saveList(); fs::create_directory(target + ".tmp");
+        CHECK_FALSE(saveFilter(f.filter()));
+        fs::remove(target + ".tmp"); REQUIRE(saveFilter(f.filter()));
+    }
+    SECTION("invalid edit does not initialize a disabled rule set") {
+        CHECK_FALSE(f.filter().addToRules("not-an-ip", eDIRECTION_BOTH));
+        REQUIRE(saveFilter(f.filter())); CHECK_FALSE(fs::exists(target));
+    }
+}
+
+TEST_CASE("Checked loaded IPFilter persists existing borrowed UI edits", "[snapshot-save][ipfilter-save]") {
+    Fixture f; const auto target = f.path("ipfilter");
+    write(target, "$EISKALTDC IPFILTERLIST$\n|D_IN|:!192.0.2.0/24\n");
+    f.filter().loadList();
+    REQUIRE(f.filter().getRules().size() == 1);
+    // This is the existing GUI edit contract. Final saving requires the owning
+    // UI to be quiesced; no cross-thread borrowed-pointer safety is implied.
+    f.filter().getRules().front()->action = etaACPT;
+    REQUIRE(saveFilter(f.filter()));
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    REQUIRE(f.filter().getRules().size() == 1);
+    CHECK(f.filter().getRules().front()->action == etaACPT);
+    CHECK_FALSE(f.context().getSettingsManager()->getBool(SettingsManager::IPFILTER));
+}
+
+TEST_CASE("Checked IPFilter staging refusal keeps saved and live rules and retries", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules(); REQUIRE(saveFilter(f.filter()));
+    const auto target = f.path("ipfilter"), previous = read(target);
+    REQUIRE(f.filter().addToRules("!192.0.2.3/32", eDIRECTION_BOTH));
+    const auto pointers = f.filter().getRules(); fs::create_directory(target + ".tmp");
+    CHECK_FALSE(saveFilter(f.filter())); CHECK(read(target) == previous);
+    CHECK(f.filter().getRules() == pointers);
+    CHECK_THROWS_AS(f.filter().saveList(), FileException);
+    fs::remove(target + ".tmp"); REQUIRE(saveFilter(f.filter()));
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    REQUIRE(f.filter().getRules().size() == 7);
+    CHECK(f.filter().getRules().back()->action == etaDROP);
+    CHECK(f.filter().getRules().back()->direction == eDIRECTION_BOTH);
+}
+
+TEST_CASE("Checked IPFilter replacement refusal preserves old snapshot and retries", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules(); REQUIRE(saveFilter(f.filter()));
+    const auto target = f.path("ipfilter"), previous = read(target);
+    REQUIRE(f.filter().addToRules("!192.0.2.3/32", eDIRECTION_BOTH));
+    write(target + ".tmp", "staging");
+    {
+        DenyReplace deny(target);
+        CHECK_FALSE(saveFilter(f.filter())); CHECK(read(target) == previous);
+        CHECK(read(target + ".tmp").find("192.0.2.3") != string::npos);
+    }
+    REQUIRE(saveFilter(f.filter()));
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    REQUIRE(f.filter().getRules().size() == 7);
+}
+
+TEST_CASE("Concurrent IPFilter ordinary and checked snapshots serialize staging", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules();
+    auto checked = std::async(std::launch::async, [&] { return saveFilter(f.filter()); });
+    auto ordinary = std::async(std::launch::async, [&] { f.filter().saveList(); });
+    CHECK(checked.get()); ordinary.get();
+    f.context().ipFilter_.reset(); f.filter().loadList();
+    REQUIRE(f.filter().getRules().size() == 6);
+}
+
+TEST_CASE("IPFilter internal operations share snapshot serialization", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules(); REQUIRE(saveFilter(f.filter()));
+    std::function<void()> operation;
+    SECTION("checked writer") { operation = [&] { if(!saveFilter(f.filter())) throw std::runtime_error("checked save refused"); }; }
+    SECTION("ordinary writer") { operation = [&] { f.filter().saveList(); }; }
+    SECTION("loader") { operation = [&] { f.filter().loadList(); }; }
+    SECTION("add") { operation = [&] { f.filter().addToRules("192.0.2.3/32", eDIRECTION_IN); }; }
+    SECTION("remove") { operation = [&] { f.filter().remFromRules("192.0.2.2/32", etaDROP); }; }
+    SECTION("direction") { operation = [&] { f.filter().changeRuleDirection("192.0.2.1/32", eDIRECTION_OUT, etaACPT); }; }
+    SECTION("clear") { operation = [&] { f.filter().clearRules(); }; }
+    SECTION("reorder") { operation = [&] { f.filter().moveRuleDown(IPFilter::StringToUint32("192.0.2.1"), etaACPT); }; }
+    SECTION("lookup") { operation = [&] { f.filter().OK("192.0.2.1", eDIRECTION_IN); }; }
+    CHECK(filterOperationSerialized(f.filter(), operation));
+}
+
+#ifndef _WIN32
+TEST_CASE("Checked IPFilter native partial write cannot replace the old rules", "[snapshot-save][ipfilter-save]") {
+    Fixture f; f.filterRules(); REQUIRE(saveFilter(f.filter()));
+    const auto target = f.path("ipfilter"), previous = read(target);
+    REQUIRE(f.filter().addToRules("!192.0.2.3/32", eDIRECTION_BOTH));
+    const auto child = fork(); REQUIRE(child >= 0);
+    if(child == 0) {
+        std::signal(SIGXFSZ, SIG_IGN);
+        rlimit limit{16, 16}; if(setrlimit(RLIMIT_FSIZE, &limit)) std::_Exit(3);
+        std::_Exit(saveFilter(f.filter()) ? 1 : 0);
+    }
+    int status = 0; REQUIRE(waitpid(child, &status, 0) == child);
+    REQUIRE(WIFEXITED(status)); CHECK(WEXITSTATUS(status) == 0);
+    CHECK(read(target) == previous); REQUIRE(saveFilter(f.filter()));
+}
+#endif
 
 TEST_CASE("Checked Favorites reloads hubs groups users commands and directories", "[snapshot-save][favorites-save]") {
     Fixture f; f.favorite("Original & hub"); f.favorites().stopForShutdown();

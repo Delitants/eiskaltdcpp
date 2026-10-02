@@ -542,3 +542,18 @@ TLS regression reproduced the misleading certificate failure before the fix;
 cancellation still takes precedence and trust/auth/REP results remain distinct.
 No TLS verification, route or direct-fallback policy is relaxed. Temporary trace
 removed; full final Qt validation and repeated deadline cases required.
+
+Conditional IPFilter checkpoint: `saveListChecked()` is a non-destructive final
+snapshot for initialized/edited rules, including explicit empty state. An unused
+manager does no persistence I/O and leaves any disabled saved rule file alone.
+Explicit load, valid add, clear or ordinary save initializes its snapshot state;
+ordinary `saveList()` retains its throwing caller interface. The existing format
+and rule order/action/direction remain unchanged. Staging is flushed/closed before
+native atomic replace, never delete-first; checked failure can retry and neither
+success nor refusal clears live rules. Internal recursive serialization covers
+load/edit/lookup and both writers, not GUI borrowed-pointer ownership. Final owner
+must still quiesce those GUI edits and network readers; legacy destructive
+shutdown is not the persistence certificate. Regression proofs include actual
+loader/native partial-write/replace/stage refusal, explicit empty/unused states
+and missing-initialization/missing-ordinary-lock mutations restored exactly.
+Whole-core aggregation, ordinary-quit and installer activation remain unwired.
