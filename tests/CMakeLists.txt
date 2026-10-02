@@ -50,6 +50,7 @@ add_executable(eiskaltdcpp-tests
     test_queueindex.cpp
     test_queue_workers_shutdown.cpp
     test_queue_producers_shutdown.cpp
+    test_queue_cleanup_shutdown.cpp
     test_usercommand.cpp
     test_util_extra.cpp
     test_settingsmanager.cpp

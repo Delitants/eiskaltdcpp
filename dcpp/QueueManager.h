@@ -21,6 +21,7 @@
 #include <deque>
 #include <atomic>
 #include <condition_variable>
+#include <exception>
 #include <mutex>
 #include <memory>
 #include <thread>
@@ -123,6 +124,12 @@ public:
     // Never from callbacks/manager locks; owner fences manual remove/raw/config.
     void stopProducersForShutdown();
 
+    // Final accepted phase after owner-fenced transfer/socket/manual/raw users.
+    // Joins admitted cleanup and workers, returning one stable checked outcome.
+    // False is not teardown/install permission. Retain dependencies; never call
+    // from callbacks or under manager/listener locks. Final saves stay separate.
+    bool stopCleanupForShutdown();
+
     void setPriority(const string& aTarget, QueueItem::Priority p);
 
     StringList getTargets(const TTHValue& tth);
@@ -173,17 +180,17 @@ private:
 
     class FileMover : public Thread {
     public:
-        explicit FileMover(DCContext& ctx) : ctx_(ctx), active(false) { }
-        DCContext& ctx() const { return ctx_; }
+        explicit FileMover(QueueManager* owner) : qm(owner), active(false) { }
         virtual ~FileMover() { join(); }
 
-        void moveFile(const string& source, const string& target);
+        bool moveFile(const string& source, const string& target);
         void closeAdmission();
+        bool drained();
         virtual int run();
     private:
         typedef pair<string, string> FilePair;
 
-        DCContext& ctx_;
+        QueueManager* qm;
         bool active;
         bool stopped = false;
         CriticalSection cs;
@@ -301,6 +308,22 @@ private:
     std::vector<std::unique_ptr<ListMatcher>> listMatchers;
     bool beginProducer();
     void finishProducer();
+    bool cleanupShutdownRequested = false;
+    bool cleanupShutdownComplete = false;
+    bool cleanupSucceeded = false;
+    bool cleanupFailed = false;
+    size_t cleanupOperations = 0;
+    std::unordered_map<std::thread::id, size_t> cleanupThreads;
+    // Only already-queued internal mover jobs may start a trusted lease after
+    // external closure; finalization joins that worker before checking outcome.
+    bool beginCleanup(bool acceptedMover = false);
+    void finishCleanup(bool failed = false);
+    void recordCleanupFailure();
+    struct CleanupGuard {
+        QueueManager& manager;
+        int exceptions = std::uncaught_exceptions();
+        ~CleanupGuard() { manager.finishCleanup(std::uncaught_exceptions() > exceptions); }
+    };
     std::mutex workerMutex;
     std::condition_variable workersChanged;
     bool workerShutdownRequested = false;
@@ -335,7 +358,7 @@ private:
     void moveFile(const string& source, const string& target);
     // Requires an admitted worker-operation lease; keeps mover drain open.
     void moveFileAccepted(const string& source, const string& target);
-    static void moveFile_(DCContext& ctx, const string& source, const string& target);
+    bool moveFile_(const string& source, const string& target);
     void moveStuckFile(QueueItem* qi);
     void rechecked(QueueItem* qi);
 

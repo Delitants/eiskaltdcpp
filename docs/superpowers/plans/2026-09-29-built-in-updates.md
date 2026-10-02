@@ -341,6 +341,25 @@ EOF finalizes once, repeated flushes keep root validation, and excess/post-EOF
 payload rejects before hashing/writing. Real-file regressions cover continued
 partial writes, corrupt complete/short final blocks and valid short-file cleanup.
 
+Accepted-queue checkpoint: `QueueManager::stopCleanupForShutdown()` closes
+external accepted cleanup after producer closure and owner-fenced transfer/socket/
+manual/raw callers. It cancels pending rechecks, joins whole admitted queue tails
+and synchronous nested mutations, then joins existing worker closure. Previously
+queued mover jobs retain trusted internal leases through execution/callbacks;
+external threads never inherit an admitted parent's lease. The mover references
+its owning manager rather than requiring the context to republish that pointer
+during destruction. Late raw/ownership entries reject before dependency effects.
+
+Concurrent/repeated callers share one stable checked result. Retained running
+downloads, incomplete mover jobs, accepted exceptions or requested-target move
+failures yield false, never installer/destructive-teardown permission. A successful
+source-directory fallback preserves data but does not certify the requested
+destination. Wrong-order worker closure retains a failed completed-move outcome.
+Rechecker cancellation/stale-identity protection and ordinary reusable operation
+remain intact. Checked hash/DHT/client persistence, aggregate core/socket drain
+and committed-normal-quit handoff remain separate prerequisites. No MainWindow/
+DCContext/Sparkle activation or `_Exit` replacement at this checkpoint.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

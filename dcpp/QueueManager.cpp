@@ -377,15 +377,16 @@ void QueueManager::UserQueue::remove(QueueItem* qi, const UserPtr& aUser, bool r
     }
 }
 
-void QueueManager::FileMover::moveFile(const string& source, const string& target) {
+bool QueueManager::FileMover::moveFile(const string& source, const string& target) {
     Lock l(cs);
-    if(stopped) return;
+    if(stopped) return false;
     files.emplace_back(source, target);
     if(!active) {
         active = true;
         try { start(); }
         catch(...) { active = false; throw; }
     }
+    return true;
 }
 
 void QueueManager::FileMover::closeAdmission() {
@@ -393,10 +394,18 @@ void QueueManager::FileMover::closeAdmission() {
     stopped = true;
 }
 
+bool QueueManager::FileMover::drained() {
+    Lock l(cs);
+    return !active && files.empty();
+}
+
 int QueueManager::FileMover::run() {
     bool normalExit = false;
     auto cleanup = makeScopedFunctor([this, &normalExit] {
-        if(!normalExit) { Lock l(cs); active = false; }
+        if(!normalExit) {
+            qm->recordCleanupFailure();
+            Lock l(cs); active = false;
+        }
     });
     while(true) {
         FilePair next;
@@ -411,7 +420,12 @@ int QueueManager::FileMover::run() {
             files.pop_back();
         }
 
-        moveFile_(ctx(), next.first, next.second);
+        if(!qm->beginCleanup(true)) {
+            qm->recordCleanupFailure();
+            continue;
+        }
+        CleanupGuard operation{*qm};
+        qm->moveFile_(next.first, next.second);
     }
     return 0;
 }
@@ -436,7 +450,10 @@ void QueueManager::Rechecker::requestStop() {
 int QueueManager::Rechecker::run() {
     bool normalExit = false;
     auto cleanup = makeScopedFunctor([this, &normalExit] {
-        if(!normalExit) { Lock l(cs); active = false; }
+        if(!normalExit) {
+            qm->recordCleanupFailure();
+            Lock l(cs); active = false;
+        }
     });
     while(true) {
         string file;
@@ -595,10 +612,13 @@ int QueueManager::Rechecker::run() {
 
             qm->rechecked(q);
         } catch(const FileException& e) {
-            if(!stopped)
+            if(!stopped) {
+                qm->recordCleanupFailure();
                 qm->ctx().getLogManager()->message(str(F_("Error rechecking %1%: %2%") % file % e.getError()));
+            }
         }
     }
+    { Lock l(cs); active = false; normalExit = true; }
     return 0;
 }
 
@@ -622,7 +642,7 @@ QueueManager::QueueManager(DCContext& ctx) :
     ContextAware(ctx),
     lastSave(0),
     queueFile(Util::getPath(Util::PATH_USER_CONFIG) + "Queue.xml"),
-    mover(this->ctx()),
+    mover(this),
     rechecker(this),
     fileQueue(this->ctx()),
     userQueue(this->ctx()),
@@ -637,8 +657,7 @@ QueueManager::QueueManager(DCContext& ctx) :
 }
 
 QueueManager::~QueueManager() {
-    stopProducersForShutdown();
-    stopWorkersForShutdown();
+    stopCleanupForShutdown();
 
     if(!CTX_BOOLSETTING(KEEP_LISTS)) {
         string path = Util::getListPath();
@@ -707,16 +726,80 @@ void QueueManager::stopProducersForShutdown() {
     }
 }
 
-bool QueueManager::beginWorkerOperation() {
-    std::lock_guard<std::mutex> lock(workerMutex);
-    if(workerShutdownRequested) return false;
-    ++workerOperations;
+bool QueueManager::beginCleanup(bool acceptedMover) {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    const auto thread = std::this_thread::get_id();
+    if(cleanupShutdownComplete || (cleanupShutdownRequested && !acceptedMover &&
+                                  cleanupThreads.find(thread) == cleanupThreads.end())) return false;
+    ++cleanupThreads[thread];
+    ++cleanupOperations;
     return true;
 }
 
+void QueueManager::finishCleanup(bool failed) {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    cleanupFailed = cleanupFailed || failed;
+    auto thread = cleanupThreads.find(std::this_thread::get_id());
+    if(--thread->second == 0) cleanupThreads.erase(thread);
+    if(--cleanupOperations == 0) producersChanged.notify_all();
+}
+
+void QueueManager::recordCleanupFailure() {
+    std::lock_guard<std::mutex> lock(producerMutex);
+    cleanupFailed = true;
+}
+
+bool QueueManager::stopCleanupForShutdown() {
+    stopProducersForShutdown();
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        if(cleanupShutdownRequested) {
+            producersChanged.wait(lock, [this] { return cleanupShutdownComplete; });
+            return cleanupSucceeded;
+        }
+        cleanupShutdownRequested = true;
+    }
+    rechecker.requestStop();
+    {
+        std::unique_lock<std::mutex> lock(producerMutex);
+        producersChanged.wait(lock, [this] { return cleanupOperations == 0; });
+    }
+    // Accepted submissions stay possible through their outer lease. Joining the
+    // mover then finishes every previously queued job, including callback tails.
+    stopWorkersForShutdown();
+    bool empty;
+    {
+        Lock lock(cs);
+        empty = userQueue.getRunning().empty();
+        for(const auto& item: fileQueue.getQueue()) empty = empty && !item.second->isRunning();
+    }
+    empty = empty && mover.drained();
+    std::unique_lock<std::mutex> lock(producerMutex);
+    producersChanged.wait(lock, [this] { return cleanupOperations == 0; });
+    cleanupSucceeded = empty && !cleanupFailed;
+    cleanupShutdownComplete = true;
+    producersChanged.notify_all();
+    return cleanupSucceeded;
+}
+
+bool QueueManager::beginWorkerOperation() {
+    if(!beginCleanup()) return false;
+    bool admitted;
+    {
+        std::lock_guard<std::mutex> lock(workerMutex);
+        admitted = !workerShutdownRequested;
+        if(admitted) ++workerOperations;
+    }
+    if(!admitted) finishCleanup();
+    return admitted;
+}
+
 void QueueManager::finishWorkerOperation() {
-    std::lock_guard<std::mutex> lock(workerMutex);
-    if(--workerOperations == 0) workersChanged.notify_all();
+    {
+        std::lock_guard<std::mutex> lock(workerMutex);
+        if(--workerOperations == 0) workersChanged.notify_all();
+    }
+    finishCleanup();
 }
 
 void QueueManager::stopWorkersForShutdown() {
@@ -1433,7 +1516,9 @@ void QueueManager::setFile(Download* d) {
 }
 
 void QueueManager::moveFile(const string& source, const string& target) {
-    if(!beginWorkerOperation()) return;
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
+    if(!beginWorkerOperation()) { recordCleanupFailure(); return; }
     ScopedFunctor([this] { finishWorkerOperation(); });
     moveFileAccepted(source, target);
 }
@@ -1441,31 +1526,36 @@ void QueueManager::moveFile(const string& source, const string& target) {
 void QueueManager::moveFileAccepted(const string& source, const string& target) {
     File::ensureDirectory(target);
     if(File::getSize(source) > MOVER_LIMIT) {
-        mover.moveFile(source, target);
+        if(!mover.moveFile(source, target)) recordCleanupFailure();
     } else {
-        moveFile_(ctx(), source, target);
+        moveFile_(source, target);
     }
 }
 
-void QueueManager::moveFile_(DCContext& ctx, const string& source, const string& target) {
+bool QueueManager::moveFile_(const string& source, const string& target) {
     try {
         File::renameFile(source, target);
-        ctx.getQueueManager()->fire(QueueManagerListener::FileMoved(), target);
+        fire(QueueManagerListener::FileMoved(), target);
+        return true;
     } catch(const FileException& e1) {
+        recordCleanupFailure();
         // Try to just rename it to the correct name at least
         string newTarget = Util::getFilePath(source) + Util::getFileName(target);
         try {
             File::renameFile(source, newTarget);
-            ctx.getLogManager()->message(str(F_("Unable to move %1% to %2% (%3%); renamed to %4%") %
+            ctx().getLogManager()->message(str(F_("Unable to move %1% to %2% (%3%); renamed to %4%") %
                                                    Util::addBrackets(source) % Util::addBrackets(target) % e1.getError() % Util::addBrackets(newTarget)));
         } catch(const FileException& e2) {
-            ctx.getLogManager()->message(str(F_("Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)") %
+            ctx().getLogManager()->message(str(F_("Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)") %
                                                    Util::addBrackets(source) % Util::addBrackets(target) % e1.getError() % Util::addBrackets(newTarget) % e2.getError()));
         }
     }
+    return false;
 }
 
 void QueueManager::moveStuckFile(QueueItem* qi) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     moveFileAccepted(qi->getTempTarget(), qi->getTarget());
 
     if(qi->isFinished()) {
@@ -1486,6 +1576,8 @@ void QueueManager::moveStuckFile(QueueItem* qi) {
 }
 
 void QueueManager::rechecked(QueueItem* qi) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     fire(QueueManagerListener::RecheckDone(), qi->getTarget());
     fire(QueueManagerListener::StatusUpdated(), qi);
 
@@ -1493,6 +1585,8 @@ void QueueManager::rechecked(QueueItem* qi) {
 }
 
 void QueueManager::putDownload(Download* aDownload, bool finished) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     HintedUserList getConn;
     string fl_fname;
     HintedUser fl_user(UserPtr(), Util::emptyString);
@@ -1698,6 +1792,8 @@ void QueueManager::recheck(const string& aTarget) {
 }
 
 void QueueManager::clear() {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     StringList targets;
     {
         Lock l(cs);
@@ -1710,6 +1806,8 @@ void QueueManager::clear() {
 }
 
 void QueueManager::remove(const string& aTarget) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     UserList x;
 
     {
@@ -1753,6 +1851,8 @@ void QueueManager::remove(const string& aTarget) {
 #define MAX_SIZE_WO_TREE 20*1024*1024
 
 void QueueManager::removeSource(const string& aTarget, const UserPtr& aUser, int reason, bool removeConn /* = true */) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     bool isRunning = false;
     bool removeCompletely = false;
     {
@@ -1805,6 +1905,8 @@ int64_t QueueManager::getQueued(const UserPtr& aUser) const {
 }
 
 void QueueManager::removeSource(const UserPtr& aUser, int reason) {
+    if(!beginCleanup()) return;
+    CleanupGuard operation{*this};
     // @todo remove from finished items
     bool isRunning = false;
     string removeRunning;
