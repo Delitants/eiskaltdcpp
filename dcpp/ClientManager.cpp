@@ -844,6 +844,11 @@ void ClientManager::loadUsers() {
 }
 
 void ClientManager::saveUsers() const {
+    (void)saveUsersChecked();
+}
+
+bool ClientManager::saveUsersChecked() const {
+    std::lock_guard<std::mutex> saveLock(usersSaveMutex);
     try {
         SimpleXML xml;
         xml.addTag("Users");
@@ -869,9 +874,9 @@ void ClientManager::saveUsers() const {
         xml.toXML(&f);
         f.flush();
         out.close();
-        File::deleteFile(fName);
-        File::renameFile(fName + ".tmp", fName);
-    } catch(const Exception&) { }
+        File::replaceFile(fName + ".tmp", fName);
+        return true;
+    } catch(const Exception&) { return false; }
 }
 
 void ClientManager::saveUser(const CID& cid) {

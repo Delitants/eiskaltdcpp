@@ -130,10 +130,13 @@ namespace dht
         auto operation = dht_.admitOperation();
         if(!operation) return;
         xml.resetCurrentChild();
-        if(xml.findChild("Indexes"))
+        const bool legacy = xml.findChild("Indexes");
+        if(!legacy)
+            xml.resetCurrentChild();
+        if(legacy || xml.findChild("Files"))
         {
             xml.stepIn();
-            while(xml.findChild("Index"))
+            while(xml.findChild(legacy ? "Index" : "File"))
             {
                 const TTHValue tth = TTHValue(xml.getChildAttrib("TTH"));
                 SourceList sources;

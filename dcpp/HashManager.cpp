@@ -508,7 +508,16 @@ void HashManager::HashStore::rebuild() {
     }
 }
 
+bool HashManager::saveIndexChecked() {
+    Lock l(cs);
+    return store.saveChecked();
+}
+
 void HashManager::HashStore::save() {
+    (void)saveChecked();
+}
+
+bool HashManager::HashStore::saveChecked() {
     if (dirty) {
         try {
             File ff(getIndexFile() + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
@@ -554,14 +563,15 @@ void HashManager::HashStore::save() {
             f.write(LIT("\t</Files>\r\n</HashStore>"));
             f.flush();
             ff.close();
-            File::deleteFile( getIndexFile());
-            File::renameFile(getIndexFile() + ".tmp", getIndexFile());
+            File::replaceFile(getIndexFile() + ".tmp", getIndexFile());
 
             dirty = false;
         } catch (const FileException& e) {
             ctx().getLogManager()->message(str(F_("Error saving hash data: %1%") % e.getError()));
+            return false;
         }
     }
+    return true;
 }
 
 string HashManager::HashStore::getIndexFile() { return Util::getPath(Util::PATH_USER_CONFIG) + "HashIndex.xml"; }

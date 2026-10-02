@@ -179,6 +179,9 @@ public:
 
     void loadUsers();
     void saveUsers() const;
+    // Retryable snapshot. Final owner must drain nick mutations and save the
+    // queue first, including its saveUser tail, while this manager stays live.
+    bool saveUsersChecked() const;
     void saveUser(const CID& cid);
 #ifdef WITH_DHT
     OnlineUserPtr findDHTNode(const CID& cid) const;
@@ -202,6 +205,7 @@ private:
 
     Client::List clients;
     mutable CriticalSection cs;
+    mutable std::mutex usersSaveMutex;
 
     enum class ClientLifecycle { Running, Stopping, Stopped };
     std::mutex clientLifecycleMutex;

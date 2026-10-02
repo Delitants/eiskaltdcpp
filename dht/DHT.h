@@ -146,10 +146,13 @@ namespace dht
         bool isConnected() const { return lastPacket && (GET_TICK() - lastPacket < CONNECTED_TIMEOUT); }
 
         /** Mark that network data should be saved */
-        void setDirty() { dirty = true; }
+        void setDirty() { dirty.store(true); }
 
         /** Saves network information to XML file */
         void saveData();
+        // Retryable snapshot while routing/index state is retained. Final owner
+        // must first stop producers and sockets; absent dirty state is not saved.
+        bool saveDataChecked();
 
         /** Returns if our UDP port is open */
         bool isFirewalled() const;
@@ -206,7 +209,7 @@ namespace dht
         bool firewalled;
 
         /** Should the network data be saved? */
-        bool dirty;
+        std::atomic<bool> dirty;
 
         /** Finds "max" closest nodes and stores them to the list */
         void getClosestNodes(const CID& cid, std::map<CID, Node::Ptr>& closest, unsigned int max, uint8_t maxType);

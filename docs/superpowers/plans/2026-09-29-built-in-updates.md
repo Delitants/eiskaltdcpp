@@ -360,6 +360,30 @@ remain intact. Checked hash/DHT/client persistence, aggregate core/socket drain
 and committed-normal-quit handoff remain separate prerequisites. No MainWindow/
 DCContext/Sparkle activation or `_Exit` replacement at this checkpoint.
 
+XML-snapshot checkpoint: `HashManager::saveIndexChecked()`,
+`ClientManager::saveUsersChecked()` and `DHT::saveDataChecked()` expose retryable
+snapshot outcomes while their managers stay live. Existing void saves delegate.
+Flushed/closed native replacement preserves the previous file on reported write
+or rename failure; hash/DHT dirty state and user save intent survive retry.
+Same-file Users writers serialize. Final owner must fence nick mutations and
+save the queue first, including its source-CID `saveUser` tail, before Users.
+
+DHT consumes an atomic dirty mark before its locked snapshot and restores it on
+failure, without clearing marks arriving during serialization/I/O or acquiring
+the DHT lock from an index writer. A fresh disabled/no-state instance succeeds
+without writing; a missing bucket with pending state cannot certify success.
+The DHT reader accepts the emitted `Files/File` and legacy `Indexes/Index`
+formats, correcting persisted foreign-index readback without changing the writer.
+
+This is an XML-file checkpoint, not all hash persistence: HashData insertion,
+physical leaf/cursor flush and coordinated data/index rebuild failure/recovery
+remain gates, as do required Favorites/conditional writers and mandatory managed
+publication revocation versus optional performance caches. Real staging/rename
+refusal, child-only buffered-flush write refusal, retry and loader readbacks do
+not prove fsync fault, disk-full/power-loss, Windows or minimum-OS acceptance.
+Aggregate non-destructive core/socket drain and committed-normal-quit installer
+handoff remain unimplemented; no runtime activation or `_Exit` replacement.
+
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.
 - [ ] Integrate at the final successful `closeEvent` cleanup boundary, not an early menu click or generic `aboutToQuit`. Implement deferred public Sparkle install/user-driver callbacks without force-exit or private APIs. Revalidate signed metadata, pending archive and policy after cache restore and immediately before handoff. Keep network bridge alive only through download completion, not as an external process.

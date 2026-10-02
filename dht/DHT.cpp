@@ -33,6 +33,7 @@
 #include "dcpp/CryptoManager.h"
 #include "dcpp/File.h"
 #include "dcpp/LogManager.h"
+#include "dcpp/ScopedFunctor.h"
 #include "dcpp/SettingsManager.h"
 #include "dcpp/ShareManager.h"
 #include "dcpp/ThrottleManager.h"
@@ -528,36 +529,45 @@ namespace dht
      */
     void DHT::saveData()
     {
-        if(!dirty)
-            return;
+        (void)saveDataChecked();
+    }
 
+    bool DHT::saveDataChecked()
+    {
         Lock l(cs);
+        if(!dirty.load())
+            return true;
+        if(!bucket)
+            return false;
 
-        SimpleXML xml;
-        xml.addTag("DHT");
-        xml.stepIn();
-
-        // save nodes
-        bucket->saveNodes(xml);
-
-        // save foreign published files
-        getIndexManager().saveIndexes(xml);
-
-        xml.stepOut();
+        // Consume before the snapshot, never clear a later IndexManager mark.
+        // setDirty must not acquire cs: index writers already hold their lock.
+        dirty.exchange(false);
+        bool saved = false;
+        ScopedFunctor([&] { if(!saved) dirty.store(true); });
 
         try
         {
+            SimpleXML xml;
+            xml.addTag("DHT");
+            xml.stepIn();
+            bucket->saveNodes(xml);
+            getIndexManager().saveIndexes(xml);
+            xml.stepOut();
+
             dcpp::File file(Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE + ".tmp", dcpp::File::WRITE, dcpp::File::CREATE | dcpp::File::TRUNCATE);
             BufferedOutputStream<false> bos(&file);
             bos.write(SimpleXML::utf8Header);
             xml.toXML(&bos);
             bos.flush();
             file.close();
-            dcpp::File::deleteFile(Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE);
-            dcpp::File::renameFile(Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE + ".tmp", Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE);
+            dcpp::File::replaceFile(Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE + ".tmp", Util::getPath(Util::PATH_USER_CONFIG) + DHT_FILE);
+            saved = true;
+            return true;
         }
-        catch(const FileException&)
+        catch(const Exception&)
         {
+            return false;
         }
     }
 

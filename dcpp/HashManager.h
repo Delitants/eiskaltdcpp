@@ -109,6 +109,10 @@ public:
     // Retains cache and does not save it; checked final persistence is separate.
     void stopForShutdown();
 
+    // Snapshot only the current index; not a HashData/rebuild certificate.
+    // Final owner must first drain every cache writer and retain dependencies.
+    bool saveIndexChecked();
+
     void shutdown() {
         stopForShutdown();
         Lock l(cs);
@@ -179,6 +183,7 @@ private:
 
         void load();
         void save();
+        bool saveChecked();
 
         void rebuild();
 
