@@ -634,3 +634,26 @@ receipts, reentrancy and the failed-context destructor guard. The product GUI,
 manual callers, Torrent/updater workers and macOS emergency exit are still
 unchanged. Their retained input/worker fence and committed-normal-quit handoff
 must land before the coordinator can authorize a real updater installation.
+
+Retained updater worker-fence checkpoint (Task 5 remains in progress):
+`UpdateTransport::stopWorkersForQuit` terminally closes admission and physically
+joins its cancelable network worker without pumping queued callbacks. It removes
+undelivered committed output, preserves already-delivered staging, rejects late
+fetches and caches removal/join refusal. Wrong-owner calls do not consume the
+owner attempt, and a fence from final progress cannot finish the canceled job.
+
+The native backend stops discovery callbacks and polling, joins transport and
+archive-verification workers, and retains a prior Ready stage only when its
+route is still valid at preparation. Intentional core route retirement after a
+successful fence no longer clears that stage. This is a worker-drain receipt,
+not an archive/installer identity certificate; refused owners and their context
+must remain alive. Unknown backends fail closed, and unsupported backends silence
+pending capability replies without claiming installer support.
+
+The controller separately closes scheduling/manual/preferences/notification
+inputs while retaining the Ready version and its prior consent. Committed quit
+rechecks the sticky worker result and saved channel, skipped/deferred version and
+consent rules. Neither this fence nor ordinary shutdown grants installation.
+GUI/manual DC/Torrent owner fencing, checked application normal-quit aggregation,
+native installer acceptance/failure recovery and macOS emergency exit integration
+remain pending; `armInstallOnQuit` is still the native fail-closed stub.

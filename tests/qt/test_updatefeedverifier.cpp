@@ -2,6 +2,7 @@
 #include "updates/UpdateFeedVerifier.h"
 #include "updates/UpdateLoopbackBridge.h"
 #include "dcpp/ProxyRoute.h"
+#include "dcpp/ScopedFunctor.h"
 #include <catch2/catch_test_macros.hpp>
 #include <QFile>
 #include <QProcess>
@@ -9,6 +10,7 @@
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDir>
+#include <QDirIterator>
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -16,6 +18,7 @@
 #include <QThread>
 #include <openssl/evp.h>
 #include <memory>
+#include <future>
 #ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
 #include "updates/MacUpdateDiscovery.h"
 #include "updates/MacUpdateBackend.h"
@@ -553,6 +556,7 @@ struct BackendFixture {
     QByteArray feed;
     std::atomic_int requests{0};
     std::atomic_bool holdArchive{false}, archiveEntered{false}, workerCancelled{false};
+    std::atomic_bool holdFeed{false}, feedEntered{false}, workerExited{false};
     bool corrupt = false;
     std::unique_ptr<MacUpdateBackend> backend;
     int offers = 0, ready = 0, failures = 0, absent = 0;
@@ -572,6 +576,12 @@ struct BackendFixture {
         backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app,
             [this](const auto& policy, const std::string& url, const auto& sink) {
                 ++requests;
+                const bool isFeed = url.find("raw.githubusercontent.com") != std::string::npos;
+                auto markExit = dcpp::makeScopedFunctor([&] { workerExited = true; });
+                if(isFeed) {
+                    feedEntered = true;
+                    for(int i = 0; holdFeed && i < 3000 && !policy.cancelled(); ++i) QThread::msleep(1);
+                }
                 if(url.find("raw.githubusercontent.com") == std::string::npos) {
                     archiveEntered = true;
                     for(int i = 0; holdArchive && i < 3000 && !policy.cancelled(); ++i) QThread::msleep(1);
@@ -596,6 +606,60 @@ struct BackendFixture {
         REQUIRE(requests.load() == 1);
     }
 };
+template<class T> bool backendFence(T& backend) {
+    if constexpr(requires { backend.stopWorkersForQuit(); }) return backend.stopWorkersForQuit();
+    else return false;
+}
+QStringList stagedArchives() {
+    QStringList result;
+    QDirIterator paths(QDir::tempPath(), {"update.zip"}, QDir::Files, QDirIterator::Subdirectories);
+    while(paths.hasNext()) result.push_back(paths.next());
+    return result;
+}
+}
+TEST_CASE("Mac backend retained fence preserves Ready staging through core route retirement", "[.][updater-worker-fence-native]") {
+    BackendFixture f; f.discover();
+    f.backend->download(211, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    REQUIRE(f.ready == 1); REQUIRE(f.failures == 0);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    CHECK_FALSE(std::async(std::launch::async, [&] { return backendFence(*f.backend); }).get());
+    REQUIRE(backendFence(*f.backend));
+    f.context.ownedCtx->getProxyRoute()->stop();
+    f.backend->check(212, Channel::Stable, CheckKind::Manual);
+    f.backend->download(213, f.offer);
+    REQUIRE(backendFence(*f.backend));
+    QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 120; }));
+    CHECK(f.offers == 1); CHECK(f.ready == 1); CHECK(f.failures == 0); CHECK(f.requests.load() == 2);
+    QFile archive(paths.front()); REQUIRE(archive.open(QIODevice::ReadOnly));
+    CHECK(archive.readAll() == f.archive); archive.close();
+    f.backend.reset(); CHECK_FALSE(QFile::exists(paths.front()));
+}
+TEST_CASE("Mac backend retained fence rejects staging revoked before preparation", "[.][updater-worker-fence-native]") {
+    BackendFixture f; f.discover(); f.backend->download(214, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    f.context.ownedCtx->getProxyRoute()->stop();
+    REQUIRE(backendFence(*f.backend));
+    CHECK_FALSE(QFile::exists(paths.front()));
+    QCoreApplication::processEvents(); CHECK(f.failures == 0); CHECK(f.ready == 1);
+}
+TEST_CASE("Mac backend retained fence joins active transport without queued completion", "[.][updater-worker-fence-native]") {
+    BackendFixture f;
+    bool feed = false;
+    SECTION("feed") { feed = true; f.holdFeed = true; f.backend->check(215, Channel::Stable, CheckKind::Manual); }
+    SECTION("archive") { f.discover(); f.workerExited = false; f.holdArchive = true; f.backend->download(216, f.offer); }
+    QElapsedTimer start; start.start();
+    while(!(feed ? f.feedEntered.load() : f.archiveEntered.load()) && start.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE((feed ? f.feedEntered.load() : f.archiveEntered.load()));
+    REQUIRE(backendFence(*f.backend));
+    CHECK(f.workerCancelled.load()); CHECK(f.workerExited.load());
+    f.backend->check(217, Channel::Stable, CheckKind::Manual);
+    f.backend->download(218, f.offer);
+    QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 120; }));
+    CHECK(f.ready == 0); CHECK(f.failures == 0); CHECK(f.offers == (feed ? 0 : 1));
+    CHECK(f.requests.load() == (feed ? 1 : 2)); CHECK(stagedArchives().isEmpty());
+    CHECK(backendFence(*f.backend));
 }
 TEST_CASE("Mac backend stages only the independently verified selected archive", "[.][update-backend-native]") {
     BackendFixture f; f.discover();

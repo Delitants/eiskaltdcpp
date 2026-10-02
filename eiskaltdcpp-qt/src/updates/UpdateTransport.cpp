@@ -61,6 +61,7 @@ struct UpdateTransport::Impl {
     transport_detail::Backend backend;
     std::shared_ptr<Job> job;
     quint64 sequence = 0;
+    bool stopped = false, stopSucceeded = false;
 };
 
 UpdateTransport::UpdateTransport(dcpp::DCContext& context, QObject* parent)
@@ -88,9 +89,12 @@ UpdateTransport::~UpdateTransport() {
 quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString& destination,
     std::shared_ptr<const dcpp::ProxyRouteSnapshot> route) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if(impl->stopped) return 0;
     const auto id = ++impl->sequence;
     if(impl->job) {
-        QMetaObject::invokeMethod(this, [this, id] { emit failed(id, tr("An update download is already running.")); }, Qt::QueuedConnection);
+        QMetaObject::invokeMethod(this, [this, id] {
+            if(!impl->stopped) emit failed(id, tr("An update download is already running."));
+        }, Qt::QueuedConnection);
         return id;
     }
     const auto job = std::make_shared<Impl::Job>();
@@ -100,11 +104,12 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
     impl->job = job;
     const auto finish = [this, job] {
         job->join();
-        if(impl->job != job) return;
+        if(impl->stopped || impl->job != job) return;
         if(job->created && !job->cancelled.load() && !revoked(job->route) && job->error.isEmpty()) {
             QPointer<UpdateTransport> alive(this);
             emit progress(job->id, job->bytes.load(), job->bytes.load());
             if(!alive) return;
+            if(impl->stopped || impl->job != job) return;
         }
         const bool cancelled = job->cancelled.load() || revoked(job->route);
         const bool success = job->created && !cancelled && job->error.isEmpty();
@@ -162,6 +167,28 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
 void UpdateTransport::cancel(quint64 id) {
     Q_ASSERT(QThread::currentThread() == thread());
     if(impl->job && impl->job->id == id) impl->job->stop();
+}
+
+bool UpdateTransport::stopWorkersForQuit() {
+    if(QThread::currentThread() != thread()) return false;
+    if(impl->stopped) return impl->stopSucceeded;
+    impl->stopped = true;
+    const auto job = impl->job;
+    try {
+        if(job) {
+            job->stop();
+            job->join();
+            // Only joined workers publish created/error or release QSaveFile.
+            const bool removed = !job->created || !QFileInfo::exists(job->destination) || QFile::remove(job->destination);
+            impl->job.reset();
+            if(!removed) return false;
+        }
+        impl->stopSucceeded = true;
+    } catch(...) {
+        // Keep an unjoined job and its owner alive; refusal is permanently
+        // cached, and no completion may masquerade as a successful fence.
+    }
+    return impl->stopSucceeded;
 }
 
 dcpp::HttpRequestPolicy transport_detail::policy(ResourceKind kind,

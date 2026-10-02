@@ -33,6 +33,9 @@ public:
     void later();
     void skipVersion();
     void cancel();
+    // Terminal input/worker fence, retaining Ready/version consent. The
+    // application must still check every other shutdown owner before commit.
+    [[nodiscard]] bool stopWorkersForQuit();
     // Called only after application shutdown has successfully committed.
     void normalQuitCommitted();
     void shutdown();

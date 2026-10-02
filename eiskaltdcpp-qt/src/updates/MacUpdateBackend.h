@@ -13,6 +13,7 @@ public:
     void check(quint64 operation, Channel, CheckKind) override;
     void download(quint64 operation, const UpdateOffer&) override;
     void cancel() override;
+    [[nodiscard]] bool stopWorkersForQuit() override;
     void armInstallOnQuit(const UpdateOffer&, bool relaunch) override;
     void revokeInstallConsent() override;
 private:

@@ -13,6 +13,8 @@
 #include <QThread>
 #include <atomic>
 #include <thread>
+#include <future>
+#include "dcpp/ScopedFunctor.h"
 
 namespace updates {
 struct UpdateTransportTestAccess {
@@ -41,6 +43,10 @@ struct Result {
     bool done() const { return successes || failures; }
 };
 auto directRoute() { return std::make_shared<dcpp::ProxyRouteSnapshot>(); }
+template<class T> bool fence(T& transport) {
+    if constexpr(requires { transport.stopWorkersForQuit(); }) return transport.stopWorkersForQuit();
+    else return false;
+}
 }
 
 TEST_CASE("Update worker commits private bytes without blocking the GUI", "[updates][update-transport][update-worker]") {
@@ -316,3 +322,118 @@ TEST_CASE("Update worker integrates strict HTTPS over authenticated local GOST",
         CHECK(origin->request.find("test-password") == std::string::npos);
     }
 }
+
+TEST_CASE("Updater quit fence physically joins an admitted worker without pumping callbacks", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    std::atomic_bool entered{false}, cancelled{false}, release{false}, tailDone{false};
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto& policy, const auto&, const auto& sink) {
+        const uint8_t byte = 'x'; sink(&byte, 1); entered = true;
+        while(!release && !policy.cancelled()) QThread::msleep(1);
+        cancelled = policy.cancelled();
+        while(!release) QThread::msleep(1);
+        tailDone = true;
+    });
+    auto releaseOnExit = dcpp::makeScopedFunctor([&] { release = true; });
+    Result result(*transport);
+    transport->fetch(feed, ResourceKind::Feed, staging.filePath("partial"), directRoute());
+    QElapsedTimer wait; wait.start();
+    while(!entered && wait.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    auto unblock = std::async(std::launch::async, [&] {
+        QElapsedTimer deadline; deadline.start();
+        while(!cancelled && deadline.elapsed() < 150) QThread::msleep(1);
+        QThread::msleep(30); release = true;
+    });
+    const bool drained = fence(*transport);
+    CHECK(drained); CHECK(tailDone.load()); CHECK(cancelled.load());
+    unblock.get();
+    CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+    QCoreApplication::processEvents();
+    CHECK_FALSE(result.done()); CHECK(result.progresses == 0);
+    CHECK(fence(*transport));
+}
+
+TEST_CASE("Updater quit fence retracts queued completion and terminally rejects new fetches", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    std::atomic_int calls{0};
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto&, const auto&, const auto& sink) {
+        ++calls; const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    Result result(*transport);
+    const auto path = staging.filePath("undelivered");
+    transport->fetch(feed, ResourceKind::Feed, path, directRoute());
+    QElapsedTimer wait; wait.start();
+    while(!QFileInfo::exists(path) && wait.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(QFileInfo::exists(path));
+    // Also leave a busy rejection queued, not just worker completion/progress.
+    transport->fetch(feed, ResourceKind::Feed, staging.filePath("busy"), directRoute());
+    CHECK(fence(*transport)); CHECK_FALSE(QFileInfo::exists(path));
+    CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
+    QCoreApplication::processEvents();
+    CHECK_FALSE(result.done()); CHECK(result.progresses == 0); CHECK(calls.load() == 1);
+}
+
+TEST_CASE("Updater quit fence preserves bytes already delivered into staging", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto& sink) {
+        const uint8_t bytes[]{'a', 'b'}; sink(bytes, 2);
+    });
+    Result result(*transport); const auto path = staging.filePath("delivered");
+    auto route = directRoute(); transport->fetch(feed, ResourceKind::Feed, path, route);
+    REQUIRE(pump([&] { return result.successes == 1; }));
+    const auto notifications = result.progresses;
+    CHECK(fence(*transport)); route->revoked->store(true);
+    CHECK(fence(*transport)); QCoreApplication::processEvents();
+    CHECK(result.successes == 1); CHECK(result.failures == 0); CHECK(result.progresses == notifications);
+    QFile file(path); REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == "ab");
+}
+
+TEST_CASE("Updater quit fence rejects a foreign caller without consuming the owner attempt", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto&) {});
+    CHECK_FALSE(std::async(std::launch::async, [&] { return fence(*transport); }).get());
+    CHECK(fence(*transport));
+}
+
+TEST_CASE("Updater quit fence from final progress suppresses the rest of completion", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto& sink) {
+        const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    Result result(*transport); bool stopped = false;
+    QObject::connect(transport.get(), &UpdateTransport::progress, transport.get(), [&](auto, auto, auto total) {
+        if(total) stopped = fence(*transport);
+    });
+    transport->fetch(feed, ResourceKind::Feed, staging.filePath("feed"), directRoute());
+    REQUIRE(pump([&] { return stopped || result.done(); }));
+    CHECK(stopped); CHECK_FALSE(result.done());
+    CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+}
+
+#ifndef _WIN32
+TEST_CASE("Updater quit fence permanently refuses failed undelivered file removal", "[updates][updater-worker-fence]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto& sink) {
+        const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    Result result(*transport); const auto path = staging.filePath("undelivered");
+    transport->fetch(feed, ResourceKind::Feed, path, directRoute());
+    QElapsedTimer wait; wait.start();
+    while(!QFileInfo::exists(path) && wait.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(QFileInfo::exists(path));
+    const auto restore = dcpp::makeScopedFunctor([&] {
+        QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
+    });
+    REQUIRE(QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::ExeOwner));
+    CHECK_FALSE(fence(*transport)); CHECK(QFileInfo::exists(path));
+    REQUIRE(QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner));
+    CHECK_FALSE(fence(*transport));
+    CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
+    QCoreApplication::processEvents(); CHECK_FALSE(result.done()); CHECK(result.progresses == 0);
+}
+#endif

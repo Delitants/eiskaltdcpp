@@ -10,6 +10,9 @@ public:
     virtual void check(quint64 operation, Channel, CheckKind) = 0;
     virtual void download(quint64 operation, const UpdateOffer&) = 0;
     virtual void cancel() = 0;
+    /// Owner-thread terminal admission/worker fence. Does not authorize an
+    /// installer or certify staging; an unknown backend must fail closed.
+    [[nodiscard]] virtual bool stopWorkersForQuit() { return false; }
     virtual void armInstallOnQuit(const UpdateOffer&, bool relaunch) = 0;
     virtual void revokeInstallConsent() = 0;
 signals:

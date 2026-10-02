@@ -1,7 +1,14 @@
 #include "updates/UnsupportedUpdateBackend.h"
 #include <catch2/catch_test_macros.hpp>
 #include <QCoreApplication>
+#include <future>
 using namespace updates;
+namespace {
+template<class T> bool fence(T& backend) {
+    if constexpr(requires { backend.stopWorkersForQuit(); }) return backend.stopWorkersForQuit();
+    else return false;
+}
+}
 TEST_CASE("Unsupported updater reports capability without offering or installing", "[updates][update-backend]") {
     UnsupportedUpdateBackend backend;
     int failures = 0, offers = 0, ready = 0;
@@ -20,4 +27,18 @@ TEST_CASE("Unsupported updater reports capability without offering or installing
     backend.download(9, {}); QCoreApplication::processEvents();
     CHECK(failures == 2); CHECK(operation == 9);
     CHECK(offers == 0); CHECK(ready == 0);
+}
+
+TEST_CASE("Unsupported updater terminal fence suppresses queued and future replies", "[updates][updater-worker-fence]") {
+    UnsupportedUpdateBackend backend;
+    int failures = 0;
+    QObject::connect(&backend, &UpdateBackend::failed, [&] { ++failures; });
+    CHECK_FALSE(std::async(std::launch::async, [&] { return fence(backend); }).get());
+    backend.check(11, Channel::Stable, CheckKind::Manual);
+    REQUIRE(fence(backend));
+    backend.download(12, {}); backend.armInstallOnQuit({}, false);
+    backend.check(13, Channel::Preview, CheckKind::Manual);
+    QCoreApplication::processEvents();
+    CHECK(failures == 0);
+    CHECK(fence(backend));
 }

@@ -6,6 +6,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <future>
 
 namespace {
 using namespace updates;
@@ -15,6 +16,9 @@ struct Backend : UpdateBackend {
     quint64 operation = 0;
     CheckKind kind = CheckKind::Automatic;
     UpdateOffer selected;
+    int fences = 0;
+    bool fenceResult = true;
+    bool stopWorkersForQuit() override { ++fences; return fenceResult; }
     void check(quint64 op, Channel, CheckKind k) override { ++checks; operation = op; kind = k; }
     void download(quint64 op, const UpdateOffer& offer) override { ++downloads; operation = op; selected = offer; }
     void cancel() override { ++cancellations; }
@@ -46,6 +50,70 @@ struct Fixture {
         REQUIRE(controller->state() == UpdateController::State::Ready);
     }
 };
+template<class T> bool controllerFence(T& controller) {
+    if constexpr(requires { controller.stopWorkersForQuit(); }) return controller.stopWorkersForQuit();
+    else return false;
+}
+}
+
+TEST_CASE("Update controller retained fence keeps Ready consent but closes every input", "[updates][updater-controller-fence]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit();
+    CHECK_FALSE(std::async(std::launch::async, [&] { return controllerFence(*f.controller); }).get());
+    CHECK(f.backend.fences == 0);
+    REQUIRE(controllerFence(*f.controller));
+    CHECK(f.backend.fences == 1); CHECK(f.backend.installs == 0);
+    const auto cancellations = f.backend.cancellations, revocations = f.backend.revocations;
+    const auto key = f.controller->offer().key();
+    auto changed = f.controller->preferences(); changed.checks = false; changed.autoInstall = true; changed.channel = Channel::Stable;
+    f.controller->applyPreferences(changed);
+    f.controller->checkNow(); f.controller->download(); f.controller->start(); f.controller->poll();
+    f.controller->later(); f.controller->skipVersion(); f.controller->cancel();
+    CHECK(f.controller->preferences().checks); CHECK_FALSE(f.controller->preferences().autoInstall);
+    CHECK(f.controller->offer().key() == key); CHECK(f.controller->state() == UpdateController::State::Ready);
+    CHECK(f.backend.checks == 1); CHECK(f.backend.downloads == 1);
+    CHECK(f.backend.cancellations == cancellations); CHECK(f.backend.revocations == revocations);
+    REQUIRE(controllerFence(*f.controller)); CHECK(f.backend.fences == 1);
+    f.controller->normalQuitCommitted();
+    CHECK(f.backend.installs == 1); CHECK(f.controller->state() == UpdateController::State::Handoff);
+    f.controller->normalQuitCommitted(); CHECK(f.backend.installs == 1);
+}
+
+TEST_CASE("Update controller fence suppresses queued readiness notifications and auto download", "[updates][updater-controller-fence]") {
+    Fixture f; auto p = f.controller->preferences(); p.autoInstall = true; f.controller->applyPreferences(p);
+    int states = 0, checks = 0, progresses = 0;
+    QObject::connect(f.controller.get(), &UpdateController::stateChanged, [&] { ++states; });
+    QObject::connect(f.controller.get(), &UpdateController::checkFinished, [&] { ++checks; });
+    QObject::connect(f.controller.get(), &UpdateController::progress, [&] { ++progresses; });
+    f.controller->start(); f.controller->poll();
+    SECTION("queued offer") { emit f.backend.available(f.backend.operation, f.offer()); }
+    SECTION("pending notification and automatic download") { QCoreApplication::processEvents(); emit f.backend.available(f.backend.operation, f.offer()); QCoreApplication::processEvents(); }
+    SECTION("queued download readiness") {
+        f.available(); REQUIRE(f.backend.downloads == 1);
+        emit f.backend.progress(f.backend.operation, 10, 100);
+        emit f.backend.downloadReady(f.backend.operation, 2, f.offer().sha256);
+    }
+    const auto priorStates = states, priorChecks = checks, priorNotices = f.notices, priorDownloads = f.backend.downloads;
+    REQUIRE(controllerFence(*f.controller)); events();
+    CHECK(states == priorStates); CHECK(checks == priorChecks); CHECK(f.notices == priorNotices);
+    CHECK(f.backend.downloads == priorDownloads); CHECK(progresses == 0);
+    f.controller->normalQuitCommitted(); CHECK(f.backend.installs == 0);
+}
+
+TEST_CASE("Update controller permanently refuses a failed worker fence", "[updates][updater-controller-fence]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit(); f.backend.fenceResult = false;
+    CHECK_FALSE(controllerFence(*f.controller)); CHECK(f.backend.fences == 1);
+    f.backend.fenceResult = true;
+    CHECK_FALSE(controllerFence(*f.controller)); CHECK(f.backend.fences == 1);
+    f.controller->normalQuitCommitted();
+    CHECK(f.backend.installs == 0); CHECK(f.controller->state() == UpdateController::State::Stopped);
+}
+
+TEST_CASE("Update controller revalidates persisted consent rules after the worker fence", "[updates][updater-controller-fence]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit(); REQUIRE(controllerFence(*f.controller));
+    SECTION("deferred") { f.settings.setStr("updates/deferred", f.offer().key()); }
+    SECTION("skipped") { f.settings.setStr("updates/skipped", f.offer().key()); }
+    SECTION("channel changed") { f.settings.setStr("updates/channel", "stable"); }
+    f.controller->normalQuitCommitted(); CHECK(f.backend.installs == 0);
 }
 
 TEST_CASE("Updater preferences retain explicit OFF and build channel defaults", "[updates][update-controller]") {
