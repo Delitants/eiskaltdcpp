@@ -20,7 +20,10 @@
 
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
+#include <cstdint>
 
 class IPFilter;  // defined in extra/ipfilter.h (global scope)
 
@@ -120,6 +123,19 @@ public:
     /// Flush state, stop threads, tear down in reverse order.
     void shutdown();
 
+    enum class ShutdownStatus { Ready, Failed, SocketTimedOut, UnsupportedContext };
+    struct ShutdownResult {
+        ShutdownStatus status;
+        const char* component;  ///< Static diagnostic; no allocation on failure.
+    };
+
+    /// Caller must first fence GUI/manual/Torrent/updater inputs and workers.
+    /// Only the full-startup Timer owner may prepare; all managers remain alive.
+    /// One admissible attempt is cached, including failures. The timeout bounds
+    /// only BufferedSocket resource drain, not all joins or persistence I/O.
+    /// Retain this OBJECT after Failed/SocketTimedOut; destroying it is fatal.
+    [[nodiscard]] ShutdownResult prepareShutdownChecked(uint32_t socketDrainTimeoutMs) noexcept;
+
     [[nodiscard]] bool isRunning() const { return running_; }
     [[nodiscard]] ProxyRoute* getProxyRoute() const { return proxyRoute_.get(); }
 
@@ -154,6 +170,14 @@ public:
 #endif
 
 private:
+    enum class ShutdownPhase { Idle, Preparing, Finished, Disposed };
+    std::mutex shutdownMutex_;
+    std::thread::id shutdownOwner_;
+    ShutdownPhase shutdownPhase_ = ShutdownPhase::Idle;
+    ShutdownResult shutdownResult_{ShutdownStatus::Failed, "Not prepared"};
+    bool timerShutdownAttempted_ = false;
+    void disposeManagers();
+
     bool running_ = false;
     bool minimalMode_ = false;  ///< true when started via startupMinimal()
 

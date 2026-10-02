@@ -609,3 +609,28 @@ hub/routing disposal no longer generates these favorite-user save tails.
 Real loopback GOST/SOCKS regressions and retained-state/loader/refcount tests
 cover these prerequisites; the checked core coordinator, failure retention and
 GUI committed-normal-quit handoff still need implementation and acceptance.
+
+Checked core coordinator checkpoint (Task 5 remains in progress):
+`DCContext::prepareShutdownChecked` now aggregates the retained stop, resource
+drain, transfer cleanup and checked persistence outcomes. Full startup records
+the Timer constructor's thread as the shutdown owner. Unsupported/incomplete,
+wrong-owner and reentrant calls do not consume an admissible attempt. An
+admissible result is permanent, including a socket timeout or the first failing
+component; no retry can turn a previously failed quit into installer permission.
+
+Preparation retains the context object, managers and running flag. It drains
+accepted Queue cleanup before closing Hash admission, stops Timer only once,
+and attempts independent snapshots after quiescence without short-circuiting;
+Queue's source-CID tail precedes Users, and Settings is last with Share attached.
+Ready shutdown disposes without replaying raw Timer unlock or primary saves.
+Failed/preparing shutdown refuses legacy teardown. Destroying a failed checked
+context terminates rather than silently destroying its unique_ptr members:
+the application owner must retain the entire object on refusal.
+
+Regression coverage includes native buffered-write refusal, sticky snapshot
+staging/listener failures, retained identities, queue-source loader readback,
+physical socket-destruction timeout, mapping exceptions, mandatory Hash/Share
+receipts, reentrancy and the failed-context destructor guard. The product GUI,
+manual callers, Torrent/updater workers and macOS emergency exit are still
+unchanged. Their retained input/worker fence and committed-normal-quit handoff
+must land before the coordinator can authorize a real updater installation.

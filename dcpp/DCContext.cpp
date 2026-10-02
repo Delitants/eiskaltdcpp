@@ -70,6 +70,16 @@ std::unique_ptr<T> makeManager(DCContext& ctx, Args&&... args) {
 DCContext::DCContext() = default;
 
 DCContext::~DCContext() {
+    // Returning here would still destroy every unique_ptr member. A failed
+    // checked quit must retain the context itself, never fall into legacy saves
+    // or destructors with active callbacks. Enforce that ownership contract.
+    {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        if (shutdownPhase_ == ShutdownPhase::Preparing ||
+            (shutdownPhase_ == ShutdownPhase::Finished &&
+             (shutdownResult_.status != ShutdownStatus::Ready || shutdownOwner_ != std::this_thread::get_id())))
+            std::terminate();
+    }
     if (running_) {
         try { shutdown(); } catch (...) {}
     }
@@ -79,6 +89,7 @@ DCContext::~DCContext() {
 
 void DCContext::startupMinimal() {
     if (running_) return;
+    if (shutdownPhase_ != ShutdownPhase::Idle) throw std::logic_error("Context shutdown is terminal");
 
     // NOTE: Caller is responsible for calling Util::initialize() with
     // desired path overrides BEFORE this method.  If not yet initialized,
@@ -99,6 +110,7 @@ void DCContext::startupMinimal() {
 
 void DCContext::startup(ProgressFn progress) {
     if (running_) return;
+    if (shutdownPhase_ != ShutdownPhase::Idle) throw std::logic_error("Context shutdown is terminal");
 
     auto report = [&](const std::string& msg) {
         if (progress) progress(msg);
@@ -123,6 +135,7 @@ void DCContext::startup(ProgressFn progress) {
     proxyRoute_          = std::make_unique<ProxyRoute>();
     logManager_          = makeManager<LogManager>(*this);
     timerManager_        = makeManager<TimerManager>(*this);
+    shutdownOwner_       = std::this_thread::get_id();
     hashManager_         = makeManager<HashManager>(*this);
     fprintf(stderr, "[DCContext::startup] CryptoManager ...\n"); fflush(stderr);
     cryptoManager_       = makeManager<CryptoManager>(*this);
@@ -203,9 +216,130 @@ void DCContext::startup(ProgressFn progress) {
     running_ = true;
 }
 
-// ─── shutdown — mirrors dcpp::shutdown() from DCPlusPlus.cpp ────────────
+DCContext::ShutdownResult DCContext::prepareShutdownChecked(uint32_t timeout) noexcept {
+    {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        if (shutdownOwner_ != std::this_thread::get_id())
+            return {ShutdownStatus::UnsupportedContext, "Startup owner"};
+        if (shutdownPhase_ == ShutdownPhase::Finished) return shutdownResult_;
+        if (shutdownPhase_ != ShutdownPhase::Idle)
+            return {ShutdownStatus::UnsupportedContext, "Context phase"};
+        if (!running_ || minimalMode_ || !resourceManager_ || !settingsManager_ || !proxyRoute_ ||
+            !logManager_ || !timerManager_ || !hashManager_ || !cryptoManager_ || !searchManager_ ||
+            !clientManager_ || !connectionManager_ || !downloadManager_ || !uploadManager_ ||
+            !throttleManager_ || !queueManager_ || !shareManager_ || !favoriteManager_ ||
+            !finishedManager_ || !adlSearchManager_ || !connectivityManager_ || !mappingManager_ ||
+            !debugManager_ || !dynDNS_ || !ipFilter_
+#ifdef WITH_DHT
+            || !dht_
+#endif
+#ifdef LUA_SCRIPT
+            || !scriptManager_
+#endif
+        ) return {ShutdownStatus::UnsupportedContext, "Full context"};
+        shutdownPhase_ = ShutdownPhase::Preparing;
+        shutdownResult_ = {ShutdownStatus::Failed, "Preparing"};
+    }
+    auto component = [this](const char* name) {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        shutdownResult_.component = name;
+    };
+    auto finish = [this](ShutdownStatus status, const char* name) {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        shutdownResult_ = {status, name};
+        shutdownPhase_ = ShutdownPhase::Finished;
+        return shutdownResult_;
+    };
+    try {
+        // No lifecycle mutex is held across a callback barrier, join or I/O.
+        component("Proxy route"); proxyRoute_->stop();
+#ifdef LUA_SCRIPT
+        component("Scripts"); scriptManager_->stopForShutdown();
+#endif
+        component("Mapping"); mappingManager_->close();
+        component("Throttle"); throttleManager_->shutdown();
+        component("Download producers"); downloadManager_->stopProducersForShutdown();
+        component("Upload producers"); uploadManager_->stopProducersForShutdown();
+        component("Queue producers"); queueManager_->stopProducersForShutdown();
+        component("DynDNS"); dynDNS_->stopForShutdown();
+        component("Favorites HTTP"); favoriteManager_->stopForShutdown();
+        component("Search"); searchManager_->stopForShutdown();
+#ifdef WITH_DHT
+        component("DHT"); dht_->stopForShutdown();
+#endif
+        component("Clients"); clientManager_->stopForShutdown();
+        component("SOCKS UDP"); Socket::stopSocksUdpForShutdown(*this);
+        component("Connections"); connectionManager_->stopForShutdown();
+        component("Buffered sockets");
+        if (!BufferedSocket::waitShutdown(timeout))
+            return finish(ShutdownStatus::SocketTimedOut, "Buffered sockets");
+
+        component("Download cleanup"); const bool downloads = downloadManager_->stopCleanupForShutdown();
+        component("Upload cleanup"); const bool uploads = uploadManager_->stopCleanupForShutdown();
+        component("Queue cleanup"); const bool queue = queueManager_->stopCleanupForShutdown();
+        if (!downloads) return finish(ShutdownStatus::Failed, "Download cleanup");
+        if (!uploads) return finish(ShutdownStatus::Failed, "Upload cleanup");
+        if (!queue) return finish(ShutdownStatus::Failed, "Queue cleanup");
+        // Accepted TREE completions above can still insert into HashManager.
+        component("Share"); shareManager_->stopForShutdown();
+        component("Hash"); hashManager_->stopForShutdown();
+        component("Timer");
+        {
+            std::lock_guard<std::mutex> lock(shutdownMutex_);
+            timerShutdownAttempted_ = true;
+        }
+        timerManager_->shutdown();
+
+        // Now quiescent: attempt every independent checked snapshot, preserving
+        // the first failure. Queue's CID tail must precede the Users snapshot;
+        // Settings is last with Share's Save listener still attached.
+        const char* failed = nullptr;
+        auto check = [&](const char* name, auto&& operation) {
+            component(name);
+            bool succeeded = false;
+            try { succeeded = operation(); } catch (...) {}
+            if (!succeeded && !failed) failed = name;
+        };
+        check("Hash data", [&] { return hashManager_->dataStorageSucceeded(); });
+        check("Hash index", [&] { return hashManager_->saveIndexChecked(); });
+        check("Share cache", [&] { return shareManager_->managedCacheRevocationsSucceeded(); });
+        check("Queue", [&] { return queueManager_->saveQueueChecked(true); });
+        check("Users", [&] { return clientManager_->saveUsersChecked(); });
+#ifdef WITH_DHT
+        check("DHT snapshot", [&] { return dht_->saveDataChecked(); });
+#endif
+        check("Favorites", [&] { return favoriteManager_->saveChecked(); });
+        check("IP filter", [&] { return ipFilter_->saveListChecked(); });
+        check("ADL", [&] { return adlSearchManager_->saveForShutdownChecked(); });
+        check("Settings", [&] { return settingsManager_->saveChecked(); });
+        return finish(failed ? ShutdownStatus::Failed : ShutdownStatus::Ready, failed ? failed : "Ready");
+    } catch (...) {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        shutdownPhase_ = ShutdownPhase::Finished;
+        return shutdownResult_;
+    }
+}
+
+// Legacy callers remain unchanged until the external normal-quit fence lands.
 
 void DCContext::shutdown() {
+    bool prepared = false;
+    {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        if (shutdownPhase_ == ShutdownPhase::Disposed) return;
+        if (shutdownPhase_ != ShutdownPhase::Idle) {
+            if (shutdownPhase_ != ShutdownPhase::Finished || shutdownResult_.status != ShutdownStatus::Ready ||
+                shutdownOwner_ != std::this_thread::get_id())
+                throw std::logic_error("Checked shutdown must retain its context");
+            shutdownPhase_ = ShutdownPhase::Disposed;
+            prepared = true;
+        }
+    }
+    if (prepared) {
+        running_ = false;
+        disposeManagers();
+        return;
+    }
     if (!running_) return;
     running_ = false;
     if (proxyRoute_) proxyRoute_->stop();
@@ -247,8 +381,19 @@ void DCContext::shutdown() {
         if (settingsManager_) settingsManager_->save();
     }
 
+    disposeManagers();
+}
+
+void DCContext::disposeManagers() {
     // ── Phase 4: destroy managers in dependency-safe order ──────────────
     // Matches the destruction sequence in dcpp::shutdown() exactly.
+#ifdef LUA_SCRIPT
+    scriptManager_.reset();
+#endif
+#ifdef WITH_DHT
+    dht_.reset();
+#endif
+    debugManager_.reset();
     mappingManager_.reset();
     connectivityManager_.reset();
     dynDNS_.reset();
