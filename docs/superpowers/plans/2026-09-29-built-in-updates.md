@@ -426,6 +426,16 @@ whole-updater or live/minimum-OS acceptance. Installed application unchanged.
 - [ ] Implement native Qt layout using existing settings styling, not new global CSS or combobox overrides. Add translated copy and accessible names; use existing Live Log/status infrastructure with redacted errors. Disable unsupported platform install controls with an explanatory label, not a broken action.
 - [ ] Run Qt `[settings-updates]` and window `[update-ui]`, expected GREEN. Inspect light/dark and narrow/large settings windows in an isolated profile; compare displayed defaults after restart. Run catalog/placeholder checks and record linguistic review separately. Commit.
 
+Task 6 can advance as an isolated reusable widget while Task 5's destructive
+native recovery checks await a disposable macOS test environment. The page uses
+the existing controller and native Qt palette/layout, preserves saved preferences,
+and renders release notes only as plain text. A backend installation capability
+defaults to false; no production backend is enabled by this UI checkpoint.
+Do not change Settings/MainWindow ownership, menus, main/_Exit, or installer arming
+until the retained native recovery and committed-quit acceptance gates pass.
+Widget/extraction tests are not integrated application settings, native Cocoa QA,
+complete language catalogs, or release acceptance. Keep those steps pending.
+
 ### Task 7: Reproducible Signed Feeds And Release Packaging
 
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.

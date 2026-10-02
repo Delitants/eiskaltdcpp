@@ -72,6 +72,9 @@ add_executable(eiskaltdcpp-qt-tests
     test_updatebridge.cpp
     test_updatepolicy.cpp
     test_updatecontroller.cpp
+    test_settingsupdates.cpp
+    ${QT_SRC_DIR}/updates/SettingsUpdates.cpp
+    ${QT_SRC_DIR}/updates/SettingsUpdates.h
     test_unsupportedupdatebackend.cpp
     ${QT_SRC_DIR}/updates/UnsupportedUpdateBackend.cpp
     ${QT_SRC_DIR}/updates/UnsupportedUpdateBackend.h

@@ -7,6 +7,9 @@ class UpdateBackend : public QObject {
     Q_OBJECT
 public:
     using QObject::QObject;
+    // Explicit capability, never inferred from the host OS. Unaccepted native
+    // handoff/recovery implementations must leave this disabled.
+    virtual bool supportsInstallation() const { return false; }
     virtual void check(quint64 operation, Channel, CheckKind) = 0;
     virtual void download(quint64 operation, const UpdateOffer&) = 0;
     virtual void cancel() = 0;

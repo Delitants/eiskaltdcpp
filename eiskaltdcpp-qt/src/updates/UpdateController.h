@@ -24,6 +24,7 @@ public:
     UpdateOffer offer() const;
     QDateTime lastAttempt() const;
     QDateTime lastSuccess() const;
+    bool supportsInstallation() const;
     void start();
     void poll();
     void applyPreferences(UpdatePreferences);

@@ -159,6 +159,7 @@ UpdateController::State UpdateController::state() const { return impl->state; }
 UpdateOffer UpdateController::offer() const { return impl->offer; }
 QDateTime UpdateController::lastAttempt() const { return impl->attempt; }
 QDateTime UpdateController::lastSuccess() const { return impl->success; }
+bool UpdateController::supportsInstallation() const { return impl->backend.supportsInstallation(); }
 void UpdateController::start() {
     impl->assertThread();
     if(impl->started || impl->stopped || impl->quitFenced) return;

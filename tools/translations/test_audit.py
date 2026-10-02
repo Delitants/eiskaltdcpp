@@ -182,6 +182,36 @@ class CatalogRegressionTests(unittest.TestCase):
 
 
 class ExtractionRegressionTests(unittest.TestCase):
+    def test_manifest_includes_updater_sources_and_headers(self):
+        manifest = ROOT / "eiskaltdcpp-qt/translations.pro"
+        text = manifest.read_text().replace("\\\n", " ")
+        files = set()
+        for line in text.splitlines():
+            match = re.match(r"(?:HEADERS|SOURCES)\s*\+?=\s*(.*)", line)
+            if match:
+                for pattern in match[1].split():
+                    files.update(p.resolve() for p in manifest.parent.glob(pattern))
+        expected = {p.resolve() for p in (ROOT / "eiskaltdcpp-qt/src/updates").glob("*")
+                    if p.suffix in {".cpp", ".h"}}
+        self.assertTrue(expected)
+        self.assertEqual([], sorted(str(p.relative_to(ROOT)) for p in expected - files))
+
+    @unittest.skipUnless(shutil.which("lupdate"), "lupdate is required")
+    def test_updater_settings_captions_are_extractable_in_runtime_context(self):
+        with tempfile.TemporaryDirectory(prefix="eiskalt-i18n-updates-") as work:
+            output = Path(work) / "updates.ts"
+            subprocess.run(["lupdate", str(ROOT / "eiskaltdcpp-qt/src/updates/SettingsUpdates.cpp"),
+                            str(ROOT / "eiskaltdcpp-qt/src/updates/SettingsUpdates.h"),
+                            "-no-obsolete", "-ts", str(output)],
+                           check=True, capture_output=True, text=True)
+            keys = {(c.findtext("name"), m.findtext("source"))
+                    for c in ET.parse(output).getroot().findall("context")
+                    for m in c.findall("message")}
+        self.assertIn(("updates::SettingsUpdates", "Last successful check: %1"), keys)
+        self.assertIn(("updates::SettingsUpdates", "Available version: %1"), keys)
+        self.assertIn(("updates::SettingsUpdates", "Install on Next &Quit"), keys)
+        self.assertNotIn("updates", {context for context, _ in keys})
+
     @unittest.skipUnless(shutil.which("lupdate"), "lupdate is required")
     def test_shared_torrent_actions_are_extractable(self):
         with tempfile.TemporaryDirectory(prefix="eiskalt-i18n-actions-") as work:
