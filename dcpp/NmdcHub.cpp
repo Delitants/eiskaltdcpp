@@ -1247,7 +1247,7 @@ void NmdcHub::on(Connected) {
 void NmdcHub::on(Line, const string& aLine) {
     try {
 #ifdef LUA_SCRIPT
-    if (ScriptInstance::L && onClientMessage(this, validateMessage(aLine, true)))
+    if (onClientMessage(this, validateMessage(aLine, true)))
         return;
 #endif
     if (CTX_BOOLSETTING(NMDC_DEBUG))
@@ -1309,6 +1309,8 @@ void NmdcHub::on(Second, uint64_t aTick) {
 
 #ifdef LUA_SCRIPT
 bool NmdcHubScriptInstance::onClientMessage(NmdcHub* aClient, const string& aLine) {
+    Operation operation;
+    if(!operation) return false;
     Lock l(cs);
     MakeCall("nmdch", "DataArrival", 1, aClient, aLine);
     return GetLuaBool();

@@ -156,7 +156,7 @@ void ThrottleManager::setSetting(SettingsManager::IntSetting setting, int value)
 
 bool ThrottleManager::getCurThrottling() {
     Lock l(stateCS);
-    return activeWaiter != -1;
+    return halt == 0 && activeWaiter != -1;
 }
 
 void ThrottleManager::waitToken() {
@@ -165,7 +165,7 @@ void ThrottleManager::waitToken() {
     CriticalSection *curCS = 0;
     {
         Lock l(stateCS);
-        if (activeWaiter != -1)
+        if (halt == 0 && activeWaiter != -1)
             curCS = &waitCS[activeWaiter];
     }
     // possible post-CS aW shifts: 0->1/1->0: lock lands in wrong place, will
@@ -191,13 +191,14 @@ void ThrottleManager::shutdown()
     bool wait = false;
     {
         Lock l(stateCS);
-        if (activeWaiter != -1)
+        if (halt == 0 && activeWaiter != -1)
         {
             n_lock = activeWaiter;
-            activeWaiter = -1;
             halt = 1;
-            wait = true;
         }
+        else if(halt == 0)
+            halt = -1; // No timer-owned locks exist before the first tick.
+        wait = halt == 1;
     }
 
     // Wait for the timer callback to see halt==1 and release the locks.
@@ -207,26 +208,23 @@ void ThrottleManager::shutdown()
     }
 }
 
+void ThrottleManager::finishShutdown() {
+    dcassert(halt == 1 && (n_lock == 0 || n_lock == 1));
+    halt = -1;
+    activeWaiter = -1;
+    waitCS[n_lock].unlock();
+    shutdownCS.unlock();
+}
+
 // TimerManagerListener
 void ThrottleManager::on(TimerManagerListener::Second, uint64_t /* aTick */)
 {
-    int newSlots = ctx().getSettingsManager()->get(getCurSetting(SettingsManager::SLOTS));
-    if(newSlots != CTX_SETTING(SLOTS)) {
-        setSetting(SettingsManager::SLOTS, newSlots);
-    }
-
     {
         Lock l(stateCS);
 
         if (halt == 1)
         {
-            halt = -1;
-
-            // unlock shutdown and token wait
-            dcassert(n_lock == 0 || n_lock == 1);
-            waitCS[n_lock].unlock();
-            shutdownCS.unlock();
-
+            finishShutdown();
             return;
         }
         else if (halt == -1)
@@ -243,33 +241,36 @@ void ThrottleManager::on(TimerManagerListener::Second, uint64_t /* aTick */)
             // lock shutdown
             shutdownCS.lock();
         }
+    }
+
+    int newSlots = ctx().getSettingsManager()->get(getCurSetting(SettingsManager::SLOTS));
+    if(newSlots != CTX_SETTING(SLOTS)) {
+        setSetting(SettingsManager::SLOTS, newSlots);
+    }
+    int downLimit = getDownLimit();
+    int upLimit = getUpLimit();
+    {
+        Lock l(downCS);
+        downTokens = downLimit * 1024;
+    }
+    {
+        Lock l(upCS);
+        upTokens = upLimit * 1024;
+    }
+
+    // Release existing waiters before alternating the token gate.
+    {
+        Lock l(stateCS);
+        // A stop may have arrived while the refill ran outside stateCS.
+        if(halt == 1) {
+            finishShutdown();
+            return;
         }
-
-                    int downLimit = getDownLimit();
-                    int upLimit   = getUpLimit();
-
-                    // readd tokens
-            {
-                Lock l(downCS);
-                downTokens = downLimit * 1024;
-            }
-
-            {
-                Lock l(upCS);
-                upTokens = upLimit * 1024;
-            }
-
-            // let existing events drain out (fairness).
-            // www.cse.wustl.edu/~schmidt/win32-cv-1.html documents various
-            // fairer strategies, but when only broadcasting, irrelevant
-            {
-                Lock l(stateCS);
-
-                dcassert(activeWaiter == 0 || activeWaiter == 1);
-                waitCS[1-activeWaiter].lock();
-                activeWaiter = 1-activeWaiter;
-                waitCS[1-activeWaiter].unlock();
-            }
-        }
+        dcassert(activeWaiter == 0 || activeWaiter == 1);
+        waitCS[1-activeWaiter].lock();
+        activeWaiter = 1-activeWaiter;
+        waitCS[1-activeWaiter].unlock();
+    }
+}
 
     }   // namespace dcpp

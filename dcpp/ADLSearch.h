@@ -125,6 +125,12 @@ public:
     // Load/save search collection to XML file
     void load();
     void save();
+    // Retryable snapshot until terminal saving. Owner serializes saves, load,
+    // matching, public collection edits and destruction; this is no input fence.
+    [[nodiscard]] bool saveChecked() noexcept;
+    // Owner-fenced final snapshot. Caches success OR failure for every later
+    // save/destructor without rewriting; retains collection and search state.
+    [[nodiscard]] bool saveForShutdownChecked() noexcept;
 
     // Settings
     GETSET(bool, breakOnFirst, BreakOnFirst)
@@ -134,6 +140,10 @@ public:
     void matchListing(DirectoryListing& aDirList);
 
 private:
+    bool shutdownSnapshotRequested = false;
+    bool shutdownSnapshotSucceeded = false;
+    bool writeSnapshotChecked() noexcept;
+
     // Recurse through the directories
     void matchRecurse(DestDirList& aDestList, DirectoryListing::Directory* aDir, string& aPath);
     // Search for file match

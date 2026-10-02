@@ -158,6 +158,8 @@ void UserConnection::on(BufferedSocketListener::Line, const string& aLine) {
 
 #ifdef LUA_SCRIPT
 bool UserConnectionScriptInstance::onUserConnectionMessageIn(UserConnection* aConn, const string& aLine) {
+    Operation operation;
+    if(!operation) return false;
     Lock l(cs);
     if (!ScriptInstance::L)
         return false;
@@ -166,6 +168,8 @@ bool UserConnectionScriptInstance::onUserConnectionMessageIn(UserConnection* aCo
 }
 
 bool UserConnectionScriptInstance::onUserConnectionMessageOut(UserConnection* aConn, const string& aLine) {
+    Operation operation;
+    if(!operation) return false;
     Lock l(cs);
     if (!ScriptInstance::L)
         return false;

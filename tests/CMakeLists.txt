@@ -29,6 +29,8 @@ add_executable(eiskaltdcpp-tests
     test_util_formatting.cpp
     test_certificate_lifecycle.cpp
     test_dccontext.cpp
+    test_script_shutdown.cpp
+    test_throttle_shutdown.cpp
     test_client_shutdown.cpp
     test_connectionmanager_shutdown.cpp
     test_transfer_producers_shutdown.cpp

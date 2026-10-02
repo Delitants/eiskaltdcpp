@@ -569,3 +569,22 @@ staging/replacement/write refusal and test-only inode/thread-bounded fsync EIO
 verify old-file retention and retry. The injected syscall outcome is not physical
 disk/power-loss acceptance; shared-core macOS explicitly skips that injection.
 Whole-core owner ordering and committed normal-quit updater handoff remain pending.
+
+Lua/Throttle/ADL prerequisite checkpoint (Task 5 remains in progress): shared
+Lua admission rejects new hooks before its lock, drains admitted nested calls,
+detaches timer and client listeners outside callback locks, and retains state
+until destruction. Loading is idempotent and cannot revive terminal admission
+or replace another manager's runtime; finalizers cannot call native side effects.
+The existing macOS ADC bypass remains unchanged. The default Lua formatter's
+invalid percent escape was corrected for the configured Lua runtime.
+
+Throttle shutdown now latches before the first tick, joins concurrent stops,
+and lets the owning timer release its locks even when shutdown arrives during
+refill. This is not a socket-resource drain, and the timer must remain running.
+ADL ordinary checked saving stages, flushes, closes and atomically replaces the
+existing XML schema; failures retain edits and can retry. Its owner-fenced
+terminal save caches either outcome and suppresses later fresh save/destructor
+writes, including after refusal. Public collection edits remain caller-fenced.
+Focused real Lua, controlled timer, loader and native I/O refusal regressions
+and bounded independent source reviews accompany these prerequisites. Full
+owner aggregation, GUI normal-quit/installer consent and release remain pending.

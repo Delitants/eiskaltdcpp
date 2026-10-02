@@ -218,11 +218,7 @@ ADLSearchManager::ADLSearchManager(DCContext& ctx) : ContextAware(ctx), breakOnF
 }
 
 ADLSearchManager::~ADLSearchManager() {
-    try {
-        save();
-    } catch (...) {
-        // Swallow exceptions — destructors must not throw
-    }
+    (void)saveChecked();
 }
 
 void ADLSearchManager::load() {
@@ -291,6 +287,23 @@ void ADLSearchManager::load() {
 }
 
 void ADLSearchManager::save() {
+    (void)saveChecked();
+}
+
+bool ADLSearchManager::saveChecked() noexcept {
+    if(shutdownSnapshotRequested) return shutdownSnapshotSucceeded;
+    return writeSnapshotChecked();
+}
+
+bool ADLSearchManager::saveForShutdownChecked() noexcept {
+    if(shutdownSnapshotRequested) return shutdownSnapshotSucceeded;
+    // Latch before I/O so a failed final snapshot cannot be retried implicitly.
+    shutdownSnapshotRequested = true;
+    shutdownSnapshotSucceeded = writeSnapshotChecked();
+    return shutdownSnapshotSucceeded;
+}
+
+bool ADLSearchManager::writeSnapshotChecked() noexcept {
     // Prepare xml string for saving
     try {
         SimpleXML xml;
@@ -326,14 +339,17 @@ void ADLSearchManager::save() {
 
         xml.stepOut();
 
-        // Save string to file
-        try {
-            File fout(getConfigFile(), File::WRITE, File::CREATE | File::TRUNCATE);
-            fout.write(SimpleXML::utf8Header);
-            fout.write(xml.toXML());
-            fout.close();
-        } catch(const FileException&) { }
-    } catch(const SimpleXMLException&) { }
+        const string target = getConfigFile();
+        File fout(target + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
+        fout.write(SimpleXML::utf8Header);
+        fout.write(xml.toXML());
+        fout.flush();
+        fout.close();
+        File::replaceFile(target + ".tmp", target);
+        return true;
+    } catch(...) {
+        return false;
+    }
 }
 
 void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing::File *currentFile, string& fullPath) {

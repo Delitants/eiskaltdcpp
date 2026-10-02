@@ -26,6 +26,9 @@
 #include "CriticalSection.h"
 #include "extra/lunar.h"
 #include "DCPlusPlus.h"
+#include <condition_variable>
+#include <exception>
+#include <mutex>
 
 namespace dcpp {
 
@@ -75,22 +78,43 @@ struct LuaManager  {
 };
 
 class ScriptInstance {
+    friend struct LuaManager;
     bool MakeCallRaw(const string& table, const string& method , int args, int ret);
+    static bool beginOperation();
+    static void endOperation() noexcept;
+    static bool operationAdmitted();
 protected:
     virtual ~ScriptInstance() { }
     static lua_State* L;
     static CriticalSection cs;
 
+    // Keep the entire Lua call and result consumption inside one admission.
+    class Operation {
+        bool admitted;
+    public:
+        Operation() : admitted(beginOperation()) { }
+        ~Operation() { if(admitted) endOperation(); }
+        explicit operator bool() const { return admitted; }
+        Operation(const Operation&) = delete;
+        Operation& operator=(const Operation&) = delete;
+    };
+
     template <typename T> bool MakeCall(const string& table, const string& method,
                                         int ret, const T& t) {
+        Operation operation;
+        if(!operation) return false;
         Lock l(cs);
+        if(!L) return false;
         dcassert(lua_gettop(L) == 0);
         LuaPush(t);
         return MakeCallRaw(table, method, 1 , ret);
     }
     template <typename T, typename T2> bool MakeCall(const string& table, const string& method,
                                                      int ret, const T& t, const T2& t2) {
+        Operation operation;
+        if(!operation) return false;
         Lock l(cs);
+        if(!L) return false;
         dcassert(lua_gettop(L) == 0);
         LuaPush(t);
         LuaPush(t2);
@@ -113,14 +137,23 @@ class ScriptManager: public ScriptInstance, public Speaker<ScriptManagerListener
 
 public:
     explicit ScriptManager(DCContext& ctx);
-    virtual ~ScriptManager() { if (L) lua_close(L); if(timerEnabled) ctx().getTimerManager()->removeListener(this); }
+    virtual ~ScriptManager();
 
     void load();
+    // Owner-fenced terminal stop; never call from an admitted Lua callback.
+    // Retains the Lua state and variables until destruction.
+    void stopForShutdown();
     void  SendDebugMessage(const string& s);
     GETSET(bool , timerEnabled, TimerEnabled);
 private:
     friend struct LuaManager;
     friend class ScriptInstance;
+    std::mutex lifecycleMutex;
+    std::condition_variable lifecycleChanged;
+    bool loaded = false;
+    bool stopping = false;
+    bool stopped = false;
+    std::exception_ptr stopFailure;
 
     virtual void on(ClientConnected, Client* aClient);
     virtual void on(ClientDisconnected, Client* aClient);

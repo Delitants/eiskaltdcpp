@@ -30,6 +30,9 @@
 #include "AdcHub.h"
 #include "Thread.h"
 #include <cstddef>
+#include <unordered_map>
+#include <thread>
+#include <stdexcept>
 #include "DCPlusPlus.h"
 #include "DCContext.h"
 
@@ -118,6 +121,7 @@ Lunar<LuaManager>::RegType LuaManager::methods[] = {
 };
 
 int LuaManager::DeleteClient(lua_State* L){
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 1 && lua_islightuserdata(L, -1)){
         Client* client = (Client*) lua_touserdata(L, -1);
         luaGetDCContext(L)->getClientManager()->putClient(client);
@@ -126,6 +130,7 @@ int LuaManager::DeleteClient(lua_State* L){
 }
 
 int LuaManager::CreateClient(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 2 && lua_isstring(L, -2) && lua_isstring(L, -1)){
         Client* client = luaGetDCContext(L)->getClientManager()->getClient(lua_tostring(L, -2));
         Identity ident;
@@ -143,6 +148,7 @@ int LuaManager::CreateClient(lua_State* L) {
 }
 
 int LuaManager::InjectHubMessageNMDC(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 2 && lua_islightuserdata(L, -2) && lua_isstring(L, -1))
         reinterpret_cast<NmdcHub *>(lua_touserdata(L, -2))->onLine(lua_tostring(L, -1));
 
@@ -150,6 +156,7 @@ int LuaManager::InjectHubMessageNMDC(lua_State* L) {
 }
 
 int LuaManager::InjectHubMessageADC(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 2 && lua_islightuserdata(L, -2) && lua_isstring(L, -1))
         reinterpret_cast<AdcHub *>(lua_touserdata(L, -2))->dispatch(lua_tostring(L, -1));
 
@@ -176,6 +183,7 @@ int LuaManager::InjectHubMessageADC(lua_State* L) {
 //}
 
 int LuaManager::SendClientMessage(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 2 && lua_islightuserdata(L, -2) && lua_isstring(L, -1)) {
         reinterpret_cast<UserConnection *>(lua_touserdata(L, -2))->sendRaw(lua_tostring(L, -1));
     }
@@ -184,6 +192,7 @@ int LuaManager::SendClientMessage(lua_State* L) {
 }
 
 int LuaManager::SendHubMessage(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     if (lua_gettop(L) == 2 && lua_islightuserdata(L, -2) && lua_isstring(L, -1)) {
         reinterpret_cast<Client*>(lua_touserdata(L, -2))->send(lua_tostring(L, -1));
     }
@@ -192,6 +201,7 @@ int LuaManager::SendHubMessage(lua_State* L) {
 }
 
 int LuaManager::GenerateDebugMessage(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: socket, buffer, address */
     if (lua_gettop(L) == 1 && lua_isstring(L, -1))
         luaGetDCContext(L)->getScriptManager()->SendDebugMessage(lua_tostring(L, -1));
@@ -200,6 +210,7 @@ int LuaManager::GenerateDebugMessage(lua_State* L) {
 }
 
 int LuaManager::SendUDPPacket(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: ip:port, data */
     if (lua_gettop(L) == 2 && lua_isstring(L, -2) && lua_isstring(L, -1)) {
         StringList sl = StringTokenizer<string>(lua_tostring(L, -2), ':').getTokens();
@@ -210,6 +221,7 @@ int LuaManager::SendUDPPacket(lua_State* L) {
 }
 
 int LuaManager::DropUserConnection(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: userconnection to drop */
     if (lua_gettop(L) == 1 && lua_islightuserdata(L, -1)) {
         reinterpret_cast<UserConnection *>(lua_touserdata(L, -1))->disconnect();
@@ -219,6 +231,7 @@ int LuaManager::DropUserConnection(lua_State* L) {
 }
 
 int LuaManager::GetSetting(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: string */
     int n;
     SettingsManager::Types type;
@@ -240,6 +253,7 @@ int LuaManager::GetSetting(lua_State* L) {
 }
 
 int LuaManager::ToUtf8(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: string */
     if(lua_gettop(L) == 1 && lua_isstring(L, -1) ) {
         lua_pushstring(L, Text::acpToUtf8(lua_tostring(L, -1)).c_str());
@@ -252,6 +266,7 @@ int LuaManager::ToUtf8(lua_State* L) {
 }
 
 int LuaManager::FromUtf8(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: string */
     if(lua_gettop(L) == 1 && lua_isstring(L, -1) ) {
         lua_pushstring(L, Text::utf8ToAcp(lua_tostring(L, -1)).c_str());
@@ -264,21 +279,25 @@ int LuaManager::FromUtf8(lua_State* L) {
 }
 
 int LuaManager::GetAppPath(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     lua_pushstring(L, Text::utf8ToAcp(Util::getPath(Util::PATH_RESOURCES)).c_str());
     return 1;
 }
 
 int LuaManager::GetConfigPath(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     lua_pushstring(L, (Text::utf8ToAcp(Util::getPath(Util::PATH_USER_CONFIG)) + PATH_SEPARATOR).c_str());
     return 1;
 }
 
 int LuaManager::GetConfigScriptsPath(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     lua_pushstring(L, (Text::utf8ToAcp(Util::getPath(Util::PATH_USER_CONFIG)) + PATH_SEPARATOR).c_str());
     return 1;
 }
 
 int LuaManager::GetScriptsPath(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     string scripts_path;
     scripts_path = Text::utf8ToAcp(Util::getPath(Util::PATH_USER_CONFIG)) + "luascripts" + PATH_SEPARATOR;
 
@@ -294,6 +313,7 @@ int LuaManager::GetScriptsPath(lua_State* L) {
 }
 
 int LuaManager::GetClientIp(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: client */
     UserConnection* uc = (UserConnection*)lua_touserdata(L, 1);
     if(uc == NULL) {
@@ -306,6 +326,7 @@ int LuaManager::GetClientIp(lua_State* L) {
 }
 
 int LuaManager::GetHubIpPort(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: client */
     Client* c = (Client*)lua_touserdata(L, 1);
     if(c == NULL) {
@@ -318,6 +339,7 @@ int LuaManager::GetHubIpPort(lua_State* L) {
 }
 
 int LuaManager::GetHubUrl(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: client */
     Client* c = (Client*)lua_touserdata(L, 1);
     if(c == NULL) {
@@ -330,6 +352,7 @@ int LuaManager::GetHubUrl(lua_State* L) {
 }
 
 int LuaManager::RunTimer(lua_State* L) {
+    if(!ScriptInstance::operationAdmitted()) return 0;
     /* arguments: bool:on/off */
     if(lua_gettop(L) == 1 && lua_isnumber(L, -1)) {
         bool on = lua_tonumber(L, 1) != 0;      //shut VC++ up
@@ -352,11 +375,50 @@ int LuaManager::RunTimer(lua_State* L) {
 lua_State* ScriptInstance::L = 0;       //filled in by scriptmanager.
 CriticalSection ScriptInstance::cs;
 
+namespace {
+std::mutex admissionMutex;
+std::condition_variable admissionChanged;
+bool admissionClosed = true;
+size_t admittedOperations = 0;
+std::unordered_map<std::thread::id, size_t> operationDepth;
+ScriptManager* runtimeOwner = nullptr; // Protected by ScriptInstance::cs.
+}
+
+bool ScriptInstance::beginOperation() {
+    std::lock_guard lock(admissionMutex);
+    const auto thread = std::this_thread::get_id();
+    auto existing = operationDepth.find(thread);
+    if(admissionClosed && existing == operationDepth.end()) return false;
+    ++operationDepth[thread];
+    ++admittedOperations;
+    return true;
+}
+
+void ScriptInstance::endOperation() noexcept {
+    std::lock_guard lock(admissionMutex);
+    auto existing = operationDepth.find(std::this_thread::get_id());
+    dcassert(existing != operationDepth.end() && admittedOperations);
+    if(--existing->second == 0) operationDepth.erase(existing);
+    if(--admittedOperations == 0) admissionChanged.notify_all();
+}
+
+bool ScriptInstance::operationAdmitted() {
+    std::lock_guard lock(admissionMutex);
+    return operationDepth.find(std::this_thread::get_id()) != operationDepth.end();
+}
+
 ScriptManager::ScriptManager(DCContext& ctx) : ContextAware(ctx), timerEnabled(false) {
 }
 
 void ScriptManager::load() {
+    std::lock_guard lifecycleLock(lifecycleMutex);
+    if(stopping || stopped || loaded) return;
+    Lock luaLock(cs);
+    if(runtimeOwner) throw std::runtime_error("Lua runtime already has an owner");
     L = luaL_newstate();//lua_open();
+    if(!L) throw std::bad_alloc();
+    runtimeOwner = this;
+    loaded = true;
     luaStoreDCContext(L, ctx());
     luaL_openlibs(L);
 
@@ -368,7 +430,7 @@ void ScriptManager::load() {
     string function =
             "dcpp = {_init_me_anyway = true}\n"
             "function dcpp.FormatChatText(hub, text)\n"
-            "   text = string.gsub(text, \"([{}\\\\])\", \"\\%1\")\n"
+            "   text = string.gsub(text, \"([{}\\\\])\", \"\\\\%1\")\n"
             "   text = string.gsub(text, \"\\n\", \"\\\\line\\n\")\n"
             "text = string.gsub( text, \".\", function( c )\n"
             "   if string.byte( c ) >= 128 then\n"
@@ -395,15 +457,68 @@ void ScriptManager::load() {
     s.create(Socket::TYPE_UDP);
 
     ctx().getClientManager()->addListener(this);
+    std::lock_guard admissionLock(admissionMutex);
+    admissionClosed = false;
+}
+
+void ScriptManager::stopForShutdown() {
+    {
+        std::unique_lock lock(lifecycleMutex);
+        if(stopping) lifecycleChanged.wait(lock, [&] { return stopped; });
+        if(stopped) {
+            if(stopFailure) std::rethrow_exception(stopFailure);
+            return;
+        }
+        stopping = true;
+    }
+    std::exception_ptr failure;
+    try {
+        if(loaded) {
+            // Do not hold the Lua or Speaker lock while joining callbacks.
+            {
+                std::unique_lock lock(admissionMutex);
+                admissionClosed = true;
+                admissionChanged.wait(lock, [] { return admittedOperations == 0; });
+            }
+            ctx().getClientManager()->removeListener(this);
+            ctx().getTimerManager()->removeListener(this);
+            timerEnabled = false;
+            s.disconnect();
+        }
+    } catch(...) { failure = std::current_exception(); }
+    {
+        std::lock_guard lock(lifecycleMutex);
+        stopFailure = failure;
+        stopped = true;
+    }
+    lifecycleChanged.notify_all();
+    if(failure) std::rethrow_exception(failure);
+}
+
+ScriptManager::~ScriptManager() {
+    try { stopForShutdown(); } catch(...) { return; }
+    Lock lock(cs);
+    if(runtimeOwner == this) {
+        // C bindings reject finalizer side effects after the admission drain.
+        lua_close(L);
+        L = nullptr;
+        runtimeOwner = nullptr;
+    }
 }
 
 void ScriptInstance::EvaluateChunk(const string& chunk) {
+    Operation operation;
+    if(!operation) return;
     Lock l(cs);
+    if(!L) return;
     lua_dostring(L, chunk.c_str());
 }
 
 void ScriptInstance::EvaluateFile(const string& fn) {
+    Operation operation;
+    if(!operation) return;
     Lock l(cs);
+    if(!L) return;
     string script_full_name;
     if(Util::fileExists(fn)) {
         script_full_name = fn;
@@ -462,7 +577,7 @@ void ScriptManager::SendDebugMessage(const string &mess) {
 bool ScriptInstance::GetLuaBool() {
     //get value from top of stack, check if should cancel message.
     bool ret = false;
-    if (lua_gettop(L) > 0) {
+    if (L && lua_gettop(L) > 0) {
         ret = !lua_isnil(L, -1);
         lua_pop(L, 1);
     }

@@ -88,6 +88,7 @@ private:
 
     bool getCurThrottling();
     void waitToken();
+    void finishShutdown(); // Timer thread only, with stateCS held.
 
     // TimerManagerListener
     void on(TimerManagerListener::Second, uint64_t /* aTick */);

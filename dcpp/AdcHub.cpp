@@ -1223,7 +1223,7 @@ void AdcHub::on(Line l, const string& aLine) {
         fire(ClientListener::StatusMessage(), this, "<ADC>" + aLine + "</ADC>");
     }
 #ifdef LUA_SCRIPT
-    if (ScriptInstance::L && onClientMessage(this, aLine))
+    if (onClientMessage(this, aLine))
         return;
 #endif
     dispatch(aLine);
@@ -1249,6 +1249,8 @@ bool AdcScriptInstance::onClientMessage(AdcHub* aClient, const string& aLine) {
     return false;
 #endif
 
+    Operation operation;
+    if(!operation) return false;
     Lock l(cs);
     MakeCall("adch", "DataArrival", 1, aClient, aLine);
     return GetLuaBool();
