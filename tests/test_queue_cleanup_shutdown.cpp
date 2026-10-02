@@ -340,7 +340,7 @@ TEST_CASE("Ordinary queue cleanup remains reusable before terminal closure", "[q
     CHECK(stopCleanup(f.queue())); CHECK(stopCleanup(f.queue())); REQUIRE(f.queue().saveQueueChecked(true));
 }
 
-TEST_CASE("Queue cleanup retains an accepted hash storage exception after raw state retirement", "[queue-cleanup-stop][queue-cleanup-exception][shutdown]") {
+TEST_CASE("Queue cleanup retains an accepted hash storage exception and retires its download", "[queue-cleanup-stop][queue-cleanup-exception][shutdown]") {
     Fixture f; auto* source = f.source(); source->setFlag(UserConnection::FLAG_SUPPORTS_TTHL);
     auto target = f.queued(*source, "tree", 192 * 1024, false);
     auto* d = f.queue().getDownload(*source, true); REQUIRE(d);
@@ -348,12 +348,25 @@ TEST_CASE("Queue cleanup retains an accepted hash storage exception after raw st
     TigerTree tree(64 * 1024); string bytes(192 * 1024, '\0'); tree.update(bytes.data(), bytes.size()); tree.finalize();
     d->getTigerTree() = tree; d->setTreeValid(true);
     CHECK(tree.getRoot() == d->getTTH());
-    File(HashManager::HashStore::getDataFile(), File::WRITE, File::OPEN).setSize(0);
-    CHECK_THROWS_AS(f.queue().putDownload(d, true), HashException);
+    SECTION("truncated cursor") {
+        File(HashManager::HashStore::getDataFile(), File::WRITE, File::OPEN).setSize(0);
+        CHECK_THROWS_AS(f.queue().putDownload(d, true), HashException);
+    }
+#ifndef _WIN32
+    SECTION("real data open refusal") {
+        auto path = HashManager::HashStore::getDataFile();
+        auto original = fs::status(path).permissions();
+        ScopedFunctor([&] { fs::permissions(path, original); });
+        fs::permissions(path, fs::perms::owner_read);
+        CHECK_THROWS_AS(f.queue().putDownload(d, true), FileException);
+    }
+#endif
     CHECK(source->getDownload() == nullptr);
-    // Retire the dangling bookkeeping owned by this deliberately failed fixture
-    // so list emptiness alone cannot satisfy the checked-failure assertion.
     { Lock lock(f.queue().cs);
+      CHECK(f.queue().fileQueue.find(target)->getDownloads().empty());
+      CHECK(f.queue().userQueue.running.empty());
+      // Baseline cleanup only: prevent a regression from leaving a destroyed
+      // Download in this disposable fixture's destructor.
       f.queue().fileQueue.find(target)->getDownloads().clear(); f.queue().userQueue.running.clear(); }
     CHECK(f.queue().getPos(target) == 64 * 1024);
     CHECK_FALSE(stopCleanup(f.queue())); CHECK_FALSE(stopCleanup(f.queue()));

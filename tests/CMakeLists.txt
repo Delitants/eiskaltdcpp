@@ -42,6 +42,7 @@ add_executable(eiskaltdcpp-tests
     test_tigerhash.cpp
     test_hashbloom.cpp
     test_hashmanager_shutdown.cpp
+    test_hashdata_persistence.cpp
     test_snapshot_persistence.cpp
     test_wildcards.cpp
     test_compression.cpp

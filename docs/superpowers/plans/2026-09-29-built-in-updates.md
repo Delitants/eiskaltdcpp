@@ -375,14 +375,40 @@ without writing; a missing bucket with pending state cannot certify success.
 The DHT reader accepts the emitted `Files/File` and legacy `Indexes/Index`
 formats, correcting persisted foreign-index readback without changing the writer.
 
-This is an XML-file checkpoint, not all hash persistence: HashData insertion,
-physical leaf/cursor flush and coordinated data/index rebuild failure/recovery
-remain gates, as do required Favorites/conditional writers and mandatory managed
-publication revocation versus optional performance caches. Real staging/rename
+This is an XML-file checkpoint, not all hash persistence: coordinated data/index
+rebuild failure/recovery remains a gate, as do required Favorites/conditional
+writers and mandatory managed publication revocation versus optional performance
+caches. Real staging/rename
 refusal, child-only buffered-flush write refusal, retry and loader readbacks do
 not prove fsync fault, disk-full/power-loss, Windows or minimum-OS acceptance.
 Aggregate non-destructive core/socket drain and committed-normal-quit installer
 handoff remain unimplemented; no runtime activation or `_Exit` replacement.
+
+Primary HashData insertion checkpoint: `dataInsertionsSucceeded()` reports only
+accepted insertions, with a manager-lifetime failure latch. Reported storage
+failure denies further new roots in this session; old roots remain readable.
+It does not certify constructor, rebuild or whole-store persistence. A transient
+failure must withhold installer handoff, not prohibit an ordinary no-update quit.
+Leaves flush before the cursor write, and the cursor flushes before publishing a
+new tree/file mapping or `TTHDone`. The first append of a loaded/rebuilt generation
+validates the cursor against header/file bounds and every indexed leaf extent.
+Short reads leave caller output unchanged. Optional unsupported xattrs remain
+optional. Accepted queue TREE insertion errors propagate after retiring the
+owned download from running/item bookkeeping, retaining the cleanup failure and
+prior verified progress rather than leaving a dangling pointer.
+
+Real read-only data-open refusal and child-only partial append refusal are
+distinct from virtual File flush-order/fault and matching-stale-tail read tests.
+These do not establish native fsync fault, disk-full/power-loss or crash-safe
+two-file rebuild. Constructor/rebuild outcomes and coordinated recovery remain
+prerequisites before consuming index and insertion results for shutdown consent.
+
+Insertion checkpoint acceptance: 72 focused cases/1,027 assertions and 20
+randomized orders pass; full DC-only core 948 cases/148,163 assertions pass;
+12 registered persistence/retirement checks pass. The exact accepted-provider
+Torrent-enabled Qt suite rebuilds and passes 548 cases/28,550 assertions, with
+eight explicit real-GOST opt-in skips. Bounded author review, not independent
+whole-updater or live/minimum-OS acceptance. Installed application unchanged.
 
 - [ ] RED `[updates][update-shutdown]` tests assert Hide/minimize/canceled quit/forced kill never install, autoInstall OFF never installs without explicit version consent, toggling preferences or changing the ready version invalidates old automatic consent, and active transfers are unaffected by check/download.
 - [ ] Native RED fixture assertions: real old/new signed bundles update only on normal quit, false relaunch flag stays closed, canceled authorization and bad identity leave the old app executable, interruption/disk-full leave a recoverable old installation. Hash disposable profile/share/download trees before and after; require equality except explicitly saved resume/settings state expected from normal shutdown.

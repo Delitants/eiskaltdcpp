@@ -1648,7 +1648,14 @@ void QueueManager::putDownload(Download* aDownload, bool finished) {
                     if(d->getType() == Transfer::TYPE_TREE) {
                         // Got a full tree, now add it to the HashManager
                         dcassert(d->getTreeValid());
-                        ctx().getHashManager()->addTree(d->getTigerTree());
+                        try {
+                            ctx().getHashManager()->addTree(d->getTigerTree());
+                        } catch(...) {
+                            // putDownload owns d and destroys it on unwind.
+                            // Never leave that pointer in accepted queue state.
+                            userQueue.removeDownload(q, d->getUser());
+                            throw;
+                        }
 
                         userQueue.removeDownload(q, d->getUser());
                         fire(QueueManagerListener::StatusUpdated(), q);

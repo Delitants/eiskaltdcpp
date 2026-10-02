@@ -339,18 +339,55 @@ void HashManager::HashStore::addFile(const string& aFileName, uint32_t aTimeStam
 
 void HashManager::HashStore::addTree(const TigerTree& tt) {
     if (treeIndex.find(tt.getRoot()) == treeIndex.end()) {
+        if(dataInsertionFailed)
+            throw HashException(_("Hash data storage failed; restart before adding new hashes"));
         try {
             File f(getDataFile(), File::READ | File::WRITE, File::OPEN);
-            int64_t index = saveTree(f, tt);
+            int64_t index = saveTree(f, tt, dataPositionValidated ? sizeof(int64_t) : minimumDataPosition());
             treeIndex.emplace(tt.getRoot(), TreeInfo(tt.getFileSize(), index, tt.getBlockSize()));
+            if(index != SMALL_TREE) dataPositionValidated = true;
             dirty = true;
-        } catch (const FileException& e) {
+        } catch(const FileException& e) {
+            dataInsertionFailed = true;
             ctx().getLogManager()->message(str(F_("Error saving hash data: %1%") % e.getError()));
+            throw;
+        } catch(...) {
+            dataInsertionFailed = true;
+            throw;
         }
     }
 }
 
-int64_t HashManager::HashStore::saveTree(File& f, const TigerTree& tt) {
+int64_t HashManager::HashStore::treeBytes(int64_t size, int64_t blockSize) {
+    if(size < 0 || blockSize < 1024 || size > std::numeric_limits<int64_t>::max() - (blockSize - 1))
+        throw HashException(_("Invalid hash data tree"));
+    const int64_t blocks = max(int64_t(1), size / blockSize + (size % blockSize != 0));
+    if(blocks > std::numeric_limits<int64_t>::max() / TTHValue::BYTES ||
+            static_cast<uint64_t>(blocks) > std::numeric_limits<size_t>::max() / TTHValue::BYTES)
+        throw HashException(_("Invalid hash data tree"));
+    return blocks * TTHValue::BYTES;
+}
+
+int64_t HashManager::HashStore::minimumDataPosition() const {
+    int64_t end = sizeof(int64_t);
+    // Scan loaded extents once per generation, not once per append. A damaged
+    // cursor must not overwrite leaves still referenced by the persisted index.
+    for(const auto& entry : treeIndex) {
+        const auto& ti = entry.second;
+        if(ti.getIndex() == SMALL_TREE) continue;
+        const int64_t bytes = treeBytes(ti.getSize(), ti.getBlockSize());
+        if(ti.getIndex() < static_cast<int64_t>(sizeof(int64_t)) ||
+                ti.getIndex() > std::numeric_limits<int64_t>::max() - bytes)
+            throw HashException(_("Invalid hash data tree"));
+        end = max(end, ti.getIndex() + bytes);
+    }
+    return end;
+}
+
+int64_t HashManager::HashStore::saveTree(File& f, const TigerTree& tt, int64_t minimumPosition) {
+    const int64_t bytes = treeBytes(tt.getFileSize(), tt.getBlockSize());
+    if(tt.getLeaves().size() != static_cast<size_t>(bytes / TTHValue::BYTES))
+        throw HashException(_("Invalid hash data tree"));
     if (tt.getLeaves().size() == 1)
         return SMALL_TREE;
 
@@ -360,17 +397,22 @@ int64_t HashManager::HashStore::saveTree(File& f, const TigerTree& tt) {
     if (f.read(&pos, n) != sizeof(pos))
         throw HashException(_("Unable to read hash data file"));
 
-    // Check if we should grow the file, we grow by a meg at a time...
-    int64_t datsz = f.getSize();
-    if ((pos + (int64_t) (tt.getLeaves().size() * TTHValue::BYTES)) >= datsz) {
-        f.setPos(datsz + 1024 * 1024);
-        f.setEOF();
+    const int64_t datsz = f.getSize();
+    if(pos < minimumPosition || pos > datsz || pos > std::numeric_limits<int64_t>::max() - bytes)
+        throw HashException(_("Invalid hash data write position"));
+    const int64_t end = pos + bytes;
+    if(end > datsz) {
+        const int64_t growth = min(std::numeric_limits<int64_t>::max() - datsz, int64_t(1024 * 1024));
+        f.setSize(max(end, datsz + growth));
     }
-    f.setPos(pos);dcassert(tt.getLeaves().size()> 1);
-    f.write(tt.getLeaves()[0].data, (tt.getLeaves().size() * TTHValue::BYTES));
-    int64_t p2 = f.getPos();
+    f.setPos(pos);
+    if(f.getPos() != pos || f.write(tt.getLeaves()[0].data, static_cast<size_t>(bytes)) != static_cast<size_t>(bytes))
+        throw FileException(_("Unable to write hash data file"));
+    f.flush();
     f.setPos(0);
-    f.write(&p2, sizeof(p2));
+    if(f.getPos() != 0 || f.write(&end, sizeof(end)) != sizeof(end))
+        throw FileException(_("Unable to write hash data file"));
+    f.flush();
     return pos;
 }
 
@@ -380,13 +422,19 @@ bool HashManager::HashStore::loadTree(File& f, const TreeInfo& ti, const TTHValu
         return true;
     }
     try {
-        f.setPos(ti.getIndex());
-        size_t datalen = TigerTree::calcBlocks(ti.getSize(), ti.getBlockSize()) * TTHValue::BYTES;
-        std::unique_ptr<uint8_t[]> buf(new uint8_t[datalen]);
-        f.read(&buf[0], datalen);
-        tt = TigerTree(ti.getSize(), ti.getBlockSize(), &buf[0]);
-        if (!(tt.getRoot() == root))
+        const int64_t bytes = treeBytes(ti.getSize(), ti.getBlockSize());
+        const int64_t size = f.getSize();
+        if(ti.getIndex() < static_cast<int64_t>(sizeof(int64_t)) || size < bytes || ti.getIndex() > size - bytes)
             return false;
+        f.setPos(ti.getIndex());
+        if(f.getPos() != ti.getIndex()) return false;
+        size_t datalen = static_cast<size_t>(bytes);
+        std::unique_ptr<uint8_t[]> buf(new uint8_t[datalen]);
+        if(f.read(&buf[0], datalen) != static_cast<size_t>(bytes)) return false;
+        TigerTree loaded(ti.getSize(), ti.getBlockSize(), &buf[0]);
+        if (!(loaded.getRoot() == root))
+            return false;
+        tt = std::move(loaded);
     } catch (const Exception&) {
         return false;
     }
@@ -501,6 +549,7 @@ void HashManager::HashStore::rebuild() {
         File::renameFile(tmpName, origName);
         treeIndex = newTreeIndex;
         fileIndex = newFileIndex;
+        dataPositionValidated = false;
         dirty = true;
         save();
     } catch (const Exception& e) {
@@ -511,6 +560,11 @@ void HashManager::HashStore::rebuild() {
 bool HashManager::saveIndexChecked() {
     Lock l(cs);
     return store.saveChecked();
+}
+
+bool HashManager::dataInsertionsSucceeded() const {
+    Lock l(cs);
+    return store.dataInsertionsSucceeded();
 }
 
 void HashManager::HashStore::save() {
@@ -604,6 +658,7 @@ private:
 };
 
 void HashManager::HashStore::load() {
+    dataPositionValidated = false;
     try {
         Util::migrate(getIndexFile());
 

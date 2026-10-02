@@ -113,6 +113,11 @@ public:
     // Final owner must first drain every cache writer and retain dependencies.
     bool saveIndexChecked();
 
+    // Accepted primary insertions only; not constructor/rebuild persistence.
+    // Failure is sticky until this manager is replaced. Drain writers first
+    // before using this result as one prerequisite for installer handoff.
+    bool dataInsertionsSucceeded() const;
+
     void shutdown() {
         stopForShutdown();
         Lock l(cs);
@@ -194,6 +199,7 @@ private:
         bool getTree(const TTHValue& root, TigerTree& tth);
         int64_t getBlockSize(const TTHValue& root) const;
         bool isDirty() { return dirty; }
+        bool dataInsertionsSucceeded() const { return !dataInsertionFailed; }
     private:
         /** Root -> tree mapping info, we assume there's only one tree for each root (a collision would mean we've broken tiger...) */
         struct TreeInfo {
@@ -227,12 +233,16 @@ private:
         unordered_map<TTHValue, TreeInfo> treeIndex;
 
         bool dirty;
+        bool dataInsertionFailed = false;
+        bool dataPositionValidated = false;
         DCContext& ctx_;
 
         void createDataFile(const string& name);
 
         bool loadTree(File& dataFile, const TreeInfo& ti, const TTHValue& root, TigerTree& tt);
-        int64_t saveTree(File& dataFile, const TigerTree& tt);
+        int64_t saveTree(File& dataFile, const TigerTree& tt, int64_t minimumPosition = sizeof(int64_t));
+        int64_t minimumDataPosition() const;
+        static int64_t treeBytes(int64_t size, int64_t blockSize);
 
         static string getIndexFile();
         static string getDataFile();
