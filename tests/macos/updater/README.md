@@ -11,6 +11,7 @@ be retained according to `macos/updater/sparkle.lock.json`.
 Download the official archive and matching source from the lock file, verify
 their SHA-256 values, then extract the framework to an isolated directory.
 Use the existing pinned Catch2 3.5.2 source; do not install shared dependencies.
+The standalone harness also needs Qt 6 Core/Widgets/Network, OpenSSL and Intl.
 
 ```sh
 cmake -S tests/macos/updater -B build-updater-probe \
@@ -78,7 +79,10 @@ The bridge binds only IPv4 loopback with a new 256-bit capability for each
 session. It accepts exact GET paths and Host headers, with no query strings,
 ranges, request bodies, proxy methods, or directory serving. Header size,
 concurrent clients, socket write queues and connection lifetimes are bounded.
-Route revocation, restart and stop invalidate the session. Files must be private
+Route revocation, restart and stop invalidate ordinary discovery sessions. A
+separate private installer session serves only local staged bytes after committed
+quit, without reviving a retired external route. Stop invalidates both kinds.
+Files must be private
 regular staging files; they stay open on their original descriptors and changes
 invalidate delivery. Windows staging remains unavailable until its private ACL
 requirements have a platform implementation.
@@ -119,7 +123,8 @@ only the disposable child spawned by this runner, after discovery completes.
 These simulate lifecycle boundaries, not actual MainWindow gestures.
 
 The runner authenticates fixture bytes before preflight and requires exact HTTP
-requests, exact old/new executable and Info.plist readback after exit, no relaunch
+requests, a whole-bundle file/symlink snapshot and strict code-signature readback
+after exit, no relaunch
 sentinel, and unchanged profile/share/download sentinel files. This does not
 exercise Eiskalt's real persistence, authorization failure, disk-full recovery,
 an interruption after commit, or installer-helper network confinement.
@@ -142,11 +147,53 @@ the real package, both ZIP methods, identity/CPU mismatches, cancellation, path
 aliases/traversal, symlink ancestors, malformed headers, CRC failure and bounds.
 These unsigned cases must never be offered to Sparkle.
 
-The verifier is currently linked only into this opt-in native harness. Production
+The verifier is linked into the opt-in native harness and native Qt test target. Production
 normal-quit handoff remains disabled. In particular, macOS currently leaves the
 Qt loop through an emergency `_Exit` path that skips core teardown; installation
 must not be enabled there without first establishing successful queue/settings/
 Torrent persistence and keeping the bridge event loop alive through preparation.
+
+### Production Adapter In Disposable Bundles
+
+`MacUpdateInstaller` is an opt-in native adapter, not an activated app feature.
+Its private start rejects uncommitted and foreign-owner calls before admission.
+It reauthenticates the selected signed feed and archive on a joined worker,
+checks internal bundle ID/build/version/CPU/minimum OS, then supplies only local
+private staging to the public Sparkle installer API. Current consent is checked
+before creating Sparkle and again at Ready; consent rejection replies Skip.
+The adapter never quits or relaunches the application and must remain owned
+outside fenced GUI roots through exit. The caller must retain exclusive immutable
+staging throughout the handoff.
+
+Create a fresh fixture for each mode, including the required installer XPC flag:
+
+```sh
+python3 tests/macos/updater/fixtures.py create --adapter --installer-xpc \
+  --root /tmp/new-native-installer-fixture --sparkle "$SPARKLE" \
+  --binary build-updater-probe/eiskalt-updater-native-tests
+python3 tests/macos/updater/fixtures.py install-probe --adapter \
+  --root /tmp/new-native-installer-fixture --mode normal
+```
+
+The ten adapter modes are `normal`, `hide`, `cancel-quit`,
+`kill-before-commit`, `cancel-prepared`, `bad-identity`, `bad-minimum-os`,
+`cancel-before-native`, `bad-feed` and `bad-archive`.
+For the latter two, add `--wrong-identity` or `--wrong-minimum-os` to `create`.
+Only normal installs; every other mode must retain the exact old signed bundle.
+Normal retains the prepared adapter until process exit. The additional consent
+and corrupt-byte cases assert refusal before creating a native installer. Tests
+first require private `0600` regular single-link staging in a private owned parent,
+so corrupt-byte rejection cannot silently be a permissions refusal.
+The adapter owns a separate Qt bridge, so it must not contact the runner's
+legacy Python server. The native parent asserts external socket denial; this
+does not prove installer/XPC-helper confinement. The hide/cancel/crash modes
+simulate lifecycle boundaries, not actual MainWindow gestures.
+
+`MacUpdateBackend::armInstallOnQuit` still reports Unsupported. Authorization
+cancellation, disk-full/interrupted replacement and recovery, native session
+deadline/abort behavior, real committed-quit integration and helper networking
+remain gates before product activation. Passing these disposable tests is not
+a successful update of the installed Eiskalt app.
 
 ### Shutdown Checkpoint Results
 

@@ -1,6 +1,13 @@
 #include "dcpp/stdinc.h"
 #include "dcpp/ProxyRoute.h"
 #include "updates/UpdateLoopbackBridge.h"
+namespace updates {
+struct UpdateLoopbackBridgeTestAccess {
+    static QUrl committed(UpdateLoopbackBridge& bridge, const QString& feed) {
+        return bridge.beginInstallerSession(feed);
+    }
+};
+}
 #include <catch2/catch_test_macros.hpp>
 #include <QCoreApplication>
 #include <QTemporaryDir>
@@ -68,6 +75,22 @@ struct Fixture {
 }
 
 #ifndef _WIN32
+TEST_CASE("Committed installer IPC survives route retirement without reopening discovery", "[updates][update-bridge][update-install-bridge]") {
+    Fixture f;
+    f.route->revoked->store(true);
+    CHECK_FALSE(f.start().isValid());
+    const auto feed = updates::UpdateLoopbackBridgeTestAccess::committed(f.bridge, f.feed);
+    REQUIRE(feed.isValid());
+    const auto archive = f.bridge.mapArchive(f.archive, f.archiveBytes.size());
+    REQUIRE(archive.isValid());
+    CHECK(request(feed, get(feed)).endsWith(f.feedBytes));
+    CHECK(request(archive, get(archive)).endsWith(f.archiveBytes));
+    CHECK(f.route->revoked->load());
+    f.bridge.stop();
+    CHECK_FALSE(f.bridge.mapArchive(f.archive, f.archiveBytes.size()).isValid());
+    CHECK_FALSE(f.start().isValid());
+}
+
 TEST_CASE("Update bridge serves unchanged staged bytes on capability-scoped IPv4 loopback", "[updates][update-bridge]") {
     Fixture f;
     const auto feed = f.start();

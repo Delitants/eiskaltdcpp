@@ -192,7 +192,8 @@ bool bundleArchiveMatches(const std::string& path, const BundleArchiveIdentity& 
             return [actual isKindOfClass:NSString.class] && [actual isEqualToString:wanted];
         };
         if(!matches(@"CFBundleIdentifier", expected.bundleId) || !matches(@"CFBundleVersion", expected.build) ||
-           !matches(@"CFBundleShortVersionString", expected.version) || !matches(@"CFBundlePackageType", "APPL")) return false;
+           !matches(@"CFBundleShortVersionString", expected.version) || !matches(@"CFBundlePackageType", "APPL") ||
+           (!expected.minimumOs.empty() && !matches(@"LSMinimumSystemVersion", expected.minimumOs))) return false;
         id executable = info[@"CFBundleExecutable"];
         if(![executable isKindOfClass:NSString.class]) return false;
         NSData* encodedName = [executable dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];

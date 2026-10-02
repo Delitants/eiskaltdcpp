@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <QApplication>
 
 // Disposable driver only. Installation requires the explicit committed-exit fixture.
 @interface Probe : NSObject <SPUUpdaterDelegate, SPUUserDriver>
@@ -283,6 +284,16 @@ TEST_CASE("Archive identity preflight rejects mismatched package metadata", "[bu
     }
 }
 
+TEST_CASE("Archive minimum system version matches signed release metadata", "[bundle-archive-minimum]") {
+    const auto path = NSProcessInfo.processInfo.environment[@"EISKALT_PROBE_LOCAL_ARCHIVE"];
+    REQUIRE(path != nil);
+    auto identity = expectedIdentity();
+    identity.minimumOs = "14.0";
+    REQUIRE(updates::bundleArchiveMatches([path UTF8String], identity));
+    identity.minimumOs = "99.0";
+    CHECK_FALSE(updates::bundleArchiveMatches([path UTF8String], identity));
+}
+
 int main(int argc, char **argv) {
     @autoreleasepool {
         NSDictionary* env = NSProcessInfo.processInfo.environment;
@@ -292,7 +303,7 @@ int main(int argc, char **argv) {
                 writeToFile:env[@"EISKALT_PROBE_RELAUNCH_MARKER"] atomically:YES];
             return 97;
         }
-        [NSApplication sharedApplication];
+        QApplication application(argc, argv);
         [NSApp setActivationPolicy:NSApplicationActivationPolicyProhibited];
         return Catch::Session().run(argc, argv);
     }

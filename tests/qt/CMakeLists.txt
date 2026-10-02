@@ -208,8 +208,11 @@ if(APPLE AND EISKALT_TEST_MAC_UPDATE_DISCOVERY)
     include(${CMAKE_SOURCE_DIR}/cmake/MacUpdater.cmake)
     target_sources(eiskaltdcpp-qt-tests PRIVATE
         ${QT_SRC_DIR}/updates/MacUpdateDiscovery.mm ${QT_SRC_DIR}/updates/MacUpdateDiscovery.h
+        ${QT_SRC_DIR}/updates/MacUpdateInstaller.mm ${QT_SRC_DIR}/updates/MacUpdateInstaller.h
+        ${CMAKE_SOURCE_DIR}/macos/updater/BundleArchiveVerifier.mm
         ${QT_SRC_DIR}/updates/MacUpdateBackend.mm ${QT_SRC_DIR}/updates/MacUpdateBackend.h)
     set_source_files_properties(${QT_SRC_DIR}/updates/MacUpdateDiscovery.mm ${QT_SRC_DIR}/updates/MacUpdateBackend.mm
+        ${QT_SRC_DIR}/updates/MacUpdateInstaller.mm ${CMAKE_SOURCE_DIR}/macos/updater/BundleArchiveVerifier.mm
         PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
     target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE EISKALT_TEST_MAC_UPDATE_DISCOVERY)
     target_link_libraries(eiskaltdcpp-qt-tests PRIVATE Sparkle::Sparkle "-framework AppKit")

@@ -26,6 +26,11 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def bundle_snapshot(app):
+    return {str(path.relative_to(app)): ("link", os.readlink(path)) if path.is_symlink()
+            else ("file", digest(path)) for path in app.rglob("*") if path.is_symlink() or path.is_file()}
+
+
 def create(args):
     root = args.root.resolve()
     root.mkdir(mode=0o700, parents=True, exist_ok=False)
@@ -53,7 +58,7 @@ def create(args):
             "CFBundleIdentifier": bundle_id + (".wrong" if label == "new" and getattr(args, "wrong_identity", False) else ""), "CFBundleName": "UpdaterProbe",
             "CFBundleExecutable": "UpdaterProbe", "CFBundlePackageType": "APPL",
             "CFBundleVersion": "1" if label == "old" else "2", "CFBundleShortVersionString": version,
-            "LSMinimumSystemVersion": "14.0", "LSUIElement": True,
+            "LSMinimumSystemVersion": "15.0" if label == "new" and args.wrong_minimum_os else "14.0", "LSUIElement": True,
             "SUPublicEDKey": public, "SURequireSignedFeed": True,
             "SUVerifyUpdateBeforeExtraction": True, "SUSignedFeedFailureExpirationInterval": 0,
             "SUEnableAutomaticChecks": False, "SUAutomaticallyUpdate": False,
@@ -80,12 +85,31 @@ def create(args):
 <enclosure url="https://203.0.113.1/update.zip" length="{archive.stat().st_size}"
  type="application/octet-stream" sparkle:edSignature="{signature}"/>
 </item></channel></rss>''')
+    if args.adapter:
+        cpu = run("lipo", "-archs", str(args.binary)).strip()
+        if cpu not in ("arm64", "x86_64"):
+            raise RuntimeError("adapter fixture must have a thin executable")
+        feed.write_text(f'''<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
+ xmlns:eiskalt="https://eiskaltdcpp.org/xml-namespaces/updates/1">
+<channel><title>Disposable updater probe</title><item><title>Probe update</title>
+<sparkle:version>2</sparkle:version><sparkle:shortVersionString>{new_version}</sparkle:shortVersionString>
+<sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+<eiskalt:bundleIdentifier>{bundle_id}</eiskalt:bundleIdentifier><eiskalt:cpu>{cpu}</eiskalt:cpu>
+<enclosure url="https://github.com/Delitants/eiskaltdcpp/releases/download/v3/fixture-{cpu}.zip"
+ length="{archive.stat().st_size}" type="application/octet-stream" sparkle:os="macos"
+ sparkle:edSignature="{signature}" eiskalt:sha256="{digest(archive)}"/>
+</item></channel></rss>''')
     run(signer, "--ed-key-file", str(key), str(feed))
+    feed.chmod(0o600)
+    archive.chmod(0o600)
     (root / "bad-feed.xml").write_bytes(feed.read_bytes().replace(b"Probe update", b"Wrong update"))
     corrupt = bytearray(archive.read_bytes())
     corrupt[len(corrupt) // 2] ^= 1
     (root / "bad-archive.zip").write_bytes(corrupt)
-    manifest = {"bundle_id": bundle_id, "public_key": public, "signature": signature,
+    for name in ("bad-feed.xml", "bad-archive.zip"):
+        (root / name).chmod(0o600)
+    manifest = {"bundle_id": bundle_id, "public_key": public, "signature": signature, "adapter": args.adapter,
                 "sparkle": str(sparkle), "files": {p.name: digest(p) for p in
                 (feed, archive, root / "bad-feed.xml", root / "bad-archive.zip")}}
     (root / "fixture.json").write_text(json.dumps(manifest, indent=2) + "\n")
@@ -237,6 +261,10 @@ def install_probe(args):
     """Post-exit assertions for disposable bundles, never the installed app."""
     root = args.root.resolve()
     manifest = json.loads((root / "fixture.json").read_text())
+    if bool(manifest.get("adapter")) != args.adapter:
+        raise RuntimeError("create a matching adapter/non-adapter fixture")
+    if args.mode in ("cancel-before-native", "bad-feed", "bad-archive", "bad-minimum-os") and not args.adapter:
+        raise RuntimeError("this mode requires the production adapter fixture")
     app = root / "old/UpdaterProbe.app"
     info = app / "Contents/Info.plist"
     if not manifest["bundle_id"].startswith("org.eiskaltdcpp.updater-probe.") or (root.stat().st_mode & 0o077):
@@ -249,6 +277,7 @@ def install_probe(args):
     verify(args)
     before_info = info.read_bytes()
     before_executable = digest(app / "Contents/MacOS/UpdaterProbe")
+    before_bundle = bundle_snapshot(app)
     home = root / "install-home"
     home.mkdir(mode=0o700, exist_ok=False)
     protected = root / "user-data"
@@ -283,7 +312,8 @@ def install_probe(args):
     environment = dict(os.environ, HOME=str(home), CFFIXED_USER_HOME=str(home),
         EISKALT_INSTALL_MODE=args.mode, EISKALT_PROBE_FEED=base + "/feed",
         EISKALT_PROBE_ARCHIVE=base + "/update.zip", EISKALT_PROBE_RELAUNCH_MARKER=str(relaunch_marker),
-        EISKALT_PROBE_KILL_MARKER=str(kill_marker), EISKALT_PROBE_LOCAL_ARCHIVE=str(root / "update.zip"))
+        EISKALT_PROBE_KILL_MARKER=str(kill_marker), EISKALT_PROBE_LOCAL_ARCHIVE=str(root / "update.zip"),
+        EISKALT_PROBE_LOCAL_FEED=str(root / "appcast.xml"))
     sandbox = '(version 1)(allow default)(deny network*)' \
         '(allow network-outbound (remote ip "localhost:*"))' \
         '(allow network-bind (local ip "localhost:*"))' \
@@ -291,7 +321,7 @@ def install_probe(args):
     child = None
     try:
         child = subprocess.Popen(["sandbox-exec", "-p", sandbox,
-            str(app / "Contents/MacOS/UpdaterProbe"), "[update-install]"], env=environment,
+            str(app / "Contents/MacOS/UpdaterProbe"), "[update-install-adapter]" if args.adapter else "[update-install]"], env=environment,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         if args.mode == "kill-before-commit":
             deadline = time.monotonic() + 35
@@ -305,10 +335,13 @@ def install_probe(args):
         print(output.replace(token, "CAPABILITY"))
         if child.returncode != (-9 if args.mode == "kill-before-commit" else 0):
             raise RuntimeError("native install probe failed: " + str(child.returncode))
-        committed = args.mode in ("normal", "cancel-prepared", "bad-identity")
+        committed = args.mode in ("normal", "cancel-prepared", "bad-identity", "bad-minimum-os",
+                                  "cancel-before-native", "bad-feed", "bad-archive")
         expected = ["/CAPABILITY/feed"] + (["/CAPABILITY/update.zip"] if committed else [])
         if args.mode == "bad-identity":
             expected = []
+        if args.adapter:
+            expected = []  # The production adapter owns its separate local bridge.
         if requests != expected:
             raise RuntimeError("unexpected requests: " + repr(requests))
         # Installation is asynchronous and can complete after the old process exits.
@@ -324,12 +357,16 @@ def install_probe(args):
                 raise RuntimeError("normal quit did not install the exact signed new bundle")
         elif info.read_bytes() != before_info or digest(app / "Contents/MacOS/UpdaterProbe") != before_executable:
             raise RuntimeError("uncommitted/cancelled/invalid update replaced the old bundle")
+        expected_bundle = bundle_snapshot(root / "new/UpdaterProbe.app") if args.mode == "normal" else before_bundle
+        if bundle_snapshot(app) != expected_bundle:
+            raise RuntimeError("installed bundle tree differs from the exact expected signed bundle")
+        run("codesign", "--verify", "--deep", "--strict", str(app))
         if relaunch_marker.exists():
             raise RuntimeError("application relaunched despite no-relaunch policy")
         if snapshot() != before_data:
             raise RuntimeError("profile/share/download fixture changed")
         result = {"mode": args.mode, "requests": requests, "installed": args.mode == "normal",
-                  "relaunched": False, "user_data_unchanged": True}
+                  "relaunched": False, "user_data_unchanged": True, "exact_bundle": True, "signature_valid": True}
         (root / "install-result.json").write_text(json.dumps(result, indent=2) + "\n")
         print("PASS:", json.dumps(result))
     finally:
@@ -353,11 +390,14 @@ if __name__ == "__main__":
             sub.add_argument("--installer-xpc", action="store_true",
                              help="Use Sparkle's documented sandbox installer service")
             sub.add_argument("--wrong-identity", action="store_true", help="Sign a disposable archive with a mismatched bundle ID")
+            sub.add_argument("--wrong-minimum-os", action="store_true", help="Sign a disposable archive with a mismatched minimum OS")
+            sub.add_argument("--adapter", action="store_true", help="Create production-schema installer adapter fixtures")
         if name == "probe":
             sub.add_argument("--mode", choices=("valid", "bad-feed", "bad-archive", "unmapped", "information-only"), default="valid")
             sub.add_argument("--filter", default="[bridge-probe]")
         if name == "install-probe":
-            sub.add_argument("--mode", choices=("normal", "hide", "cancel-quit", "kill-before-commit", "cancel-prepared", "bad-identity"), required=True)
+            sub.add_argument("--mode", choices=("normal", "hide", "cancel-quit", "kill-before-commit", "cancel-prepared", "bad-identity", "bad-minimum-os", "cancel-before-native", "bad-feed", "bad-archive"), required=True)
+            sub.add_argument("--adapter", action="store_true", help="Exercise the production Qt installer adapter")
         sub.set_defaults(function=globals()[name.replace("-", "_")])
     args = parser.parse_args()
     args.function(args)

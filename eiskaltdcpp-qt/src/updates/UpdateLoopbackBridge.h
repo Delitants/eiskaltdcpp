@@ -17,6 +17,10 @@ public:
     QUrl mapArchive(const QString& verifiedStagedArchive, qint64 expectedSize);
     void stop();
 private:
+    friend class MacUpdateInstaller;
+    friend struct UpdateLoopbackBridgeTestAccess;
+    // Local staged content only, entered by the committed installer adapter.
+    QUrl beginInstallerSession(const QString& stagedFeed);
     struct Impl;
     std::unique_ptr<Impl> impl;
 };

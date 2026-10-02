@@ -716,3 +716,26 @@ This is not live peer payload, native installer, crash/recovery, physical
 power-loss, minimum-OS or independent whole-updater review proof. Next is actual
 native installer acceptance/handoff and ordinary committed-quit integration,
 not another audit of the completed preparation prerequisites.
+
+Native committed-handoff checkpoint (Task 5 remains in progress):
+`MacUpdateInstaller` now implements the public native installer protocol in
+opt-in disposable signed bundles. Its private entry requires committed normal
+quit and the GUI owner thread, reauthenticates the exact signed offer/archive
+on a physically joined worker, and binds internal bundle ID/build/version/CPU
+and minimum OS before native preparation. A private staged-only bridge remains
+usable after intentional route retirement without reopening external networking.
+Current consent is checked before Sparkle creation and again at Ready; only
+approved committed work can reply Dismiss. The adapter never quits or relaunches
+the app and is not connected to `MacUpdateBackend::armInstallOnQuit` yet.
+
+Disposable cases cover normal installation, hide, canceled quit, pre-commit
+termination, consent withdrawal at Ready, wrong internal bundle ID and wrong
+internal minimum OS, consent already withdrawn before native creation, and
+corrupt staged feed/archive bytes. Normal retains the prepared native owner
+through process exit. Parent readback checks the exact whole signed bundle,
+no relaunch and unchanged user-data sentinels. These are simulated lifecycle
+boundaries, not real MainWindow gestures or installer authorization cancellation.
+External denial is proved in the native parent, not in launchd/XPC helpers.
+Recovery after disk/interruption failure, authorization cancellation, native
+deadline/abort behavior and real committed/no-update quit remain next gates.
+The installed app, normal exit path, profile and real signing keys are unchanged.

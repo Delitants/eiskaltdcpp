@@ -3,7 +3,7 @@
 #include <string>
 namespace updates {
 struct BundleArchiveIdentity {
-    std::string bundleId, build, version, cpu;
+    std::string bundleId, build, version, cpu, minimumOs;
 };
 // Worker-only preflight after archive signature verification. Reads bounded ZIP
 // metadata without extracting files or executing archive contents. Not consent.

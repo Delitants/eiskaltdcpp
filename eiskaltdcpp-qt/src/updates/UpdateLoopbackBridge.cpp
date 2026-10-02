@@ -97,6 +97,7 @@ struct UpdateLoopbackBridge::Impl {
     QByteArray authority, prefix;
     std::shared_ptr<const dcpp::ProxyRouteSnapshot> route;
     quint64 generation = 0;
+    bool committedLocal = false;
     std::shared_ptr<Resource> feed, archive;
     QHash<QTcpSocket*, std::shared_ptr<Client>> clients;
 
@@ -108,8 +109,8 @@ struct UpdateLoopbackBridge::Impl {
         QObject::connect(&routeTimer, &QTimer::timeout, &owner, [this] { if(!active()) owner.stop(); });
     }
     bool active() const {
-        return server.isListening() && route && route->valid && route->revoked &&
-            !route->revoked->load() && route->generation == generation;
+        return server.isListening() && (committedLocal || (route && route->valid && route->revoked &&
+            !route->revoked->load() && route->generation == generation));
     }
     void close(QTcpSocket* socket) {
         QObject::disconnect(socket, nullptr, &owner, nullptr);
@@ -240,6 +241,21 @@ QUrl UpdateLoopbackBridge::mapArchive(const QString& path, qint64 expectedSize) 
     return impl->url("update.zip");
 }
 
+QUrl UpdateLoopbackBridge::beginInstallerSession(const QString& path) {
+    Q_ASSERT(QThread::currentThread() == thread());
+    stop();
+    auto feed = openPrivate(path, 1024 * 1024);
+    if(!feed) return {};
+    QByteArray capability(32, '\0');
+    if(RAND_bytes(reinterpret_cast<unsigned char*>(capability.data()), capability.size()) != 1 ||
+        !impl->server.listen(QHostAddress::LocalHost, 0)) return {};
+    impl->committedLocal = true;
+    impl->feed = std::move(feed);
+    impl->prefix = "/" + capability.toHex() + "/";
+    impl->authority = "127.0.0.1:" + QByteArray::number(impl->server.serverPort());
+    return impl->url("feed.xml");
+}
+
 void UpdateLoopbackBridge::stop() {
     Q_ASSERT(QThread::currentThread() == thread());
     impl->routeTimer.stop();
@@ -251,6 +267,7 @@ void UpdateLoopbackBridge::stop() {
     const auto sockets = impl->clients.keys();
     for(auto* socket : sockets) impl->close(socket);
     impl->feed.reset(); impl->archive.reset(); impl->route.reset();
+    impl->committedLocal = false;
     impl->authority.clear(); impl->prefix.clear();
 }
 }
