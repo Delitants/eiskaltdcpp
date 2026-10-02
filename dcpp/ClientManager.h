@@ -50,6 +50,7 @@ public:
     /// and callbacks; releases arriving during the stop are deferred until then.
     /// Keep this manager alive and serialize manual Client operations with stop.
     /// Never call from a callback or while holding registry/listener locks.
+    /// The owner must fence manual sends (including sendUdp) before this call.
     /// Socket resource destruction still requires BufferedSocket::waitShutdown.
     void stopForShutdown();
 
@@ -185,6 +186,10 @@ public:
     void saveUser(const CID& cid);
 #ifdef WITH_DHT
     OnlineUserPtr findDHTNode(const CID& cid) const;
+    /// Called by the DHT owner after its producer/callback barriers. Retires
+    /// registrations (including nodes not in routing), never shared User flags
+    /// directly. No DHT, registry or listener lock may be held by the caller.
+    void retireDHTNodesForShutdown(const ClientBase& owner);
 #endif
 
 private:

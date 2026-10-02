@@ -270,6 +270,10 @@ public:
 
     /** When socks settings are updated, this has to be called... */
     static void socksUpdated(DCContext& ctx);
+    /// Owner-fenced terminal cleanup after all UDP users/setup callers drain.
+    /// Disconnects even borrowed snapshots, but never a foreign context's relay.
+    /// This is not an admission fence: callers must not rebuild afterward.
+    static void stopSocksUdpForShutdown(DCContext& ctx);
     /** Returns the public UDP relay endpoint when the active proxy provides one. */
     static bool getUdpProxyEndpoint(DCContext& ctx, string& server, string& port);
     string getIfaceI4 (const string &iface);
@@ -305,6 +309,7 @@ protected:
     using SocksUdpAssociationPtr = std::shared_ptr<const SocksUdpAssociation>;
 
     static SocksUdpAssociationPtr udpAssociation;
+    static std::vector<std::weak_ptr<Socket>> udpControls;
     static std::mutex udpProxyMutex;
     static std::mutex udpProxySetupMutex;
 

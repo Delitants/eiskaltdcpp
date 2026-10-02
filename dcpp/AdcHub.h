@@ -121,6 +121,7 @@ private:
     void putUser(const uint32_t sid, bool disconnect);
 
     void clearUsers();
+    void finishRetainedStateForShutdown() override;
 
     void handle(AdcCommand::SUP, AdcCommand& c);
     void handle(AdcCommand::SID, AdcCommand& c);

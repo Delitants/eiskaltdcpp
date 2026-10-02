@@ -1232,6 +1232,59 @@ TEST_CASE("SOCKS5 settings scope clears the association and closes its control c
     REQUIRE_FALSE(proxy.hasProtocolFailed());
 }
 
+namespace {
+template<class SocketType> void stopSocksControlForShutdown(DCContext& context) {
+    // Baseline adapter: a missing cleanup API must fail on a real open control,
+    // not merely fail compilation before the regression can execute.
+    if constexpr(requires { SocketType::stopSocksUdpForShutdown(context); })
+        SocketType::stopSocksUdpForShutdown(context);
+}
+}
+
+TEST_CASE("Terminal SOCKS UDP cleanup disconnects borrowed control snapshots", "[qt][socket][socks5][retained-udp]") {
+    LocalSocks5UdpServer proxy;
+    test::TestContext tc;
+    SocksSettingsScope cleanup(*tc.ownedCtx);
+    configureLocalSocks(*tc.ownedCtx, "127.0.0.1", proxy.port());
+    string host, port;
+    REQUIRE(Socket::getUdpProxyEndpoint(*tc.ownedCtx, host, port));
+    REQUIRE(proxy.waitForOpenControls(1, std::chrono::seconds(2)));
+    auto borrowed = SocksAssociationInspector::retainAssociation();
+    REQUIRE(borrowed);
+    SECTION("Matching context closes despite the borrowed snapshot") {
+        stopSocksControlForShutdown<Socket>(*tc.ownedCtx);
+        CHECK_FALSE(SocksAssociationInspector::hasAssociation());
+        CHECK(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+        stopSocksControlForShutdown<Socket>(*tc.ownedCtx);
+        CHECK(borrowed);
+    }
+    SECTION("Foreign context cannot revoke the live owner") {
+        DCContext foreign;
+        stopSocksControlForShutdown<Socket>(foreign);
+        CHECK(SocksAssociationInspector::hasAssociation());
+        CHECK(proxy.openControlCount() == 1);
+        stopSocksControlForShutdown<Socket>(*tc.ownedCtx);
+        CHECK(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+    }
+    SECTION("Previously cleared borrowed controls still belong to the owner") {
+        tc.ownedCtx->getSettingsManager()->set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
+        Socket::socksUpdated(*tc.ownedCtx);
+        REQUIRE_FALSE(SocksAssociationInspector::hasAssociation());
+        REQUIRE(proxy.openControlCount() == 1);
+        stopSocksControlForShutdown<Socket>(*tc.ownedCtx);
+        CHECK(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+    }
+    SECTION("Replacement and retired borrowed controls both drain") {
+        Socket::socksUpdated(*tc.ownedCtx);
+        REQUIRE(proxy.waitForOpenControls(2, std::chrono::seconds(2)));
+        auto replacement = SocksAssociationInspector::retainAssociation();
+        REQUIRE(replacement);
+        stopSocksControlForShutdown<Socket>(*tc.ownedCtx);
+        CHECK_FALSE(SocksAssociationInspector::hasAssociation());
+        CHECK(proxy.waitForOpenControls(0, std::chrono::seconds(2)));
+    }
+}
+
 #ifndef _WIN32
 TEST_CASE("SOCKS5 UDP control liveness retries an interrupted peek", "[qt][socket][socks5][udp]")
 {

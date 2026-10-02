@@ -2,6 +2,7 @@
 
 #include "stdinc.h"
 #include <future>
+#include <fstream>
 #define private public
 #include "DCContext.h"
 #undef private
@@ -73,7 +74,7 @@ struct Fixture {
         settings.set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_DIRECT);
         c.dht_ = std::make_unique<dht::DHT>(c);
     }
-    ~Fixture() { stopDht(dht()); CHECK(BufferedSocket::waitShutdown(2000)); }
+    ~Fixture() { if(context().getDHT()) stopDht(dht()); CHECK(BufferedSocket::waitShutdown(2000)); }
     DCContext& context() { return *fixture.ownedCtx; }
     dht::DHT& dht() { return *context().getDHT(); }
 };
@@ -119,6 +120,74 @@ TEST_CASE("Terminal DHT stop before start prevents later bootstrap and listener 
     CHECK_FALSE(f.dht().bootstrapMgr_);
     CHECK(&f.dht().getIndexManager() == index);
     stopDht(f.dht());
+}
+
+TEST_CASE("Retained DHT stop retires each node registration without deleting routing entries", "[dht-stop][offline-tail]") {
+    Fixture f;
+    REQUIRE(std::filesystem::equivalent(Util::getPath(Util::PATH_USER_CONFIG), f.fixture.tmpDir));
+    auto& manager = *f.context().getClientManager();
+    // Construct actual routing state without starting any public UDP producer.
+    f.dht().bucket = new dht::KBucket(f.dht());
+    auto node = f.dht().createNode(CID(string(39, 'B')), "127.0.0.1", "6250", false, true);
+    REQUIRE(node);
+    REQUIRE(f.dht().addNode(node, true));
+    REQUIRE(node->isOnline());
+    REQUIRE(node->unique(3)); // local pointer, routing entry, online registration
+    auto& favorites = *f.context().getFavoriteManager();
+    favorites.addFavoriteUser(node->getUser());
+    auto* bucket = f.dht().bucket;
+    dht::Node::Ptr outside;
+    std::unique_ptr<OnlineUser> hubIdentity;
+    Client* otherHub = nullptr;
+    auto cleanup = makeScopedFunctor([&] {
+        if(hubIdentity) manager.putOffline(hubIdentity.get());
+        if(otherHub) manager.putClient(otherHub);
+    });
+    SECTION("Routing registration") { }
+    SECTION("Online registration rejected by routing address collision") {
+        outside = f.dht().createNode(CID(string(39, 'C')), "127.0.0.1", "6250", false, true);
+        REQUIRE(outside);
+        REQUIRE_FALSE(f.dht().addNode(outside, true));
+        REQUIRE(outside->isOnline());
+        REQUIRE(outside->unique(2)); // local pointer and online registration only
+    }
+    SECTION("The shared User stays online while another identity remains") {
+        otherHub = manager.getClient("adc://127.0.0.1:1");
+        hubIdentity = std::make_unique<OnlineUser>(node->getUser(), *otherHub, 77);
+        manager.putOnline(hubIdentity.get());
+    }
+    f.dht().stopForShutdown();
+    CHECK_FALSE(node->isOnline());
+    CHECK(node->getUser()->isOnline() == bool(hubIdentity));
+    CHECK_FALSE(manager.findDHTNode(node->getUser()->getCID()));
+    CHECK(node->unique(2));
+    CHECK(f.dht().bucket == bucket);
+    CHECK(f.dht().getNodesCount() == 1);
+    if(outside) {
+        CHECK_FALSE(outside->isOnline());
+        CHECK_FALSE(outside->getUser()->isOnline());
+        CHECK(outside->unique(1));
+    }
+    if(hubIdentity) {
+        CHECK(favorites.getFavoriteUsers().at(node->getUser()->getCID()).getLastSeen() == 0);
+        manager.putOffline(hubIdentity.get());
+        hubIdentity.reset();
+        manager.putClient(otherHub);
+        otherHub = nullptr;
+    }
+    CHECK(favorites.getFavoriteUsers().at(node->getUser()->getCID()).getLastSeen() > 0);
+    REQUIRE(favorites.saveChecked());
+    REQUIRE(manager.saveUsersChecked());
+    const auto path = f.fixture.tmpDir / "Favorites.xml";
+    std::ofstream(path, std::ios::app) << "\n<!-- final snapshot marker -->\n";
+    const auto finalSnapshot = File(path.string(), File::READ, File::OPEN).read();
+    f.dht().stopForShutdown();
+    f.context().dht_.reset();
+    CHECK(node->unique(1));
+    CHECK(File(path.string(), File::READ, File::OPEN).read() == finalSnapshot);
+    FavoriteManager loaded(f.context());
+    loaded.load();
+    CHECK(loaded.getFavoriteUsers().at(node->getUser()->getCID()).getLastSeen() > 0);
 }
 
 TEST_CASE("Terminal DHT stop retains routing state but cancels queued and late producers", "[dht-stop]") {

@@ -172,6 +172,8 @@ namespace dht
             firewallCheck.stop();
         }
         lastPacket = 0;
+        if(auto* clients = ctx_.getClientManager())
+            clients->retireDHTNodesForShutdown(*this);
     }
 
     /*

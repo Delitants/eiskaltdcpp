@@ -9,6 +9,8 @@
 #include "Client.h"
 #include "BufferedSocket.h"
 #include "NmdcHub.h"
+#include "AdcHub.h"
+#include "ClientManager.h"
 #undef protected
 #undef private
 #include "TestContext.h"
@@ -19,6 +21,10 @@
 #include "ThrottleManager.h"
 #include "UploadManager.h"
 #include "Semaphore.h"
+#include "ProxyRoute.h"
+#include "File.h"
+#include "proxy/DisposableGostServer.h"
+#include <fstream>
 
 using namespace dcpp;
 using namespace std::chrono_literals;
@@ -82,6 +88,54 @@ struct HubFixture {
 };
 }
 
+TEST_CASE("Retained hub shutdown releases the real raw GOST UDP transport", "[hub-shutdown][retained-udp]") {
+    HubFixture fixture("adc://127.0.0.1:1");
+    auto& context = *fixture.fixture.ownedCtx;
+    REQUIRE(std::filesystem::equivalent(Util::getPath(Util::PATH_USER_CONFIG), fixture.fixture.tmpDir));
+    proxy_test::GostServer server;
+    const auto ca = fixture.fixture.tmpDir / "disposable-ca.pem";
+    std::ofstream(ca) << server.ca.pem;
+    auto& settings = *context.getSettingsManager();
+    settings.set(SettingsManager::OUTGOING_CONNECTIONS, SettingsManager::OUTGOING_GOST);
+    settings.set(SettingsManager::GOST_SERVER, "127.0.0.1");
+    settings.set(SettingsManager::GOST_PORT, server.port());
+    settings.set(SettingsManager::GOST_USER, "fixture-user");
+    settings.set(SettingsManager::GOST_PASSWORD, "fixture-password");
+    settings.set(SettingsManager::GOST_CA_FILE, ca.string());
+    context.getProxyRoute()->reload(settings);
+    server.start();
+    auto& manager = *context.getClientManager();
+    Socket* transport = nullptr;
+    SECTION("ClientManager raw UDP") {
+        transport = &manager.udp;
+        manager.sendUdp("192.0.2.7", "6000", "probe");
+    }
+    SECTION("ADC hub raw UDP") {
+        auto& hub = static_cast<AdcHub&>(*fixture.hub);
+        transport = &hub.udp;
+        transport->writeTo("192.0.2.7", "6000", "probe");
+    }
+    REQUIRE(transport->hasGostUdpTransport());
+    REQUIRE(transport->wait(2000, Socket::WAIT_READ) == Socket::WAIT_READ);
+    char reply[32]{};
+    sockaddr_storage source{};
+    REQUIRE(transport->read(reply, sizeof(reply), source) == 5);
+    REQUIRE(string(reply, 5) == "probe");
+    // Revocation requests worker cancellation but is not its retained cleanup.
+    context.getProxyRoute()->stop();
+    manager.stopForShutdown();
+    CHECK_FALSE(transport->hasGostUdpTransport());
+    CHECK(transport->sock == INVALID_SOCKET);
+    std::vector<std::shared_ptr<void>> slots;
+    for(int i = 0; i < 8; ++i) {
+        slots.push_back(context.getProxyRoute()->acquireUdpSlot());
+        CHECK(slots.back());
+    }
+    CHECK(manager.getClients().front() == fixture.hub);
+    manager.stopForShutdown();
+    CHECK_FALSE(transport->hasGostUdpTransport());
+}
+
 TEST_CASE("Terminal registry stop retains clients and rejects late creation", "[hub-shutdown][client-registry-stop]") {
     HubFixture fixture("adc://127.0.0.1:1");
     auto& manager = *fixture.fixture.ownedCtx->getClientManager();
@@ -98,6 +152,39 @@ TEST_CASE("Terminal registry stop retains clients and rejects late creation", "[
     stopRegistry(manager);
     manager.putClient(second);
     CHECK(manager.getClients().size() == 1);
+}
+
+TEST_CASE("Retained hub stop finishes favorite offline persistence before disposal", "[hub-shutdown][offline-tail]") {
+    for(const auto* protocol : {"adc", "dchub"}) {
+        HubFixture fixture(string(protocol) + "://127.0.0.1:1");
+        auto& context = *fixture.fixture.ownedCtx;
+        REQUIRE(std::filesystem::equivalent(Util::getPath(Util::PATH_USER_CONFIG), fixture.fixture.tmpDir));
+        auto& manager = *context.getClientManager();
+        auto user = protocol == string("adc")
+            ? static_cast<AdcHub&>(*fixture.hub).getUser(123, CID(string(39, 'B'))).getUser()
+            : static_cast<NmdcHub&>(*fixture.hub).getUser("favorite-fixture").getUser();
+        auto& favorites = *context.getFavoriteManager();
+        favorites.addFavoriteUser(user);
+        REQUIRE(user->isOnline());
+        REQUIRE(favorites.getFavoriteUsers().at(user->getCID()).getLastSeen() == 0);
+        manager.stopForShutdown();
+        CHECK_FALSE(user->isOnline());
+        CHECK(manager.getUserCount() == 0);
+        CHECK(fixture.hub->getUserCount() == 0);
+        CHECK(favorites.getFavoriteUsers().at(user->getCID()).getLastSeen() > 0);
+        REQUIRE(favorites.saveChecked());
+        REQUIRE(manager.saveUsersChecked());
+        const auto path = fixture.fixture.tmpDir / "Favorites.xml";
+        std::ofstream(path, std::ios::app) << "\n<!-- final snapshot marker -->\n";
+        const auto finalSnapshot = File(path.string(), File::READ, File::OPEN).read();
+        manager.stopForShutdown();
+        manager.putClient(fixture.hub);
+        fixture.hub = nullptr;
+        CHECK(File(path.string(), File::READ, File::OPEN).read() == finalSnapshot);
+        FavoriteManager loaded(context);
+        loaded.load();
+        CHECK(loaded.getFavoriteUsers().at(user->getCID()).getLastSeen() > 0);
+    }
 }
 
 TEST_CASE("Registry stop waits for an admitted client release without holding registry locks", "[hub-shutdown][client-registry-stop]") {

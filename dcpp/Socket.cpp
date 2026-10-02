@@ -96,6 +96,7 @@ struct Socket::GostUdpState {
 };
 
 Socket::SocksUdpAssociationPtr Socket::udpAssociation;
+std::vector<std::weak_ptr<Socket>> Socket::udpControls;
 std::mutex Socket::udpProxyMutex;
 std::mutex Socket::udpProxySetupMutex;
 
@@ -2892,6 +2893,11 @@ void Socket::publishSocksUdpAssociation(SocksUdpAssociationPtr association) {
     SocksUdpAssociationPtr previous;
     {
         std::lock_guard<std::mutex> lock(udpProxyMutex);
+        std::erase_if(udpControls, [](const auto& control) { return control.expired(); });
+        // Weak tracking preserves ordinary borrowed-snapshot lifetimes while
+        // keeping retired controls reachable for owner-fenced terminal cleanup.
+        if(association)
+            udpControls.emplace_back(association->control);
         previous.swap(udpAssociation);
         udpAssociation = std::move(association);
     }
@@ -2900,6 +2906,30 @@ void Socket::publishSocksUdpAssociation(SocksUdpAssociationPtr association) {
 void Socket::socksUpdated(DCContext& ctx) {
     std::lock_guard<std::mutex> setupLock(udpProxySetupMutex);
     publishSocksUdpAssociation(buildSocksUdpAssociation(ctx));
+}
+
+void Socket::stopSocksUdpForShutdown(DCContext& ctx) {
+    SocksUdpAssociationPtr stopped;
+    std::vector<std::shared_ptr<Socket>> controls;
+    {
+        std::lock_guard<std::mutex> setupLock(udpProxySetupMutex);
+        std::lock_guard<std::mutex> lock(udpProxyMutex);
+        controls.reserve(udpControls.size());
+        for(const auto& control : udpControls)
+            controls.emplace_back(control.lock());
+        std::erase_if(udpControls, [&ctx](const auto& entry) {
+            const auto control = entry.lock();
+            return !control || control->ctx_ == &ctx;
+        });
+        if(udpAssociation && udpAssociation->control->ctx_ == &ctx)
+            stopped = std::move(udpAssociation);
+    }
+    // Merely releasing the static pointer leaves borrowed controls open.
+    // Native close and subscription release must not hold association locks.
+    for(const auto& control : controls) {
+        if(control && control->ctx_ == &ctx)
+            control->disconnect();
+    }
 }
 
 Socket::SocksUdpAssociationPtr Socket::getSocksUdpAssociation(DCContext& ctx) {

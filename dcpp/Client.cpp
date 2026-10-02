@@ -160,6 +160,7 @@ void Client::stopForShutdown() {
     ctx().getTimerManager()->removeListener(this);
     shutdown();
     setAutoReconnect(false);
+    finishRetainedStateForShutdown();
 }
 
 void Client::reloadSettings(bool updateNick) {

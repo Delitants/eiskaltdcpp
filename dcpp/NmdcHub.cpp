@@ -268,6 +268,10 @@ void NmdcHub::putUser(const string& aNick) {
     delete ou;
 }
 
+void NmdcHub::finishRetainedStateForShutdown() {
+    clearUsers();
+}
+
 void NmdcHub::clearUsers() {
     decltype(users) u2;
 

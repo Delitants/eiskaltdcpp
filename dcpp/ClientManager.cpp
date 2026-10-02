@@ -143,6 +143,10 @@ void ClientManager::stopForShutdown() {
             try { client->stopForShutdown(); }
             catch(...) { if(!failure) failure = std::current_exception(); }
         }
+        // Manual UDP callers are owner-fenced before terminal stop. This raw
+        // relay is not part of BufferedSocket's asynchronous resource count.
+        Lock udpLock(udpMutex);
+        udp.close();
     } catch(...) { failure = std::current_exception(); }
 
     for(;;) {
@@ -969,6 +973,26 @@ void ClientManager::cancelSearch(void* aOwner) {
 }
 
 #ifdef WITH_DHT
+void ClientManager::retireDHTNodesForShutdown(const ClientBase& owner) {
+    std::vector<dht::Node::Ptr> nodes;
+    {
+        Lock l(cs);
+        for(const auto& entry : onlineUsers) {
+            auto* identity = entry.second;
+            if(&identity->getClientBase() == &owner && owner.getType() == ClientBase::DHT)
+                nodes.emplace_back(static_cast<dht::Node*>(identity));
+        }
+    }
+    // Online DHT nodes own one explicit reference beyond any routing entry.
+    // Keep a snapshot reference through callbacks and balance it exactly once.
+    for(const auto& node : nodes) {
+        if(!node->isOnline()) continue;
+        node->setOnline(false);
+        putOffline(node.get());
+        node->dec();
+    }
+}
+
 OnlineUserPtr ClientManager::findDHTNode(const CID& cid) const {
     Lock l(cs);
 

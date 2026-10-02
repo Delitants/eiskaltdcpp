@@ -184,6 +184,7 @@ public:
     /// the lifetime owner's thread, serialized with connect/reconnect/deletion,
     /// never from a timer or socket callback. Waits for in-flight callbacks;
     /// BufferedSocket::waitShutdown must still drain asynchronous destruction.
+    /// Manual sends must also be fenced by the owner before this call.
     void stopForShutdown();
     bool isActive() const;
     void send(const string& aMessage) { send(aMessage.c_str(), aMessage.length()); }
@@ -215,6 +216,7 @@ public:
     /** Reload details from favmanager or settings */
     void reloadSettings(bool updateNick);
 protected:
+    virtual void finishRetainedStateForShutdown() { }
     friend class ClientManager;
     Client(DCContext& ctx, const string& hubURL, char separator, bool secure_, Socket::Protocol proto_);
     virtual ~Client();

@@ -588,3 +588,24 @@ writes, including after refusal. Public collection edits remain caller-fenced.
 Focused real Lua, controlled timer, loader and native I/O refusal regressions
 and bounded independent source reviews accompany these prerequisites. Full
 owner aggregation, GUI normal-quit/installer consent and release remain pending.
+
+Retained transport/offline-tail prerequisite checkpoint (Task 5 remains in
+progress): terminal Client cleanup now closes ADC's raw UDP relay after its
+timer/socket callback barriers, and the client registry closes its own raw UDP
+socket. The lifetime owner must fence manual UDP sends first; these closes are
+not admission gates and BufferedSocket's resource count does not cover them.
+Shared SOCKS UDP terminal cleanup disconnects all matching-context published or
+retired controls, even with borrowed snapshots, outside association/setup locks.
+Weak tracking preserves ordinary settings-refresh snapshot behavior and prunes
+expired controls; unrelated contexts are not revoked.
+
+ADC/NMDC terminal cleanup also finishes their offline-user transitions while
+Favorites and ClientManager remain alive, before the final snapshot phase.
+DHT terminal cleanup snapshots its actual ClientManager registrations, not
+only routing entries: each per-node online flag and explicit registration
+reference is retired once, including routing-rejected nodes. Routing state is
+retained and a shared User stays online while another identity remains. Later
+hub/routing disposal no longer generates these favorite-user save tails.
+Real loopback GOST/SOCKS regressions and retained-state/loader/refcount tests
+cover these prerequisites; the checked core coordinator, failure retention and
+GUI committed-normal-quit handoff still need implementation and acceptance.

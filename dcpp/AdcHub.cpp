@@ -78,6 +78,13 @@ AdcHub::~AdcHub() {
     clearUsers();
 }
 
+void AdcHub::finishRetainedStateForShutdown() {
+    // Client has drained timer/socket callbacks; the owner fences manual sends.
+    // Do not hold the hub lock while the GOST relay's worker is joined.
+    udp.close();
+    clearUsers();
+}
+
 OnlineUser& AdcHub::getUser(const uint32_t aSID, const CID& aCID) {
     OnlineUser* ou = findUser(aSID);
     if(ou) {

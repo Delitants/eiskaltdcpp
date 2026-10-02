@@ -105,6 +105,7 @@ private:
     virtual ~NmdcHub();
 
     void clearUsers();
+    void finishRetainedStateForShutdown() override;
     void maybeAutoDetectEncoding(const string& aLine);
 
     OnlineUser& getUser(const string& aNick);
