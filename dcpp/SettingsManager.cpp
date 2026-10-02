@@ -625,7 +625,8 @@ bool SettingsManager::saveChecked(string const& aFileName) {
     }
     xml.stepOut();
 
-    fire(SettingsManagerListener::Save(), xml);
+    if(!fireChecked(SettingsManagerListener::Save(), xml))
+        return false;
 
     try {
         File out(aFileName + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);

@@ -38,6 +38,15 @@ public:
     /// Fire an event to all registered listeners (snapshot under lock).
     template<typename... Args>
     void fire(Args&&... args) noexcept {
+        (void)fireChecked(std::forward<Args>(args)...);
+    }
+
+protected:
+    // Notify all listeners as usual, but expose incomplete delivery to callers
+    // that must not commit a snapshot after a serialization callback failed.
+    template<typename... Args>
+    bool fireChecked(Args&&... args) noexcept {
+        bool succeeded = true;
         try {
         Lock l(listenerCS);
         auto snapshot = listeners;  // snapshot so listeners can self-remove
@@ -45,24 +54,30 @@ public:
             try {
                 listener->on(std::forward<Args>(args)...);
             } catch(const std::exception& e) {
+                succeeded = false;
                 fprintf(stderr, "[Speaker::fire<%s>] exception from listener %p (%s): %s\n",
                         typeid(Listener).name(), static_cast<void*>(listener),
                         typeid(*listener).name(), e.what());
             } catch(...) {
+                succeeded = false;
                 fprintf(stderr, "[Speaker::fire<%s>] unknown exception from listener %p (%s)\n",
                         typeid(Listener).name(), static_cast<void*>(listener),
                         typeid(*listener).name());
             }
         }
         } catch(const std::exception& e) {
+            succeeded = false;
             fprintf(stderr, "[Speaker::fire<%s>] exception during snapshot/iteration: %s\n",
                     typeid(Listener).name(), e.what());
         } catch(...) {
+            succeeded = false;
             fprintf(stderr, "[Speaker::fire<%s>] unknown exception during snapshot/iteration\n",
                     typeid(Listener).name());
         }
+        return succeeded;
     }
 
+public:
     void addListener(Listener* aListener) {
         Lock l(listenerCS);
         if (std::ranges::find(listeners, aListener) == listeners.end())

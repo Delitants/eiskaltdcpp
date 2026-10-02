@@ -6,6 +6,7 @@
 #include <ranges>
 #ifndef _WIN32
 #include <csignal>
+#include <dlfcn.h>
 #include <sys/resource.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -33,6 +34,30 @@
 
 using namespace dcpp;
 namespace fs = std::filesystem;
+
+#ifdef EISKALT_TEST_INTERPOSE_FSYNC
+namespace {
+struct NativeFlushFault {
+    bool enabled = false;
+    dev_t device = 0;
+    ino_t inode = 0;
+};
+thread_local NativeFlushFault nativeFlushFault;
+}
+
+// Fault only this thread's owned staging inode where executable symbol
+// interposition is supported; other flushes use the real system implementation.
+extern "C" int fsync(int fd) {
+    static const auto realFlush = reinterpret_cast<int (*)(int)>(dlsym(RTLD_NEXT, "fsync"));
+    struct stat file{};
+    if(nativeFlushFault.enabled && fstat(fd, &file) == 0 &&
+        file.st_dev == nativeFlushFault.device && file.st_ino == nativeFlushFault.inode) {
+        errno = EIO; return -1;
+    }
+    if(!realFlush) { errno = ENOSYS; return -1; }
+    return realFlush(fd);
+}
+#endif
 
 namespace {
 template<class M> bool saveHash(M& m) {
@@ -167,7 +192,116 @@ struct Fixture {
     }
 #endif
 };
+
+struct SavedSettingsListener : SettingsManagerListener {
+    int calls = 0;
+    int failure = 0;
+    void on(Save, SimpleXML& xml) override {
+        ++calls;
+        if(failure == 1) throw std::runtime_error("fixture serialization failure");
+        if(failure == 2) throw FileException("fixture listener file failure");
+        if(failure == 3) throw 7;
+        xml.addTag("SnapshotFixture", "listener<&>");
+    }
+};
 }
+
+TEST_CASE("Checked settings reload values search types and listener data", "[snapshot-save][settings-save]") {
+    Fixture f; auto& settings = *f.context().getSettingsManager();
+    SavedSettingsListener listener;
+    settings.addListener(&listener);
+    ScopedFunctor remove([&] { settings.removeListener(&listener); });
+    settings.set(SettingsManager::NICK, "Saved & nick");
+    settings.set(SettingsManager::SLOTS, 17);
+    settings.set(SettingsManager::TOTAL_UPLOAD, int64_t(1234567890123));
+    settings.addSearchType("Snapshot files", {"mkv", "txt"});
+    const auto target = f.path("DCPlusPlus.xml");
+    REQUIRE(settings.saveChecked(target)); CHECK(listener.calls == 1);
+    SimpleXML saved; saved.fromXML(read(target));
+    REQUIRE(saved.findChild("DCPlusPlus")); saved.stepIn();
+    REQUIRE(saved.findChild("SnapshotFixture")); CHECK(saved.getChildData() == "listener<&>");
+    SettingsManager loaded(f.context()); loaded.load(target);
+    CHECK(loaded.get(SettingsManager::NICK) == "Saved & nick");
+    CHECK(loaded.get(SettingsManager::SLOTS) == 17);
+    CHECK(loaded.get(SettingsManager::TOTAL_UPLOAD) == int64_t(1234567890123));
+    CHECK(loaded.getExtensions("Snapshot files") == StringList{"mkv", "txt"});
+}
+
+TEST_CASE("Checked settings staging and replacement failures preserve old snapshot and retry", "[snapshot-save][settings-save]") {
+    Fixture f; auto& settings = *f.context().getSettingsManager();
+    const auto target = f.path("DCPlusPlus.xml");
+    settings.set(SettingsManager::NICK, "Original"); REQUIRE(settings.saveChecked(target));
+    const auto previous = read(target); settings.set(SettingsManager::NICK, "Updated");
+    SECTION("stage directory refuses write") {
+        fs::create_directory(target + ".tmp");
+        CHECK_FALSE(settings.saveChecked(target)); CHECK(read(target) == previous);
+        fs::remove(target + ".tmp");
+    }
+    SECTION("native replacement refuses write") {
+        write(target + ".tmp", "staging");
+        {
+            DenyReplace deny(target);
+#ifndef _WIN32
+            REQUIRE(geteuid() != 0);
+#endif
+            CHECK_FALSE(settings.saveChecked(target)); CHECK(read(target) == previous);
+        }
+    }
+    CHECK(settings.get(SettingsManager::NICK) == "Updated");
+    REQUIRE(settings.saveChecked(target));
+    SettingsManager loaded(f.context()); loaded.load(target);
+    CHECK(loaded.get(SettingsManager::NICK) == "Updated");
+}
+
+TEST_CASE("Checked settings listener failures cannot publish incomplete snapshot", "[snapshot-save][settings-save]") {
+    Fixture f; auto& settings = *f.context().getSettingsManager();
+    const auto target = f.path("DCPlusPlus.xml");
+    settings.set(SettingsManager::NICK, "Original"); REQUIRE(settings.saveChecked(target));
+    const auto previous = read(target); settings.set(SettingsManager::NICK, "Updated");
+    SavedSettingsListener first, last;
+    SECTION("standard exception") { first.failure = 1; }
+    SECTION("native exception") { first.failure = 2; }
+    SECTION("unknown exception") { first.failure = 3; }
+    settings.addListener(&first); settings.addListener(&last);
+    ScopedFunctor remove([&] { settings.removeListener(&first); settings.removeListener(&last); });
+    CHECK_FALSE(settings.saveChecked(target)); CHECK(read(target) == previous);
+    CHECK(first.calls == 1); CHECK(last.calls == 1);
+    CHECK_FALSE(fs::exists(target + ".tmp"));
+    SimpleXML ordinary;
+    REQUIRE_NOTHROW(settings.fire(SettingsManagerListener::Save(), ordinary));
+    CHECK(first.calls == 2); CHECK(last.calls == 2);
+    CHECK(read(target) == previous);
+    first.failure = 0; REQUIRE(settings.saveChecked(target));
+    SettingsManager loaded(f.context()); loaded.load(target);
+    CHECK(loaded.get(SettingsManager::NICK) == "Updated");
+}
+
+#ifndef _WIN32
+TEST_CASE("Checked settings native flush refusal preserves old snapshot and retries", "[snapshot-save][settings-save]") {
+#ifdef EISKALT_TEST_INTERPOSE_FSYNC
+    Fixture f; auto& settings = *f.context().getSettingsManager();
+    const auto target = f.path("DCPlusPlus.xml");
+    settings.set(SettingsManager::NICK, "Original"); REQUIRE(settings.saveChecked(target));
+    const auto previous = read(target); settings.set(SettingsManager::NICK, "Updated");
+    write(target + ".tmp", "staging");
+    struct stat staged{}; REQUIRE(stat((target + ".tmp").c_str(), &staged) == 0);
+    nativeFlushFault = {true, staged.st_dev, staged.st_ino};
+    ScopedFunctor restore([] { nativeFlushFault.enabled = false; });
+    {
+        File probe(target + ".tmp", File::WRITE, File::OPEN);
+        probe.write("probe"); REQUIRE_THROWS_AS(probe.flush(), FileException);
+    }
+    CHECK_FALSE(settings.saveChecked(target)); CHECK(read(target) == previous);
+    CHECK(fs::exists(target + ".tmp"));
+    nativeFlushFault.enabled = false;
+    REQUIRE(settings.saveChecked(target));
+    SettingsManager loaded(f.context()); loaded.load(target);
+    CHECK(loaded.get(SettingsManager::NICK) == "Updated");
+#else
+    SKIP("Native fsync fault needs executable symbol interposition (static core on macOS)");
+#endif
+}
+#endif
 
 TEST_CASE("Checked IPFilter reloads all ordered rule kinds without enabling filtering", "[snapshot-save][ipfilter-save]") {
     Fixture f; f.filterRules();
@@ -398,6 +532,12 @@ TEST_CASE("Checked Favorites native write refusal cannot replace the saved snaps
 
 TEST_CASE("Snapshot buffered flush failure cannot replace a valid previous file", "[snapshot-save][snapshot-flush]") {
     Fixture f; string name, root; std::function<bool()> save;
+    SECTION("settings") {
+        auto& settings = *f.context().getSettingsManager();
+        settings.set(SettingsManager::NICK, "Original"); REQUIRE(settings.saveChecked(f.path("DCPlusPlus.xml")));
+        settings.set(SettingsManager::NICK, "Updated"); name = "DCPlusPlus.xml"; root = "DCPlusPlus";
+        save = [&] { return settings.saveChecked(f.path(name)); };
+    }
     SECTION("hash index") {
         f.hash("first.bin", "first"); REQUIRE(saveHash(f.hashes())); f.hash("second.bin", "second");
         name = "HashIndex.xml"; root = "HashStore"; save = [&] { return saveHash(f.hashes()); };

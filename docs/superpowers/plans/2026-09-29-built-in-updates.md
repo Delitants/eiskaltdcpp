@@ -557,3 +557,15 @@ shutdown is not the persistence certificate. Regression proofs include actual
 loader/native partial-write/replace/stage refusal, explicit empty/unused states
 and missing-initialization/missing-ordinary-lock mutations restored exactly.
 Whole-core aggregation, ordinary-quit and installer activation remain unwired.
+
+Settings outcome checkpoint (Task 5 remains in progress): a checked final save
+now refuses to publish XML if any retained Save listener fails. The shared event
+dispatcher exposes an opt-in delivery outcome while ordinary events retain their
+notify-all, exception-containment and diagnostic behavior. Callers must still
+quiesce settings edits and own listener lifetimes; this is not a shutdown fence.
+Tracing the buffer corrected the earlier audit: its flush already delegates to
+native File.flush, so no redundant flush was added. Loader/readback, native
+staging/replacement/write refusal and test-only inode/thread-bounded fsync EIO
+verify old-file retention and retry. The injected syscall outcome is not physical
+disk/power-loss acceptance; shared-core macOS explicitly skips that injection.
+Whole-core owner ordering and committed normal-quit updater handoff remain pending.

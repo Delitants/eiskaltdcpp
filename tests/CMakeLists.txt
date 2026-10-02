@@ -115,7 +115,15 @@ if (USE_IDN2)
     target_include_directories(eiskaltdcpp-tests PRIVATE ${IDN2_INCLUDE_DIR})
 endif ()
 
-target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain )
+target_link_libraries(eiskaltdcpp-tests PRIVATE dcpp Catch2::Catch2WithMain ${CMAKE_DL_LIBS})
+if(UNIX)
+    get_target_property(DCPP_TEST_LINK_TYPE dcpp TYPE)
+    # ELF interposes executable symbols; macOS needs the static core for this
+    # test-only syscall fault. Shared-core macOS explicitly skips that case.
+    if(NOT APPLE OR DCPP_TEST_LINK_TYPE STREQUAL "STATIC_LIBRARY")
+        target_compile_definitions(eiskaltdcpp-tests PRIVATE EISKALT_TEST_INTERPOSE_FSYNC=1)
+    endif()
+endif()
 
 # Auto-discover test cases
 catch_discover_tests(eiskaltdcpp-tests)

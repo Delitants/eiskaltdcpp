@@ -279,6 +279,8 @@ public:
 
     void load(const string& aFileName);
     void save(const string& aFileName);
+    // Final snapshot only: callers quiesce settings edits and retain listeners.
+    // False includes native I/O failure or incomplete Save listener delivery.
     bool saveChecked() { return saveChecked(getConfigFile()); }
     bool saveChecked(const string& aFileName);
 
