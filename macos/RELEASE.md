@@ -1,5 +1,9 @@
 # macOS Release Flavors
 
+Offline authenticated update-feed preparation is documented in
+[updater/README.md](updater/README.md). That tooling is not publication or
+installer acceptance; numeric bundle-version packaging integration is pending.
+
 The v3 prerelease uses two separate bundles, not a universal binary:
 
 | Profile | Architecture | Minimum macOS | ZIP filename |

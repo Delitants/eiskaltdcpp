@@ -20,7 +20,7 @@ find_package(OpenSSL REQUIRED)
 find_package(Intl REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(_updates "${CMAKE_CURRENT_LIST_DIR}/../../../eiskaltdcpp-qt/src/updates")
-add_executable(eiskalt-updater-native-tests main.mm installer.mm
+add_executable(eiskalt-updater-native-tests main.mm installer.mm feed-publication.cpp
     ../../../macos/updater/BundleArchiveVerifier.mm
     ${_updates}/UpdateFeedVerifier.cpp ${_updates}/UpdatePolicy.cpp
     ${_updates}/UpdateUrlPolicy.cpp ${_updates}/UpdateArchiveVerifier.cpp)

@@ -448,7 +448,18 @@ version use this number; CFBundleShortVersionString and archive filenames retain
 the visible release version. Update the existing packaging equality checks and
 their tests rather than leaving conflicting version contracts.
 
-- [ ] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
+Offline tooling checkpoint (Task 7 remains partial): `release_feeds.py` shares
+strict schema/byte/signature validation between the two CLI entry points. Both
+flavors stage together and use macOS exclusive promotion; no existing output
+is overwritten. An optional previous manifest checks increasing numeric builds
+offline, not publication history. Ephemeral-key tests invoke the pinned SDK and
+OpenSSL 3; the opt-in native `[feed-publication]` case consumes their public-only
+fixtures using production feed/policy/archive verifiers. This does not establish
+real bundle contents or enable an installer. Numeric packaging metadata,
+framework/helper signing, production Keychain setup, both real release packages
+and native minimum-OS/recovery acceptance are still pending.
+
+- [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
 - [ ] Generate the production signing identity only as a distinct, recorded release-setup action, in local Keychain; expose only its public key to source/configuration. Generate full-archive signatures after final signing/packaging. No automatic private-key export; document secure backup/rotation requirements.
 - [ ] Run `python3 tests/macos/updater/test_release_feeds.py` and `python3 tests/macos/bundle/release-profiles.py "$PWD"`, plus native `[feed-publication]`; expected GREEN. Add Sparkle's exact source/license/build provenance to each flavor's notices. Preserve the 512 MiB archive gate or revise the plan if the actual complete bundle exceeds it, never silently raise it.
