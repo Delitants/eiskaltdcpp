@@ -175,13 +175,13 @@ python3 tests/macos/updater/fixtures.py install-probe --adapter \
   --root /tmp/new-native-installer-fixture --mode normal
 ```
 
-The twenty-three adapter modes are `normal`, `hide`, `cancel-quit`,
+The twenty-five adapter modes are `normal`, `hide`, `cancel-quit`,
 `kill-before-commit`, `cancel-prepared`, `bad-identity`, `bad-minimum-os`,
 `cancel-before-native`, `bad-feed`, `bad-archive`, `cancel-verifier`,
 `destroy-verifier`, `cancel-check`, `cancel-download`, `cancel-extraction`,
 `cancel-ready`, `deadline-verifier`, `deadline-extraction`, `cancel-after-handoff`,
 `deadline-after-handoff`, `worker-start-failure`, `cancel-worker-start` and
-`deadline-worker-start`.
+`deadline-worker-start`, `resume-installing` and `replacement-denied`.
 For `bad-identity` or `bad-minimum-os`, add the corresponding
 `--wrong-identity` or `--wrong-minimum-os` flag to `create`.
 Normal and the two post-handoff refusal cases install; every other mode must
@@ -191,9 +191,39 @@ and corrupt-byte cases assert refusal before creating a native installer. Tests
 first require private `0600` regular single-link staging in a private owned parent,
 so corrupt-byte rejection cannot silently be a permissions refusal.
 The adapter owns a separate Qt bridge, so it must not contact the runner's
-legacy Python server. The native parent asserts external socket denial; this
+legacy Python server, except the explicit retained-session seed described below.
+The native parent asserts external socket denial; this
 does not prove installer/XPC-helper confinement. The hide/cancel/crash modes
 simulate lifecycle boundaries, not actual MainWindow gestures.
+
+### Retained Installer And Replacement Refusal
+
+`resume-installing` uses public Sparkle callbacks to prepare/Dismiss an installer
+in the same process and bundle identity, then verifies a second public check
+reports `Installing` with no second feed/archive fetch. The production adapter
+must refuse that actual retained installer, with no new download/extraction or
+Ready/handoff. After process exit the parent requires the exact old signed tree
+and unchanged user-data snapshots. A temporary `Skip`-to-`Dismiss` mutation was
+caught by post-exit readback even though the child reported refusal, proving that
+an update-cycle callback alone is not a disarm receipt. This covers a live
+retained installer, not persisted downloaded-cache recovery across a crash.
+
+`replacement-denied` waits for committed native preparation, identifies the
+single fixture `Autoupdate` PID by the exact random bundle ID, then makes only
+the owned disposable destination directory read-only before allowing child exit.
+It requires that native helper to exit and its OS log to report both permission
+denial and failure to move this exact old app. Directory permissions are restored
+only when no installer for that fixture remains. If one remains, denial is
+retained rather than permitting a late replacement. The old signed tree and
+user-data snapshots must match after exit. This is an actual failure before
+moving the old app; it does not establish administrator cancellation, disk-full,
+interrupted replacement or successful restoration after moving the old app aside.
+
+The disposable parent has a separate home. Launchd-owned Sparkle helpers can
+still use the real user's cache directory under the unique probe bundle ID, as
+confirmed by their logs. Those are not Eiskalt profile paths; they are not proof
+of helper filesystem/network confinement. No production keys or installed app
+are targeted, and no real authorization prompt is exercised here.
 
 Cancellation is a private owner-thread request, not an immediate terminal
 receipt. The monotonic deadline requests the same cancellation path; it never

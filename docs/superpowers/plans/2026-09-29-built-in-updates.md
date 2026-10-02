@@ -770,3 +770,30 @@ an already accepted first cancellation/deadline reason; a private launcher seam
 throws before creating a thread to exercise that catch/queued-refusal branch,
 without claiming real OS resource-exhaustion acceptance. All twenty-three native
 modes remain disposable and runtime activation stays disabled.
+
+Native retained-session/replacement-refusal checkpoint (Task 5 remains in progress):
+the disposable public SDK driver prepares an installer, replies Dismiss, then
+checks again with the same process/bundle identity and requires an actual
+`Installing` callback without another feed/archive fetch. The production adapter
+refuses that live retained session; exact old whole-bundle/signature and user-data
+readback after process exit is required. A temporary Skip-to-Dismiss mutation was
+caught by post-exit replacement even though the child still reported refusal.
+Update-cycle refusal alone is therefore not accepted as a disarm receipt.
+
+A separate case waits for completed native preparation, identifies the fixture's
+single Autoupdate process, and denies writes only to its disposable destination
+before child exit. It requires physical exit of that helper and OS-log receipts
+for permission denial, finalization failure and failure to move the exact old
+app. Permissions are restored only after no fixture installer remains; the old
+signed tree and user-data snapshots must match. This exercises failure before
+old-app removal, not disk-full, administrator cancellation, interruption after
+removal or best-effort rollback. Launchd-owned helpers can use real-user cache
+paths under their random probe identities despite parent-home isolation; no
+helper filesystem/network confinement is claimed.
+
+Product armInstallOnQuit, MainWindow and the emergency exit remain unchanged.
+Cross-crash downloaded-cache recovery, authorization/disk/interruption/rollback
+and helper confinement still need an isolated test environment and acceptance
+before native activation or real committed/no-update quit integration. Updater
+UI/localization, live routed HTTP/DNS, whole-branch/platform QA, signing/thin
+packages, install/docs/wiki/screenshots/prerelease and feeds-last remain pending.

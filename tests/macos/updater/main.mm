@@ -25,6 +25,10 @@
 @property NSError *error;
 @property NSString *foundVersion;
 @property NSString *foundArchive;
+@property NSString *expectedArchive;
+@property SPUUserUpdateStage foundStage;
+@property NSUInteger cycles;
+@property BOOL retainResumedInstaller;
 @end
 
 @implementation Probe
@@ -38,7 +42,7 @@
 - (void)updater:(SPUUpdater *)updater willDownloadUpdate:(SUAppcastItem *)item withRequest:(NSMutableURLRequest *)request {
     request.timeoutInterval = 3;
     if (![self.mode isEqualToString:@"unmapped"] && self.verifiedFeed &&
-        [item.fileURL.absoluteString isEqualToString:@"https://203.0.113.1/update.zip"] &&
+        [item.fileURL.absoluteString isEqualToString:(self.expectedArchive ?: @"https://203.0.113.1/update.zip")] &&
         [request.URL isEqual:item.fileURL]) {
         request.URL = [NSURL URLWithString:self.archive];
         self.rewrites++;
@@ -53,6 +57,7 @@
 }
 - (void)updater:(SPUUpdater *)updater didFinishUpdateCycleForUpdateCheck:(SPUUpdateCheck)check error:(NSError *)error {
     self.finishedCycle = YES;
+    ++self.cycles;
     if (!self.error) self.error = error;
     self.done = YES;
 }
@@ -63,7 +68,8 @@
 - (void)showUpdateFoundWithAppcastItem:(SUAppcastItem *)item state:(SPUUserUpdateState *)state reply:(void (^)(SPUUserUpdateChoice))reply {
     self.found = YES;
     self.verifiedFeed = item.signingValidationStatus == SPUAppcastSigningValidationStatusSucceeded;
-    reply(SPUUserUpdateChoiceInstall);
+    self.foundStage = state.stage;
+    reply(self.retainResumedInstaller ? SPUUserUpdateChoiceDismiss : SPUUserUpdateChoiceInstall);
 }
 - (void)showUpdateReleaseNotesWithDownloadData:(SPUDownloadData *)data { self.done = YES; }
 - (void)showUpdateReleaseNotesFailedToDownloadWithError:(NSError *)error { self.error = error; self.done = YES; }
@@ -90,6 +96,48 @@
 - (void)showUpdateInstalledAndRelaunched:(BOOL)relaunched acknowledgement:(void (^)(void))ack { self.done = YES; ack(); }
 - (void)dismissUpdateInstallation {}
 @end
+
+// The same bundle identity and live helper are retained across public SDK checks.
+// This deliberately arms only a disposable app, then the adapter must disarm it.
+void prepareRetainedNativeUpdate(NSString* expectedArchive) {
+    static Probe* probe;
+    static SPUUpdater* updater;
+    REQUIRE(probe == nil);
+    NSDictionary* env = NSProcessInfo.processInfo.environment;
+    probe = [Probe new];
+    probe.feed = env[@"EISKALT_PROBE_FEED"];
+    probe.archive = env[@"EISKALT_PROBE_ARCHIVE"];
+    probe.expectedArchive = expectedArchive;
+    probe.mode = @"valid";
+    probe.installOnCommittedExit = YES;
+    updater = [[SPUUpdater alloc] initWithHostBundle:NSBundle.mainBundle
+        applicationBundle:NSBundle.mainBundle userDriver:probe delegate:probe];
+    updater.automaticallyChecksForUpdates = NO;
+    updater.automaticallyDownloadsUpdates = NO;
+    updater.sendsSystemProfile = NO;
+    NSError* error = nil;
+    REQUIRE([updater startUpdater:&error]);
+    const auto awaitCycle = [] {
+        NSDate* deadline = [NSDate dateWithTimeIntervalSinceNow:25];
+        while(!probe.done && deadline.timeIntervalSinceNow > 0)
+            [NSRunLoop.currentRunLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.02]];
+        INFO((probe.error ? probe.error.description.UTF8String : "no updater error"));
+        REQUIRE(probe.done); REQUIRE(probe.finishedCycle); REQUIRE(probe.error == nil);
+    };
+    [updater checkForUpdates];
+    awaitCycle();
+    REQUIRE(probe.ready); REQUIRE(probe.downloaded); REQUIRE(probe.verifiedFeed);
+    REQUIRE(probe.foundStage == SPUUserUpdateStageNotDownloaded);
+    REQUIRE(probe.rewrites == 1); REQUIRE(probe.cycles == 1);
+    probe.done = NO; probe.finishedCycle = NO;
+    probe.retainResumedInstaller = YES;
+    [updater checkForUpdates];
+    awaitCycle();
+    REQUIRE(probe.foundStage == SPUUserUpdateStageInstalling);
+    REQUIRE(probe.rewrites == 1); REQUIRE(probe.cycles == 2);
+    printf("RESUME_PROBE fresh=NotDownloaded resumed=Installing cycles=2 downloads=1\n");
+    fflush(stdout);
+}
 
 TEST_CASE("Numeric internal builds preserve prerelease to final release ordering", "[updater-native][bridge-probe]") {
     id<SUVersionComparison> comparator = [SUStandardVersionComparator defaultComparator];

@@ -21,7 +21,7 @@ LEGACY_INSTALL_MODES = ("normal", "hide", "cancel-quit", "kill-before-commit", "
 ADAPTER_INSTALL_MODES = ("bad-minimum-os", "cancel-before-native", "bad-feed", "bad-archive", "cancel-verifier",
                          "destroy-verifier", "cancel-check", "cancel-download", "cancel-extraction", "cancel-ready",
                          "deadline-verifier", "deadline-extraction", "cancel-after-handoff", "deadline-after-handoff", "worker-start-failure",
-                          "cancel-worker-start", "deadline-worker-start")
+                          "cancel-worker-start", "deadline-worker-start", "resume-installing", "replacement-denied")
 INSTALLING_MODES = ("normal", "cancel-after-handoff", "deadline-after-handoff")
 
 
@@ -295,6 +295,8 @@ def install_probe(args):
     def snapshot():
         return {str(p.relative_to(protected)): digest(p) for p in protected.rglob("*") if p.is_file()}
     before_data = snapshot()
+    (root / "install-before.json").write_text(json.dumps(
+        {"bundle": before_bundle, "user_data": before_data}, indent=2) + "\n")
     token = secrets.token_hex(32)
     requests = []
     class Handler(http.server.BaseHTTPRequestHandler):
@@ -316,16 +318,25 @@ def install_probe(args):
     worker.start()
     base = f"http://127.0.0.1:{server.server_port}/{token}"
     relaunch_marker, kill_marker = root / "relaunched", root / "kill-ready"
+    denial_ready, denial_applied = root / "replacement-ready", root / "denial-applied"
     environment = dict(os.environ, HOME=str(home), CFFIXED_USER_HOME=str(home),
         EISKALT_INSTALL_MODE=args.mode, EISKALT_PROBE_FEED=base + "/feed",
         EISKALT_PROBE_ARCHIVE=base + "/update.zip", EISKALT_PROBE_RELAUNCH_MARKER=str(relaunch_marker),
         EISKALT_PROBE_KILL_MARKER=str(kill_marker), EISKALT_PROBE_LOCAL_ARCHIVE=str(root / "update.zip"),
-        EISKALT_PROBE_LOCAL_FEED=str(root / "appcast.xml"))
+        EISKALT_PROBE_LOCAL_FEED=str(root / "appcast.xml"),
+        EISKALT_PROBE_DENIAL_READY=str(denial_ready), EISKALT_PROBE_DENIAL_APPLIED=str(denial_applied))
     sandbox = '(version 1)(allow default)(deny network*)' \
         '(allow network-outbound (remote ip "localhost:*"))' \
         '(allow network-bind (local ip "localhost:*"))' \
         '(allow network-inbound (local ip "localhost:*"))'
     child = None
+    helper_pid = None
+    parent_mode = app.parent.stat().st_mode & 0o777
+    denied_replacement = False
+    def native_helpers():
+        rows = run("/bin/ps", "-axww", "-o", "pid=,command=").splitlines()
+        return [int(row.split()[0]) for row in rows if manifest["bundle_id"] in row.split()
+                and any(word.endswith("/Autoupdate") for word in row.split()[1:])]
     try:
         child = subprocess.Popen(["sandbox-exec", "-p", sandbox,
             str(app / "Contents/MacOS/UpdaterProbe"), "[update-install-adapter]" if args.adapter else "[update-install]"], env=environment,
@@ -337,6 +348,21 @@ def install_probe(args):
             if not kill_marker.exists():
                 raise RuntimeError("disposable child did not reach pre-commit discovery boundary")
             child.kill()
+        if args.mode == "replacement-denied":
+            deadline = time.monotonic() + 35
+            while not denial_ready.exists() and child.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.05)
+            if not denial_ready.exists():
+                raise RuntimeError("disposable child did not finish committed native preparation")
+            helpers = native_helpers()
+            if len(helpers) != 1:
+                raise RuntimeError("expected exactly one native installer for this fixture: " + repr(helpers))
+            helper_pid = helpers[0]
+            # The native helper is already prepared, so this cannot request new
+            # administrator rights. Only the disposable destination is changed.
+            app.parent.chmod(0o500)
+            denied_replacement = True
+            denial_applied.write_text("denied\n")
         output, _ = child.communicate(timeout=40)
         (root / "install.log").write_text(output.replace(token, "CAPABILITY"))
         print(output.replace(token, "CAPABILITY"))
@@ -348,8 +374,30 @@ def install_probe(args):
             expected = []
         if args.adapter:
             expected = []  # The production adapter owns its separate local bridge.
+            if args.mode == "resume-installing":
+                expected = ["/CAPABILITY/feed", "/CAPABILITY/update.zip"]
+                if "RESUME_PROBE fresh=NotDownloaded resumed=Installing cycles=2 downloads=1" not in output:
+                    raise RuntimeError("public SDK did not confirm an actual retained installer session")
         if requests != expected:
             raise RuntimeError("unexpected requests: " + repr(requests))
+        if args.mode == "replacement-denied":
+            if "REPLACEMENT_PROBE prepared=1 denial_applied=1" not in output:
+                raise RuntimeError("child did not acknowledge post-preparation denial")
+            deadline = time.monotonic() + 20
+            while native_helpers() and time.monotonic() < deadline:
+                time.sleep(0.1)
+            if native_helpers():
+                raise RuntimeError("native fixture installer has not physically exited; retain denied destination")
+            log = run("/usr/bin/log", "show", "--last", "2m", "--style", "json", "--predicate",
+                      f'processIdentifier == {helper_pid} AND subsystem == "org.sparkle-project.Sparkle"')
+            (root / "native-helper.log").write_text(log + "\n")
+            messages = [row.get("eventMessage", "") for row in json.loads(log)]
+            if not any("Failed to finalize installation" in message for message in messages) or \
+                not any("Permission denied" in message for message in messages) or \
+                not any(f"Failed to move the old app at {app} " in message for message in messages):
+                raise RuntimeError("no actual native replacement-permission failure receipt")
+            app.parent.chmod(parent_mode)
+            denied_replacement = False
         # Installation is asynchronous and can complete after the old process exits.
         installs = args.mode in INSTALLING_MODES
         deadline = time.monotonic() + (15 if installs else 3)
@@ -374,12 +422,17 @@ def install_probe(args):
             raise RuntimeError("profile/share/download fixture changed")
         result = {"mode": args.mode, "requests": requests, "installed": installs,
                   "relaunched": False, "user_data_unchanged": True, "exact_bundle": True, "signature_valid": True}
+        if args.mode == "replacement-denied":
+            result.update(native_helper_pid=helper_pid, native_helper_exited=True,
+                          replacement_permission_failure=True, failure_phase="old-app-move")
         (root / "install-result.json").write_text(json.dumps(result, indent=2) + "\n")
         print("PASS:", json.dumps(result))
     finally:
         if child is not None and child.poll() is None:
             child.kill()
             child.communicate(timeout=5)
+        if denied_replacement and not native_helpers():
+            app.parent.chmod(parent_mode)
         server.shutdown()
         server.server_close()
 

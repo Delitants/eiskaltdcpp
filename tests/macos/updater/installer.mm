@@ -16,6 +16,7 @@
 #include <future>
 #include <system_error>
 #include "eiskaltdcpp-qt/src/updates/MacUpdateInstaller.h"
+void prepareRetainedNativeUpdate(NSString* expectedArchive);
 namespace updates {
 struct MacUpdateInstallerTestAccess {
     static std::unique_ptr<MacUpdateInstaller> make(bool failWorkerStart) {
@@ -51,9 +52,13 @@ TEST_CASE("Production native installer starts only from committed validated stag
     const auto key = QByteArray([[NSBundle.mainBundle objectForInfoDictionaryKey:@"SUPublicEDKey"] UTF8String]);
     const auto feed = updates::verifyUpdateFeed(file.readAll(), key); REQUIRE(feed);
     REQUIRE(feed->releases.size() == 1);
+    if(mode == "resume-installing")
+        prepareRetainedNativeUpdate([NSString stringWithUTF8String:
+            feed->releases.front().archiveUrl.toString(QUrl::FullyEncoded).toUtf8().constData()]);
     const bool workerFailure = mode == "worker-start-failure" || mode == "cancel-worker-start" || mode == "deadline-worker-start";
     const bool handoffCancellation = mode == "cancel-after-handoff" || mode == "deadline-after-handoff";
-    const bool installs = mode == "normal" || handoffCancellation;
+    const bool replacementDenied = mode == "replacement-denied";
+    const bool handsOff = mode == "normal" || handoffCancellation || replacementDenied;
     auto lifetime = updates::MacUpdateInstallerTestAccess::make(workerFailure);
     auto& installer = *lifetime;
     int ready = 0, failures = 0;
@@ -146,8 +151,8 @@ TEST_CASE("Production native installer starts only from committed validated stag
         REQUIRE(ready + failures == 1);
         QCoreApplication::processEvents();
         INFO(installer.failureReason().toStdString());
-        CHECK(ready == (installs ? 1 : 0));
-        CHECK(failures == (installs ? 0 : 1));
+        CHECK(ready == (handsOff ? 1 : 0));
+        CHECK(failures == (handsOff ? 0 : 1));
         CHECK_FALSE(installer.active());
         CHECK_FALSE(updates::MacUpdateInstallerTestAccess::cancel(installer));
         CHECK_FALSE(updates::MacUpdateInstallerTestAccess::cancel(installer, true));
@@ -169,6 +174,16 @@ TEST_CASE("Production native installer starts only from committed validated stag
             CHECK(installer.failureReason() == (mode == "worker-start-failure" ? "Worker start" :
                 mode == "deadline-worker-start" ? "Deadline" : "Cancelled"));
         }
+        if(mode == "resume-installing") {
+            CHECK(consentChecks == 1);
+            // A resumed installer bypasses feed checking and its progress UI.
+            CHECK(stages == QList<Stage>{Stage::Verifying});
+            CHECK_FALSE(stages.contains(Stage::Downloading));
+            CHECK_FALSE(stages.contains(Stage::Extracting));
+            CHECK_FALSE(stages.contains(Stage::Ready));
+            CHECK_FALSE(stages.contains(Stage::HandingOff));
+            CHECK(installer.failureReason().startsWith("Native installation"));
+        }
         if(handoffCancellation) {
             CHECK(handoffAttempts == 1); CHECK(handoffActive);
             CHECK(handoffCancelRejected); CHECK(handoffDeadlineRejected);
@@ -181,12 +196,23 @@ TEST_CASE("Production native installer starts only from committed validated stag
             CHECK(installer.failureReason().startsWith(mode == "deadline-extraction" ? "Deadline" : "Cancelled"));
             if(mode == "cancel-extraction" || mode == "deadline-extraction") CHECK(stages.contains(Stage::Ready));
         }
-        if(installs) {
+        if(handsOff) {
             // A prepared native owner lives until process exit, not test-scope teardown.
             QObject::disconnect(readyConnection);
             QObject::disconnect(failedConnection);
             QObject::disconnect(stageConnection);
             lifetime.release();
+        }
+        if(replacementDenied) {
+            QFile marker(qEnvironmentVariable("EISKALT_PROBE_DENIAL_READY"));
+            REQUIRE(marker.open(QIODevice::WriteOnly));
+            REQUIRE(marker.write("prepared") == 8); marker.close();
+            QElapsedTimer wait; wait.start();
+            while(!QFileInfo::exists(qEnvironmentVariable("EISKALT_PROBE_DENIAL_APPLIED")) && wait.elapsed() < 10000) {
+                QCoreApplication::processEvents(); QThread::msleep(2);
+            }
+            REQUIRE(QFileInfo::exists(qEnvironmentVariable("EISKALT_PROBE_DENIAL_APPLIED")));
+            printf("REPLACEMENT_PROBE prepared=1 denial_applied=1\n"); fflush(stdout);
         }
     }
     if(mode == "kill-before-commit") {
