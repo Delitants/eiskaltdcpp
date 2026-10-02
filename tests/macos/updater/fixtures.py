@@ -11,11 +11,18 @@ import plistlib
 import secrets
 import shutil
 import subprocess
+import struct
 import threading
 import time
 import uuid
 import zipfile
-import struct
+
+LEGACY_INSTALL_MODES = ("normal", "hide", "cancel-quit", "kill-before-commit", "cancel-prepared", "bad-identity")
+ADAPTER_INSTALL_MODES = ("bad-minimum-os", "cancel-before-native", "bad-feed", "bad-archive", "cancel-verifier",
+                         "destroy-verifier", "cancel-check", "cancel-download", "cancel-extraction", "cancel-ready",
+                         "deadline-verifier", "deadline-extraction", "cancel-after-handoff", "deadline-after-handoff", "worker-start-failure",
+                          "cancel-worker-start", "deadline-worker-start")
+INSTALLING_MODES = ("normal", "cancel-after-handoff", "deadline-after-handoff")
 
 
 def run(*args, **kwargs):
@@ -263,7 +270,7 @@ def install_probe(args):
     manifest = json.loads((root / "fixture.json").read_text())
     if bool(manifest.get("adapter")) != args.adapter:
         raise RuntimeError("create a matching adapter/non-adapter fixture")
-    if args.mode in ("cancel-before-native", "bad-feed", "bad-archive", "bad-minimum-os") and not args.adapter:
+    if args.mode in ADAPTER_INSTALL_MODES and not args.adapter:
         raise RuntimeError("this mode requires the production adapter fixture")
     app = root / "old/UpdaterProbe.app"
     info = app / "Contents/Info.plist"
@@ -335,8 +342,7 @@ def install_probe(args):
         print(output.replace(token, "CAPABILITY"))
         if child.returncode != (-9 if args.mode == "kill-before-commit" else 0):
             raise RuntimeError("native install probe failed: " + str(child.returncode))
-        committed = args.mode in ("normal", "cancel-prepared", "bad-identity", "bad-minimum-os",
-                                  "cancel-before-native", "bad-feed", "bad-archive")
+        committed = args.mode not in ("hide", "cancel-quit", "kill-before-commit")
         expected = ["/CAPABILITY/feed"] + (["/CAPABILITY/update.zip"] if committed else [])
         if args.mode == "bad-identity":
             expected = []
@@ -345,19 +351,20 @@ def install_probe(args):
         if requests != expected:
             raise RuntimeError("unexpected requests: " + repr(requests))
         # Installation is asynchronous and can complete after the old process exits.
-        deadline = time.monotonic() + (15 if args.mode == "normal" else 3)
+        installs = args.mode in INSTALLING_MODES
+        deadline = time.monotonic() + (15 if installs else 3)
         while time.monotonic() < deadline:
-            if args.mode == "normal" and info.exists() and plistlib.loads(info.read_bytes())["CFBundleVersion"] == "2":
+            if installs and info.exists() and plistlib.loads(info.read_bytes())["CFBundleVersion"] == "2":
                 break
             time.sleep(0.1)
         time.sleep(2)
-        if args.mode == "normal":
+        if installs:
             if info.read_bytes() != (root / "new/UpdaterProbe.app/Contents/Info.plist").read_bytes() or \
                 digest(app / "Contents/MacOS/UpdaterProbe") != digest(root / "new/UpdaterProbe.app/Contents/MacOS/UpdaterProbe"):
                 raise RuntimeError("normal quit did not install the exact signed new bundle")
         elif info.read_bytes() != before_info or digest(app / "Contents/MacOS/UpdaterProbe") != before_executable:
             raise RuntimeError("uncommitted/cancelled/invalid update replaced the old bundle")
-        expected_bundle = bundle_snapshot(root / "new/UpdaterProbe.app") if args.mode == "normal" else before_bundle
+        expected_bundle = bundle_snapshot(root / "new/UpdaterProbe.app") if installs else before_bundle
         if bundle_snapshot(app) != expected_bundle:
             raise RuntimeError("installed bundle tree differs from the exact expected signed bundle")
         run("codesign", "--verify", "--deep", "--strict", str(app))
@@ -365,7 +372,7 @@ def install_probe(args):
             raise RuntimeError("application relaunched despite no-relaunch policy")
         if snapshot() != before_data:
             raise RuntimeError("profile/share/download fixture changed")
-        result = {"mode": args.mode, "requests": requests, "installed": args.mode == "normal",
+        result = {"mode": args.mode, "requests": requests, "installed": installs,
                   "relaunched": False, "user_data_unchanged": True, "exact_bundle": True, "signature_valid": True}
         (root / "install-result.json").write_text(json.dumps(result, indent=2) + "\n")
         print("PASS:", json.dumps(result))
@@ -396,7 +403,7 @@ if __name__ == "__main__":
             sub.add_argument("--mode", choices=("valid", "bad-feed", "bad-archive", "unmapped", "information-only"), default="valid")
             sub.add_argument("--filter", default="[bridge-probe]")
         if name == "install-probe":
-            sub.add_argument("--mode", choices=("normal", "hide", "cancel-quit", "kill-before-commit", "cancel-prepared", "bad-identity", "bad-minimum-os", "cancel-before-native", "bad-feed", "bad-archive"), required=True)
+            sub.add_argument("--mode", choices=LEGACY_INSTALL_MODES + ADAPTER_INSTALL_MODES, required=True)
             sub.add_argument("--adapter", action="store_true", help="Exercise the production Qt installer adapter")
         sub.set_defaults(function=globals()[name.replace("-", "_")])
     args = parser.parse_args()

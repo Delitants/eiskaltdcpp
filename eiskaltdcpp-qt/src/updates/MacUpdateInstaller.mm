@@ -4,6 +4,7 @@
 #include "UpdatePolicy.h"
 #include "macos/updater/BundleArchiveVerifier.h"
 #include <QCoreApplication>
+#include <QElapsedTimer>
 #include <QFile>
 #include <QOperatingSystemVersion>
 #include <QSysInfo>
@@ -43,6 +44,7 @@ NSError* denied() { return [NSError errorWithDomain:@"org.eiskaltdcpp.update-ins
     updates::SignedUpdate expected;
     std::function<bool()> consent;
     std::function<void(bool)> complete;
+    std::function<void(updates::MacUpdateInstaller::Stage)> stage;
 }
 @property NSString* feed;
 @property NSString* archive;
@@ -52,9 +54,20 @@ NSError* denied() { return [NSError errorWithDomain:@"org.eiskaltdcpp.update-ins
 @property BOOL prepared;
 @property BOOL downloaded;
 @property NSInteger errorCode;
+@property BOOL cancellationRequested;
+@property(copy) void (^cancellation)(void);
 @end
 @implementation EDInstallDriver
-- (BOOL)approved { try { return self.enabled && !self.violation && consent && consent(); } catch(...) { return NO; } }
+- (BOOL)approved { try { return self.enabled && !self.violation && !self.cancellationRequested && consent && consent(); } catch(...) { return NO; } }
+- (void)requestCancellation {
+    self.cancellationRequested = YES;
+    void (^cancel)(void) = self.cancellation;
+    self.cancellation = nil;
+    if(cancel) cancel();
+}
+- (void)changed:(updates::MacUpdateInstaller::Stage)value {
+    if(self.enabled && stage) stage(value);
+}
 - (NSString*)feedURLStringForUpdater:(SPUUpdater*)updater { return self.feed; }
 - (BOOL)updaterShouldRelaunchApplication:(SPUUpdater*)updater { return NO; }
 - (NSSet<NSString*>*)allowedChannelsForUpdater:(SPUUpdater*)updater {
@@ -97,29 +110,48 @@ NSError* denied() { return [NSError errorWithDomain:@"org.eiskaltdcpp.update-ins
 - (void)showUpdatePermissionRequest:(SPUUpdatePermissionRequest*)request reply:(void (^)(SUUpdatePermissionResponse*))reply {
     self.violation = YES; reply([[SUUpdatePermissionResponse alloc] initWithAutomaticUpdateChecks:NO sendSystemProfile:NO]);
 }
-- (void)showUserInitiatedUpdateCheckWithCancellation:(void (^)(void))cancel {}
+- (void)showUserInitiatedUpdateCheckWithCancellation:(void (^)(void))cancel {
+    self.cancellation = cancel;
+    [self changed:updates::MacUpdateInstaller::Stage::Checking];
+    if(self.cancellationRequested) [self requestCancellation];
+}
 - (void)showUpdateFoundWithAppcastItem:(SUAppcastItem*)item state:(SPUUserUpdateState*)state reply:(void (^)(SPUUserUpdateChoice))reply {
-    const bool valid = self.enabled && self.verified && !self.violation && matches(item, expected);
-    if(!valid) self.violation = YES; reply(valid ? SPUUserUpdateChoiceInstall : SPUUserUpdateChoiceSkip);
+    self.cancellation = nil;
+    const bool valid = self.enabled && self.verified && !self.violation && matches(item, expected) &&
+        state.stage == SPUUserUpdateStageNotDownloaded && state.userInitiated && !item.informationOnlyUpdate;
+    if(!valid) self.violation = YES;
+    reply(valid && !self.cancellationRequested ? SPUUserUpdateChoiceInstall : SPUUserUpdateChoiceSkip);
 }
 - (void)showUpdateReleaseNotesWithDownloadData:(SPUDownloadData*)data { self.violation = YES; }
 - (void)showUpdateReleaseNotesFailedToDownloadWithError:(NSError*)error { self.violation = YES; }
-- (void)showUpdateNotFoundWithError:(NSError*)error acknowledgement:(void (^)(void))ack { self.violation = YES; ack(); }
-- (void)showUpdaterError:(NSError*)error acknowledgement:(void (^)(void))ack { self.violation = YES; ack(); }
-- (void)showDownloadInitiatedWithCancellation:(void (^)(void))cancel {}
+- (void)showUpdateNotFoundWithError:(NSError*)error acknowledgement:(void (^)(void))ack { self.cancellation = nil; self.violation = YES; ack(); }
+- (void)showUpdaterError:(NSError*)error acknowledgement:(void (^)(void))ack { self.cancellation = nil; self.violation = YES; ack(); }
+- (void)showDownloadInitiatedWithCancellation:(void (^)(void))cancel {
+    self.cancellation = cancel;
+    [self changed:updates::MacUpdateInstaller::Stage::Downloading];
+    if(self.cancellationRequested) [self requestCancellation];
+}
 - (void)showDownloadDidReceiveExpectedContentLength:(uint64_t)length { if(length != uint64_t(expected.offer.size)) self.violation = YES; }
 - (void)showDownloadDidReceiveDataOfLength:(uint64_t)length {}
-- (void)showDownloadDidStartExtractingUpdate {}
+- (void)showDownloadDidStartExtractingUpdate {
+    // The public download cancellation block expires at extraction. Keep a
+    // pending request until Ready can Skip and the SDK confirms completion.
+    self.cancellation = nil;
+    [self changed:updates::MacUpdateInstaller::Stage::Extracting];
+}
 - (void)showExtractionReceivedProgress:(double)progress {}
 - (void)showReadyToInstallAndRelaunch:(void (^)(SPUUserUpdateChoice))reply {
+    self.cancellation = nil;
+    [self changed:updates::MacUpdateInstaller::Stage::Ready];
     self.prepared = self.downloaded && [self approved];
+    if(self.prepared) [self changed:updates::MacUpdateInstaller::Stage::HandingOff];
     // Dismiss can install on any exit. It is allowed only after committed quit
     // and a final live consent check; uncommitted work never creates this driver.
     reply(self.prepared ? SPUUserUpdateChoiceDismiss : SPUUserUpdateChoiceSkip);
 }
 - (void)showInstallingUpdateWithApplicationTerminated:(BOOL)terminated retryTerminatingApplication:(void (^)(void))retry { self.violation = YES; }
 - (void)showUpdateInstalledAndRelaunched:(BOOL)relaunched acknowledgement:(void (^)(void))ack { self.violation = YES; ack(); }
-- (void)dismissUpdateInstallation {}
+- (void)dismissUpdateInstallation { self.cancellation = nil; }
 @end
 
 namespace updates {
@@ -128,7 +160,11 @@ struct MacUpdateInstaller::Impl {
     MacUpdateInstaller& owner;
     UpdateLoopbackBridge bridge;
     QTimer timer;
+    QElapsedTimer elapsed;
+    int deadlineMilliseconds = 30000;
+    const char* stopReason = nullptr;
     std::thread worker;
+    WorkerStarter launch;
     std::atomic_bool cancelled{false}, done{false};
     bool valid = false;
     const char* verificationFailure = "Bundle policy";
@@ -139,17 +175,34 @@ struct MacUpdateInstaller::Impl {
     std::function<bool()> consent;
     SPUUpdater* updater = nil;
     EDInstallDriver* driver = nil;
-    explicit Impl(MacUpdateInstaller& o) : owner(o) {
+    Impl(MacUpdateInstaller& o, WorkerStarter starter) : owner(o), launch(std::move(starter)) {
         timer.setInterval(20);
         QObject::connect(&timer, &QTimer::timeout, &owner, [this] { poll(); });
     }
     ~Impl() {
         timer.stop(); cancelled.store(true);
         if(worker.joinable()) worker.join();
-        if(driver) { driver.enabled = NO; driver->complete = {}; driver->consent = {}; }
+        clearCallbacks();
         updater = nil; driver = nil;
     }
     bool approved() { try { return consent && consent(); } catch(...) { return false; } }
+    void clearCallbacks() {
+        if(driver) {
+            driver.enabled = NO; driver.cancellation = nil;
+            driver->complete = {}; driver->consent = {}; driver->stage = {};
+        }
+    }
+    bool requestCancellation(bool expired) {
+        // Approval is irrevocable before the SDK reply/cycle callback. Never
+        // report cancellation while a Dismiss installation remains armed.
+        if((phase != Verifying && phase != Native) || (driver && driver.prepared)) return false;
+        if(!stopReason) {
+            stopReason = expired ? "Deadline" : "Cancelled";
+            cancelled.store(true);
+            if(driver) [driver requestCancellation];
+        }
+        return true;
+    }
     void finish(bool success, const char* reason = "Native installation") {
         if(phase != Native && phase != Verifying) return;
         timer.stop(); bridge.stop(); phase = success ? Prepared : Refused;
@@ -158,7 +211,7 @@ struct MacUpdateInstaller::Impl {
             if(driver) failure += QStringLiteral(" (code %1, verified %2, downloaded %3, prepared %4, rejected %5)")
                 .arg(driver.errorCode).arg(driver.verified).arg(driver.downloaded).arg(driver.prepared).arg(driver.violation);
         }
-        if(driver) { driver.enabled = NO; driver->complete = {}; driver->consent = {}; }
+        clearCallbacks();
         if(success) emit owner.readyToExit(operation); else emit owner.failed(operation);
     }
     bool verify(const QByteArray& key) {
@@ -178,8 +231,11 @@ struct MacUpdateInstaller::Impl {
                 o.version.toStdString(), o.cpu.toStdString(), o.minimumOs.toString().toStdString()}, stopped);
     }
     void poll() {
+        if((phase == Verifying || phase == Native) && !stopReason && elapsed.elapsed() >= deadlineMilliseconds)
+            requestCancellation(true);
         if(phase == Verifying && done.load()) {
             worker.join();
+            if(stopReason) { finish(false, stopReason); return; }
             if(!valid || cancelled.load()) { finish(false, verificationFailure); return; }
             if(!approved()) { finish(false, "Consent"); return; }
             const auto feed = bridge.beginInstallerSession(feedPath);
@@ -188,26 +244,38 @@ struct MacUpdateInstaller::Impl {
             driver = [EDInstallDriver new]; driver->expected = selected; driver->consent = consent;
             driver.feed = ns(feed.toString(QUrl::FullyEncoded)); driver.archive = ns(archive.toString(QUrl::FullyEncoded));
             driver.enabled = YES; driver->complete = [this](bool success) {
-                QMetaObject::invokeMethod(&owner, [this, success] { finish(success); }, Qt::QueuedConnection);
+                QMetaObject::invokeMethod(&owner, [this, success] {
+                    finish(success && !stopReason, stopReason ? stopReason : "Native installation");
+                }, Qt::QueuedConnection);
             };
+            driver->stage = [this](Stage value) { emit owner.stageChanged(operation, value); };
             updater = [[SPUUpdater alloc] initWithHostBundle:NSBundle.mainBundle applicationBundle:NSBundle.mainBundle userDriver:driver delegate:driver];
             updater.automaticallyChecksForUpdates = NO; updater.automaticallyDownloadsUpdates = NO; updater.sendsSystemProfile = NO;
-            phase = Native; timer.stop();
+            phase = Native;
             NSError* error = nil;
             if(![updater startUpdater:&error]) { finish(false); return; }
             [updater checkForUpdates];
         }
     }
 };
-MacUpdateInstaller::MacUpdateInstaller(QObject* parent) : QObject(parent), impl(new Impl(*this)) {}
+MacUpdateInstaller::MacUpdateInstaller(QObject* parent) : MacUpdateInstaller(parent,
+    [](std::function<void()> work) { return std::thread(std::move(work)); }) {}
+MacUpdateInstaller::MacUpdateInstaller(QObject* parent, WorkerStarter starter) :
+    QObject(parent), impl(new Impl(*this, std::move(starter))) {}
 MacUpdateInstaller::~MacUpdateInstaller() = default;
 bool MacUpdateInstaller::active() const { return impl->phase == Impl::Verifying || impl->phase == Impl::Native; }
 QString MacUpdateInstaller::failureReason() const {
     return impl->failure;
 }
+bool MacUpdateInstaller::cancel(bool expired) {
+    if(!QCoreApplication::instance() || QThread::currentThread() != QCoreApplication::instance()->thread() ||
+        thread() != QThread::currentThread()) return false;
+    return impl->requestCancellation(expired);
+}
 bool MacUpdateInstaller::start(quint64 operation, const SignedUpdate& selected, const QString& feed,
-    const QString& archive, bool committed, std::function<bool()> consent) {
-    if(!committed || !operation || !consent || impl->phase != Impl::Idle || !QCoreApplication::instance() ||
+    const QString& archive, bool committed, std::function<bool()> consent, int deadlineMilliseconds) {
+    if(!committed || !operation || !consent || deadlineMilliseconds <= 0 || deadlineMilliseconds > 300000 ||
+        impl->phase != Impl::Idle || !QCoreApplication::instance() ||
         QThread::currentThread() != QCoreApplication::instance()->thread() || thread() != QThread::currentThread()) return false;
     NSBundle* bundle = NSBundle.mainBundle;
     const auto build = qt([bundle objectForInfoDictionaryKey:@"CFBundleVersion"]);
@@ -218,6 +286,7 @@ bool MacUpdateInstaller::start(quint64 operation, const SignedUpdate& selected, 
     id expiration = [bundle objectForInfoDictionaryKey:@"SUSignedFeedFailureExpirationInterval"];
     impl->operation = operation; impl->selected = selected; impl->feedPath = feed; impl->archivePath = archive; impl->consent = std::move(consent);
     impl->phase = Impl::Verifying;
+    impl->deadlineMilliseconds = deadlineMilliseconds; impl->elapsed.start();
     const bool policy = numeric && value > 0 && QString::number(value) == build &&
         UpdatePolicy::accepts(identity, {true, true, false, selected.offer.channel}, selected.offer) &&
         boolean(bundle, @"SURequireSignedFeed", true) && boolean(bundle, @"SUVerifyUpdateBeforeExtraction", true) &&
@@ -226,12 +295,18 @@ bool MacUpdateInstaller::start(quint64 operation, const SignedUpdate& selected, 
         [expiration isKindOfClass:NSNumber.class] && CFGetTypeID((__bridge CFTypeRef)expiration) != CFBooleanGetTypeID() && [expiration doubleValue] == 0;
     const auto key = qt([bundle objectForInfoDictionaryKey:@"SUPublicEDKey"]).toLatin1();
     try {
-        impl->worker = std::thread([this, key, policy] {
-            @autoreleasepool { try { impl->valid = policy && impl->verify(key); } catch(...) { impl->valid = false; } }
-            impl->done.store(true);
+        // Impl joins this worker before deletion; the owning unique_ptr can
+        // already be null while that destructor is waiting for the join.
+        impl->worker = impl->launch([state = impl.get(), key, policy] {
+            @autoreleasepool { try { state->valid = policy && state->verify(key); } catch(...) { state->valid = false; } }
+            state->done.store(true);
         });
-        impl->timer.start();
-    } catch(...) { QTimer::singleShot(0, this, [this] { impl->finish(false); }); }
+    } catch(...) {
+        QTimer::singleShot(0, this, [this] { impl->finish(false, impl->stopReason ? impl->stopReason : "Worker start"); });
+        return true;
+    }
+    impl->timer.start();
+    emit stageChanged(operation, Stage::Verifying);
     return true;
 }
 }

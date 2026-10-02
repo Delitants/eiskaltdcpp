@@ -737,5 +737,36 @@ no relaunch and unchanged user-data sentinels. These are simulated lifecycle
 boundaries, not real MainWindow gestures or installer authorization cancellation.
 External denial is proved in the native parent, not in launchd/XPC helpers.
 Recovery after disk/interruption failure, authorization cancellation, native
-deadline/abort behavior and real committed/no-update quit remain next gates.
+session recovery and real committed/no-update quit remain next gates.
 The installed app, normal exit path, profile and real signing keys are unchanged.
+
+Native cancellation checkpoint (Task 5 remains in progress):
+the private adapter accepts owner-thread cancellation and a monotonic deadline
+without treating either request as an exit receipt. Verification joins before
+refusal. Native check/download requests use only current public cancellation
+blocks; extraction clears the expired block, waits for Ready/Skip and the
+update-cycle completion callback. A stalled native cycle retains its owner and
+staging rather than fabricating completion. First reason wins, active repeats
+are idempotent, and approved prepared handoff refuses cancellation.
+
+Typed phase notifications support future progress UI without activating it.
+The verification worker captures the joined implementation state, fixing a
+separately reproduced owner-destruction crash. Disposable native cases cover
+verifier/check/download/extraction/Ready cancellation, real elapsed verifier
+expiry, explicit expiry at extraction, foreign-thread refusal, and destruction
+before event pumping. Extraction expiry is not elapsed slow-extraction proof.
+Fresh-state admission rejects resumed SDK stages, but real resumed-session
+recovery, authorization/disk/interruption recovery and helper confinement are
+still unverified. Product backend, MainWindow and emergency exit remain unchanged;
+no installed-app update or whole Task 5 completion is claimed.
+
+Scoped review additionally identified the Native-before-cycle approved-handoff
+window: accepting cancel there falsely reported refusal while Dismiss remained
+armed. Approval now refuses cancellation before the SDK reply, not just after
+terminal Prepared. Direct cancellation/deadline cases prove the pre-terminal
+window; queued cases may run after completion and also require refusal and exact
+approved installation. Worker-start refusal preserves
+an already accepted first cancellation/deadline reason; a private launcher seam
+throws before creating a thread to exercise that catch/queued-refusal branch,
+without claiming real OS resource-exhaustion acceptance. All twenty-three native
+modes remain disposable and runtime activation stays disabled.

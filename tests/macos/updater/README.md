@@ -175,12 +175,18 @@ python3 tests/macos/updater/fixtures.py install-probe --adapter \
   --root /tmp/new-native-installer-fixture --mode normal
 ```
 
-The ten adapter modes are `normal`, `hide`, `cancel-quit`,
+The twenty-three adapter modes are `normal`, `hide`, `cancel-quit`,
 `kill-before-commit`, `cancel-prepared`, `bad-identity`, `bad-minimum-os`,
-`cancel-before-native`, `bad-feed` and `bad-archive`.
-For the latter two, add `--wrong-identity` or `--wrong-minimum-os` to `create`.
-Only normal installs; every other mode must retain the exact old signed bundle.
-Normal retains the prepared adapter until process exit. The additional consent
+`cancel-before-native`, `bad-feed`, `bad-archive`, `cancel-verifier`,
+`destroy-verifier`, `cancel-check`, `cancel-download`, `cancel-extraction`,
+`cancel-ready`, `deadline-verifier`, `deadline-extraction`, `cancel-after-handoff`,
+`deadline-after-handoff`, `worker-start-failure`, `cancel-worker-start` and
+`deadline-worker-start`.
+For `bad-identity` or `bad-minimum-os`, add the corresponding
+`--wrong-identity` or `--wrong-minimum-os` flag to `create`.
+Normal and the two post-handoff refusal cases install; every other mode must
+retain the exact old signed bundle. Successful handoffs retain the prepared
+adapter until process exit. The additional consent
 and corrupt-byte cases assert refusal before creating a native installer. Tests
 first require private `0600` regular single-link staging in a private owned parent,
 so corrupt-byte rejection cannot silently be a permissions refusal.
@@ -189,9 +195,36 @@ legacy Python server. The native parent asserts external socket denial; this
 does not prove installer/XPC-helper confinement. The hide/cancel/crash modes
 simulate lifecycle boundaries, not actual MainWindow gestures.
 
+Cancellation is a private owner-thread request, not an immediate terminal
+receipt. The monotonic deadline requests the same cancellation path; it never
+grants exit or drops the native owner. Verification joins its worker before
+refusal. Check/download cancellation invokes only the currently valid public
+SDK block. Extraction clears the expired download block, waits for Ready,
+replies Skip, and waits for the native update-cycle completion callback. If
+that callback never arrives, the active owner and staging must remain retained.
+The first cancellation/deadline reason is retained, repeated active requests
+are idempotent, and cancellation after approved handoff is refused.
+Approval is latched before the SDK reply, not only after cycle completion.
+The HandingOff phase is an observation of that irrevocable decision, not an
+exit receipt. Direct and queued post-approval requests must both be refused
+while the approved update still installs exactly once without relaunch.
+
+The phase cases assert no immediate terminal callback, foreign-thread refusal,
+exactly one eventual refusal and unchanged signed bundles after child exit.
+`deadline-verifier` uses a real elapsed deadline; `deadline-extraction` requests
+expiry at the real extraction callback, not a timed slow-extraction simulation.
+`destroy-verifier` destroys the admitted owner before pumping events and checks
+that its worker joins without a callback or crash. The worker captures its
+joined implementation state, not the owning `unique_ptr` being destroyed.
+The three worker-start cases use a private launcher that throws before creating
+a thread. They cover queued failure and first-reason retention; they do not
+prove behavior under actual OS thread/resource exhaustion.
+Fresh-state admission rejects resumed/downloaded/installing offers, but real
+SDK resumed-session recovery still requires separate acceptance.
+
 `MacUpdateBackend::armInstallOnQuit` still reports Unsupported. Authorization
 cancellation, disk-full/interrupted replacement and recovery, native session
-deadline/abort behavior, real committed-quit integration and helper networking
+recovery, real committed-quit integration and helper networking
 remain gates before product activation. Passing these disposable tests is not
 a successful update of the installed Eiskalt app.
 
