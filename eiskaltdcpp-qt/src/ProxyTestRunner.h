@@ -3,9 +3,12 @@
 #include "dcpp/stdinc.h"
 #include "dcpp/Socket.h"
 #include <QObject>
+#include <QPointer>
 #include <QString>
 #include <memory>
 #include <utility>
+
+class QThread;
 
 // All methods are called on the owning (GUI) thread. Network work owns a copy
 // of the configuration and never reads or changes application proxy settings.
@@ -51,6 +54,7 @@ public:
     static QString validateTargets(const ProbeTargets& targets, bool requestUdp);
     void cancel();
     bool isRunning() const;
+    [[nodiscard]] bool stopWorkersForQuit();
 
 signals:
     void finished(ProxyTestRunner::Result result);
@@ -58,6 +62,9 @@ signals:
 private:
     struct State;
     std::shared_ptr<State> state;
+    QPointer<QThread> worker;
+    bool quitFenced = false;
+    bool quitFenceSaved = false;
 };
 
 Q_DECLARE_METATYPE(ProxyTestRunner::Result)

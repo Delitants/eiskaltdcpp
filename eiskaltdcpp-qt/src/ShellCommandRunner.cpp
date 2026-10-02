@@ -40,14 +40,12 @@ ShellCommandRunner::ShellCommandRunner(const QString &cmd_,
 /** */
 ShellCommandRunner::~ShellCommandRunner() {
     cancel();
-    /* the longest total sleep in run() is 1.1 seconds */
-    if (!wait(1150)) {
-        printf("~ShellCommandRunner: warning not finished\n");
-    }
+    wait();
 }
 
 /** */
 void ShellCommandRunner::run() {
+    if (stop.load()) return;
     m_exitCode = 1;
     QString output;
     bool succeeded = false;

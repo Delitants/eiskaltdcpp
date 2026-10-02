@@ -448,7 +448,7 @@ ProxyTestRunner::ProxyTestRunner(QObject* parent) : QObject(parent) {
     qRegisterMetaType<Result>();
 }
 
-ProxyTestRunner::~ProxyTestRunner() { cancel(); }
+ProxyTestRunner::~ProxyTestRunner() { (void)stopWorkersForQuit(); }
 
 bool ProxyTestRunner::start(const Config& snapshot, bool requestUdp, int timeoutMs) {
     return start(snapshot, ProbeTargets(QStringLiteral("example.com"),
@@ -473,7 +473,7 @@ QString ProxyTestRunner::validateTargets(const ProbeTargets& targets, bool reque
 }
 
 bool ProxyTestRunner::start(const Config& snapshot, const ProbeTargets& targets, bool requestUdp, int timeoutMs) {
-    if (state) return false;
+    if (QThread::currentThread() != this->thread() || quitFenced || state) return false;
     auto job = std::make_shared<State>();
     state = job;
     const auto deadline = Clock::now() + std::chrono::milliseconds(std::clamp(timeoutMs, 1, 30000));
@@ -517,7 +517,10 @@ bool ProxyTestRunner::start(const Config& snapshot, const ProbeTargets& targets,
                 text("Proxy test failed: %1").arg(QString::fromUtf8(error.what()))};
         }
     });
+    thread->setParent(this);
+    worker = thread;
     connect(thread, &QThread::finished, this, [this, job] {
+        if (quitFenced || state != job) return;
         state.reset();
         emit finished(job->result);
     });
@@ -531,3 +534,18 @@ void ProxyTestRunner::cancel() {
 }
 
 bool ProxyTestRunner::isRunning() const { return bool(state); }
+
+bool ProxyTestRunner::stopWorkersForQuit() {
+    if (QThread::currentThread() != thread()) return false;
+    if (quitFenced) return quitFenceSaved;
+    quitFenced = true;
+    cancel();
+    if (worker && !worker->wait()) return false;
+    // A finished signal may precede TLS teardown; older worker objects can
+    // remain owned here while a newer diagnostic is already running.
+    for (auto* retained : findChildren<QThread*>(QString(), Qt::FindDirectChildrenOnly))
+        if (retained != worker && !retained->wait()) return false;
+    state.reset();
+    quitFenceSaved = true;
+    return true;
+}

@@ -1,5 +1,6 @@
 #include "dcpp/stdinc.h"
 #include "ProxyTestRunner.h"
+#include "dcpp/ScopedFunctor.h"
 #include "tests/TestContext.h"
 #include "dcpp/SettingsManager.h"
 #include "tests/proxy/DisposableGostServer.h"
@@ -17,8 +18,13 @@
 #include <atomic>
 #include <array>
 #include <thread>
+#include <future>
 
 namespace {
+template<class T> bool proxyFence(T& runner) {
+    if constexpr(requires { runner.stopWorkersForQuit(); }) return runner.stopWorkersForQuit();
+    else return false;
+}
 using Socket = dcpp::Socket;
 using Status = ProxyTestRunner::Status;
 
@@ -61,6 +67,39 @@ struct Proxy {
         });
     }
 };
+
+TEST_CASE("Proxy diagnostic quit fence physically retires the worker and silences late replies", "[qt][proxytestrunner][gui-worker-fence][network]") {
+    Proxy proxy([](Socket& peer) { char bytes[64]{}; peer.readAll(bytes, sizeof(bytes), 1500); });
+    ProxyTestRunner runner;
+    int replies = 0;
+    QObject::connect(&runner, &ProxyTestRunner::finished, [&] { ++replies; });
+    CHECK_FALSE(std::async(std::launch::async, [&] { return proxyFence(runner); }).get());
+    REQUIRE(runner.start(proxy.config, false, 2000));
+    QElapsedTimer wait; wait.start();
+    while(!proxy.accepted && wait.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE(proxy.accepted.load());
+    REQUIRE(proxyFence(runner));
+    CHECK_FALSE(runner.isRunning());
+    const auto workers = runner.findChildren<QThread*>(); REQUIRE(workers.size() == 1);
+    CHECK(workers.front()->isFinished());
+    CHECK_FALSE(runner.start(proxy.config, false));
+    QCoreApplication::processEvents(); CHECK(replies == 0); CHECK(proxyFence(runner));
+}
+
+TEST_CASE("Proxy quit fence also joins retained earlier worker objects", "[qt][proxytestrunner][gui-worker-fence]") {
+    ProxyTestRunner runner;
+    std::atomic_bool entered{false}, released{false}, finished{false};
+    auto* earlier = QThread::create([&] { entered = true; while(!released) QThread::msleep(1); finished = true; });
+    earlier->setParent(&runner);
+    auto releaseOnExit = dcpp::makeScopedFunctor([&] { released = true; earlier->wait(); });
+    earlier->start();
+    QElapsedTimer start; start.start();
+    while(!entered && start.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
+    REQUIRE(proxyFence(runner));
+    CHECK(finished.load()); CHECK(earlier->isFinished()); release.get();
+}
 
 bool hello(Socket& peer, bool auth = false) {
     unsigned char bytes[3]{};

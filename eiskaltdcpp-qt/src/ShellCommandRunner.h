@@ -20,6 +20,7 @@
 #include <QString>
 #include <QList>
 #include <QStringList>
+#include <atomic>
 
 class ShellCommandRunner : public QThread {
     Q_OBJECT
@@ -45,7 +46,7 @@ Q_SIGNALS:
 
 private:
     /** used to cancel the thread */
-    bool stop;
+    std::atomic_bool stop;
     /** */
     bool useArgList;
     /** the program to run and its arguments */

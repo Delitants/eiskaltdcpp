@@ -52,6 +52,9 @@
 #include <QTreeView>
 #include <QMetaType>
 #include <QTimer>
+#include <QThread>
+#include <QFutureWatcher>
+#include <QSet>
 #if defined(Q_OS_MAC)
 #include <objc/objc.h>
 #include <objc/message.h>
@@ -100,6 +103,8 @@
 #include "ActionToolBar.h"
 #include "Magnet.h"
 #include "FileHasher.h"
+#include "ProxyTestRunner.h"
+#include "ShellCommandRunner.h"
 #include "SpyFrame.h"
 #include "SideBar.h"
 #include "ActionCustomizer.h"
@@ -147,6 +152,32 @@ static void tuneMacMainWindowDragBehavior(QWidget *w)
 
 using namespace std;
 
+namespace {
+class RetainedGuiInputFence final : public QObject {
+public:
+    RetainedGuiInputFence(const QList<QObject*>& owners, QObject* parent) : QObject(parent) {
+        for (auto* owner : owners) roots.append(owner);
+    }
+protected:
+    bool eventFilter(QObject* receiver, QEvent* event) override {
+        switch (event->type()) {
+        case QEvent::MetaCall:
+        case QEvent::FutureCallOut:
+        case QEvent::DeferredDelete:
+        case QEvent::Timer:
+            for (auto* owner = receiver; owner; owner = owner->parent())
+                for (const auto& root : roots)
+                    if (root && root == owner) return true;
+            break;
+        default: break;
+        }
+        return false;
+    }
+private:
+    QList<QPointer<QObject>> roots;
+};
+}
+
 class MainWindowPrivate {
 public:
         typedef QList<QAction*> ActionList;
@@ -154,6 +185,9 @@ public:
         bool isUnload = false;
         bool exitBegin = false;
         bool nickPreferencesPromptActive = false;
+        bool quitFenced = false;
+        bool quitFenceSaved = false;
+        bool windowStateSaved = false;
 
         // position and geometry
         bool showMax = false;
@@ -442,6 +476,10 @@ void MainWindow::setUnload(bool b){
 
 void MainWindow::closeEvent(QCloseEvent *e){
     Q_D(MainWindow);
+    if (d->quitFenced) {
+        e->ignore();
+        return;
+    }
 
 #if defined(Q_OS_MAC)
     if (!d->isUnload) {
@@ -884,9 +922,8 @@ void MainWindow::loadSettings(){
 
 void MainWindow::saveSettings(){
     Q_D(MainWindow);
-    static bool stateIsSaved = false;
 
-    if (stateIsSaved)
+    if (d->windowStateSaved)
         return;
 
     if (isVisible())
@@ -918,7 +955,69 @@ void MainWindow::saveSettings(){
     QString dockwidgetsState = QString::fromUtf8(saveState().toBase64());
     qtCtx()->settings()->setStr(WS_MAINWINDOW_STATE, dockwidgetsState);
 
-    stateIsSaved = true;
+    d->windowStateSaved = true;
+}
+
+bool MainWindow::stopWorkersForQuit() {
+    if (QThread::currentThread() != thread()) return false;
+    Q_D(MainWindow);
+    if (d->quitFenced) return d->quitFenceSaved;
+    auto* ctx = qtCtx();
+    // Do not fence a suspended modal handler that can resume and start new work.
+    if (!ctx || !ctx->settings() || QApplication::activeModalWidget() ||
+        QApplication::activePopupWidget()) return false;
+#ifdef USE_JS
+    if (ctx->scriptEngine()) return false;
+#endif
+    d->quitFenced = true;
+    bool saved = true;
+    try {
+        saveSettings();
+        if (ctx->settings()->getBool("app/clear-search-history-on-exit", false))
+            ctx->settings()->setStr(WS_SEARCH_HISTORY, "");
+        if (ctx->settings()->getBool("app/clear-download-directories-history-on-exit", false))
+            ctx->settings()->setStr(WS_DOWNLOAD_DIR_HISTORY, "");
+    } catch (...) { saved = false; }
+
+    QList<QObject*> roots{this};
+    if (ctx->notification()) roots.append(ctx->notification());
+    for (auto* arena : d->menuWidgetsHash)
+        if (auto* widget = arena->getWidget(); widget && !roots.contains(widget)) roots.append(widget);
+    qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
+    if (ctx->globalTimer()) ctx->globalTimer()->stop();
+
+    QSet<QThread*> threads;
+    QSet<QFutureWatcherBase*> futures;
+    QSet<ProxyTestRunner*> probes;
+    QSet<FileHasher*> hashers;
+    for (auto* root : roots) {
+        if (auto* widget = qobject_cast<QWidget*>(root)) widget->setEnabled(false);
+        for (auto* action : root->findChildren<QAction*>()) {
+            action->setEnabled(false);
+            action->blockSignals(true);
+        }
+        for (auto* worker : root->findChildren<QThread*>()) threads.insert(worker);
+        for (auto* future : root->findChildren<QFutureWatcherBase*>()) futures.insert(future);
+        for (auto* probe : root->findChildren<ProxyTestRunner*>()) probes.insert(probe);
+        for (auto* hasher : root->findChildren<FileHasher*>()) hashers.insert(hasher);
+    }
+    for (auto* probe : probes) saved = probe->stopWorkersForQuit() && saved;
+    for (auto* hasher : hashers) saved = hasher->stopWorkersForQuit() && saved;
+    for (auto* worker : threads) {
+        if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
+        worker->requestInterruption();
+        worker->quit();
+        saved = worker->wait() && saved;
+    }
+    // No GUI event pumping: queued results and owner deletion stay fenced.
+    for (auto* future : futures) future->waitForFinished();
+#ifdef USE_TORRENT
+    if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
+    if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;
+#endif
+    saved = ctx->settings()->saveChecked() && saved;
+    d->quitFenceSaved = saved;
+    return saved;
 }
 
 void MainWindow::initActions(){
@@ -1957,6 +2056,7 @@ QObject *MainWindow::getToolBar(){
 ArenaWidget *MainWindow::widgetForRole(ArenaWidget::Role r){
     ArenaWidget *awgt = nullptr;
     Q_D(MainWindow);
+    if (d->quitFenced) return nullptr;
     auto *ctx = qtCtx();
 
     switch (r){
@@ -2105,6 +2205,7 @@ ArenaWidget *MainWindow::widgetForRole(ArenaWidget::Role r){
 }
 
 void MainWindow::newHubFrame(QString address, QString enc){
+    if (d_ptr->quitFenced) return;
     if (address.isEmpty())
         return;
 
@@ -2308,6 +2409,7 @@ void MainWindow::displayStatusWarning(QString msg){
 }
 
 void MainWindow::autoconnect(){
+    if (d_ptr->quitFenced) return;
     const FavoriteHubEntryList& fl = dcCtx().getFavoriteManager()->getFavoriteHubs();
 
     for (const auto &i : fl) {
@@ -2325,6 +2427,7 @@ void MainWindow::autoconnect(){
 }
 
 void MainWindow::parseCmdLine(const QStringList &args){
+    if (d_ptr->quitFenced) return;
     for (const auto &arg : args){
 #ifdef USE_TORRENT
         if (openTorrentSource(arg))
@@ -2345,6 +2448,7 @@ void MainWindow::parseCmdLine(const QStringList &args){
 }
 
 void MainWindow::parseInstanceLine(const QString &data){
+    if (d_ptr->quitFenced) return;
     if (!isVisible()){
         show();
         raise();
@@ -2597,6 +2701,7 @@ void MainWindow::toggleMainMenu(bool showMenu){
 }
 
 void MainWindow::startSocket(bool changed){
+    if (d_ptr->quitFenced) return;
     if (changed)
         dcCtx().getConnectivityManager()->updateLast();
     try {
@@ -2611,6 +2716,7 @@ void MainWindow::showPortsError(const string& port) {
     QMessageBox::warning(this, tr("Connectivity Manager: Warning"), msg, QMessageBox::Ok);
 }
 void MainWindow::showShareBrowser(dcpp::UserPtr usr, const QString &file, const QString &jump_to){
+    if (d_ptr->quitFenced) return;
     ArenaWidgetFactory().create<ShareBrowser, UserPtr, QString, QString>(usr, file, jump_to);
 }
 
@@ -2666,6 +2772,7 @@ void MainWindow::slotFileHashProgress(){
 }
 
 void MainWindow::slotFileHasher(){
+    if (d_ptr->quitFenced) return;
     FileHasher *m = new FileHasher(qtCtx()->mainWindow());
     m->setModal(true);
     m->exec();
@@ -2955,6 +3062,7 @@ void MainWindow::slotToolsSettings(){
 #ifdef USE_TORRENT
 bool MainWindow::openTorrentSource(const QString &source)
 {
+    if (d_ptr->quitFenced) return true;
     const auto normalized = torrent_source::normalize(source);
     if (normalized.isEmpty())
         return false;
@@ -2968,6 +3076,7 @@ bool MainWindow::openTorrentSource(const QString &source)
 
 TorrentWindow *MainWindow::ensureTorrentWindow()
 {
+    if (d_ptr->quitFenced) return nullptr;
     if (!torrentRuntime)
         return nullptr;
     if (!torrentWindow) {

@@ -23,6 +23,7 @@
 #include <QMessageBox>
 
 #include <algorithm>
+#include <array>
 
 #include "dcpp/stdinc.h"
 #include "dcpp/HashManager.h"
@@ -44,7 +45,7 @@ FileHasher::FileHasher(QWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
-    hasher = new HashThread();
+    hasher = new HashThread(this);
 
     toolButton_COPY_MAGNET->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMAGNET));
     toolButton_COPY_SEARCH_LINK->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiMAGNET));
@@ -64,19 +65,27 @@ FileHasher::FileHasher(QWidget *parent) :
 }
 
 FileHasher::~FileHasher() {
-    if (hasher) {
-        hasher->quit();
-        hasher->wait(2000);
-    }
+    (void)stopWorkersForQuit();
+}
 
-    delete hasher;
+bool FileHasher::stopWorkersForQuit() {
+    if (QThread::currentThread() != thread()) return false;
+    if (quitFenced) return quitFenceSaved;
+    saveWindowSize();
+    quitFenced = true;
+    setEnabled(false);
+    hasher->requestInterruption();
+    quitFenceSaved = hasher->wait();
+    return quitFenceSaved;
 }
 
 void FileHasher::saveWindowSize(){
-    qtCtx()->settings()->setVar(DIALOG_SIZE, size());
+    if (!quitFenced && qtCtx() && qtCtx()->settings())
+        qtCtx()->settings()->setVar(DIALOG_SIZE, size());
 }
 
 void FileHasher::slotStart(){
+    if (quitFenced || hasher->isRunning()) return;
     const QString &&tth = lineEdit_TTH->text();
     if (tth.size() == 39)
         return;
@@ -92,20 +101,20 @@ void FileHasher::slotStart(){
         lineEdit_TTH->setText(_q(tth_val->toBase32()));
         pushButton_RUN->setEnabled(true);
     } else if (hasher) {
-        hasher->quit();
-        hasher->wait(2000);
         hasher->setFile(file);
         hasher->start();
     }
 }
 
 void FileHasher::slotDone(){
+    if (quitFenced) return;
     lineEdit_TTH->setText(hasher->getHash());
 
     pushButton_RUN->setEnabled(true);
 }
 
 void FileHasher::search(){
+    if (quitFenced) return;
     QString size_str = lineEdit_SIZE->text();
     qulonglong size = size_str.left(size_str.indexOf(" (")).toULongLong();
     search(lineEdit_FNAME->text(), size, lineEdit_TTH->text());
@@ -119,6 +128,7 @@ void FileHasher::search(const QString &file, const qulonglong &, const QString &
 }
 
 void FileHasher::searchTTH(const QString &tth) {
+    if (quitFenced) return;
     SearchFrame *fr = ArenaWidgetFactory().create<SearchFrame>();
     fr->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -126,6 +136,7 @@ void FileHasher::searchTTH(const QString &tth) {
 }
 
 void FileHasher::searchFile(const QString &file) {
+    if (quitFenced) return;
     SearchFrame *fr = ArenaWidgetFactory().create<SearchFrame>();
     fr->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -133,6 +144,7 @@ void FileHasher::searchFile(const QString &file) {
 }
 
 void FileHasher::slotCopyMagnet(){
+    if (quitFenced) return;
     const QString &&tth = lineEdit_TTH->text();
     const QString &&fname = lineEdit_FNAME->text().trimmed();
     const QString &&sizeStr = lineEdit_SIZE->text();
@@ -151,6 +163,7 @@ void FileHasher::slotCopyMagnet(){
 }
 
 void FileHasher::slotCopySearchString(){
+    if (quitFenced) return;
     const QString &&fname = lineEdit_FNAME->text().trimmed();
 
     if (fname.isEmpty())
@@ -167,6 +180,7 @@ void FileHasher::slotCopySearchString(){
 }
 
 void FileHasher::slotBrowse(){
+    if (quitFenced || hasher->isRunning()) return;
 
     const QString &&file = QFileDialog::getOpenFileName(this, tr("Select file"), QDir::homePath(), tr("All files (*.*)"));
 
@@ -184,13 +198,15 @@ void FileHasher::slotBrowse(){
     }
 }
 
-HashThread::HashThread(){
+HashThread::HashThread(QObject *parent) : QThread(parent) {
 }
 
 HashThread::~HashThread(){
 }
 
 void HashThread::run(){
+    hash.clear();
+    if (isInterruptionRequested()) return;
     calculate_tth();
 }
 
@@ -204,9 +220,7 @@ QString HashThread::getHash(){
 
 void HashThread::calculate_tth() {
     char TTH[40] = {0};
-    char *buf = new char[BUF_SIZE];
-
-    memset(buf, 0, BUF_SIZE);
+    std::array<char, BUF_SIZE> buf{};
 
     try {
         File f(_tq(file_name), File::READ, File::OPEN);
@@ -214,17 +228,18 @@ void HashThread::calculate_tth() {
         if(f.getSize() > 0) {
             size_t n = BUF_SIZE;
             while( (n = f.read(&buf[0], n)) > 0) {
+                if (isInterruptionRequested()) return;
                 tth.update(&buf[0], n);
                 n = BUF_SIZE;
             }
         } else {
             tth.update("", 0);
         }
+        if (isInterruptionRequested()) return;
         tth.finalize();
         strncpy(&TTH[0], tth.getRoot().toBase32().c_str(), sizeof(TTH)-1);
         hash = _q(TTH);
         f.close();
     } catch (...) {}
 
-    delete [] buf;
 }

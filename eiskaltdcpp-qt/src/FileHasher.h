@@ -21,7 +21,7 @@ class HashThread: public QThread{
     Q_OBJECT
 
     public:
-        HashThread();
+        explicit HashThread(QObject *parent = nullptr);
         virtual ~HashThread();
 
         void run();
@@ -43,6 +43,7 @@ Q_OBJECT
 public:
     explicit FileHasher(QWidget *parent = nullptr);
     virtual ~FileHasher();
+    [[nodiscard]] bool stopWorkersForQuit();
 
     private slots:
         void saveWindowSize();
@@ -57,4 +58,6 @@ public:
         void searchFile(const QString &);
     private:
         HashThread *hasher;
+        bool quitFenced = false;
+        bool quitFenceSaved = false;
 };

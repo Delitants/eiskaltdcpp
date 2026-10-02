@@ -657,3 +657,30 @@ consent rules. Neither this fence nor ordinary shutdown grants installation.
 GUI/manual DC/Torrent owner fencing, checked application normal-quit aggregation,
 native installer acceptance/failure recovery and macOS emergency exit integration
 remain pending; `armInstallOnQuit` is still the native fail-closed stub.
+
+Retained GUI worker-preparation checkpoint (Task 5 remains in progress):
+`MainWindow::stopWorkersForQuit` snapshots window/history intent, fences queued
+GUI work and deferred owner deletion, disables manual actions, drains owned
+threads and futures without pumping GUI events, and consumes checked Torrent
+and GUI-settings outcomes. It includes registered tab roots and the separately
+owned notification service. Foreign-thread calls and active modal/popup handlers
+are rejected before consuming the attempt; an admitted failure stays false and
+retains the window and core owners. Script-engine preparation is not supported.
+An admitted preparation also rejects the old unchecked window-close path;
+deferred GUI owners remain retained until the application coordinator resolves
+the outcome. Future updater/native-handoff objects must live outside these
+fenced GUI roots so their deliberately preserved event loop can still operate.
+
+Proxy diagnostics now own and explicitly join their worker; cancellation and
+late replies cannot restart a terminal runner. File hashing checks interruption
+between chunks, retains its worker until joined, and rejects terminal dialog
+actions. Shell cancellation is atomic and does not launch a pre-cancelled child.
+Qt future completion events are fenced separately from queued signal delivery.
+
+This GUI preparation API is not connected to normal quit yet and does not
+release hub registry clients or authorize installation. Checked application
+aggregation, full active-transfer shutdown/failure-retention tests, native
+installer acceptance/recovery and replacement of the macOS emergency exit
+remain pending. Keep the existing exit path and fail-closed installer unchanged
+until those integration gates pass; do not infer whole-application quiescence
+from this bounded GUI worker receipt.

@@ -8,10 +8,15 @@
 #include "dcpp/Util.h"
 #include "ArenaWidgetManager.h"
 #include "GlobalTimer.h"
+#include "HubFrame.h"
 #include "MainWindow.h"
 #include "QtContext.h"
 #include "SettingsConnection.h"
 #include "CertificateSettings.h"
+#include "FileHasher.h"
+#include "ProxyTestRunner.h"
+#include "ShellCommandRunner.h"
+#include "Notification.h"
 #include "Settings.h"
 #include "dcpp/ProxyRoute.h"
 #include <QRadioButton>
@@ -57,6 +62,8 @@
 #include <QTest>
 #include <QTimer>
 #include <QThreadPool>
+#include <QFutureWatcher>
+#include <QtConcurrent>
 #include <QTabWidget>
 #include <QToolButton>
 #include <QTcpServer>
@@ -66,8 +73,15 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <atomic>
+#include <future>
+#include "dcpp/ScopedFunctor.h"
 
 namespace {
+template<class T> bool guiFence(T& owner) {
+    if constexpr(requires { owner.stopWorkersForQuit(); }) return owner.stopWorkersForQuit();
+    else return false;
+}
 bool waitFor(const std::function<bool()> &ready)
 {
     QElapsedTimer elapsed;
@@ -171,6 +185,169 @@ struct IsolatedMainWindow {
         else qputenv("XDG_CONFIG_HOME", previousConfig);
     }
 };
+
+TEST_CASE("GUI quit preparation joins retained workers without pumping pending input", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    std::atomic_bool entered{false}, released{false}, finished{false};
+    auto* worker = new AsyncRunner(window);
+    worker->setRunFunction([&] {
+        entered = true;
+        while(!released) QThread::msleep(1);
+        finished = true;
+    });
+    auto releaseOnExit = dcpp::makeScopedFunctor([&] { released = true; worker->wait(); });
+    worker->start();
+    QElapsedTimer start; start.start();
+    while(!entered && start.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    bool lateInput = false, otherInput = false;
+    QObject unrelated;
+    QMetaObject::invokeMethod(window, [&] { lateInput = true; }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(&unrelated, [&] { otherInput = true; }, Qt::QueuedConnection);
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
+    CHECK_FALSE(std::async(std::launch::async, [&] { return guiFence(*window); }).get());
+    REQUIRE(guiFence(*window)); release.get();
+    CHECK(finished.load()); CHECK(worker->isFinished()); CHECK_FALSE(window->isEnabled());
+    QCoreApplication::processEvents(); CHECK_FALSE(lateInput); CHECK(otherInput);
+    CHECK(guiFence(*window));
+    CHECK(f.core->getHashManager() != nullptr); // GUI fence retains the core.
+}
+
+TEST_CASE("GUI quit preparation saves history intent and caches Torrent persistence refusal", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    f.gui->settings()->setBool("app/clear-search-history-on-exit", true);
+    f.gui->settings()->setStr(WS_SEARCH_HISTORY, "old search");
+    auto* runtime = f.gui->mainWindow()->findChild<TorrentRuntime*>(); REQUIRE(runtime);
+    bool expected = true;
+    SECTION("successful worker and GUI checkpoint") {}
+    SECTION("failed Torrent checkpoint") {
+        REQUIRE(QDir().mkpath(f.home.filePath("torrent/state/jobs.json"))); expected = false;
+    }
+    CHECK(guiFence(*f.gui->mainWindow()) == expected);
+    CHECK(f.gui->settings()->getStr(WS_SEARCH_HISTORY).isEmpty());
+    if(!expected) REQUIRE(QDir(f.home.filePath("torrent/state/jobs.json")).removeRecursively());
+    CHECK(guiFence(*f.gui->mainWindow()) == expected);
+    CHECK(runtime->shutdownChecked() == expected);
+}
+
+TEST_CASE("File hasher cooperates with interruption before touching its source", "[qt][mainwindow][gui-hash-fence]") {
+    QTemporaryDir root; REQUIRE(root.isValid());
+    const auto source = root.filePath("payload");
+    QFile file(source); REQUIRE(file.open(QIODevice::WriteOnly)); REQUIRE(file.write("known bytes") == 11); file.close();
+    HashThread thread; thread.setFile(source);
+    QObject::connect(&thread, &QThread::started, &thread, [&] { thread.requestInterruption(); }, Qt::DirectConnection);
+    thread.start(); REQUIRE(thread.wait(2000));
+    CHECK(thread.getHash().isEmpty());
+}
+
+TEST_CASE("GUI settings sync refusal remains sticky while retaining the core", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    REQUIRE(f.gui->settings()->saveChecked());
+    const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
+    REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config));
+    CHECK_FALSE(guiFence(*f.gui->mainWindow()));
+    CHECK_FALSE(f.gui->mainWindow()->isEnabled());
+    CHECK(f.core->getHashManager() != nullptr);
+    REQUIRE(QDir(config).removeRecursively());
+    CHECK_FALSE(guiFence(*f.gui->mainWindow()));
+    auto* runtime = f.gui->mainWindow()->findChild<TorrentRuntime*>(); REQUIRE(runtime);
+    CHECK(runtime->shutdownChecked());
+}
+
+TEST_CASE("GUI quit preparation rejects nested modal input before consuming its owner attempt", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    QDialog dialog(f.gui->mainWindow()); dialog.setWindowModality(Qt::ApplicationModal); dialog.show();
+    QCoreApplication::processEvents(); REQUIRE(QApplication::activeModalWidget() == &dialog);
+    CHECK_FALSE(guiFence(*f.gui->mainWindow())); CHECK(f.gui->mainWindow()->isEnabled());
+    dialog.close(); QCoreApplication::processEvents();
+    CHECK(guiFence(*f.gui->mainWindow()));
+}
+
+TEST_CASE("GUI preparation drains a future and fences direct file hashing and IPC", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    FileHasher dialog(window);
+    REQUIRE(dialog.findChild<HashThread*>());
+    QFile file(f.home.filePath("payload")); REQUIRE(file.open(QIODevice::WriteOnly));
+    REQUIRE(file.write("known bytes") == 11); file.close();
+    auto* input = dialog.findChild<QLineEdit*>("lineEdit_FILE"); REQUIRE(input);
+    input->setText(file.fileName());
+    std::atomic_bool entered{false}, released{false};
+    auto* watcher = new QFutureWatcher<void>(window);
+    auto releaseOnExit = dcpp::makeScopedFunctor([&] { released = true; watcher->waitForFinished(); });
+    bool delivered = false;
+    QObject::connect(watcher, &QFutureWatcher<void>::finished, window, [&] { delivered = true; });
+    watcher->setFuture(QtConcurrent::run([&] { entered = true; while(!released) QThread::msleep(1); }));
+    QElapsedTimer start; start.start();
+    while(!entered && start.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
+    REQUIRE(guiFence(*window)); release.get(); CHECK(watcher->isFinished());
+    REQUIRE(QMetaObject::invokeMethod(&dialog, "slotStart", Qt::DirectConnection));
+    CHECK_FALSE(dialog.findChild<HashThread*>()->isRunning());
+    window->parseInstanceLine("eiskaltdcpp-qt adc://127.0.0.1:1");
+    window->newHubFrame("adc://127.0.0.1:1", "");
+    CHECK(window->findChildren<HubFrame*>().isEmpty());
+    CHECK(window->widgetForRole(ArenaWidget::Torrent) == nullptr);
+    QCoreApplication::processEvents(); CHECK_FALSE(delivered);
+}
+
+TEST_CASE("Cancelled shell worker does not launch a child after cancellation", "[qt][mainwindow][gui-shell-fence]") {
+    QTemporaryDir root; REQUIRE(root.isValid());
+    const auto output = root.filePath("unexpected-child");
+    ShellCommandRunner worker("/bin/sh", {"-c", "touch \"" + output + "\""});
+    QObject::connect(&worker, &QThread::started, &worker, [&] { worker.cancel(); }, Qt::DirectConnection);
+    worker.start(); REQUIRE(worker.wait(2000));
+    CHECK_FALSE(QFile::exists(output));
+}
+
+TEST_CASE("GUI preparation cancels and joins its own running shell command", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    const auto ready = f.home.filePath("child-ready");
+    auto* worker = new ShellCommandRunner("/bin/sh",
+        {"-c", "printf ready > \"" + ready + "\"; exec sleep 10"}, f.gui->mainWindow());
+    auto cancelOnExit = dcpp::makeScopedFunctor([&] { worker->cancel(); worker->wait(); });
+    worker->start();
+    QElapsedTimer start; start.start();
+    while(!QFile::exists(ready) && start.elapsed() < 2000) QThread::msleep(1);
+    REQUIRE(QFile::exists(ready)); REQUIRE(worker->isRunning());
+    start.restart(); REQUIRE(guiFence(*f.gui->mainWindow()));
+    CHECK(worker->isFinished()); CHECK(start.elapsed() < 3000);
+}
+
+TEST_CASE("GUI preparation includes the separately owned notification service", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    auto* notifications = f.gui->notification(); REQUIRE(notifications);
+    std::atomic_bool entered{false}, released{false}, finished{false};
+    auto* worker = new AsyncRunner(notifications);
+    worker->setRunFunction([&] { entered = true; while(!released) QThread::msleep(1); finished = true; });
+    auto releaseOnExit = dcpp::makeScopedFunctor([&] { released = true; worker->wait(); });
+    worker->start();
+    QElapsedTimer start; start.start();
+    while(!entered && start.elapsed() < 1000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    bool delivered = false;
+    QMetaObject::invokeMethod(notifications, [&] { delivered = true; }, Qt::QueuedConnection);
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(80); released = true; });
+    REQUIRE(guiFence(*f.gui->mainWindow()));
+    CHECK(finished.load()); CHECK(worker->isFinished()); release.get();
+    QCoreApplication::processEvents(); CHECK_FALSE(delivered);
+}
+
+TEST_CASE("Prepared GUI retains deferred owners and rejects the legacy window-close path", "[qt][mainwindow][gui-quit-fence]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    QPointer<QObject> retained = new QObject(window);
+    retained->deleteLater();
+    REQUIRE(guiFence(*window));
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    CHECK(retained);
+    window->close();
+    CHECK(window->isVisible());
+    CHECK(f.gui->notification() != nullptr);
+    CHECK(guiFence(*window));
+}
 
 template<class T> T *child(QObject *parent, const char *name)
 {

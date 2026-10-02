@@ -111,6 +111,8 @@ friend class QtContext;
         Q_PROPERTY (QMenuBar* MenuBar READ menuBar);
 
         void beginExit();
+        // Retained GUI/Torrent preparation only, not core shutdown or installer consent.
+        [[nodiscard]] bool stopWorkersForQuit();
 
         /** */
         void newHubFrame(QString, QString);
