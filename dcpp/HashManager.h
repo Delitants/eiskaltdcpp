@@ -117,6 +117,9 @@ public:
     // Failure is sticky until this manager is replaced. Drain writers first
     // before using this result as one prerequisite for installer handoff.
     bool dataInsertionsSucceeded() const;
+    // Creation/load, accepted insertions and rebuilds, not an XML-save
+    // certificate. Drain all cache writers before installer consent.
+    bool dataStorageSucceeded() const;
 
     void shutdown() {
         stopForShutdown();
@@ -191,6 +194,7 @@ private:
         bool saveChecked();
 
         void rebuild();
+        bool rebuildChecked();
 
         bool checkTTH(const string& aFileName, int64_t aSize, uint32_t aTimeStamp, bool invalidate = true);
         const TTHValue* getTTH(const string& aFileName, bool markUsed = true);
@@ -200,6 +204,8 @@ private:
         int64_t getBlockSize(const TTHValue& root) const;
         bool isDirty() { return dirty; }
         bool dataInsertionsSucceeded() const { return !dataInsertionFailed; }
+        bool storageReady() const { return dataReady && !initializationFailed; }
+        bool rebuildsSucceeded() const { return !rebuildFailed; }
     private:
         /** Root -> tree mapping info, we assume there's only one tree for each root (a collision would mean we've broken tiger...) */
         struct TreeInfo {
@@ -229,15 +235,30 @@ private:
 
         friend class HashLoader;
 
-        unordered_map<string, vector<FileInfo>> fileIndex;
-        unordered_map<TTHValue, TreeInfo> treeIndex;
+        using FileIndex = unordered_map<string, vector<FileInfo>>;
+        using TreeIndex = unordered_map<TTHValue, TreeInfo>;
+        FileIndex fileIndex;
+        TreeIndex treeIndex;
 
         bool dirty;
         bool dataInsertionFailed = false;
         bool dataPositionValidated = false;
+        bool dataReady = false;
+        bool initializationFailed = false;
+        bool rebuildFailed = false;
+        string activeDataFile;
         DCContext& ctx_;
 
         void createDataFile(const string& name);
+        void writeIndex(const string& path, const TreeIndex& trees, const FileIndex& files, const string& dataFile);
+        struct RebuildState {
+            FileIndex files;
+            TreeIndex trees;
+            string dataFile;
+        };
+        RebuildState prepareRebuild();
+        void commitRebuild(RebuildState& state);
+        static bool isGenerationName(const string& name);
 
         bool loadTree(File& dataFile, const TreeInfo& ti, const TTHValue& root, TigerTree& tt);
         int64_t saveTree(File& dataFile, const TigerTree& tt, int64_t minimumPosition = sizeof(int64_t));

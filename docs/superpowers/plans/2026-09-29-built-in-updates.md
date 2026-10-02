@@ -465,3 +465,56 @@ Coverage: Task 1 proves the otherwise unverified API path; Tasks 2-3 enforce rou
 This plan and its two execution amendments were approved. Execution remains
 native/inline; no further execution-mode confirmation is needed. Approval is
 not evidence of publication or replacement of the installed application.
+
+Hash creation/rebuild checkpoint (Task 5 remains in progress): construction now
+loads/selects the committed cache once; worker startup does not reload it or
+clear already-used mappings. Fresh data is staged, cursor/size checked and
+physically flushed before replacement. Truncated/indexed data is never silently
+recreated. Failed initialization denies new roots and checked index saves, while
+independently valid old leaves remain readable.
+
+Rebuild stages a unique data generation and complete flushed XML. One native
+same-filesystem XML replacement commits both offsets and data selection, then
+no-throw map/path swaps update memory. Generated caches use format v3 with a
+validated basename; legacy v2 remains readable/writable. Older clients ignore
+v3 rather than combining compacted offsets with legacy data. The original legacy
+data is retained as migration evidence. Superseded committed generations are
+optionally reclaimed after commit; interrupted unreferenced stages remain safe
+orphans. No shared-profile/multi-process or filesystem/power-loss guarantee.
+
+`dataStorageSucceeded()` covers initialization and accepted insertion/rebuild
+outcomes, NOT final XML persistence or whole-core shutdown. Rebuild failures are
+sticky for the manager lifetime, including after a successful retry. Corrupt
+retained leaves/missing retained roots refuse rebuild without dropping their
+saved mapping. Filesystem lookup refusals are checked rather than escaping the
+worker. All accepted producers/cache writers still must drain before the final
+owner combines this outcome with `saveIndexChecked()` and other required saves.
+No MainWindow/DCContext/Sparkle/normal-quit installer activation in this slice.
+
+Verification hold (2026-10-01): randomized QA exposed a shared test-path isolation
+bug that reached the real hash cache, queue and nickname cache. Development,
+commit and release validation were paused pending approved narrow recovery.
+Current files and a matching saved-profile candidate are preserved in private
+local QA evidence. Shared TestContext now reapplies owned path overrides; future
+suite launches must also isolate HOME/XDG defaults. That initial hold is a
+historical record, not a claim that the profile was preserved. Do not treat the
+preceding initial QA as release acceptance or an installed implementation.
+
+Recovery completed after explicit user approval: the exact four saved-copy
+files were restored with closed-app/hash guards and independent Merkle-root
+readback; preferences, favorites, DHT state and installed executable hashes
+are unchanged. The approved queue/nickname copies are empty. The incident
+history remains recorded. A shared-path regression uses only an owned decoy
+directory and checks ownership before cache construction; removing the helper
+reset reproduces the failure without reaching a real profile. All resumed
+acceptance runs use fresh isolated HOME/XDG/TMP roots in addition to fixture
+overrides. No installation, release or whole-core acceptance is implied.
+
+Final bounded checkpoint validation after recovery: focused90/1301 and all20
+randomized seeds pass; full DC-only core964/148414 passes; registered CTest16/16
+passes serially; exact accepted selected-recheck provider Torrent-enabled Qt
+passes548 cases/28563 assertions with8 explicit opt-in live-GOST skips. Both
+targets rebuilt-j2, suites serial, source/profile/executable hashes unchanged
+after resumed QA. Bounded inline author review completed; independent whole-
+updater review, mandatory remaining writers and aggregate normal-quit wiring
+are still required. Task5 remains IN PROGRESS with original BASE retained.

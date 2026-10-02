@@ -69,6 +69,9 @@ struct TestContext {
         overrides[Util::PATH_USER_CONFIG] = dirStr;
         overrides[Util::PATH_USER_LOCAL]  = dirStr;
         overrides[Util::PATH_DOWNLOADS]   = dirStr + "Downloads" + std::string(1, PATH_SEPARATOR);
+        // Other fixtures may restore initialized global paths after teardown.
+        // Always apply this fixture's overrides before constructing managers.
+        Util::uninitialize();
         Util::initialize(overrides);
 
         // Create minimal context (ResourceManager + SettingsManager + LogManager)

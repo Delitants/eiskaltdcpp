@@ -22,6 +22,7 @@
 #include "HashManager.h"
 
 #include <memory>
+#include <filesystem>
 
 #include "File.h"
 #include "LogManager.h"
@@ -218,8 +219,6 @@ void HashManager::startup() {
     if(!beginOperation()) return;
     ScopedFunctor([this] { finishOperation(); });
     hasher.start();
-    Lock l(cs);
-    store.load();
 }
 
 void HashManager::addTree(const TigerTree& tree) {
@@ -342,7 +341,8 @@ void HashManager::HashStore::addTree(const TigerTree& tt) {
         if(dataInsertionFailed)
             throw HashException(_("Hash data storage failed; restart before adding new hashes"));
         try {
-            File f(getDataFile(), File::READ | File::WRITE, File::OPEN);
+            if(!storageReady()) throw HashException(_("Hash data storage is unavailable"));
+            File f(activeDataFile, File::READ | File::WRITE, File::OPEN);
             int64_t index = saveTree(f, tt, dataPositionValidated ? sizeof(int64_t) : minimumDataPosition());
             treeIndex.emplace(tt.getRoot(), TreeInfo(tt.getFileSize(), index, tt.getBlockSize()));
             if(index != SMALL_TREE) dataPositionValidated = true;
@@ -447,7 +447,7 @@ bool HashManager::HashStore::getTree(const TTHValue& root, TigerTree& tt) {
     if (i == treeIndex.end())
         return false;
     try {
-        File f(getDataFile(), File::READ, File::OPEN);
+        File f(activeDataFile, File::READ, File::OPEN);
         return loadTree(f, i->second, root, tt);
     } catch (const Exception&) {
         return false;
@@ -496,65 +496,111 @@ const TTHValue* HashManager::HashStore::getTTH(const string& aFileName, bool mar
 }
 
 void HashManager::HashStore::rebuild() {
+    (void)rebuildChecked();
+}
+
+bool HashManager::HashStore::rebuildChecked() {
     try {
-        decltype(fileIndex) newFileIndex;
-        decltype(treeIndex) newTreeIndex;
-
-        for (auto& i: fileIndex) {
-            for (auto& j : i.second) {
-                if (!j.getUsed())
-                    continue;
-
-                auto k = treeIndex.find(j.getRoot());
-                if (k != treeIndex.end()) {
-                    newTreeIndex[j.getRoot()] = k->second;
-                }
-            }
-        }
-
-        auto tmpName = getDataFile() + ".tmp";
-        auto origName = getDataFile();
-
-        createDataFile(tmpName);
-
-        {
-            File in(origName, File::READ, File::OPEN);
-            File out(tmpName, File::READ | File::WRITE, File::OPEN);
-
-            for (auto i = newTreeIndex.begin(); i != newTreeIndex.end();) {
-                TigerTree tree;
-                if (loadTree(in, i->second, i->first, tree)) {
-                    i->second.setIndex(saveTree(out, tree));
-                    ++i;
-                } else {
-                    newTreeIndex.erase(i++);
-                }
-            }
-        }
-
-        for (auto& i: fileIndex) {
-            auto fi = newFileIndex.emplace(i.first, vector<FileInfo>()).first;
-
-            for (auto& j: i.second) {
-                if (newTreeIndex.find(j.getRoot()) != newTreeIndex.end()) {
-                    fi->second.push_back(j);
-                }
-            }
-
-            if (fi->second.empty())
-                newFileIndex.erase(fi);
-        }
-
-        File::deleteFile(origName);
-        File::renameFile(tmpName, origName);
-        treeIndex = newTreeIndex;
-        fileIndex = newFileIndex;
-        dataPositionValidated = false;
-        dirty = true;
-        save();
+        if(!storageReady() || dataInsertionFailed) throw HashException(_("Hash data storage is unavailable"));
+        auto state = prepareRebuild();
+        commitRebuild(state);
+        // Reclamation is optional after commit, never installer consent. Keep
+        // the legacy file as migration evidence, but do not accumulate old
+        // committed generations. Interrupted, unreferenced stages are retained.
+        try {
+            if(isGenerationName(Util::getFileName(state.dataFile))) File::deleteFile(state.dataFile);
+        } catch(...) { }
+        return true;
     } catch (const Exception& e) {
+        rebuildFailed = true;
         ctx().getLogManager()->message(str(F_("Hashing failed: %1%") % e.getError()));
+        return false;
+    } catch(const std::filesystem::filesystem_error& e) {
+        rebuildFailed = true;
+        ctx().getLogManager()->message(str(F_("Hashing failed: %1%") % e.what()));
+        return false;
+    } catch(...) {
+        rebuildFailed = true;
+        throw;
     }
+}
+
+bool HashManager::HashStore::isGenerationName(const string& name) {
+    const string prefix = "HashData.rebuild.", suffix = ".dat";
+    if(name.size() <= prefix.size() + suffix.size() || name.size() > prefix.size() + 20 + suffix.size()
+        || name.compare(0, prefix.size(), prefix) != 0
+        || name.compare(name.size() - suffix.size(), suffix.size(), suffix) != 0) return false;
+    return all_of(name.begin() + prefix.size(), name.end() - suffix.size(), [](char c) { return c >= '0' && c <= '9'; });
+}
+
+HashManager::HashStore::RebuildState HashManager::HashStore::prepareRebuild() {
+    RebuildState state;
+    auto& newTreeIndex = state.trees;
+    auto& newFileIndex = state.files;
+
+    for (auto& i: fileIndex) {
+        for (auto& j : i.second) {
+            if (!j.getUsed())
+                continue;
+
+            auto k = treeIndex.find(j.getRoot());
+            if(k == treeIndex.end()) throw HashException(_("Hash data storage is unavailable"));
+            newTreeIndex[j.getRoot()] = k->second;
+        }
+    }
+
+    // A generation is never the currently referenced data. The flushed
+    // XML below is the only commit point; an interrupted stage is an orphan.
+    do {
+        const uint64_t id = (uint64_t(Util::rand()) << 32) | Util::rand();
+        state.dataFile = Util::getPath(Util::PATH_USER_CONFIG) + "HashData.rebuild." + Util::toString(id) + ".dat";
+    } while(std::filesystem::symlink_status(std::filesystem::u8path(state.dataFile)).type() != std::filesystem::file_type::not_found);
+    bool prepared = false;
+    ScopedFunctor([&] { if(!prepared) File::deleteFile(state.dataFile); });
+    createDataFile(state.dataFile);
+
+    {
+        File in(activeDataFile, File::READ, File::OPEN);
+        File out(state.dataFile, File::READ | File::WRITE, File::OPEN);
+
+        for (auto i = newTreeIndex.begin(); i != newTreeIndex.end();) {
+            TigerTree tree;
+            if (loadTree(in, i->second, i->first, tree)) {
+                i->second.setIndex(saveTree(out, tree));
+                ++i;
+            } else {
+                throw HashException(_("Hash data storage is unavailable"));
+            }
+        }
+    }
+
+    for (auto& i: fileIndex) {
+        auto fi = newFileIndex.emplace(i.first, vector<FileInfo>()).first;
+
+        for (auto& j: i.second) {
+            if (j.getUsed() && newTreeIndex.find(j.getRoot()) != newTreeIndex.end()) {
+                fi->second.push_back(j);
+            }
+        }
+
+        if (fi->second.empty())
+            newFileIndex.erase(fi);
+    }
+
+    writeIndex(getIndexFile() + ".tmp", state.trees, state.files, state.dataFile);
+    prepared = true;
+    return state;
+}
+
+void HashManager::HashStore::commitRebuild(RebuildState& state) {
+    File::replaceFile(getIndexFile() + ".tmp", getIndexFile());
+    // No allocation or throwing I/O after the commit point. Optional old-data
+    // reclamation is done by the caller, outside the committed state switch.
+    treeIndex.swap(state.trees);
+    fileIndex.swap(state.files);
+    activeDataFile.swap(state.dataFile);
+    dataPositionValidated = false;
+    dirty = false;
 }
 
 bool HashManager::saveIndexChecked() {
@@ -567,58 +613,21 @@ bool HashManager::dataInsertionsSucceeded() const {
     return store.dataInsertionsSucceeded();
 }
 
+bool HashManager::dataStorageSucceeded() const {
+    Lock l(cs);
+    return store.storageReady() && store.dataInsertionsSucceeded() && store.rebuildsSucceeded();
+}
+
 void HashManager::HashStore::save() {
     (void)saveChecked();
 }
 
 bool HashManager::HashStore::saveChecked() {
+    if(!storageReady()) return false;
     if (dirty) {
         try {
-            File ff(getIndexFile() + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
-            BufferedOutputStream<false> f(&ff);
-
-            string tmp;
-            string b32tmp;
-
-            f.write(SimpleXML::utf8Header);
-            f.write(LIT("<HashStore Version=\"" HASH_FILE_VERSION_STRING "\">\r\n"));
-
-            f.write(LIT("\t<Trees>\r\n"));
-
-            for (auto& i: treeIndex) {
-                const TreeInfo& ti = i.second;
-                f.write(LIT("\t\t<Hash Type=\"TTH\" Index=\""));
-                f.write(Util::toString(ti.getIndex()));
-                f.write(LIT("\" BlockSize=\""));
-                f.write(Util::toString(ti.getBlockSize()));
-                f.write(LIT("\" Size=\""));
-                f.write(Util::toString(ti.getSize()));
-                f.write(LIT("\" Root=\""));
-                b32tmp.clear();
-                f.write(i.first.toBase32(b32tmp));
-                f.write(LIT("\"/>\r\n"));
-            }
-
-            f.write(LIT("\t</Trees>\r\n\t<Files>\r\n"));
-
-            for (auto& i: fileIndex) {
-                const string& dir = i.first;
-                for (auto& fi: i.second) {
-                    f.write(LIT("\t\t<File Name=\""));
-                    f.write(SimpleXML::escape(dir + fi.getFileName(), tmp, true));
-                    f.write(LIT("\" TimeStamp=\""));
-                    f.write(Util::toString(fi.getTimeStamp()));
-                    f.write(LIT("\" Root=\""));
-                    b32tmp.clear();
-                    f.write(fi.getRoot().toBase32(b32tmp));
-                    f.write(LIT("\"/>\r\n"));
-                }
-            }
-            f.write(LIT("\t</Files>\r\n</HashStore>"));
-            f.flush();
-            ff.close();
+            writeIndex(getIndexFile() + ".tmp", treeIndex, fileIndex, activeDataFile);
             File::replaceFile(getIndexFile() + ".tmp", getIndexFile());
-
             dirty = false;
         } catch (const FileException& e) {
             ctx().getLogManager()->message(str(F_("Error saving hash data: %1%") % e.getError()));
@@ -626,6 +635,56 @@ bool HashManager::HashStore::saveChecked() {
         }
     }
     return true;
+}
+
+void HashManager::HashStore::writeIndex(const string& path, const TreeIndex& trees, const FileIndex& files, const string& dataFile) {
+    File ff(path, File::WRITE, File::CREATE | File::TRUNCATE);
+    BufferedOutputStream<false> f(&ff);
+
+    string tmp;
+    string b32tmp;
+
+    f.write(SimpleXML::utf8Header);
+    if(dataFile == getDataFile()) {
+        f.write(LIT("<HashStore Version=\"" HASH_FILE_VERSION_STRING "\">\r\n"));
+    } else {
+        f.write("<HashStore Version=\"3\" DataFile=\"" + Util::getFileName(dataFile) + "\">\r\n");
+    }
+
+    f.write(LIT("\t<Trees>\r\n"));
+
+    for (auto& i: trees) {
+        const TreeInfo& ti = i.second;
+        f.write(LIT("\t\t<Hash Type=\"TTH\" Index=\""));
+        f.write(Util::toString(ti.getIndex()));
+        f.write(LIT("\" BlockSize=\""));
+        f.write(Util::toString(ti.getBlockSize()));
+        f.write(LIT("\" Size=\""));
+        f.write(Util::toString(ti.getSize()));
+        f.write(LIT("\" Root=\""));
+        b32tmp.clear();
+        f.write(i.first.toBase32(b32tmp));
+        f.write(LIT("\"/>\r\n"));
+    }
+
+    f.write(LIT("\t</Trees>\r\n\t<Files>\r\n"));
+
+    for (auto& i: files) {
+        const string& dir = i.first;
+        for (auto& fi: i.second) {
+            f.write(LIT("\t\t<File Name=\""));
+            f.write(SimpleXML::escape(dir + fi.getFileName(), tmp, true));
+            f.write(LIT("\" TimeStamp=\""));
+            f.write(Util::toString(fi.getTimeStamp()));
+            f.write(LIT("\" Root=\""));
+            b32tmp.clear();
+            f.write(fi.getRoot().toBase32(b32tmp));
+            f.write(LIT("\"/>\r\n"));
+        }
+    }
+    f.write(LIT("\t</Files>\r\n</HashStore>"));
+    f.flush();
+    ff.close();
 }
 
 string HashManager::HashStore::getIndexFile() { return Util::getPath(Util::PATH_USER_CONFIG) + "HashIndex.xml"; }
@@ -643,6 +702,12 @@ public:
         inHashStore(false)
     { }
     void startTag(const string& name, StringPairList& attribs, bool simple);
+    void endTag(const string& name) override {
+        if(name == "Trees") inTrees = false;
+        if(name == "Files") inFiles = false;
+        if(name == "HashStore") { inHashStore = false; complete = true; }
+    }
+    bool valid() const { return seenRoot && complete; }
 
 private:
     HashManager::HashStore& store;
@@ -655,18 +720,44 @@ private:
     bool inTrees;
     bool inFiles;
     bool inHashStore;
+    bool seenRoot = false;
+    bool complete = false;
 };
 
 void HashManager::HashStore::load() {
+    if(initializationFailed) return;
     dataPositionValidated = false;
+    dataReady = false;
+    treeIndex.clear(); fileIndex.clear();
+    activeDataFile = getDataFile();
     try {
         Util::migrate(getIndexFile());
-
-        HashLoader l(*this);
-        File f(getIndexFile(), File::READ, File::OPEN);
-        SimpleXMLReader(&l).parse(f);
-    } catch (const Exception&) {
-        // ...
+        const bool indexed = std::filesystem::exists(std::filesystem::u8path(getIndexFile()));
+        if(indexed) {
+            HashLoader l(*this);
+            File f(getIndexFile(), File::READ, File::OPEN);
+            SimpleXMLReader(&l).parse(f);
+            if(!l.valid()) throw HashException(_("Hash data storage is unavailable"));
+        } else if(!std::filesystem::exists(std::filesystem::u8path(activeDataFile))) {
+            createDataFile(activeDataFile + ".tmp");
+            File::replaceFile(activeDataFile + ".tmp", activeDataFile);
+        }
+        if(activeDataFile != getDataFile() && !std::filesystem::is_regular_file(std::filesystem::symlink_status(std::filesystem::u8path(activeDataFile))))
+            throw HashException(_("Hash data storage is unavailable"));
+        File f(activeDataFile, File::READ, File::OPEN);
+        int64_t position = 0; size_t length = sizeof(position);
+        if(f.read(&position, length) != sizeof(position) || position < minimumDataPosition() || position > f.getSize())
+            throw HashException(_("Hash data storage is unavailable"));
+        dataReady = true;
+    } catch (const Exception& e) {
+        initializationFailed = true;
+        ctx().getLogManager()->message(str(F_("Error creating hash data file: %1%") % e.getError()));
+    } catch(const std::filesystem::filesystem_error& e) {
+        initializationFailed = true;
+        ctx().getLogManager()->message(str(F_("Error creating hash data file: %1%") % e.what()));
+    } catch(...) {
+        initializationFailed = true;
+        throw;
     }
 }
 
@@ -688,13 +779,24 @@ static const string sTimeStamp = "TimeStamp";
 static const string sRoot = "Root";
 
 void HashLoader::startTag(const string& name, StringPairList& attribs, bool simple) {
-    if (!inHashStore && name == sHashStore) {
+    if (name == sHashStore) {
+        if(seenRoot) throw HashException(_("Hash data storage is unavailable"));
+        seenRoot = true;
+        complete = simple;
         version = Util::toInt(getAttrib(attribs, sVersion, 0));
         if (version == 0) {
             version = Util::toInt(getAttrib(attribs, sversion, 0));
         }
+        if(version != 2 && version != 3) throw HashException(_("Hash data storage is unavailable"));
+        const auto& dataFile = getAttrib(attribs, "DataFile", 0);
+        if(version == 3) {
+            if(!HashManager::HashStore::isGenerationName(dataFile)) throw HashException(_("Hash data storage is unavailable"));
+            store.activeDataFile = Util::getPath(Util::PATH_USER_CONFIG) + dataFile;
+        } else if(!dataFile.empty()) {
+            throw HashException(_("Hash data storage is unavailable"));
+        }
         inHashStore = !simple;
-    } else if (inHashStore && version == 2) {
+    } else if (inHashStore && (version == 2 || version == 3)) {
         if (inTrees && name == sHash) {
             const string& type = getAttrib(attribs, sType, 0);
             int64_t index = Util::toInt64(getAttrib(attribs, sIndex, 1));
@@ -728,13 +830,7 @@ HashManager::HashStore::HashStore(DCContext& ctx) :
 
     Util::migrate(getDataFile());
 
-    if (File::getSize(getDataFile()) <= static_cast<int64_t> (sizeof(int64_t))) {
-        try {
-            createDataFile( getDataFile());
-        } catch (const FileException&) {
-            // ?
-        }
-    }
+    load();
 }
 
 /**
@@ -744,21 +840,18 @@ HashManager::HashStore::HashStore(DCContext& ctx) :
  * in the file counting from the start (so that file can be grown in chunks).
  * We start with a 1 mb file, and then grow it as needed to avoid fragmentation.
  * To find data inside the file, use the corresponding index file.
- * Since file is never deleted, space will eventually be wasted, so a rebuild
- * should occasionally be done.
+ * Rebuild compacts into a fresh generation selected by one XML replacement.
  */
 void HashManager::HashStore::createDataFile(const string& name) {
-    try {
-        File dat(name, File::WRITE, File::CREATE | File::TRUNCATE);
-        dat.setPos(1024 * 1024);
-        dat.setEOF();
-        dat.setPos(0);
-        int64_t start = sizeof(start);
-        dat.write(&start, sizeof(start));
-
-    } catch (const FileException& e) {
-        ctx().getLogManager()->message(str(F_("Error creating hash data file: %1%") % e.getError()));
-    }
+    File dat(name, File::WRITE, File::CREATE | File::TRUNCATE);
+    dat.setPos(1024 * 1024);
+    dat.setEOF();
+    dat.setPos(0);
+    int64_t start = sizeof(start);
+    if(dat.getPos() != 0 || dat.getSize() != 1024 * 1024 || dat.write(&start, sizeof(start)) != sizeof(start))
+        throw HashException(_("Hash data storage is unavailable"));
+    dat.flush();
+    dat.close();
 }
 
 void HashManager::Hasher::hashFile(const string& fileName, int64_t size) {
