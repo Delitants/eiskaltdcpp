@@ -677,8 +677,17 @@ between chunks, retains its worker until joined, and rejects terminal dialog
 actions. Shell cancellation is atomic and does not launch a pre-cancelled child.
 Qt future completion events are fenced separately from queued signal delivery.
 
+Retained hub lifetime preparation now saves each hub's layout intent, removes
+core listeners, terminally stops and releases its registered client with core
+dependencies alive, and drains hub-command workers even when they belong to a
+separate chat widget. GUI preparation includes inactive and detached hub tabs
+before final settings sync. Prepared frames remain disabled and owned; queued
+work, deletion, reconnect, redirect and manual command paths stay fenced. Hub
+registration is delivered on the GUI thread rather than mutating its registry
+from a socket worker. This receipt is not physical core socket-drain proof.
+
 This GUI preparation API is not connected to normal quit yet and does not
-release hub registry clients or authorize installation. Checked application
+authorize installation. Checked application
 aggregation, full active-transfer shutdown/failure-retention tests, native
 installer acceptance/recovery and replacement of the macOS emergency exit
 remain pending. Keep the existing exit path and fail-closed installer unchanged

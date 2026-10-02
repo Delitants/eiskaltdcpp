@@ -9,6 +9,8 @@
 #include "ArenaWidgetManager.h"
 #include "GlobalTimer.h"
 #include "HubFrame.h"
+#include "HubManager.h"
+#include "ViewLayout.h"
 #include "MainWindow.h"
 #include "QtContext.h"
 #include "SettingsConnection.h"
@@ -80,6 +82,10 @@
 namespace {
 template<class T> bool guiFence(T& owner) {
     if constexpr(requires { owner.stopWorkersForQuit(); }) return owner.stopWorkersForQuit();
+    else return false;
+}
+template<class T> bool hubFence(T& owner) {
+    if constexpr(requires { owner.prepareForQuit(); }) return owner.prepareForQuit();
     else return false;
 }
 bool waitFor(const std::function<bool()> &ready)
@@ -186,6 +192,135 @@ struct IsolatedMainWindow {
     }
 };
 
+TEST_CASE("Hub registration is delivered on the GUI owner thread", "[qt][hub-quit-fence]") {
+    IsolatedMainWindow f;
+    QTcpServer server;
+    REQUIRE(server.listen(QHostAddress::LocalHost));
+    std::atomic_bool registered{false}, ownerThread{false};
+    QObject::connect(f.gui->hubManager(), &HubManager::hubRegistered, f.gui->mainWindow(),
+        [&](QObject*) {
+            ownerThread = QThread::currentThread() == qApp->thread();
+            registered = true;
+        }, Qt::DirectConnection);
+    f.gui->mainWindow()->newHubFrame(QString("adc://127.0.0.1:%1").arg(server.serverPort()), "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
+    REQUIRE(waitFor([&] { return registered.load(); }));
+    CHECK(ownerThread.load());
+}
+
+TEST_CASE("GUI quit preparation retires connected and inactive hub clients but retains tabs", "[qt][mainwindow][hub-quit-fence]") {
+    IsolatedMainWindow f;
+    QTcpServer first, second;
+    REQUIRE(first.listen(QHostAddress::LocalHost));
+    REQUIRE(second.listen(QHostAddress::LocalHost));
+    const QString one = QString("adc://127.0.0.1:%1").arg(first.serverPort());
+    const QString two = QString("dchub://127.0.0.1:%1").arg(second.serverPort());
+    f.gui->mainWindow()->newHubFrame(one, "");
+    f.gui->mainWindow()->newHubFrame(two, "");
+    QList<QPointer<HubFrame>> hubs;
+    for(auto* hub : f.gui->mainWindow()->findChildren<HubFrame*>()) hubs.append(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] {
+        for(auto hub : hubs) if(hub) {
+            hub->close();
+            if(hub && !hub->parent()) delete hub.data();
+        }
+    });
+    REQUIRE(hubs.size() == 2);
+    REQUIRE(waitFor([&] { return f.gui->hubManager()->getHubs().size() == 2; }));
+    REQUIRE(f.core->getClientManager()->getClients().size() == 2);
+    // Registered tabs can be detached from the window's QObject subtree.
+    hubs.front()->setParent(nullptr);
+    bool late = false;
+    QMetaObject::invokeMethod(hubs.front(), [&] { late = true; }, Qt::QueuedConnection);
+    REQUIRE(guiFence(*f.gui->mainWindow()));
+    CHECK(f.core->getClientManager()->getClients().empty());
+    CHECK(f.gui->hubManager()->getHubs().isEmpty());
+    CHECK(f.gui->hubManager()->activeHub() == nullptr);
+    for(auto hub : hubs) { REQUIRE(hub); CHECK_FALSE(hub->isEnabled()); }
+    CHECK_FALSE(f.gui->settings()->getStr(view_layout::hubStateKey(one)).isEmpty());
+    CHECK_FALSE(f.gui->settings()->getStr(view_layout::hubStateKey(two)).isEmpty());
+    QCoreApplication::processEvents();
+    CHECK_FALSE(late);
+    CHECK(guiFence(*f.gui->mainWindow()));
+}
+
+TEST_CASE("Retained hub preparation rejects later reconnect redirect command and deletion", "[qt][hub-quit-fence]") {
+    IsolatedMainWindow f;
+    f.gui->mainWindow()->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
+    CHECK_FALSE(std::async(std::launch::async, [&] { return hubFence(*hub); }).get());
+    REQUIRE(hubFence(*hub));
+    CHECK(f.core->getClientManager()->getClients().empty());
+    bool late = false, childLate = false;
+    auto* child = new QObject(hub);
+    QMetaObject::invokeMethod(child, [&] { childLate = true; }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(hub, [&] { late = true; }, Qt::QueuedConnection);
+    hub->deleteLater();
+    hub->reconnect();
+    hub->createPMWindow(QString("unavailable"));
+    hub->addPM("unavailable", "late message");
+    CHECK_FALSE(hub->hasCID(dcpp::CID(), "unavailable"));
+    QShowEvent show;
+    QCoreApplication::sendEvent(hub, &show);
+    CHECK(f.gui->hubManager()->activeHub() == nullptr);
+    REQUIRE(QMetaObject::invokeMethod(hub, "follow", Qt::DirectConnection,
+                                    Q_ARG(QString, "adc://127.0.0.1:2")));
+    CHECK(hub->parseForCmd("/rebuild", hub));
+    CHECK_FALSE(hub->close());
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCoreApplication::processEvents();
+    REQUIRE(hub);
+    CHECK_FALSE(late);
+    CHECK_FALSE(childLate);
+    CHECK(f.core->getClientManager()->getClients().empty());
+    CHECK(hubFence(*hub));
+}
+
+TEST_CASE("Hub preparation drains shell work owned by a separate chat widget", "[qt][hub-quit-fence][hub-shell-fence]") {
+    IsolatedMainWindow f;
+    f.gui->mainWindow()->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>();
+    REQUIRE(hub);
+    QWidget chat(f.gui->mainWindow());
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
+    const QString ready = f.home.filePath("shell-ready");
+    QFile script(f.home.filePath("chat-command"));
+    REQUIRE(script.open(QIODevice::WriteOnly));
+    script.write(("#!/bin/sh\ntouch '" + ready + "'\nwhile :; do sleep 0.1; done\n").toUtf8());
+    script.close();
+    REQUIRE(script.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner));
+    REQUIRE(hub->parseForCmd("/sh " + script.fileName(), &chat));
+    auto* worker = chat.findChild<ShellCommandRunner*>();
+    REQUIRE(worker);
+    auto drain = dcpp::makeScopedFunctor([&] { worker->cancel(); worker->wait(); });
+    REQUIRE(waitFor([&] { return QFile::exists(ready); }));
+    REQUIRE(worker->isRunning());
+    REQUIRE(hubFence(*hub));
+    CHECK_FALSE(worker->isRunning());
+    CHECK(worker->wait(0));
+}
+
+TEST_CASE("Hub modal refusal does not consume later retained preparation", "[qt][hub-quit-fence]") {
+    IsolatedMainWindow f;
+    f.gui->mainWindow()->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
+    QDialog modal(hub);
+    modal.setModal(true); modal.show();
+    REQUIRE(waitFor([&] { return QApplication::activeModalWidget() == &modal; }));
+    CHECK_FALSE(hubFence(*hub));
+    CHECK(hub->isEnabled());
+    CHECK(f.core->getClientManager()->getClients().size() == 1);
+    modal.hide();
+    REQUIRE(hubFence(*hub));
+    CHECK(f.core->getClientManager()->getClients().empty());
+}
+
 TEST_CASE("GUI quit preparation joins retained workers without pumping pending input", "[qt][mainwindow][gui-quit-fence]") {
     IsolatedMainWindow f;
     auto* window = f.gui->mainWindow();
@@ -243,12 +378,20 @@ TEST_CASE("File hasher cooperates with interruption before touching its source",
 
 TEST_CASE("GUI settings sync refusal remains sticky while retaining the core", "[qt][mainwindow][gui-quit-fence]") {
     IsolatedMainWindow f;
+    f.gui->mainWindow()->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = f.gui->mainWindow()->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if(hub) hub->close(); });
     REQUIRE(f.gui->settings()->saveChecked());
     const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
     REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config));
     CHECK_FALSE(guiFence(*f.gui->mainWindow()));
     CHECK_FALSE(f.gui->mainWindow()->isEnabled());
     CHECK(f.core->getHashManager() != nullptr);
+    CHECK(f.core->getClientManager()->getClients().empty());
+    REQUIRE(hub);
+    CHECK_FALSE(hub->isEnabled());
+    CHECK_FALSE(f.gui->settings()->getStr(view_layout::hubStateKey("adc://127.0.0.1:1")).isEmpty());
     REQUIRE(QDir(config).removeRecursively());
     CHECK_FALSE(guiFence(*f.gui->mainWindow()));
     auto* runtime = f.gui->mainWindow()->findChild<TorrentRuntime*>(); REQUIRE(runtime);

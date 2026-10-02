@@ -34,6 +34,8 @@
 #include "MainWindow.h"
 #include "MenuIconHelper.h"
 #include "GlobalTimer.h"
+#include "RetainedGuiInputFence.h"
+#include <QApplication>
 
 #include "UserListModel.h"
 #include "EmoticonFactory.h"
@@ -397,6 +399,8 @@ public:
     bool hasHighlightMessages;
     bool drawLine;
     bool persistUserListLayoutChanges;
+    bool quitPrepared = false;
+    bool quitPreparationSucceeded = false;
     QString userListLayoutKey;
 
     QStringList status_msg_history;
@@ -1421,6 +1425,54 @@ HubFrame::~HubFrame(){
     delete d;
 }
 
+bool HubFrame::prepareForQuit() {
+    if (QThread::currentThread() != thread()) return false;
+    Q_D(HubFrame);
+    if (d->quitPrepared) return d->quitPreparationSucceeded;
+    auto* ctx = qtCtx();
+    if (!ctx || !ctx->settings() || !ctx->hubManager() ||
+        !ctx->dcCtx().getClientManager() || !ctx->dcCtx().getFavoriteManager() ||
+        QApplication::activeModalWidget() || QApplication::activePopupWidget()) return false;
+
+    d->quitPrepared = true;
+    qApp->installEventFilter(new RetainedGuiInputFence({this}, this));
+    bool ready = true;
+    try { save(); } catch (...) { ready = false; }
+    d->persistUserListLayoutChanges = false;
+    setEnabled(false);
+    for (auto* action : findChildren<QAction*>()) {
+        action->setEnabled(false);
+        action->blockSignals(true);
+    }
+    QSet<QThread*> workers;
+    for (auto* worker : findChildren<QThread*>()) workers.insert(worker);
+    // A /sh command can belong to a PM widget rather than this hub subtree.
+    for (auto* command : d->shell_list) workers.insert(command);
+    for (auto* worker : workers) {
+        if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
+        worker->requestInterruption();
+        worker->quit();
+        ready = worker->wait() && ready;
+    }
+    try {
+        ctx->dcCtx().getFavoriteManager()->removeListener(this);
+        if (d->client) {
+            auto* client = d->client;
+            // Listener removal is a barrier before GUI/core ownership changes.
+            client->removeListener(this);
+            const QString url = _q(client->getHubUrl());
+            client->stopForShutdown();
+            ctx->hubManager()->unregisterHubUrl(url);
+            d->client = nullptr;
+            ctx->dcCtx().getClientManager()->putClient(client);
+        }
+        if (ctx->hubManager()->activeHub() == this) ctx->hubManager()->setActiveHub(nullptr);
+    } catch (...) { ready = false; }
+    // PM tabs, core context and this disabled frame remain owned by the caller.
+    d->quitPreparationSucceeded = ready;
+    return ready;
+}
+
 bool HubFrame::eventFilter(QObject *obj, QEvent *e){
     Q_D(HubFrame);
 
@@ -1681,6 +1733,7 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
 
 void HubFrame::closeEvent(QCloseEvent *e){
     Q_D(HubFrame);
+    if (d->quitPrepared) { e->ignore(); return; }
 
     if (emojiDialog_ && emojiDialog_->isVisible())
         emojiDialog_->close();
@@ -1744,6 +1797,7 @@ void HubFrame::closeEvent(QCloseEvent *e){
 
 void HubFrame::showEvent(QShowEvent *e){
     Q_D(HubFrame);
+    if (d->quitPrepared) { e->accept(); return; }
 
     e->accept();
 
@@ -1923,7 +1977,12 @@ void HubFrame::init(){
     frame_SMILES->setVisible(false);
 
     connect(this, &HubFrame::coreConnecting, this, &HubFrame::addStatus, Qt::QueuedConnection);
-    connect(this, &HubFrame::coreConnected, this, &HubFrame::addStatus, Qt::QueuedConnection);
+    connect(this, &HubFrame::coreConnected, this, [this](const QString& status) {
+        Q_D(HubFrame);
+        if (d->quitPrepared || !d->client) return;
+        qtCtx()->hubManager()->registerHubUrl(_q(d->client->getHubUrl()), this);
+        addStatus(status);
+    }, Qt::QueuedConnection);
     connect(this, &HubFrame::coreUserUpdated, this, &HubFrame::userUpdated, Qt::QueuedConnection);
     connect(this, &HubFrame::coreUserRemoved, this, &HubFrame::userRemoved, Qt::QueuedConnection);
     connect(this, &HubFrame::coreStatusMsg, this, &HubFrame::addStatus, Qt::QueuedConnection);
@@ -2126,7 +2185,7 @@ void HubFrame::load(){
     reloadSomeSettings();
 
     QTimer::singleShot(0, this, [d]() {
-        d->persistUserListLayoutChanges = true;
+        if (!d->quitPrepared) d->persistUserListLayoutChanges = true;
     });
 }
 
@@ -2324,6 +2383,7 @@ void HubFrame::sendMsg(const QString &msg){
 
 void HubFrame::sendChat(QString msg, bool thirdPerson, bool stripNewLines){
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
 
     if (!d->client || !d->client->isConnected() || msg.isEmpty() || msg.isNull())
         return;
@@ -2364,6 +2424,7 @@ bool HubFrame::parseForCmd(QString line, QWidget *wg){
     HubFrame *fr = qobject_cast<HubFrame *>(wg);
     PMWindow *pm = qobject_cast<PMWindow *>(wg);
     Q_D(HubFrame);
+    if (d->quitPrepared) return true;
 
     QStringList list = line.split(" ", Qt::SkipEmptyParts);
 
@@ -2884,6 +2945,7 @@ void HubFrame::addUserData(const QString &nick){
 
 void HubFrame::addPM(QString cid, QString output, bool keepfocus, QString nick){
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
     bool redirectToMainChat = qtCtx()->settings()->getBool("hubframe/redirect-pm-to-main-chat", true);
 
     if (!d->pm.contains(cid)){
@@ -3062,6 +3124,8 @@ void HubFrame::getParams(HubFrame::VarMap &map, const Identity &id){
 }
 
 void HubFrame::browseUserFiles(const QString& id, bool match){
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     string message;
     string cid = id.toStdString();
 
@@ -3070,7 +3134,6 @@ void HubFrame::browseUserFiles(const QString& id, bool match){
             UserPtr user = qtCtx()->dcCtx().getClientManager()->findUser(CID(cid));
 
             if (user){
-                Q_D(HubFrame);
 
                 if (user == qtCtx()->dcCtx().getClientManager()->getMe())
                     qtCtx()->mainWindow()->browseOwnFiles();
@@ -3093,6 +3156,7 @@ void HubFrame::browseUserFiles(const QString& id, bool match){
 
 void HubFrame::grantSlot(const QString& id){
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
 
     QString message = tr("User not found");
 
@@ -3109,6 +3173,8 @@ void HubFrame::grantSlot(const QString& id){
 }
 
 void HubFrame::addUserToFav(const QString& id){
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     if (id.isEmpty())
         return;
 
@@ -3123,6 +3189,8 @@ void HubFrame::addUserToFav(const QString& id){
 }
 
 void HubFrame::delUserFromFav(const QString& id){
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     if (id.isEmpty())
         return;
 
@@ -3137,13 +3205,14 @@ void HubFrame::delUserFromFav(const QString& id){
 }
 
 void HubFrame::changeFavStatus(const QString &id) {
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     if (id.isEmpty())
         return;
 
     UserPtr user = qtCtx()->dcCtx().getClientManager()->findUser(CID(id.toStdString()));
 
     if (user) {
-        Q_D(HubFrame);
 
         UserListItem *item = nullptr;
 
@@ -3167,6 +3236,8 @@ void HubFrame::changeFavStatus(const QString &id) {
 }
 
 void HubFrame::delUserFromQueue(const QString& id){
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     if (!id.isEmpty()){
         UserPtr user = qtCtx()->dcCtx().getClientManager()->findUser(CID(id.toStdString()));
 
@@ -3177,6 +3248,7 @@ void HubFrame::delUserFromQueue(const QString& id){
 
 void HubFrame::addAsFavorite(){
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
     FavoriteHubEntry *existingHub = qtCtx()->dcCtx().getFavoriteManager()->getFavoriteHubEntry(d->client->getHubUrl());
 
     if (!existingHub){
@@ -3403,6 +3475,7 @@ void HubFrame::newPm(const VarMap &map){
 
 void HubFrame::createPMWindow(const QString &nick){
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
     createPMWindow(CID(_tq(d->model->CIDforNick(nick, _q(d->client->getHubUrl())))));
 }
 
@@ -3412,6 +3485,7 @@ void HubFrame::createPMWindow(const dcpp::CID &cid){
 
 bool HubFrame::hasCID(const dcpp::CID &cid, const QString &nick){
     Q_D(HubFrame);
+    if (d->quitPrepared) return false;
     return (d->model->CIDforNick(nick, _q(d->client->getHubUrl())) == _q(cid.toBase32()));
 }
 
@@ -3463,6 +3537,7 @@ void HubFrame::pmUserEvent(const QString &cid, const QString &e){
 }
 
 void HubFrame::getPassword(){
+    if (d_func()->quitPrepared) return;
     Q_D(HubFrame);
 
     MainWindow *MW = qtCtx()->mainWindow();
@@ -3490,6 +3565,8 @@ void HubFrame::getPassword(){
 }
 
 void HubFrame::follow(QString redirect){
+    Q_D(HubFrame);
+    if (d->quitPrepared || !d->client) return;
     if(!redirect.isEmpty()) {
         if(qtCtx()->dcCtx().getClientManager()->isConnected(_tq(redirect))) {
             addStatus(tr("Redirect request received to a hub that's already connected"));
@@ -3498,7 +3575,6 @@ void HubFrame::follow(QString redirect){
 
         string url = _tq(redirect);
 
-        Q_D(HubFrame);
         // the client is dead, long live the client!
         d->client->removeListener(this);
         qtCtx()->hubManager()->unregisterHubUrl(_q(d->client->getHubUrl()));
@@ -3563,10 +3639,12 @@ void HubFrame::updateStyles(){
 }
 
 void HubFrame::slotActivate(){
+    if (d_func()->quitPrepared) return;
     plainTextEdit_INPUT->setFocus();
 }
 
 void HubFrame::slotUsersUpdated(){
+    if (d_func()->quitPrepared) return;
     Q_D(HubFrame);
 
     if (d->proxy && treeView_USERS->model() == d->proxy){
@@ -3585,19 +3663,22 @@ void HubFrame::slotUsersUpdated(){
 }
 
 void HubFrame::slotReconnect(){
-    clearUsers();
-
     Q_D(HubFrame);
+    if (d->quitPrepared) return;
+    clearUsers();
 
     if (d->client)
         d->client->reconnect();
 }
 
 void HubFrame::slotMapOnArena(){
+    if (d_func()->quitPrepared) return;
     qtCtx()->arenaWidgetManager()->activate(this);
 }
 
 void HubFrame::slotClose(){
+    Q_D(HubFrame);
+    if (d->quitPrepared) return;
     qtCtx()->arenaWidgetManager()->rem(this);
 }
 
@@ -4095,6 +4176,7 @@ void HubFrame::slotShowWnd(){
 }
 
 void HubFrame::slotShellFinished(bool ok, QString output){
+    if (d_func()->quitPrepared) return;
     if (ok){
         HubFrame *fr = qobject_cast<HubFrame *>(sender()->parent());
         PMWindow *pm = qobject_cast<PMWindow *>(sender()->parent());
@@ -4438,6 +4520,7 @@ void HubFrame::slotStatusLinkOpen(const QString &url){
 }
 
 void HubFrame::slotHubMenu(QAction *res) {
+    if (d_func()->quitPrepared) return;
     if (res && res->data().canConvert<int>()) {//User command
         const int id = res->data().toInt();
 
@@ -4516,14 +4599,11 @@ void HubFrame::on(ClientListener::Connecting, Client *c) noexcept{
     emit coreConnecting(status);
 }
 
-void HubFrame::on(ClientListener::Connected, Client*) noexcept{
-    Q_D(HubFrame);
-
-    QString status = tr("Connected to %1").arg(_q(d->client->getHubUrl()));
+void HubFrame::on(ClientListener::Connected, Client* client) noexcept{
+    QString status = tr("Connected to %1").arg(_q(client->getHubUrl()));
 
     emit coreConnected(status);
 
-    qtCtx()->hubManager()->registerHubUrl(_q(d->client->getHubUrl()), this);
 }
 
 void HubFrame::on(ClientListener::UserUpdated, Client*, const OnlineUser &user) noexcept{

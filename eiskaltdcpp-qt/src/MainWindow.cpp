@@ -105,6 +105,7 @@
 #include "FileHasher.h"
 #include "ProxyTestRunner.h"
 #include "ShellCommandRunner.h"
+#include "RetainedGuiInputFence.h"
 #include "SpyFrame.h"
 #include "SideBar.h"
 #include "ActionCustomizer.h"
@@ -152,31 +153,6 @@ static void tuneMacMainWindowDragBehavior(QWidget *w)
 
 using namespace std;
 
-namespace {
-class RetainedGuiInputFence final : public QObject {
-public:
-    RetainedGuiInputFence(const QList<QObject*>& owners, QObject* parent) : QObject(parent) {
-        for (auto* owner : owners) roots.append(owner);
-    }
-protected:
-    bool eventFilter(QObject* receiver, QEvent* event) override {
-        switch (event->type()) {
-        case QEvent::MetaCall:
-        case QEvent::FutureCallOut:
-        case QEvent::DeferredDelete:
-        case QEvent::Timer:
-            for (auto* owner = receiver; owner; owner = owner->parent())
-                for (const auto& root : roots)
-                    if (root && root == owner) return true;
-            break;
-        default: break;
-        }
-        return false;
-    }
-private:
-    QList<QPointer<QObject>> roots;
-};
-}
 
 class MainWindowPrivate {
 public:
@@ -990,7 +966,10 @@ bool MainWindow::stopWorkersForQuit() {
     QSet<QFutureWatcherBase*> futures;
     QSet<ProxyTestRunner*> probes;
     QSet<FileHasher*> hashers;
+    QSet<HubFrame*> hubs;
     for (auto* root : roots) {
+        if (auto* hub = qobject_cast<HubFrame*>(root)) hubs.insert(hub);
+        for (auto* hub : root->findChildren<HubFrame*>()) hubs.insert(hub);
         if (auto* widget = qobject_cast<QWidget*>(root)) widget->setEnabled(false);
         for (auto* action : root->findChildren<QAction*>()) {
             action->setEnabled(false);
@@ -1011,6 +990,7 @@ bool MainWindow::stopWorkersForQuit() {
     }
     // No GUI event pumping: queued results and owner deletion stay fenced.
     for (auto* future : futures) future->waitForFinished();
+    for (auto* hub : hubs) saved = hub->prepareForQuit() && saved;
 #ifdef USE_TORRENT
     if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
     if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;

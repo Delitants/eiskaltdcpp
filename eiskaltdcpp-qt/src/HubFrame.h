@@ -146,6 +146,10 @@ public:
     HubFrame(QWidget *parent, QString, QString);
     ~HubFrame();
 
+    // Save layout intent and retire the client with core dependencies alive.
+    // The caller must still check final settings persistence and core drainage.
+    [[nodiscard]] bool prepareForQuit();
+
     HubFrame(const HubFrame&) = delete;
     HubFrame& operator=(const HubFrame&) = delete;
 
