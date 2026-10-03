@@ -5,6 +5,7 @@
 
 namespace updates {
 enum class ResourceKind { Feed, Archive };
+QUrl feedUrlForCpu(const QString& cpu);
 
 // Apply before DNS and again to every redirect, not just the initial URL.
 bool allowedUrl(const QUrl& url, ResourceKind kind, bool redirect = false);

@@ -19,6 +19,7 @@
 #include <openssl/evp.h>
 #include <memory>
 #include <future>
+#include <mutex>
 #ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
 #include "updates/MacUpdateDiscovery.h"
 #include "updates/MacUpdateBackend.h"
@@ -555,6 +556,8 @@ struct BackendFixture {
     QByteArray archive = QByteArray(8192, 'A');
     QByteArray feed;
     std::atomic_int requests{0};
+    std::mutex requestMutex;
+    std::string requestedFeed;
     std::atomic_bool holdArchive{false}, archiveEntered{false}, workerCancelled{false};
     std::atomic_bool holdFeed{false}, feedEntered{false}, workerExited{false};
     bool corrupt = false;
@@ -577,6 +580,10 @@ struct BackendFixture {
             [this](const auto& policy, const std::string& url, const auto& sink) {
                 ++requests;
                 const bool isFeed = url.find("raw.githubusercontent.com") != std::string::npos;
+                if(isFeed) {
+                    std::lock_guard<std::mutex> lock(requestMutex);
+                    requestedFeed = url;
+                }
                 auto markExit = dcpp::makeScopedFunctor([&] { workerExited = true; });
                 if(isFeed) {
                     feedEntered = true;
@@ -616,6 +623,17 @@ QStringList stagedArchives() {
     while(paths.hasNext()) result.push_back(paths.next());
     return result;
 }
+}
+TEST_CASE("Mac backend requests the published feed for its CPU flavor", "[.][update-feed-path-native]") {
+    BackendFixture f; f.discover();
+    const auto cpu = QSysInfo::buildCpuArchitecture();
+    REQUIRE((cpu == "arm64" || cpu == "x86_64"));
+    const std::string expected = cpu == "arm64"
+        ? "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/apple-silicon.xml"
+        : "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/intel.xml";
+    std::lock_guard<std::mutex> lock(f.requestMutex);
+    CHECK(f.requestedFeed == expected);
+    CHECK(f.ready == 0);
 }
 TEST_CASE("Mac backend retained fence preserves Ready staging through core route retirement", "[.][updater-worker-fence-native]") {
     BackendFixture f; f.discover();

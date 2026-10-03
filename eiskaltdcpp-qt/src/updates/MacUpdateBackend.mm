@@ -4,6 +4,7 @@
 #include "MacUpdateBackend.h"
 #include "MacUpdateDiscovery.h"
 #include "UpdateArchiveVerifier.h"
+#include "UpdateUrlPolicy.h"
 #include <QFile>
 #include <QSysInfo>
 #include <QTemporaryDir>
@@ -217,8 +218,8 @@ void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     if(impl->quitFenced || !op) return;
     if(impl->busy()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
     impl->clear(); impl->operation = op; impl->channel = channel;
-    const auto cpu = QSysInfo::buildCpuArchitecture();
-    if((cpu != "arm64" && cpu != "x86_64") || (channel != Channel::Stable && channel != Channel::Preview)) {
+    const auto feedUrl = feedUrlForCpu(QSysInfo::buildCpuArchitecture());
+    if(feedUrl.isEmpty() || (channel != Channel::Stable && channel != Channel::Preview)) {
         impl->fail(FailureCategory::Unsupported); return;
     }
     impl->route = impl->context.getProxyRoute() ? impl->context.getProxyRoute()->snapshot() : nullptr;
@@ -226,8 +227,7 @@ void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     impl->stage = std::make_shared<Impl::Stage>();
     if(!impl->stage->directory.isValid()) { impl->fail(FailureCategory::Storage); return; }
     impl->phase = Impl::Feed;
-    impl->fetch(QUrl("https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/" + cpu + ".xml"),
-        ResourceKind::Feed, impl->stage->feed());
+    impl->fetch(feedUrl, ResourceKind::Feed, impl->stage->feed());
 }
 void MacUpdateBackend::download(quint64 op, const UpdateOffer& requested) {
     Q_ASSERT(QThread::currentThread() == thread());

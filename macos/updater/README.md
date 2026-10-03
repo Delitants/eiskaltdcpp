@@ -128,6 +128,9 @@ verified by Sparkle, then promoted atomically without overwriting another
 owner's directory. Failure does not expose a partial pair. Stable feeds omit
 the preview-channel marker. Displayed versions stay separate from numeric
 update-ordering versions.
+The native consumer maps `x86_64` to `intel.xml` and `arm64` to
+`apple-silicon.xml` in the existing maintained feed namespace. Unknown CPUs
+are unsupported; there is no synthesized filename or alternate-host fallback.
 The generator disables Sparkle's optional warning-insertion XML rewrite so
 carriage-return references in plain-text notes survive unchanged. This does
 not disable signing or either cryptographic verification step; any subsequent

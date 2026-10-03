@@ -3,8 +3,21 @@
 
 using updates::ResourceKind;
 
+TEST_CASE("Updater CPU feeds match the two published release flavors", "[updates][update-transport][update-url]") {
+    const auto intel = updates::feedUrlForCpu("x86_64");
+    const auto silicon = updates::feedUrlForCpu("arm64");
+    CHECK(intel.toString() == "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/intel.xml");
+    CHECK(silicon.toString() == "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/apple-silicon.xml");
+    CHECK(updates::allowedUrl(intel, ResourceKind::Feed));
+    CHECK(updates::allowedUrl(silicon, ResourceKind::Feed));
+    for(const QString cpu : {"", "aarch64", "ARM64", "i386", "x86_64/../intel", " arm64"}) {
+        CAPTURE(cpu.toStdString());
+        CHECK(updates::feedUrlForCpu(cpu).isEmpty());
+    }
+}
+
 TEST_CASE("Updater URLs stay within the maintained feed and release namespaces", "[updates][update-transport][update-url]") {
-    const QString feed = "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/arm64.xml";
+    const QString feed = "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/apple-silicon.xml";
     const QString archive = "https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.1/Eiskalt.zip";
     CHECK(updates::allowedUrl(QUrl(feed), ResourceKind::Feed));
     CHECK(updates::allowedUrl(QUrl(feed), ResourceKind::Feed, true));

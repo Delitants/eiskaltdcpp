@@ -3,6 +3,13 @@
 #include <QAbstractSocket>
 
 namespace updates {
+QUrl feedUrlForCpu(const QString& cpu) {
+    const QString prefix = QStringLiteral("https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/");
+    if(cpu == QStringLiteral("arm64")) return QUrl(prefix + QStringLiteral("apple-silicon.xml"));
+    if(cpu == QStringLiteral("x86_64")) return QUrl(prefix + QStringLiteral("intel.xml"));
+    return {};
+}
+
 bool allowedUrl(const QUrl& url, ResourceKind kind, bool redirect) {
     if(!url.isValid() || url.isRelative() || url.scheme() != QStringLiteral("https") ||
         url.hasFragment() || url.authority(QUrl::FullyEncoded).contains(QLatin1Char('@')) ||
