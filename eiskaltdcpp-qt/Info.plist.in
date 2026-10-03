@@ -41,6 +41,7 @@
         </dict>
     </array>
 ${MACOSX_BUNDLE_TORRENT_TYPES}
+${MACOSX_BUNDLE_UPDATER_METADATA}
     <key>LSMinimumSystemVersion</key>
     <string>${CMAKE_OSX_DEPLOYMENT_TARGET}</string>
     <key>CSResourcesFileMapped</key>

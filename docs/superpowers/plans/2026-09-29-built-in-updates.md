@@ -492,6 +492,21 @@ literal contract; portable policy tests cover both mappings and unsupported
 CPUs. The maintained host/repository namespace, routing policy and production
 backend activation gates are unchanged. This does not publish or install feeds.
 
+Trust metadata checkpoint: `MacUpdaterMetadata.cmake` is included before the
+existing bundle metadata hash. Its separate opt-in development flag defaults
+OFF and is not framework packaging or updater activation. ON requires an explicit
+canonical nonzero base64 public key and a single CPU's exact maintained flavor
+feed URL; only an optional positive decimal revision query is permitted for
+public cache invalidation. Signed-feed/archive guards and single-policy-owner
+settings are emitted into the real plist; OFF removes them. Actual Make/Xcode
+fixture builds exercise key-only/feed-only relink and re-signing. Build-cache
+metadata source generations and a confined pre-link gate also exercise equal
+timestamps and returning to a prior hash; no-op builds keep their identity.
+The internal generation/linked receipt is not release ordering or proof of
+successful final signing. Metadata opt-in requires CMake 3.23+.
+Configured feed consumption, audited framework/helper copying and whole-app final signing
+remain later gated work; the packaging checklist item stays open.
+
 - [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
 - [ ] Generate the production signing identity only as a distinct, recorded release-setup action, in local Keychain; expose only its public key to source/configuration. Generate full-archive signatures after final signing/packaging. No automatic private-key export; document secure backup/rotation requirements.

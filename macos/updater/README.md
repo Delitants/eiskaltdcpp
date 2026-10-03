@@ -9,6 +9,42 @@ checks the numeric bundle version independently from the displayed release
 version. A generated feed alone is not proof that the package has matching
 metadata: audit the actual final archive and use the same build for both CPUs.
 
+## Validate Bundle Trust Metadata
+
+`EISKALT_MAC_UPDATER_METADATA` defaults to OFF. Opt-in packaging development
+requires CMake 3.23+ and an explicit `EISKALT_MAC_UPDATER_PUBLIC_KEY` (canonical nonzero 32-byte
+base64 public key), one `CMAKE_OSX_ARCHITECTURES` value (`x86_64` or `arm64`),
+and `EISKALT_MAC_UPDATER_FEED_URL`. The URL must be in the existing maintained
+`https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/`
+namespace: `intel.xml` for Intel or `apple-silicon.xml` for Apple Silicon.
+Only an optional `?revision=N` with a canonical positive decimal value is allowed
+for public cache invalidation. Credentials, other queries/hosts, fragments and
+wrong-CPU filenames are rejected. No key is generated or implicitly trusted.
+
+Validated fields enter the actual bundle template before its metadata hash.
+Key-only and feed-only changes therefore relink and re-sign under Make and Xcode.
+Build-cache source generations and an ordered link gate handle equal timestamps
+and returning to an older metadata value, without forcing no-op Make links.
+The gate only invalidates the owned build executable and rejects outside-build
+or symlinked paths; its receipt records linking, not final signature acceptance.
+This internal generation is not the allocated release build number.
+Turning the option OFF removes all updater and local-network exception keys.
+Signed-feed and pre-extraction verification are required, with zero signed-feed
+failure expiration; Sparkle's scheduler, automatic updating, profiling and remote
+downloader are disabled. Qt remains the policy and remote transport owner.
+The only ATS exception allows the app-owned local verification bridge.
+
+This flag does **not** package Sparkle, select the production backend, prepare
+an installer or activate updates. The native backend's maintained default URL
+selection is unchanged; consuming configured feed metadata belongs to later
+gated runtime integration. Do not publish a metadata-only updater bundle.
+Audited framework/helper packaging, final signing and native recovery/quit
+acceptance remain required. Test with disposable bundles and public fixture keys:
+
+```sh
+python3 tests/macos/updater/test_bundle_metadata.py
+```
+
 ## Stage The Framework Offline
 
 `stage-framework.py` prepares a separate dependency tree; it never modifies or

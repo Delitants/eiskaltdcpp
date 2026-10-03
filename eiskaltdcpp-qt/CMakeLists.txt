@@ -1,6 +1,11 @@
 cmake_minimum_required (VERSION 3.10)
 project (eiskaltdcpp-qt)
 
+# Capture nondependent file-component expressions when the app target is created.
+if (APPLE AND POLICY CMP0112)
+    cmake_policy (SET CMP0112 NEW)
+endif ()
+
 include_directories(${PROJECT_BINARY_DIR})
 
 # --- Qt version selection ---
@@ -512,6 +517,7 @@ if (APPLE)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleVersion.cmake)
     set (MACOSX_BUNDLE_COPYRIGHT "Copyright 2009-2021 EiskaltDC++ developers")
     include (${PROJECT_SOURCE_DIR}/../cmake/MacOpenHandlers.cmake)
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterMetadata.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleMetadata.cmake)
 endif (APPLE)
 
