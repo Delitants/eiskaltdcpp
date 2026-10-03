@@ -191,6 +191,56 @@ curation, project sources from the final reviewed commit, notices staged into
 the final apps, and signed binary/source archive readback. This preparation
 does not activate the updater, install an app or publish release assets.
 
+## Input Attribution And QA Notice Placement
+
+The follow-up input audit records 91 c-ares objects and two libmaxminddb objects
+per CPU. Intel's installed archive members match the retained build objects;
+130 c-ares and six libmaxminddb dependency-listed upstream inputs match the
+pinned source archives. Generated header hashes and compiler flags are retained
+separately. ARM's thin archive members, exact recipes and installation receipts
+are verified, but original per-object compilation records were not retained.
+Do not infer historical build-input proof from an installation receipt; final
+controlled ARM build receipts remain required.
+
+Compiler dependency listings identify 2,022 Intel and 2,023 ARM Boost headers
+whose current bytes match the pinned Boost 1.92.0 source archive. The five
+vendored BLAKE3 source/header files and selected CC0 notice are recorded
+separately. These are retained dependency listings with current-byte comparisons,
+not immutable snapshots of every historical compiler input.
+
+All 1,215 resource paths in each prepared bundle have exact byte provenance:
+project assets, generated deployment configuration, catalogs and icon families.
+The four Phosphor-derived themes retain identical upstream MIT license bytes
+both beside their copied assets and in the staged notice tree. Offline
+regeneration verifies all 688 SVGs, eight attribution/license files and the icon
+manifest. Legacy icon families remain covered by their original copyright
+inventory entries, not by the Phosphor license. Compiled QRC inputs and the
+external default QRC declaration are distinguished in the audit.
+
+**Historical catalog warning:** these input bundles contain the 25 Qt TS files
+from commit `4824e481bac1ead3de42fb544451e6dc0fe37fdf`, before the later hub-filter
+and updater catalog additions. Recompiling those exact TS bytes reproduces all
+25 bundled QM payloads for both CPUs. This establishes old-input provenance,
+not current translation coverage. Final packages must rebuild current TS/QM
+together and include the newer translated interface.
+
+Two fresh QA copies contain notices for the actual 16 Intel and 38 ARM dependency
+packages: 580 and 2,814 notice/provenance files respectively. Reserved Sparkle
+sources stay separate because its framework is absent from these input bundles;
+its notices must accompany the eventual updater-enabled builds. Before QA
+signing, every original binary/resource payload remains byte-identical. No
+shared dependency prefix, source input app, installed app or profile is changed.
+These notice trees and their private assembly/readback scripts are preparation
+artifacts, not a new public release-tool interface or final legal certification.
+
+Both notice-bearing QA copies pass strict ad-hoc signing and complete ZIP
+readback: 1,898 Intel and 4,230 ARM regular-file/symlink records survive exactly.
+The ZIPs remain below the existing 512 MiB gate. Main executable code/data
+sections and all dependency/resource payloads remain unchanged; QA signing
+updates signature metadata. Only `CFBundleVersion` is adjusted to fixture value
+`1` in copied plists, with all other fields unchanged. This is not a production
+build-number allocation, notarization, installation or native minimum-OS test.
+
 ## Final Distribution Gate
 
 For the final artifact, enumerate dynamic frameworks/libraries, static linked
