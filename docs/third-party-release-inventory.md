@@ -1,9 +1,10 @@
 # Release Source And Notice Inventory
 
-This records the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory and the
-remaining updater-enabled release gates. It is not a legal certification or a
-claim that both final CPU flavors have complete source/notice sets. Verify the
-actual distributed artifacts and their checksums.
+This records the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory,
+split-CPU input preparation and the remaining updater-enabled release gates.
+It is not a legal certification or a claim that both final CPU flavors have
+complete source/notice sets. Verify the actual distributed artifacts and their
+checksums.
 
 ## Project Sources
 
@@ -88,7 +89,7 @@ claim: static components, runtime-loaded data and source/patch identity still
 need independent inventory. An older UUID match is useful provenance evidence,
 not proof that its notice/source set describes a changed binary.
 
-## macOS Candidate Materials
+## Earlier ARM64 Candidate Materials
 
 The candidate inventory covers 38 dependency packages: the copied frameworks,
 libraries and plugins, plus statically linked c-ares/libmaxminddb and Boost
@@ -120,6 +121,75 @@ The distribution layout is:
 Keep the source archive available alongside the binary release. Recreate this
 inventory when dependencies, plugins, static libraries or packaged data change;
 it is not a reusable completeness assertion for future builds.
+
+## Split-CPU Input Preparation
+
+The 2026-10-02 preparation separately records the actual thin Intel/macOS 14+
+and Apple Silicon/macOS 26+ application inputs. These are pre-integration
+bundles, not final updater-enabled release artifacts. The Intel graph contains
+40 Mach-O images; ARM contains 84. All 39 Intel and 83 ARM third-party images
+match their selected providers' file-backed code/data section bytes. Whole-file
+hashes are also recorded, but load-command relocation and signing can change
+them. Section matches establish copied-input identity, not reproducible builds
+or native minimum-OS acceptance.
+
+Do not reuse the earlier ARM inventory unchanged for Intel:
+
+| Component | Intel Input | ARM Input |
+| --- | --- | --- |
+| Qt | Official Qt 6.11.1 SDK, vendor source/build SBOMs | Homebrew Qt 6.11.1, retained recipes and SBOMs |
+| gettext | 0.24 | 1.0 |
+| PCRE2 | 10.45 | 10.47 revision 1 |
+| FFmpeg | Qt-supplied 7.1.3, five dylibs | Not present in this prepared bundle |
+| libtorrent | 2.1.1 with maintained selected-recheck patch | Same source and patch, separately built |
+| Sparkle | 2.10.0 reserved, not yet in this input bundle | Same reserved dependency |
+
+The newly retained Intel source archives are:
+
+- [gettext 0.24](https://ftp.gnu.org/gnu/gettext/gettext-0.24.tar.gz), SHA-256
+  `c918503d593d70daf4844d175a13d816afacb667c06fba1ec9dcd5002c1518b7`.
+- [PCRE2 10.45](https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.45/pcre2-10.45.tar.bz2), SHA-256
+  `21547f3516120c75597e5b30a992e27a592a31950b5140e7b8bfde3f192033c4`.
+- [FFmpeg 7.1.3](https://ffmpeg.org/releases/ffmpeg-7.1.3.tar.xz), SHA-256
+  `f0bf043299db9e3caacb435a712fc541fbb07df613c4b893e8b77e67baf3adbe`.
+
+gettext/PCRE2 match their exact historical installed recipes. FFmpeg's official
+detached signature verifies against fingerprint
+`FCF986EA15E6E293A5644F10B4322F04D67658D8`, published on the
+[FFmpeg verification page](https://ffmpeg.org/download.html#release-verification).
+Its version is independently identified by Qt's vendor SBOM and the library's
+embedded configuration. Retain FFmpeg's source-level notices and Qt's embedded
+component attributions, not just an LGPL label. The recorded Intel configure
+options enable shared libraries and omit GPL/nonfree enablement; they do not
+replace the complete licensing inventory.
+
+Qt Base/SVG vendor commit identifiers match the official `v6.11.1` release tags.
+The retained module archives match 22,492 Qt Base, 621 Qt SVG and 2,957 Qt
+Multimedia vendor-listed source files. The Base/SVG differences are explicitly
+recorded: Git export omits `.gitignore`/`.gitattributes`, and generated `.tag`
+contents differ. No other vendor-listed source content differs. Preserve this
+comparison and the full vendor SBOM rather than treating a version label alone
+as source proof.
+
+The [selected-recheck source lock](../dependencies/libtorrent/source.json) pins
+both the upstream archive and patch. A fresh no-fuzz reconstruction matches all
+1,653 files in each actual provider build source tree. Both Cocoa providers use
+the same patched Qt source; all 99 recorded Cocoa source/resource files match
+the modified-source archive and build inputs. Each CPU retains its own provider
+binary hash, build recipe and linked static c-ares/libmaxminddb archive hashes;
+Boost 1.92.0 headers are recorded separately from dynamic libraries.
+
+Local preparation retains 17 Intel package records and a conservative 39-package
+ARM superset, each including reserved Sparkle sources/notices. ARM recipe
+metadata used to pin shared source bytes is not labeled as an Intel build
+receipt. Actual Intel build recipes, historical receipts and official Qt vendor
+archive checksums remain distinct. Both bundles' resources are hashed; neither
+contains GeoIP databases or Aspell dictionary payloads in this preparation.
+
+Still required: final static/header and resource attribution review, superset
+curation, project sources from the final reviewed commit, notices staged into
+the final apps, and signed binary/source archive readback. This preparation
+does not activate the updater, install an app or publish release assets.
 
 ## Final Distribution Gate
 
