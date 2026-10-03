@@ -436,14 +436,27 @@ TEST_CASE("GOST UDP associations isolate sender and translate remote address for
     bindUdp(sender);
     bindUdp(foreignPort);
     foreignIp.setProxy(QNetworkProxy::NoProxy);
+    QStringList bindAttempts;
     if(!foreignIp.bind(QHostAddress("127.0.0.2"), 0)) {
+        bindAttempts << QStringLiteral("127.0.0.2: %1 (%2), fd=%3")
+            .arg(foreignIp.errorString()).arg(int(foreignIp.error())).arg(foreignIp.socketDescriptor());
         // macOS does not assign all of 127/8 to lo0. Use an existing local
         // interface as source, still sending only to the loopback destination.
         for(const auto& address : QNetworkInterface::allAddresses()) {
-            if(address.protocol() == QAbstractSocket::IPv4Protocol && !address.isLoopback() &&
-               foreignIp.bind(address, 0)) break;
+            if(address.protocol() == QAbstractSocket::IPv4Protocol && !address.isLoopback()) {
+                if(foreignIp.bind(address, 0)) break;
+                bindAttempts << QStringLiteral("%1: %2 (%3), fd=%4")
+                    .arg(address.toString(), foreignIp.errorString()).arg(int(foreignIp.error()))
+                    .arg(foreignIp.socketDescriptor());
+            }
         }
     }
+    INFO(bindAttempts.join(QStringLiteral("; ")).toStdString());
+#ifndef _WIN32
+    struct rlimit bindLimit{};
+    getrlimit(RLIMIT_NOFILE, &bindLimit);
+    INFO("descriptor limit " << bindLimit.rlim_cur << "/" << bindLimit.rlim_max);
+#endif
     REQUIRE(foreignIp.state() == QAbstractSocket::BoundState);
     {
         // Confirm this alternate source can actually reach a loopback UDP
