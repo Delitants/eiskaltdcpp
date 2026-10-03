@@ -134,7 +134,7 @@ else ()
 endif ()
 set(UPDATER_TEST_QM_DIR "${CMAKE_CURRENT_BINARY_DIR}/updater-catalogs")
 set(UPDATER_TEST_QM_FILES)
-foreach (LANGUAGE en uk ru)
+foreach (LANGUAGE be bg cs da de el en es eu fr hu ie it ka pl pt_BR ru sk sr sr@latin sv_SE tr uk vi zh_CN)
     set(QM "${UPDATER_TEST_QM_DIR}/${LANGUAGE}.qm")
     add_custom_command(OUTPUT "${QM}"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${UPDATER_TEST_QM_DIR}"

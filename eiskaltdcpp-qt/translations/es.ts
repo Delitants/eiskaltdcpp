@@ -10948,191 +10948,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>La instalación de actualizaciones no está disponible en esta compilación.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>La verificación de la actualización falló. No se instaló ninguna actualización.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>No se pudo crear un área privada de preparación de actualizaciones.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>La actualización se canceló, ya está en curso o no está disponible mediante la ruta de conexión elegida.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Preferencias de actualización</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Buscar actualizaciones automáticamente</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Buscar actualizaciones automáticamente</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>&amp;Avisarme de las actualizaciones disponibles</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Avisarme de las actualizaciones disponibles</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Descargar; instalar al salir normalmente</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>Descargar; instalar al salir normalmente</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Canal de versiones</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Estable</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Preliminar</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Canal de versiones:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Estado de actualización</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Notas de la versión</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>Progreso de descarga</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>C&amp;omprobar ahora</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>Ca&amp;ncelar</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>D&amp;escargar</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Instalar al salir</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>&amp;Más tarde</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>Omi&amp;tir esta versión</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Esta versión se instalará después de una salida normal correcta. No se fuerza ningún reinicio.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>Instalación aplazada. La actualización descargada no se instalará al salir.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Se omitirá esta versión.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>Operación de actualización cancelada.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Hay una versión compatible más reciente.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>No hay una versión compatible más reciente.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>Las actualizaciones se preparan primero. La instalación requiere una salida normal correcta y un cierre verificado; un fallo del programa nunca autoriza la instalación.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>La instalación de actualizaciones no está disponible en esta compilación. Puede seguir buscando actualizaciones manualmente.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Última comprobación correcta: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Última comprobación correcta: nunca</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Versión disponible: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>La actualización automática no es compatible con esta plataforma o compilación.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>La conexión de actualización falló. No se recurrió a una conexión directa.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>No se pudo verificar la actualización y no se instalará.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>No se pudo guardar la actualización de forma segura.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>La instalación de actualizaciones no es compatible con este sistema.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Ya se está descargando una actualización.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>La descarga se canceló o cambiaron los ajustes del proxy.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>La descarga de la actualización falló. No se recurrió a una conexión directa.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>No se pudo iniciar el proceso de descarga de la actualización.</translation>
         </message>
     </context>
 </TS>

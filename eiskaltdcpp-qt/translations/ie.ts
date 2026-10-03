@@ -10584,191 +10584,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>Installation de actualisationes ne es disponibil in ti compilation.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>Verification del actualisation ne successat. Null actualisation esset installat.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>Ne posse crear un privat area por preparar actualisationes.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>Li actualisation es anullat, ja in cursu o índisponibil sur li selectet via de conexion.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Preferenties de actualisation</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Serchar actualisationes automaticmen</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Serchar actualisationes automaticmen</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>&amp;Notificar pri disponibil actualisationes</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Notificar pri disponibil actualisationes</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Descargar; installar pos normal surtida</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>Descargar; installar pos normal surtida</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Canal de versiones</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Stabil</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Preliminari</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Canal de versiones:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Statu de actualisation</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Notes del version</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>Progress del descargo</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>C&amp;ontrolar nu</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>&amp;Anullar</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>D&amp;escargar</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Installar al surtida</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>&amp;Plu tard</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>O&amp;misser ti version</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Ti version va esser installat pos un successosi normal surtida. Null restart es fortiat.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>Installation ajornat. Li descargat actualisation ne va esser installat al surtida.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Ti version va esser omisset.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>Li operation de actualisation es anullat.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Un plu nov compatibil version es disponibil.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Null plu nov compatibil version es disponibil.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>Actualisationes es preparat in antecess. Installation besona un successosi normal surtida e un verificat termination; un crash nequande permisse installation.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>Installation de actualisationes es índisponibil in ti compilation. Vu posse ancor serchar actualisationes manualmen.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Ultim successosi control: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Ultim successosi control: nequande</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Disponibil version: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>Autoactualisation ne es supportat sur ti platform o in ti compilation.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Li conexion por actualisation ne successat. Null alternativ direct conexion esset usat.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>Li actualisation ne posse esser verificat e ne va esser installat.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>Li actualisation ne posse esser gardat securmen.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>Installation de actualisationes ne es supportat sur ti sistema.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Un descargo de actualisation es ja in cursu.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>Descargo anullat o parametres del proxy changeat.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Descargo del actualisation ne successat. Null alternativ direct conexion esset usat.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>Ne posse lansar li processu de descargo del actualisation.</translation>
         </message>
     </context>
 </TS>

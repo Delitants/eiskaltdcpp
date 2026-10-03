@@ -10911,191 +10911,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>Bu derlemede güncelleme kurulumu kullanılamıyor.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme doğrulanamadı. Hiçbir güncelleme kurulmadı.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme için özel bir hazırlama alanı oluşturulamadı.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme iptal edildi, zaten sürüyor veya seçilen bağlantı yolunda kullanılamıyor.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme tercihleri</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Güncellemeleri otomatik denetle</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Güncellemeleri otomatik denetle</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>&amp;Yeni güncellemeleri bildir</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Yeni güncellemeleri bildir</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>İ&amp;ndir; normal çıkışta kur</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>İndir; normal çıkışta kur</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Sürüm kanalı</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Kararlı</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Önizleme</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Sürüm kanalı:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme durumu</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Sürüm notları</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>İndirme ilerlemesi</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>Ş&amp;imdi denetle</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>İ&amp;ptal</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>İn&amp;dir</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>Çı&amp;kışta kur</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>D&amp;aha sonra</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>&amp;Bu sürümü atla</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Bu sürüm başarılı bir normal çıkıştan sonra kurulacaktır. Yeniden başlatma zorlanmaz.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>Kurulum ertelendi. İndirilen güncelleme çıkışta kurulmayacaktır.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Bu sürüm atlanacaktır.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme işlemi iptal edildi.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Daha yeni uyumlu bir sürüm var.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Daha yeni uyumlu bir sürüm yok.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>Güncellemeler önce hazırlanır. Kurulum için başarılı bir normal çıkış ve doğrulanmış kapanış gerekir; çökmeler hiçbir zaman kuruluma izin vermez.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>Bu derlemede güncelleme kurulumu kullanılamıyor. Güncellemeleri yine de elle denetleyebilirsiniz.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Son başarılı denetim: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Son başarılı denetim: hiç yapılmadı</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Kullanılabilir sürüm: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>Bu platformda veya derlemede kendi kendine güncelleme desteklenmiyor.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme bağlantısı başarısız oldu. Doğrudan bağlantıya geçilmedi.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme doğrulanamadı ve kurulmayacak.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme güvenle kaydedilemedi.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>Bu sistemde güncelleme kurulumu desteklenmiyor.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Bir güncelleme zaten indiriliyor.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>İndirme iptal edildi veya vekil sunucu ayarları değişti.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme indirilemedi. Doğrudan bağlantıya geçilmedi.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>Güncelleme indirme işlemi başlatılamadı.</translation>
         </message>
     </context>
 </TS>

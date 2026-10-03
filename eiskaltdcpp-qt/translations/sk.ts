@@ -10751,191 +10751,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>Inštalácia aktualizácií nie je v tomto zostavení dostupná.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>Overenie aktualizácie zlyhalo. Nebola nainštalovaná žiadna aktualizácia.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>Nie je možné vytvoriť súkromné úložisko na prípravu aktualizácie.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizácia bola zrušená, už prebieha alebo nie je dostupná cez zvolenú trasu pripojenia.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Nastavenia aktualizácií</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Automaticky hľadať aktualizácie</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Automaticky hľadať aktualizácie</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>&amp;Upozorniť na dostupné aktualizácie</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Upozorniť na dostupné aktualizácie</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Stiahnuť; inštalovať pri riadnom ukončení</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>Stiahnuť; inštalovať pri riadnom ukončení</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Kanál vydaní</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Stabilný</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Predbežný</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Kanál vydaní:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Stav aktualizácie</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Poznámky k vydaniu</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>Priebeh sťahovania</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>Sk&amp;ontrolovať teraz</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>&amp;Zrušiť</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>S&amp;tiahnuť</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Inštalovať pri ukončení</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>&amp;Neskôr</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>&amp;Preskočiť túto verziu</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Táto verzia sa nainštaluje po úspešnom riadnom ukončení. Reštart nebude vynútený.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>Inštalácia bola odložená. Stiahnutá aktualizácia sa pri ukončení nenainštaluje.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Táto verzia bude preskočená.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizácia bola zrušená.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Je dostupná novšia kompatibilná verzia.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Novšia kompatibilná verzia nie je dostupná.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizácie sa najprv pripravia. Inštalácia vyžaduje úspešné riadne ukončenie a overené vypnutie; pád aplikácie nikdy neoprávňuje na inštaláciu.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>Inštalácia aktualizácií nie je v tomto zostavení dostupná. Aktualizácie môžete naďalej hľadať ručne.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Posledná úspešná kontrola: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Posledná úspešná kontrola: nikdy</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Dostupná verzia: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>Samoaktualizácia nie je na tejto platforme alebo v tomto zostavení podporovaná.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Pripojenie pre aktualizáciu zlyhalo. Priame náhradné pripojenie nebolo použité.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizáciu nemožno overiť a nebude nainštalovaná.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizáciu nemožno bezpečne uložiť.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>Inštalácia aktualizácií nie je na tomto systéme podporovaná.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Aktualizácia sa už sťahuje.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>Sťahovanie bolo zrušené alebo sa zmenili nastavenia proxy.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Stiahnutie aktualizácie zlyhalo. Priame náhradné pripojenie nebolo použité.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>Nemožno spustiť pracovné vlákno na stiahnutie aktualizácie.</translation>
         </message>
     </context>
 </TS>

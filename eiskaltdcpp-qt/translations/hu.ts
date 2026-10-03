@@ -10885,191 +10885,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>A frissítések telepítése ebben a buildben nem érhető el.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés ellenőrzése sikertelen. Nem történt frissítés.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>Nem hozható létre privát előkészítési terület a frissítéshez.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés megszakadt, már folyamatban van, vagy nem érhető el a kiválasztott kapcsolati útvonalon.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Frissítési beállítások</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Frissítések automatikus keresése</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Frissítések automatikus keresése</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>É&amp;rtesítés az elérhető frissítésekről</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Értesítés az elérhető frissítésekről</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Letöltés; telepítés szabályos kilépéskor</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>Letöltés; telepítés szabályos kilépéskor</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Kiadási csatorna</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Stabil</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Előzetes</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Kiadási csatorna:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Frissítés állapota</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Kiadási megjegyzések</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>Letöltési folyamat</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>&amp;Ellenőrzés most</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>&amp;Mégse</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>Le&amp;töltés</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>Tele&amp;pítés kilépéskor</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>Ké&amp;sőbb</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>&amp;Verzió kihagyása</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Ez a verzió sikeres, szabályos kilépés után települ. Nincs kényszerített újraindítás.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>A telepítés elhalasztva. A letöltött frissítés kilépéskor nem települ.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Ez a verzió kimarad.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>A frissítési művelet megszakadt.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Újabb kompatibilis verzió érhető el.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Nem érhető el újabb kompatibilis verzió.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>A frissítések először előkészítésre kerülnek. A telepítéshez sikeres, szabályos kilépés és ellenőrzött leállítás szükséges; az összeomlás soha nem engedélyez telepítést.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>A frissítések telepítése ebben a buildben nem érhető el. Kézi frissítéskeresés továbbra is lehetséges.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Utolsó sikeres ellenőrzés: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Utolsó sikeres ellenőrzés: még nem volt</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Elérhető verzió: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>Az önfrissítés ezen a platformon vagy ebben a buildben nem támogatott.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>A frissítési kapcsolat sikertelen. Nem történt váltás közvetlen kapcsolatra.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés nem ellenőrizhető, ezért nem települ.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés nem menthető biztonságosan.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>A frissítések telepítése ezen a rendszeren nem támogatott.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Egy frissítés letöltése már folyamatban van.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>A letöltés megszakadt vagy megváltoztak a proxybeállítások.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés letöltése sikertelen. Nem történt váltás közvetlen kapcsolatra.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>A frissítés letöltését végző munkafolyamat nem indítható el.</translation>
         </message>
     </context>
 </TS>

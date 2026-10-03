@@ -10735,191 +10735,191 @@ SHA-256: %4</translation>
         <name>updates::MacUpdateBackend</name>
         <message>
             <source>Update installation is not available in this build.</source>
-            <translation type="unfinished" />
+            <translation>Η εγκατάσταση ενημερώσεων δεν είναι διαθέσιμη σε αυτήν την έκδοση του προγράμματος.</translation>
         </message>
         <message>
             <source>Update verification failed. No update was installed.</source>
-            <translation type="unfinished" />
+            <translation>Η επαλήθευση της ενημέρωσης απέτυχε. Δεν εγκαταστάθηκε καμία ενημέρωση.</translation>
         </message>
         <message>
             <source>Unable to create private update staging.</source>
-            <translation type="unfinished" />
+            <translation>Δεν είναι δυνατή η δημιουργία ιδιωτικού χώρου προετοιμασίας ενημερώσεων.</translation>
         </message>
         <message>
             <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
-            <translation type="unfinished" />
+            <translation>Η ενημέρωση ακυρώθηκε, εκτελείται ήδη ή δεν είναι διαθέσιμη μέσω της επιλεγμένης διαδρομής σύνδεσης.</translation>
         </message>
     </context>
     <context>
         <name>updates::SettingsUpdates</name>
         <message>
             <source>Update preferences</source>
-            <translation type="unfinished" />
+            <translation>Προτιμήσεις ενημερώσεων</translation>
         </message>
         <message>
             <source>&amp;Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>&amp;Αυτόματος έλεγχος ενημερώσεων</translation>
         </message>
         <message>
             <source>Check for updates automatically</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματος έλεγχος ενημερώσεων</translation>
         </message>
         <message>
             <source>N&amp;otify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>&amp;Ειδοποίηση για διαθέσιμες ενημερώσεις</translation>
         </message>
         <message>
             <source>Notify me when updates are available</source>
-            <translation type="unfinished" />
+            <translation>Ειδοποίηση για διαθέσιμες ενημερώσεις</translation>
         </message>
         <message>
             <source>Download and &amp;install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>&amp;Λήψη· εγκατάσταση στην κανονική έξοδο</translation>
         </message>
         <message>
             <source>Download and install on next normal quit</source>
-            <translation type="unfinished" />
+            <translation>Λήψη· εγκατάσταση στην κανονική έξοδο</translation>
         </message>
         <message>
             <source>Release channel</source>
-            <translation type="unfinished" />
+            <translation>Κανάλι εκδόσεων</translation>
         </message>
         <message>
             <source>Stable</source>
-            <translation type="unfinished" />
+            <translation>Σταθερό</translation>
         </message>
         <message>
             <source>Preview</source>
-            <translation type="unfinished" />
+            <translation>Προεπισκόπηση</translation>
         </message>
         <message>
             <source>Release c&amp;hannel:</source>
-            <translation type="unfinished" />
+            <translation>&amp;Κανάλι εκδόσεων:</translation>
         </message>
         <message>
             <source>Update status</source>
-            <translation type="unfinished" />
+            <translation>Κατάσταση ενημέρωσης</translation>
         </message>
         <message>
             <source>Release notes</source>
-            <translation type="unfinished" />
+            <translation>Σημειώσεις έκδοσης</translation>
         </message>
         <message>
             <source>Update download progress</source>
-            <translation type="unfinished" />
+            <translation>Πρόοδος λήψης</translation>
         </message>
         <message>
             <source>Check &amp;Now</source>
-            <translation type="unfinished" />
+            <translation>&amp;Έλεγχος τώρα</translation>
         </message>
         <message>
             <source>Cance&amp;l</source>
-            <translation type="unfinished" />
+            <translation>Ακ&amp;ύρωση</translation>
         </message>
         <message>
             <source>&amp;Download</source>
-            <translation type="unfinished" />
+            <translation>Λ&amp;ήψη</translation>
         </message>
         <message>
             <source>Install on Next &amp;Quit</source>
-            <translation type="unfinished" />
+            <translation>Ε&amp;γκατάσταση στην έξοδο</translation>
         </message>
         <message>
             <source>La&amp;ter</source>
-            <translation type="unfinished" />
+            <translation>Α&amp;ργότερα</translation>
         </message>
         <message>
             <source>&amp;Skip This Version</source>
-            <translation type="unfinished" />
+            <translation>&amp;Παράλειψη αυτής της έκδοσης</translation>
         </message>
         <message>
             <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η έκδοση θα εγκατασταθεί μετά από επιτυχή κανονική έξοδο. Δεν επιβάλλεται επανεκκίνηση.</translation>
         </message>
         <message>
             <source>Installation deferred. Your downloaded update is not installed on quit.</source>
-            <translation type="unfinished" />
+            <translation>Η εγκατάσταση αναβλήθηκε. Η ληφθείσα ενημέρωση δεν θα εγκατασταθεί κατά την έξοδο.</translation>
         </message>
         <message>
             <source>This version will be skipped.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η έκδοση θα παραλειφθεί.</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation type="unfinished" />
+            <translation>Η ενημέρωση ακυρώθηκε.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Διατίθεται νεότερη συμβατή έκδοση.</translation>
         </message>
         <message>
             <source>No newer compatible version is available.</source>
-            <translation type="unfinished" />
+            <translation>Δεν διατίθεται νεότερη συμβατή έκδοση.</translation>
         </message>
         <message>
             <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
-            <translation type="unfinished" />
+            <translation>Οι ενημερώσεις προετοιμάζονται πρώτα. Η εγκατάσταση απαιτεί επιτυχή κανονική έξοδο και επαληθευμένο τερματισμό· οι καταρρεύσεις δεν επιτρέπουν ποτέ την εγκατάσταση.</translation>
         </message>
         <message>
             <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
-            <translation type="unfinished" />
+            <translation>Η εγκατάσταση ενημερώσεων δεν είναι διαθέσιμη σε αυτήν την έκδοση του προγράμματος. Μπορείτε ακόμη να ελέγχετε χειροκίνητα για ενημερώσεις.</translation>
         </message>
         <message>
             <source>Last successful check: %1</source>
-            <translation type="unfinished" />
+            <translation>Τελευταίος επιτυχής έλεγχος: %1</translation>
         </message>
         <message>
             <source>Last successful check: never</source>
-            <translation type="unfinished" />
+            <translation>Τελευταίος επιτυχής έλεγχος: ποτέ</translation>
         </message>
         <message>
             <source>Available version: %1</source>
-            <translation type="unfinished" />
+            <translation>Διαθέσιμη έκδοση: %1</translation>
         </message>
     </context>
     <context>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation type="unfinished" />
+            <translation>Η αυτοενημέρωση δεν υποστηρίζεται σε αυτήν την πλατφόρμα ή έκδοση του προγράμματος.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateController</name>
         <message>
             <source>The update connection failed. No direct fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Η σύνδεση ενημέρωσης απέτυχε. Δεν χρησιμοποιήθηκε εφεδρική απευθείας σύνδεση.</translation>
         </message>
         <message>
             <source>The update could not be verified and will not be installed.</source>
-            <translation type="unfinished" />
+            <translation>Η ενημέρωση δεν μπορεί να επαληθευτεί και δεν θα εγκατασταθεί.</translation>
         </message>
         <message>
             <source>The update could not be saved safely.</source>
-            <translation type="unfinished" />
+            <translation>Η ενημέρωση δεν μπορεί να αποθηκευτεί με ασφάλεια.</translation>
         </message>
         <message>
             <source>Update installation is not supported on this system.</source>
-            <translation type="unfinished" />
+            <translation>Η εγκατάσταση ενημερώσεων δεν υποστηρίζεται σε αυτό το σύστημα.</translation>
         </message>
     </context>
     <context>
         <name>updates::UpdateTransport</name>
         <message>
             <source>An update download is already running.</source>
-            <translation type="unfinished" />
+            <translation>Μια ενημέρωση λαμβάνεται ήδη.</translation>
         </message>
         <message>
             <source>Update download cancelled or proxy settings changed.</source>
-            <translation type="unfinished" />
+            <translation>Η λήψη ακυρώθηκε ή άλλαξαν οι ρυθμίσεις του διαμεσολαβητή.</translation>
         </message>
         <message>
             <source>Update download failed. No direct-connection fallback was used.</source>
-            <translation type="unfinished" />
+            <translation>Η λήψη της ενημέρωσης απέτυχε. Δεν χρησιμοποιήθηκε εφεδρική απευθείας σύνδεση.</translation>
         </message>
         <message>
             <source>Unable to start the update download worker.</source>
-            <translation type="unfinished" />
+            <translation>Δεν είναι δυνατή η εκκίνηση της διεργασίας λήψης ενημέρωσης.</translation>
         </message>
     </context>
 </TS>

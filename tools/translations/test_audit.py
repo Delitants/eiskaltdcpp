@@ -238,7 +238,7 @@ class ExtractionRegressionTests(unittest.TestCase):
                 with self.subTest(language=path.stem, context=key[0], source=key[1]):
                     translations = entries.get(key, [])
                     self.assertEqual(1, len(translations), "Missing or ambiguous runtime message")
-                    if not translations or path.stem not in {"en", "uk", "ru"}:
+                    if not translations:
                         continue
                     translation = translations[0]
                     self.assertNotEqual("unfinished", translation.get("type"))

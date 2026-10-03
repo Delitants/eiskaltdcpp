@@ -5,6 +5,7 @@
 #include "updates/UpdateController.h"
 #include "updates/SettingsUpdates.h"
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
@@ -122,6 +123,52 @@ TEST_CASE("Updater compiled catalogs localize real controls, consent and errors"
     CHECK(f.control<QLabel>("updateResult")->text() == QString::fromUtf8(captions->noFallback));
     CHECK(QCoreApplication::translate("updates::UnsupportedUpdateBackend",
         "Self-updating is not supported on this platform or build.") == QString::fromUtf8(captions->unsupported));
+}
+
+TEST_CASE("Updater controls and diagnostics resolve in every shipped language", "[settings-updates][updater-catalogs]") {
+    const struct { const char *language, *checkNow; } examples[] = {
+        {"be", "Праверыць зараз"}, {"bg", "Провери сега"}, {"cs", "Zkontrolovat nyní"},
+        {"da", "Kontrollér nu"}, {"de", "Jetzt prüfen"}, {"el", "Έλεγχος τώρα"},
+        {"en", "Check Now"}, {"es", "Comprobar ahora"}, {"eu", "Egiaztatu orain"},
+        {"fr", "Vérifier maintenant"}, {"hu", "Ellenőrzés most"}, {"ie", "Controlar nu"},
+        {"it", "Controlla ora"}, {"ka", "ახლავე შემოწმება"}, {"pl", "Sprawdź teraz"},
+        {"pt_BR", "Verificar agora"}, {"ru", "Проверить сейчас"}, {"sk", "Skontrolovať teraz"},
+        {"sr", "Провери сада"}, {"sr@latin", "Proveri sada"}, {"sv_SE", "Kontrollera nu"},
+        {"tr", "Şimdi denetle"}, {"uk", "Перевірити зараз"}, {"vi", "Kiểm tra ngay"},
+        {"zh_CN", "立即检查"}
+    };
+    for(const auto& example : examples) {
+        DYNAMIC_SECTION(example.language) {
+            TranslationScope translation(example.language);
+            for(const auto& entry : {std::pair{"updates::SettingsUpdates", "Available version: %1"},
+                                    std::pair{"updates::UpdateController", "The update connection failed. No direct fallback was used."},
+                                    std::pair{"updates::MacUpdateBackend", "Unable to create private update staging."},
+                                    std::pair{"updates::UpdateTransport", "An update download is already running."},
+                                    std::pair{"updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build."}})
+                CHECK_FALSE(translation.translator.translate(entry.first, entry.second).isEmpty());
+            Fixture f;
+            auto caption = f.control<QPushButton>("updateCheckNow")->text();
+            caption.remove(QRegularExpression("\\s*\\(&[A-Za-z]\\)$"));
+            caption.remove('&');
+            CHECK(caption == QString::fromUtf8(example.checkNow));
+            QSet<QString> mnemonics;
+            const auto add = [&](const QString& text) {
+                const auto match = QRegularExpression("(?<!&)&([^&])").match(text);
+                REQUIRE(match.hasMatch());
+                CHECK_FALSE(mnemonics.contains(match.captured(1).toLower()));
+                mnemonics.insert(match.captured(1).toLower());
+            };
+            for(auto* control : f.page->findChildren<QCheckBox*>()) add(control->text());
+            for(auto* control : f.page->findChildren<QPushButton*>()) add(control->text());
+            for(auto* label : f.page->findChildren<QLabel*>()) if(label->buddy()) add(label->text());
+            CHECK(mnemonics.size() == 10);
+            f.ready();
+            CHECK(f.control<QLabel>("updateVersion")->text().contains("3.0.0-pre.2"));
+            CHECK_FALSE(f.control<QLabel>("updateVersion")->text().contains("%1"));
+            f.control<QPushButton>("updateInstallOnQuit")->click();
+            CHECK(f.backend.installs == 0);
+        }
+    }
 }
 
 TEST_CASE("Updater settings preserve explicit OFF choices and accessible native defaults", "[settings-updates]") {
@@ -268,10 +315,8 @@ TEST_CASE("Updater settings detach safely when the controller is destroyed", "[s
 }
 
 TEST_CASE("Updater settings keep native controls inside narrow light and dark layouts", "[settings-updates]") {
-    const char* language = "en";
-    SECTION("English") { language = "en"; }
-    SECTION("Ukrainian") { language = "uk"; }
-    SECTION("Russian") { language = "ru"; }
+    const char* language = GENERATE("be", "bg", "cs", "da", "de", "el", "en", "es", "eu", "fr", "hu", "ie",
+        "it", "ka", "pl", "pt_BR", "ru", "sk", "sr", "sr@latin", "sv_SE", "tr", "uk", "vi", "zh_CN");
     TranslationScope translation(language);
     Fixture f;
     f.control<QPushButton>("updateCheckNow");

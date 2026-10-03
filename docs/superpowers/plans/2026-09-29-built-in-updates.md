@@ -434,14 +434,16 @@ defaults to false; no production backend is enabled by this UI checkpoint.
 Do not change Settings/MainWindow ownership, menus, main/_Exit, or installer arming
 until the retained native recovery and committed-quit acceptance gates pass.
 Widget/extraction tests are not integrated application settings, native Cocoa QA,
-complete language catalogs, or release acceptance. Keep those steps pending.
+linguistic review of language catalogs, or release acceptance. Keep those steps pending.
 
 Catalog checkpoint: all 25 catalogs now contain the updater's extracted runtime
-contexts, including Objective-C++ backend errors. English, Ukrainian and Russian
-have completed captions and diagnostics; the other 22 languages retain explicit
-unfinished entries and English fallback. Test-owned compiled catalogs verify
-actual widget labels, accessible names, version substitution, consent/error text
-and distinct keyboard mnemonics. Existing catalog content is preserved. This
+contexts, including Objective-C++ backend errors. All 25 languages have populated
+updater captions and diagnostics; existing non-updater content is preserved.
+Test-owned compiled catalogs verify actual widget actions, runtime diagnostic
+lookups, version substitution and distinct keyboard mnemonics in every language.
+The offscreen light/dark layout checks retain the 420-pixel limit for all 25
+languages. Detailed consent/error text is tested in English, Ukrainian and Russian.
+These tests do not constitute independent linguistic review. This
 does not complete translation review, real Settings/menu/Live Log integration,
 native Cocoa layout QA or the installer recovery/committed-quit gates.
 
