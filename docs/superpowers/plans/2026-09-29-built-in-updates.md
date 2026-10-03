@@ -447,6 +447,23 @@ These tests do not constitute independent linguistic review. This
 does not complete translation review, real Settings/menu/Live Log integration,
 native Cocoa layout QA or the installer recovery/committed-quit gates.
 
+Native reusable-widget checkpoint: the isolated settings suite now runs with the
+copied patched Cocoa plugin on macOS 27. Ukrainian checkbox captions and Georgian
+action rows reproduced native-only violations of the existing 420-pixel limit.
+Local native-indicator checkbox wrapping and Qt form-row wrapping fix those
+violations without changing captions, fonts, global styling or controller policy.
+Mouse clicks on wrapped text and keyboard toggling remain tested.
+
+All 25 languages pass native light/dark 420-pixel layout checks; 100 retained
+native screenshots cover narrow and 800-pixel-wide variants. Native settings
+tests pass 13 cases/2,904 assertions, DC-only settings pass 13/2,804, and the
+frozen-candidate full Qt suite passes 578 cases with eight explicit real-GOST
+opt-in skips. Original build binaries/catalogs and the installed app/profile
+remain unchanged. This is reusable-widget QA and a bounded author review, not
+actual Settings/menu/Live Log ownership integration, independent linguistic or
+whole-branch review, native minimum-OS acceptance or installer recovery.
+Those remaining runtime and release gates are unchanged.
+
 ### Task 7: Reproducible Signed Feeds And Release Packaging
 
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.

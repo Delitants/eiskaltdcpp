@@ -2,17 +2,72 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
-#include <QGridLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLocale>
 #include <QProgressBar>
 #include <QPushButton>
+#include <QRegularExpression>
+#include <QStyleOptionButton>
+#include <QStylePainter>
 #include <QTextBrowser>
 #include <QVBoxLayout>
 
 namespace updates {
 namespace {
+// Keep the native indicator, shortcuts and accessibility while wrapping long captions.
+class WrappingCheckBox final : public QCheckBox {
+public:
+    WrappingCheckBox(const QString& text, QWidget* parent) : QCheckBox(text, parent) {
+        auto policy = sizePolicy();
+        policy.setHorizontalPolicy(QSizePolicy::Preferred);
+        policy.setVerticalPolicy(QSizePolicy::Preferred);
+        policy.setHeightForWidth(true);
+        setSizePolicy(policy);
+    }
+    QSize minimumSizeHint() const override {
+        const auto native = QCheckBox::minimumSizeHint();
+        auto caption = text();
+        caption.remove('&');
+        int longest = 0;
+        for(const auto& word : caption.split(QRegularExpression(QStringLiteral("\\s+")), Qt::SkipEmptyParts))
+            longest = qMax(longest, fontMetrics().horizontalAdvance(word));
+        const auto padding = native.width() - fontMetrics().horizontalAdvance(caption);
+        return {qMax(0, padding) + longest, native.height()};
+    }
+    bool hasHeightForWidth() const override { return true; }
+    int heightForWidth(int width) const override {
+        const auto native = QCheckBox::sizeHint();
+        QStyleOptionButton option;
+        initStyleOption(&option);
+        option.rect = QRect(0, 0, width, native.height());
+        const auto contents = style()->subElementRect(QStyle::SE_CheckBoxContents, &option, this);
+        const auto wrapped = fontMetrics().boundingRect(QRect(0, 0, qMax(1, contents.width()), 100000),
+            Qt::TextWordWrap | Qt::TextHideMnemonic, text());
+        return native.height() + qMax(0, wrapped.height() - fontMetrics().height());
+    }
+protected:
+    bool hitButton(const QPoint& point) const override { return rect().contains(point); }
+    void paintEvent(QPaintEvent* event) override {
+        const auto native = QCheckBox::sizeHint();
+        if(heightForWidth(width()) <= native.height()) {
+            QCheckBox::paintEvent(event);
+            return;
+        }
+        QStyleOptionButton option;
+        initStyleOption(&option);
+        const auto contents = style()->subElementRect(QStyle::SE_CheckBoxContents, &option, this);
+        option.text.clear();
+        option.rect.setHeight(native.height());
+        QStylePainter painter(this);
+        painter.drawControl(QStyle::CE_CheckBox, option);
+        const auto mnemonic = style()->styleHint(QStyle::SH_UnderlineShortcut, &option, this)
+            ? Qt::TextShowMnemonic : Qt::TextHideMnemonic;
+        painter.drawItemText(contents, Qt::AlignLeading | Qt::AlignVCenter | Qt::TextWordWrap | mnemonic,
+            option.palette, isEnabled(), text(), QPalette::WindowText);
+    }
+};
+
 template<class T> T* named(T* widget, const char* name, const QString& accessible) {
     widget->setObjectName(QString::fromLatin1(name));
     widget->setAccessibleName(accessible);
@@ -33,11 +88,11 @@ SettingsUpdates::SettingsUpdates(UpdateController& owner, QWidget* parent)
     auto* layout = new QVBoxLayout(this);
     auto* preferences = new QGroupBox(tr("Update preferences"), this);
     auto* preferenceLayout = new QVBoxLayout(preferences);
-    checks = named(new QCheckBox(tr("&Check for updates automatically"), preferences),
+    checks = named(new WrappingCheckBox(tr("&Check for updates automatically"), preferences),
         "updateChecks", tr("Check for updates automatically"));
-    notifications = named(new QCheckBox(tr("N&otify me when updates are available"), preferences),
+    notifications = named(new WrappingCheckBox(tr("N&otify me when updates are available"), preferences),
         "updateNotifications", tr("Notify me when updates are available"));
-    autoInstall = named(new QCheckBox(tr("Download and &install on next normal quit"), preferences),
+    autoInstall = named(new WrappingCheckBox(tr("Download and &install on next normal quit"), preferences),
         "updateAutoInstall", tr("Download and install on next normal quit"));
     preferenceLayout->addWidget(checks);
     preferenceLayout->addWidget(notifications);
@@ -68,20 +123,24 @@ SettingsUpdates::SettingsUpdates(UpdateController& owner, QWidget* parent)
     activityLayout->addWidget(notes);
     progress = named(new QProgressBar(activity), "updateProgress", tr("Update download progress"));
     activityLayout->addWidget(progress);
-    auto* actions = new QGridLayout;
-    const auto button = [&](const QString& text, const char* name, int row, int column) {
+    auto* actions = new QFormLayout;
+    actions->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    actions->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    const auto button = [&](const QString& text, const char* name) {
         auto accessible = text;
         accessible.remove('&');
         auto* widget = named(new QPushButton(text, activity), name, accessible);
-        actions->addWidget(widget, row, column);
         return widget;
     };
-    checkNow = button(tr("Check &Now"), "updateCheckNow", 0, 0);
-    cancel = button(tr("Cance&l"), "updateCancel", 0, 1);
-    download = button(tr("&Download"), "updateDownload", 1, 0);
-    installOnQuit = button(tr("Install on Next &Quit"), "updateInstallOnQuit", 1, 1);
-    later = button(tr("La&ter"), "updateLater", 2, 0);
-    skip = button(tr("&Skip This Version"), "updateSkip", 2, 1);
+    checkNow = button(tr("Check &Now"), "updateCheckNow");
+    cancel = button(tr("Cance&l"), "updateCancel");
+    download = button(tr("&Download"), "updateDownload");
+    installOnQuit = button(tr("Install on Next &Quit"), "updateInstallOnQuit");
+    later = button(tr("La&ter"), "updateLater");
+    skip = button(tr("&Skip This Version"), "updateSkip");
+    actions->addRow(checkNow, cancel);
+    actions->addRow(download, installOnQuit);
+    actions->addRow(later, skip);
     activityLayout->addLayout(actions);
     layout->addWidget(activity);
     layout->addStretch();

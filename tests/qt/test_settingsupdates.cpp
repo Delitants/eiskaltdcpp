@@ -314,6 +314,25 @@ TEST_CASE("Updater settings detach safely when the controller is destroyed", "[s
     f.control<QPushButton>("updateCheckNow")->click(); f.apply(); events();
 }
 
+TEST_CASE("Updater long checkboxes wrap without losing native input behavior", "[settings-updates]") {
+    TranslationScope translation("uk");
+    Fixture f;
+    auto* check = f.control<QCheckBox>("updateAutoInstall");
+    REQUIRE(check->hasHeightForWidth());
+    const auto wrappedHeight = check->heightForWidth(200);
+    REQUIRE(wrappedHeight > check->sizeHint().height());
+    check->setFixedSize(200, wrappedHeight); events();
+    REQUIRE(check->isEnabled());
+    CHECK_FALSE(check->isChecked());
+    QTest::mouseClick(check, Qt::LeftButton, Qt::NoModifier, QPoint(80, wrappedHeight - 3));
+    CHECK(check->isChecked());
+    check->setFocus();
+    QTest::keyClick(check, Qt::Key_Space);
+    CHECK_FALSE(check->isChecked());
+    CHECK_FALSE(check->accessibleName().isEmpty());
+    CHECK(f.backend.installs == 0);
+}
+
 TEST_CASE("Updater settings keep native controls inside narrow light and dark layouts", "[settings-updates]") {
     const char* language = GENERATE("be", "bg", "cs", "da", "de", "el", "en", "es", "eu", "fr", "hu", "ie",
         "it", "ka", "pl", "pt_BR", "ru", "sk", "sr", "sr@latin", "sv_SE", "tr", "uk", "vi", "zh_CN");
@@ -334,14 +353,27 @@ TEST_CASE("Updater settings keep native controls inside narrow light and dark la
         INFO("language=" << language << "; auto-install minimum="
              << f.control<QCheckBox>("updateAutoInstall")->minimumSizeHint().width()
              << "; install-button minimum="
-             << f.control<QPushButton>("updateInstallOnQuit")->minimumSizeHint().width());
+             << f.control<QPushButton>("updateInstallOnQuit")->minimumSizeHint().width()
+             << "; checks minimum=" << f.control<QCheckBox>("updateChecks")->minimumSizeHint().width()
+             << "; notifications minimum=" << f.control<QCheckBox>("updateNotifications")->minimumSizeHint().width());
         CHECK(f.page->width() <= 420);
+        for(auto* check : f.page->findChildren<QCheckBox*>()) {
+            CHECK(check->width() >= check->minimumSizeHint().width());
+            CHECK(check->height() >= check->heightForWidth(check->width()));
+            CHECK(f.page->rect().contains(QRect(check->mapTo(f.page.get(), QPoint()), check->size())));
+        }
         for(auto* button : f.page->findChildren<QPushButton*>()) {
             const auto bounds = QRect(button->mapTo(f.page.get(), QPoint()), button->size());
             CHECK(f.page->rect().contains(bounds));
+            CHECK(button->width() >= button->minimumSizeHint().width());
             CHECK_FALSE(button->accessibleName().isEmpty());
         }
-        if(!qEnvironmentVariableIsEmpty("EISKALT_SETTINGS_SCREENSHOTS"))
-            REQUIRE(f.page->grab().save(qEnvironmentVariable("EISKALT_SETTINGS_SCREENSHOTS") + (dark ? "/dark.png" : "/light.png")));
+        if(!qEnvironmentVariableIsEmpty("EISKALT_SETTINGS_SCREENSHOTS")) {
+            const auto directory = qEnvironmentVariable("EISKALT_SETTINGS_SCREENSHOTS");
+            const auto theme = dark ? QStringLiteral("dark") : QStringLiteral("light");
+            REQUIRE(f.page->grab().save(directory + QStringLiteral("/%1-%2-narrow.png").arg(QString::fromUtf8(language), theme)));
+            f.page->resize(800, 800); events();
+            REQUIRE(f.page->grab().save(directory + QStringLiteral("/%1-%2-wide.png").arg(QString::fromUtf8(language), theme)));
+        }
     }
 }
