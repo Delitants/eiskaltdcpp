@@ -436,6 +436,15 @@ until the retained native recovery and committed-quit acceptance gates pass.
 Widget/extraction tests are not integrated application settings, native Cocoa QA,
 complete language catalogs, or release acceptance. Keep those steps pending.
 
+Catalog checkpoint: all 25 catalogs now contain the updater's extracted runtime
+contexts, including Objective-C++ backend errors. English, Ukrainian and Russian
+have completed captions and diagnostics; the other 22 languages retain explicit
+unfinished entries and English fallback. Test-owned compiled catalogs verify
+actual widget labels, accessible names, version substitution, consent/error text
+and distinct keyboard mnemonics. Existing catalog content is preserved. This
+does not complete translation review, real Settings/menu/Live Log integration,
+native Cocoa layout QA or the installer recovery/committed-quit gates.
+
 ### Task 7: Reproducible Signed Feeds And Release Packaging
 
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.

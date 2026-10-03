@@ -192,7 +192,7 @@ class ExtractionRegressionTests(unittest.TestCase):
                 for pattern in match[1].split():
                     files.update(p.resolve() for p in manifest.parent.glob(pattern))
         expected = {p.resolve() for p in (ROOT / "eiskaltdcpp-qt/src/updates").glob("*")
-                    if p.suffix in {".cpp", ".h"}}
+                    if p.suffix in {".cpp", ".h", ".mm"}}
         self.assertTrue(expected)
         self.assertEqual([], sorted(str(p.relative_to(ROOT)) for p in expected - files))
 
@@ -211,6 +211,41 @@ class ExtractionRegressionTests(unittest.TestCase):
         self.assertIn(("updates::SettingsUpdates", "Available version: %1"), keys)
         self.assertIn(("updates::SettingsUpdates", "Install on Next &Quit"), keys)
         self.assertNotIn("updates", {context for context, _ in keys})
+
+    @unittest.skipUnless(shutil.which("lupdate"), "lupdate is required")
+    def test_updater_catalogs_cover_extracted_runtime_messages(self):
+        sources = sorted(str(p) for p in (ROOT / "eiskaltdcpp-qt/src/updates").glob("*")
+                         if p.suffix in {".cpp", ".h", ".mm"})
+        with tempfile.TemporaryDirectory(prefix="eiskalt-updater-catalogs-") as work:
+            output = Path(work) / "updates.ts"
+            subprocess.run(["lupdate", *sources, "-no-obsolete", "-locations", "none",
+                            "-ts", str(output)], check=True, capture_output=True, text=True)
+            required = {(c.findtext("name"), m.findtext("source"))
+                        for c in ET.parse(output).getroot().findall("context")
+                        for m in c.findall("message")}
+        self.assertGreaterEqual(len(required), 40)
+        self.assertIn(("updates::MacUpdateBackend", "Unable to create private update staging."), required)
+        tokens = re.compile(r"%(?:L?[1-9]\d*|n)")
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {}
+            for context in ET.parse(path).getroot().findall("context"):
+                for message in context.findall("message"):
+                    translation = message.find("translation")
+                    if translation is not None and translation.get("type") not in {"obsolete", "vanished"}:
+                        key = (context.findtext("name"), message.findtext("source"))
+                        entries.setdefault(key, []).append(translation)
+            for key in sorted(required):
+                with self.subTest(language=path.stem, context=key[0], source=key[1]):
+                    translations = entries.get(key, [])
+                    self.assertEqual(1, len(translations), "Missing or ambiguous runtime message")
+                    if not translations or path.stem not in {"en", "uk", "ru"}:
+                        continue
+                    translation = translations[0]
+                    self.assertNotEqual("unfinished", translation.get("type"))
+                    text = "".join(translation.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertEqual(Counter(tokens.findall(key[1])), Counter(tokens.findall(text)))
+                    self.assertEqual(key[1].count("&"), text.count("&"))
 
     @unittest.skipUnless(shutil.which("lupdate"), "lupdate is required")
     def test_shared_torrent_actions_are_extractable(self):

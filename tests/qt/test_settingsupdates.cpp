@@ -14,6 +14,7 @@
 #include <QSet>
 #include <QTest>
 #include <QTextBrowser>
+#include <QTranslator>
 
 namespace {
 using namespace updates;
@@ -66,6 +67,61 @@ struct Fixture {
         emit backend.downloadReady(backend.operation, 2, QByteArray(32, 'a')); events();
     }
 };
+struct TranslationScope {
+    QTranslator translator;
+    explicit TranslationScope(const char* language) {
+        REQUIRE(translator.load(QString::fromUtf8(language), QStringLiteral(UPDATER_TEST_QM_DIR)));
+        REQUIRE(QCoreApplication::installTranslator(&translator));
+    }
+    ~TranslationScope() { QCoreApplication::removeTranslator(&translator); }
+};
+}
+
+TEST_CASE("Updater compiled catalogs localize real controls, consent and errors", "[settings-updates][updater-catalogs]") {
+    struct Captions {
+        const char *language, *checks, *checkAccessible, *checkNow, *version, *consent, *noFallback, *unsupported;
+    };
+    const Captions english{"en", "&Check for updates automatically", "Check for updates automatically",
+        "Check &Now", "Available version: 3.0.0-pre.2",
+        "This version is selected for installation after a successful normal quit. No restart is forced.",
+        "The update connection failed. No direct fallback was used.",
+        "Self-updating is not supported on this platform or build."};
+    const Captions ukrainian{"uk", "&Автоматично перевіряти оновлення", "Автоматично перевіряти оновлення",
+        "Перевірити &зараз", "Доступна версія: 3.0.0-pre.2",
+        "Цю версію вибрано для встановлення після успішного штатного виходу. Примусового перезапуску не буде.",
+        "Не вдалося встановити з'єднання для оновлення. Пряме з'єднання не використовувалося.",
+        "Самооновлення не підтримується на цій платформі або в цій збірці."};
+    const Captions russian{"ru", "&Автоматически проверять обновления", "Автоматически проверять обновления",
+        "Проверить &сейчас", "Доступная версия: 3.0.0-pre.2",
+        "Эта версия выбрана для установки после успешного штатного выхода. Принудительного перезапуска не будет.",
+        "Не удалось установить соединение для обновления. Прямое соединение не использовалось.",
+        "Самообновление не поддерживается на этой платформе или в этой сборке."};
+    const Captions* captions = &english;
+    SECTION("English") { captions = &english; }
+    SECTION("Ukrainian") { captions = &ukrainian; }
+    SECTION("Russian") { captions = &russian; }
+    TranslationScope translation(captions->language);
+    for(const auto& entry : {std::pair{"updates::SettingsUpdates", "&Check for updates automatically"},
+                            std::pair{"updates::UpdateController", "The update connection failed. No direct fallback was used."},
+                            std::pair{"updates::MacUpdateBackend", "Unable to create private update staging."},
+                            std::pair{"updates::UpdateTransport", "An update download is already running."}}) {
+        CHECK_FALSE(translation.translator.translate(entry.first, entry.second).isEmpty());
+    }
+    Fixture f;
+    CHECK(f.control<QCheckBox>("updateChecks")->text() == QString::fromUtf8(captions->checks));
+    CHECK(f.control<QCheckBox>("updateChecks")->accessibleName() == QString::fromUtf8(captions->checkAccessible));
+    CHECK(f.control<QPushButton>("updateCheckNow")->text() == QString::fromUtf8(captions->checkNow));
+    f.ready();
+    CHECK(f.control<QLabel>("updateVersion")->text() == QString::fromUtf8(captions->version));
+    f.control<QPushButton>("updateInstallOnQuit")->click();
+    CHECK(f.control<QLabel>("updateResult")->text() == QString::fromUtf8(captions->consent));
+    CHECK(f.backend.installs == 0);
+    f.controller->checkNow();
+    emit f.backend.failed(f.backend.operation, "Private diagnostic must not appear", FailureCategory::Network);
+    events();
+    CHECK(f.control<QLabel>("updateResult")->text() == QString::fromUtf8(captions->noFallback));
+    CHECK(QCoreApplication::translate("updates::UnsupportedUpdateBackend",
+        "Self-updating is not supported on this platform or build.") == QString::fromUtf8(captions->unsupported));
 }
 
 TEST_CASE("Updater settings preserve explicit OFF choices and accessible native defaults", "[settings-updates]") {
@@ -114,6 +170,11 @@ TEST_CASE("Updater settings use the saved channel and show successful manual res
 }
 
 TEST_CASE("Updater settings reserve distinct mnemonic labels on platforms that use them", "[settings-updates]") {
+    const char* language = "en";
+    SECTION("English") { language = "en"; }
+    SECTION("Ukrainian") { language = "uk"; }
+    SECTION("Russian") { language = "ru"; }
+    TranslationScope translation(language);
     Fixture f;
     QStringList shortcuts;
     const auto add = [&](const QString& text) {
@@ -207,6 +268,11 @@ TEST_CASE("Updater settings detach safely when the controller is destroyed", "[s
 }
 
 TEST_CASE("Updater settings keep native controls inside narrow light and dark layouts", "[settings-updates]") {
+    const char* language = "en";
+    SECTION("English") { language = "en"; }
+    SECTION("Ukrainian") { language = "uk"; }
+    SECTION("Russian") { language = "ru"; }
+    TranslationScope translation(language);
     Fixture f;
     f.control<QPushButton>("updateCheckNow");
     f.available();
@@ -220,6 +286,10 @@ TEST_CASE("Updater settings keep native controls inside narrow light and dark la
         palette.setColor(QPalette::ButtonText, dark ? Qt::white : Qt::black);
         palette.setColor(QPalette::Disabled, QPalette::ButtonText, dark ? QColor("#888888") : QColor("#777777"));
         f.page->setPalette(palette); f.page->resize(420, 800); events();
+        INFO("language=" << language << "; auto-install minimum="
+             << f.control<QCheckBox>("updateAutoInstall")->minimumSizeHint().width()
+             << "; install-button minimum="
+             << f.control<QPushButton>("updateInstallOnQuit")->minimumSizeHint().width());
         CHECK(f.page->width() <= 420);
         for(auto* button : f.page->findChildren<QPushButton*>()) {
             const auto bounds = QRect(button->mapTo(f.page.get(), QPoint()), button->size());

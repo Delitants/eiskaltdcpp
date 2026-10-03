@@ -124,6 +124,30 @@ target_include_directories(eiskaltdcpp-qt-tests PRIVATE
     ${GETTEXT_INCLUDE_DIR}
 )
 target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE QT_CONTEXT_MINIMAL)
+
+# Compile production catalogs for runtime-context tests without touching source .qm files.
+find_package(Qt6 COMPONENTS LinguistTools QUIET)
+if (TARGET Qt6::lrelease)
+    get_target_property(UPDATER_TEST_LRELEASE Qt6::lrelease IMPORTED_LOCATION)
+else ()
+    find_program(UPDATER_TEST_LRELEASE NAMES lrelease-qt6 lrelease6 lrelease REQUIRED)
+endif ()
+set(UPDATER_TEST_QM_DIR "${CMAKE_CURRENT_BINARY_DIR}/updater-catalogs")
+set(UPDATER_TEST_QM_FILES)
+foreach (LANGUAGE en uk ru)
+    set(QM "${UPDATER_TEST_QM_DIR}/${LANGUAGE}.qm")
+    add_custom_command(OUTPUT "${QM}"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${UPDATER_TEST_QM_DIR}"
+        COMMAND "${UPDATER_TEST_LRELEASE}" -nounfinished
+            "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/translations/${LANGUAGE}.ts" -qm "${QM}"
+        DEPENDS "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/translations/${LANGUAGE}.ts"
+        VERBATIM)
+    list(APPEND UPDATER_TEST_QM_FILES "${QM}")
+endforeach ()
+add_custom_target(eiskalt-updater-test-catalogs DEPENDS ${UPDATER_TEST_QM_FILES})
+add_dependencies(eiskaltdcpp-qt-tests eiskalt-updater-test-catalogs)
+target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE
+    UPDATER_TEST_QM_DIR="${UPDATER_TEST_QM_DIR}")
 eiskalt_add_icon_themes(eiskaltdcpp-qt-tests)
 add_executable(eiskalt-icon-theme-preview EXCLUDE_FROM_ALL
     icon_theme_preview.cpp ${QT_SRC_DIR}/AppIconTheme.cpp)

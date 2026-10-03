@@ -10731,4 +10731,195 @@ SHA-256: %4</translation>
             <translation>Τα δεδομένα συμπλήρωσης του Torrent δεν είναι επιλέξιμο αρχείο.</translation>
         </message>
     </context>
+    <context>
+        <name>updates::MacUpdateBackend</name>
+        <message>
+            <source>Update installation is not available in this build.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update verification failed. No update was installed.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Unable to create private update staging.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
+            <translation type="unfinished" />
+        </message>
+    </context>
+    <context>
+        <name>updates::SettingsUpdates</name>
+        <message>
+            <source>Update preferences</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>&amp;Check for updates automatically</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Check for updates automatically</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>N&amp;otify me when updates are available</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Notify me when updates are available</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Download and &amp;install on next normal quit</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Download and install on next normal quit</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Release channel</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Stable</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Preview</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Release c&amp;hannel:</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update status</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Release notes</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update download progress</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Check &amp;Now</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Cance&amp;l</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>&amp;Download</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Install on Next &amp;Quit</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>La&amp;ter</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>&amp;Skip This Version</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Installation deferred. Your downloaded update is not installed on quit.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>This version will be skipped.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update operation canceled.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>A newer compatible version is available.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>No newer compatible version is available.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Last successful check: %1</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Last successful check: never</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Available version: %1</source>
+            <translation type="unfinished" />
+        </message>
+    </context>
+    <context>
+        <name>updates::UnsupportedUpdateBackend</name>
+        <message>
+            <source>Self-updating is not supported on this platform or build.</source>
+            <translation type="unfinished" />
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateController</name>
+        <message>
+            <source>The update connection failed. No direct fallback was used.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>The update could not be verified and will not be installed.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>The update could not be saved safely.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update installation is not supported on this system.</source>
+            <translation type="unfinished" />
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateTransport</name>
+        <message>
+            <source>An update download is already running.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update download cancelled or proxy settings changed.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Update download failed. No direct-connection fallback was used.</source>
+            <translation type="unfinished" />
+        </message>
+        <message>
+            <source>Unable to start the update download worker.</source>
+            <translation type="unfinished" />
+        </message>
+    </context>
 </TS>

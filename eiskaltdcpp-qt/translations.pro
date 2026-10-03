@@ -1,5 +1,5 @@
 HEADERS = ../*.h ../torrent/*.h src/*.h src/updates/*.h scriptengine/*.h
-SOURCES = ../torrent/*.cpp src/*.cpp src/updates/*.cpp scriptengine/*.cpp
+SOURCES = ../torrent/*.cpp src/*.cpp src/updates/*.cpp src/updates/*.mm scriptengine/*.cpp
 FORMS   = ui/*.ui
 TRANSLATIONS = \
     translations/be.ts \

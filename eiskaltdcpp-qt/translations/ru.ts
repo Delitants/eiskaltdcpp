@@ -10922,4 +10922,195 @@ SHA-256: %4</translation>
             <translation>Заполнение торрента не является выбираемым файлом.</translation>
         </message>
     </context>
+    <context>
+        <name>updates::MacUpdateBackend</name>
+        <message>
+            <source>Update installation is not available in this build.</source>
+            <translation>Установка обновлений недоступна в этой сборке.</translation>
+        </message>
+        <message>
+            <source>Update verification failed. No update was installed.</source>
+            <translation>Не удалось проверить обновление. Ни одно обновление не установлено.</translation>
+        </message>
+        <message>
+            <source>Unable to create private update staging.</source>
+            <translation>Не удалось создать закрытое хранилище для подготовки обновления.</translation>
+        </message>
+        <message>
+            <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
+            <translation>Операция обновления отменена, уже выполняется или недоступна через выбранный маршрут соединения.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::SettingsUpdates</name>
+        <message>
+            <source>Update preferences</source>
+            <translation>Настройки обновлений</translation>
+        </message>
+        <message>
+            <source>&amp;Check for updates automatically</source>
+            <translation>&amp;Автоматически проверять обновления</translation>
+        </message>
+        <message>
+            <source>Check for updates automatically</source>
+            <translation>Автоматически проверять обновления</translation>
+        </message>
+        <message>
+            <source>N&amp;otify me when updates are available</source>
+            <translation>&amp;Уведомлять о доступных обновлениях</translation>
+        </message>
+        <message>
+            <source>Notify me when updates are available</source>
+            <translation>Уведомлять о доступных обновлениях</translation>
+        </message>
+        <message>
+            <source>Download and &amp;install on next normal quit</source>
+            <translation>Загружать &amp;и устанавливать после штатного выхода</translation>
+        </message>
+        <message>
+            <source>Download and install on next normal quit</source>
+            <translation>Загружать и устанавливать после штатного выхода</translation>
+        </message>
+        <message>
+            <source>Release channel</source>
+            <translation>Канал выпусков</translation>
+        </message>
+        <message>
+            <source>Stable</source>
+            <translation>Стабильный</translation>
+        </message>
+        <message>
+            <source>Preview</source>
+            <translation>Предварительный</translation>
+        </message>
+        <message>
+            <source>Release c&amp;hannel:</source>
+            <translation>Канал в&amp;ыпусков:</translation>
+        </message>
+        <message>
+            <source>Update status</source>
+            <translation>Состояние обновления</translation>
+        </message>
+        <message>
+            <source>Release notes</source>
+            <translation>Примечания к выпуску</translation>
+        </message>
+        <message>
+            <source>Update download progress</source>
+            <translation>Ход загрузки обновления</translation>
+        </message>
+        <message>
+            <source>Check &amp;Now</source>
+            <translation>Проверить &amp;сейчас</translation>
+        </message>
+        <message>
+            <source>Cance&amp;l</source>
+            <translation>Отме&amp;нить</translation>
+        </message>
+        <message>
+            <source>&amp;Download</source>
+            <translation>&amp;Загрузить</translation>
+        </message>
+        <message>
+            <source>Install on Next &amp;Quit</source>
+            <translation>Установить при &amp;выходе</translation>
+        </message>
+        <message>
+            <source>La&amp;ter</source>
+            <translation>Поз&amp;же</translation>
+        </message>
+        <message>
+            <source>&amp;Skip This Version</source>
+            <translation>&amp;Пропустить эту версию</translation>
+        </message>
+        <message>
+            <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
+            <translation>Эта версия выбрана для установки после успешного штатного выхода. Принудительного перезапуска не будет.</translation>
+        </message>
+        <message>
+            <source>Installation deferred. Your downloaded update is not installed on quit.</source>
+            <translation>Установка отложена. Загруженное обновление не будет установлено при выходе.</translation>
+        </message>
+        <message>
+            <source>This version will be skipped.</source>
+            <translation>Эта версия будет пропущена.</translation>
+        </message>
+        <message>
+            <source>Update operation canceled.</source>
+            <translation>Операция обновления отменена.</translation>
+        </message>
+        <message>
+            <source>A newer compatible version is available.</source>
+            <translation>Доступна более новая совместимая версия.</translation>
+        </message>
+        <message>
+            <source>No newer compatible version is available.</source>
+            <translation>Более новой совместимой версии нет.</translation>
+        </message>
+        <message>
+            <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
+            <translation>Сначала обновления сохраняются для последующей установки. Установка требует успешного штатного выхода и проверенного завершения работы; аварийное завершение никогда не разрешает установку.</translation>
+        </message>
+        <message>
+            <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
+            <translation>Установка обновлений недоступна в этой сборке. Вы можете проверять обновления вручную.</translation>
+        </message>
+        <message>
+            <source>Last successful check: %1</source>
+            <translation>Последняя успешная проверка: %1</translation>
+        </message>
+        <message>
+            <source>Last successful check: never</source>
+            <translation>Последняя успешная проверка: ещё не выполнялась</translation>
+        </message>
+        <message>
+            <source>Available version: %1</source>
+            <translation>Доступная версия: %1</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UnsupportedUpdateBackend</name>
+        <message>
+            <source>Self-updating is not supported on this platform or build.</source>
+            <translation>Самообновление не поддерживается на этой платформе или в этой сборке.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateController</name>
+        <message>
+            <source>The update connection failed. No direct fallback was used.</source>
+            <translation>Не удалось установить соединение для обновления. Прямое соединение не использовалось.</translation>
+        </message>
+        <message>
+            <source>The update could not be verified and will not be installed.</source>
+            <translation>Не удалось проверить обновление, поэтому оно не будет установлено.</translation>
+        </message>
+        <message>
+            <source>The update could not be saved safely.</source>
+            <translation>Не удалось безопасно сохранить обновление.</translation>
+        </message>
+        <message>
+            <source>Update installation is not supported on this system.</source>
+            <translation>Установка обновлений не поддерживается в этой системе.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateTransport</name>
+        <message>
+            <source>An update download is already running.</source>
+            <translation>Обновление уже загружается.</translation>
+        </message>
+        <message>
+            <source>Update download cancelled or proxy settings changed.</source>
+            <translation>Загрузка обновления отменена или настройки прокси изменены.</translation>
+        </message>
+        <message>
+            <source>Update download failed. No direct-connection fallback was used.</source>
+            <translation>Не удалось загрузить обновление. Прямое соединение не использовалось.</translation>
+        </message>
+        <message>
+            <source>Unable to start the update download worker.</source>
+            <translation>Не удалось запустить поток загрузки обновления.</translation>
+        </message>
+    </context>
 </TS>

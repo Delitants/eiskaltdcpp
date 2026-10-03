@@ -10799,4 +10799,195 @@ SHA-256: %4</translation>
             <translation>Torrent padding is not a selectable file.</translation>
         </message>
     </context>
+    <context>
+        <name>updates::MacUpdateBackend</name>
+        <message>
+            <source>Update installation is not available in this build.</source>
+            <translation>Update installation is not available in this build.</translation>
+        </message>
+        <message>
+            <source>Update verification failed. No update was installed.</source>
+            <translation>Update verification failed. No update was installed.</translation>
+        </message>
+        <message>
+            <source>Unable to create private update staging.</source>
+            <translation>Unable to create private update staging.</translation>
+        </message>
+        <message>
+            <source>Update operation cancelled, busy, or unavailable on the selected connection route.</source>
+            <translation>Update operation cancelled, busy, or unavailable on the selected connection route.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::SettingsUpdates</name>
+        <message>
+            <source>Update preferences</source>
+            <translation>Update preferences</translation>
+        </message>
+        <message>
+            <source>&amp;Check for updates automatically</source>
+            <translation>&amp;Check for updates automatically</translation>
+        </message>
+        <message>
+            <source>Check for updates automatically</source>
+            <translation>Check for updates automatically</translation>
+        </message>
+        <message>
+            <source>N&amp;otify me when updates are available</source>
+            <translation>N&amp;otify me when updates are available</translation>
+        </message>
+        <message>
+            <source>Notify me when updates are available</source>
+            <translation>Notify me when updates are available</translation>
+        </message>
+        <message>
+            <source>Download and &amp;install on next normal quit</source>
+            <translation>Download and &amp;install on next normal quit</translation>
+        </message>
+        <message>
+            <source>Download and install on next normal quit</source>
+            <translation>Download and install on next normal quit</translation>
+        </message>
+        <message>
+            <source>Release channel</source>
+            <translation>Release channel</translation>
+        </message>
+        <message>
+            <source>Stable</source>
+            <translation>Stable</translation>
+        </message>
+        <message>
+            <source>Preview</source>
+            <translation>Preview</translation>
+        </message>
+        <message>
+            <source>Release c&amp;hannel:</source>
+            <translation>Release c&amp;hannel:</translation>
+        </message>
+        <message>
+            <source>Update status</source>
+            <translation>Update status</translation>
+        </message>
+        <message>
+            <source>Release notes</source>
+            <translation>Release notes</translation>
+        </message>
+        <message>
+            <source>Update download progress</source>
+            <translation>Update download progress</translation>
+        </message>
+        <message>
+            <source>Check &amp;Now</source>
+            <translation>Check &amp;Now</translation>
+        </message>
+        <message>
+            <source>Cance&amp;l</source>
+            <translation>Cance&amp;l</translation>
+        </message>
+        <message>
+            <source>&amp;Download</source>
+            <translation>&amp;Download</translation>
+        </message>
+        <message>
+            <source>Install on Next &amp;Quit</source>
+            <translation>Install on Next &amp;Quit</translation>
+        </message>
+        <message>
+            <source>La&amp;ter</source>
+            <translation>La&amp;ter</translation>
+        </message>
+        <message>
+            <source>&amp;Skip This Version</source>
+            <translation>&amp;Skip This Version</translation>
+        </message>
+        <message>
+            <source>This version is selected for installation after a successful normal quit. No restart is forced.</source>
+            <translation>This version is selected for installation after a successful normal quit. No restart is forced.</translation>
+        </message>
+        <message>
+            <source>Installation deferred. Your downloaded update is not installed on quit.</source>
+            <translation>Installation deferred. Your downloaded update is not installed on quit.</translation>
+        </message>
+        <message>
+            <source>This version will be skipped.</source>
+            <translation>This version will be skipped.</translation>
+        </message>
+        <message>
+            <source>Update operation canceled.</source>
+            <translation>Update operation canceled.</translation>
+        </message>
+        <message>
+            <source>A newer compatible version is available.</source>
+            <translation>A newer compatible version is available.</translation>
+        </message>
+        <message>
+            <source>No newer compatible version is available.</source>
+            <translation>No newer compatible version is available.</translation>
+        </message>
+        <message>
+            <source>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</source>
+            <translation>Updates are staged first. Installation requires a successful normal quit and verified shutdown; crashes never authorize installation.</translation>
+        </message>
+        <message>
+            <source>Update installation is unavailable in this build. You can still check for updates manually.</source>
+            <translation>Update installation is unavailable in this build. You can still check for updates manually.</translation>
+        </message>
+        <message>
+            <source>Last successful check: %1</source>
+            <translation>Last successful check: %1</translation>
+        </message>
+        <message>
+            <source>Last successful check: never</source>
+            <translation>Last successful check: never</translation>
+        </message>
+        <message>
+            <source>Available version: %1</source>
+            <translation>Available version: %1</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UnsupportedUpdateBackend</name>
+        <message>
+            <source>Self-updating is not supported on this platform or build.</source>
+            <translation>Self-updating is not supported on this platform or build.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateController</name>
+        <message>
+            <source>The update connection failed. No direct fallback was used.</source>
+            <translation>The update connection failed. No direct fallback was used.</translation>
+        </message>
+        <message>
+            <source>The update could not be verified and will not be installed.</source>
+            <translation>The update could not be verified and will not be installed.</translation>
+        </message>
+        <message>
+            <source>The update could not be saved safely.</source>
+            <translation>The update could not be saved safely.</translation>
+        </message>
+        <message>
+            <source>Update installation is not supported on this system.</source>
+            <translation>Update installation is not supported on this system.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::UpdateTransport</name>
+        <message>
+            <source>An update download is already running.</source>
+            <translation>An update download is already running.</translation>
+        </message>
+        <message>
+            <source>Update download cancelled or proxy settings changed.</source>
+            <translation>Update download cancelled or proxy settings changed.</translation>
+        </message>
+        <message>
+            <source>Update download failed. No direct-connection fallback was used.</source>
+            <translation>Update download failed. No direct-connection fallback was used.</translation>
+        </message>
+        <message>
+            <source>Unable to start the update download worker.</source>
+            <translation>Unable to start the update download worker.</translation>
+        </message>
+    </context>
 </TS>
