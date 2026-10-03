@@ -507,6 +507,22 @@ successful final signing. Metadata opt-in requires CMake 3.23+.
 Configured feed consumption, audited framework/helper copying and whole-app final signing
 remain later gated work; the packaging checklist item stays open.
 
+Audited packaging integration checkpoint: the separate default-OFF
+`EISKALT_MAC_UPDATER_PACKAGE` requires validated metadata and an explicitly pinned
+complete local stage digest. It audits during configure and every build, copies
+from a re-verified private snapshot after Qt deployment/normalization, signs only
+the confined copied Cocoa leaf while proving unchanged non-signature code,
+retains exact Sparkle bytes/notices, and signs other leaves/bundles then
+the app explicitly without deep signature rewriting. Strict whole-app signatures,
+CPU/OS declarations and forbidden absolute dependencies are checked. Recipe,
+stage and identity inputs enter the metadata generation gate. Existing different
+destinations or changing ON back to OFF require a fresh build tree. Default
+legacy signing remains unchanged; install-time redeployment is skipped on the
+enabled path. No runtime/backend/quit activation is implied. Disposable
+Intel/ARM and Make/Xcode fixtures do not complete actual split-CPU release,
+native minimum-OS, installer recovery or installation acceptance; the checklist
+item and whole Task 7 therefore remain open until those gates pass.
+
 - [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
 - [ ] Generate the production signing identity only as a distinct, recorded release-setup action, in local Keychain; expose only its public key to source/configuration. Generate full-archive signatures after final signing/packaging. No automatic private-key export; document secure backup/rotation requirements.

@@ -2,7 +2,7 @@
 
 These tools prepare and verify one release's Intel and Apple Silicon feeds.
 They do not download, upload, publish, install or enable the runtime updater.
-Production framework integration, signing-key setup and native installer recovery
+Runtime integration, production signing-key setup and native installer recovery
 acceptance remain separate release gates. The release presets require an
 allocated `EISKALT_MACOS_BUILD_NUMBER`, and `macos/release.py --build-number`
 checks the numeric bundle version independently from the displayed release
@@ -89,6 +89,79 @@ must retain its patched Cocoa plugin, validated feed/public-key metadata, nested
 signatures and notices, and be sealed/audited after merging dependencies. Keep
 those gates open until the actual two release bundles pass; do not copy a stage
 over the installed app. Matching source archives must accompany publication.
+
+## Package An Audited Build Bundle
+
+`EISKALT_MAC_UPDATER_PACKAGE` is a separate CMake option, OFF by default. It
+requires the validated metadata option above, Python 3.9+, a single CPU, and an
+explicit `EISKALT_MAC_UPDATER_STAGE` and `EISKALT_MAC_UPDATER_STAGE_SHA256`.
+The checksum is selected from an independently audited local stage, not accepted
+from an untrusted downloaded receipt. This is a local build-input trust anchor;
+it is not a feed signature or production key setup. `package-framework.py`
+defines the canonical digest: sorted relative entries including directory types,
+link targets, executable-bit status and SHA256 file bytes, encoded as compact
+ASCII JSON and SHA256 hashed. Caller paths never enter this digest.
+
+```sh
+# After independently auditing the selected stage, record its complete digest.
+PYTHONPATH=macos/updater python3 - <<'PY'
+import importlib.util
+from pathlib import Path
+spec = importlib.util.spec_from_file_location('packaging', 'macos/updater/package-framework.py')
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+print(module.digest_tree(Path('/path/to/audited-stage')))
+PY
+
+cmake -S . -B /path/to/fresh-build \
+  -DEISKALT_MAC_UPDATER_METADATA=ON \
+  -DEISKALT_MAC_UPDATER_PUBLIC_KEY="$AUDITED_UPDATE_PUBLIC_KEY" \
+  -DEISKALT_MAC_UPDATER_FEED_URL="$MATCHING_MAINTAINED_FEED" \
+  -DEISKALT_MAC_UPDATER_PACKAGE=ON \
+  -DEISKALT_MAC_UPDATER_STAGE=/path/to/audited-stage \
+  -DEISKALT_MAC_UPDATER_STAGE_SHA256="$AUDITED_STAGE_SHA256" \
+  -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=26.0
+```
+
+The stage is checked during configuration and before every build, including
+no-op builds. Copying uses a private re-verified snapshot after all Qt deployment,
+resource copying and library normalization. Invalid stage checksums, license or
+source pins, missing helpers/notices, wrong CPU/OS, unsafe links or unexpected
+content are rejected. Only owned build bundles beneath the supplied build root
+can be modified. Existing different updater destinations are not overwritten;
+use a fresh build tree for a new stage or when changing packaging back to OFF.
+
+The confined copied Cocoa leaf is explicitly signed after normalization and
+input/path validation; its source is never changed. Signature-stripped private
+copies prove that its loadable code bytes are unchanged. The consumer then
+retains its final signed bytes, all original
+Sparkle nested signatures, license and provenance. Other Mach-O leaves and nested
+bundles are signed inside out, followed by the outer application. `--deep` is
+used only for strict verification, never signature overwriting on this path.
+The final app is checked for thin CPU/OS metadata and forbidden absolute external
+library dependencies. This does not prove native minimum-OS execution or resolve
+every relative dynamic-link path. Default builds retain their existing signing
+path. Enabled packaging skips install-time Qt redeployment over sealed helpers;
+installation/CPack acceptance is still a separate gate.
+
+`EISKALT_MAC_UPDATER_CODESIGN_IDENTITY` defaults to explicit ad-hoc `-`, with
+timestamps disabled. An existing identity may be supplied; no key is generated.
+The app's `ThirdPartyNotices/EiskaltUpdaterPackaging.json` records the public
+stage digest, signed and non-signature Cocoa hashes and signing mode, not successful installation or
+runtime enablement. Recipe/stage/identity changes enter the metadata generation
+gate and force relinking/resealing rather than relying on coarse timestamps.
+Failed signing makes the build fail; a mutated build output must not be packaged
+until strict final validation succeeds. No updater/helper is launched by these
+tools. The production backend remains unsupported until recovery and normal-quit
+acceptance; do not publish an inert dependency-only build as a working updater.
+
+```sh
+EISKALT_SPARKLE_INTEL_STAGE=/path/to/audited-intel-stage \
+EISKALT_SPARKLE_ARM_STAGE=/path/to/audited-arm-stage \
+  python3 tests/macos/updater/test_app_packaging.py
+```
+
+## Actual Stage Tests
 
 Actual-SDK staging and ZIP-round-trip tests are opt-in when both archive paths
 are provided; otherwise the suite explicitly skips them:

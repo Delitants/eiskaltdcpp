@@ -518,6 +518,7 @@ if (APPLE)
     set (MACOSX_BUNDLE_COPYRIGHT "Copyright 2009-2021 EiskaltDC++ developers")
     include (${PROJECT_SOURCE_DIR}/../cmake/MacOpenHandlers.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterMetadata.cmake)
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterPackaging.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleMetadata.cmake)
 endif (APPLE)
 
@@ -554,9 +555,11 @@ if (APPLE)
     get_filename_component (_qt_install_prefix "${_qt_install_prefix}" PATH)
     get_filename_component (_qt_install_prefix "${_qt_install_prefix}" PATH)
     set (MACDEPLOYQT "${_qt_install_prefix}/bin/macdeployqt")
-    install (CODE "
+    if(NOT EISKALT_MAC_UPDATER_PACKAGE)
+        install (CODE "
                 execute_process(COMMAND ${MACDEPLOYQT} ${PROJECT_NAME_GLOBAL}.app -verbose=2
                     WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX})")
+    endif()
     set (CPACK_BINARY_DRAGNDROP ON)
 endif (APPLE)
 
@@ -760,7 +763,9 @@ if(APPLE)
     )
 
     find_program(CODESIGN_EXECUTABLE codesign)
-    if(CODESIGN_EXECUTABLE)
+    if(EISKALT_MAC_UPDATER_PACKAGE)
+        eiskalt_package_updater(eiskaltdcpp-qt)
+    elseif(CODESIGN_EXECUTABLE)
         add_custom_command(TARGET eiskaltdcpp-qt POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "Ad-hoc signing macOS app bundle..."
             COMMAND "${CODESIGN_EXECUTABLE}" --force --deep --sign -
