@@ -199,8 +199,9 @@ per CPU. Intel's installed archive members match the retained build objects;
 pinned source archives. Generated header hashes and compiler flags are retained
 separately. ARM's thin archive members, exact recipes and installation receipts
 are verified, but original per-object compilation records were not retained.
-Do not infer historical build-input proof from an installation receipt; final
-controlled ARM build receipts remain required.
+Do not infer historical build-input proof from an installation receipt. The
+controlled candidate build below does not establish how those older ARM inputs
+were compiled.
 
 Compiler dependency listings identify 2,022 Intel and 2,023 ARM Boost headers
 whose current bytes match the pinned Boost 1.92.0 source archive. The five
@@ -240,6 +241,27 @@ sections and all dependency/resource payloads remain unchanged; QA signing
 updates signature metadata. Only `CFBundleVersion` is adjusted to fixture value
 `1` in copied plists, with all other fields unchanged. This is not a production
 build-number allocation, notarization, installation or native minimum-OS test.
+
+## Controlled ARM Static Candidate
+
+An owned, separate prefix now contains c-ares 1.34.8 and libmaxminddb 1.13.3 built
+offline from the pinned archives for arm64/macOS 26. All 91 c-ares and two
+libmaxminddb archive members match retained compiler objects and declare that
+architecture/deployment target. Source-tree hashes captured before compilation,
+generated configuration, exact compiler commands and per-object dependency
+readbacks are retained. SDK/system dependency hashes are post-build readbacks,
+not immutable pre-build snapshots.
+
+SDK 27 marks `pipe2` as macOS 27-only, so this macOS 26 candidate explicitly uses
+`HAVE_PIPE2=OFF`. Neither archive nor the static-link fixture imports `pipe2`.
+The offline DNS-parser/database-lookup fixture imports only Apple libSystem;
+all 26 MaxMind upstream tests and five frozen-prefix integrity checks pass.
+The c-ares GoogleTest suite was not built; parser fixtures provide narrower
+coverage. Host execution is not native minimum-OS acceptance.
+
+This prefix has not replaced shared providers or been linked into the installed
+or earlier QA apps. Final reviewed application builds must explicitly consume
+the controlled prefix and regenerate matching source/notice receipts.
 
 ## Final Distribution Gate
 
