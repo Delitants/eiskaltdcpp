@@ -11013,7 +11013,7 @@ SHA-256: %4</translation>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation>L'aggiornamento automatico non è supportato su questa piattaforma o in questa build.</translation>
+            <translation>L'installazione degli aggiornamenti dall'applicazione non è supportata su questa piattaforma o in questa build.</translation>
         </message>
     </context>
     <context>

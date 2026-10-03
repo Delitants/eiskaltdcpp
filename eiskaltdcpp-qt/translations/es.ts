@@ -11094,7 +11094,7 @@ SHA-256: %4</translation>
         <name>updates::UnsupportedUpdateBackend</name>
         <message>
             <source>Self-updating is not supported on this platform or build.</source>
-            <translation>La actualización automática no es compatible con esta plataforma o compilación.</translation>
+            <translation>La instalación de actualizaciones desde la aplicación no es compatible con esta plataforma o compilación.</translation>
         </message>
     </context>
     <context>

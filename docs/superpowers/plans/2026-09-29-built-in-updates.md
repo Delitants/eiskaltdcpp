@@ -483,6 +483,18 @@ or whole-branch acceptance. No catalogs or runtime behavior changed. Actual
 application integration, disposable-Mac installer recovery and committed-quit
 acceptance remain required before enabling updates.
 
+Wording-polish follow-up: the four deferred messages above are now corrected.
+Hungarian explicitly reports cancellation; Spanish, French and Italian describe
+unsupported installation by the application rather than unsupported automatic
+checking. XML and compiled-catalog regressions reproduced the original wording;
+the Hungarian runtime test also exercises the actual Cancel status. The corrected
+catalogs pass 17 mechanical tests and 14 settings tests (2,844 assertions) with
+both offscreen and native Cocoa rendering. The unsupported-installation tests
+retain manual checking and leave installation actions disabled. Only the four
+intended catalog messages changed; all other messages in all 25 catalogs remain
+unchanged. This does not resolve native-speaker polish, installer recovery,
+actual application integration, production signing or release acceptance.
+
 ### Task 7: Reproducible Signed Feeds And Release Packaging
 
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.

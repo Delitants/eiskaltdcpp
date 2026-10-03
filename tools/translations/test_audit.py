@@ -14,6 +14,25 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_updater_reviewed_status_wording_is_unambiguous(self):
+        reviewed = {
+            "hu": ("updates::SettingsUpdates", "Update operation canceled.",
+                   "A frissítési művelet megszakítva."),
+            "es": ("updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+                   "La instalación de actualizaciones desde la aplicación no es compatible con esta plataforma o compilación."),
+            "fr": ("updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+                   "L'installation de mises à jour par l'application n'est pas prise en charge sur cette plateforme ou dans cette version du programme."),
+            "it": ("updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+                   "L'installazione degli aggiornamenti dall'applicazione non è supportata su questa piattaforma o in questa build."),
+        }
+        for language, (context, source, expected) in reviewed.items():
+            path = ROOT / "eiskaltdcpp-qt/translations" / f"{language}.ts"
+            entries = {(c.findtext("name"), m.findtext("source")): m.findtext("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            with self.subTest(language=language):
+                self.assertEqual(expected, entries[(context, source)])
+
     def test_public_hub_filter_and_counter_are_translated(self):
         captions = {("PublicHubs", "Hubs: %1 / %2"),
                     ("UIPublicHubs", "Filter hubs"),

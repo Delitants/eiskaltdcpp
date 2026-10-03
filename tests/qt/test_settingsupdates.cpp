@@ -125,6 +125,39 @@ TEST_CASE("Updater compiled catalogs localize real controls, consent and errors"
         "Self-updating is not supported on this platform or build.") == QString::fromUtf8(captions->unsupported));
 }
 
+TEST_CASE("Reviewed updater wording distinguishes cancellation and unsupported installation", "[settings-updates][updater-catalogs][updater-wording]") {
+    const struct { const char *language, *context, *source, *expected; } reviewed[] = {
+        {"hu", "updates::SettingsUpdates", "Update operation canceled.",
+            "A frissítési művelet megszakítva."},
+        {"es", "updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+            "La instalación de actualizaciones desde la aplicación no es compatible con esta plataforma o compilación."},
+        {"fr", "updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+            "L'installation de mises à jour par l'application n'est pas prise en charge sur cette plateforme ou dans cette version du programme."},
+        {"it", "updates::UnsupportedUpdateBackend", "Self-updating is not supported on this platform or build.",
+            "L'installazione degli aggiornamenti dall'applicazione non è supportata su questa piattaforma o in questa build."}
+    };
+    for(const auto& entry : reviewed) {
+        DYNAMIC_SECTION(entry.language) {
+            TranslationScope translation(entry.language);
+            CHECK(QCoreApplication::translate(entry.context, entry.source) == QString::fromUtf8(entry.expected));
+            Fixture f;
+            if(QString::fromLatin1(entry.language) == QStringLiteral("hu")) {
+                f.control<QPushButton>("updateCheckNow")->click();
+                REQUIRE(f.control<QPushButton>("updateCancel")->isEnabled());
+                f.control<QPushButton>("updateCancel")->click();
+                CHECK(f.control<QLabel>("updateResult")->text() == QString::fromUtf8(entry.expected));
+            } else {
+                f.backend.supported = false;
+                f.restart();
+                CHECK(f.control<QPushButton>("updateCheckNow")->isEnabled());
+                CHECK_FALSE(f.control<QPushButton>("updateDownload")->isEnabled());
+                CHECK_FALSE(f.control<QPushButton>("updateInstallOnQuit")->isEnabled());
+            }
+            CHECK(f.backend.installs == 0);
+        }
+    }
+}
+
 TEST_CASE("Updater controls and diagnostics resolve in every shipped language", "[settings-updates][updater-catalogs]") {
     const struct { const char *language, *checkNow; } examples[] = {
         {"be", "Праверыць зараз"}, {"bg", "Провери сега"}, {"cs", "Zkontrolovat nyní"},

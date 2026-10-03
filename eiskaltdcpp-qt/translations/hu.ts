@@ -10996,7 +10996,7 @@ SHA-256: %4</translation>
         </message>
         <message>
             <source>Update operation canceled.</source>
-            <translation>A frissítési művelet megszakadt.</translation>
+            <translation>A frissítési művelet megszakítva.</translation>
         </message>
         <message>
             <source>A newer compatible version is available.</source>
