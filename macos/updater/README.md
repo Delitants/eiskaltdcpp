@@ -1,13 +1,67 @@
-# Offline Signed Release Feeds
+# Offline Updater Release Tools
 
 These tools prepare and verify one release's Intel and Apple Silicon feeds.
 They do not download, upload, publish, install or enable the runtime updater.
-Framework packaging, production signing-key setup and native installer recovery
+Production framework integration, signing-key setup and native installer recovery
 acceptance remain separate release gates. The release presets require an
 allocated `EISKALT_MACOS_BUILD_NUMBER`, and `macos/release.py --build-number`
 checks the numeric bundle version independently from the displayed release
 version. A generated feed alone is not proof that the package has matching
 metadata: audit the actual final archive and use the same build for both CPUs.
+
+## Stage The Framework Offline
+
+`stage-framework.py` prepares a separate dependency tree; it never modifies or
+launches an app, updater, helper or installer. Supply the exact SDK and matching
+source archives pinned by `sparkle.lock.json`. It snapshots and checks both
+archive hashes before extraction, compares their original license bytes, thins
+every framework/helper Mach-O to the requested CPU and enforces its OS ceiling.
+No downloads or production key generation occur.
+Input archives are limited to 64 MiB each; only checksum-matching snapshots are
+extracted. Tools have finite timeouts and their signing diagnostics are not
+forwarded.
+
+```sh
+python3 macos/updater/stage-framework.py \
+  --sdk-archive /path/to/Sparkle-2.10.0.tar.xz \
+  --source-archive /path/to/pinned-Sparkle-source.tar.gz \
+  --profile intel --output /path/to/new-intel-updater-stage
+
+python3 macos/updater/stage-framework.py \
+  --sdk-archive /path/to/Sparkle-2.10.0.tar.xz \
+  --source-archive /path/to/pinned-Sparkle-source.tar.gz \
+  --profile apple-silicon --output /path/to/new-arm-updater-stage
+```
+
+The output parent must exist; an existing destination, including a symlink, is
+never overwritten. The complete result is promoted exclusively after successful
+inside-out signing and strict signature checks. Partial failures leave no output.
+The tree contains only `Contents/Frameworks/Sparkle.framework` and
+`Contents/Resources/ThirdPartyNotices/Sparkle/{LICENSE,provenance.json}`. SDK test
+apps, developer tools and symbol files are not distributed. Framework links stay
+inside the framework; helper identifiers and entitlements are preserved. Each
+signed Mach-O hash, CPU/OS ceiling, source pin and preparation are recorded.
+
+Default code signing is explicitly ad-hoc (`--identity -`), without a timestamp.
+An existing identity may be supplied with `--identity`; the tool does not create
+or export it and still disables timestamp network access. This is not Developer
+ID/notarization acceptance or an authenticated update-feed signing identity.
+Production key setup remains a distinct recorded step.
+
+Staging is not production CMake integration or updater activation. The final app
+must retain its patched Cocoa plugin, validated feed/public-key metadata, nested
+signatures and notices, and be sealed/audited after merging dependencies. Keep
+those gates open until the actual two release bundles pass; do not copy a stage
+over the installed app. Matching source archives must accompany publication.
+
+Actual-SDK staging and ZIP-round-trip tests are opt-in when both archive paths
+are provided; otherwise the suite explicitly skips them:
+
+```sh
+EISKALT_SPARKLE_ARCHIVE=/path/to/Sparkle-2.10.0.tar.xz \
+EISKALT_SPARKLE_SOURCE_ARCHIVE=/path/to/pinned-Sparkle-source.tar.gz \
+  python3 tests/macos/updater/test_framework_staging.py
+```
 
 ## Inputs
 

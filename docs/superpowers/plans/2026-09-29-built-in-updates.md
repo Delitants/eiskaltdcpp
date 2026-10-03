@@ -473,6 +473,18 @@ The deploy script now rejects an existing staging symlink/directory and makes
 only the copied libtorrent file owner-writable before Qt's edits, never the
 shared dependency. Regression tests retain original source bytes/permissions.
 
+Framework staging checkpoint: `stage-framework.py` snapshots/verifies both pinned
+SDK/source archives before extraction, preserves matching license bytes, and
+produces a separate thin dependency tree per flavor. All framework/helper Mach-O
+files are OS-floor audited, signed inside out and strictly verified; original
+helper identifiers/entitlements and confined framework links are retained.
+Source pins, preparation/signing mode and final binary hashes are recorded in
+ThirdPartyNotices. Exclusive promotion rejects existing destinations and failed
+signing never exposes a partial stage. Actual-SDK fixtures include a signed ZIP
+round-trip. This is not production application wiring, feed/public-key CMake
+validation, final app signing, key setup or native installation/minimum-OS proof.
+The framework/helper packaging checklist item therefore remains open.
+
 - [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
 - [ ] Generate the production signing identity only as a distinct, recorded release-setup action, in local Keychain; expose only its public key to source/configuration. Generate full-archive signatures after final signing/packaging. No automatic private-key export; document secure backup/rotation requirements.

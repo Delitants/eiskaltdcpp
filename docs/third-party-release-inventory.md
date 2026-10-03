@@ -53,6 +53,27 @@ the application/source release. Its throwaway certificates, credentials, logs
 and generated configuration are local QA artifacts. Private server deployment
 scripts/configuration and developer profiles are not part of the public candidate.
 
+## Sparkle Updater Dependency
+
+The updater dependency is pinned to Sparkle 2.10.0, source commit
+`eef1a539a373c1f1a320624b1130fc5de7b2e100`. The SDK/source URLs and complete archive
+SHA-256 values are in [sparkle.lock.json](../macos/updater/sparkle.lock.json).
+[Offline staging](../macos/updater/README.md) verifies both archives and matching
+original license bytes before preparing separate thin framework/helper trees.
+No SDK test application, signer/developer tools or symbol bundles are included.
+
+Each staged flavor retains the unmodified upstream LICENSE, including its
+external-component notices, plus provenance recording input/source pins,
+architecture/OS ceiling, signing mode, preparation and final binary hashes.
+Keep the matching pinned source archive available alongside the binary release.
+The offline fixture ZIP round-trip verifies these materials and helper signatures
+survive packaging; it is not evidence that the actual release app includes them.
+
+Production CMake/framework integration, final signing of both actual apps,
+release source/notice inventories and native minimum-OS/installer acceptance are
+still pending. The older 38-package candidate inventory below predates Sparkle;
+it is not a completeness claim for the future updater-enabled release.
+
 ## macOS Candidate Materials
 
 The candidate inventory covers 38 dependency packages: the copied frameworks,

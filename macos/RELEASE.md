@@ -4,6 +4,9 @@ Offline authenticated update-feed preparation is documented in
 [updater/README.md](updater/README.md). That tooling is not publication or
 installer acceptance. Release builds and package audits require a separately
 allocated numeric build number, shared by both CPU flavors and the signed feed.
+The same guide documents offline, pinned, CPU-specific Sparkle framework/helper
+staging with notices and strict signatures. That dependency stage is not yet
+integrated into production bundles and does not enable update installation.
 
 The v3 prerelease uses two separate bundles, not a universal binary:
 
