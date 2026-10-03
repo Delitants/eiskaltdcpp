@@ -464,6 +464,25 @@ actual Settings/menu/Live Log ownership integration, independent linguistic or
 whole-branch review, native minimum-OS acceptance or installer recovery.
 Those remaining runtime and release gates are unchanged.
 
+Semantic-review checkpoint: a separate reviewer inspected all 31 updater-settings
+messages in each of 25 catalogs (775 source/translation pairs). An author review
+covered the remaining 13 diagnostic messages per catalog (325 pairs). No clear
+reversal of installation consent, crash exclusion, verification failure or the
+no-direct-fallback guarantee was identified within the reviewers' language
+confidence limits. The fresh extraction/completion/placeholder audit passes
+16 tests; mechanical checks do not prove meaning.
+
+One minor Hungarian confirmation-message issue is deferred: "Update operation
+canceled." currently reads as an interruption rather than explicit cancellation.
+The Spanish, French and Italian unsupported-backend wording also uses "automatic
+updating" for "self-updating"; the settings support label separately distinguishes
+unavailable installation from available manual checking. Neither finding changes
+the installation policy. Basque, Georgian and Interlingue idiom needs native-speaker
+review; this bounded independent model review is not native-speaker certification
+or whole-branch acceptance. No catalogs or runtime behavior changed. Actual
+application integration, disposable-Mac installer recovery and committed-quit
+acceptance remain required before enabling updates.
+
 ### Task 7: Reproducible Signed Feeds And Release Packaging
 
 **Files:** Create `macos/updater/{make-feeds.py,verify-feeds.py,README.md}`, `tests/macos/updater/test_release_feeds.py`; modify `macos/release.py`, `macos/RELEASE.md`, `eiskaltdcpp-qt/Info.plist.in`, `cmake/MacUpdater.cmake`, `docs/third-party-release-inventory.md`, relevant presets/CMake and `tests/macos/bundle/release-profiles.py`.
