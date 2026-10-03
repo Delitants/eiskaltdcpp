@@ -2,10 +2,12 @@
 
 These tools prepare and verify one release's Intel and Apple Silicon feeds.
 They do not download, upload, publish, install or enable the runtime updater.
-Framework packaging, numeric bundle metadata, production signing-key setup and
-native installer recovery acceptance remain separate release gates. In
-particular, current `macos/release.py` still uses the earlier bundle-version
-contract; a generated feed is not proof that a package has numeric metadata.
+Framework packaging, production signing-key setup and native installer recovery
+acceptance remain separate release gates. The release presets require an
+allocated `EISKALT_MACOS_BUILD_NUMBER`, and `macos/release.py --build-number`
+checks the numeric bundle version independently from the displayed release
+version. A generated feed alone is not proof that the package has matching
+metadata: audit the actual final archive and use the same build for both CPUs.
 
 ## Inputs
 

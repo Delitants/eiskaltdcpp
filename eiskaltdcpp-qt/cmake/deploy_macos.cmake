@@ -5,11 +5,20 @@ if(DEFINED TORRENT_LIBRARY)
     endif()
     # Search-directory order is not sufficient when another provider shares its SONAME.
     file(MAKE_DIRECTORY "${APP_BUNDLE}/Contents/Frameworks")
+    set(staged_torrent "${APP_BUNDLE}/Contents/Frameworks/${TORRENT_SONAME}")
+    if(IS_SYMLINK "${staged_torrent}" OR IS_DIRECTORY "${staged_torrent}")
+        message(FATAL_ERROR "Linked Torrent staging destination must be a regular file")
+    endif()
     execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-        "${TORRENT_LIBRARY}" "${APP_BUNDLE}/Contents/Frameworks/${TORRENT_SONAME}"
+        "${TORRENT_LIBRARY}" "${staged_torrent}"
         RESULT_VARIABLE copy_result)
     if(NOT "${copy_result}" STREQUAL "0")
         message(FATAL_ERROR "Could not stage the linked Torrent provider (${copy_result})")
+    endif()
+    # Package-manager libraries can be read-only. Qt edits only this owned copy.
+    execute_process(COMMAND /bin/chmod u+w "${staged_torrent}" RESULT_VARIABLE writable_result)
+    if(NOT "${writable_result}" STREQUAL "0")
+        message(FATAL_ERROR "Could not make the staged Torrent provider writable")
     endif()
 endif()
 

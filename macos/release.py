@@ -64,14 +64,21 @@ def check_binary(path, arch, floor):
             raise ValueError(f"{path}: requires macOS {minimum}, above {floor}")
 
 
-def check(app, profile, version):
+def validate_build_number(value):
+    if type(value) is not str or not re.fullmatch(r"[1-9][0-9]{0,18}", value) or int(value) > 9223372036854775807:
+        raise ValueError("build number must be a canonical positive decimal within the signed-feed range")
+
+
+def check(app, profile, version, build_number):
+    validate_build_number(build_number)
     arch, floor, _ = PROFILES[profile]
     contents = app / "Contents"
     with (contents / "Info.plist").open("rb") as stream:
         info = plistlib.load(stream)
-    for key in ("CFBundleShortVersionString", "CFBundleVersion"):
-        if info.get(key) != version:
-            raise ValueError(f"{key} must be {version}, got {info.get(key)!r}")
+    if info.get("CFBundleShortVersionString") != version:
+        raise ValueError(f"CFBundleShortVersionString must be {version}, got {info.get('CFBundleShortVersionString')!r}")
+    if type(info.get("CFBundleVersion")) is not str or info["CFBundleVersion"] != build_number:
+        raise ValueError(f"CFBundleVersion must be numeric build {build_number}, got {info.get('CFBundleVersion')!r}")
     if version_tuple(info.get("LSMinimumSystemVersion", "")) != version_tuple(floor):
         raise ValueError(f"LSMinimumSystemVersion must be {floor}")
     executable = info.get("CFBundleExecutable", "")
@@ -91,16 +98,16 @@ def check(app, profile, version):
         elif path.is_file() and is_macho(path):
             check_binary(path, arch, floor)
             count += 1
-    print(f"PASS {profile}: {count} thin {arch} Mach-O files; macOS <= {floor}; {version}")
+    print(f"PASS {profile}: {count} thin {arch} Mach-O files; macOS <= {floor}; {version}; build {build_number}")
 
 
-def package(app, profile, version, output):
+def package(app, profile, version, build_number, output):
     name = f"EiskaltDCpp-{version}-{PROFILES[profile][2]}.zip"
     archive = output / name
     checksum = output / (name + ".sha256")
     if archive.exists() or archive.is_symlink() or checksum.exists() or checksum.is_symlink():
         raise ValueError("release asset already exists: " + str(archive))
-    check(app, profile, version)
+    check(app, profile, version, build_number)
     notices = app / "Contents/Resources/ThirdPartyNotices"
     if not notices.is_dir() or not any(p.is_file() for p in notices.rglob("*")):
         raise ValueError("ThirdPartyNotices must be staged before packaging")
@@ -120,7 +127,7 @@ def package(app, profile, version, output):
         unpacked = temp / "unpacked"
         run("ditto", "-x", "-k", str(packed), str(unpacked))
         restored = unpacked / app.name
-        check(restored, profile, version)
+        check(restored, profile, version, build_number)
         run("codesign", "--verify", "--deep", "--strict", str(restored))
         run("/bin/sh", str(audit), str(restored))
         digest = hashlib.sha256()
@@ -143,21 +150,23 @@ def main():
     parser.add_argument("command", choices=("check", "package"))
     parser.add_argument("--profile", choices=PROFILES, required=True)
     parser.add_argument("--version", required=True)
+    parser.add_argument("--build-number", required=True, help="Allocated numeric build shared by both release flavors")
     parser.add_argument("--app", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?", args.version):
         parser.error("version must be a safe release version such as 3.0.0-pre.1")
+    validate_build_number(args.build_number)
     app = args.app.resolve(strict=True)
     if args.command == "check":
-        check(app, args.profile, args.version)
+        check(app, args.profile, args.version, args.build_number)
     else:
         if args.output is None:
             parser.error("package requires --output")
         output = args.output.resolve()
         if output == app or app in output.parents:
             parser.error("output must be outside the app bundle")
-        package(app, args.profile, args.version, output)
+        package(app, args.profile, args.version, args.build_number, output)
 
 
 if __name__ == "__main__":

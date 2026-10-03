@@ -23,12 +23,14 @@
           { "type": "notEquals", "lhs": "$env{DEPS_PREFIX}", "rhs": "" },
           { "type": "notEquals", "lhs": "$env{QT_PREFIX}", "rhs": "" },
           { "type": "notEquals", "lhs": "$env{COCOA_PLUGIN}", "rhs": "" },
-          { "type": "notEquals", "lhs": "$env{COCOA_PLUGIN_SHA256}", "rhs": "" }
+          { "type": "notEquals", "lhs": "$env{COCOA_PLUGIN_SHA256}", "rhs": "" },
+          { "type": "notEquals", "lhs": "$env{EISKALT_MACOS_BUILD_NUMBER}", "rhs": "" }
         ]
       },
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "REPLACE_VERSION": "3.0.0-pre.1",
+        "EISKALT_MACOS_BUILD_NUMBER": "$env{EISKALT_MACOS_BUILD_NUMBER}",
         "CMAKE_PREFIX_PATH": "$env{QT_PREFIX};$env{DEPS_PREFIX};$env{DEPS_PREFIX}/opt/openssl@3;$env{DEPS_PREFIX}/opt/gettext",
         "CMAKE_FIND_USE_PACKAGE_REGISTRY": "OFF",
         "CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY": "OFF",

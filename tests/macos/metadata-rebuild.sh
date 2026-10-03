@@ -21,7 +21,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.eiskaltdcpp.test.metadata")
 set(MACOSX_BUNDLE_BUNDLE_NAME "MetadataSmoke")
 set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0")
-set(MACOSX_BUNDLE_BUNDLE_VERSION "1.0")
+set(APP_VERSION "1.0")
+set(MACOSX_BUNDLE_BUNDLE_VERSION "${APP_VERSION}")
+include("${REPO}/cmake/MacBundleVersion.cmake")
 include("${REPO}/cmake/MacOpenHandlers.cmake")
 include("${REPO}/cmake/MacBundleMetadata.cmake")
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -34,6 +36,7 @@ cmake --build "$QA/build" --config Release > "$QA/initial-build.log" 2>&1
 APP="$(find "$QA/build" -type d -name MetadataSmoke.app -print -quit)"
 test -n "$APP"
 codesign --verify --deep --strict "$APP"
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")" = 1
 cp "$QA/build/MacBundleMetadata.cpp" "$QA/initial-metadata.cpp"
 STAMP="$(stat -f %m "$QA/build/signed.stamp")"
 sleep 2
@@ -45,6 +48,27 @@ test "$(stat -f %m "$QA/build/signed.stamp")" -gt "$STAMP"
 test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDevelopmentRegion' "$APP/Contents/Info.plist")" = French
 codesign --verify --deep --strict "$APP"
 STAMP="$(stat -f %m "$QA/build/signed.stamp")"
+cp "$QA/build/MacBundleMetadata.cpp" "$QA/before-number.cpp"
+sleep 2
+# Only the allocated build changes: displayed version stays intact.
+cmake -S "$QA/source" -B "$QA/build" -DEISKALT_MACOS_BUILD_NUMBER=30000002 > "$QA/number-configure.log" 2>&1
+cmake --build "$QA/build" --config Release > "$QA/number-build.log" 2>&1
+test "$(stat -f %m "$QA/build/signed.stamp")" -gt "$STAMP"
+! cmp -s "$QA/before-number.cpp" "$QA/build/MacBundleMetadata.cpp"
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP/Contents/Info.plist")" = 30000002
+test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")" = 1.0
+codesign --verify --deep --strict "$APP"
+STAMP="$(stat -f %m "$QA/build/signed.stamp")"
+cp "$QA/build/MacBundleMetadata.cpp" "$QA/number-metadata.cpp"
+sleep 2
+cmake --build "$QA/build" --config Release > "$QA/number-noop-build.log" 2>&1
+cmp -s "$QA/number-metadata.cpp" "$QA/build/MacBundleMetadata.cpp"
+# Xcode's CMake POST_BUILD phase is unconditional even without linking. Keep
+# that existing behavior distinct from a real metadata-driven rebuild.
+if [[ "$GENERATOR" != Xcode ]]; then
+    test "$(stat -f %m "$QA/build/signed.stamp")" = "$STAMP"
+fi
+STAMP="$(stat -f %m "$QA/build/signed.stamp")"
 sleep 2
 # A feature-only change must remove the document declaration and re-sign too.
 cmake -S "$QA/source" -B "$QA/build" -DUSE_TORRENT=OFF > "$QA/off-configure.log" 2>&1
@@ -52,4 +76,4 @@ cmake --build "$QA/build" --config Release > "$QA/off-build.log" 2>&1
 test "$(stat -f %m "$QA/build/signed.stamp")" -gt "$STAMP"
 ! /usr/libexec/PlistBuddy -c 'Print :CFBundleDocumentTypes' "$APP/Contents/Info.plist" >/dev/null 2>&1
 codesign --verify --deep --strict "$APP"
-printf 'PASS: %s metadata-only and torrent-toggle changes rebuild and re-sign.\n' "$GENERATOR" | tee "$QA/result.txt"
+printf 'PASS: %s metadata/build-number changes rebuild and re-sign, no-op metadata stable, torrent-toggle preserved.\n' "$GENERATOR" | tee "$QA/result.txt"

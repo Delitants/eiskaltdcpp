@@ -2,7 +2,8 @@
 
 Offline authenticated update-feed preparation is documented in
 [updater/README.md](updater/README.md). That tooling is not publication or
-installer acceptance; numeric bundle-version packaging integration is pending.
+installer acceptance. Release builds and package audits require a separately
+allocated numeric build number, shared by both CPU flavors and the signed feed.
 
 The v3 prerelease uses two separate bundles, not a universal binary:
 
@@ -59,6 +60,7 @@ export QT_PREFIX=/path/to/matching-qt
 export COCOA_PLUGIN=/path/to/matching-patched/libqcocoa.dylib
 export COCOA_PLUGIN_SHA256="$(shasum -a 256 "$COCOA_PLUGIN" | cut -d ' ' -f1)"
 export RECHECK_PREFIX=/path/to/matching-private-libtorrent
+export EISKALT_MACOS_BUILD_NUMBER=30000001 # Example only; use the allocated release build.
 
 # Choose one; the presets have separate build directories and two build workers.
 cmake --preset macos-intel \
@@ -73,7 +75,8 @@ cmake --build --preset build-macos-apple-silicon
 ctest --test-dir out/build/macos-apple-silicon --output-on-failure -j1
 ```
 
-The presets are unavailable until all four environment variables are set.
+The presets are unavailable until all five required environment variables are
+set (dependency prefix, Qt prefix, Cocoa plugin/path digest and numeric build).
 Their outputs are `out/build/<preset>/eiskaltdcpp-qt/EiskaltDC++.app`.
 Never reuse the other architecture's CMake cache. On an ARM host, running Intel
 tests also requires a working x86_64 execution environment; Rosetta testing is
@@ -91,7 +94,11 @@ style or SQLite plugins.
 
 Deployment stages the exact shared libtorrent selected by its imported CMake
 target under that library's SONAME before running macdeployqt. A same-named
-system library must not replace the maintained extension. The normalizer removes
+system library must not replace the maintained extension.
+The staged file must be regular, not an existing symlink or directory. Only that
+copy is made owner-writable for Qt's strip/install-name edits; the shared
+dependency prefix is not chmodded or rewritten.
+The normalizer removes
 build-machine and escaping search paths while retaining resolvable paths inside
 the bundle/system roots; it does not rewrite dependency selection or OS floors.
 Always rerun the closure/extension audit and re-sign after normalization.
@@ -112,16 +119,33 @@ archives with both binary downloads and document which sources belong to which.
 ```sh
 tools/dependencies/audit-selected-recheck.sh /path/to/Intel/EiskaltDC++.app x86_64 14.0
 python3 macos/release.py check --profile intel --version 3.0.0-pre.1 \
+  --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/Intel/EiskaltDC++.app
 python3 macos/release.py package --profile intel --version 3.0.0-pre.1 \
+  --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/Intel/EiskaltDC++.app --output /path/to/release-assets
 
 tools/dependencies/audit-selected-recheck.sh /path/to/AppleSilicon/EiskaltDC++.app arm64 26.0
 python3 macos/release.py package --profile apple-silicon --version 3.0.0-pre.1 \
+  --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/AppleSilicon/EiskaltDC++.app --output /path/to/release-assets
 ```
 
-The tool checks both bundle version fields and the exact advertised minimum OS.
+The tool checks the displayed `CFBundleShortVersionString`, separately allocated
+numeric `CFBundleVersion` and exact advertised minimum OS. `--build-number` is
+mandatory and must be canonical positive decimal, no greater than
+`9223372036854775807`, matching the signed manifest's `build_number`. Both CPUs
+must use the same immutable allocation; do not reuse it for changed release
+contents. Ordering against the last published release remains a separate feed
+validation gate. Archive names retain the displayed version.
+
+Ordinary non-preset development builds use numeric build `1` unless explicitly
+configured with `-DEISKALT_MACOS_BUILD_NUMBER=<allocated-number>`. That default
+is not a production allocation or publication-history check. A build-number-only
+change flows through `MacBundleMetadata.cmake`, causing relinking and post-build
+signing. Unchanged numbers leave metadata intact. Makefiles avoid re-signing on
+a no-op build; Xcode's existing unconditional post-build phase can still run.
+
 The selected-recheck audit additionally checks the reachable extension library,
 all five operations and an isolated native ABI caller. It accepts bundle-relative
 `@rpath`, `@loader_path` and `@executable_path` IDs, rejecting expanded paths that

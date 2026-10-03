@@ -455,9 +455,23 @@ is overwritten. An optional previous manifest checks increasing numeric builds
 offline, not publication history. Ephemeral-key tests invoke the pinned SDK and
 OpenSSL 3; the opt-in native `[feed-publication]` case consumes their public-only
 fixtures using production feed/policy/archive verifiers. This does not establish
-real bundle contents or enable an installer. Numeric packaging metadata,
-framework/helper signing, production Keychain setup, both real release packages
+real bundle contents or enable an installer. Framework/helper signing,
+production Keychain setup, both real release packages
 and native minimum-OS/recovery acceptance are still pending.
+
+Numeric packaging checkpoint: `MacBundleVersion.cmake` validates a separate
+positive canonical signed-64-bit `EISKALT_MACOS_BUILD_NUMBER`. Ordinary builds
+default to development identity `1`; both release presets require an explicit
+environment allocation. The package CLI requires `--build-number`, checks it
+against a string-valued `CFBundleVersion` before packaging and again after ZIP
+extraction, and preserves display versions/filenames. Existing metadata hashing
+forces relink/post-build signing for a number-only change, including Xcode.
+This is not production number allocation, dependency/minimum-OS acceptance or
+installer activation; whole Task 7 remains partial.
+Full application deployment also exposed read-only linked-provider staging.
+The deploy script now rejects an existing staging symlink/directory and makes
+only the copied libtorrent file owner-writable before Qt's edits, never the
+shared dependency. Regression tests retain original source bytes/permissions.
 
 - [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.

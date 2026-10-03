@@ -65,7 +65,7 @@ class SelectedRecheckBundle(unittest.TestCase):
         (self.contents / "Frameworks").mkdir()
         (self.contents / "Info.plist").write_bytes(plistlib.dumps({
             "CFBundleExecutable": "EiskaltDC++", "LSMinimumSystemVersion": FLOOR,
-            "CFBundleShortVersionString": "3.0.0-pre.1", "CFBundleVersion": "3.0.0-pre.1"}))
+            "CFBundleShortVersionString": "3.0.0-pre.1", "CFBundleVersion": "30000001"}))
         self.main = self.contents / "MacOS/EiskaltDC++"
         self.library = self.contents / "Frameworks/libtorrent-rasterbar.2.1.dylib"
         shutil.copy2(self.work / "main", self.main)
@@ -78,7 +78,7 @@ class SelectedRecheckBundle(unittest.TestCase):
             # Exercise the actual pre-extension release gate to demonstrate its gaps.
             profile = "apple-silicon" if ARCH == "arm64" else "intel"
             args = [sys.executable, ROOT / "macos/release.py", "check", "--app", self.app,
-                    "--profile", profile, "--version", "3.0.0-pre.1"]
+                    "--profile", profile, "--version", "3.0.0-pre.1", "--build-number", "30000001"]
         return subprocess.run(list(map(str, args)), capture_output=True, text=True)
 
     def rejected(self, reason):
