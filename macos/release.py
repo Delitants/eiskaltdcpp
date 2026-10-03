@@ -70,6 +70,7 @@ def validate_build_number(value):
 
 
 def check(app, profile, version, build_number):
+    app = app.resolve(strict=True)
     validate_build_number(build_number)
     arch, floor, _ = PROFILES[profile]
     contents = app / "Contents"

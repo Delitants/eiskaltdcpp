@@ -1,8 +1,9 @@
 # Release Source And Notice Inventory
 
-This records the source and notice inventory for the staged macOS ARM64
-`3.0.0-pre.1` candidate. It is not a legal certification or a claim about other
-platforms. Verify the final distributed artifacts and their checksums.
+This records the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory and the
+remaining updater-enabled release gates. It is not a legal certification or a
+claim that both final CPU flavors have complete source/notice sets. Verify the
+actual distributed artifacts and their checksums.
 
 ## Project Sources
 
@@ -69,10 +70,23 @@ Keep the matching pinned source archive available alongside the binary release.
 The offline fixture ZIP round-trip verifies these materials and helper signatures
 survive packaging; it is not evidence that the actual release app includes them.
 
-Production CMake/framework integration, final signing of both actual apps,
+Opt-in CMake/framework packaging is implemented and audited on disposable
+bundles; it does not enable the updater backend. Final signing of both actual apps,
 release source/notice inventories and native minimum-OS/installer acceptance are
 still pending. The older 38-package candidate inventory below predates Sparkle;
 it is not a completeness claim for the future updater-enabled release.
+
+## Dependency Closure Inventory
+
+The read-only [closure auditor](../macos/audit-bundle-closure.py) emits hashes,
+architecture, install IDs, runpaths and context-specific resolved imports for
+every thin Mach-O image in an app, including helper executables and unlinked
+plugins. The package gate runs it before ZIP creation and after extraction.
+Follow [the release guide](../macos/RELEASE.md) to retain its JSON report beside
+the source/notice mapping. A complete dynamic graph is not a source-completeness
+claim: static components, runtime-loaded data and source/patch identity still
+need independent inventory. An older UUID match is useful provenance evidence,
+not proof that its notice/source set describes a changed binary.
 
 ## macOS Candidate Materials
 

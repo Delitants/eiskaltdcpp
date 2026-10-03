@@ -6,6 +6,14 @@ trap 'rm -rf "$work"' EXIT HUP INT TERM
 app="$work/Test App.app"
 libs="$app/Contents/Frameworks"
 mkdir -p "$libs" "$app/Contents/PlugIns/platforms"
+# Closure auditing now needs a real executable context, not a library fragment.
+make_main() {
+    mkdir -p "$1/Contents/MacOS"
+    printf 'int main(void) { return 0; }\n' > "$work/main.c"
+    xcrun clang "$work/main.c" -mmacosx-version-min=11.0 -Wl,-rpath,@executable_path/../Frameworks -o "$1/Contents/MacOS/Main"
+    printf '<plist version="1.0"><dict><key>CFBundleExecutable</key><string>Main</string></dict></plist>\n' > "$1/Contents/Info.plist"
+}
+make_main "$app"
 printf 'int bundle_test_value(void) { return 42; }\n' > "$work/library.c"
 xcrun clang -dynamiclib "$work/library.c" -Wl,-install_name,/opt/homebrew/lib/libfixture.dylib -o "$libs/libfixture.dylib"
 xcrun clang -dynamiclib "$work/library.c" -Wl,-install_name,@rpath/librelative.dylib -o "$libs/librelative.dylib"
@@ -39,6 +47,7 @@ printf 'PASS external library/plugin runpaths removed, relative paths/plugin pre
 
 framework_app="$work/Framework App.app"
 framework="$framework_app/Contents/Frameworks/Fixture.framework/Versions/A/Fixture"
+make_main "$framework_app"
 mkdir -p "$(dirname "$framework")/Resources"
 printf 'not a Mach-O binary\n' > "$(dirname "$framework")/Resources/Info.plist"
 xcrun clang -dynamiclib "$work/library.c" -mmacosx-version-min=11.0 \

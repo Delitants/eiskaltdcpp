@@ -153,6 +153,41 @@ file(WRITE "${PROJECT_BINARY_DIR}/recipe-hash" "${EISKALT_MAC_BUNDLE_PACKAGING_H
             hashes.append((build / "recipe-hash").read_text())
         self.assertNotEqual(hashes[0], hashes[1])
 
+    def test_closure_audit_change_invalidates_recipe_even_with_equal_timestamp(self):
+        source = self.root / "copied-recipe"
+        for folder in ("cmake", "macos/updater"):
+            (source / folder).mkdir(parents=True)
+        for name in ("cmake/MacUpdaterPackaging.cmake", "macos/release.py",
+                     "macos/check-bundle-external-links.sh", "macos/audit-bundle-closure.py",
+                     "macos/updater/package-framework.py", "macos/updater/release_feeds.py",
+                     "macos/updater/sparkle.lock.json"):
+            shutil.copyfile(ROOT / name, source / name)
+        (source / "CMakeLists.txt").write_text('''cmake_minimum_required(VERSION 3.23)
+project(ClosureRecipe NONE)
+set(EISKALT_MAC_UPDATER_PACKAGE ON)
+set(EISKALT_MAC_UPDATER_METADATA ON)
+set(CMAKE_OSX_ARCHITECTURES arm64)
+include("${CMAKE_CURRENT_LIST_DIR}/cmake/MacUpdaterPackaging.cmake")
+file(WRITE "${PROJECT_BINARY_DIR}/recipe" "${EISKALT_MAC_BUNDLE_PACKAGING_HASH}")
+''')
+        build = self.root / "recipe-build"
+        stage = self.stages["apple-silicon"]
+
+        def configure():
+            result = subprocess.run(["cmake", "-S", str(source), "-B", str(build),
+                                     "-DEISKALT_MAC_UPDATER_STAGE=" + str(stage),
+                                     "-DEISKALT_MAC_UPDATER_STAGE_SHA256=" + digest_tree(stage)],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return (build / "recipe").read_text()
+
+        before = configure()
+        audit = source / "macos/audit-bundle-closure.py"
+        old = audit.stat()
+        audit.write_text(audit.read_text() + "\n# changed audit recipe\n")
+        os.utime(audit, ns=(old.st_atime_ns, old.st_mtime_ns))
+        self.assertNotEqual(configure(), before)
+
     def test_invalid_stage_is_rejected_before_application_mutation(self):
         app = self.fixture()
         original = digest_tree(app)

@@ -2,6 +2,7 @@
 """Exercise release gates with actual thin/fat Mach-O fixtures, not tool mocks."""
 
 import hashlib
+import importlib.util
 import os
 import plistlib
 from pathlib import Path
@@ -158,6 +159,18 @@ class ReleaseProfiles(unittest.TestCase):
     def test_rejects_symlink_outside_bundle(self):
         (self.contents / "escape").symlink_to(self.work / "x86_64-14.0")
         self.rejected("symlink")
+
+    def test_check_api_accepts_parent_alias_with_confined_framework_links(self):
+        # The packaging consumer calls check() directly, unlike the release CLI
+        # which already canonicalizes its app argument.
+        (self.contents / "value").write_text("confined resource")
+        (self.contents / "internal-link").symlink_to("value")
+        alias = self.case / "alias"
+        alias.symlink_to(self.case, target_is_directory=True)
+        spec = importlib.util.spec_from_file_location("release_tool", TOOL)
+        release = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(release)
+        release.check(alias / self.app.name, "intel", "3.0.0-pre.1", "30000001")
 
     def test_rejects_wrong_arch_executable_symlinked_to_bundle_root(self):
         main = self.contents / "MacOS/EiskaltDC++"

@@ -46,16 +46,18 @@ file(SHA256 "${CMAKE_CURRENT_LIST_DIR}/../macos/updater/sparkle.lock.json" _upda
 file(SHA256 "${CMAKE_CURRENT_LIST_DIR}/../macos/release.py" _updater_audit_hash)
 file(SHA256 "${CMAKE_CURRENT_LIST_DIR}/../macos/updater/release_feeds.py" _updater_input_hash)
 file(SHA256 "${CMAKE_CURRENT_LIST_DIR}/../macos/check-bundle-external-links.sh" _updater_links_hash)
+file(SHA256 "${CMAKE_CURRENT_LIST_DIR}/../macos/audit-bundle-closure.py" _updater_closure_hash)
 # Caller-controlled paths/identity can contain separators. Hash fields separately
 # so different tuples cannot alias without an actual SHA256 collision.
 string(SHA256 _updater_stage_path_hash "${EISKALT_MAC_UPDATER_STAGE}")
 string(SHA256 _updater_identity_hash "${EISKALT_MAC_UPDATER_CODESIGN_IDENTITY}")
 string(SHA256 EISKALT_MAC_BUNDLE_PACKAGING_HASH
-    "${EISKALT_MAC_UPDATER_STAGE_SHA256}|${_updater_stage_path_hash}|${_updater_identity_hash}|${_updater_recipe_hash}|${_updater_cmake_hash}|${_updater_lock_hash}|${_updater_audit_hash}|${_updater_input_hash}|${_updater_links_hash}")
+    "${EISKALT_MAC_UPDATER_STAGE_SHA256}|${_updater_stage_path_hash}|${_updater_identity_hash}|${_updater_recipe_hash}|${_updater_cmake_hash}|${_updater_lock_hash}|${_updater_audit_hash}|${_updater_input_hash}|${_updater_links_hash}|${_updater_closure_hash}")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
     "${_updater_package_tool}" "${CMAKE_CURRENT_LIST_DIR}/../macos/updater/sparkle.lock.json"
     "${CMAKE_CURRENT_LIST_DIR}/../macos/release.py" "${CMAKE_CURRENT_LIST_DIR}/../macos/updater/release_feeds.py"
-    "${CMAKE_CURRENT_LIST_DIR}/../macos/check-bundle-external-links.sh")
+    "${CMAKE_CURRENT_LIST_DIR}/../macos/check-bundle-external-links.sh"
+    "${CMAKE_CURRENT_LIST_DIR}/../macos/audit-bundle-closure.py")
 
 function(eiskalt_package_updater target)
     # This function must be called after all deployment/resource/normalization commands.

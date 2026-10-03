@@ -534,6 +534,15 @@ Intel/ARM and Make/Xcode fixtures do not complete actual split-CPU release,
 native minimum-OS, installer recovery or installation acceptance; the checklist
 item and whole Task 7 therefore remain open until those gates pass.
 
+Relative closure checkpoint: the legacy external-link entry point now performs
+a read-only thin-Mach-O audit of main/helper/plugin contexts, inherited runpaths,
+required/weak/re-export/upward imports, confinement and dependency existence.
+Install IDs are separate from imports. JSON records per-image hashes and resolved
+edges; system-cache paths and detached-image contexts remain explicit assumptions.
+The new recipe enters packaging hash/configure dependencies, including equal
+timestamps. This does not establish runtime-generated dlopen resolution, symbol
+compatibility, static/source/notice completeness or native minimum-OS acceptance.
+
 - [x] RED release tests use ephemeral keys and literal fixtures: tampered/truncated feed/archive, absent signature, mismatched length/hash, wrong flavor/minOS/name, conflicting versions, path injection and missing assets all fail; two valid flavor feeds round-trip against actual Sparkle verification. No production private key enters fixture logs.
 - [ ] Add framework/helper packaging with explicit thinning and strict final signing, retaining the patched Qt Cocoa plugin. Make feed URL/public verification key changes invalidate bundle metadata and relink through `MacBundleMetadata.cmake`. A release configure without a valid public key/feed contract must fail rather than emit an updater that trusts unsigned content.
 - [ ] Generate the production signing identity only as a distinct, recorded release-setup action, in local Keychain; expose only its public key to source/configuration. Generate full-archive signatures after final signing/packaging. No automatic private-key export; document secure backup/rotation requirements.

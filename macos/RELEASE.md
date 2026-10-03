@@ -161,7 +161,32 @@ metadata, wrong deployment platforms and dependencies above the floor. Internal
 framework symlinks are allowed; broken or out-of-bundle symlinks are rejected.
 
 Packaging additionally requires notices, strict deep signature verification and
-the external-link audit. It preserves the source app, verifies ZIP CRCs, extracts
+the read-only dependency-closure audit. The legacy external-link script delegates
+to `audit-bundle-closure.py`: it scans thin Mach-O images, resolves required,
+weak, re-exported and upward imports through loader/executable-relative paths and
+the inherited runpath stack, and rejects missing or escaping non-system targets.
+Each helper uses its own executable directory; otherwise unlinked plugins and
+dylibs use their containing application's executable runpaths. External search
+paths are rejected even if a bundled library happens to satisfy the import.
+Install IDs are inventoried separately, not mistaken for imports. Missing
+non-system weak libraries are conservatively rejected by this release gate.
+
+For a relative-path, hashed inventory without editing or executing the app:
+
+```sh
+python3 macos/audit-bundle-closure.py /path/to/EiskaltDC++.app --json > bundle-closure.json
+```
+
+The resolver follows the [Apple dyld path/runpath contract](https://github.com/apple-oss-distributions/dyld/blob/main/doc/man/man1/dyld.1).
+System load paths are assumed available from the OS/shared cache, including
+OS-managed Cryptex redirections; this is not minimum-OS runtime proof. No host
+environment/fallback paths are used. Runtime-generated `dlopen` names, load-order
+effects, symbol binding and API compatibility still require native acceptance.
+Detached-image contexts in the JSON inventory are assumptions, not proof that
+the app loaded those images. A closure inventory does not map static libraries
+or replace the exact source/recipe/license inventory.
+
+Packaging preserves the source app, verifies ZIP CRCs, extracts
 and re-audits the result, and writes a per-archive `.zip.sha256` file. Existing
 assets are never overwritten. The checks do not establish notice completeness,
 all runtime-loaded dependency resolution, or minimum-OS runtime compatibility.
@@ -172,6 +197,7 @@ Run the packaging regression independently of a full application build:
 
 ```sh
 python3 tests/macos/bundle/release-profiles.py "$PWD"
+python3 tests/macos/bundle/dependency-closure.py "$PWD"
 sh tests/macos/bundle/dylib-ids.sh "$PWD"
 ```
 
