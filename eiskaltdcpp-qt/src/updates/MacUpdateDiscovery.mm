@@ -16,7 +16,7 @@
 #import <Sparkle/Sparkle.h>
 
 namespace {
-QString qt(NSString* value) { return [value isKindOfClass:NSString.class] ? QString::fromUtf8(value.UTF8String) : QString(); }
+QString qt(NSString* value) { return [value isKindOfClass:NSString.class] ? QString::fromCFString((__bridge CFStringRef)value) : QString(); }
 NSString* ns(const QString& value) { return [NSString stringWithUTF8String:value.toUtf8().constData()]; }
 NSError* denied() { return [NSError errorWithDomain:@"org.eiskaltdcpp.update-discovery" code:1
     userInfo:@{NSLocalizedDescriptionKey: @"Update discovery was rejected."}]; }
@@ -128,6 +128,8 @@ namespace updates {
 struct MacUpdateDiscovery::Impl {
     MacUpdateDiscovery& owner;
     QString fixtureBundle;
+    const std::optional<UpdateRuntimeConfig> runtime;
+    const bool requiresRuntime;
     UpdateLoopbackBridge bridge;
     QTimer timer;
     QElapsedTimer elapsed;
@@ -138,7 +140,8 @@ struct MacUpdateDiscovery::Impl {
     EDDiscoveryDriver* driver = nil;
     quint64 generation = 0, operation = 0;
     bool busy = false;
-    Impl(MacUpdateDiscovery& o, const QString& fixture) : owner(o), fixtureBundle(fixture) {
+    Impl(MacUpdateDiscovery& o, const QString& fixture, std::optional<UpdateRuntimeConfig> config, bool required)
+        : owner(o), fixtureBundle(fixture), runtime(std::move(config)), requiresRuntime(required) {
         timer.setInterval(100);
         QObject::connect(&timer, &QTimer::timeout, &owner, [this] {
             if(!routeValid() || elapsed.elapsed() >= 30000) finish(false);
@@ -169,6 +172,7 @@ struct MacUpdateDiscovery::Impl {
     }
     void start(const QByteArray& bytes, Channel channel, quint64 epoch) {
         if(!busy || epoch != generation) return;
+        if(requiresRuntime && !runtime) { finish(false); return; }
         NSBundle* bundle = fixtureBundle.isEmpty() ? NSBundle.mainBundle : [NSBundle bundleWithPath:ns(fixtureBundle)];
         id expiration = [bundle objectForInfoDictionaryKey:@"SUSignedFeedFailureExpirationInterval"];
         const auto buildString = qt([bundle objectForInfoDictionaryKey:@"CFBundleVersion"]);
@@ -181,12 +185,17 @@ struct MacUpdateDiscovery::Impl {
             !setting(bundle, @"SUEnableSystemProfiling", false) || ![expiration isKindOfClass:NSNumber.class] ||
             CFGetTypeID((__bridge CFTypeRef)expiration) == CFBooleanGetTypeID() ||
             [expiration doubleValue] != 0.0) { finish(false); return; }
-        const auto feed = verifyUpdateFeed(bytes, qt([bundle objectForInfoDictionaryKey:@"SUPublicEDKey"]).toLatin1());
+        const auto bundleKey = qt([bundle objectForInfoDictionaryKey:@"SUPublicEDKey"]).toLatin1();
+        if(runtime && (runtime->publicKeyBase64 != bundleKey || runtime->identity.build != build ||
+            runtime->identity.bundleId != qt(bundle.bundleIdentifier) ||
+            runtime->identity.cpu != QSysInfo::buildCpuArchitecture())) { finish(false); return; }
+        const auto feed = verifyUpdateFeed(bytes, runtime ? runtime->publicKeyBase64 : bundleKey);
         if(!feed) { finish(false); return; }
         UpdateIdentity installed;
         installed.build = build; installed.bundleId = qt(bundle.bundleIdentifier); installed.cpu = QSysInfo::buildCpuArchitecture();
         const auto os = QOperatingSystemVersion::current();
         installed.os = QVersionNumber(os.majorVersion(), os.minorVersion(), os.microVersion());
+        if(runtime) installed = runtime->identity;
         if(installed.bundleId.isEmpty() || (installed.cpu != "arm64" && installed.cpu != "x86_64")) { finish(false); return; }
         selected = selectUpdate(*feed, installed, channel);
         staging = std::make_unique<QTemporaryDir>();
@@ -215,8 +224,11 @@ struct MacUpdateDiscovery::Impl {
         [updater checkForUpdateInformation];
     }
 };
-MacUpdateDiscovery::MacUpdateDiscovery(QObject* parent) : MacUpdateDiscovery(QString(), parent) {}
-MacUpdateDiscovery::MacUpdateDiscovery(const QString& fixture, QObject* parent) : QObject(parent), impl(new Impl(*this, fixture)) {}
+MacUpdateDiscovery::MacUpdateDiscovery(QObject* parent) : MacUpdateDiscovery(QString(), currentMacUpdateRuntime(), parent) {}
+MacUpdateDiscovery::MacUpdateDiscovery(const QString& fixture, QObject* parent)
+    : QObject(parent), impl(new Impl(*this, fixture, {}, false)) {}
+MacUpdateDiscovery::MacUpdateDiscovery(const QString& fixture, std::optional<UpdateRuntimeConfig> config, QObject* parent)
+    : QObject(parent), impl(new Impl(*this, fixture, std::move(config), true)) {}
 MacUpdateDiscovery::~MacUpdateDiscovery() { impl->clear(); }
 bool MacUpdateDiscovery::check(quint64 op, const QByteArray& bytes, Channel channel, std::shared_ptr<const dcpp::ProxyRouteSnapshot> route) {
     if(!op || impl->busy || !QCoreApplication::instance() || QThread::currentThread() != QCoreApplication::instance()->thread() || thread() != QThread::currentThread()) return false;

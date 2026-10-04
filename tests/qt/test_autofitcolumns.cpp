@@ -49,7 +49,7 @@ TEST_CASE("Untouched transfer columns fit incoming content and translated header
     REQUIRE(waitForFit([&] { return table.view.columnWidth(2) >= table.textWidth(2) + 8; }));
     REQUIRE(table.view.columnWidth(1) >= table.textWidth(1) + 8);
     table.model.setHeaderData(0, Qt::Horizontal, "A much longer translated user heading");
-    const int heading = table.view.fontMetrics().horizontalAdvance("A much longer translated user heading");
+    const int heading = table.view.header()->fontMetrics().horizontalAdvance("A much longer translated user heading");
     REQUIRE(waitForFit([&] { return table.view.columnWidth(0) >= heading + 12; }));
     table.model.setData(table.model.index(0, 2), "An even longer complete filename that arrives after the initial display.iso");
     REQUIRE(waitForFit([&] { return table.view.columnWidth(2) >= table.textWidth(2) + 8; }));

@@ -808,3 +808,18 @@ test public key, not a production key, and are not signature-authentication test
 Eligibility does not establish vendor authenticity, a verified dependency OS
 floor, or live routed HTTPS/DNS. Native factory/capability, scheduler, UI and
 release activation remain separate gates.
+
+### Native Factory Configuration Binding
+
+With the pinned SDK and disposable native fixture environment above:
+
+```sh
+build-test/tests/qt/eiskaltdcpp-qt-tests '[update-factory-native]'
+```
+
+This group exercises immutable feed revision/key/identity consumption, mismatch
+rejection and current-main-bundle factory admission. Its child copies the test
+binary into an ad-hoc-signed private fixture bundle; it never starts a scheduler,
+network check or installer. Non-bundled processes receive Unsupported rather than
+attempting a fallback route. The factory is implemented but is not selected by
+the production application owner; native installation capability remains false.

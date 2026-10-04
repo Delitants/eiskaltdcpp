@@ -24,6 +24,9 @@
 #ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
 #include "updates/MacUpdateDiscovery.h"
 #include "updates/MacUpdateBackend.h"
+#include "updates/UpdateRuntimeIdentity.h"
+#include "updates/UpdateUrlPolicy.h"
+#include <QOperatingSystemVersion>
 #include "updates/UpdateController.h"
 #include "WulforSettings.h"
 #include "tests/TestContext.h"
@@ -43,7 +46,8 @@ struct MacUpdateDiscoveryTestAccess {
 };
 struct MacUpdateBackendTestAccess {
     static std::unique_ptr<MacUpdateBackend> make(dcpp::DCContext& context, const QString& bundle, transport_detail::Backend transport,
-        const QString& cache = {}) {
+        const QString& cache = {}, std::optional<UpdateRuntimeConfig> config = {}) {
+        if(config) return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), cache, std::move(*config), nullptr));
         return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), cache, nullptr));
     }
 };
@@ -581,7 +585,7 @@ struct BackendFixture {
         feed = fixture.signer.sign(fixture.signer.xml(item));
         createBackend(cache);
     }
-    void createBackend(const QString& cache) {
+    void createBackend(const QString& cache, std::optional<UpdateRuntimeConfig> config = {}) {
         backend.reset();
         offers = ready = failures = absent = 0; requests = 0;
         backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app,
@@ -606,7 +610,7 @@ struct BackendFixture {
                 const auto bytes = url.find("raw.githubusercontent.com") != std::string::npos ? feed :
                     (corrupt ? QByteArray(archive.size(), 'B') : archive);
                 sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
-            }, cache);
+            }, cache, std::move(config));
         QObject::connect(backend.get(), &UpdateBackend::available, [&](quint64 op, UpdateOffer value) { ++offers; operation = op; offer = value; });
         QObject::connect(backend.get(), &UpdateBackend::downloadReady, [&](quint64 op, quint64 build, QByteArray digest) {
             ++ready; operation = op; CHECK(build == offer.build); CHECK(digest == offer.sha256);
@@ -650,6 +654,105 @@ TEST_CASE("Mac backend requests the published feed for its CPU flavor", "[.][upd
     std::lock_guard<std::mutex> lock(f.requestMutex);
     CHECK(f.requestedFeed == expected);
     CHECK(f.ready == 0);
+}
+namespace {
+UpdateRuntimeConfig boundRuntime(const BackendFixture& f) {
+    const auto os = QOperatingSystemVersion::current();
+    const auto cpu = QSysInfo::buildCpuArchitecture();
+    return {{1, Channel::Stable, QString::fromLatin1(f.fixture.bundle), cpu,
+        QVersionNumber(os.majorVersion(), os.minorVersion(), qMax(0, os.microVersion()))},
+        QUrl(feedUrlForCpu(cpu).toString() + "?revision=17"), f.fixture.signer.publicKey};
+}
+}
+TEST_CASE("Native backend consumes an immutable runtime feed revision and signing key", "[.][update-backend-native][update-factory-native]") {
+    BackendFixture f;
+    auto config = boundRuntime(f);
+    f.createBackend({}, config);
+    config.feedUrl = QUrl("https://example.invalid/changed");
+    config.publicKeyBase64 = QByteArray(32, 'x').toBase64();
+    config.identity.build = 999;
+    f.discover();
+    const std::string expected = QSysInfo::buildCpuArchitecture() == "arm64"
+        ? "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/apple-silicon.xml?revision=17"
+        : "https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/intel.xml?revision=17";
+    { std::lock_guard<std::mutex> lock(f.requestMutex); CHECK(f.requestedFeed == expected); }
+    CHECK_FALSE(f.backend->supportsInstallation());
+    f.backend->download(202, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.ready == 1); CHECK(f.failures == 0);
+}
+TEST_CASE("Native discovery rejects a runtime snapshot that differs from its host bundle", "[.][update-backend-native][update-factory-native]") {
+    BackendFixture f;
+    auto config = boundRuntime(f);
+    SECTION("signing key") { config.publicKeyBase64 = QByteArray(32, 'x').toBase64(); }
+    SECTION("installed build") { config.identity.build = 2; }
+    SECTION("product identity") { config.identity.bundleId = "org.test.foreign"; }
+    f.createBackend({}, config);
+    f.backend->check(205, Channel::Stable, CheckKind::Manual);
+    REQUIRE(discoveryPump([&] { return f.offers || f.failures || f.absent; }));
+    CHECK(f.failures == 1); CHECK(f.offers == 0); CHECK(f.absent == 0); CHECK(f.ready == 0);
+    CHECK(f.category == FailureCategory::Verification);
+}
+TEST_CASE("Native factory refuses a non-bundled process without selecting a network route", "[.][update-factory-native]") {
+    dcpp::test::TestContext context;
+    REQUIRE_FALSE(currentMacUpdateRuntime());
+    std::unique_ptr<UpdateBackend> backend;
+    SECTION("factory") { backend = MacUpdateBackend::create(*context.ownedCtx); }
+    SECTION("direct native construction") { backend = std::make_unique<MacUpdateBackend>(*context.ownedCtx); }
+    REQUIRE(backend); CHECK_FALSE(backend->supportsInstallation());
+    CHECK(backend->parent() == nullptr);
+    int failures = 0; FailureCategory category{};
+    QObject::connect(backend.get(), &UpdateBackend::failed, [&](quint64 op, QString, FailureCategory value) {
+        CHECK(op == 209); ++failures; category = value;
+    });
+    backend->check(209, Channel::Stable, CheckKind::Manual);
+    CHECK(failures == 0);
+    REQUIRE(discoveryPump([&] { return failures != 0; }));
+    CHECK(failures == 1); CHECK(category == FailureCategory::Unsupported);
+    CHECK(backend->stopWorkersForQuit());
+}
+TEST_CASE("Native factory selects a structurally eligible current bundle without starting workers", "[.][update-factory-native]") {
+    DiscoveryFixture f;
+    REQUIRE(QFile::copy(QCoreApplication::applicationFilePath(), f.app + "/Contents/MacOS/EiskaltDC++"));
+    const auto replace = [&](const QString& key, const QString& type, const QString& value) {
+        QProcess remove; remove.start("/usr/libexec/PlistBuddy", {"-c", "Delete :" + key, f.app + "/Contents/Info.plist"});
+        REQUIRE(remove.waitForFinished(5000));
+        f.setting("Add :" + key + " " + type + " " + value);
+    };
+    const auto cpu = QSysInfo::buildCpuArchitecture();
+    replace("CFBundleIdentifier", "string", "com.github.eiskaltdcpp");
+    replace("CFBundleExecutable", "string", "EiskaltDC++");
+    replace("CFBundleVersion", "string", "30000001");
+    replace("CFBundleShortVersionString", "string", "3.0.0-pre.1");
+    replace("LSMinimumSystemVersion", "string", cpu == "arm64" ? "26.0" : "14.0");
+    replace("SUFeedURL", "string", feedUrlForCpu(cpu).toString() + "?revision=17");
+    for(const auto& key : {"SURequireSignedFeed", "SUVerifyUpdateBeforeExtraction", "SUEnableInstallerLauncherService"})
+        replace(key, "bool", "true");
+    for(const auto& key : {"SUEnableDownloaderService", "SUEnableAutomaticChecks", "SUAutomaticallyUpdate", "SUEnableSystemProfiling"})
+        replace(key, "bool", "false");
+    replace("SUSignedFeedFailureExpirationInterval", "integer", "0");
+    replace("NSAppTransportSecurity", "dict", "");
+    f.setting("Add :NSAppTransportSecurity:NSAllowsLocalNetworking bool true");
+    f.run("/usr/bin/codesign", {"--force", "--sign", "-", f.app});
+    auto environment = QProcessEnvironment::systemEnvironment();
+    environment.insert("EISKALT_FACTORY_CHILD", "1");
+    QProcess child; child.setProcessEnvironment(environment);
+    child.start(f.app + "/Contents/MacOS/EiskaltDC++", {"[factory-runtime-child]"});
+    REQUIRE(child.waitForStarted(5000));
+    REQUIRE(child.waitForFinished(20000));
+    INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
+    CHECK(child.exitStatus() == QProcess::NormalExit); CHECK(child.exitCode() == 0);
+}
+TEST_CASE("Current bundle native factory fixture child", "[.][factory-runtime-child]") {
+    if(qEnvironmentVariable("EISKALT_FACTORY_CHILD") != "1") SKIP("Internal fixture child; use the public native factory test");
+    REQUIRE(qEnvironmentVariable("HOME").startsWith("/private/tmp/"));
+    const auto runtime = currentMacUpdateRuntime(); REQUIRE(runtime);
+    CHECK(runtime->feedUrl.query() == "revision=17"); CHECK(runtime->identity.build == 30000001);
+    dcpp::test::TestContext context;
+    auto backend = MacUpdateBackend::create(*context.ownedCtx); REQUIRE(backend);
+    CHECK(qobject_cast<MacUpdateBackend*>(backend.get()) != nullptr);
+    CHECK(backend->parent() == nullptr); CHECK_FALSE(backend->supportsInstallation());
+    CHECK(backend->stopWorkersForQuit());
 }
 TEST_CASE("Mac backend restores verified cache only after fresh routed discovery", "[.][update-backend-native][backend-cache-native]") {
     QTemporaryDir cache; REQUIRE(cache.isValid());

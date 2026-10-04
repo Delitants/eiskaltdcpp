@@ -7,6 +7,7 @@
 #include "UpdateArchiveVerifier.h"
 #include "UpdateStagingCache.h"
 #include "UpdateUrlPolicy.h"
+#include "UnsupportedUpdateBackend.h"
 #include <QFile>
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -35,7 +36,7 @@ QByteArray pinnedKey(const QString& fixture) {
     NSBundle* bundle = fixture.isEmpty() ? NSBundle.mainBundle : [NSBundle bundleWithPath:
         [NSString stringWithUTF8String:fixture.toUtf8().constData()]];
     id key = [bundle objectForInfoDictionaryKey:@"SUPublicEDKey"];
-    return [key isKindOfClass:NSString.class] ? QByteArray([key UTF8String]) : QByteArray{};
+    return [key isKindOfClass:NSString.class] ? QString::fromCFString((__bridge CFStringRef)key).toLatin1() : QByteArray{};
 }
 bool routeValid(const std::shared_ptr<const dcpp::ProxyRouteSnapshot>& route) {
     return route && route->valid && route->revoked && !route->revoked->load();
@@ -77,6 +78,10 @@ struct MacUpdateBackend::Impl {
     MacUpdateBackend& owner;
     dcpp::DCContext& context;
     QString fixture, cacheDirectory;
+    const std::optional<UpdateRuntimeConfig> runtime;
+    const bool requiresRuntime;
+    const QByteArray publicKey;
+    const QUrl feedUrl;
     std::unique_ptr<UpdateTransport> transport;
     std::unique_ptr<MacUpdateDiscovery> discovery;
     std::shared_ptr<Stage> stage, transferStage;
@@ -95,10 +100,15 @@ struct MacUpdateBackend::Impl {
     quint64 handoffOperation = 0;
     bool handoffPending = false, handoffRevoked = false;
 
-    Impl(MacUpdateBackend& o, dcpp::DCContext& c, QString bundle, transport_detail::Backend wire, QString cache)
+    Impl(MacUpdateBackend& o, dcpp::DCContext& c, QString bundle, transport_detail::Backend wire, QString cache,
+        std::optional<UpdateRuntimeConfig> config, bool required)
         : owner(o), context(c), fixture(std::move(bundle)), cacheDirectory(std::move(cache)),
+          runtime(std::move(config)), requiresRuntime(required),
+          publicKey(runtime ? runtime->publicKeyBase64 : QByteArray{}),
+          feedUrl(runtime ? runtime->feedUrl : feedUrlForCpu(QSysInfo::buildCpuArchitecture())),
           transport(new UpdateTransport(c, std::move(wire), nullptr)),
-          discovery(new MacUpdateDiscovery(fixture, nullptr)) {
+          discovery(runtime || required ? new MacUpdateDiscovery(fixture, runtime, nullptr) :
+              new MacUpdateDiscovery(fixture, nullptr)) {
         timer.setInterval(20);
         QObject::connect(&timer, &QTimer::timeout, &owner, [this] { poll(); });
         QObject::connect(transport.get(), &UpdateTransport::finished, &owner,
@@ -236,7 +246,9 @@ struct MacUpdateBackend::Impl {
         const auto selectedRoute = route;
         const auto selection = *selected;
         const auto bytes = feedBytes;
-        const auto key = pinnedKey(fixture);
+        // Legacy private fixtures edit their plist before discovery. Do not
+        // preload NSBundle there; production always uses the admitted snapshot.
+        const auto key = runtime ? publicKey : pinnedKey(fixture);
         const auto cache = cacheDirectory;
         try {
             job->worker = std::thread([value, key, selection, bytes, selectedRoute, cache] {
@@ -332,18 +344,29 @@ struct MacUpdateBackend::Impl {
         return quitFenceSucceeded;
     }
 };
-MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, QObject* p) : MacUpdateBackend(c, {}, {},
-    QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", p) {}
+MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, QObject* p)
+    : UpdateBackend(p), impl(new Impl(*this, c, {}, {},
+        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates",
+        currentMacUpdateRuntime(), true)) {}
+std::unique_ptr<UpdateBackend> MacUpdateBackend::create(dcpp::DCContext& c) {
+    const auto runtime = currentMacUpdateRuntime();
+    if(!runtime) return std::make_unique<UnsupportedUpdateBackend>();
+    return std::unique_ptr<UpdateBackend>(new MacUpdateBackend(c, {}, {},
+        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", *runtime, nullptr));
+}
 MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire, const QString& cache, QObject* p)
-    : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache)) {}
+    : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, {}, false)) {}
+MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire,
+    const QString& cache, UpdateRuntimeConfig config, QObject* p)
+    : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, std::move(config), true)) {}
 MacUpdateBackend::~MacUpdateBackend() = default;
 void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     Q_ASSERT(QThread::currentThread() == thread());
     if(impl->quitFenced || !op) return;
     if(impl->busy()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
     impl->clear(); impl->operation = op; impl->channel = channel;
-    const auto feedUrl = feedUrlForCpu(QSysInfo::buildCpuArchitecture());
-    if(feedUrl.isEmpty() || (channel != Channel::Stable && channel != Channel::Preview)) {
+    if((impl->requiresRuntime && !impl->runtime) || impl->feedUrl.isEmpty() ||
+        (channel != Channel::Stable && channel != Channel::Preview)) {
         impl->fail(FailureCategory::Unsupported); return;
     }
     impl->route = impl->context.getProxyRoute() ? impl->context.getProxyRoute()->snapshot() : nullptr;
@@ -351,7 +374,7 @@ void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     impl->stage = std::make_shared<Impl::Stage>();
     if(!impl->stage->directory.isValid()) { impl->fail(FailureCategory::Storage); return; }
     impl->phase = Impl::Feed;
-    impl->fetch(feedUrl, ResourceKind::Feed, impl->stage->feed());
+    impl->fetch(impl->feedUrl, ResourceKind::Feed, impl->stage->feed());
 }
 void MacUpdateBackend::download(quint64 op, const UpdateOffer& requested) {
     Q_ASSERT(QThread::currentThread() == thread());

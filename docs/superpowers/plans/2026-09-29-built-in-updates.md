@@ -1056,3 +1056,25 @@ repair is claimed. Structural eligibility is not signature/vendor authenticity,
 dependency/minimum-OS acceptance or live routing proof. The production backend
 is still unsupported with no scheduler or native capability. Next is gated native
 factory/config consumption and scheduler/UI ownership after routing acceptance.
+
+### Native Factory And Configuration Binding Checkpoint
+
+The native backend factory now admits only structurally validated current-main-
+bundle metadata, otherwise returning an asynchronous unsupported backend before
+route selection. Native construction also refuses missing runtime metadata. The
+factory owns an unparented backend and starts no scheduler or installer.
+
+The admitted feed (including its revision), signing key and installed identity
+are copied as an immutable snapshot. Discovery checks the host bundle key,
+build, product and compiled CPU against that snapshot before Sparkle; feed,
+archive and cached-stage verification use the same pinned key. Private fixture
+constructors remain separate from the public current-bundle path. Production
+ApplicationUpdateOwner still selects the unsupported backend: capability,
+scheduler, settings/menu/notification integration and live proxy/provider-DNS/
+HTTPS acceptance remain gates, not consequences of factory eligibility.
+
+Native tests observe the exact revision-bearing request, mutate the caller's
+copy without changing admitted behavior, refuse mismatched key/build/product,
+and exercise both valid actual-bundle and non-bundled factory selection.
+These disposable development-host checks do not establish vendor authenticity,
+release minimum-OS compatibility, live routing or production installation.

@@ -1,5 +1,6 @@
 #pragma once
 #include "UpdateFeedVerifier.h"
+#include "UpdateRuntimeIdentity.h"
 #include <QObject>
 #include <memory>
 
@@ -25,6 +26,7 @@ private:
     friend struct MacUpdateDiscoveryTestAccess;
     friend class MacUpdateBackend;
     MacUpdateDiscovery(const QString& fixtureBundle, QObject* parent);
+    MacUpdateDiscovery(const QString& fixtureBundle, std::optional<UpdateRuntimeConfig>, QObject* parent);
     struct Impl;
     std::unique_ptr<Impl> impl;
 };
