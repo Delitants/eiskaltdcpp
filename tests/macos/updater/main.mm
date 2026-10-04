@@ -48,7 +48,22 @@
         self.rewrites++;
     }
 }
-- (void)updater:(SPUUpdater *)updater didDownloadUpdate:(SUAppcastItem *)item { self.downloaded = YES; }
+- (void)updater:(SPUUpdater *)updater didDownloadUpdate:(SUAppcastItem *)item {
+    self.downloaded = YES;
+    if ([self.mode isEqualToString:@"cache-seed"] && self.verifiedFeed &&
+        self.foundStage == SPUUserUpdateStageNotDownloaded && !self.extracting && !self.ready &&
+        [NSBundle.mainBundle.bundleIdentifier hasPrefix:@"org.eiskaltdcpp.updater-probe."]) {
+        NSString *marker = NSProcessInfo.processInfo.environment[@"EISKALT_PROBE_CACHE_SEED_MARKER"];
+        NSData *identity = [NSBundle.mainBundle.bundleIdentifier dataUsingEncoding:NSUTF8StringEncoding];
+        if (marker && [identity writeToFile:marker atomically:YES]) {
+            printf("CACHE_SEED downloaded=1 verified_feed=1 ready=0 extracting=0\n");
+            fflush(stdout);
+            // Parent kills only this disposable child before returning into
+            // Sparkle's extraction/installer path. No nested event loop here.
+            sleep(60);
+        }
+    }
+}
 - (void)updater:(SPUUpdater *)updater didFindValidUpdate:(SUAppcastItem *)item {
     self.found = YES;
     self.verifiedFeed = item.signingValidationStatus == SPUAppcastSigningValidationStatusSucceeded;
@@ -234,6 +249,10 @@ TEST_CASE("Real Sparkle checks signed bytes through the public bridge hooks", "[
         REQUIRE(probe.ready);
         REQUIRE(probe.finishedCycle);
         REQUIRE(probe.error == nil);
+        if ([probe.mode isEqualToString:@"cache-restart"]) {
+            REQUIRE(probe.foundStage == SPUUserUpdateStageNotDownloaded);
+            printf("CACHE_RESTART stage=NotDownloaded\n"); fflush(stdout);
+        }
     }
 }
 

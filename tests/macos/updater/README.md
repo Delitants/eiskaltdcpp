@@ -175,13 +175,14 @@ python3 tests/macos/updater/fixtures.py install-probe --adapter \
   --root /tmp/new-native-installer-fixture --mode normal
 ```
 
-The twenty-five adapter modes are `normal`, `hide`, `cancel-quit`,
+The twenty-six adapter modes are `normal`, `hide`, `cancel-quit`,
 `kill-before-commit`, `cancel-prepared`, `bad-identity`, `bad-minimum-os`,
 `cancel-before-native`, `bad-feed`, `bad-archive`, `cancel-verifier`,
 `destroy-verifier`, `cancel-check`, `cancel-download`, `cancel-extraction`,
 `cancel-ready`, `deadline-verifier`, `deadline-extraction`, `cancel-after-handoff`,
 `deadline-after-handoff`, `worker-start-failure`, `cancel-worker-start` and
-`deadline-worker-start`, `resume-installing` and `replacement-denied`.
+`deadline-worker-start`, `resume-installing`, `replacement-denied` and
+`authorization-refused`.
 For `bad-identity` or `bad-minimum-os`, add the corresponding
 `--wrong-identity` or `--wrong-minimum-os` flag to `create`.
 Normal and the two post-handoff refusal cases install; every other mode must
@@ -223,7 +224,51 @@ The disposable parent has a separate home. Launchd-owned Sparkle helpers can
 still use the real user's cache directory under the unique probe bundle ID, as
 confirmed by their logs. Those are not Eiskalt profile paths; they are not proof
 of helper filesystem/network confinement. No production keys or installed app
-are targeted, and no real authorization prompt is exercised here.
+are targeted. These cases do not exercise a real authorization prompt; the
+separate VM-only case below does.
+
+### Actual Authorization Cancellation In A Disposable VM
+
+Create a fresh adapter fixture inside a disposable macOS VM with a logged-in
+GUI account. Run the following from the guest's GUI Terminal, not a background
+SSH session, and click **Cancel** on the actual macOS update authorization prompt:
+
+```sh
+python3 tests/macos/updater/fixtures.py install-probe --adapter --disposable-vm \
+  --root /absolute/path/to/fresh-guest-fixture --mode authorization-refused
+```
+
+The runner requires explicit VM opt-in and a `VirtualMac` hardware model before
+reading any fixture files. It verifies a fresh unique authorization right, makes
+only the owned immediate fixture destination read-only, and allows two minutes
+for cancellation. The native test requires Sparkle cancellation code **4007**,
+verified/downloaded bytes, no prepared installer, and no Ready or HandingOff
+stage. The parent checks the entire old signed bundle, sentinel user data and
+absence of relaunch after child exit. Destination permissions are restored only
+after the exact cancellation receipt and if its exact `Autoupdate` process is
+absent. An unconfirmed failure retains the read-only destination for inspection,
+even if that process is not currently observed. This query is not a complete XPC or
+launchd-helper lifetime/confinement proof.
+
+The native helper may create `<fixtureBundleIdentifier>.sparkle2-auth` in the
+guest authorization database. The result reports the exact right and whether
+cleanup is required. An administrator must remove **only that test-created
+right** in the disposable guest and verify that reading it subsequently fails.
+Do not reset the authorization database, change authorization rules, or run this
+case against the host or an installed application. No password is needed to
+cancel the update prompt; cleanup may require the guest administrator password.
+
+A background-session error **4005** or `errAuthorizationInteractionNotAllowed`
+(-60007) is not cancellation acceptance. A writable-destination control must
+fail the cancellation assertions. VM observations on macOS 27/ARM64 do not
+establish either supported platform's minimum-OS behavior.
+
+Admission and mocked cleanup regressions launch no native helper and modify no
+authorization right:
+
+```sh
+python3 tests/macos/updater/test_fixture_admission.py -v
+```
 
 Cancellation is a private owner-thread request, not an immediate terminal
 receipt. The monotonic deadline requests the same cancellation path; it never
@@ -249,14 +294,52 @@ joined implementation state, not the owning `unique_ptr` being destroyed.
 The three worker-start cases use a private launcher that throws before creating
 a thread. They cover queued failure and first-reason retention; they do not
 prove behavior under actual OS thread/resource exhaustion.
-Fresh-state admission rejects resumed/downloaded/installing offers, but real
-SDK resumed-session recovery still requires separate acceptance.
+Fresh-state admission rejects resumed/downloaded/installing offers. The
+downloaded-cache crash test below exercises one real SDK restart boundary;
+product staging restoration remains a separate acceptance gate.
 
-`MacUpdateBackend::armInstallOnQuit` still reports Unsupported. Authorization
-cancellation, disk-full/interrupted replacement and recovery, native session
-recovery, real committed-quit integration and helper networking
-remain gates before product activation. Passing these disposable tests is not
-a successful update of the installed Eiskalt app.
+### Downloaded-Cache Crash Boundary
+
+The disposable `Probe` driver exposes two hooks for an owning parent harness:
+`EISKALT_PROBE_MODE=cache-seed` holds inside the public `didDownloadUpdate`
+callback, before returning into extraction. It writes the fixture bundle ID to
+`EISKALT_PROBE_CACHE_SEED_MARKER` and emits `CACHE_SEED` only for a verified feed,
+a fresh NotDownloaded offer, no extraction/Ready state, and a probe bundle ID.
+The parent must verify a complete cached archive against the authenticated
+fixture bytes, then terminate **only its spawned disposable child** within
+30 seconds. The hold expires after 60 seconds; this is not a production pause.
+
+Restart `[bridge-probe]` with the same bundle and separate fixture home using
+`EISKALT_PROBE_MODE=cache-restart`. It requires signed feed/archive handling,
+Ready followed by Skip/cycle completion, and public state NotDownloaded before
+emitting `CACHE_RESTART`. The parent must independently check actual request
+counts, old whole-bundle/signature readback, user-data sentinels and no relaunch.
+On the tested pinned SDK, cached bytes survived the crash but this fresh process
+fetched the signed feed/archive again rather than silently resuming them. A
+subsequent production-adapter `cancel-ready` run also leaves the old app intact.
+
+These are native test-driver hooks, not a product cache loader or installation
+consent. App-owned staging restoration and committed-quit integration still
+need their separate acceptance. Observed SDK cache behavior on one VM is not
+a promise of cache recovery on every supported OS.
+
+Disposable VM recovery also covers a final-new-app move failure after the old
+app was moved aside: the native installer restored the exact signed old bundle
+and left fixture user data unchanged. This is one tested HFS+ rollback path,
+not a guarantee for every filesystem or interruption phase.
+
+Fresh normal-install and cancel-at-Ready VM observations identified the exact
+fixture-owned Installer XPC, Autoupdate and Updater processes and verified each
+was gone after its cycle. No Internet sockets were observed in the helper
+samples. Sampling does not prove the absence of every short-lived connection
+and is not production proxy/DNS acceptance or an OS isolation boundary.
+
+`MacUpdateBackend::armInstallOnQuit` still reports Unsupported. App-owned staging
+restoration, real committed-quit integration, supported-platform acceptance,
+helper lifetime and verified update routing remain gates before product
+activation. The approved vendor installer is not strictly OS-isolated; parent
+socket denial must not be presented as blanket helper sandboxing. Passing
+disposable tests is not a successful update of the installed Eiskalt app.
 
 ### Shutdown Checkpoint Results
 

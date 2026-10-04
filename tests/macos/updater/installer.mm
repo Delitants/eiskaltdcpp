@@ -58,6 +58,7 @@ TEST_CASE("Production native installer starts only from committed validated stag
     const bool workerFailure = mode == "worker-start-failure" || mode == "cancel-worker-start" || mode == "deadline-worker-start";
     const bool handoffCancellation = mode == "cancel-after-handoff" || mode == "deadline-after-handoff";
     const bool replacementDenied = mode == "replacement-denied";
+    const bool authorizationRefused = mode == "authorization-refused";
     const bool handsOff = mode == "normal" || handoffCancellation || replacementDenied;
     auto lifetime = updates::MacUpdateInstallerTestAccess::make(workerFailure);
     auto& installer = *lifetime;
@@ -132,7 +133,7 @@ TEST_CASE("Production native installer starts only from committed validated stag
             REQUIRE((state.st_mode & 0077) == 0);
         }
         REQUIRE(updates::MacUpdateInstallerTestAccess::start(installer, feed->releases.front(), stagedFeed, stagedArchive, true, consent,
-            mode == "deadline-verifier" ? 1 : 30000));
+            mode == "deadline-verifier" ? 1 : authorizationRefused ? 120000 : 30000));
         if(mode == "destroy-verifier") {
             lifetime.reset();
             CHECK(ready == 0); CHECK(failures == 0); CHECK(consentChecks == 0);
@@ -145,7 +146,7 @@ TEST_CASE("Production native installer starts only from committed validated stag
             CHECK(installer.active()); CHECK(ready == 0); CHECK(failures == 0);
         }
         QElapsedTimer timer; timer.start();
-        while(ready + failures == 0 && timer.elapsed() < 30000) {
+        while(ready + failures == 0 && timer.elapsed() < (authorizationRefused ? 120000 : 30000)) {
             QCoreApplication::processEvents(); QThread::msleep(2);
         }
         REQUIRE(ready + failures == 1);
@@ -183,6 +184,17 @@ TEST_CASE("Production native installer starts only from committed validated stag
             CHECK_FALSE(stages.contains(Stage::Ready));
             CHECK_FALSE(stages.contains(Stage::HandingOff));
             CHECK(installer.failureReason().startsWith("Native installation"));
+        }
+        if(authorizationRefused) {
+            CHECK(consentChecks == 1);
+            CHECK(stages.contains(Stage::Checking));
+            CHECK(stages.contains(Stage::Downloading));
+            CHECK_FALSE(stages.contains(Stage::Ready));
+            CHECK_FALSE(stages.contains(Stage::HandingOff));
+            REQUIRE(installer.failureReason() ==
+                "Native installation (code 4007, verified 1, downloaded 1, prepared 0, rejected 0)");
+            printf("AUTHORIZATION_PROBE ready=%d failed=%d code=4007 prepared=0\n", ready, failures);
+            fflush(stdout);
         }
         if(handoffCancellation) {
             CHECK(handoffAttempts == 1); CHECK(handoffActive);

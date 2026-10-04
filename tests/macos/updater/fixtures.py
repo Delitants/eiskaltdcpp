@@ -21,7 +21,8 @@ LEGACY_INSTALL_MODES = ("normal", "hide", "cancel-quit", "kill-before-commit", "
 ADAPTER_INSTALL_MODES = ("bad-minimum-os", "cancel-before-native", "bad-feed", "bad-archive", "cancel-verifier",
                          "destroy-verifier", "cancel-check", "cancel-download", "cancel-extraction", "cancel-ready",
                          "deadline-verifier", "deadline-extraction", "cancel-after-handoff", "deadline-after-handoff", "worker-start-failure",
-                          "cancel-worker-start", "deadline-worker-start", "resume-installing", "replacement-denied")
+                          "cancel-worker-start", "deadline-worker-start", "resume-installing", "replacement-denied",
+                          "authorization-refused")
 INSTALLING_MODES = ("normal", "cancel-after-handoff", "deadline-after-handoff")
 
 
@@ -266,6 +267,10 @@ def probe(args):
 
 def install_probe(args):
     """Post-exit assertions for disposable bundles, never the installed app."""
+    authorization_refused = args.mode == "authorization-refused"
+    if authorization_refused and (not args.adapter or not getattr(args, "disposable_vm", False) or
+                                  not run("/usr/sbin/sysctl", "-n", "hw.model").startswith("VirtualMac")):
+        raise RuntimeError("Authorization refusal requires an explicitly selected disposable macOS VM")
     root = args.root.resolve()
     manifest = json.loads((root / "fixture.json").read_text())
     if bool(manifest.get("adapter")) != args.adapter:
@@ -333,11 +338,26 @@ def install_probe(args):
     helper_pid = None
     parent_mode = app.parent.stat().st_mode & 0o777
     denied_replacement = False
+    denied_authorization = False
+    authorization_canceled = False
+    authorization_right = manifest["bundle_id"] + ".sparkle2-auth"
     def native_helpers():
         rows = run("/bin/ps", "-axww", "-o", "pid=,command=").splitlines()
         return [int(row.split()[0]) for row in rows if manifest["bundle_id"] in row.split()
                 and any(word.endswith("/Autoupdate") for word in row.split()[1:])]
     try:
+        if authorization_refused:
+            if app.parent.is_symlink() or app.parent.resolve().parent != root or app.parent.stat().st_uid != os.getuid():
+                raise RuntimeError("authorization target must be an owned direct fixture directory")
+            before_right = subprocess.run(["/usr/bin/security", "authorizationdb", "read", authorization_right],
+                                          capture_output=True, text=True)
+            (root / "authorization-right-before.log").write_text(before_right.stdout + before_right.stderr)
+            if before_right.returncode == 0:
+                raise RuntimeError("authorization fixture must have a fresh unique right")
+            app.parent.chmod(0o500)
+            denied_authorization = True
+            if os.access(app.parent, os.W_OK):
+                raise RuntimeError("disposable destination is still writable")
         child = subprocess.Popen(["sandbox-exec", "-p", sandbox,
             str(app / "Contents/MacOS/UpdaterProbe"), "[update-install-adapter]" if args.adapter else "[update-install]"], env=environment,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -363,11 +383,17 @@ def install_probe(args):
             app.parent.chmod(0o500)
             denied_replacement = True
             denial_applied.write_text("denied\n")
-        output, _ = child.communicate(timeout=40)
+        output, _ = child.communicate(timeout=150 if authorization_refused else 40)
         (root / "install.log").write_text(output.replace(token, "CAPABILITY"))
         print(output.replace(token, "CAPABILITY"))
         if child.returncode != (-9 if args.mode == "kill-before-commit" else 0):
             raise RuntimeError("native install probe failed: " + str(child.returncode))
+        if authorization_refused:
+            if "AUTHORIZATION_PROBE ready=0 failed=1 code=4007 prepared=0" not in output:
+                raise RuntimeError("no actual public SDK authorization-cancellation receipt")
+            if native_helpers():
+                raise RuntimeError("authorization cancellation unexpectedly started a native installer")
+            authorization_canceled = True
         committed = args.mode not in ("hide", "cancel-quit", "kill-before-commit")
         expected = ["/CAPABILITY/feed"] + (["/CAPABILITY/update.zip"] if committed else [])
         if args.mode == "bad-identity":
@@ -425,6 +451,13 @@ def install_probe(args):
         if args.mode == "replacement-denied":
             result.update(native_helper_pid=helper_pid, native_helper_exited=True,
                           replacement_permission_failure=True, failure_phase="old-app-move")
+        if authorization_refused:
+            after_right = subprocess.run(["/usr/bin/security", "authorizationdb", "read", authorization_right],
+                                         capture_output=True, text=True)
+            (root / "authorization-right-after.log").write_text(after_right.stdout + after_right.stderr)
+            result.update(authorization_refused=True, native_error_code=4007, native_installer_started=False,
+                          authorization_right=authorization_right,
+                          authorization_right_cleanup_required=after_right.returncode == 0)
         (root / "install-result.json").write_text(json.dumps(result, indent=2) + "\n")
         print("PASS:", json.dumps(result))
     finally:
@@ -432,6 +465,8 @@ def install_probe(args):
             child.kill()
             child.communicate(timeout=5)
         if denied_replacement and not native_helpers():
+            app.parent.chmod(parent_mode)
+        if denied_authorization and authorization_canceled and not native_helpers():
             app.parent.chmod(parent_mode)
         server.shutdown()
         server.server_close()
@@ -458,6 +493,8 @@ if __name__ == "__main__":
         if name == "install-probe":
             sub.add_argument("--mode", choices=LEGACY_INSTALL_MODES + ADAPTER_INSTALL_MODES, required=True)
             sub.add_argument("--adapter", action="store_true", help="Exercise the production Qt installer adapter")
+            sub.add_argument("--disposable-vm", action="store_true",
+                             help="Allow the authorization-refusal fixture only on a macOS virtual machine")
         sub.set_defaults(function=globals()[name.replace("-", "_")])
     args = parser.parse_args()
     args.function(args)
