@@ -4,6 +4,7 @@
 #include "WulforSettings.h"
 #include <QThread>
 #include <QTimer>
+#include <QPointer>
 #include <atomic>
 namespace updates {
 namespace {
@@ -23,12 +24,14 @@ struct UpdateController::Impl {
     UpdatePreferences preferences;
     UpdateOffer offer;
     State state = State::Idle;
+    QuitDisposition quitDisposition = QuitDisposition::NotCommitted;
     CheckKind kind = CheckKind::Automatic;
     QDateTime attempt, success;
     QString ready, consent;
     quint64 operation = 0;
     bool started = false, stopped = false, busy = false;
     bool quitFenced = false, quitFenceSucceeded = false;
+    bool handoffConsentRevoked = false;
 
     Impl(UpdateController& o, WulforSettings& s, UpdateBackend& b, UpdateIdentity i, Clock c)
         : owner(o), settings(s), backend(b), identity(std::move(i)), clock(std::move(c)) {
@@ -135,11 +138,38 @@ struct UpdateController::Impl {
             if(!stopped && !quitFenced) emit owner.errorReported(message, manual);
         }, Qt::QueuedConnection);
     }
+    bool consentCurrent(quint64 id, const QString& key) {
+        if(quitDisposition != QuitDisposition::AwaitingHandoff || handoffConsentRevoked || operation != id) return false;
+        bool approved = false;
+        try {
+            const auto current = readPreferences();
+            approved = quitFenced && quitFenceSucceeded && state == State::Handoff && backend.supportsInstallation() &&
+                ready == key && offer.key() == key && UpdatePolicy::accepts(identity, current, offer) &&
+                settings.getStr("updates/deferred") != key && settings.getStr("updates/skipped") != key &&
+                UpdatePolicy::mayInstall(current, true, key, consent);
+        } catch(...) {}
+        if(!approved) handoffConsentRevoked = true;
+        return approved;
+    }
+    void finishHandoff(quint64 id, bool prepared) {
+        if(quitDisposition != QuitDisposition::AwaitingHandoff || operation != id) return;
+        prepared = prepared && !handoffConsentRevoked;
+        handoffConsentRevoked = true;
+        quitDisposition = prepared ? QuitDisposition::Prepared : QuitDisposition::Refused;
+        if(!prepared) {
+            ready.clear(); consent.clear();
+            try { backend.revokeInstallConsent(); } catch(...) {}
+        }
+        setState(State::Stopped);
+        QMetaObject::invokeMethod(&owner, [this, prepared] { emit owner.installHandoffFinished(prepared); }, Qt::QueuedConnection);
+    }
 };
 
 UpdateController::UpdateController(WulforSettings& settings, UpdateBackend& backend, UpdateIdentity identity, Clock clock, QObject* parent)
     : QObject(parent), impl(std::make_unique<Impl>(*this, settings, backend, std::move(identity), std::move(clock))) {
     qRegisterMetaType<UpdateOffer>(); qRegisterMetaType<FailureCategory>(); qRegisterMetaType<CheckKind>();
+    connect(&backend, &UpdateBackend::installHandoffFinished, this,
+        [this](quint64 id, bool prepared) { impl->finishHandoff(id, prepared); }, Qt::QueuedConnection);
     connect(&backend, &UpdateBackend::available, this, [this](quint64 id, const UpdateOffer& offer) { impl->finishCheck(id, &offer); }, Qt::QueuedConnection);
     connect(&backend, &UpdateBackend::noUpdate, this, [this](quint64 id) { impl->finishCheck(id, nullptr); }, Qt::QueuedConnection);
     connect(&backend, &UpdateBackend::failed, this, [this](quint64 id, const QString&, FailureCategory category) { impl->fail(id, category); }, Qt::QueuedConnection);
@@ -156,6 +186,7 @@ UpdateController::UpdateController(WulforSettings& settings, UpdateBackend& back
 UpdateController::~UpdateController() { shutdown(); }
 UpdatePreferences UpdateController::preferences() const { return impl->preferences; }
 UpdateController::State UpdateController::state() const { return impl->state; }
+UpdateController::QuitDisposition UpdateController::quitDisposition() const { return impl->quitDisposition; }
 UpdateOffer UpdateController::offer() const { return impl->offer; }
 QDateTime UpdateController::lastAttempt() const { return impl->attempt; }
 QDateTime UpdateController::lastSuccess() const { return impl->success; }
@@ -219,22 +250,47 @@ bool UpdateController::stopWorkersForQuit() {
 void UpdateController::normalQuitCommitted() {
     impl->assertThread(); if(impl->stopped) return;
     if(!stopWorkersForQuit()) {
+        impl->quitDisposition = QuitDisposition::Refused;
         impl->stopped = true; impl->ready.clear(); impl->consent.clear();
-        impl->backend.revokeInstallConsent(); impl->setState(State::Stopped);
+        try { impl->backend.revokeInstallConsent(); } catch(...) {}
+        impl->setState(State::Stopped);
         return;
     }
-    auto preferences = impl->readPreferences();
-    if(impl->state == State::Ready && impl->ready == impl->offer.key() &&
-        UpdatePolicy::accepts(impl->identity, preferences, impl->offer) &&
-        impl->settings.getStr("updates/deferred") != impl->ready &&
-        impl->settings.getStr("updates/skipped") != impl->ready &&
-        UpdatePolicy::mayInstall(preferences, true, impl->ready, impl->consent)) {
-        impl->stopped = true; impl->timer.stop(); impl->setState(State::Handoff);
-        impl->backend.armInstallOnQuit(impl->offer, false);
-    } else shutdown();
+    try {
+        const auto preferences = impl->readPreferences();
+        if(impl->backend.supportsInstallation() && impl->state == State::Ready && impl->ready == impl->offer.key() &&
+            UpdatePolicy::accepts(impl->identity, preferences, impl->offer) &&
+            impl->settings.getStr("updates/deferred") != impl->ready &&
+            impl->settings.getStr("updates/skipped") != impl->ready &&
+            UpdatePolicy::mayInstall(preferences, true, impl->ready, impl->consent)) {
+            impl->stopped = true; impl->timer.stop(); impl->setState(State::Handoff);
+            impl->quitDisposition = QuitDisposition::AwaitingHandoff;
+            impl->operation = nextOperation();
+            const auto id = impl->operation;
+            const auto key = impl->ready;
+            QPointer<UpdateController> guard(this);
+            auto* ownerThread = thread();
+            impl->backend.beginInstallHandoff(id, impl->offer, [guard, ownerThread, id, key] {
+                // Do not dereference a guarded QObject from a foreign thread.
+                if(QThread::currentThread() != ownerThread || !guard) return false;
+                return guard->impl->consentCurrent(id, key);
+            });
+        } else {
+            impl->quitDisposition = QuitDisposition::NoUpdate;
+            shutdown();
+        }
+    } catch(...) {
+        if(impl->quitDisposition == QuitDisposition::AwaitingHandoff) impl->finishHandoff(impl->operation, false);
+        else {
+            impl->quitDisposition = QuitDisposition::Refused;
+            shutdown();
+        }
+    }
 }
 void UpdateController::shutdown() {
-    impl->assertThread(); if(impl->stopped) return;
+    impl->assertThread();
+    if(impl->quitDisposition == QuitDisposition::AwaitingHandoff) impl->finishHandoff(impl->operation, false);
+    if(impl->stopped) return;
     impl->stopped = true; impl->timer.stop(); impl->cancelOperation(); impl->setState(State::Stopped);
 }
 }

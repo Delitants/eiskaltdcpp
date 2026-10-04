@@ -6,6 +6,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <QSignalSpy>
+#include <QMetaEnum>
 #include <future>
 
 namespace {
@@ -18,6 +20,17 @@ struct Backend : UpdateBackend {
     UpdateOffer selected;
     int fences = 0;
     bool fenceResult = true;
+    bool supported = true, throwsOnHandoff = false, defaultHandoff = false;
+    std::optional<bool> synchronousReceipt;
+    quint64 handoffOperation = 0;
+    std::function<bool()> handoffConsent;
+    bool supportsInstallation() const override { return supported; }
+    void beginInstallHandoff(quint64 op, const UpdateOffer& offer, std::function<bool()> consent) override {
+        if(throwsOnHandoff) throw std::runtime_error("fixture handoff refusal");
+        if(defaultHandoff) { UpdateBackend::beginInstallHandoff(op, offer, std::move(consent)); return; }
+        handoffOperation = op; handoffConsent = std::move(consent); ++installs; selected = offer;
+        if(synchronousReceipt) emit installHandoffFinished(op, *synchronousReceipt);
+    }
     bool stopWorkersForQuit() override { ++fences; return fenceResult; }
     void check(quint64 op, Channel, CheckKind k) override { ++checks; operation = op; kind = k; }
     void download(quint64 op, const UpdateOffer& offer) override { ++downloads; operation = op; selected = offer; }
@@ -54,6 +67,113 @@ template<class T> bool controllerFence(T& controller) {
     if constexpr(requires { controller.stopWorkersForQuit(); }) return controller.stopWorkersForQuit();
     else return false;
 }
+template<class T> bool quitDispositionIs(T& controller, const char* expected) {
+    if constexpr(requires { controller.quitDisposition(); }) {
+        const auto value = controller.quitDisposition();
+        return QByteArray(QMetaEnum::fromType<decltype(value)>().valueToKey(int(value))) == expected;
+    } else return false;
+}
+template<class T> void handoffReceipt(T& backend, quint64 op, bool ready) {
+    if constexpr(requires { backend.installHandoffFinished(op, ready); }) emit backend.installHandoffFinished(op, ready);
+}
+}
+
+TEST_CASE("Committed quit passes live version consent to the asynchronous handoff", "[updates][update-handoff-contract]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit();
+    f.controller->normalQuitCommitted();
+    CHECK(f.backend.handoffOperation != 0);
+    REQUIRE(f.backend.handoffConsent);
+    CHECK(f.backend.handoffConsent());
+    f.settings.setBool("updates/autoInstall", false); f.settings.setBool("updates/checks", false);
+    CHECK(f.backend.handoffConsent()); // Explicit version consent does not require automatic checks.
+    CHECK(quitDispositionIs(*f.controller, "AwaitingHandoff"));
+    CHECK_FALSE(std::async(std::launch::async, [&] { return f.backend.handoffConsent(); }).get());
+    CHECK(f.backend.handoffConsent());
+    f.controller->normalQuitCommitted(); CHECK(f.backend.installs == 1);
+    QSignalSpy finished(f.controller.get(), SIGNAL(installHandoffFinished(bool))); REQUIRE(finished.isValid());
+    handoffReceipt(f.backend, f.backend.handoffOperation + 1, true); events();
+    CHECK(finished.isEmpty()); CHECK(quitDispositionIs(*f.controller, "AwaitingHandoff"));
+    handoffReceipt(f.backend, f.backend.handoffOperation, true); events();
+    REQUIRE(finished.count() == 1); CHECK(finished.front().front().toBool());
+    CHECK(quitDispositionIs(*f.controller, "Prepared")); CHECK_FALSE(f.backend.handoffConsent());
+    handoffReceipt(f.backend, f.backend.handoffOperation, false); events();
+    CHECK(finished.count() == 1); CHECK(quitDispositionIs(*f.controller, "Prepared"));
+}
+
+TEST_CASE("Handoff consent rechecks settings and never revives after observed revocation", "[updates][update-handoff-contract]") {
+    Fixture f; f.ready();
+    auto preferences = f.controller->preferences(); preferences.autoInstall = true;
+    f.controller->applyPreferences(preferences); f.controller->normalQuitCommitted();
+    REQUIRE(f.backend.handoffConsent); REQUIRE(f.backend.handoffConsent());
+    SECTION("automatic installation") { f.settings.setBool("updates/autoInstall", false); }
+    SECTION("automatic checks") { f.settings.setBool("updates/checks", false); }
+    SECTION("channel") { f.settings.setStr("updates/channel", "stable"); }
+    SECTION("deferred") { f.settings.setStr("updates/deferred", f.offer().key()); }
+    SECTION("skipped") { f.settings.setStr("updates/skipped", f.offer().key()); }
+    CHECK_FALSE(f.backend.handoffConsent());
+    f.settings.setBool("updates/autoInstall", true); f.settings.setBool("updates/checks", true);
+    f.settings.setStr("updates/channel", "preview"); f.settings.setStr("updates/deferred", {}); f.settings.setStr("updates/skipped", {});
+    CHECK_FALSE(f.backend.handoffConsent());
+    QSignalSpy finished(f.controller.get(), SIGNAL(installHandoffFinished(bool))); REQUIRE(finished.isValid());
+    handoffReceipt(f.backend, f.backend.handoffOperation, true); events();
+    REQUIRE(finished.count() == 1); CHECK_FALSE(finished.front().front().toBool());
+    CHECK(quitDispositionIs(*f.controller, "Refused"));
+}
+
+TEST_CASE("Handoff consent expires before owner teardown or explicit shutdown", "[updates][update-handoff-contract]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit(); f.controller->normalQuitCommitted();
+    REQUIRE(f.backend.handoffConsent); const auto consent = f.backend.handoffConsent;
+    const auto revoked = f.backend.revocations;
+    SECTION("owner destruction") { f.controller.reset(); }
+    SECTION("shutdown") { f.controller->shutdown(); }
+    CHECK_FALSE(consent()); CHECK(f.backend.revocations == revoked + 1);
+}
+
+TEST_CASE("Committed quit reports no-update and handoff refusals distinctly", "[updates][update-handoff-contract]") {
+    Fixture f;
+    SECTION("no pending update") {
+        f.controller->normalQuitCommitted(); CHECK(quitDispositionIs(*f.controller, "NoUpdate")); CHECK(f.backend.installs == 0);
+    }
+    SECTION("no consent") {
+        f.ready(); f.controller->normalQuitCommitted(); CHECK(quitDispositionIs(*f.controller, "NoUpdate")); CHECK(f.backend.installs == 0);
+    }
+    SECTION("unsupported backend") {
+        f.ready(); f.controller->installOnNextQuit(); f.backend.supported = false;
+        f.controller->normalQuitCommitted(); CHECK(quitDispositionIs(*f.controller, "NoUpdate")); CHECK(f.backend.installs == 0);
+    }
+    SECTION("worker refusal") {
+        f.ready(); f.controller->installOnNextQuit(); f.backend.fenceResult = false;
+        f.controller->normalQuitCommitted(); CHECK(quitDispositionIs(*f.controller, "Refused")); CHECK(f.backend.installs == 0);
+    }
+    SECTION("handoff throws") {
+        f.ready(); f.controller->installOnNextQuit(); f.backend.throwsOnHandoff = true;
+        CHECK_NOTHROW(f.controller->normalQuitCommitted()); CHECK(quitDispositionIs(*f.controller, "Refused"));
+    }
+    SECTION("negative receipt") {
+        f.ready(); f.controller->installOnNextQuit(); f.controller->normalQuitCommitted();
+        REQUIRE(f.backend.handoffOperation != 0);
+        QSignalSpy finished(f.controller.get(), SIGNAL(installHandoffFinished(bool))); REQUIRE(finished.isValid());
+        handoffReceipt(f.backend, f.backend.handoffOperation, false); events();
+        REQUIRE(finished.count() == 1); CHECK_FALSE(finished.front().front().toBool());
+        CHECK(quitDispositionIs(*f.controller, "Refused")); CHECK_FALSE(f.backend.handoffConsent());
+    }
+    SECTION("unknown endpoint refuses without legacy fallback") {
+        f.ready(); f.controller->installOnNextQuit(); f.backend.defaultHandoff = true;
+        f.controller->normalQuitCommitted(); events();
+        CHECK(quitDispositionIs(*f.controller, "Refused")); CHECK(f.backend.installs == 0);
+    }
+}
+
+TEST_CASE("Synchronous backend receipts remain deferred and allow owner destruction", "[updates][update-handoff-contract]") {
+    Fixture f; f.ready(); f.controller->installOnNextQuit();
+    f.backend.synchronousReceipt = true;
+    bool received = false;
+    QObject::connect(f.controller.get(), &UpdateController::installHandoffFinished, qApp, [&](bool prepared) {
+        CHECK(prepared); received = true; f.controller.reset();
+    });
+    f.controller->normalQuitCommitted();
+    CHECK_FALSE(received); REQUIRE(f.controller); CHECK(quitDispositionIs(*f.controller, "AwaitingHandoff"));
+    events(); CHECK(received); CHECK_FALSE(f.controller); CHECK_FALSE(f.backend.handoffConsent());
 }
 
 TEST_CASE("Update controller retained fence keeps Ready consent but closes every input", "[updates][updater-controller-fence]") {

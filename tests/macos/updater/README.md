@@ -640,3 +640,27 @@ Ready/Later lifecycle. It also checks tampering, changed offers, route revocatio
 in-flight cancellation/reuse and destruction. This is composition evidence,
 **not production HTTP/proxy DNS acceptance or an installation test**. Those
 remain separate gates, together with the quit handoff and release packaging.
+
+## Committed-Quit Controller Contract
+
+`normalQuitCommitted()` consumes a successful updater worker fence and current
+version-bound policy. `quitDisposition()` distinguishes no pending installation,
+an awaiting handoff, a prepared installation, and refusal. NoUpdate needs no
+asynchronous receipt; AwaitingHandoff requires retaining the controller, backend,
+staging and application owners while the event loop remains alive.
+
+The new `beginInstallHandoff` backend endpoint receives a unique operation and a
+guarded, owner-thread consent callback. It must check consent immediately before
+irreversible handoff, and emit exactly one matching `installHandoffFinished`
+receipt. Exceptions are permitted only before work is admitted. Unknown
+implementations refuse; there is no fallback to the legacy arm call. The
+controller rechecks current preferences, skip/defer settings and exact ready
+version, latches observed revocation, rejects stale/duplicate receipts, and
+invalidates callbacks on shutdown or destruction. A claimed success cannot
+override an already observed consent refusal.
+
+Run `[update-handoff-contract]` and `[application-quit]` in the isolated Qt targets.
+The latter composes real retained core/GUI shutdown with a fixture backend; it
+does not install an update. Native endpoint implementation, real MainWindow
+committed/no-update quit, and runtime activation remain pending. The public Mac
+backend still reports installation unsupported.

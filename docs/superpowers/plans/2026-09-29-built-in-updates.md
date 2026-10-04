@@ -950,3 +950,21 @@ and helper confinement still need an isolated test environment and acceptance
 before native activation or real committed/no-update quit integration. Updater
 UI/localization, live routed HTTP/DNS, whole-branch/platform QA, signing/thin
 packages, install/docs/wiki/screenshots/prerelease and feeds-last remain pending.
+
+### Committed-Quit Receipt Contract Checkpoint
+
+The controller now separates NotCommitted, NoUpdate, AwaitingHandoff, Prepared
+and Refused. A successful updater worker fence and current version-bound policy
+are required before it invokes the explicit asynchronous beginInstallHandoff
+endpoint. The backend receives a unique operation and guarded live consent
+callback; unknown implementations refuse without a legacy arm fallback. Backend
+exceptions are allowed only before admitting work. Matching terminal receipts
+are delivered once on the GUI owner thread; stale/duplicate replies and success
+after observed consent revocation cannot certify Prepared. Shutdown/destruction
+invalidate callbacks before revocation, and NoUpdate needs no pending receipt.
+
+This is an interface/controller checkpoint, not native or MainWindow activation.
+The final caller must consume ApplicationQuitCoordinator Ready first and retain
+all owners/event-loop until the backend terminal receipt. Native signed-stage
+handoff and actual committed/no-update closeEvent acceptance remain next. The
+legacy macOS emergency exit remains unchanged.

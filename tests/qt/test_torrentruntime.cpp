@@ -484,6 +484,8 @@ TEST_CASE("Runtime unchanged settings proxy and country path do not reconfigure 
     }
     const auto id = f.add(false, sourceReadOnly);
     f.awaitPublished(id);
+    INFO("runtime error=" << f.runtime->lastError().toStdString() << ", source seed=" << sourceReadOnly
+        << ", local proxy=" << bool(proxy) << ", error signals=" << errors.count());
     REQUIRE(f.runtime->lastError().isEmpty());
     REQUIRE(errors.isEmpty());
     if (proxy) {

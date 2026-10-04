@@ -115,6 +115,12 @@ struct QuitBackend : updates::UpdateBackend {
     dcpp::DCContext& core;
     int fences = 0, installs = 0, checks = 0;
     quint64 operation = 0;
+    quint64 handoffOperation = 0;
+    std::function<bool()> handoffConsent;
+    bool supportsInstallation() const override { return true; }
+    void beginInstallHandoff(quint64 op, const updates::UpdateOffer&, std::function<bool()> consent) override {
+        handoffOperation = op; handoffConsent = std::move(consent); ++installs;
+    }
     bool fenceResult = true, routeWasRunning = false;
     explicit QuitBackend(dcpp::DCContext& c) : core(c) {}
     void check(quint64 op, updates::Channel, updates::CheckKind) override { ++checks; operation = op; }
@@ -318,6 +324,45 @@ TEST_CASE("Application quit aggregates real GUI hub Torrent and core saves witho
     updater.checkNow(); CHECK(backend.checks == 1);
     CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
     CHECK(backend.fences == 1); CHECK(backend.installs == 0);
+}
+
+TEST_CASE("Prepared application owners remain alive through a matching update handoff receipt", "[qt][application-quit][update-handoff-composition]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    bool install = true, prepared = true;
+    SECTION("prepared") { updater.installOnNextQuit(); }
+    SECTION("refused") { updater.installOnNextQuit(); prepared = false; }
+    SECTION("ordinary no update") { install = false; }
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
+    auto* core = f.core.get(); QPointer<MainWindow> window = f.gui->mainWindow();
+    CHECK(core->getProxyRoute()->snapshot()->revoked->load()); CHECK(backend.installs == 0);
+    QSignalSpy receipt(&updater, &updates::UpdateController::installHandoffFinished);
+    updater.normalQuitCommitted();
+    if(install) {
+        REQUIRE(updater.quitDisposition() == updates::UpdateController::QuitDisposition::AwaitingHandoff);
+        REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent()); CHECK(backend.installs == 1);
+        // Intentional core route retirement cannot authorize remote work, but
+        // the retained local-stage consent and receipt remain usable.
+        emit backend.installHandoffFinished(backend.handoffOperation, prepared);
+        REQUIRE(waitFor([&] { return receipt.count() == 1; }));
+        CHECK(receipt.front().front().toBool() == prepared);
+        CHECK(updater.quitDisposition() == (prepared ? updates::UpdateController::QuitDisposition::Prepared :
+            updates::UpdateController::QuitDisposition::Refused));
+        CHECK_FALSE(backend.handoffConsent());
+    } else {
+        CHECK(updater.quitDisposition() == updates::UpdateController::QuitDisposition::NoUpdate);
+        CHECK(backend.installs == 0); CHECK(receipt.isEmpty());
+    }
+    REQUIRE(window); CHECK(f.core.get() == core); CHECK(core->isRunning()); CHECK_FALSE(window->isEnabled());
 }
 
 TEST_CASE("Application quit retains an earlier updater or GUI refusal after core succeeds", "[qt][application-quit]") {

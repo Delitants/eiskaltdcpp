@@ -13,6 +13,8 @@ class UpdateController final : public QObject {
 public:
     enum class State { Idle, Checking, Available, Downloading, Ready, Handoff, Stopped };
     Q_ENUM(State)
+    enum class QuitDisposition { NotCommitted, NoUpdate, AwaitingHandoff, Prepared, Refused };
+    Q_ENUM(QuitDisposition)
     using Clock = std::function<QDateTime()>;
     // Settings and backend outlive this object. Identity comes from verified
     // installed-bundle metadata, never a displayed prerelease version string.
@@ -21,6 +23,7 @@ public:
     ~UpdateController() override;
     UpdatePreferences preferences() const;
     State state() const;
+    QuitDisposition quitDisposition() const;
     UpdateOffer offer() const;
     QDateTime lastAttempt() const;
     QDateTime lastSuccess() const;
@@ -38,9 +41,14 @@ public:
     // application must still check every other shutdown owner before commit.
     [[nodiscard]] bool stopWorkersForQuit();
     // Called only after application shutdown has successfully committed.
+    // AwaitingHandoff is not permission to exit; retain owners/event loop until
+    // a matching terminal receipt. NoUpdate needs no asynchronous handoff.
     void normalQuitCommitted();
     void shutdown();
 signals:
+    // Only a matching terminal backend receipt can certify Prepared. NoUpdate
+    // needs no asynchronous receipt; the application may inspect disposition.
+    void installHandoffFinished(bool prepared);
     void stateChanged(updates::UpdateController::State);
     void notificationRequested(updates::UpdateOffer);
     void checkFinished(bool updateAvailable, updates::CheckKind);
