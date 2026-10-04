@@ -16,9 +16,18 @@ export GOST_BIN=/absolute/path/to/verified/gost
 export GOST_QA_DIR="$QA"
 export GOST_CAPTURE=1 # dedicated loopback fixture ports only; requires BPF access
 QT_QPA_PLATFORM=offscreen QT_ACCESSIBILITY=0 \
-  build-torrent/tests/qt/eiskaltdcpp-qt-tests '[gost][interop]'
+  build-torrent/tests/qt/eiskaltdcpp-qt-tests '[interop]'
 build-torrent/tests/torrent/eiskalt-torrent-tests '[gost]'
 ```
+
+The `[interop]` selector includes all eight public cases, including the global
+core traffic case; `[gost][interop]` selects only seven. Run the coordinator in
+a private profile without wrapping it in another Seatbelt sandbox. The GOST
+supervisor and Torrent/core client children establish their own loopback or
+exact-port restrictions. macOS rejects applying these profiles from an already
+sandboxed coordinator (`sandbox_apply: Operation not permitted`). This setup
+failure is not a proxy interoperability failure. Do not remove child restrictions
+or direct-connection-denial assertions to work around it.
 
 Without `GOST_BIN`, public interop cases explicitly skip. When it is set, missing
 binaries, unsupported isolation, IPv6 failure, and actual transport failure are

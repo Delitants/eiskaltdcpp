@@ -1175,3 +1175,39 @@ the pressed highlight, transparent idle surface and keyboard focus ring. A new
 flat-palette regression reproduces the previous failure on Cocoa and offscreen;
 all 468 combined Cocoa/native Qt cases now pass. This resolves that focused
 rendering failure, not the remaining live routing or installation gates.
+
+### 2026-10-04 Live Transport And Torrent Regression Checkpoint
+
+The production update transport fetched a 3,886,463-byte legacy release archive
+through the saved global GOST route, routed DoH, strict HTTPS and approved GitHub
+redirects. Its SHA256 matched independently retrieved GitHub asset metadata. Both
+fixed v3 feeds remain unpublished and were refused without staged output. The
+legacy archive was not mounted, executed or installed; this is transport evidence,
+not v3 Ed25519 verification or signed-release acceptance. Native activation and
+installation capability remain disabled.
+
+The current Torrent Qt target rebuilt successfully. The alternate-source UDP
+case passed 80 assertions, and the broad offline suite passed 609 cases with
+33,362 assertions using the original failing order seed 1053519413. All eight
+opt-in real-GOST cases passed 448 assertions against a checksum-verified upstream
+3.3.0 executable, disposable authentication/CA and guarded loopback services.
+These cover peer TCP/uTP, tracker/DHT, DNS, reconnect and separate global-core
+traffic. They are protocol/runtime QA, not Cocoa UI delivery or production
+Torrent acceptance. The old intermittent bind failure did not reproduce; its
+root cause remains unproven, not fixed.
+
+The second previously failing order seed 2081490689 also passed all 609 cases
+(33,351 assertions). Neither replay reproduced the old bind failure.
+
+The GOST instructions now select `[interop]`, including the eighth global-core
+case omitted by `[gost][interop]`. An already sandboxed coordinator cannot apply
+the child Seatbelt profiles on macOS; that setup failure is distinct from proxy
+failure. The documented private coordinator retains the child restrictions and
+direct-connection rejection assertions. No live profile, installed application,
+server, production signing key or VM was changed.
+
+Remaining gates: live v3 signed-feed/archive acceptance and guarded activation;
+lifecycle/logout/notification/DC-only runtime QA and the unproven Torrent bind
+root cause; thin Intel/macOS 14 and Apple Silicon/macOS 26 release/minimum-OS QA
+and independent linguistic/whole-branch review; closed-app installation,
+README/wiki/screenshots and pre.1 publication. Signed feeds remain last.
