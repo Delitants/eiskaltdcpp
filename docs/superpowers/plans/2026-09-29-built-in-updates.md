@@ -84,6 +84,30 @@ Introduce a namespace-level `dcpp::HttpRequestPolicy` and a constructor overload
 
 ### Task 3: Integrate The Real Proxy Bridge And Verification Backend
 
+Signed physical-route checkpoint (2026-10-04): actual native Sparkle discovery
+and Eiskalt-owned Ed25519/digest staging now run through authenticated loopback
+SOCKS5 and GOST relays with external destinations denied. Production URL/DNS
+admission, immutable global route and strict HTTPS remain intact; only disposable
+CA roots and responses are injected. Cases cover approved redirects, verified
+provider outage, failed proxy/auth/trust, tampered feed/archive, invalid archive
+signature with matching digest, inert image notes, refused external notes,
+cancelled offer and revocation before readiness. Archive bytes are signed staging
+fixtures, not installable release bundles; no installer is started.
+
+Read-only live diagnostics also verified Cloudflare and Google A/AAAA DoH answers
+through the saved global GOST route using production strict HTTPS and bounded DNS
+parsing. Direct HTTPS/DNS destinations were denied; the macOS sandbox constrained
+the proxy port and the helper admitted only the saved numeric proxy endpoint.
+No live profile, installed app, server or production signing key was changed.
+This is live provider proof, not live signed feed/archive or release acceptance.
+Native scheduler/installation activation remains disabled until those remaining
+routing, lifecycle and release gates pass.
+
+Native component paint fixtures explicitly establish Qt logical activation before
+comparing idle and keyboard-focus images, so a background Cocoa process does not
+invalidate the component setup. Focus and pixel assertions remain intact. This
+does not prove OS keyboard-focus or notification delivery.
+
 **Files:** Create `updates/UpdateTypes.h`, `updates/UpdateBackend.h`, `updates/UpdateLoopbackBridge.{h,cpp}`, `updates/MacUpdateBackend.mm`, `updates/UnsupportedUpdateBackend.cpp`, `tests/qt/test_updatebridge.cpp`; extend native fixture and app/test CMake wiring. All `updates/` source paths here are under `eiskaltdcpp-qt/src/`.
 
 **Interfaces:** Define `enum class Channel { Stable, Preview }` and `enum class CheckKind { Automatic, Manual }` in `UpdateTypes.h`. `UpdateBackend : QObject` exposes void-returning `check(Channel, CheckKind)`, `download(QString version)`, `cancel()`, `armInstallOnQuit(QString version, bool relaunch)`, `revokeInstallConsent()`. Signals: `available(UpdateOffer)`, `downloadReady(QString version)`, `progress(qint64,qint64)`, `failed(QString)`, `noUpdate()`. `UpdateOffer` contains only verified version/channel, plain-text notes, CPU/minOS, expected size and identity; it exposes no untrusted executable commands.

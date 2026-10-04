@@ -31,6 +31,10 @@
 #include "WulforSettings.h"
 #include "tests/TestContext.h"
 #include "dcpp/HttpRequestPolicy.h"
+#include "dcpp/SettingsManager.h"
+#include "tests/proxy/NestedTlsOrigin.h"
+#include "UpdateRouteRelay.h"
+#include <QUrlQuery>
 #include <QSysInfo>
 #include <QGuiApplication>
 #include <QTimer>
@@ -585,11 +589,11 @@ struct BackendFixture {
         feed = fixture.signer.sign(fixture.signer.xml(item));
         createBackend(cache);
     }
-    void createBackend(const QString& cache, std::optional<UpdateRuntimeConfig> config = {}) {
+    void createBackend(const QString& cache, std::optional<UpdateRuntimeConfig> config = {},
+        transport_detail::Backend wire = {}) {
         backend.reset();
         offers = ready = failures = absent = 0; requests = 0;
-        backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app,
-            [this](const auto& policy, const std::string& url, const auto& sink) {
+        if(!wire) wire = [this](const auto& policy, const std::string& url, const auto& sink) {
                 ++requests;
                 const bool isFeed = url.find("raw.githubusercontent.com") != std::string::npos;
                 if(isFeed) {
@@ -610,7 +614,8 @@ struct BackendFixture {
                 const auto bytes = url.find("raw.githubusercontent.com") != std::string::npos ? feed :
                     (corrupt ? QByteArray(archive.size(), 'B') : archive);
                 sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
-            }, cache, std::move(config));
+            };
+        backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app, std::move(wire), cache, std::move(config));
         QObject::connect(backend.get(), &UpdateBackend::available, [&](quint64 op, UpdateOffer value) { ++offers; operation = op; offer = value; });
         QObject::connect(backend.get(), &UpdateBackend::downloadReady, [&](quint64 op, quint64 build, QByteArray digest) {
             ++ready; operation = op; CHECK(build == offer.build); CHECK(digest == offer.sha256);
@@ -643,6 +648,99 @@ QStringList stagedArchives() {
     while(paths.hasNext()) result.push_back(paths.next());
     return result;
 }
+}
+TEST_CASE("Signed native discovery and staging remain on one authenticated physical proxy route", "[.][update-signed-route-native]") {
+    const bool plain = GENERATE(false, true);
+    CAPTURE(plain);
+    BackendFixture f;
+    update_test::UpdateRouteRelay relay; relay.plain = plain; relay.feed = f.feed; relay.archive = f.archive;
+    bool invalidFeed = false, invalidArchive = false, wrongProxy = false, cancelled = false, failedProxy = false;
+    SECTION("signed feed and archive") {}
+    SECTION("approved archive redirect") { relay.redirect = true; }
+    SECTION("verified provider outage falls back through the same proxy") { relay.providerOutage = true; }
+    SECTION("authentication rejected") { relay.rejectAuth = true; }
+    SECTION("unavailable proxy never opens a direct origin connection") { failedProxy = true; }
+    SECTION("wrong origin CA after valid DNS") { relay.wrongOrigin = true; }
+    if(!plain) SECTION("wrong GOST proxy CA") { wrongProxy = true; }
+    SECTION("tampered signed feed") { relay.feed.replace("Plain", "Wrong"); invalidFeed = true; }
+    SECTION("tampered signed archive") { relay.archive[0] = 'B'; invalidArchive = true; }
+    SECTION("wrong archive signature with matching digest and valid feed signature") {
+        auto xml = relay.feed.left(relay.feed.indexOf("<!-- sparkle-signatures:"));
+        const auto signature = f.fixture.signer.sign(f.archive).mid(f.archive.size()).split('\n')[1].mid(13);
+        xml.replace(signature, QByteArray(64, 'x').toBase64());
+        relay.feed = f.fixture.signer.sign(xml); invalidArchive = true;
+    }
+    SECTION("signed literal image notes cause no external request") {
+        auto xml = relay.feed.left(relay.feed.indexOf("<!-- sparkle-signatures:"));
+        xml.replace("Plain &amp; safe notes", "<![CDATA[<img src='https://example.invalid/image'>]]>");
+        relay.feed = f.fixture.signer.sign(xml);
+    }
+    SECTION("signed external release notes are refused without fetching them") {
+        auto xml = relay.feed.left(relay.feed.indexOf("<!-- sparkle-signatures:"));
+        xml.replace("</item>", "<sparkle:releaseNotesLink>https://example.invalid/notes</sparkle:releaseNotesLink></item>");
+        relay.feed = f.fixture.signer.sign(xml); invalidFeed = true;
+    }
+    SECTION("unapproved archive redirect") { relay.redirect = relay.badRedirect = true; }
+    SECTION("route revoked before archive readiness") { relay.revokeArchive = true; }
+    SECTION("cancelled discovered offer cannot start archive") { cancelled = true; }
+    const auto caPath = f.fixture.root.filePath("proxy-ca.pem");
+    QFile ca(caPath); REQUIRE(ca.open(QIODevice::WriteOnly));
+    const auto& pem = wrongProxy ? relay.originCa.pem : relay.proxyCa.pem;
+    REQUIRE(ca.write(pem.data(), pem.size()) == qint64(pem.size())); ca.close();
+    using SM = dcpp::SettingsManager;
+    auto& settings = *f.context.ownedCtx->getSettingsManager();
+    settings.set(SM::OUTGOING_CONNECTIONS, plain ? SM::OUTGOING_SOCKS5 : SM::OUTGOING_GOST);
+    settings.set(plain ? SM::SOCKS_SERVER : SM::GOST_SERVER, "127.0.0.1");
+    settings.set(plain ? SM::SOCKS_PORT : SM::GOST_PORT, std::stoi(relay.listener.getLocalPort()));
+    settings.set(plain ? SM::SOCKS_USER : SM::GOST_USER, "disposable-user");
+    settings.set(plain ? SM::SOCKS_PASSWORD : SM::GOST_PASSWORD, "disposable-password");
+    settings.set(SM::SOCKS_RESOLVE, true); settings.set(SM::SOCKS_TLS, false);
+    settings.set(SM::GOST_CA_FILE, caPath.toStdString());
+    REQUIRE(f.context.ownedCtx->getProxyRoute()->reload(settings));
+    relay.route = f.context.ownedCtx->getProxyRoute()->snapshot();
+    REQUIRE(relay.route->valid);
+    if(failedProxy) relay.listener.disconnect();
+    f.createBackend({}, {}, [&](const auto& policy, const auto& url, const auto& sink) {
+        relay.request(*f.context.ownedCtx, policy, url, sink);
+    });
+    auto cleanup = dcpp::makeScopedFunctor([&] { f.backend.reset(); });
+    f.backend->check(601, Channel::Stable, CheckKind::Manual);
+    REQUIRE(discoveryPump([&] { return f.offers || f.failures || f.absent; }, 15000));
+    const bool feedFails = invalidFeed || relay.rejectAuth || wrongProxy || relay.wrongOrigin || failedProxy;
+    CHECK(f.offers == (feedFails ? 0 : 1)); CHECK(f.failures == (feedFails ? 1 : 0)); CHECK(f.absent == 0);
+    if(!feedFails) {
+        CHECK(f.offer.build == 2); CHECK(f.offer.cpu == QSysInfo::buildCpuArchitecture());
+        CHECK(f.offer.sha256 == QCryptographicHash::hash(f.archive, QCryptographicHash::Sha256));
+        if(cancelled) f.backend->cancel();
+        f.backend->download(602, f.offer);
+        REQUIRE(discoveryPump([&] { return f.ready || f.failures; }, 15000));
+        const bool archiveFails = invalidArchive || relay.badRedirect || relay.revokeArchive || cancelled;
+        CHECK(f.ready == (archiveFails ? 0 : 1)); CHECK(f.failures == (archiveFails ? 1 : 0));
+        if(invalidArchive) CHECK(f.category == FailureCategory::Verification);
+    }
+    REQUIRE(backendFence(*f.backend));
+    CHECK_FALSE(f.backend->supportsInstallation());
+    const auto paths = stagedArchives();
+    if(f.ready) {
+        REQUIRE(paths.size() == 1);
+        QFile staged(paths.front()); REQUIRE(staged.open(QIODevice::ReadOnly)); CHECK(staged.readAll() == f.archive);
+        CHECK(relay.origins == (relay.redirect ? 3 : 2));
+        CHECK(relay.queries == relay.origins * (relay.providerOutage ? 3 : 2));
+    } else CHECK(paths.isEmpty());
+    if(cancelled) CHECK(relay.origins == 1);
+    if(relay.badRedirect) { CHECK(relay.origins == 2); CHECK(relay.queries == 4); }
+    if(relay.rejectAuth || wrongProxy || failedProxy) { CHECK(relay.origins == 0); CHECK(relay.queries == 1); }
+    for(const auto& record : relay.records) {
+        if(record.request.empty()) continue;
+        CHECK(record.user == "disposable-user"); CHECK(record.password == "disposable-password");
+        CHECK(record.target == record.address); CHECK(record.port == 443);
+        CHECK(record.request.find("Host: " + record.host + "\r\n") != std::string::npos);
+        CHECK(record.request.find("Authorization") == std::string::npos);
+        CHECK(record.request.find("disposable-password") == std::string::npos);
+        CHECK((record.host == "cloudflare-dns.com" || record.host == "dns.google" ||
+            record.host == "raw.githubusercontent.com" || record.host == "github.com" ||
+            record.host == "release-assets.githubusercontent.com"));
+    }
 }
 TEST_CASE("Mac backend requests the published feed for its CPU flavor", "[.][update-feed-path-native]") {
     BackendFixture f; f.discover();

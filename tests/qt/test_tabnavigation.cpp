@@ -36,6 +36,17 @@ void settleLayout()
         settle();
 }
 
+void activatePaintFixture(QWidget &window)
+{
+    window.activateWindow();
+    // Component rendering owns Qt activation, not the host's foreground app.
+    QT_WARNING_PUSH
+    QT_WARNING_DISABLE_DEPRECATED
+    QApplication::setActiveWindow(&window);
+    QT_WARNING_POP
+    REQUIRE(QApplication::activeWindow() == &window);
+}
+
 QPalette tabPalette(bool dark)
 {
     QPalette palette = qApp->palette();
@@ -96,6 +107,7 @@ QImage closePatch(QToolButton &close)
 
 void checkClosePaint(QToolButton &close)
 {
+    activatePaintFixture(*close.window());
     REQUIRE(close.size() == QSize(24, 24));
     CHECK_FALSE(close.accessibleName().isEmpty());
     CHECK((close.focusPolicy() & Qt::TabFocus) != 0);
@@ -487,6 +499,7 @@ TEST_CASE("Tab and overflow controls paint a keyboard focus cue", "[qt][tabnavig
     host.show();
     host.activateWindow();
     settleLayout();
+    activatePaintFixture(host);
     for (QWidget *control : {static_cast<QWidget *>(&tab), static_cast<QWidget *>(all), static_cast<QWidget *>(row)}) {
         host.setFocus();
         control->setAttribute(Qt::WA_UnderMouse, false);
