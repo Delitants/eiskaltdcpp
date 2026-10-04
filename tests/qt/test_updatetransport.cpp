@@ -1,6 +1,7 @@
 #include "dcpp/stdinc.h"
 #include "dcpp/HttpRequestPolicy.h"
 #include "dcpp/HttpConnection.h"
+#include "dcpp/SettingsManager.h"
 #include "tests/proxy/NestedTlsOrigin.h"
 #include "updates/UpdateTransport.h"
 #include "tests/TestContext.h"
@@ -11,6 +12,7 @@
 #include <QDir>
 #include <QElapsedTimer>
 #include <QThread>
+#include <QUrlQuery>
 #include <atomic>
 #include <thread>
 #include <future>
@@ -133,6 +135,47 @@ TEST_CASE("Update target preparation validates namespaces and pins public direct
     CHECK(policy.idleMs == 30000);
     CHECK(policy.totalMs == 1800000);
     CHECK(transport_detail::policy(ResourceKind::Archive, directRoute()).limits.bodyBytes == 512ULL * 1024 * 1024);
+}
+
+TEST_CASE("Update worker resolves proxied origins only through its same-route DoH backend", "[updates][update-dns-worker]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    auto route = directRoute();
+    route->mode = dcpp::SettingsManager::OUTGOING_GOST;
+    route->proxy.type = dcpp::Socket::StreamProxyConfig::Gost;
+    std::atomic<unsigned> queries{0}, origins{0};
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto& policy, const auto& url, const auto& sink) {
+        if(policy.route != route) throw std::runtime_error("Wrong route");
+        const auto target = policy.prepare(url, "", *route, 5000, policy.cancelled);
+        const QUrl request(QString::fromStdString(url));
+        if(request.host() == "cloudflare-dns.com") {
+            if(target.address != "1.1.1.1" || policy.redirects != 0) throw std::runtime_error("Wrong DoH pin");
+            ++queries;
+            auto body = QByteArray::fromBase64(QUrlQuery(request).queryItemValue("dns").toLatin1(), QByteArray::Base64UrlEncoding);
+            const auto type = static_cast<unsigned char>(body[body.size() - 3]);
+            body[2] = char(0x81); body[3] = char(0x80);
+            if(type == 1) {
+                body[7] = 1;
+                body.append(QByteArray::fromHex("c00c000100010000003c00048c527203"));
+            }
+            sink(reinterpret_cast<const uint8_t*>(body.constData()), body.size());
+        } else {
+            if(target.address != "140.82.114.3" || target.host != "raw.githubusercontent.com")
+                throw std::runtime_error("Wrong update pin");
+            ++origins;
+            const uint8_t bytes[]{'f', 'e', 'e', 'd'}; sink(bytes, sizeof(bytes));
+        }
+    });
+    Result result(*transport);
+    const auto destination = staging.filePath("feed.xml");
+    transport->fetch(feed, ResourceKind::Feed, destination, route);
+    REQUIRE(pump([&] { return result.done(); }));
+    CHECK(result.successes == 1);
+    CHECK(result.failures == 0);
+    CHECK(queries.load() == 2);
+    CHECK(origins.load() == 1);
+    QFile file(destination); REQUIRE(file.open(QIODevice::ReadOnly));
+    CHECK(file.readAll() == "feed");
 }
 
 TEST_CASE("Update worker cancellation and destruction remove partial files", "[updates][update-transport][update-worker]") {
@@ -285,8 +328,8 @@ TEST_CASE("Update worker integrates strict HTTPS over authenticated local GOST",
     proxy.caPem = server.ca.pem;
     auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto& original, const auto& url, const auto& sink) {
         auto policy = original;
-        // Only the fixture replaces resolution/trust. Production policy continues
-        // to reject proxy DNS until it can prove a pinned public destination.
+        // Only this fixture replaces resolution/trust; routed DNS has separate
+        // tests and production pinning is not weakened by these test roots.
         policy.rootsPem = badTrust ? server.ca.pem : origin->roots();
         policy.prepare = [](const auto& next, const auto&, const auto&, auto, const auto&) {
             return dcpp::HttpRequestPolicy::Target{next, "proxy.test", "443", "/feed", "8.8.8.8"};

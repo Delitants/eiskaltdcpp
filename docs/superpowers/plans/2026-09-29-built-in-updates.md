@@ -1118,3 +1118,23 @@ primary and Google DNS over HTTPS fallback, both over the same global proxy.
 No direct fallback, OS DNS change or security-validation bypass is permitted.
 Development-host selection/packaging QA is not supported-minimum-OS evidence,
 live proxy acceptance or permission to enable automatic installation.
+
+### 2026-10-04 Routed DNS Checkpoint
+
+`UpdateDns` now supplies the worker's proxied origin resolution through the same
+strict synchronous HTTP backend and immutable global route. Cloudflare DoH is
+primary, Google DoH fallback for validated SERVFAIL/REFUSED only. Provider-host
+TLS is independent of proxy TLS trust; fixed numeric bootstrap, DNS wire GET,
+A+AAAA question/CNAME/full-address validation, shared bounded deadline, fixed
+request/response MIME and no provider redirects/cache prevent local-origin DNS
+or direct retry. Generic HTTP outage failover remains pending typed retryability
+so a proxy authentication or certificate failure cannot silently select another
+provider. Numeric SOCKS stream targets encode binary IPv4/IPv6 before hostname
+branches; hostname resolution behavior is otherwise unchanged.
+
+Isolated authenticated SOCKS5/GOST nested-TLS tests exercise actual DNS HTTP
+bytes, provider failover, wrong auth/proxy CA/origin CA/hostname/MIME, cancellation,
+route revocation and an IPv6 pin with all external network access denied.
+Production worker tests bind the same backend/route to DNS and the origin fetch.
+This does not establish live provider/feed/archive or signed native whole-route
+acceptance. Scheduler/install capability remain disabled; Task 3 remains open.

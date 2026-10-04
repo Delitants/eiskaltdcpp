@@ -1018,7 +1018,19 @@ void Socket::socksConnect(const string& aAddr, const string& aPort, uint32_t tim
     connStr.push_back(1);           // Connect
     connStr.push_back(0);           // Reserved
 
-    if(config.remoteDns) {
+    // A numeric target is already resolved: preserve the pin without asking
+    // either the local resolver or the proxy to interpret it as a hostname.
+    in_addr pinned4{};
+    in6_addr pinned6{};
+    if(inet_pton(AF_INET, aAddr.c_str(), &pinned4) == 1) {
+        connStr.push_back(1);
+        const auto* bytes = reinterpret_cast<const uint8_t*>(&pinned4);
+        connStr.insert(connStr.end(), bytes, bytes + 4);
+    } else if(inet_pton(AF_INET6, aAddr.c_str(), &pinned6) == 1) {
+        connStr.push_back(4);
+        const auto* bytes = reinterpret_cast<const uint8_t*>(&pinned6);
+        connStr.insert(connStr.end(), bytes, bytes + 16);
+    } else if(config.remoteDns) {
         connStr.push_back(3);       // Address type: domain name
         connStr.push_back((uint8_t)aAddr.size());
         connStr.insert(connStr.end(), aAddr.begin(), aAddr.end());

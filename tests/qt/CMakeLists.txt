@@ -66,6 +66,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_proxytestrunner.cpp
     test_updateurlpolicy.cpp
     test_updatetransport.cpp
+    test_updatedns.cpp
     test_updatearchiveverifier.cpp
     test_updatestagingcache.cpp
     test_updatefeedverifier.cpp
@@ -92,6 +93,7 @@ add_executable(eiskaltdcpp-qt-tests
     ${QT_SRC_DIR}/updates/UpdateArchiveVerifier.cpp
     ${QT_SRC_DIR}/updates/UpdateStagingCache.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.cpp
+    ${QT_SRC_DIR}/updates/UpdateDns.cpp
     ${QT_SRC_DIR}/updates/UpdateTransport.h
     ${QT_SRC_DIR}/updates/UpdateUrlPolicy.cpp
     ${QT_SRC_DIR}/ProxyTestRunner.cpp

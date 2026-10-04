@@ -67,7 +67,7 @@ else (USE_QT_SQLITE)
 endif (USE_QT_SQLITE)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SRCS)
-list(APPEND SRCS src/updates/UpdateTransport.cpp src/updates/UpdateUrlPolicy.cpp)
+list(APPEND SRCS src/updates/UpdateTransport.cpp src/updates/UpdateUrlPolicy.cpp src/updates/UpdateDns.cpp)
 list(APPEND SRCS src/updates/UpdateArchiveVerifier.cpp)
 list(APPEND SRCS src/updates/UpdateStagingCache.cpp)
 list(APPEND SRCS src/updates/UpdateFeedVerifier.cpp)

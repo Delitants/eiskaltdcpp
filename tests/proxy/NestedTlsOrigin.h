@@ -14,8 +14,9 @@ public:
     std::string request;
     std::function<std::string(const std::string&)> responder;
     const std::string& roots() const { return ca.pem; }
-    explicit NestedTlsEcho(std::string reply = {}, bool closeAfter = false, const proxy_test::Identity* trust = nullptr)
-        : ca(trust ? *trust : proxy_test::Identity::make()), identity(proxy_test::Identity::make(&ca)),
+    explicit NestedTlsEcho(std::string reply = {}, bool closeAfter = false, const proxy_test::Identity* trust = nullptr,
+        const char* san = "IP:127.0.0.1,DNS:proxy.test")
+        : ca(trust ? *trust : proxy_test::Identity::make()), identity(proxy_test::Identity::make(&ca, san)),
           response(std::move(reply)), closeNotify(closeAfter) {
         SSL_CTX_use_certificate(context.get(), identity.cert.get());
         SSL_CTX_use_PrivateKey(context.get(), identity.key.get());

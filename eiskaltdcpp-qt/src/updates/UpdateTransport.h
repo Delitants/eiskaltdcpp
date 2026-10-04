@@ -14,7 +14,8 @@ namespace transport_detail {
 using Resolver = std::function<std::vector<std::string>(const std::string&, uint32_t, const std::function<bool()>&)>;
 using Sink = std::function<void(const uint8_t*, size_t)>;
 using Backend = std::function<void(const dcpp::HttpRequestPolicy&, const std::string&, const Sink&)>;
-dcpp::HttpRequestPolicy policy(ResourceKind, std::shared_ptr<const dcpp::ProxyRouteSnapshot>, Resolver = {});
+dcpp::HttpRequestPolicy policy(ResourceKind, std::shared_ptr<const dcpp::ProxyRouteSnapshot>,
+    Resolver directResolver = {}, Resolver proxiedResolver = {});
 }
 
 struct UpdateTransportTestAccess;

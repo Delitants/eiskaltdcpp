@@ -4,6 +4,7 @@
 #include "dcpp/ProxyResolver.h"
 #include "dcpp/SettingsManager.h"
 #include "UpdateTransport.h"
+#include "UpdateDns.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QSaveFile>
@@ -131,7 +132,8 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
                 output.setDirectWriteFallback(false);
                 require(output.open(QIODevice::WriteOnly));
                 require(output.setPermissions(QFile::ReadOwner | QFile::WriteOwner));
-                auto policy = transport_detail::policy(kind, job->route);
+                auto policy = transport_detail::policy(kind, job->route, {},
+                    dns_detail::resolver(job->route, backend, job->notifier));
                 policy.cancelled = cancelled;
                 policy.cancellationNotifier = job->notifier;
                 backend(policy, url.toEncoded().toStdString(), [this, job, &output, &policy, &cancelled](const uint8_t* data, size_t size) {
@@ -192,21 +194,25 @@ bool UpdateTransport::stopWorkersForQuit() {
 }
 
 dcpp::HttpRequestPolicy transport_detail::policy(ResourceKind kind,
-    std::shared_ptr<const dcpp::ProxyRouteSnapshot> route, Resolver resolver) {
+    std::shared_ptr<const dcpp::ProxyRouteSnapshot> route, Resolver resolver, Resolver proxiedResolver) {
     dcpp::HttpRequestPolicy result;
     result.route = std::move(route);
     result.limits.bodyBytes = kind == ResourceKind::Feed ? 1024ULL * 1024 : 512ULL * 1024 * 1024;
     if(!resolver) resolver = dcpp::resolveDirectEndpoint;
-    result.prepare = [kind, resolver](const std::string& next, const std::string& previous,
+    result.prepare = [kind, resolver, proxiedResolver](const std::string& next, const std::string& previous,
         const dcpp::ProxyRouteSnapshot& route, uint32_t timeout, const std::function<bool()>& cancelled) {
         require(!cancelled() && route.valid && route.revoked && !route.revoked->load());
         const QUrl candidate = QUrl::fromEncoded(QByteArray::fromStdString(next), QUrl::StrictMode);
         const QUrl url = previous.empty() ? candidate : QUrl(QString::fromStdString(previous)).resolved(candidate);
         require(allowedUrl(url, kind, !previous.empty()));
-        // Remote SOCKS resolution does not disclose a verifiable destination IP.
-        // Until a route-aware resolver is available, do not query local DNS or dial.
-        require(route.mode == dcpp::SettingsManager::OUTGOING_DIRECT && route.proxy.type == dcpp::Socket::StreamProxyConfig::None);
-        const auto addresses = resolver(url.host().toStdString(), timeout, cancelled);
+        const auto type = route.proxy.type;
+        const bool direct = route.mode == dcpp::SettingsManager::OUTGOING_DIRECT && type == dcpp::Socket::StreamProxyConfig::None;
+        const bool proxied = (route.mode == dcpp::SettingsManager::OUTGOING_SOCKS5 && type == dcpp::Socket::StreamProxyConfig::Socks5) ||
+            (route.mode == dcpp::SettingsManager::OUTGOING_GOST && type == dcpp::Socket::StreamProxyConfig::Gost) ||
+            (route.mode == dcpp::SettingsManager::OUTGOING_SHADOWSOCKS && type == dcpp::Socket::StreamProxyConfig::Shadowsocks);
+        require(direct || (proxied && bool(proxiedResolver)));
+        // Never run local origin DNS for a proxy route, even when DoH fails.
+        const auto addresses = (direct ? resolver : proxiedResolver)(url.host().toStdString(), timeout, cancelled);
         require(!cancelled() && !route.revoked->load() && !addresses.empty());
         for(const auto& address : addresses) require(publicAddress(QString::fromStdString(address)));
         auto path = url.path(QUrl::FullyEncoded);

@@ -142,7 +142,8 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
             check();
             stage = "request write";
             const auto request = "GET " + target.path + " HTTP/1.1\r\nHost: " + target.host +
-                "\r\nUser-Agent: " + agent + "\r\nAccept-Encoding: identity\r\nConnection: close\r\n\r\n";
+                "\r\nUser-Agent: " + agent + (policy.dnsMessage ? "\r\nAccept: application/dns-message" : "") +
+                "\r\nAccept-Encoding: identity\r\nConnection: close\r\n\r\n";
             stream->writeAll(request.data(), static_cast<int>(request.size()), left(connectDeadline));
             stage = "response read";
             HttpResponseParser parser(policy.limits);
@@ -167,6 +168,8 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
             stream->disconnect();
             check();
             if(!parser.redirect()) {
+                if(policy.dnsMessage && parser.contentType() != "application/dns-message")
+                    throw std::runtime_error("Invalid DNS response MIME");
                 fire(HttpConnectionListener::Complete(), this, url);
                 return;
             }

@@ -26,6 +26,7 @@ public:
     unsigned status() const { return statusCode; }
     uint64_t received() const { return bodyReceived; }
     const std::string& location() const { return redirectLocation; }
+    const std::string& contentType() const { return mime; }
 
 private:
     enum class State { Status, Headers, FixedBody, CloseBody, ChunkSize,
@@ -43,10 +44,12 @@ private:
     bool hasTransferEncoding = false;
     bool hasContentEncoding = false;
     bool hasLocation = false;
+    bool hasMime = false;
     uint64_t remaining = 0;
     unsigned statusCode = 0;
     uint64_t bodyReceived = 0;
     std::string redirectLocation;
+    std::string mime;
 };
 
 }

@@ -60,6 +60,10 @@ void HttpResponseParser::parseHeader(bool trailer) {
     } else if(name == "content-encoding") {
         if(hasContentEncoding || lower(value) != "identity") fail("Unsupported HTTP content encoding");
         hasContentEncoding = true;
+    } else if(name == "content-type") {
+        if(hasMime) fail("Duplicate HTTP content type");
+        hasMime = true;
+        mime = lower(value);
     } else if(name == "location") {
         if(hasLocation || value.empty()) fail("Invalid HTTP redirect location");
         hasLocation = true;

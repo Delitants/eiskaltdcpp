@@ -103,7 +103,25 @@ proxied resolver on 2026-10-04, with Google DNS over HTTPS as fallback. Both use
 the same admitted global route; failover must not bypass certificate checks,
 destination-address validation, cancellation or route revocation. Do not change
 system DNS settings or fall back to direct origin resolution. This is an approved
-policy, not proof that proxied DNS or update fetching is implemented or accepted.
+policy, not proof that live proxy updating is accepted.
+
+The bounded implementation uses RFC 8484 GET wire messages at each provider's
+`/dns-query` endpoint, not the provider-specific JSON schema. Provider bootstrap
+addresses are internal numeric pins; TLS still verifies `cloudflare-dns.com` or
+`dns.google`, independently of proxy trust. Queries cover A and AAAA with a shared
+deadline, fixed MIME, no provider redirects, no cross-request DNS cache, and
+strict question/CNAME/address validation. The fixed updater origins alone are
+eligible for this resolver. Standards references:
+[Cloudflare wire format](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-wireformat/)
+and [Google DoH](https://developers.google.com/speed/public-dns/docs/doh).
+
+At this checkpoint Google failover is limited to validated DNS SERVFAIL or
+REFUSED responses. NXDOMAIN, malformed/truncated/private answers, proxy/auth/TLS
+failure, cancellation and revocation remain terminal. The core's generic HTTP
+failure does not safely distinguish provider outage from authentication or
+certificate failure, so generic transport-outage failover remains pending until
+typed retryability is verified. Isolated relay tests do not establish live
+provider/feed/archive acceptance or authorize scheduler/installation activation.
 
 ### Sparkle Transport Integration
 

@@ -23,5 +23,7 @@ struct HttpRequestPolicy {
         const ProxyRouteSnapshot&, uint32_t, const std::function<bool()>&)> prepare;
     // Empty selects default HTTPS roots, never the DC or proxy trust settings.
     std::string rootsPem;
+    // Fixed MIME selector, not an arbitrary origin-header injection API.
+    bool dnsMessage = false;
 };
 }
