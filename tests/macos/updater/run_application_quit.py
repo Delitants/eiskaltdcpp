@@ -10,13 +10,10 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 
-def run(args):
-    build = args.build.resolve()
+def compile_entrypoint(build, root, native_build=None):
+    build = build.resolve()
     source = Path(__file__).resolve().parent / "application_quit_main.cpp"
-    root = Path(tempfile.mkdtemp(prefix="eiskalt-app-quit-", dir="/private/tmp"))
-    root.chmod(0o700)
-    print("Disposable full-entrypoint root:", root, flush=True)
-    subprocess.run(["cmake", "--build", str(build), "--target", "eiskaltdcpp-qt", "-j4"], check=True)
+    subprocess.run(["cmake", "--build", str(build), "--target", "eiskaltdcpp-qt", "-j2"], check=True)
     objects = build / "eiskaltdcpp-qt/CMakeFiles/eiskaltdcpp-qt.dir"
     flags = {}
     for line in (objects / "flags.make").read_text().splitlines():
@@ -27,8 +24,9 @@ def run(args):
     if "FORCE_XDG:BOOL=ON" not in cache:
         raise RuntimeError("full-entrypoint fixture requires the FORCE_XDG build")
     output = root / "entry.o"
+    extra = ["-DEISKALT_APPLICATION_NATIVE_FIXTURE"] if native_build else []
     subprocess.run(["/usr/bin/c++", *flags["CXX_DEFINES"], *flags["CXX_INCLUDES"], *flags["CXX_FLAGS"],
-                    "-DFORCE_XDG", "-c", str(source), "-o", str(output)], check=True)
+                    "-DFORCE_XDG", *extra, "-c", str(source), "-o", str(output)], check=True)
     command = shlex.split((objects / "link.txt").read_text())
     main_object = "CMakeFiles/eiskaltdcpp-qt.dir/src/main.cpp.o"
     if command.count(main_object) != 1:
@@ -36,7 +34,38 @@ def run(args):
     command[command.index(main_object)] = str(output)
     binary = root / "eiskalt-quit-entry"
     command[command.index("-o") + 1] = str(binary)
+    if native_build:
+        native_build = native_build.resolve()
+        subprocess.run(["cmake", "--build", str(native_build), "--target", "eiskaltdcpp-qt-tests", "-j2"], check=True)
+        native_dir = native_build / "tests/qt"
+        native_link = shlex.split((native_dir / "CMakeFiles/eiskaltdcpp-qt-tests.dir/link.txt").read_text())
+        for name in ("MacUpdateDiscovery", "MacUpdateInstaller", "MacUpdateBackend", "BundleArchiveVerifier"):
+            matches = [token for token in native_link if token.endswith("/" + name + ".mm.o")]
+            if len(matches) != 1:
+                raise RuntimeError("unknown native object layout: " + name)
+            command.append(str((native_dir / matches[0]).resolve()))
+        for name in ("MacUpdateDiscovery", "MacUpdateInstaller", "MacUpdateBackend"):
+            matches = list((native_dir / "eiskaltdcpp-qt-tests_autogen").rglob("moc_" + name + ".cpp"))
+            if len(matches) != 1:
+                raise RuntimeError("unknown native MOC layout: " + name)
+            moc_object = root / (name + ".o")
+            subprocess.run(["/usr/bin/c++", *flags["CXX_DEFINES"], *flags["CXX_INCLUDES"], *flags["CXX_FLAGS"],
+                            "-c", str(matches[0]), "-o", str(moc_object)], check=True)
+            command.append(str(moc_object))
+        native_cache = (native_build / "CMakeCache.txt").read_text().splitlines()
+        sparkle = [line.split("=", 1)[1] for line in native_cache if line.startswith("EISKALT_SPARKLE_ROOT:PATH=")]
+        if len(sparkle) != 1:
+            raise RuntimeError("native fixture requires the configured pinned Sparkle framework")
+        command.extend(["-F" + sparkle[0], "-framework", "Sparkle", "-framework", "AppKit", "-Wl,-rpath," + sparkle[0]])
     subprocess.run(command, cwd=build / "eiskaltdcpp-qt", check=True)
+    return binary
+
+
+def run(args):
+    root = Path(tempfile.mkdtemp(prefix="eiskalt-app-quit-", dir="/private/tmp"))
+    root.chmod(0o700)
+    print("Disposable full-entrypoint root:", root, flush=True)
+    binary = compile_entrypoint(args.build, root)
     home = root / "home"
     home.mkdir(mode=0o700)
     for leaf in (".config", ".local/share", "cache", "tmp", "downloads", "shares"):

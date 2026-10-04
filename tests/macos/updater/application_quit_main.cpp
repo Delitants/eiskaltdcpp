@@ -1,4 +1,5 @@
-// Exercise the production entrypoint, changing only the fixture IPC identity.
+// Exercise the production entrypoint with isolated IPC and an optional test-only
+// updater factory for disposable signed-bundle acceptance.
 #include "dcpp/stdinc.h"
 #include "EiskaltApp_mac.h"
 #include <QUuid>
@@ -8,10 +9,17 @@ public:
         : EiskaltApp(argc, argv, "eiskalt-quit-qa-" + QUuid::createUuid().toString()) {}
 };
 #define EiskaltApp IsolatedQuitApp
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+#include "application_update_fixture.h"
+#define ApplicationUpdateOwner FixtureUpdateOwner
+#endif
 #define main eiskaltApplicationMain
 #include "../../../eiskaltdcpp-qt/src/main.cpp"
 #undef main
 #undef EiskaltApp
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+#undef ApplicationUpdateOwner
+#endif
 #include "TorrentRuntime.h"
 #include "torrent/TorrentSettings.h"
 #include <QTimer>
@@ -26,6 +34,13 @@ static void startQuitDriver() {
     QObject::connect(timer, &QTimer::timeout, timer, [timer] {
         auto* context = qtCtx();
         if(!context || !context->mainWindow() || !context->queuedUsers()) return;
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+        auto* updater = updates::fixtureController.data();
+        if(!updater) qFatal("Application updater owner missing");
+        if(updater->state() == updates::UpdateController::State::Idle) { updater->checkNow(); return; }
+        if(updater->state() == updates::UpdateController::State::Available) { updater->download(); return; }
+        if(updater->state() != updates::UpdateController::State::Ready) return;
+#endif
         timer->stop();
         auto* window = context->mainWindow();
         const auto hashPath = qEnvironmentVariable("HOME") + "/shares/untouched.bin";
@@ -45,6 +60,12 @@ static void startQuitDriver() {
             auto* application = qobject_cast<EiskaltApp*>(qApp);
             fprintf(stdout, "IPC_HELD_AT_QUIT=%d\n", int(application && application->getSharedMemory().isAttached()));
             fflush(stdout);
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+            const auto disposition = updates::fixtureController->quitDisposition();
+            fprintf(stdout, "NATIVE_QUIT_PREPARED=%d FIXTURE_REQUESTS=%d\n",
+                int(disposition == updates::UpdateController::QuitDisposition::Prepared), updates::fixtureRequests->load());
+            fflush(stdout);
+#endif
         });
         QObject::connect(window, &QObject::destroyed, qApp, [] {
             auto* application = qobject_cast<EiskaltApp*>(qApp);
@@ -52,6 +73,33 @@ static void startQuitDriver() {
                 int(application && application->getSharedMemory().isAttached()));
             fflush(stdout);
         }, Qt::DirectConnection);
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+        const auto mode = qEnvironmentVariable("EISKALT_APPLICATION_TEST_MODE");
+        if(mode != "no-consent") updater->installOnNextQuit();
+        if(mode == "kill-before-commit") {
+            QFile marker(qEnvironmentVariable("EISKALT_APPLICATION_FIXTURE") + "/kill-ready");
+            if(!marker.open(QIODevice::WriteOnly) || marker.write("ready") != 5) qFatal("Kill fixture marker failed");
+            return;
+        }
+        if(mode == "hide") {
+            window->hide();
+            if(window->normalQuitPrepared() || updater->quitDisposition() != updates::UpdateController::QuitDisposition::NotCommitted)
+                qFatal("Hide committed installation");
+            fprintf(stdout, "NO_INSTALL_BOUNDARY=hide\n"); updater->later();
+        } else if(mode == "cancel-quit") {
+            context->settings()->setBool(WB_EXIT_CONFIRM, true);
+            QTimer::singleShot(0, qApp, [] {
+                auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+                if(!box) qFatal("Expected quit confirmation");
+                box->done(QMessageBox::No);
+            });
+            if(window->close() || window->normalQuitPrepared() ||
+                updater->quitDisposition() != updates::UpdateController::QuitDisposition::NotCommitted)
+                qFatal("Canceled confirmation committed installation");
+            fprintf(stdout, "NO_INSTALL_BOUNDARY=cancel-quit\n");
+            context->settings()->setBool(WB_EXIT_CONFIRM, false); updater->later();
+        }
+#endif
         if(QCoreApplication::arguments().contains(QStringLiteral("--quit-via-event"))) {
             QEvent quit(QEvent::Quit);
             QCoreApplication::sendEvent(qApp, &quit);
@@ -70,6 +118,15 @@ int main(int argc, char** argv) {
     const auto home = qEnvironmentVariable("HOME");
     if(!home.startsWith("/private/tmp/eiskalt-app-quit-") || home != qEnvironmentVariable("CFFIXED_USER_HOME") ||
         qEnvironmentVariable("XDG_CONFIG_HOME") != home + "/.config") return 72;
+#ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
+    QFile fixtureInfo(QFileInfo(QString::fromLocal8Bit(argv[0])).absolutePath() + "/../Info.plist");
+    if(!fixtureInfo.open(QIODevice::ReadOnly)) return 76;
+    if(fixtureInfo.readAll().contains("<string>2</string>")) {
+        QFile marker(qEnvironmentVariable("EISKALT_APPLICATION_FIXTURE") + "/relaunched");
+        if(marker.open(QIODevice::WriteOnly)) marker.write("unexpected relaunch");
+        return 77;
+    }
+#endif
     const auto config = home + "/.config/eiskaltdc++/";
     if(!QDir().mkpath(config)) return 73;
     dcpp::Util::PathsMap paths;

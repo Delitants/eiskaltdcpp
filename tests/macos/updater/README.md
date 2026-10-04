@@ -703,8 +703,9 @@ readiness only for NoUpdate or Prepared. Refused remains retained: a controller
 can synthesize refusal before native cancellation finishes, so it is not a safe
 disarm receipt. Hide, active modal input and canceled confirmation do not commit.
 
-The production macOS entrypoint enables this checked session without an updater
-service yet. Its application-owned receiver exits only after readiness, destroys
+The production macOS entrypoint enables this checked session with an unparented
+application updater owner. Its backend remains unsupported, with no scheduler or
+native installation capability enabled. Its receiver exits only after readiness, destroys
 GUI owners while core managers exist, then consumes checked core shutdown. Quit
 events cannot accept termination while preparation is pending. The profile's
 single-instance marker remains owned through GUI/core disposal, not merely until
@@ -727,3 +728,47 @@ The private IPC marker must still be owned at quit and during GUI destruction.
 `_Exit` cannot produce the required post-return receipt. This establishes ordinary
 no-update quit, not signed pending-update full-app replacement, OS logout,
 installer activation, or supported-minimum-OS acceptance.
+
+## Application Updater Lifetime And Signed Full-App Quit
+
+`ApplicationUpdateOwner` owns the unparented backend and controller outside the
+GUI roots fenced by checked quit. After aggregate readiness, NoUpdate disposes
+them while borrowed GUI/core settings still exist. Prepared retains the sealed
+owner and native staging until OS process cleanup; pending/refused dispositions
+cannot release ownership. Production construction still selects the unsupported
+backend and does not start automatic checks.
+
+Exercise the real production entrypoint, MainWindow, controller, Mac backend and
+Sparkle in disposable signed bundles:
+
+```sh
+python3 tests/macos/updater/run_application_update.py \
+  --build build-torrent --native-build build-test \
+  --sparkle /path/to/pinned/sparkle \
+  --mode normal --mode no-consent --mode hide \
+  --mode cancel-quit --mode kill-before-commit
+```
+
+The native test build must opt into the pinned framework. The wrapper substitutes
+only a test-owned updater factory and unique IPC identity, never a production
+profile/environment endpoint override. Fixture-only capability delegates to the
+real backend; signed feed/archive bytes enter its injected test wire, not live
+HTTPS. Each case gets a fresh private home and ephemeral signing key. Tests run
+serially with two build workers and deny external network access from the app.
+The approved vendor installer helper retains ordinary app-level access; this
+parent policy is not proof of strict helper isolation or live proxy routing.
+
+Normal quit requires Prepared, return through actual GUI/core destruction, exact
+new signed bundle, no relaunch, unchanged download/share bytes and valid persisted
+hash/queue/settings/Torrent checkpoints. No consent, Hide and canceled confirmation
+must keep the exact old bundle; the latter two revoke consent with Later before
+normal fixture cleanup. The kill case targets only its owned QA child after Ready
+but before committed quit, requires abnormal exit without the post-main receipt,
+and preserves the old bundle/data without asserting final persistence on a crash.
+Private JSON receipts record the outcomes. The profile IPC lease must remain held
+at quit and during GUI destruction in every normally returning case.
+
+This establishes signed pending-update full-app acceptance on the development
+host, not production activation, OS logout, live GOST/provider DNS, or supported
+minimum-OS acceptance. Runtime identity/scheduler/UI/feed integration, platform
+QA and independent whole-branch review remain separate gates.

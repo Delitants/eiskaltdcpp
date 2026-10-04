@@ -77,6 +77,7 @@ list(APPEND SRCS src/updates/UpdatePolicy.cpp src/updates/UpdateController.cpp)
 list(APPEND SRCS src/updates/SettingsUpdates.cpp)
 list(APPEND SRCS src/updates/ApplicationQuitCoordinator.cpp)
 list(APPEND SRCS src/updates/ApplicationQuitSession.cpp)
+list(APPEND SRCS src/updates/ApplicationUpdateOwner.cpp)
 
 if (NOT HAIKU)
     list (APPEND SRCS src/qtsingleapp/qtsinglecoreapplication.cpp)

@@ -94,6 +94,7 @@ using namespace std;
 #include <QSettings>
 #include <QTimer>
 #include <cstdlib>
+#include "updates/ApplicationUpdateOwner.h"
 
 #ifdef DBUS_NOTIFY
 #include <QtDBus>
@@ -583,7 +584,8 @@ int main(int argc, char *argv[])
     qtCtx()->arenaWidgetManager()->add(ctx.queuedUsers());
 
 #if defined(Q_OS_MAC)
-    if (!ctx.mainWindow()->enableCheckedQuit())
+    auto applicationUpdates = std::make_unique<updates::ApplicationUpdateOwner>(*ctx.settings(), *dcContext);
+    if (!ctx.mainWindow()->enableCheckedQuit(applicationUpdates->controller()))
         qFatal("Could not enable checked normal quit");
     QObject::connect(ctx.mainWindow(), &MainWindow::normalQuitReady, &app, [&app, openTarget] {
         // The retained window fences its own queued events; the application
@@ -633,6 +635,8 @@ int main(int argc, char *argv[])
         fflush(nullptr);
         std::_Exit(ret);
     }
+    if (!updates::ApplicationUpdateOwner::finishNormalQuit(applicationUpdates))
+        qFatal("Checked quit did not retain a terminal updater disposition");
 #endif
 
 #if !defined(Q_OS_MAC)

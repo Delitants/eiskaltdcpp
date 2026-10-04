@@ -1010,7 +1010,31 @@ private profiles and a localhost-only network policy. It requires the post-retur
 receipt, protected bytes and valid hash/queue/settings/Torrent snapshots. This is
 ordinary no-update acceptance, not signed pending-update full-app replacement.
 Public installation capability/runtime backend selection remain disabled.
-Task 5 stays in progress until full-app native handoff and remaining lifecycle
+Task 5 stays in progress until remaining lifecycle
 acceptance; routed HTTP/DNS, UI/localization, intermittent Torrent bind diagnosis,
 current dual thin builds/minimum-OS QA/fresh whole-branch review and publication
 with signed feeds last remain separate gates.
+
+### Application Owner And Signed Full-App Quit Checkpoint
+
+Production macOS main now owns an unparented ApplicationUpdateOwner outside
+fenced GUI roots and passes its controller into checked quit. Its constructor
+still selects UnsupportedUpdateBackend with no scheduler or native installation
+capability. At aggregate-ready NoUpdate, ownership is disposed before borrowed
+GUI/core settings vanish. Prepared retains the sealed owner/native staging
+through OS process exit; pending/refused dispositions cannot release it.
+
+Disposable signed full-app acceptance includes actual main.cpp, MainWindow,
+controller, MacUpdateBackend and Sparkle. Only the QA translation unit substitutes
+a trusted fixture owner with fixture-only capability and injected signed bytes.
+Normal quit returns through actual GUI/core teardown, installs the exact signed
+new bundle, does not relaunch and preserves download/share data and valid
+hash/queue/settings/Torrent snapshots. No consent, Hide, canceled confirmation
+and owned-child SIGKILL before commitment keep the exact old bundle. The abnormal
+case does not assert final persistence. Normally returning cases retain the
+profile IPC lease at quit and through GUI destruction.
+
+This is development-host full-app lifecycle acceptance, not production native
+selection, live routed HTTPS/provider DNS, strict helper isolation or minimum-OS
+proof. Verified runtime identity/scheduler, settings/menu/notification ownership,
+OS logout/additional lifecycle coverage and remaining release gates stay pending.
