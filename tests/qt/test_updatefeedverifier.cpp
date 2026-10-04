@@ -842,6 +842,179 @@ TEST_CASE("Mac backend retained fence joins active transport without queued comp
     CHECK(f.requests.load() == (feed ? 1 : 2)); CHECK(stagedArchives().isEmpty());
     CHECK(backendFence(*f.backend));
 }
+TEST_CASE("Mac backend hands retained staging to the real installer after route retirement", "[.][update-backend-native][backend-handoff-native]") {
+    bool destroyOnReceipt = false;
+    SECTION("retained observer") {}
+    SECTION("observer destroys refused backend") { destroyOnReceipt = true; }
+    BackendFixture f; f.discover(); f.backend->download(401, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    REQUIRE(backendFence(*f.backend));
+    f.context.ownedCtx->getProxyRoute()->stop();
+    int checks = 0, receipts = 0; bool prepared = true;
+    QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, f.backend.get(),
+        [&](quint64 op, bool result) {
+            CHECK(op == 402); ++receipts; prepared = result;
+            if(destroyOnReceipt) f.backend.reset();
+        });
+    CHECK_FALSE(f.backend->supportsInstallation());
+    f.backend->beginInstallHandoff(402, f.offer, [&] { ++checks; return true; });
+    CHECK(checks == 1); CHECK(receipts == 0); CHECK(QFile::exists(paths.front()));
+    f.backend->beginInstallHandoff(402, f.offer, [&] { FAIL("Duplicate handoff evaluated consent"); return true; });
+    REQUIRE(discoveryPump([&] { return receipts != 0; }));
+    // This process is intentionally not the selected signed app. The real
+    // installer must refuse its missing bundle policy, never prepare an update.
+    CHECK_FALSE(prepared); CHECK(receipts == 1); CHECK(f.requests.load() == 2);
+    CHECK_FALSE(QFile::exists(paths.front()));
+    if(f.backend) f.backend->beginInstallHandoff(402, f.offer, [] { return true; });
+    QCoreApplication::processEvents(); CHECK(receipts == 1);
+}
+
+TEST_CASE("Mac backend handoff admission refuses unsafe staging or absent consent", "[.][update-backend-native][backend-handoff-native]") {
+    BackendFixture f; f.discover(); f.backend->download(411, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    auto offer = f.offer;
+    bool fenced = true, approved = true, missing = false, throwing = false;
+    int expectedChecks = 0;
+    SECTION("unfenced") { fenced = false; }
+    SECTION("different offer") { ++offer.build; }
+    SECTION("metadata changed") { offer.notes += " changed"; }
+    SECTION("route revoked before fence") { f.context.ownedCtx->getProxyRoute()->stop(); }
+    SECTION("consent refused") { approved = false; expectedChecks = 1; }
+    SECTION("consent throws") { throwing = true; expectedChecks = 1; }
+    SECTION("consent absent") { missing = true; }
+    if(fenced) REQUIRE(backendFence(*f.backend));
+    int receipts = 0, checks = 0; bool prepared = true;
+    QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, f.backend.get(),
+        [&](quint64 op, bool value) { CHECK(op == 412); ++receipts; prepared = value; });
+    std::function<bool()> consent;
+    if(!missing) consent = [&] { ++checks; if(throwing) throw std::runtime_error("refused"); return approved; };
+    f.backend->beginInstallHandoff(412, offer, consent);
+    CHECK(checks == expectedChecks); CHECK(receipts == 0);
+    REQUIRE(discoveryPump([&] { return receipts != 0; }));
+    CHECK(receipts == 1); CHECK_FALSE(prepared); CHECK(f.requests.load() == 2);
+}
+
+TEST_CASE("Mac backend cancellation retains installer files until terminal refusal", "[.][update-backend-native][backend-handoff-native]") {
+    BackendFixture f; f.discover(); f.backend->download(421, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    REQUIRE(backendFence(*f.backend));
+    int receipts = 0, checks = 0;
+    QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, f.backend.get(),
+        [&](quint64 op, bool prepared) { CHECK(op == 422); CHECK_FALSE(prepared); ++receipts; });
+    f.backend->beginInstallHandoff(422, f.offer, [&] { ++checks; return true; });
+    CHECK(checks == 1); CHECK(receipts == 0);
+    bool ordinaryCancel = false;
+    SECTION("consent revocation") {}
+    SECTION("ordinary cancellation") { ordinaryCancel = true; }
+    if(ordinaryCancel) f.backend->cancel(); else f.backend->revokeInstallConsent();
+    CHECK(receipts == 0); CHECK(QFile::exists(paths.front()));
+    REQUIRE(discoveryPump([&] { return receipts != 0; }));
+    CHECK(receipts == 1); CHECK_FALSE(QFile::exists(paths.front()));
+}
+
+TEST_CASE("Mac backend pending installer destruction joins before removing staging", "[.][update-backend-native][backend-handoff-native]") {
+    BackendFixture f; f.discover(); f.backend->download(431, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    REQUIRE(backendFence(*f.backend));
+    int checks = 0, receipts = 0;
+    QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, [&](quint64, bool) { ++receipts; });
+    f.backend->beginInstallHandoff(432, f.offer, [&] { ++checks; return true; });
+    CHECK(checks == 1); CHECK(receipts == 0);
+    f.backend.reset(); CHECK_FALSE(QFile::exists(paths.front()));
+    QCoreApplication::processEvents(); CHECK(receipts == 0);
+}
+
+TEST_CASE("Mac backend foreign and competing requests cannot steal a retained handoff", "[.][update-backend-native][backend-handoff-native]") {
+    BackendFixture f; f.discover(); f.backend->download(441, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    REQUIRE(backendFence(*f.backend));
+    int checks = 0; QList<quint64> receipts;
+    QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, f.backend.get(),
+        [&](quint64 op, bool prepared) { CHECK_FALSE(prepared); receipts.append(op); });
+    std::async(std::launch::async, [&] {
+        f.backend->beginInstallHandoff(442, f.offer, [] { FAIL("Foreign consent executed"); return true; });
+    }).get();
+    f.backend->beginInstallHandoff(443, f.offer, [&] { ++checks; return true; });
+    CHECK(checks == 1); CHECK(receipts.isEmpty());
+    for(const auto op : {quint64(0), quint64(444), quint64(444)})
+        f.backend->beginInstallHandoff(op, f.offer, [] { FAIL("Competing consent executed"); return true; });
+    REQUIRE(discoveryPump([&] { return receipts.size() == 4; }));
+    CHECK(receipts.count(442) == 1); CHECK(receipts.count(443) == 1);
+    CHECK(receipts.count(444) == 1); CHECK(receipts.count(0) == 1);
+    CHECK(checks == 1); CHECK(f.requests.load() == 2);
+}
+
+TEST_CASE("Mac backend installs only the retained signed main bundle on committed handoff", "[.][backend-install-native]") {
+    const auto mode = qEnvironmentVariable("EISKALT_INSTALL_MODE");
+    REQUIRE((mode == "normal" || mode == "cancel-verifier" || mode == "cancel-before-native" || mode == "cancel-prepared"));
+    const auto contents = QFileInfo(QCoreApplication::applicationDirPath()).absolutePath();
+    QFile plist(contents + "/Info.plist"); REQUIRE(plist.open(QIODevice::ReadOnly));
+    const auto info = plist.readAll();
+    REQUIRE(info.contains("org.eiskaltdcpp.updater-probe."));
+    REQUIRE(qEnvironmentVariable("CFFIXED_USER_HOME") == qEnvironmentVariable("HOME"));
+    REQUIRE(qEnvironmentVariable("TMPDIR").startsWith(qEnvironmentVariable("HOME") + "/"));
+    REQUIRE(QGuiApplication::platformName() == "cocoa");
+    const int fd = socket(AF_INET, SOCK_STREAM, 0); REQUIRE(fd >= 0);
+    fcntl(fd, F_SETFL, O_NONBLOCK);
+    sockaddr_in address{}; address.sin_family = AF_INET; address.sin_port = htons(443);
+    inet_pton(AF_INET, "203.0.113.1", &address.sin_addr);
+    const int connected = connect(fd, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    const int error = errno; close(fd);
+    REQUIRE(connected == -1); REQUIRE(error == EPERM);
+    QFile feedFile(qEnvironmentVariable("EISKALT_PROBE_LOCAL_FEED")); REQUIRE(feedFile.open(QIODevice::ReadOnly));
+    QFile archiveFile(qEnvironmentVariable("EISKALT_PROBE_LOCAL_ARCHIVE")); REQUIRE(archiveFile.open(QIODevice::ReadOnly));
+    const auto feed = feedFile.readAll(), archive = archiveFile.readAll();
+    dcpp::test::TestContext context;
+    std::atomic_int requests{0};
+    int offers = 0, ready = 0, failures = 0, receipts = 0, checks = 0;
+    UpdateOffer offer; bool prepared = false;
+    auto backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, {},
+        [&](const auto& policy, const std::string& url, const auto& sink) {
+            if(policy.cancelled()) throw std::runtime_error("cancelled");
+            ++requests;
+            const auto& bytes = url.find("raw.githubusercontent.com") != std::string::npos ? feed : archive;
+            sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
+        });
+    QObject::connect(backend.get(), &UpdateBackend::available, [&](quint64 op, UpdateOffer value) {
+        CHECK(op == 501); ++offers; offer = value;
+    });
+    QObject::connect(backend.get(), &UpdateBackend::downloadReady, [&](quint64 op, quint64, QByteArray) { CHECK(op == 502); ++ready; });
+    QObject::connect(backend.get(), &UpdateBackend::failed, [&](quint64, QString message, FailureCategory) {
+        INFO(message.toStdString()); ++failures;
+    });
+    QObject::connect(backend.get(), &UpdateBackend::installHandoffFinished, backend.get(), [&](quint64 op, bool result) {
+        CHECK(op == 503); ++receipts; prepared = result;
+    });
+    backend->check(501, Channel::Stable, CheckKind::Manual);
+    REQUIRE(discoveryPump([&] { return offers || failures; })); REQUIRE(offers == 1); REQUIRE(failures == 0);
+    backend->download(502, offer);
+    REQUIRE(discoveryPump([&] { return ready || failures; }, 30000)); REQUIRE(ready == 1); REQUIRE(failures == 0);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    REQUIRE(backend->stopWorkersForQuit()); context.ownedCtx->getProxyRoute()->stop();
+    backend->beginInstallHandoff(503, offer, [&] {
+        ++checks;
+        return mode == "normal" || mode == "cancel-verifier" ||
+            (mode == "cancel-before-native" ? checks == 1 : checks < 3);
+    });
+    CHECK(checks == 1); CHECK(receipts == 0);
+    backend->beginInstallHandoff(503, offer, [] { FAIL("Duplicate admitted native operation"); return true; });
+    if(mode == "cancel-verifier") {
+        backend->revokeInstallConsent(); CHECK(receipts == 0); CHECK(QFile::exists(paths.front()));
+    }
+    REQUIRE(discoveryPump([&] { return receipts != 0; }, 30000));
+    CHECK(receipts == 1); CHECK(prepared == (mode == "normal")); CHECK(requests == 2);
+    if(mode == "normal") {
+        CHECK(checks >= 3); CHECK(QFile::exists(paths.front()));
+        // Keep the prepared native owner and staging through process exit.
+        backend.release();
+    } else {
+        CHECK_FALSE(QFile::exists(paths.front()));
+        CHECK(checks == (mode == "cancel-verifier" ? 1 : mode == "cancel-before-native" ? 2 : 3));
+    }
+}
 TEST_CASE("Mac backend stages only the independently verified selected archive", "[.][update-backend-native]") {
     BackendFixture f; f.discover();
     bool invalid = false;

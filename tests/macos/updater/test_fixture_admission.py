@@ -27,6 +27,16 @@ class AuthorizationAdmission(unittest.TestCase):
             fixtures.install_probe(self.args)
         self.assertFalse(self.args.root.exists())
 
+    def test_backend_probe_requires_adapter_before_file_access(self):
+        self.args = SimpleNamespace(root=self.args.root, mode="normal", adapter=False, backend=True)
+        with self.assertRaisesRegex(RuntimeError, "backend.*adapter"):
+            fixtures.install_probe(self.args)
+
+    def test_backend_probe_rejects_unimplemented_mode_before_file_access(self):
+        self.args = SimpleNamespace(root=self.args.root, mode="resume-installing", adapter=True, backend=True)
+        with self.assertRaisesRegex(RuntimeError, "backend.*mode"):
+            fixtures.install_probe(self.args)
+
     def test_refusal_mode_never_expects_installation(self):
         self.assertIn("authorization-refused", fixtures.ADAPTER_INSTALL_MODES)
         self.assertNotIn("authorization-refused", fixtures.INSTALLING_MODES)

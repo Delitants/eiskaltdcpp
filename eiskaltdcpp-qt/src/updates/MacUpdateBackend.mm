@@ -3,12 +3,16 @@
 #include "dcpp/ProxyRoute.h"
 #include "MacUpdateBackend.h"
 #include "MacUpdateDiscovery.h"
+#include "MacUpdateInstaller.h"
 #include "UpdateArchiveVerifier.h"
 #include "UpdateStagingCache.h"
 #include "UpdateUrlPolicy.h"
 #include <QFile>
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QPointer>
+#include <QSet>
 #include <QSysInfo>
 #include <QTemporaryDir>
 #include <QThread>
@@ -85,6 +89,11 @@ struct MacUpdateBackend::Impl {
     quint64 operation = 0, epoch = 0, request = 0;
     QByteArray feedBytes;
     bool quitFenced = false, quitFenceSucceeded = false;
+    std::unique_ptr<MacUpdateInstaller> installer;
+    std::shared_ptr<Stage> installerStage;
+    QSet<quint64> handoffRequests;
+    quint64 handoffOperation = 0;
+    bool handoffPending = false, handoffRevoked = false;
 
     Impl(MacUpdateBackend& o, dcpp::DCContext& c, QString bundle, transport_detail::Backend wire, QString cache)
         : owner(o), context(c), fixture(std::move(bundle)), cacheDirectory(std::move(cache)),
@@ -121,12 +130,15 @@ struct MacUpdateBackend::Impl {
     }
     ~Impl() {
         clear(); timer.stop();
+        // The installer joins its verifier before releasing the staged files.
+        installer.reset(); installerStage.reset();
         // Transport joins its cancelable network worker before QObject teardown.
         transport.reset();
         verification.reset();
     }
     bool busy() const { return request || verification || phase == Discovering; }
     void clear() {
+        revokeHandoff();
         ++epoch;
         phase = Idle;
         discovery->cancel();
@@ -134,6 +146,70 @@ struct MacUpdateBackend::Impl {
         if(verification) verification->cancelled.store(true);
         selected.reset(); stage.reset(); route.reset(); feedBytes.clear();
         // transferStage / Verification retain files until their worker exits.
+    }
+    void revokeHandoff() {
+        if(!handoffPending) return;
+        handoffRevoked = true;
+        if(installer) installer->cancel();
+        // Cancellation is a request, not a terminal receipt. Keep its stage.
+    }
+    void receipt(quint64 op, bool prepared) {
+        QTimer::singleShot(0, &owner, [this, op, prepared] { emit owner.installHandoffFinished(op, prepared); });
+    }
+    void refuseHandoff(quint64 op) {
+        if(handoffRequests.contains(op)) return;
+        handoffRequests.insert(op);
+        receipt(op, false);
+    }
+    void finishHandoff(quint64 op, bool prepared) {
+        if(!handoffPending || op != handoffOperation) return;
+        handoffPending = false;
+        if(!prepared) {
+            stage.reset(); selected.reset(); route.reset(); feedBytes.clear(); phase = Idle;
+            installerStage.reset();
+        }
+        // Forward the native terminal fact, never invent a disarm receipt after
+        // irreversible preparation. Prepared owners survive through process exit.
+        receipt(op, prepared);
+    }
+    void beginHandoff(quint64 op, const UpdateOffer& offer, std::function<bool()> consent) {
+        if(handoffRequests.contains(op)) return;
+        if(!op || handoffOperation || !quitFenced || !quitFenceSucceeded || phase != Ready ||
+            !stage || !selected || !sameOffer(offer, selected->offer) || !consent ||
+            !QCoreApplication::instance() || owner.thread() != QCoreApplication::instance()->thread()) {
+            refuseHandoff(op); return;
+        }
+        handoffRequests.insert(op);
+        handoffOperation = op; handoffPending = true;
+        installerStage = stage;
+        const QPointer<MacUpdateBackend> guard(&owner);
+        auto* const ownerThread = owner.thread();
+        auto liveConsent = [guard, ownerThread, op, consent = std::move(consent)] {
+            if(QThread::currentThread() != ownerThread || !guard) return false;
+            auto* state = guard->impl.get();
+            if(!state->handoffPending || state->handoffOperation != op || state->handoffRevoked) return false;
+            bool allowed = false;
+            try { allowed = consent(); } catch(...) {}
+            if(!guard) return false;
+            state = guard->impl.get();
+            if(!allowed) state->handoffRevoked = true;
+            return allowed && state->handoffPending && state->handoffOperation == op && !state->handoffRevoked;
+        };
+        if(!liveConsent()) { if(guard) finishHandoff(op, false); return; }
+        try {
+            installer = std::make_unique<MacUpdateInstaller>();
+            QObject::connect(installer.get(), &MacUpdateInstaller::readyToExit, &owner,
+                [this](quint64 id) { finishHandoff(id, true); }, Qt::QueuedConnection);
+            QObject::connect(installer.get(), &MacUpdateInstaller::failed, &owner,
+                [this](quint64 id) { finishHandoff(id, false); }, Qt::QueuedConnection);
+            // The route was retired by core shutdown after the fence. Only the
+            // existing private local-stage installer bridge may run now.
+            if(!installer->start(op, *selected, installerStage->feed(), installerStage->archive(), true,
+                std::move(liveConsent))) finishHandoff(op, false);
+        } catch(...) {
+            if(installer && installer->active()) revokeHandoff();
+            else finishHandoff(op, false);
+        }
     }
     void report(quint64 op, FailureCategory category) {
         if(quitFenced) return;
@@ -295,9 +371,22 @@ bool MacUpdateBackend::stopWorkersForQuit() {
     if(QThread::currentThread() != thread()) return false;
     return impl->stopWorkersForQuit();
 }
+void MacUpdateBackend::beginInstallHandoff(quint64 op, const UpdateOffer& offer, std::function<bool()> consent) {
+    if(QThread::currentThread() != thread()) {
+        QMetaObject::invokeMethod(this, [this, op] { impl->refuseHandoff(op); }, Qt::QueuedConnection);
+        return;
+    }
+    impl->beginHandoff(op, offer, std::move(consent));
+}
 void MacUpdateBackend::armInstallOnQuit(const UpdateOffer&, bool) {
-    // Fail closed until the committed-quit installer handoff is integrated.
+    // The legacy entry never grants consent or substitutes for receipt handoff.
     impl->fail(FailureCategory::Unsupported);
 }
-void MacUpdateBackend::revokeInstallConsent() { /* No installer can be armed by this checkpoint. */ }
+void MacUpdateBackend::revokeInstallConsent() {
+    if(QThread::currentThread() != thread()) {
+        QMetaObject::invokeMethod(this, [this] { impl->revokeHandoff(); }, Qt::QueuedConnection);
+        return;
+    }
+    impl->revokeHandoff();
+}
 }

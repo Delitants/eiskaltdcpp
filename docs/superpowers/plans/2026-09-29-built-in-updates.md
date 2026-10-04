@@ -968,3 +968,22 @@ The final caller must consume ApplicationQuitCoordinator Ready first and retain
 all owners/event-loop until the backend terminal receipt. Native signed-stage
 handoff and actual committed/no-update closeEvent acceptance remain next. The
 legacy macOS emergency exit remains unchanged.
+
+### Native Backend Receipt Checkpoint
+
+MacUpdateBackend now connects committed beginInstallHandoff to the real native
+installer after a successful worker fence and exact retained Ready offer check.
+It preserves exclusive staging through asynchronous cancellation and terminal
+receipts. Operation IDs cannot produce duplicate receipts; foreign or competing
+calls cannot steal the admitted handoff. Live consent runs on the GUI owner,
+with sticky rejection and weak-owner guards. Terminal forwarding is deferred so
+refusal observers may release owners safely. A prepared receipt reports actual
+native preparation, never a fabricated disarm result after irreversible handoff.
+
+Disposable signed-main-bundle tests exercise real backend discovery, archive
+verification, route retirement and native installation. The normal case requires
+exact signed replacement after process exit, no relaunch and unchanged test data.
+Verifier cancellation and consent refusal before native startup or at final Ready
+require the exact old signed bundle after exit. This is not actual MainWindow
+closeEvent acceptance or supported-minimum-OS verification. Public installation
+capability and runtime selection remain disabled; the emergency exit is unchanged.

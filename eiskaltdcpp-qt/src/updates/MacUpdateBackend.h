@@ -14,6 +14,7 @@ public:
     void download(quint64 operation, const UpdateOffer&) override;
     void cancel() override;
     [[nodiscard]] bool stopWorkersForQuit() override;
+    void beginInstallHandoff(quint64 operation, const UpdateOffer&, std::function<bool()>) override;
     void armInstallOnQuit(const UpdateOffer&, bool relaunch) override;
     void revokeInstallConsent() override;
 private:

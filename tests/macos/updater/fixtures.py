@@ -267,6 +267,11 @@ def probe(args):
 
 def install_probe(args):
     """Post-exit assertions for disposable bundles, never the installed app."""
+    backend = getattr(args, "backend", False)
+    if backend and not args.adapter:
+        raise RuntimeError("backend probe requires an adapter fixture")
+    if backend and args.mode not in ("normal", "cancel-verifier", "cancel-before-native", "cancel-prepared"):
+        raise RuntimeError("unsupported backend probe mode")
     authorization_refused = args.mode == "authorization-refused"
     if authorization_refused and (not args.adapter or not getattr(args, "disposable_vm", False) or
                                   not run("/usr/sbin/sysctl", "-n", "hw.model").startswith("VirtualMac")):
@@ -330,6 +335,13 @@ def install_probe(args):
         EISKALT_PROBE_KILL_MARKER=str(kill_marker), EISKALT_PROBE_LOCAL_ARCHIVE=str(root / "update.zip"),
         EISKALT_PROBE_LOCAL_FEED=str(root / "appcast.xml"),
         EISKALT_PROBE_DENIAL_READY=str(denial_ready), EISKALT_PROBE_DENIAL_APPLIED=str(denial_applied))
+    if backend:
+        for variable, leaf in (("XDG_CONFIG_HOME", "config"), ("XDG_DATA_HOME", "data"),
+                               ("XDG_CACHE_HOME", "cache"), ("TMPDIR", "tmp")):
+            directory = home / leaf
+            directory.mkdir(mode=0o700)
+            environment[variable] = str(directory) + "/"
+        environment["QT_QPA_PLATFORM"] = "cocoa"
     sandbox = '(version 1)(allow default)(deny network*)' \
         '(allow network-outbound (remote ip "localhost:*"))' \
         '(allow network-bind (local ip "localhost:*"))' \
@@ -359,7 +371,8 @@ def install_probe(args):
             if os.access(app.parent, os.W_OK):
                 raise RuntimeError("disposable destination is still writable")
         child = subprocess.Popen(["sandbox-exec", "-p", sandbox,
-            str(app / "Contents/MacOS/UpdaterProbe"), "[update-install-adapter]" if args.adapter else "[update-install]"], env=environment,
+            str(app / "Contents/MacOS/UpdaterProbe"), "[backend-install-native]" if backend else
+            "[update-install-adapter]" if args.adapter else "[update-install]"], env=environment,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         if args.mode == "kill-before-commit":
             deadline = time.monotonic() + 35
@@ -493,6 +506,7 @@ if __name__ == "__main__":
         if name == "install-probe":
             sub.add_argument("--mode", choices=LEGACY_INSTALL_MODES + ADAPTER_INSTALL_MODES, required=True)
             sub.add_argument("--adapter", action="store_true", help="Exercise the production Qt installer adapter")
+            sub.add_argument("--backend", action="store_true", help="Exercise the full native backend using the opt-in Qt test binary")
             sub.add_argument("--disposable-vm", action="store_true",
                              help="Allow the authorization-refusal fixture only on a macOS virtual machine")
         sub.set_defaults(function=globals()[name.replace("-", "_")])

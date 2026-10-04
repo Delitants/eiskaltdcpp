@@ -664,3 +664,32 @@ The latter composes real retained core/GUI shutdown with a fixture backend; it
 does not install an update. Native endpoint implementation, real MainWindow
 committed/no-update quit, and runtime activation remain pending. The public Mac
 backend still reports installation unsupported.
+
+### Native Backend Handoff
+
+The opt-in Qt target (`EISKALT_TEST_MAC_UPDATE_DISCOVERY=ON`) also exercises the
+real MacUpdateBackend endpoint, without enabling installation capability in the
+product. `[backend-handoff-native]` checks admission, operation IDs, thread
+ownership, stage retention and terminal refusal using the nonbundled test process.
+A refusal from that process is not native replacement acceptance.
+
+Use a fresh signed fixture for each real main-bundle case:
+
+```sh
+python3 tests/macos/updater/fixtures.py create --adapter --installer-xpc \
+  --root /tmp/new-backend-installer-fixture --sparkle "$SPARKLE" \
+  --binary build-test/tests/qt/eiskaltdcpp-qt-tests
+python3 tests/macos/updater/fixtures.py install-probe --adapter --backend \
+  --root /tmp/new-backend-installer-fixture --mode normal
+```
+
+Backend modes are `normal`, `cancel-verifier`, `cancel-before-native` and
+`cancel-prepared`. The parent preserves the adapter's exact post-exit bundle,
+signature, no-relaunch and test-data checks. Backend modes add disposable XDG
+paths/TMPDIR and Cocoa rendering; unsupported modes are refused before fixture
+access. Each child uses fresh authenticated information-only discovery and archive
+verification, then retires the core route after its worker fence. Only private
+local staged installer IPC remains; no external transport is restarted.
+The normal case retains the prepared owner through process exit. Cancellation
+and consent refusals keep the old app. These cases do not simulate an actual
+MainWindow close gesture and do not establish installer-helper OS isolation.
