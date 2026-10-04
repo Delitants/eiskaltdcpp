@@ -566,6 +566,28 @@ in-flight cancellation, reused IDs, route revocation and owner destruction.
 
 ## Backend Composition
 
+### Verified Stage Cache Foundation
+
+`saveVerifiedStage` authenticates the selected signed feed and complete archive
+before publishing a bounded pair in an explicitly supplied private directory.
+Only `appcast.xml`, `update.zip` and two reserved temporary slots are used. A
+directory lock excludes concurrent cache operations. Writes and temporary-slot
+cleanup are anchored to opened directories; symlinks, hardlinks, shared roots
+and special files are rejected. A crash between the two atomic replacements
+can leave a mixed pair, which restoration refuses rather than treating as Ready.
+
+`restoreVerifiedStage` requires a fresh signed feed selecting exactly the same
+release under the currently pinned key. It reauthenticates the cached feed,
+copies and reverifies the archive into a new private stage without overwriting
+an existing destination. It performs no network requests and grants no offer or
+install consent. Installed identity/channel/route policy remains the caller's
+responsibility. Windows refuses until private staging ACL support is accepted.
+
+Run `[update-stage-cache]` in the Qt or standalone native test target. This
+foundation is compiled but not yet called by `MacUpdateBackend`: actual backend
+worker restoration, process-restart acceptance and committed-quit integration
+remain pending. It must not be presented as a working product restart cache yet.
+
 `MacUpdateBackend` connects the worker transport, native discovery adapter and
 archive verifier. It captures one immutable connection route, downloads the
 fixed CPU-specific feed into private temporary staging, and emits only the

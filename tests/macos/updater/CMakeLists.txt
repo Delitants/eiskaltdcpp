@@ -21,10 +21,11 @@ find_package(Intl REQUIRED)
 set(CMAKE_AUTOMOC ON)
 set(_updates "${CMAKE_CURRENT_LIST_DIR}/../../../eiskaltdcpp-qt/src/updates")
 add_executable(eiskalt-updater-native-tests main.mm installer.mm feed-publication.cpp
+    ../../qt/test_updatestagingcache.cpp
     ../../../macos/updater/BundleArchiveVerifier.mm
     ${_updates}/UpdateFeedVerifier.cpp ${_updates}/UpdatePolicy.cpp
-    ${_updates}/UpdateUrlPolicy.cpp ${_updates}/UpdateArchiveVerifier.cpp)
-target_include_directories(eiskalt-updater-native-tests PRIVATE "${CMAKE_CURRENT_LIST_DIR}/../../.." ${Intl_INCLUDE_DIRS})
+    ${_updates}/UpdateUrlPolicy.cpp ${_updates}/UpdateArchiveVerifier.cpp ${_updates}/UpdateStagingCache.cpp)
+target_include_directories(eiskalt-updater-native-tests PRIVATE "${CMAKE_CURRENT_LIST_DIR}/../../.." "${_updates}/.." ${Intl_INCLUDE_DIRS})
 target_sources(eiskalt-updater-native-tests PRIVATE
     ${_updates}/MacUpdateInstaller.mm ${_updates}/MacUpdateInstaller.h ${_updates}/UpdateLoopbackBridge.cpp)
 target_compile_options(eiskalt-updater-native-tests PRIVATE -fobjc-arc)
