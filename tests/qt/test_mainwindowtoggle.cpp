@@ -88,6 +88,9 @@
 #include "Antispam.h"
 #include "updates/UpdateBackend.h"
 #include "updates/UpdateController.h"
+#include "updates/SettingsUpdates.h"
+#include <QCheckBox>
+#include <QStackedWidget>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QXmlStreamReader>
@@ -253,6 +256,173 @@ template<class T> bool enableCheckedQuit(T& window, updates::UpdateController* u
 template<class T> bool normalQuitPrepared(T& window) {
     if constexpr(requires { window.normalQuitPrepared(); }) return window.normalQuitPrepared();
     else return false;
+}
+
+TEST_CASE("Real Preferences exposes shared Updates settings without applying rejected edits", "[qt][update-ui-owner]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    auto dialog = std::make_unique<::Settings>(&updater);
+    auto* page = dialog->findChild<updates::SettingsUpdates*>();
+    REQUIRE(page);
+    auto* list = dialog->findChild<QListWidget*>("listWidget"); REQUIRE(list);
+    auto* stack = dialog->findChild<QStackedWidget*>("stackedWidget"); REQUIRE(stack);
+    REQUIRE(list->count() == 13); // Existing eleven pages plus Torrents and Updates.
+    list->setCurrentRow(12);
+    REQUIRE(QMetaObject::invokeMethod(dialog.get(), "slotItemActivated", Q_ARG(QListWidgetItem*, list->item(12))));
+    REQUIRE(stack->currentWidget()->isAncestorOf(page));
+    REQUIRE_FALSE(list->item(12)->icon().isNull());
+    const auto image = qEnvironmentVariable("EISKALT_UPDATES_SETTINGS_IMAGE");
+    if(!image.isEmpty()) {
+        dialog->show(); QTest::qWait(100);
+        REQUIRE(dialog->grab().save(image));
+        dialog->hide();
+    }
+    auto* checks = page->findChild<QCheckBox*>("updateChecks"); REQUIRE(checks);
+    auto* notices = page->findChild<QCheckBox*>("updateNotifications"); REQUIRE(notices);
+    checks->setChecked(false); notices->setChecked(false);
+    dialog->reject(); dialog.reset();
+    CHECK(updater.preferences().checks); CHECK(updater.preferences().notifications);
+    dialog = std::make_unique<::Settings>(&updater);
+    dialog->findChild<QCheckBox*>("updateChecks")->setChecked(false);
+    dialog->findChild<QCheckBox*>("updateNotifications")->setChecked(false);
+    dialog->accept();
+    REQUIRE(dialog->result() == QDialog::Accepted);
+    CHECK_FALSE(updater.preferences().checks); CHECK_FALSE(updater.preferences().notifications);
+    dialog.reset();
+    updater.checkNow(); CHECK(backend.checks == 1); // Dialog teardown does not stop the owner.
+    ::Settings standalone;
+    REQUIRE(standalone.findChild<updates::SettingsUpdates*>());
+    CHECK_FALSE(standalone.findChild<QCheckBox*>("updateAutoInstall")->isEnabled());
+}
+
+TEST_CASE("Help updater checks show redacted manual results even with notifications disabled", "[qt][update-ui-owner]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    auto* action = window->findChild<QAction*>("checkForUpdates"); REQUIRE(action);
+    CHECK_FALSE(action->isEnabled());
+    QuitBackend backend(*f.core);
+    auto updater = std::make_unique<updates::UpdateController>(*f.gui->settings(), backend,
+        updates::UpdateIdentity{1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    CHECK_FALSE(std::async(std::launch::async, [&] { return window->attachUpdateController(*updater); }).get());
+    REQUIRE(window->attachUpdateController(*updater)); CHECK_FALSE(window->attachUpdateController(*updater));
+    REQUIRE(action->isEnabled());
+    auto prefs = updater->preferences(); prefs.notifications = false; updater->applyPreferences(prefs);
+    QSignalSpy notifications(window, SIGNAL(notifyMessage(int,QString,QString)));
+    auto* logs = f.core->getLogManager(); logs->clearLiveEntries();
+    action->trigger(); REQUIRE(backend.checks == 1);
+    emit backend.failed(backend.operation, "secret-password@private-proxy.invalid", updates::FailureCategory::Network);
+    REQUIRE(waitFor([&] {
+        for(const auto& entry : logs->getLiveEntries())
+            if(entry.area == dcpp::LogManager::STATUS && entry.message.find("No direct fallback") != std::string::npos) return true;
+        return false;
+    }));
+    bool system = false, status = false;
+    for(const auto& entry : logs->getLiveEntries()) {
+        CHECK(entry.message.find("secret-password") == std::string::npos);
+        CHECK(entry.message.find("private-proxy") == std::string::npos);
+        system |= entry.area == dcpp::LogManager::SYSTEM;
+        status |= entry.area == dcpp::LogManager::STATUS;
+    }
+    CHECK(system); CHECK(status); CHECK(notifications.isEmpty());
+    bool red = false;
+    for(auto* label : window->findChildren<QLabel*>()) {
+        const auto color = label->palette().color(QPalette::WindowText);
+        if(label->toolTip().contains("No direct fallback"))
+            red |= label->textFormat() == Qt::PlainText && color.red() > color.green() * 1.5;
+    }
+    CHECK(red);
+    logs->clearLiveEntries(); action->trigger(); emit backend.noUpdate(backend.operation);
+    REQUIRE(waitFor([&] {
+        for(const auto& entry : logs->getLiveEntries())
+            if(entry.message.find("No newer compatible version") != std::string::npos) return true;
+        return false;
+    }));
+    CHECK(logs->getLiveEntries().back().message.find("No newer compatible version") != std::string::npos);
+    updater.reset(); CHECK_FALSE(action->isEnabled());
+    action->trigger(); CHECK(backend.checks == 2);
+}
+
+TEST_CASE("Open Preferences does not revive or dereference a destroyed updater", "[qt][update-ui-owner]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    auto updater = std::make_unique<updates::UpdateController>(*f.gui->settings(), backend,
+        updates::UpdateIdentity{1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    ::Settings dialog(updater.get());
+    dialog.navigate(::Settings::Page::Updates);
+    auto* check = dialog.findChild<QPushButton*>("updateCheckNow"); REQUIRE(check);
+    auto* page = dialog.findChild<updates::SettingsUpdates*>(); REQUIRE(page);
+    updater.reset(); check->click();
+    CHECK_FALSE(page->isEnabled()); CHECK(backend.checks == 0);
+    dialog.accept(); CHECK(backend.checks == 0);
+    CHECK(f.gui->settings()->getStr("updates/channel").isEmpty());
+}
+
+TEST_CASE("Application Preferences borrows the attached updater rather than creating a separate session", "[qt][update-ui-owner]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    REQUIRE(window->attachUpdateController(updater));
+    bool inspected = false, preview = false;
+    QTimer::singleShot(0, window, [&] {
+        auto* dialog = qobject_cast<::Settings*>(QApplication::activeModalWidget());
+        if(!dialog) return;
+        if(auto* channel = dialog->findChild<QComboBox*>("updateChannel")) preview = channel->currentIndex() == 1;
+        if(auto* check = dialog->findChild<QPushButton*>("updateCheckNow")) {
+            check->click(); inspected = backend.checks == 1;
+        }
+        dialog->reject();
+    });
+    QTimer watchdog;
+    watchdog.setSingleShot(true);
+    QObject::connect(&watchdog, &QTimer::timeout, window, [] {
+        if(auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget())) dialog->reject();
+    });
+    watchdog.start(5000);
+    SECTION("application menu") { REQUIRE(QMetaObject::invokeMethod(window, "slotToolsSettings")); }
+    SECTION("tray speed limits") { REQUIRE(QMetaObject::invokeMethod(f.gui->notification(), "slotShowSpeedLimits")); }
+    CHECK(inspected); CHECK(preview); CHECK(backend.checks == 1);
+    updater.cancel(); updater.checkNow(); CHECK(backend.checks == 2);
+}
+
+TEST_CASE("Automatic update notifications obey preferences and retained GUI fencing", "[qt][update-ui-owner]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    REQUIRE(window->attachUpdateController(updater));
+    QSignalSpy notifications(window, SIGNAL(notifyMessage(int,QString,QString)));
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    auto* logs = f.core->getLogManager(); logs->clearLiveEntries();
+    SECTION("notifications disabled") {
+        auto prefs = updater.preferences(); prefs.notifications = false; updater.applyPreferences(prefs);
+        updater.start(); updater.poll(); REQUIRE(backend.checks == 1); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+        QTest::qWait(50); CHECK(notifications.isEmpty());
+        for(const auto& entry : logs->getLiveEntries()) CHECK(entry.message.find("3.0.0-pre.2") == std::string::npos);
+    }
+    SECTION("notification dispatch") {
+        updater.start(); updater.poll(); REQUIRE(backend.checks == 1); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return notifications.count() == 1; }));
+        CHECK(notifications.front().at(0).toInt() == Notification::ANY);
+        CHECK(notifications.front().at(2).toString().contains("3.0.0-pre.2"));
+        REQUIRE_FALSE(logs->getLiveEntries().empty());
+        CHECK(logs->getLiveEntries().back().area == dcpp::LogManager::STATUS);
+    }
+    SECTION("retained GUI suppresses pending callbacks") {
+        updater.checkNow(); REQUIRE(backend.checks == 1);
+        REQUIRE(window->stopWorkersForQuit());
+        emit backend.failed(backend.operation, "secret-password", updates::FailureCategory::Network);
+        QTest::qWait(50); CHECK(notifications.isEmpty());
+        for(const auto& entry : logs->getLiveEntries()) CHECK(entry.message.find("No direct fallback") == std::string::npos);
+        CHECK_FALSE(window->findChild<QAction*>("checkForUpdates")->isEnabled());
+        CHECK_FALSE(window->attachUpdateController(updater));
+    }
 }
 
 TEST_CASE("Actual window close waits for the committed matching update receipt", "[qt][window-quit]") {

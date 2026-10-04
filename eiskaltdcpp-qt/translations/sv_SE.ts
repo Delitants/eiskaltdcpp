@@ -2792,6 +2792,10 @@ Favoritanvändare</translation>
             <source>All downloads complete</source>
             <translation>Alla nedladdningar är klara</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Sök efter uppdateringar</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3660,6 +3664,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrenter</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Uppdateringar</translation>
         </message>
     </context>
     <context>

@@ -2782,6 +2782,10 @@ Favorite user</source>
             <source>Show live application log</source>
             <translation>显示实时应用程序日志</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>检查更新</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3646,6 +3650,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>种子任务</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>更新</translation>
         </message>
     </context>
     <context>

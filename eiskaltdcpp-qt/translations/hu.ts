@@ -2788,6 +2788,10 @@ Kedvenc felhasználó</translation>
             <source>All downloads complete</source>
             <translation>Minden letöltés kész</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Frissítések keresése</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3656,6 +3660,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrentek</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Frissítések</translation>
         </message>
     </context>
     <context>

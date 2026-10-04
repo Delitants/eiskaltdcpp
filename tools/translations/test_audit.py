@@ -14,6 +14,19 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_application_update_entry_points_are_translated(self):
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            for key in (("Settings", "Updates"), ("MainWindow", "Check for Updates"),
+                        ("updates::SettingsUpdates", "No newer compatible version is available.")):
+                with self.subTest(language=path.stem, caption=key):
+                    translation = entries.get(key)
+                    self.assertIsNotNone(translation)
+                    self.assertNotIn(translation.get("type"), {"unfinished", "obsolete", "vanished"})
+                    self.assertTrue("".join(translation.itertext()).strip())
+
     def test_updater_reviewed_status_wording_is_unambiguous(self):
         reviewed = {
             "hu": ("updates::SettingsUpdates", "Update operation canceled.",

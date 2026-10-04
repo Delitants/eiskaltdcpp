@@ -2721,6 +2721,10 @@ Favorite user</source>
             <source>All downloads complete</source>
             <translation type="unfinished" />
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Serchar actualisationes</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3562,6 +3566,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrentes</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Actualisationes</translation>
         </message>
     </context>
     <context>

@@ -2792,6 +2792,10 @@ Favorite user</source>
             <source>Show live application log</source>
             <translation>Прикажи дневник апликације уживо</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Провери ажурирања</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3660,6 +3664,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Торенти</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Ажурирања</translation>
         </message>
     </context>
     <context>

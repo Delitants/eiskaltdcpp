@@ -14,9 +14,12 @@
 #include <QListWidgetItem>
 #include <QMap>
 #include <QScrollArea>
+#include <QPointer>
+#include <memory>
 
 #include "ui_UISettings.h"
 class SettingsConnection;
+namespace updates { class UpdateController; class UpdateBackend; }
 
 #ifdef USE_TORRENT
 class SettingsTorrent;
@@ -45,9 +48,10 @@ public:
 #ifdef USE_TORRENT
         , Torrent
 #endif
+        , Updates
     };
 
-    Settings();
+    explicit Settings(updates::UpdateController* controller = nullptr);
     virtual ~Settings();
 
     void navigate(enum Page, int tab = -1);
@@ -76,6 +80,9 @@ private:
     bool is_dirty;
     bool appearance_style_in_progress;
     SettingsConnection *connectionPage = nullptr;
+    std::unique_ptr<updates::UpdateBackend> fallbackUpdateBackend;
+    std::unique_ptr<updates::UpdateController> fallbackUpdateController;
+    QPointer<updates::UpdateController> updateController;
 #ifdef USE_TORRENT
     SettingsTorrent *torrentPage = nullptr;
 #endif

@@ -115,6 +115,9 @@ friend class QtContext;
         // Retained GUI/Torrent preparation only, not core shutdown or installer consent.
         [[nodiscard]] bool stopWorkersForQuit();
         [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
+        // Borrow the application-owned controller; no scheduler or native activation.
+        [[nodiscard]] bool attachUpdateController(updates::UpdateController&);
+        void showSpeedLimitSettings();
         bool normalQuitPrepared() const;
 
         /** */

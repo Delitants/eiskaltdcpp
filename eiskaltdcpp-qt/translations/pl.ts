@@ -2768,6 +2768,10 @@ Ulubiony użytkownik</translation>
             <source>All downloads complete</source>
             <translation>Wszystkie pobierania zakończone</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Sprawdź aktualizacje</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3636,6 +3640,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrenty</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Aktualizacje</translation>
         </message>
     </context>
     <context>

@@ -2738,6 +2738,10 @@ Favorite user</source>
             <source>Show live application log</source>
             <translation>Hiển thị nhật ký trực tiếp của ứng dụng</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Kiểm tra bản cập nhật</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3579,6 +3583,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Các torrent</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Bản cập nhật</translation>
         </message>
     </context>
     <context>

@@ -325,13 +325,7 @@ void Notification::slotTrayMenuTriggered(QSystemTrayIcon::ActivationReason r){
 }
 
 void Notification::slotShowSpeedLimits(){
-    qtCtx()->mainWindow()->show();
-    qtCtx()->mainWindow()->raise();
-
-    Settings settings;
-    settings.navigate(Settings::Page::Connection, 1);
-
-    settings.exec();
+    qtCtx()->mainWindow()->showSpeedLimitSettings();
 }
 
 void Notification::slotCmdFinished(bool, QString){

@@ -68,8 +68,17 @@ struct UpdateController::Impl {
     void beginCheck(CheckKind nextKind) {
         assertThread();
         if(stopped || quitFenced) return;
+        if(identity.build == 0) {
+            if(nextKind == CheckKind::Manual) {
+                QMetaObject::invokeMethod(&owner, [this] {
+                    if(!stopped && !quitFenced)
+                        emit owner.errorReported(tr("Update installation is not supported on this system."), true);
+                }, Qt::QueuedConnection);
+            }
+            return;
+        }
         const auto now = clock();
-        if(stopped || !UpdatePolicy::mayCheck(preferences, nextKind, now, attempt, busy) || identity.build == 0) return;
+        if(!UpdatePolicy::mayCheck(preferences, nextKind, now, attempt, busy)) return;
         revoke(); offer = {}; kind = nextKind; busy = true; operation = nextOperation();
         attempt = now; saveDate("updates/lastAttempt", now);
         setState(State::Checking);

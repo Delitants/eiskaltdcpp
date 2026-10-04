@@ -108,6 +108,7 @@
 #include "RetainedGuiInputFence.h"
 #include "updates/ApplicationQuitSession.h"
 #include "updates/UpdateController.h"
+#include "updates/SettingsUpdates.h"
 #include "SpyFrame.h"
 #include "SideBar.h"
 #include "ActionCustomizer.h"
@@ -167,6 +168,8 @@ public:
         bool quitFenceSaved = false;
         bool windowStateSaved = false;
         std::unique_ptr<updates::ApplicationQuitSession> checkedQuit;
+        QPointer<updates::UpdateController> updateController;
+        bool updatesAttached = false;
 
         // position and geometry
         bool showMax = false;
@@ -287,6 +290,7 @@ public:
         QAction *aboutChangelog = nullptr;
         QAction *aboutClient = nullptr;
         QAction *aboutQt = nullptr;
+        QAction *checkForUpdates = nullptr;
 
         ActionList toolBarActions;
         ActionList fileMenuActions;
@@ -607,6 +611,39 @@ void MainWindow::closeEvent(QCloseEvent *e){
 #endif
 }
 
+bool MainWindow::attachUpdateController(updates::UpdateController& controller) {
+    Q_D(MainWindow);
+    if(QThread::currentThread() != thread() || controller.thread() != thread() ||
+        d->quitFenced || d->updatesAttached) return false;
+    d->updatesAttached = true;
+    d->updateController = &controller;
+    d->checkForUpdates->setEnabled(true);
+    connect(&controller, &QObject::destroyed, this, [this] {
+        d_ptr->checkForUpdates->setEnabled(false);
+    });
+    connect(&controller, &updates::UpdateController::errorReported, this,
+        [this](const QString& message, bool manual) {
+            if(d_ptr->quitFenced) return;
+            application_status::diagnostic(*dcCtx().getLogManager(), message);
+            if(manual) displayStatusWarning(message);
+        });
+    connect(&controller, &updates::UpdateController::checkFinished, this,
+        [this](bool available, updates::CheckKind kind) {
+            if(d_ptr->quitFenced || kind != updates::CheckKind::Manual || !d_ptr->updateController) return;
+            const auto message = available ? updates::SettingsUpdates::tr("Available version: %1").arg(d_ptr->updateController->offer().version)
+                                           : updates::SettingsUpdates::tr("No newer compatible version is available.");
+            setStatusMessage(message);
+        });
+    connect(&controller, &updates::UpdateController::notificationRequested, this,
+        [this](const updates::UpdateOffer& offer) {
+            if(d_ptr->quitFenced) return;
+            const auto message = updates::SettingsUpdates::tr("Available version: %1").arg(offer.version);
+            setStatusMessage(message);
+            emit notifyMessage(Notification::ANY, Settings::tr("Updates"), message);
+        });
+    return true;
+}
+
 bool MainWindow::enableCheckedQuit(updates::UpdateController* updater) {
     if(QThread::currentThread() != thread() || (updater && updater->thread() != thread())) return false;
     Q_D(MainWindow);
@@ -698,7 +735,7 @@ bool MainWindow::ensureNickConfigured()
         activateWindow();
         raise();
 
-        Settings settings;
+        Settings settings(d->updateController);
         settings.navigate(Settings::Page::Personal);
         settings.exec();
         reloadSomeSettings();
@@ -1540,6 +1577,14 @@ void MainWindow::initActions(){
         d->aboutQt->setMenuRole(QAction::AboutQtRole);
         d->aboutQt->setIcon(WU->getIcon(WulforUtil::eiQT_LOGO));
         connect(d->aboutQt, &QAction::triggered, this, &MainWindow::slotAboutQt);
+        d->checkForUpdates = new QAction("", this);
+        d->checkForUpdates->setObjectName(QStringLiteral("checkForUpdates"));
+        d->checkForUpdates->setMenuRole(QAction::NoRole);
+        d->checkForUpdates->setEnabled(false);
+        connect(d->checkForUpdates, &QAction::triggered, this, [this] {
+            if(!d_ptr->quitFenced && d_ptr->updateController)
+                d_ptr->updateController->checkNow();
+        });
     }
 }
 
@@ -1686,6 +1731,8 @@ void MainWindow::initMenuBar(){
         d->menuAbout->addAction(sep1);
         d->menuAbout->addAction(d->aboutClient);
         d->menuAbout->addAction(d->aboutQt);
+        d->menuAbout->addSeparator();
+        d->menuAbout->addAction(d->checkForUpdates);
     }
 
     menuBar()->addMenu(d->menuFile);
@@ -1924,6 +1971,7 @@ void MainWindow::retranslateUi(){
         d->aboutClient->setText(tr("About EiskaltDC++"));
 
         d->aboutQt->setText(tr("About Qt"));
+        d->checkForUpdates->setText(tr("Check for Updates"));
 
         // Short toolbar captions do not replace the full menu/overflow labels.
         d->fileFileListBrowserLocal->setIconText(tr("Files"));
@@ -3067,7 +3115,7 @@ void MainWindow::slotToolsCopyWindowTitle(){
 }
 
 void MainWindow::slotToolsSettings(){
-    Settings s;
+    Settings s(d_ptr->updateController);
 
     s.exec();
 
@@ -3080,6 +3128,14 @@ void MainWindow::slotToolsSettings(){
         d->fileHideWindow->setText(tr("Show/hide find frame"));
     else
         d->fileHideWindow->setText(tr("Hide window"));
+}
+
+void MainWindow::showSpeedLimitSettings() {
+    if(d_ptr->quitFenced) return;
+    show(); raise();
+    Settings settings(d_ptr->updateController);
+    settings.navigate(Settings::Page::Connection, 1);
+    settings.exec();
 }
 
 #ifdef USE_TORRENT
@@ -3131,7 +3187,7 @@ TorrentWindow *MainWindow::ensureTorrentWindow()
         for (const auto &job : torrentRuntime->engine()->jobs())
             torrentWindow->setSharingStatus(job.id, torrentRuntime->shareStatus(job.id));
         connect(torrentWindow.data(), &TorrentWindow::settingsRequested, this, [this] {
-            Settings settings;
+            Settings settings(d_ptr->updateController);
             settings.navigate(Settings::Page::Torrent);
             settings.exec();
             reloadSomeSettings();

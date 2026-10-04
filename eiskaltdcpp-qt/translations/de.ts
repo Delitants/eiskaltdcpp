@@ -2788,6 +2788,10 @@ Bevorzugte Benutzer</translation>
             <source>All downloads complete</source>
             <translation>Alle Downloads abgeschlossen</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Nach Aktualisierungen suchen</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3656,6 +3660,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrents</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Aktualisierungen</translation>
         </message>
     </context>
     <context>

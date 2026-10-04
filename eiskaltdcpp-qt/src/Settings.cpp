@@ -26,6 +26,8 @@
 #include "SettingsShortcuts.h"
 #include "SettingsHistory.h"
 #include "SettingsAdvanced.h"
+#include "updates/UnsupportedUpdateBackend.h"
+#include "updates/SettingsUpdates.h"
 #ifdef USE_TORRENT
 #include "SettingsTorrent.h"
 #include "TorrentRuntime.h"
@@ -587,8 +589,15 @@ void polishMacSettingsPage(QWidget *page)
 #endif
 }
 
-Settings::Settings(): is_dirty(false), appearance_style_in_progress(false)
+Settings::Settings(updates::UpdateController* controller): is_dirty(false), appearance_style_in_progress(false), updateController(controller)
 {
+    if(!updateController) {
+        // Standalone dialogs never select a native backend or start a scheduler.
+        fallbackUpdateBackend = std::make_unique<updates::UnsupportedUpdateBackend>();
+        fallbackUpdateController = std::make_unique<updates::UpdateController>(
+            *qtCtx()->settings(), *fallbackUpdateBackend, updates::UpdateIdentity{});
+        updateController = fallbackUpdateController.get();
+    }
     setupUi(this);
 
     
@@ -715,9 +724,13 @@ void Settings::reloadCategoryIcons()
                 qtCtx()->wulforUtil()->getIcon(entry.fallback)));
     }
 #ifdef USE_TORRENT
-    if (auto *item = listWidget->item(row))
+    if (auto *item = listWidget->item(row++))
         item->setIcon(torrent_toolbar::icon());
 #endif
+    if (auto *item = listWidget->item(row))
+        item->setIcon(app_icon_theme::icon(app_icon_theme::activePath(),
+            QStringLiteral("reconnect"), qApp->palette(),
+            qtCtx()->wulforUtil()->getIcon(WulforUtil::eiRECONNECT)));
 }
 
 void Settings::init(){
@@ -778,7 +791,6 @@ void Settings::init(){
     SettingsAdvanced *sadv = new SettingsAdvanced(this);
     connect(this, &Settings::timeToDie, sadv, &SettingsAdvanced::ok);
     widgets.insert(item, (int)Page::Advanced);
-    reloadCategoryIcons();
     connect(WU, &WulforUtil::iconsReloaded, this, &Settings::reloadCategoryIcons);
 
 #ifdef USE_TORRENT
@@ -793,11 +805,16 @@ void Settings::init(){
 #endif
 #endif
 
+    item = new QListWidgetItem(tr("Updates"), listWidget);
+    auto *updatesPage = new updates::SettingsUpdates(*updateController, this);
+    widgets.insert(item, (int)Page::Updates);
+    connect(this, &Settings::timeToDie, updatesPage, &updates::SettingsUpdates::apply);
+    reloadCategoryIcons();
 #ifdef Q_OS_MAC
     for (QWidget *page : {static_cast<QWidget*>(personal), static_cast<QWidget*>(connection), static_cast<QWidget*>(downloads),
                           static_cast<QWidget*>(sharing), static_cast<QWidget*>(gui), static_cast<QWidget*>(notify),
                           static_cast<QWidget*>(logs), static_cast<QWidget*>(ucs), static_cast<QWidget*>(sshs),
-                          static_cast<QWidget*>(shist), static_cast<QWidget*>(sadv)}) {
+                          static_cast<QWidget*>(shist), static_cast<QWidget*>(sadv), static_cast<QWidget*>(updatesPage)}) {
         polishMacSettingsPage(page);
     }
 #endif
@@ -837,6 +854,7 @@ void Settings::init(){
 #ifdef USE_TORRENT
     stackedWidget->insertWidget((int)Page::Torrent, prepareWidget(torrentPage));
 #endif
+    stackedWidget->insertWidget((int)Page::Updates, prepareWidget(updatesPage));
 
     stackedWidget->setCurrentIndex(0);
 

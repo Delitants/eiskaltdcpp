@@ -2773,6 +2773,10 @@ Favorite user</source>
             <source>All downloads complete</source>
             <translation>Všetky sťahovania dokončené</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Skontrolovať aktualizácie</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3629,6 +3633,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrenty</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Aktualizácie</translation>
         </message>
     </context>
     <context>

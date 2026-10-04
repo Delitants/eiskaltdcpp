@@ -2768,6 +2768,10 @@ Favorite user</source>
             <source>Show live application log</source>
             <translation>აპლიკაციის ჟურნალის რეალურ დროში ჩვენება</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>განახლებების შემოწმება</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3621,6 +3625,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>ტორენტები</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>განახლებები</translation>
         </message>
     </context>
     <context>

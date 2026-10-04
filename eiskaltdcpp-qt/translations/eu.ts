@@ -2733,6 +2733,10 @@ Favorite user</source>
             <source>Show live application log</source>
             <translation>Erakutsi aplikazioaren zuzeneko erregistroa</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Bilatu eguneratzeak</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3574,6 +3578,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrentak</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Eguneratzeak</translation>
         </message>
     </context>
     <context>

@@ -436,6 +436,21 @@ until the retained native recovery and committed-quit acceptance gates pass.
 Widget/extraction tests are not integrated application settings, native Cocoa QA,
 linguistic review of language catalogs, or release acceptance. Keep those steps pending.
 
+Application UI ownership checkpoint (2026-10-03): after the retained native and
+committed-quit fixture gates, bind Preferences and Help to the application-owned
+controller without enabling production native capability or its scheduler.
+Append Updates after all existing pages in both DC-only and Torrent builds;
+standalone Preferences has an explicitly unsupported fallback, not another
+native factory. Apply preferences only on dialog acceptance. Borrowed controller
+bindings expire on teardown and reject duplicate, foreign-thread or fenced
+attachment. Manual invalid-runtime checks report Unsupported asynchronously
+without network or attempt/success writes. Manual errors enter red status and
+System logs using category-redacted text; automatic errors are diagnostic-only.
+Automatic offers use the existing Notification dispatch and therefore inherit
+global/OS notification suppression. Dispatch evidence is not OS balloon delivery.
+Current native routing/activation, end-to-end update notification delivery,
+independent linguistic review and release/minimum-OS acceptance remain pending.
+
 Catalog checkpoint: all 25 catalogs now contain the updater's extracted runtime
 contexts, including Objective-C++ backend errors. All 25 languages have populated
 updater captions and diagnostics; existing non-updater content is preserved.

@@ -2787,6 +2787,10 @@ Utente preferito</translation>
             <source>Show live application log</source>
             <translation>Mostra il registro dell'applicazione in tempo reale</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Controlla aggiornamenti</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3655,6 +3659,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Torrent</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Aggiornamenti</translation>
         </message>
     </context>
     <context>

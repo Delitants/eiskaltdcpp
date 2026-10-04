@@ -583,8 +583,10 @@ int main(int argc, char *argv[])
     ctx.createQueuedUsers();
     qtCtx()->arenaWidgetManager()->add(ctx.queuedUsers());
 
-#if defined(Q_OS_MAC)
     auto applicationUpdates = std::make_unique<updates::ApplicationUpdateOwner>(*ctx.settings(), *dcContext);
+    if (!ctx.mainWindow()->attachUpdateController(*applicationUpdates->controller()))
+        qFatal("Could not attach application update UI");
+#if defined(Q_OS_MAC)
     if (!ctx.mainWindow()->enableCheckedQuit(applicationUpdates->controller()))
         qFatal("Could not enable checked normal quit");
     QObject::connect(ctx.mainWindow(), &MainWindow::normalQuitReady, &app, [&app, openTarget] {
@@ -640,6 +642,7 @@ int main(int argc, char *argv[])
 #endif
 
 #if !defined(Q_OS_MAC)
+    applicationUpdates.reset();
     dcContext->shutdown();
 #endif
 #if !defined(Q_OS_MAC)

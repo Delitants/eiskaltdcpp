@@ -2779,6 +2779,10 @@ Favorite user</source>
             <source>All downloads complete</source>
             <translation>Όλες οι λήψεις ολοκληρώθηκαν</translation>
         </message>
+        <message>
+            <source>Check for Updates</source>
+            <translation>Έλεγχος για ενημερώσεις</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -3647,6 +3651,10 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/Settings.cpp" line="780" />
             <source>Torrents</source>
             <translation>Τόρεντ</translation>
+        </message>
+        <message>
+            <source>Updates</source>
+            <translation>Ενημερώσεις</translation>
         </message>
     </context>
     <context>

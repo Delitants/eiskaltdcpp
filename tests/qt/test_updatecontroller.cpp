@@ -78,6 +78,25 @@ template<class T> void handoffReceipt(T& backend, quint64 op, bool ready) {
 }
 }
 
+TEST_CASE("Manual checks on an invalid installed identity report unsupported without contacting a backend", "[updates][update-ui-owner]") {
+    Fixture f; f.identity.build = 0; f.restart();
+    QSignalSpy errors(f.controller.get(), &UpdateController::errorReported);
+    f.controller->start(); f.controller->poll(); events();
+    CHECK(errors.isEmpty()); CHECK(f.backend.checks == 0);
+    f.controller->checkNow();
+    CHECK(errors.isEmpty()); // The UI receiver may safely be destroyed before delivery.
+    events();
+    REQUIRE(errors.count() == 1);
+    CHECK(errors.front().at(1).toBool());
+    CHECK_FALSE(errors.front().at(0).toString().isEmpty());
+    CHECK(f.backend.checks == 0);
+    CHECK_FALSE(f.controller->lastAttempt().isValid());
+    CHECK_FALSE(f.controller->lastSuccess().isValid());
+    CHECK(f.controller->state() == UpdateController::State::Idle);
+    f.controller->checkNow(); f.controller->shutdown(); events();
+    CHECK(errors.count() == 1);
+}
+
 TEST_CASE("Committed quit passes live version consent to the asynchronous handoff", "[updates][update-handoff-contract]") {
     Fixture f; f.ready(); f.controller->installOnNextQuit();
     f.controller->normalQuitCommitted();
