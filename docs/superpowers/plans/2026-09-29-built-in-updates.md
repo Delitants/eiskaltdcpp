@@ -1123,18 +1123,28 @@ live proxy acceptance or permission to enable automatic installation.
 
 `UpdateDns` now supplies the worker's proxied origin resolution through the same
 strict synchronous HTTP backend and immutable global route. Cloudflare DoH is
-primary, Google DoH fallback for validated SERVFAIL/REFUSED only. Provider-host
+primary, Google DoH fallback for validated SERVFAIL/REFUSED and verified,
+fully framed HTTP 500/502/503/504 provider responses. Provider-host
 TLS is independent of proxy TLS trust; fixed numeric bootstrap, DNS wire GET,
 A+AAAA question/CNAME/full-address validation, shared bounded deadline, fixed
 request/response MIME and no provider redirects/cache prevent local-origin DNS
-or direct retry. Generic HTTP outage failover remains pending typed retryability
-so a proxy authentication or certificate failure cannot silently select another
-provider. Numeric SOCKS stream targets encode binary IPv4/IPv6 before hostname
+or direct retry. Typed outage reporting is strict-DNS-only; error bodies are
+bounded and discarded, partial primary answers discarded, and the same snapshot/
+deadline retained. Generic transport failures remain terminal so authentication
+or certificate failure cannot silently select another provider. Numeric SOCKS
+stream targets encode binary IPv4/IPv6 before hostname
 branches; hostname resolution behavior is otherwise unchanged.
 
 Isolated authenticated SOCKS5/GOST nested-TLS tests exercise actual DNS HTTP
 bytes, provider failover, wrong auth/proxy CA/origin CA/hostname/MIME, cancellation,
 route revocation and an IPv6 pin with all external network access denied.
 Production worker tests bind the same backend/route to DNS and the origin fetch.
+Physical GOST worker tests retain production preparation and strict HTTP handling
+for feed/archive bytes and approved archive redirects, with loopback-only relays;
+private DNS, unapproved redirects and origin trust failures cannot commit output.
 This does not establish live provider/feed/archive or signed native whole-route
 acceptance. Scheduler/install capability remain disabled; Task 3 remains open.
+The 2026-10-04 outage checkpoint passes ordinary Qt tests offscreen and native
+updater fixtures on Cocoa separately. The combined Cocoa suite reproduces a
+multiline tab-close hover-image assertion failure outside this transport change;
+native rendering acceptance remains open, and offscreen success does not waive it.

@@ -165,10 +165,33 @@ TEST_CASE("Updater DoH physically tunnels verified HTTPS through authenticated S
     proxy.caPem = proxyCa.pem;
     bool failAuth = false, failProxyCa = false, failOriginCa = false, failHostname = false, fallback = false;
     bool plain = false, failMime = false, ipv6Pin = false, cancelOnReply = false, revokeOnReply = false;
+    unsigned outage = 0;
+    std::string brokenOutage;
+    bool bothUnavailable = false, lateOutage = false, errorBody = false;
     std::atomic_bool cancelled{false};
     auto wake = std::make_shared<dcpp::WakeNotifier>();
     SECTION("Valid nested HTTPS") {}
     SECTION("Valid Google fallback") { fallback = true; }
+    SECTION("Verified HTTP 500 fallback") { outage = 500; }
+    SECTION("Verified HTTP 502 fallback") { outage = 502; }
+    SECTION("Verified HTTP 503 fallback") { outage = 503; }
+    SECTION("Verified HTTP 504 fallback") { outage = 504; }
+    SECTION("Plain SOCKS5 verified HTTP outage fallback") { plain = true; outage = 503; }
+    SECTION("Error body is discarded before fallback") { outage = 503; errorBody = true; }
+    SECTION("Primary AAAA outage discards its earlier A answer") { outage = 503; lateOutage = true; }
+    SECTION("Both providers unavailable is terminal") { outage = 503; bothUnavailable = true; }
+    SECTION("Outage cannot bypass proxy auth") { outage = 503; failAuth = true; }
+    SECTION("Outage cannot bypass proxy trust") { outage = 503; failProxyCa = true; proxy.caPem = originCa.pem; }
+    SECTION("Outage cannot bypass origin trust") { outage = 503; failOriginCa = true; }
+    SECTION("Outage cannot bypass origin hostname") { outage = 503; failHostname = true; }
+    SECTION("Cancelled outage is terminal") { outage = 503; cancelOnReply = true; }
+    SECTION("Revoked outage is terminal") { outage = 503; revokeOnReply = true; }
+    SECTION("Truncated outage body is terminal") { brokenOutage = "HTTP/1.1 503 Unavailable\r\nContent-Length: 3\r\n\r\nx"; }
+    SECTION("Truncated outage headers are terminal") { brokenOutage = "HTTP/1.1 503 Unavailable\r\nContent-Length: 0\r\n"; }
+    SECTION("Ambiguous outage framing is terminal") { brokenOutage = "HTTP/1.1 503 Unavailable\r\nContent-Length: 0\r\nTransfer-Encoding: chunked\r\n\r\n"; }
+    SECTION("Oversized outage body is terminal") { brokenOutage = "HTTP/1.1 503 Unavailable\r\nContent-Length: 65536\r\n\r\n"; }
+    SECTION("Unauthorized HTTP is terminal") { brokenOutage = "HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\n\r\n"; }
+    SECTION("Rate limiting is terminal") { brokenOutage = "HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\n\r\n"; }
     SECTION("Wrong proxy authentication") { failAuth = true; }
     SECTION("Wrong proxy CA") { failProxyCa = true; proxy.caPem = originCa.pem; }
     SECTION("Wrong HTTPS CA") { failOriginCa = true; }
@@ -192,11 +215,16 @@ TEST_CASE("Updater DoH physically tunnels verified HTTPS through authenticated S
         const auto type = static_cast<unsigned char>(wire[wire.size() - 3]);
         const bool primaryFailed = fallback && request.host() == "cloudflare-dns.com";
         const auto body = response(type, primaryFailed ? 2 : 0, primaryFailed ? QByteArray{} : type == 1 ?
-            QByteArray::fromHex("8c527203") : QByteArray::fromHex("26064700470000000000000000001111"));
-        const std::string http = std::string("HTTP/1.1 200 OK\r\nContent-Type: ") +
+            QByteArray::fromHex(lateOutage && request.host() == "cloudflare-dns.com" ? "08080808" : "8c527203") :
+            QByteArray::fromHex("26064700470000000000000000001111"));
+        const std::string http = !brokenOutage.empty() ? brokenOutage :
+            outage && (bothUnavailable || request.host() == "cloudflare-dns.com") && (!lateOutage || type == 28) ?
+            "HTTP/1.1 " + std::to_string(outage) + " Unavailable\r\nContent-Length: " +
+            (errorBody ? "4\r\n\r\noops" : "0\r\n\r\n") :
+            std::string("HTTP/1.1 200 OK\r\nContent-Type: ") +
             (failMime ? "text/plain" : "application/dns-message") + "\r\nContent-Length: " +
             std::to_string(body.size()) + "\r\n\r\n" + body.toStdString();
-        auto origin = std::make_shared<proxy_test::NestedTlsEcho>(http, false, &originCa,
+        auto origin = std::make_shared<proxy_test::NestedTlsEcho>(http, !brokenOutage.empty(), &originCa,
             failHostname ? "DNS:wrong.test" : "DNS:cloudflare-dns.com,DNS:dns.google");
         proxy_test::GostOptions options;
         if(failAuth) options.authStatus = 1;
@@ -221,13 +249,6 @@ TEST_CASE("Updater DoH physically tunnels verified HTTPS through authenticated S
                 return target;
             };
         }
-        struct Receiver : dcpp::HttpConnectionListener {
-            const transport_detail::Sink& sink;
-            bool complete = false;
-            explicit Receiver(const transport_detail::Sink& value) : sink(value) {}
-            void on(Data, dcpp::HttpConnection*, const uint8_t* data, size_t size) override { sink(data, size); }
-            void on(Complete, dcpp::HttpConnection*, const std::string&) override { complete = true; }
-        } receiver(sink);
         std::atomic_bool stopping{false};
         std::string socksUser, socksTarget;
         std::jthread plainRelay;
@@ -273,12 +294,13 @@ TEST_CASE("Updater DoH physically tunnels verified HTTPS through authenticated S
                 }
             } catch(...) { }
         });
-        dcpp::HttpConnection connection(*context.ownedCtx, policy, "isolated-doh-test");
-        connection.addListener(&receiver); connection.downloadFile(url);
+        std::exception_ptr error;
+        try { transport_detail::request(*context.ownedCtx, policy, url, sink); }
+        catch(...) { error = std::current_exception(); }
         if(plain) { stopping = true; plainRelay.join(); }
         else { server.requestStop(); server.join(); }
         CHECK(policy.route == snapshot);
-        if(!receiver.complete) throw std::runtime_error("Isolated HTTPS failure");
+        if(error) std::rethrow_exception(error);
         CHECK((plain ? socksUser : server.user) == "disposable-user");
         CHECK((plain ? socksTarget : server.target) == (ipv6Pin ? "2606:4700:4700::1111" :
             request.host() == "cloudflare-dns.com" ? "1.1.1.1" : "8.8.8.8"));
@@ -288,11 +310,12 @@ TEST_CASE("Updater DoH physically tunnels verified HTTPS through authenticated S
         CHECK(origin->request.find("disposable-password") == std::string::npos);
         CHECK(origin->request.find("Authorization") == std::string::npos);
     }, wake);
-    if(failAuth || failProxyCa || failOriginCa || failHostname || failMime || cancelOnReply || revokeOnReply) {
+    if(failAuth || failProxyCa || failOriginCa || failHostname || failMime || cancelOnReply || revokeOnReply ||
+        !brokenOutage.empty() || bothUnavailable) {
         CHECK_THROWS(lookup(host, 5000, [&] { return cancelled.load(); }));
-        CHECK(attempts == 1);
+        CHECK(attempts == (bothUnavailable ? 2 : 1));
     } else {
         CHECK(lookup(host, 5000, [] { return false; }) == std::vector<std::string>{"140.82.114.3", "2606:4700:4700::1111"});
-        CHECK(attempts == (fallback ? 3 : 2));
+        CHECK(attempts == (lateOutage ? 4 : fallback || outage ? 3 : 2));
     }
 }

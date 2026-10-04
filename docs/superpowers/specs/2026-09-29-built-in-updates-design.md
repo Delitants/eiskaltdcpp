@@ -115,13 +115,17 @@ eligible for this resolver. Standards references:
 [Cloudflare wire format](https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/make-api-requests/dns-wireformat/)
 and [Google DoH](https://developers.google.com/speed/public-dns/docs/doh).
 
-At this checkpoint Google failover is limited to validated DNS SERVFAIL or
-REFUSED responses. NXDOMAIN, malformed/truncated/private answers, proxy/auth/TLS
-failure, cancellation and revocation remain terminal. The core's generic HTTP
-failure does not safely distinguish provider outage from authentication or
-certificate failure, so generic transport-outage failover remains pending until
-typed retryability is verified. Isolated relay tests do not establish live
-provider/feed/archive acceptance or authorize scheduler/installation activation.
+Google failover is limited to validated DNS SERVFAIL/REFUSED or complete,
+bounded, well-framed HTTP 500/502/503/504 responses received over verified provider
+TLS. The strict DNS transport discards error bodies and reports a typed outage;
+the resolver never infers retryability from error text. A retry discards the
+primary provider's partial answers, repeats both families through the same
+snapshot, and consumes the original deadline. NXDOMAIN, malformed/truncated/
+private answers, other HTTP statuses, proxy/auth/TLS failure, timeout,
+cancellation and revocation remain terminal. Generic transport-outage failover
+is deliberately not supported. Isolated relay tests do not establish live
+provider or signed native feed/archive acceptance, or authorize scheduler/
+installation activation.
 
 ### Sparkle Transport Integration
 

@@ -366,6 +366,115 @@ TEST_CASE("Update worker integrates strict HTTPS over authenticated local GOST",
     }
 }
 
+TEST_CASE("Update worker physically routes DNS feed and archive bytes through one authenticated GOST snapshot", "[updates][update-dns-worker][update-whole-route]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    dcpp::Socket listener;
+    listener.create(dcpp::Socket::TYPE_TCP, AF_INET);
+    listener.bind("0", "127.0.0.1"); listener.listen();
+    const auto proxyCa = proxy_test::Identity::make(), originCa = proxy_test::Identity::make();
+    auto route = directRoute();
+    route->mode = dcpp::SettingsManager::OUTGOING_GOST;
+    auto& proxy = route->proxy;
+    proxy.type = dcpp::Socket::StreamProxyConfig::Gost;
+    proxy.host = proxy.connectHost = "127.0.0.1";
+    proxy.port = std::stoi(listener.getLocalPort()); proxy.caPem = proxyCa.pem;
+    proxy.user = "disposable-user"; proxy.password = "disposable-password";
+    bool archive = false, redirect = false, fallback = false, privateDns = false, badRedirect = false, badOriginTrust = false;
+    SECTION("Feed bytes") {}
+    SECTION("Archive bytes") { archive = true; }
+    SECTION("Archive redirect resolves and pins each hop") { archive = true; redirect = true; }
+    SECTION("Feed provider outage uses same route") { fallback = true; }
+    SECTION("Archive provider outage uses same route") { archive = true; redirect = true; fallback = true; }
+    SECTION("Private DNS cannot reach update origin") { privateDns = true; }
+    SECTION("Unapproved archive redirect is terminal") { archive = true; redirect = true; badRedirect = true; }
+    SECTION("Origin trust failure after valid DNS is terminal") { badOriginTrust = true; }
+    unsigned queries = 0, origins = 0;
+    std::vector<std::string> requests;
+    const QByteArray payload("fixture\0data", 12);
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto& original, const auto& url, const auto& sink) {
+        if(original.route != route) throw std::runtime_error("Snapshot changed");
+        struct Relay {
+            std::shared_ptr<proxy_test::NestedTlsEcho> origin;
+            std::unique_ptr<proxy_test::GostServer> server;
+            std::string address;
+        };
+        std::vector<Relay> relays;
+        auto policy = original;
+        policy.rootsPem = originCa.pem;
+        const auto prepare = original.prepare;
+        // Start the fixture relay only after production URL and DNS admission.
+        // Nested DNS uses the same listener, without racing an origin accept.
+        policy.prepare = [&](const auto& next, const auto& previous, const auto& snapshot, auto timeout, const auto& stop) {
+            auto target = prepare(next, previous, snapshot, timeout, stop);
+            const QUrl request(QString::fromStdString(next));
+            QByteArray body;
+            std::string http;
+            if(original.dnsMessage) {
+                ++queries;
+                if(fallback && request.host() == "cloudflare-dns.com") {
+                    http = "HTTP/1.1 503 Unavailable\r\nContent-Length: 0\r\n\r\n";
+                } else {
+                    body = QByteArray::fromBase64(QUrlQuery(request).queryItemValue("dns").toLatin1(), QByteArray::Base64UrlEncoding);
+                    const auto type = static_cast<uint8_t>(body[body.size() - 3]);
+                    body[2] = char(0x81); body[3] = char(0x80);
+                    if(type == 1) {
+                        body[7] = 1;
+                        body.append(QByteArray::fromHex(privateDns ? "c00c000100010000003c00047f000001" : "c00c000100010000003c00048c527203"));
+                    }
+                }
+            } else {
+                ++origins;
+                if(redirect && request.host() == "github.com") {
+                    http = std::string("HTTP/1.1 302 Redirect\r\nLocation: https://") +
+                        (badRedirect ? "unapproved.test" : "release-assets.githubusercontent.com") +
+                        "/fixture.zip\r\nContent-Length: 0\r\n\r\n";
+                } else body = payload;
+            }
+            if(http.empty()) http = std::string("HTTP/1.1 200 OK\r\n") +
+                (original.dnsMessage ? "Content-Type: application/dns-message\r\n" : "") +
+                "Content-Length: " + std::to_string(body.size()) + "\r\n\r\n" + body.toStdString();
+            auto origin = std::make_shared<proxy_test::NestedTlsEcho>(http, false,
+                badOriginTrust && !original.dnsMessage ? &proxyCa : &originCa,
+                "DNS:cloudflare-dns.com,DNS:dns.google,DNS:raw.githubusercontent.com,DNS:github.com,DNS:release-assets.githubusercontent.com");
+            proxy_test::GostOptions options;
+            options.transform = [origin](auto input) { return origin->exchange(input); };
+            auto server = std::make_unique<proxy_test::GostServer>(options, "IP:127.0.0.1", false, &proxyCa);
+            server->start(&listener);
+            relays.push_back({origin, std::move(server), target.address});
+            return target;
+        };
+        std::exception_ptr error;
+        try { transport_detail::request(*context.ownedCtx, policy, url, sink); }
+        catch(...) { error = std::current_exception(); }
+        for(auto& relay : relays) {
+            relay.server->requestStop(); relay.server->join();
+            if(relay.server->user != "disposable-user" || relay.server->target != relay.address || relay.server->targetPort != 443)
+                throw std::runtime_error("Wrong proxy envelope");
+            requests.push_back(relay.origin->request);
+        }
+        if(error) std::rethrow_exception(error);
+    });
+    Result result(*transport);
+    const auto destination = staging.filePath("resource");
+    transport->fetch(archive ? QUrl("https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.1/fixture.zip") : feed,
+        archive ? ResourceKind::Archive : ResourceKind::Feed, destination, route);
+    REQUIRE(pump([&] { return result.done(); }, 8000));
+    if(privateDns || badRedirect || badOriginTrust) {
+        CHECK(result.successes == 0); CHECK(result.failures == 1);
+        CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+        CHECK(origins == (privateDns ? 0 : 1)); CHECK(queries == (privateDns ? 1 : 2));
+    } else {
+        REQUIRE(result.successes == 1); CHECK(result.failures == 0);
+        QFile file(destination); REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == payload);
+        CHECK(origins == (redirect ? 2 : 1)); CHECK(queries == origins * (fallback ? 3 : 2));
+    }
+    for(const auto& request : requests) {
+        CHECK(request.find("Authorization") == std::string::npos);
+        CHECK(request.find("disposable-password") == std::string::npos);
+    }
+}
+
 TEST_CASE("Updater quit fence physically joins an admitted worker without pumping callbacks", "[updates][updater-worker-fence]") {
     dcpp::test::TestContext context;
     QTemporaryDir staging;

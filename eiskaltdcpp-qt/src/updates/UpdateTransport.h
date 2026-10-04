@@ -6,6 +6,7 @@
 #include <QObject>
 #include <functional>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace dcpp { class DCContext; struct HttpRequestPolicy; struct ProxyRouteSnapshot; }
@@ -14,6 +15,11 @@ namespace transport_detail {
 using Resolver = std::function<std::vector<std::string>(const std::string&, uint32_t, const std::function<bool()>&)>;
 using Sink = std::function<void(const uint8_t*, size_t)>;
 using Backend = std::function<void(const dcpp::HttpRequestPolicy&, const std::string&, const Sink&)>;
+void request(dcpp::DCContext&, const dcpp::HttpRequestPolicy&, const std::string&, const Sink&);
+class ProviderUnavailable final : public std::runtime_error {
+    friend void request(dcpp::DCContext&, const dcpp::HttpRequestPolicy&, const std::string&, const Sink&);
+    ProviderUnavailable() : std::runtime_error("Verified DNS provider unavailable") {}
+};
 dcpp::HttpRequestPolicy policy(ResourceKind, std::shared_ptr<const dcpp::ProxyRouteSnapshot>,
     Resolver directResolver = {}, Resolver proxiedResolver = {});
 }

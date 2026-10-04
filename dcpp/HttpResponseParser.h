@@ -18,11 +18,13 @@ public:
     };
     using BodySink = std::function<void(const uint8_t*, size_t)>;
 
-    explicit HttpResponseParser(Limits limits);
+    explicit HttpResponseParser(Limits limits, bool allowUnavailable = false);
     void feed(const uint8_t* data, size_t size, const BodySink& sink);
     void eof();
     bool complete() const;
     bool redirect() const;
+    // Status classification only; framing is not trusted until complete().
+    bool unavailable() const;
     unsigned status() const { return statusCode; }
     uint64_t received() const { return bodyReceived; }
     const std::string& location() const { return redirectLocation; }
@@ -36,6 +38,7 @@ private:
     [[noreturn]] void fail(const char* message);
 
     Limits limits;
+    bool allowUnavailable;
     State state = State::Status;
     std::string line;
     size_t headerReceived = 0;

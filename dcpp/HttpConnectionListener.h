@@ -37,6 +37,7 @@ public:
     typedef X<4> TypeNormal;
     typedef X<5> TypeBZ2;
     typedef X<6> Retried;
+    typedef X<7> VerifiedUnavailable;
 
     virtual void on(Data, HttpConnection*, const uint8_t*, size_t) = 0;
     virtual void on(Failed, HttpConnection*, const string&) { }
@@ -45,7 +46,8 @@ public:
     virtual void on(TypeNormal, HttpConnection*) { }
     virtual void on(TypeBZ2, HttpConnection*) { }
     virtual void on(Retried, HttpConnection*, const bool) { }
+    // Strict DNS HTTPS only: authenticated origin, complete bounded response.
+    virtual void on(VerifiedUnavailable, HttpConnection*, unsigned) { }
 };
 
 } // namespace dcpp
-

@@ -31,7 +31,8 @@ uint64_t number(std::string_view value, int base) {
 }
 }
 
-HttpResponseParser::HttpResponseParser(Limits value) : limits(value) {}
+HttpResponseParser::HttpResponseParser(Limits value, bool unavailable)
+    : limits(value), allowUnavailable(unavailable) {}
 
 [[noreturn]] void HttpResponseParser::fail(const char* message) {
     state = State::Failed;
@@ -79,12 +80,12 @@ void HttpResponseParser::finishLine() {
             fail("Invalid HTTP status line");
         statusCode = static_cast<unsigned>(number(std::string_view(line).substr(9, 3), 10));
         if(statusCode != 200 && statusCode != 301 && statusCode != 302 && statusCode != 303 &&
-            statusCode != 307 && statusCode != 308) fail("Unexpected HTTP response status");
+            statusCode != 307 && statusCode != 308 && !unavailable()) fail("Unexpected HTTP response status");
         state = State::Headers;
     } else if(state == State::Headers) {
         if(!line.empty()) {
             parseHeader(false);
-        } else if(statusCode != 200) {
+        } else if(statusCode != 200 && !unavailable()) {
             if(!hasLocation) fail("Missing HTTP redirect location");
             state = State::Redirect;
         } else if(hasLength) {
@@ -162,4 +163,7 @@ void HttpResponseParser::eof() {
 
 bool HttpResponseParser::complete() const { return state == State::Complete || state == State::Redirect; }
 bool HttpResponseParser::redirect() const { return state == State::Redirect; }
+bool HttpResponseParser::unavailable() const {
+    return allowUnavailable && (statusCode == 500 || statusCode == 502 || statusCode == 503 || statusCode == 504);
+}
 }

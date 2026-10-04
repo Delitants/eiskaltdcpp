@@ -29,9 +29,13 @@ bool revoked(const std::shared_ptr<const dcpp::ProxyRouteSnapshot>& route) {
 struct Listener final : dcpp::HttpConnectionListener {
     transport_detail::Sink sink;
     bool complete = false;
+    bool unavailable = false;
     explicit Listener(transport_detail::Sink value) : sink(std::move(value)) {}
     void on(Data, dcpp::HttpConnection*, const uint8_t* data, size_t size) override { sink(data, size); }
     void on(Complete, dcpp::HttpConnection*, const std::string&) override { complete = true; }
+    void on(VerifiedUnavailable, dcpp::HttpConnection*, unsigned status) override {
+        unavailable = status == 500 || status == 502 || status == 503 || status == 504;
+    }
 };
 
 void privateDestination(const QString& destination) {
@@ -44,6 +48,16 @@ void privateDestination(const QString& destination) {
     require(!(parent.permissions() & (QFile::ReadGroup | QFile::WriteGroup | QFile::ExeGroup |
         QFile::ReadOther | QFile::WriteOther | QFile::ExeOther)));
 }
+}
+
+void transport_detail::request(dcpp::DCContext& context, const dcpp::HttpRequestPolicy& policy,
+    const std::string& url, const Sink& sink) {
+    Listener listener(sink);
+    dcpp::HttpConnection connection(context, policy, {});
+    connection.addListener(&listener);
+    connection.downloadFile(url);
+    if(listener.unavailable) throw ProviderUnavailable();
+    require(listener.complete);
 }
 
 struct UpdateTransport::Impl {
@@ -71,11 +85,7 @@ UpdateTransport::UpdateTransport(dcpp::DCContext& context, transport_detail::Bac
     : QObject(parent), impl(std::make_unique<Impl>()) {
     impl->backend = backend ? std::move(backend) : transport_detail::Backend(
         [&context](const auto& policy, const auto& url, const auto& sink) {
-            Listener listener(sink);
-            dcpp::HttpConnection connection(context, policy, {});
-            connection.addListener(&listener);
-            connection.downloadFile(url);
-            require(listener.complete);
+            transport_detail::request(context, policy, url, sink);
         });
 }
 

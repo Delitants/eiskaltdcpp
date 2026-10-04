@@ -177,3 +177,21 @@ TEST_CASE("Strict HTTP makes a failed body sink terminal", "[http][update-transp
     REQUIRE_FALSE(parser.complete());
     REQUIRE_THROWS_AS(feed(parser, "hello", body), std::runtime_error);
 }
+
+TEST_CASE("Strict HTTP provider outages are opt-in and fully framed", "[http][http-response][http-outage]") {
+    for(unsigned code : {500U, 502U, 503U, 504U}) {
+        const auto bytes = "HTTP/1.1 " + std::to_string(code) + " Unavailable\r\nContent-Length: 4\r\n\r\noops";
+        HttpResponseParser ordinary({4, 65536});
+        std::string body;
+        CHECK_THROWS(feed(ordinary, bytes, body));
+        for(size_t split = 0; split <= bytes.size(); ++split) {
+            HttpResponseParser parser({4, 65536}, true);
+            body.clear();
+            feed(parser, bytes.substr(0, split), body);
+            if(split < bytes.size()) CHECK_FALSE(parser.complete());
+            feed(parser, bytes.substr(split), body);
+            CHECK(parser.complete()); CHECK(parser.unavailable());
+            CHECK_FALSE(parser.redirect()); CHECK(body == "oops");
+        }
+    }
+}

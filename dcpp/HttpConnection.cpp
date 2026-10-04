@@ -146,7 +146,7 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
                 "\r\nAccept-Encoding: identity\r\nConnection: close\r\n\r\n";
             stream->writeAll(request.data(), static_cast<int>(request.size()), left(connectDeadline));
             stage = "response read";
-            HttpResponseParser parser(policy.limits);
+            HttpResponseParser parser(policy.limits, policy.dnsMessage);
             std::array<uint8_t, 16384> buffer{};
             auto idleDeadline = Clock::now() + std::chrono::milliseconds(policy.idleMs);
             while(!parser.complete()) {
@@ -160,6 +160,7 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
                 idleDeadline = Clock::now() + std::chrono::milliseconds(policy.idleMs);
                 parser.feed(buffer.data(), static_cast<size_t>(count), [&](const uint8_t* data, size_t count) {
                     check();
+                    if(parser.unavailable()) return;
                     done += static_cast<int64_t>(count);
                     fire(HttpConnectionListener::Data(), this, data, count);
                     check();
@@ -167,6 +168,11 @@ void HttpConnection::downloadStrict(const string& requestedUrl) {
             }
             stream->disconnect();
             check();
+            if(parser.unavailable()) {
+                fire(HttpConnectionListener::VerifiedUnavailable(), this, parser.status());
+                fire(HttpConnectionListener::Failed(), this, string("Verified DNS provider unavailable"));
+                return;
+            }
             if(!parser.redirect()) {
                 if(policy.dnsMessage && parser.contentType() != "application/dns-message")
                     throw std::runtime_error("Invalid DNS response MIME");

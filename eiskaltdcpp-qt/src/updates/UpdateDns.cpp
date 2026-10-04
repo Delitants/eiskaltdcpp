@@ -183,10 +183,16 @@ transport_detail::Resolver resolver(std::shared_ptr<const dcpp::ProxyRouteSnapsh
                 const auto url = std::string("https://") + name + "/dns-query?dns=" +
                     wire.toBase64(QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals).toStdString();
                 QByteArray body;
-                backend(request, url, [&](const uint8_t* bytes, size_t count) {
-                    require(!stop() && count <= 65535 - size_t(body.size()));
-                    body.append(reinterpret_cast<const char*>(bytes), qsizetype(count));
-                });
+                try {
+                    backend(request, url, [&](const uint8_t* bytes, size_t count) {
+                        require(!stop() && count <= 65535 - size_t(body.size()));
+                        body.append(reinterpret_cast<const char*>(bytes), qsizetype(count));
+                    });
+                } catch(const transport_detail::ProviderUnavailable&) {
+                    require(!stop());
+                    retry = true;
+                    break;
+                }
                 require(!stop());
                 const auto answer = parse(body, host, type);
                 if(answer.retryable) { retry = true; break; }
