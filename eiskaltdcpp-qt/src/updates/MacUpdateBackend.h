@@ -18,7 +18,7 @@ public:
     void revokeInstallConsent() override;
 private:
     friend struct MacUpdateBackendTestAccess;
-    MacUpdateBackend(dcpp::DCContext&, const QString& fixtureBundle, transport_detail::Backend, QObject*);
+    MacUpdateBackend(dcpp::DCContext&, const QString& fixtureBundle, transport_detail::Backend, const QString& cacheDirectory, QObject*);
     struct Impl;
     std::unique_ptr<Impl> impl;
 };

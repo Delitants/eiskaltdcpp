@@ -4,6 +4,7 @@
 #include "dcpp/ProxyRoute.h"
 #include "dcpp/ScopedFunctor.h"
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include <QFile>
 #include <QProcess>
 #include <QTemporaryDir>
@@ -32,6 +33,7 @@
 #include <QTimer>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
 namespace updates {
 struct MacUpdateDiscoveryTestAccess {
@@ -40,8 +42,9 @@ struct MacUpdateDiscoveryTestAccess {
     }
 };
 struct MacUpdateBackendTestAccess {
-    static std::unique_ptr<MacUpdateBackend> make(dcpp::DCContext& context, const QString& bundle, transport_detail::Backend transport) {
-        return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), nullptr));
+    static std::unique_ptr<MacUpdateBackend> make(dcpp::DCContext& context, const QString& bundle, transport_detail::Backend transport,
+        const QString& cache = {}) {
+        return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), cache, nullptr));
     }
 };
 }
@@ -566,7 +569,7 @@ struct BackendFixture {
     quint64 operation = 0;
     UpdateOffer offer;
     FailureCategory category{};
-    BackendFixture() {
+    BackendFixture(const QString& cache = {}) {
         auto item = fixture.signer.item(2, QSysInfo::buildCpuArchitecture().toLatin1(), "stable");
         const auto signedArchive = fixture.signer.sign(archive);
         const auto signature = signedArchive.mid(archive.size()).split('\n')[1].mid(13);
@@ -576,6 +579,11 @@ struct BackendFixture {
         item.replace(QByteArray(64, 's').toBase64(), signature);
         item.replace(QByteArray(64, 'a'), QCryptographicHash::hash(archive, QCryptographicHash::Sha256).toHex());
         feed = fixture.signer.sign(fixture.signer.xml(item));
+        createBackend(cache);
+    }
+    void createBackend(const QString& cache) {
+        backend.reset();
+        offers = ready = failures = absent = 0; requests = 0;
         backend = MacUpdateBackendTestAccess::make(*context.ownedCtx, fixture.app,
             [this](const auto& policy, const std::string& url, const auto& sink) {
                 ++requests;
@@ -598,7 +606,7 @@ struct BackendFixture {
                 const auto bytes = url.find("raw.githubusercontent.com") != std::string::npos ? feed :
                     (corrupt ? QByteArray(archive.size(), 'B') : archive);
                 sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
-            });
+            }, cache);
         QObject::connect(backend.get(), &UpdateBackend::available, [&](quint64 op, UpdateOffer value) { ++offers; operation = op; offer = value; });
         QObject::connect(backend.get(), &UpdateBackend::downloadReady, [&](quint64 op, quint64 build, QByteArray digest) {
             ++ready; operation = op; CHECK(build == offer.build); CHECK(digest == offer.sha256);
@@ -611,6 +619,14 @@ struct BackendFixture {
         REQUIRE(discoveryPump([&] { return offers || failures || absent; }));
         REQUIRE(offers == 1); REQUIRE(failures == 0); REQUIRE(operation == 201);
         REQUIRE(requests.load() == 1);
+    }
+    void populateCache(const QString& cache) {
+        discover(); backend->download(301, offer);
+        REQUIRE(discoveryPump([&] { return ready || failures; }));
+        REQUIRE(ready == 1); REQUIRE(failures == 0);
+        REQUIRE(QFile::exists(cache + "/update.zip"));
+        REQUIRE(QFile::exists(cache + "/appcast.xml"));
+        createBackend(cache);
     }
 };
 template<class T> bool backendFence(T& backend) {
@@ -634,6 +650,153 @@ TEST_CASE("Mac backend requests the published feed for its CPU flavor", "[.][upd
     std::lock_guard<std::mutex> lock(f.requestMutex);
     CHECK(f.requestedFeed == expected);
     CHECK(f.ready == 0);
+}
+TEST_CASE("Mac backend restores verified cache only after fresh routed discovery", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir cache; REQUIRE(cache.isValid());
+    BackendFixture f(cache.path()); f.populateCache(cache.path());
+    QCoreApplication::processEvents(); CHECK(f.ready == 0); CHECK(f.offers == 0); CHECK(f.requests.load() == 0);
+    f.discover(); f.backend->download(302, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.ready == 1); CHECK(f.failures == 0); CHECK(f.requests.load() == 1);
+    CHECK(f.operation == 302);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 2);
+    for(const auto& path : paths) {
+        QFile file(path); REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == f.archive);
+    }
+}
+TEST_CASE("Mac backend cache misses retain ordinary routed archive verification", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir cache; REQUIRE(cache.isValid());
+    BackendFixture f(cache.path()); f.populateCache(cache.path());
+    SECTION("missing archive") { REQUIRE(QFile::remove(cache.filePath("update.zip"))); }
+    SECTION("changed archive") {
+        QFile file(cache.filePath("update.zip")); REQUIRE(file.open(QIODevice::WriteOnly));
+        REQUIRE(file.write(QByteArray(f.archive.size(), 'B')) == f.archive.size());
+    }
+    SECTION("changed cached signed feed") {
+        QFile file(cache.filePath("appcast.xml")); REQUIRE(file.open(QIODevice::WriteOnly)); REQUIRE(file.write("bad") == 3);
+    }
+    SECTION("changed fresh authenticated notes") {
+        auto xml = f.feed.left(f.feed.indexOf("</rss>") + 6);
+        xml.replace("Plain &amp; safe notes", "New notes"); f.feed = f.fixture.signer.sign(xml);
+    }
+    SECTION("cache valid but fresh archive corrupt") {
+        REQUIRE(QFile::remove(cache.filePath("update.zip"))); f.corrupt = true;
+    }
+    f.discover(); f.backend->download(303, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.requests.load() == 2); CHECK(f.ready == (f.corrupt ? 0 : 1)); CHECK(f.failures == (f.corrupt ? 1 : 0));
+    if(f.corrupt) CHECK(f.category == FailureCategory::Verification);
+}
+TEST_CASE("Mac backend creates only a private cache leaf and treats storage failure as optional", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir parent; REQUIRE(parent.isValid());
+    QString cache = parent.filePath("private-cache"); bool permitted = false;
+    SECTION("fresh private leaf") { permitted = true; }
+    SECTION("missing parent") { cache = parent.filePath("missing/cache"); }
+    SECTION("shared parent") { REQUIRE(::chmod(QFile::encodeName(parent.path()).constData(), 0777) == 0); }
+    SECTION("shared existing leaf") {
+        REQUIRE(QDir().mkdir(cache)); REQUIRE(::chmod(QFile::encodeName(cache).constData(), 0755) == 0);
+    }
+    SECTION("symlink leaf") { REQUIRE(QFile::link(parent.path(), cache)); }
+    SECTION("file leaf") { QFile file(cache); REQUIRE(file.open(QIODevice::WriteOnly)); REQUIRE(file.write("sentinel") == 8); }
+    BackendFixture f(cache); f.discover(); f.backend->download(304, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    CHECK(f.ready == 1); CHECK(f.failures == 0); CHECK(f.requests.load() == 2);
+    if(permitted) {
+        struct stat node{}; REQUIRE(::lstat(QFile::encodeName(cache).constData(), &node) == 0);
+        CHECK((node.st_mode & 0777) == 0700); CHECK(QFile::exists(cache + "/update.zip"));
+    } else CHECK_FALSE(QFile::exists(cache + "/update.zip"));
+}
+TEST_CASE("Mac backend cached bytes cannot bypass current feed or installed key", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir cache; REQUIRE(cache.isValid());
+    BackendFixture old(cache.path()); old.populateCache(cache.path()); old.backend.reset();
+    // New installed bundle path: NSBundle/Sparkle retain loaded plist values in-process.
+    BackendFixture f(cache.path());
+    bool current = false;
+    SECTION("fresh feed rejected") { f.feed.replace("Plain", "Wrong"); }
+    SECTION("installed version current") { current = true; f.fixture.setting("Set :CFBundleVersion 10"); }
+    SECTION("current installed key changed") { f.fixture.setting("Set :SUPublicEDKey " + QByteArray(32, '\x55').toBase64()); }
+    f.backend->check(305, Channel::Stable, CheckKind::Manual);
+    REQUIRE(discoveryPump([&] { return f.absent || f.failures || f.offers; }));
+    CHECK(f.offers == 0); CHECK(f.ready == 0); CHECK(f.failures == (current ? 0 : 1));
+    CHECK(f.absent == (current ? 1 : 0)); CHECK(f.requests.load() == 1);
+}
+TEST_CASE("Mac backend restore completion cannot outlive cancellation route or quit fence", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir cache; REQUIRE(cache.isValid());
+    BackendFixture f(cache.path()); f.populateCache(cache.path()); f.discover();
+    bool revoked = false;
+    bool miss = GENERATE(false, true);
+    if(miss) REQUIRE(QFile::remove(cache.filePath("update.zip")));
+    f.backend->download(306, f.offer);
+    // Hold the owner event loop so a completed worker cannot publish Ready or fetch on a miss.
+    QThread::msleep(40);
+    SECTION("cancel") { f.backend->cancel(); }
+    SECTION("revoke route") { f.context.ownedCtx->getProxyRoute()->stop(); revoked = true; }
+    SECTION("committed worker fence") { REQUIRE(backendFence(*f.backend)); }
+    SECTION("owner destruction") { f.backend.reset(); }
+    QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 100; }));
+    CHECK(f.ready == 0); CHECK(f.failures == (revoked ? 1 : 0)); CHECK(f.requests.load() == 1);
+    CHECK(stagedArchives().size() == (miss ? 0 : 1));
+}
+TEST_CASE("Internal Mac backend persisted cache child", "[.][backend-cache-child]") {
+    const auto cache = qEnvironmentVariable("EISKALT_BACKEND_CACHE_CHILD_ROOT");
+    const auto mode = qEnvironmentVariable("EISKALT_BACKEND_CACHE_CHILD_MODE");
+    if(cache.isEmpty() || mode.isEmpty()) SKIP("Internal fixture child; use the public backend cache restart test");
+    REQUIRE(cache.startsWith(QDir::tempPath() + "/"));
+    REQUIRE((mode == "populate" || mode == "crash" || mode == "restore"));
+    BackendFixture f(cache);
+    CHECK(f.ready == 0); CHECK(f.offers == 0); CHECK(f.requests.load() == 0);
+    f.discover(); f.backend->download(307, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; }));
+    REQUIRE(f.ready == 1); REQUIRE(f.failures == 0);
+    REQUIRE(f.requests.load() == (mode == "restore" ? 1 : 2));
+    QFile archive(cache + "/update.zip"); REQUIRE(archive.open(QIODevice::ReadOnly));
+    CHECK(archive.readAll() == f.archive); archive.close();
+    if(mode == "crash") {
+        QFile receipt(cache + "/child-ready"); REQUIRE(receipt.open(QIODevice::WriteOnly | QIODevice::NewOnly));
+        REQUIRE(receipt.write("verified-cache-ready") == 20); REQUIRE(receipt.flush()); receipt.close();
+        QElapsedTimer wait; wait.start();
+        while(wait.elapsed() < 30000) QThread::msleep(10);
+        FAIL("Parent must kill only its owned child after the verified cache receipt");
+    }
+    REQUIRE(backendFence(*f.backend));
+}
+TEST_CASE("Mac backend reauthenticates persisted staging after process exit or crash", "[.][update-backend-native][backend-cache-native]") {
+    QTemporaryDir root; REQUIRE(root.isValid());
+    const QDir cache(root.filePath("cache")); REQUIRE(QDir().mkdir(cache.path()));
+    REQUIRE(::chmod(QFile::encodeName(cache.path()).constData(), 0700) == 0);
+    bool crash = false;
+    SECTION("normal process exit") {}
+    SECTION("owned process SIGKILL") { crash = true; }
+    auto env = QProcessEnvironment::systemEnvironment();
+    env.insert("EISKALT_BACKEND_CACHE_CHILD_ROOT", cache.path());
+    // Parent owns the complete child temp namespace, including SIGKILL leftovers.
+    env.insert("TMPDIR", root.path() + "/");
+    env.insert("EISKALT_BACKEND_CACHE_CHILD_MODE", crash ? "crash" : "populate");
+    QProcess child; child.setProcessEnvironment(env);
+    child.start(QCoreApplication::applicationFilePath(), {"[backend-cache-child]"});
+    REQUIRE(child.waitForStarted(5000));
+    if(crash) {
+        const bool ready = discoveryPump([&] { return QFile::exists(cache.filePath("child-ready")) || child.state() == QProcess::NotRunning; }, 20000);
+        if(!ready || !QFile::exists(cache.filePath("child-ready"))) {
+            child.kill(); child.waitForFinished(5000);
+            INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
+            FAIL("Owned child did not finish saving a verified private cache");
+        }
+        child.kill(); REQUIRE(child.waitForFinished(5000)); CHECK(child.exitStatus() == QProcess::CrashExit);
+    } else {
+        const bool finished = child.waitForFinished(20000);
+        if(!finished) { child.kill(); child.waitForFinished(5000); }
+        INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
+        REQUIRE(finished); REQUIRE(child.exitStatus() == QProcess::NormalExit); REQUIRE(child.exitCode() == 0);
+    }
+    REQUIRE(QFile::exists(cache.filePath("appcast.xml"))); REQUIRE(QFile::exists(cache.filePath("update.zip")));
+    env.insert("EISKALT_BACKEND_CACHE_CHILD_MODE", "restore"); child.setProcessEnvironment(env);
+    child.start(QCoreApplication::applicationFilePath(), {"[backend-cache-child]"});
+    REQUIRE(child.waitForStarted(5000));
+    const bool finished = child.waitForFinished(20000);
+    if(!finished) { child.kill(); child.waitForFinished(5000); }
+    INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
+    REQUIRE(finished); CHECK(child.exitStatus() == QProcess::NormalExit); CHECK(child.exitCode() == 0);
 }
 TEST_CASE("Mac backend retained fence preserves Ready staging through core route retirement", "[.][updater-worker-fence-native]") {
     BackendFixture f; f.discover();

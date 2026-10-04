@@ -4,14 +4,21 @@
 #include "MacUpdateBackend.h"
 #include "MacUpdateDiscovery.h"
 #include "UpdateArchiveVerifier.h"
+#include "UpdateStagingCache.h"
 #include "UpdateUrlPolicy.h"
 #include <QFile>
+#include <QFileInfo>
+#include <QStandardPaths>
 #include <QSysInfo>
 #include <QTemporaryDir>
 #include <QThread>
 #include <QTimer>
 #include <atomic>
 #include <thread>
+#include <cerrno>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #import <Foundation/Foundation.h>
 
 namespace updates {
@@ -29,6 +36,23 @@ QByteArray pinnedKey(const QString& fixture) {
 bool routeValid(const std::shared_ptr<const dcpp::ProxyRouteSnapshot>& route) {
     return route && route->valid && route->revoked && !route->revoked->load();
 }
+bool prepareCache(const QString& path) {
+    if(path.isEmpty() || path.contains(QChar('\0')) || !QFileInfo(path).isAbsolute()) return false;
+    const QFileInfo info(path);
+    const auto parentName = QFile::encodeName(info.absolutePath());
+    const auto leaf = QFile::encodeName(info.fileName());
+    const int parent = ::open(parentName.constData(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+    if(parent < 0) return false;
+    struct stat before{}, named{}, node{};
+    const bool safe = ::fstat(parent, &before) == 0 && before.st_uid == getuid() && !(before.st_mode & 0022) &&
+        !leaf.isEmpty() && leaf != "." && leaf != ".." &&
+        (::mkdirat(parent, leaf.constData(), 0700) == 0 || errno == EEXIST) &&
+        ::fstatat(parent, leaf.constData(), &node, AT_SYMLINK_NOFOLLOW) == 0 && S_ISDIR(node.st_mode) &&
+        node.st_uid == getuid() && !(node.st_mode & 0077) &&
+        ::lstat(parentName.constData(), &named) == 0 && named.st_dev == before.st_dev && named.st_ino == before.st_ino;
+    ::close(parent);
+    return safe;
+}
 }
 struct MacUpdateBackend::Impl {
     enum Phase { Idle, Feed, Discovering, Available, Archive, Verifying, Ready };
@@ -41,13 +65,14 @@ struct MacUpdateBackend::Impl {
         std::shared_ptr<Stage> stage;
         std::atomic_bool cancelled{false}, done{false};
         bool valid = false;
+        bool restoring = false, authenticated = false;
         quint64 epoch = 0;
         std::thread worker;
         ~Verification() { if(worker.joinable()) worker.join(); }
     };
     MacUpdateBackend& owner;
     dcpp::DCContext& context;
-    QString fixture;
+    QString fixture, cacheDirectory;
     std::unique_ptr<UpdateTransport> transport;
     std::unique_ptr<MacUpdateDiscovery> discovery;
     std::shared_ptr<Stage> stage, transferStage;
@@ -61,8 +86,8 @@ struct MacUpdateBackend::Impl {
     QByteArray feedBytes;
     bool quitFenced = false, quitFenceSucceeded = false;
 
-    Impl(MacUpdateBackend& o, dcpp::DCContext& c, QString bundle, transport_detail::Backend wire)
-        : owner(o), context(c), fixture(std::move(bundle)),
+    Impl(MacUpdateBackend& o, dcpp::DCContext& c, QString bundle, transport_detail::Backend wire, QString cache)
+        : owner(o), context(c), fixture(std::move(bundle)), cacheDirectory(std::move(cache)),
           transport(new UpdateTransport(c, std::move(wire), nullptr)),
           discovery(new MacUpdateDiscovery(fixture, nullptr)) {
         timer.setInterval(20);
@@ -128,6 +153,42 @@ struct MacUpdateBackend::Impl {
         request = transport->fetch(url, kind, path, route);
         timer.start();
     }
+    void verify(bool restoring) {
+        auto job = std::make_unique<Verification>();
+        job->stage = stage; job->epoch = epoch; job->restoring = restoring;
+        auto* value = job.get();
+        const auto selectedRoute = route;
+        const auto selection = *selected;
+        const auto bytes = feedBytes;
+        const auto key = pinnedKey(fixture);
+        const auto cache = cacheDirectory;
+        try {
+            job->worker = std::thread([value, key, selection, bytes, selectedRoute, cache] {
+                const auto stopped = [value, selectedRoute] { return value->cancelled.load() || !routeValid(selectedRoute); };
+                try {
+                    // Reauthenticate the exact selection under the current installed key.
+                    const auto feed = verifyUpdateFeed(bytes, key, stopped);
+                    if(feed) for(const auto& item : feed->releases)
+                        if(sameOffer(item.offer, selection.offer) && item.archiveUrl == selection.archiveUrl &&
+                            item.archiveSignatureBase64 == selection.archiveSignatureBase64) value->authenticated = true;
+                    if(value->authenticated && !stopped()) {
+                        if(value->restoring) {
+                            value->valid = prepareCache(cache) && restoreVerifiedStage(cache, bytes, selection, key,
+                                value->stage->archive(), stopped);
+                        } else {
+                            const ArchiveExpectation expected{selection.offer.size, selection.offer.sha256, selection.archiveSignatureBase64};
+                            value->valid = verifyUpdateArchive(value->stage->archive(), expected, key, stopped);
+                            // Cache storage is optional; its failure cannot revoke a verified download.
+                            if(value->valid && !stopped() && prepareCache(cache))
+                                saveVerifiedStage(cache, bytes, selection, key, value->stage->archive(), stopped);
+                        }
+                    }
+                } catch(...) { value->valid = false; }
+                value->done.store(true);
+            });
+        } catch(...) { fail(FailureCategory::Storage); return; }
+        verification = std::move(job); phase = Verifying; timer.start();
+    }
     void transferred(quint64 id, const QString& path) {
         if(quitFenced || id != request) return;
         request = 0; transferStage.reset();
@@ -142,27 +203,7 @@ struct MacUpdateBackend::Impl {
             if(!discovery->check(epoch, feedBytes, channel, route)) fail(FailureCategory::Verification);
         } else {
             if(path != stage->archive() || !selected) { fail(FailureCategory::Verification); return; }
-            const auto key = pinnedKey(fixture);
-            // Reauthenticate against the currently installed key before archive work.
-            const auto feed = verifyUpdateFeed(feedBytes, key);
-            bool bound = false;
-            if(feed) for(const auto& item : feed->releases)
-                if(sameOffer(item.offer, selected->offer) && item.archiveUrl == selected->archiveUrl &&
-                    item.archiveSignatureBase64 == selected->archiveSignatureBase64) bound = true;
-            if(!bound) { fail(FailureCategory::Verification); return; }
-            auto job = std::make_unique<Verification>();
-            job->stage = stage; job->epoch = epoch;
-            auto* value = job.get();
-            const auto selectedRoute = route;
-            const ArchiveExpectation expected{selected->offer.size, selected->offer.sha256, selected->archiveSignatureBase64};
-            try {
-                job->worker = std::thread([value, key, expected, selectedRoute] {
-                    value->valid = verifyUpdateArchive(value->stage->archive(), expected, key,
-                        [value, selectedRoute] { return value->cancelled.load() || !routeValid(selectedRoute); });
-                    value->done.store(true);
-                });
-            } catch(...) { fail(FailureCategory::Storage); return; }
-            verification = std::move(job); phase = Verifying;
+            verify(false);
         }
     }
     void poll() {
@@ -171,8 +212,14 @@ struct MacUpdateBackend::Impl {
         if(verification && verification->done.load()) {
             const bool current = verification->epoch == epoch && phase == Verifying;
             const bool valid = verification->valid && !verification->cancelled.load();
+            const bool miss = verification->restoring && verification->authenticated && !verification->cancelled.load();
             verification.reset();
             if(current) {
+                if(!valid && miss && selected && routeValid(route)) {
+                    phase = Archive;
+                    fetch(selected->archiveUrl, ResourceKind::Archive, stage->archive());
+                    return;
+                }
                 if(!valid || !selected) { fail(FailureCategory::Verification); return; }
                 phase = Ready;
                 emit owner.downloadReady(operation, selected->offer.build, selected->offer.sha256);
@@ -209,9 +256,10 @@ struct MacUpdateBackend::Impl {
         return quitFenceSucceeded;
     }
 };
-MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, QObject* p) : MacUpdateBackend(c, {}, {}, p) {}
-MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire, QObject* p)
-    : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire))) {}
+MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, QObject* p) : MacUpdateBackend(c, {}, {},
+    QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", p) {}
+MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire, const QString& cache, QObject* p)
+    : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache)) {}
 MacUpdateBackend::~MacUpdateBackend() = default;
 void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     Q_ASSERT(QThread::currentThread() == thread());
@@ -238,6 +286,7 @@ void MacUpdateBackend::download(quint64 op, const UpdateOffer& requested) {
         impl->fail(FailureCategory::Verification); return;
     }
     if(!routeValid(impl->route)) { impl->fail(FailureCategory::Network); return; }
+    if(!impl->cacheDirectory.isEmpty()) { impl->verify(true); return; }
     impl->phase = Impl::Archive;
     impl->fetch(impl->selected->archiveUrl, ResourceKind::Archive, impl->stage->archive());
 }

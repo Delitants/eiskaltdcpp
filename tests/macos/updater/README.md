@@ -583,10 +583,9 @@ an existing destination. It performs no network requests and grants no offer or
 install consent. Installed identity/channel/route policy remains the caller's
 responsibility. Windows refuses until private staging ACL support is accepted.
 
-Run `[update-stage-cache]` in the Qt or standalone native test target. This
-foundation is compiled but not yet called by `MacUpdateBackend`: actual backend
-worker restoration, process-restart acceptance and committed-quit integration
-remain pending. It must not be presented as a working product restart cache yet.
+Run `[update-stage-cache]` in the Qt or standalone native test target. Actual
+`MacUpdateBackend` worker restoration is covered by the tests below. Runtime activation and
+committed-quit integration remain pending; this is not an installed-app updater.
 
 `MacUpdateBackend` connects the worker transport, native discovery adapter and
 archive verifier. It captures one immutable connection route, downloads the
@@ -602,8 +601,28 @@ while that worker drains, so cancellation cannot create unbounded parallel jobs.
 Owner destruction cancels and joins its workers. Archive verification is bounded
 to 512 MiB; OpenSSL's single Ed25519 verification call cannot be interrupted
 mid-call, so final destruction can wait for that call to finish. Ordinary cancel
-does not join it on the GUI thread. Staging is temporary and is removed on normal
-destruction; crash/restart cache recovery is not implemented by this checkpoint.
+does not join it on the GUI thread. Ephemeral staging is removed on normal
+destruction. An optional persistent cache uses a fixed private leaf beneath the
+platform's generic cache location, not the user profile. Only that leaf may be
+created, on the worker; unsuitable or absent parent directories disable caching
+without changing existing permissions or invalidating a verified download.
+
+Every download first tries cache restoration on the joined verification worker,
+after fresh routed, authenticated discovery. Both fresh and cached signed feeds
+must bind the exact selection under the currently installed key, and the copied
+archive is verified again. A cache miss uses the same immutable connection route
+for a normal archive download, never a direct fallback. Cancellation, revoked
+routes and the retained quit fence suppress stale Ready results and miss retries.
+Successful fresh verification optionally stores the pair on that worker; cache
+storage failure does not turn a verified download into an installation failure.
+Cache data never supplies an offline offer or installation consent.
+
+The `[backend-cache-native]` group also runs fresh child processes against one
+private cache. It verifies restoration after ordinary process exit and after
+SIGKILL of only the owned child following a verified-cache receipt. Each restart
+starts without an offer or Ready result, fetches the feed again, then reaches
+Ready without an archive fetch. This uses injected transport bytes and real
+Sparkle discovery/Ed25519 verification, not production HTTP or installer access.
 
 The controller discards invalidated offers after cancel/failure and requires a
 new check before retrying. `UnsupportedUpdateBackend` reports unsupported

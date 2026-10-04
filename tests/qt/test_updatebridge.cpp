@@ -17,6 +17,8 @@ struct UpdateLoopbackBridgeTestAccess {
 #include <QTcpServer>
 #include <QHostAddress>
 #include <QElapsedTimer>
+#include <QEventLoop>
+#include <QTimer>
 #include <QThread>
 #include <QRegularExpression>
 #include <array>
@@ -32,10 +34,14 @@ struct UpdateLoopbackBridgeTestAccess {
 
 namespace {
 bool pump(const std::function<bool()>& done, int timeout = 3000) {
-    QElapsedTimer timer; timer.start();
-    while(!done() && timer.elapsed() < timeout) {
-        QCoreApplication::processEvents(); QThread::msleep(1);
-    }
+    if(done()) return true;
+    QEventLoop loop;
+    QTimer check, deadline;
+    deadline.setSingleShot(true); deadline.setTimerType(Qt::PreciseTimer);
+    QObject::connect(&check, &QTimer::timeout, &loop, [&] { if(done()) loop.quit(); });
+    QObject::connect(&deadline, &QTimer::timeout, &loop, &QEventLoop::quit);
+    check.start(1); deadline.start(timeout);
+    loop.exec();
     return done();
 }
 void writePrivate(const QString& path, const QByteArray& bytes) {
@@ -51,7 +57,10 @@ QByteArray request(const QUrl& endpoint, const QByteArray& bytes) {
     if(!pump([&] { return socket.state() != QAbstractSocket::ConnectingState; })) return {};
     if(socket.state() != QAbstractSocket::ConnectedState) return {};
     socket.write(bytes);
-    REQUIRE(pump([&] { return socket.state() == QAbstractSocket::UnconnectedState; }));
+    const bool closed = pump([&] { return socket.state() == QAbstractSocket::UnconnectedState; });
+    INFO("Bridge received bytes=" << result.size() << ", buffered=" << socket.bytesAvailable()
+        << ", socket state=" << socket.state());
+    REQUIRE(closed);
     result += socket.readAll();
     return result;
 }
