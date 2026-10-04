@@ -821,5 +821,59 @@ This group exercises immutable feed revision/key/identity consumption, mismatch
 rejection and current-main-bundle factory admission. Its child copies the test
 binary into an ad-hoc-signed private fixture bundle; it never starts a scheduler,
 network check or installer. Non-bundled processes receive Unsupported rather than
-attempting a fallback route. The factory is implemented but is not selected by
-the production application owner; native installation capability remains false.
+attempting a fallback route. The factory returns a move-only backend/identity
+pair from one validated runtime snapshot. Default builds still use Unsupported;
+native installation capability remains false.
+
+### Gated Native Build Selection
+
+The packaging regression fixtures include actual Intel/ARM executables linked
+to Sparkle before framework deployment. The packager overlays the audited stage
+in a private prospective app copy and checks complete dependency closure there
+before touching the original bundle. An additional unresolved import must be
+rejected with the original bundle unchanged. Dummy Cocoa fixtures use a
+relocatable install name, as required by this private-copy preflight.
+
+Bundle executables are signed with their containers only after dependent leaves
+are sealed; a strict check on a bare main executable can otherwise encounter
+stale Qt plugin signatures. Confined executable bindings are validated on the
+prospective copy before input mutation. The integration regression accepts
+`EISKALT_TEST_INVALIDATED_NATIVE_APP`, a captured disposable native QA bundle
+with the documented dummy public key and invalidated Qt plugin signatures.
+Never provide an installed production app. Without this fixture that one test
+explicitly skips; ordinary packaging tests do not imply full native acceptance.
+
+`EISKALT_MAC_UPDATER_NATIVE` defaults to OFF. Opting in requires validated
+`EISKALT_MAC_UPDATER_METADATA` and audited `EISKALT_MAC_UPDATER_PACKAGE` inputs,
+plus the pinned Sparkle SDK. This compiles the native adapter and makes the
+application owner consume its correlated backend/identity pair. It does not
+start a scheduler or enable installation capability. Proxy-routed DNS/HTTPS
+acceptance and remaining lifecycle/platform checks still gate activation.
+
+With the verified SDK and Qt development package available:
+
+```sh
+EISKALT_TEST_SPARKLE_ROOT=/path/to/verified-sparkle \
+EISKALT_TEST_QT_DIR=/path/to/lib/cmake/Qt6 \
+  python3 tests/macos/updater/test_native_wiring.py
+```
+
+These actual CMake configurations check default-off behavior, prerequisites,
+native sources/dependency selection, and distinct real MOC generation for the
+application and full-GUI fixture. The test is registered when native discovery
+QA is enabled. Configuration/MOC generation is not a release build or routing
+acceptance; use a separate disposable native-enabled full application build for
+linking/packaging verification. Never use a production signing key for this QA.
+
+After a separate native-enabled full application build has passed packaging:
+
+```sh
+python3 tests/macos/updater/run_native_selection.py --build /path/to/native-build
+```
+
+The probe links the real application's compiled objects, then replaces only the
+executable in a private ad-hoc-signed bundle copy. A fresh isolated HOME/XDG and
+external-network-denied sandbox verify that the public application owner selects
+an unparented native backend with the admitted channel, waits past startup delay
+without scheduling work, keeps installation disabled, and disposes safely after
+checked no-update quit. It uses no production key, installed app or user profile.

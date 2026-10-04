@@ -9,6 +9,10 @@
 namespace updates {
 struct ApplicationUpdateOwnerTestAccess {
     static std::unique_ptr<ApplicationUpdateOwner> make(WulforSettings& settings,
+        UpdateBackendSelection selection) {
+        return std::unique_ptr<ApplicationUpdateOwner>(new ApplicationUpdateOwner(settings, std::move(selection)));
+    }
+    static std::unique_ptr<ApplicationUpdateOwner> make(WulforSettings& settings,
         std::unique_ptr<UpdateBackend> backend, UpdateIdentity identity) {
         return std::unique_ptr<ApplicationUpdateOwner>(new ApplicationUpdateOwner(settings, std::move(backend), std::move(identity)));
     }
@@ -33,6 +37,32 @@ struct Backend final : UpdateBackend {
     }
 };
 void events() { for(int i = 0; i < 12; ++i) QCoreApplication::processEvents(); }
+}
+TEST_CASE("Application updater consumes one backend identity selection", "[updates][update-app-owner][update-selection]") {
+    dcpp::test::TestContext context;
+    WulforSettings settings(*context.ownedCtx);
+    int destroyed = 0;
+    auto wire = std::make_unique<Backend>(destroyed); auto* backend = wire.get();
+    UpdateBackendSelection selection{std::move(wire),
+        {30000001, Channel::Preview, "org.test.selected", "arm64", QVersionNumber(26, 0)}};
+    auto owner = ApplicationUpdateOwnerTestAccess::make(settings, std::move(selection));
+    auto* controller = owner->controller();
+    CHECK(controller->preferences().channel == Channel::Preview);
+    CHECK_FALSE(controller->lastAttempt().isValid());
+    events(); CHECK(backend->operation == 0); // Construction never starts the scheduler.
+    UpdateOffer offer{30000002, "3.0.0-pre.2", {}, "org.test.selected", "arm64",
+        QVersionNumber(26, 0), Channel::Preview, 100, QByteArray(32, 'a')};
+    bool accepted = false;
+    SECTION("matching immutable identity") { accepted = true; }
+    SECTION("not newer than selected build") { offer.build = 30000001; }
+    SECTION("different product") { offer.bundleId = "org.test.other"; }
+    SECTION("different CPU") { offer.cpu = "x86_64"; }
+    SECTION("higher minimum OS") { offer.minimumOs = QVersionNumber(27, 0); }
+    controller->checkNow(); REQUIRE(backend->operation != 0);
+    emit backend->available(backend->operation, offer); events();
+    CHECK(controller->state() == (accepted ? UpdateController::State::Available : UpdateController::State::Idle));
+    REQUIRE(controller->stopWorkersForQuit()); controller->normalQuitCommitted();
+    CHECK(ApplicationUpdateOwner::finishNormalQuit(owner)); CHECK(destroyed == 1);
 }
 TEST_CASE("Application updater owner is unsupported and unfenced by GUI parenting", "[updates][update-app-owner]") {
     dcpp::test::TestContext context;

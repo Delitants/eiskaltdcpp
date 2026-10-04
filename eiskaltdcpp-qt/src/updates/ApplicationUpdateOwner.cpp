@@ -2,16 +2,26 @@
 #include "UpdateController.h"
 #include "UnsupportedUpdateBackend.h"
 #include "UpdateRuntimeIdentity.h"
+#ifdef EISKALT_MAC_UPDATER_NATIVE
+#include "MacUpdateBackend.h"
+#endif
 
 namespace updates {
 namespace {
-UpdateIdentity installedIdentity() {
+UpdateBackendSelection selectBackend(dcpp::DCContext& context) {
+#ifdef EISKALT_MAC_UPDATER_NATIVE
+    return MacUpdateBackend::createSelection(context);
+#else
+    (void)context;
     const auto runtime = currentMacUpdateRuntime();
-    return runtime ? runtime->identity : UpdateIdentity{};
+    return {std::make_unique<UnsupportedUpdateBackend>(), runtime ? runtime->identity : UpdateIdentity{}};
+#endif
 }
 }
-ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings, dcpp::DCContext&)
-    : ApplicationUpdateOwner(settings, std::make_unique<UnsupportedUpdateBackend>(), installedIdentity()) {}
+ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings, dcpp::DCContext& context)
+    : ApplicationUpdateOwner(settings, selectBackend(context)) {}
+ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings, UpdateBackendSelection selected)
+    : ApplicationUpdateOwner(settings, std::move(selected.backend), std::move(selected.identity)) {}
 ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings,
     std::unique_ptr<UpdateBackend> wire, UpdateIdentity identity)
     : backend(std::move(wire)),

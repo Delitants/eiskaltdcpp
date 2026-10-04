@@ -260,6 +260,10 @@ if(APPLE AND EISKALT_TEST_MAC_UPDATE_DISCOVERY)
         PROPERTIES COMPILE_OPTIONS "-fobjc-arc")
     target_compile_definitions(eiskaltdcpp-qt-tests PRIVATE EISKALT_TEST_MAC_UPDATE_DISCOVERY)
     target_link_libraries(eiskaltdcpp-qt-tests PRIVATE Sparkle::Sparkle "-framework AppKit")
+    add_test(NAME eiskalt-native-updater-build-wiring
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/updater/test_native_wiring.py")
+    set_tests_properties(eiskalt-native-updater-build-wiring PROPERTIES ENVIRONMENT
+        "EISKALT_TEST_SPARKLE_ROOT=${EISKALT_SPARKLE_ROOT};EISKALT_TEST_QT_DIR=${Qt6_DIR};PYTHONDONTWRITEBYTECODE=1")
 endif()
 
 # Auto-discover test cases.

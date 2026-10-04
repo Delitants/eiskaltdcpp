@@ -98,6 +98,13 @@ the separate public-hub-list HTTP proxy. Snapshot the global outgoing route for
 each operation, cancel on route changes, and never retry directly when a selected
 proxy fails. Downloads and DNS follow that same route, not the Torrent override.
 
+The maintainer selected Cloudflare DNS over HTTPS as the updater's primary
+proxied resolver on 2026-10-04, with Google DNS over HTTPS as fallback. Both use
+the same admitted global route; failover must not bypass certificate checks,
+destination-address validation, cancellation or route revocation. Do not change
+system DNS settings or fall back to direct origin resolution. This is an approved
+policy, not proof that proxied DNS or update fetching is implemented or accepted.
+
 ### Sparkle Transport Integration
 
 Prototype and test a private loopback content bridge using public Sparkle feed

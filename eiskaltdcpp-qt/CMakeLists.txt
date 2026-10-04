@@ -350,7 +350,7 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_tr)
 include(${CMAKE_SOURCE_DIR}/cmake/AppIconThemes.cmake)
 eiskalt_add_icon_themes(${PROJECT_NAME})
 if (USE_TORRENT)
-    target_link_libraries(${PROJECT_NAME} eiskalt-torrent)
+    target_link_libraries(${PROJECT_NAME} PRIVATE eiskalt-torrent)
     qt6_add_resources(${PROJECT_NAME} torrent_icons
         PREFIX "/torrent"
         BASE "${PROJECT_SOURCE_DIR}/icons/torrent"
@@ -406,7 +406,7 @@ else ()
 endif ()
 
 if (APPLE)
-    target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp iconv)
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${LIBS} extra dcpp iconv)
     set_target_properties (${PROJECT_NAME} PROPERTIES
         MACOSX_RPATH ON
         INSTALL_RPATH "@executable_path/../Frameworks;@loader_path/../Frameworks;@loader_path/../../Frameworks")
@@ -414,9 +414,9 @@ if (APPLE)
     set_property(TARGET eiskaltdcpp-qt APPEND PROPERTY BUILD_RPATH
         "@executable_path/../Frameworks")
 elseif (HAIKU)
-    target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp be)
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${LIBS} extra dcpp be)
 else (APPLE)
-    target_link_libraries (${PROJECT_NAME} ${LIBS} extra dcpp)
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${LIBS} extra dcpp)
 endif (APPLE)
 
 if (BUILD_TESTS AND USE_TORRENT)
@@ -527,6 +527,12 @@ if (APPLE)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterPackaging.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleMetadata.cmake)
 endif (APPLE)
+
+include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterNative.cmake)
+eiskalt_add_native_updater(${PROJECT_NAME})
+if(TARGET eiskalt-mainwindow-toggle-tests)
+    eiskalt_add_native_updater(eiskalt-mainwindow-toggle-tests)
+endif()
 
 if (USE_JS)
     install (DIRECTORY qtscripts/ DESTINATION ${CLIENT_SCRIPTS_DEST}

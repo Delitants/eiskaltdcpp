@@ -2,6 +2,7 @@
 #include "UpdateTypes.h"
 #include <QObject>
 #include <functional>
+#include <memory>
 
 namespace updates {
 class UpdateBackend : public QObject {
@@ -33,5 +34,11 @@ signals:
     void progress(quint64 operation, qint64 received, qint64 total);
     void failed(quint64 operation, QString redactedMessage, updates::FailureCategory category);
     void noUpdate(quint64 operation);
+};
+// A factory returns the backend and controller identity from the same validated
+// runtime snapshot. Moving the pair never starts workers or grants consent.
+struct UpdateBackendSelection {
+    std::unique_ptr<UpdateBackend> backend;
+    UpdateIdentity identity;
 };
 }

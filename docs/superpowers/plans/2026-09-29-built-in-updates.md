@@ -1093,3 +1093,28 @@ copy without changing admitted behavior, refuse mismatched key/build/product,
 and exercise both valid actual-bundle and non-bundled factory selection.
 These disposable development-host checks do not establish vendor authenticity,
 release minimum-OS compatibility, live routing or production installation.
+
+### Correlated Native Selection Checkpoint
+
+The factory returns a move-only backend and controller identity from one
+validated current-bundle snapshot. The application owner consumes this pair;
+it does not independently reread installed identity. An explicit
+`EISKALT_MAC_UPDATER_NATIVE` build option defaults OFF and requires macOS,
+validated updater metadata and audited framework packaging. Opting in compiles
+the real adapters with separate per-target MOC outputs, but does not start the
+scheduler or enable installation capability.
+
+Packaging validates a private prospective bundle containing the exact audited
+Sparkle stage before modifying the owned build output. This permits an executable
+already linked to Sparkle without skipping dependency-closure validation. Other
+missing dependencies still reject the input before mutation; the final sealed
+bundle receives the same metadata, closure and strict-signature checks.
+Bundle executables are deferred to their container signing pass so standalone
+main verification cannot run ahead of repairs to invalidated Qt plugin signatures.
+Executable bindings are confined and validated on the prospective copy first.
+
+Route-aware DNS remains the next activation gate: Cloudflare DNS over HTTPS
+primary and Google DNS over HTTPS fallback, both over the same global proxy.
+No direct fallback, OS DNS change or security-validation bypass is permitted.
+Development-host selection/packaging QA is not supported-minimum-OS evidence,
+live proxy acceptance or permission to enable automatic installation.

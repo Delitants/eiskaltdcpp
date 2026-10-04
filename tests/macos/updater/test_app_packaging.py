@@ -65,7 +65,8 @@ class AppPackaging(unittest.TestCase):
         plugin.parent.mkdir(parents=True)
         source = self.root / "fixture.c"
         source.write_text("int main(void) { return 0; }\n")
-        for dest, extra in ((contents / "MacOS/Fixture", []), (plugin, ["-dynamiclib"])):
+        for dest, extra in ((contents / "MacOS/Fixture", []),
+                            (plugin, ["-dynamiclib", "-install_name", "@rpath/libqcocoa.dylib"])):
             subprocess.run(["xcrun", "clang", "-arch", arch, "-mmacosx-version-min=" + floor,
                             *extra, str(source), "-o", str(dest)], check=True, capture_output=True)
         info = {"CFBundleExecutable": "Fixture", "CFBundleIdentifier": "com.github.eiskaltdcpp",
@@ -126,6 +127,79 @@ class AppPackaging(unittest.TestCase):
         self.assertEqual(stripped.read_bytes(), before)
         receipt = json.loads((app / "Contents/Resources/ThirdPartyNotices/EiskaltUpdaterPackaging.json").read_text())
         self.assertEqual(receipt["cocoa_code_sha256"], hashlib.sha256(before).hexdigest())
+
+    def linked_fixture(self, flavor, extra_import=False):
+        app = self.fixture(flavor, "linked-" + flavor)
+        arch, floor = ("x86_64", "14.0") if flavor == "intel" else ("arm64", "26.0")
+        source = self.root / "linked.mm"
+        source.write_text('#import <Sparkle/Sparkle.h>\n'
+                          'extern "C" int unbundled();\n'
+                          'int main() { @autoreleasepool { return [SPUUpdater class] == Nil' +
+                          (' || unbundled()' if extra_import else '') + '; } }\n')
+        extra = []
+        if extra_import:
+            stub = self.root / "stub.c"
+            stub.write_text("int unbundled(void) { return 0; }\n")
+            library = self.root / "libunbundled.dylib"
+            subprocess.run(["xcrun", "clang", "-arch", arch, "-mmacosx-version-min=" + floor,
+                            "-dynamiclib", "-install_name", "@rpath/libunbundled.dylib",
+                            str(stub), "-o", str(library)], check=True, capture_output=True)
+            extra.append(str(library))
+        subprocess.run(["xcrun", "clang++", "-arch", arch, "-mmacosx-version-min=" + floor,
+                        "-fobjc-arc", "-F" + str(self.stages[flavor] / "Contents/Frameworks"),
+                        "-framework", "Sparkle", "-framework", "Foundation",
+                        "-Wl,-rpath,@executable_path/../Frameworks", str(source), *extra,
+                        "-o", str(app / "Contents/MacOS/Fixture")], check=True, capture_output=True)
+        subprocess.run(["codesign", "--force", "--sign", "-", str(app)], check=True, capture_output=True)
+        return app
+
+    def test_real_sparkle_import_is_validated_with_prospective_audited_stage(self):
+        for flavor in self.stages:
+            with self.subTest(flavor=flavor):
+                app = self.linked_fixture(flavor)
+                self.assertFalse((app / "Contents/Frameworks/Sparkle.framework").exists())
+                result = self.cli(app, flavor=flavor)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                subprocess.run(["codesign", "--verify", "--deep", "--strict", str(app)],
+                               check=True, capture_output=True)
+
+    def test_prospective_stage_cannot_hide_other_unresolved_imports(self):
+        app = self.linked_fixture("apple-silicon", extra_import=True)
+        before = digest_tree(app)
+        result = self.cli(app)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(digest_tree(app), before)
+        self.assertFalse((app / "Contents/Frameworks/Sparkle.framework").exists())
+
+    def test_invalidated_plugin_is_sealed_before_main_executable(self):
+        source = os.environ.get("EISKALT_TEST_INVALIDATED_NATIVE_APP")
+        if not source:
+            self.skipTest("Provide a captured disposable native QA app with invalidated Qt plugin signatures")
+        source = Path(source).resolve()
+        self.assertEqual(plistlib.loads((source / "Contents/Info.plist").read_bytes())["SUPublicEDKey"], KEY,
+                         "Use the dummy-key QA build, never a production app")
+        before = digest_tree(source)
+        app = self.root / "EiskaltDC++.app"
+        shutil.copytree(source, app, symlinks=True)
+        plugin = app / "Contents/PlugIns/multimedia/libdarwinmediaplugin.dylib"
+        self.assertNotEqual(subprocess.run(["codesign", "--verify", "--strict", str(plugin)],
+                                          capture_output=True).returncode, 0)
+        result = self.cli(app)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        subprocess.run(["codesign", "--verify", "--deep", "--strict", str(app)],
+                       check=True, capture_output=True)
+        self.assertEqual(digest_tree(source), before)
+
+    def test_nested_executable_traversal_is_rejected_before_mutation(self):
+        app = self.fixture()
+        info = app / "Contents/Resources/Invalid.bundle/Contents/Info.plist"
+        info.parent.mkdir(parents=True)
+        info.write_bytes(plistlib.dumps({"CFBundleExecutable": "../escape"}))
+        before = digest_tree(app)
+        result = self.cli(app)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Invalid nested bundle executable", result.stderr)
+        self.assertEqual(digest_tree(app), before)
 
     def test_packaging_recipe_hash_distinguishes_field_separator_aliases(self):
         source = self.root / "source"

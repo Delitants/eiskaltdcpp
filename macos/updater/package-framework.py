@@ -138,6 +138,28 @@ def code_digest(path, work, name):
     return hashlib.sha256(copy.read_bytes()).hexdigest()
 
 
+def bundle_executables(app):
+    app = app.resolve(strict=True)
+    managed = set()
+    for bundle in (app, *app.rglob("*")):
+        if (bundle.is_symlink() or not bundle.is_dir() or
+                bundle.suffix not in (".app", ".xpc", ".framework", ".bundle") or
+                bundle == app / FRAMEWORK or app / FRAMEWORK in bundle.parents):
+            continue
+        framework = bundle.suffix == ".framework"
+        info_path = bundle / ("Resources/Info.plist" if framework else "Contents/Info.plist")
+        if not info_path.is_file():
+            continue
+        name = plistlib.loads(bounded_read(info_path, 1024 * 1024)).get("CFBundleExecutable")
+        if name is None:  # Resource-only bundles have no executable to defer.
+            continue
+        require(type(name) is str and name and Path(name).name == name, "Invalid nested bundle executable")
+        executable = ((bundle if framework else bundle / "Contents/MacOS") / name).resolve(strict=True)
+        require(bundle.resolve() in executable.parents and is_macho(executable), "Unsafe nested bundle executable")
+        managed.add(executable.relative_to(app))
+    return managed
+
+
 def seal(app, stage, profile, expected, build_root, identity):
     require(identity and not identity.startswith("--"), "Invalid signing identity")
     confined_app(app, build_root)
@@ -147,7 +169,6 @@ def seal(app, stage, profile, expected, build_root, identity):
         digest_tree(stage)
         shutil.copytree(stage, snapshot, symlinks=True)
         audit_stage(snapshot, profile, expected)
-        metadata(app, profile)
         cocoa = app / "Contents/PlugIns/platforms/libqcocoa.dylib"
         require(cocoa.is_file() and not cocoa.is_symlink() and is_macho(cocoa), "Bundled Cocoa plugin missing")
         cocoa_code_hash = code_digest(cocoa, Path(temp), "cocoa-before.dylib")
@@ -166,6 +187,17 @@ def seal(app, stage, profile, expected, build_root, identity):
         receipt_path = app / "Contents/Resources/ThirdPartyNotices/EiskaltUpdaterPackaging.json"
         require(not receipt_path.is_symlink() and (not receipt_path.exists() or receipt_path.is_file()),
                 "Unsafe packaging receipt destination")
+        # The executable may already import Sparkle, which Qt deployment does
+        # not copy. Audit the prospective closure without mutating the input.
+        prospective = Path(temp) / app.name
+        shutil.copytree(app, prospective, symlinks=True)
+        for relative in (FRAMEWORK, NOTICES):
+            target = prospective / relative
+            if not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copytree(snapshot / relative, target, symlinks=True)
+        metadata(prospective, profile)
+        managed_executables = bundle_executables(prospective)
         # Deployment may invalidate a prior seal. Sign only this confined copied
         # leaf after all input/path checks, retaining its non-signature code bytes.
         invoke("/usr/bin/codesign", "--force", "--sign", identity, "--timestamp=none",
@@ -191,7 +223,10 @@ def seal(app, stage, profile, expected, build_root, identity):
             if path.is_symlink() or path == framework or framework in path.parents or path == cocoa:
                 continue
             if path.is_file() and is_macho(path):
-                binaries.append(path)
+                # Signing/verifying a bundle executable as a bare leaf can
+                # inspect stale sibling plugin signatures. Defer to its bundle.
+                if path.relative_to(app) not in managed_executables:
+                    binaries.append(path)
             elif path.is_dir() and path.suffix in (".app", ".xpc", ".framework", ".bundle"):
                 bundles.append(path)
         # Do not re-sign/rewrite audited Sparkle helpers or the patched Cocoa plugin.

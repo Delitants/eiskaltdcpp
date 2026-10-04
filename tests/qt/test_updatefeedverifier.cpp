@@ -698,6 +698,12 @@ TEST_CASE("Native factory refuses a non-bundled process without selecting a netw
     REQUIRE_FALSE(currentMacUpdateRuntime());
     std::unique_ptr<UpdateBackend> backend;
     SECTION("factory") { backend = MacUpdateBackend::create(*context.ownedCtx); }
+    SECTION("correlated selection") {
+        auto selection = MacUpdateBackend::createSelection(*context.ownedCtx);
+        CHECK(selection.identity.build == 0); CHECK(selection.identity.bundleId.isEmpty());
+        CHECK(selection.identity.cpu.isEmpty()); CHECK(selection.identity.os.isNull());
+        backend = std::move(selection.backend);
+    }
     SECTION("direct native construction") { backend = std::make_unique<MacUpdateBackend>(*context.ownedCtx); }
     REQUIRE(backend); CHECK_FALSE(backend->supportsInstallation());
     CHECK(backend->parent() == nullptr);
@@ -749,7 +755,13 @@ TEST_CASE("Current bundle native factory fixture child", "[.][factory-runtime-ch
     const auto runtime = currentMacUpdateRuntime(); REQUIRE(runtime);
     CHECK(runtime->feedUrl.query() == "revision=17"); CHECK(runtime->identity.build == 30000001);
     dcpp::test::TestContext context;
-    auto backend = MacUpdateBackend::create(*context.ownedCtx); REQUIRE(backend);
+    auto selection = MacUpdateBackend::createSelection(*context.ownedCtx);
+    CHECK(selection.identity.build == runtime->identity.build);
+    CHECK(selection.identity.defaultChannel == runtime->identity.defaultChannel);
+    CHECK(selection.identity.bundleId == runtime->identity.bundleId);
+    CHECK(selection.identity.cpu == runtime->identity.cpu);
+    CHECK(selection.identity.os == runtime->identity.os);
+    auto backend = std::move(selection.backend); REQUIRE(backend);
     CHECK(qobject_cast<MacUpdateBackend*>(backend.get()) != nullptr);
     CHECK(backend->parent() == nullptr); CHECK_FALSE(backend->supportsInstallation());
     CHECK(backend->stopWorkersForQuit());

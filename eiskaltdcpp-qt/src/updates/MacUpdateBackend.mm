@@ -349,10 +349,15 @@ MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, QObject* p)
         QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates",
         currentMacUpdateRuntime(), true)) {}
 std::unique_ptr<UpdateBackend> MacUpdateBackend::create(dcpp::DCContext& c) {
+    auto selection = createSelection(c);
+    return std::move(selection.backend);
+}
+UpdateBackendSelection MacUpdateBackend::createSelection(dcpp::DCContext& c) {
     const auto runtime = currentMacUpdateRuntime();
-    if(!runtime) return std::make_unique<UnsupportedUpdateBackend>();
-    return std::unique_ptr<UpdateBackend>(new MacUpdateBackend(c, {}, {},
-        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", *runtime, nullptr));
+    if(!runtime) return {std::make_unique<UnsupportedUpdateBackend>(), {}};
+    return {std::unique_ptr<UpdateBackend>(new MacUpdateBackend(c, {}, {},
+        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", *runtime, nullptr)),
+        runtime->identity};
 }
 MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire, const QString& cache, QObject* p)
     : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, {}, false)) {}

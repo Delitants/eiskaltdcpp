@@ -13,6 +13,7 @@ public:
     // Current process bundle only. Structural eligibility does not enable
     // installation capability or start a scheduler.
     static std::unique_ptr<UpdateBackend> create(dcpp::DCContext&);
+    static UpdateBackendSelection createSelection(dcpp::DCContext&);
     ~MacUpdateBackend() override;
     void check(quint64 operation, Channel, CheckKind) override;
     void download(quint64 operation, const UpdateOffer&) override;
