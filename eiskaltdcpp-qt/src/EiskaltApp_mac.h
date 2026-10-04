@@ -177,6 +177,7 @@ protected:
 
             mw->beginExit();
             mw->close();
+            e->setAccepted(mw->normalQuitPrepared());
             return true;
         }
 
@@ -196,6 +197,10 @@ protected:
 
             mw->beginExit();
             mw->close();
+            if (!mw->normalQuitPrepared()) {
+                manager.cancel();
+                return;
+            }
         }
 
         manager.release();

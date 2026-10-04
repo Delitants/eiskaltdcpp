@@ -147,11 +147,11 @@ the real package, both ZIP methods, identity/CPU mismatches, cancellation, path
 aliases/traversal, symlink ancestors, malformed headers, CRC failure and bounds.
 These unsigned cases must never be offered to Sparkle.
 
-The verifier is linked into the opt-in native harness and native Qt test target. Production
-normal-quit handoff remains disabled. In particular, macOS currently leaves the
-Qt loop through an emergency `_Exit` path that skips core teardown; installation
-must not be enabled there without first establishing successful queue/settings/
-Torrent persistence and keeping the bridge event loop alive through preparation.
+The verifier is linked into the opt-in native harness and native Qt test target.
+Production installation remains disabled. Normal macOS quit now requires checked
+preparation and returns through GUI/core teardown; an unsolicited event-loop exit
+still uses the emergency `_Exit` fallback. Installation must not be enabled until
+the actual pending-update application handoff is accepted as well.
 
 ### Production Adapter In Disposable Bundles
 
@@ -661,9 +661,9 @@ override an already observed consent refusal.
 
 Run `[update-handoff-contract]` and `[application-quit]` in the isolated Qt targets.
 The latter composes real retained core/GUI shutdown with a fixture backend; it
-does not install an update. Native endpoint implementation, real MainWindow
-committed/no-update quit, and runtime activation remain pending. The public Mac
-backend still reports installation unsupported.
+does not install an update. The native endpoint and real MainWindow checked-quit
+session are implemented, but runtime installation activation remains pending.
+The public Mac backend still reports installation unsupported.
 
 ### Native Backend Handoff
 
@@ -693,3 +693,37 @@ local staged installer IPC remains; no external transport is restarted.
 The normal case retains the prepared owner through process exit. Cancellation
 and consent refusals keep the old app. These cases do not simulate an actual
 MainWindow close gesture and do not establish installer-helper OS isolation.
+
+### Actual Application Normal Quit
+
+`ApplicationQuitSession` is owned outside the retained GUI QObject tree. It
+consumes checked application preparation before committing the updater, retains
+all owners and the event loop during a pending handoff, and emits deferred exit
+readiness only for NoUpdate or Prepared. Refused remains retained: a controller
+can synthesize refusal before native cancellation finishes, so it is not a safe
+disarm receipt. Hide, active modal input and canceled confirmation do not commit.
+
+The production macOS entrypoint enables this checked session without an updater
+service yet. Its application-owned receiver exits only after readiness, destroys
+GUI owners while core managers exist, then consumes checked core shutdown. Quit
+events cannot accept termination while preparation is pending. The profile's
+single-instance marker remains owned through GUI/core disposal, not merely until
+the exit callback runs. Unexpected loop
+exit retains the emergency fallback and is not installation consent.
+
+Run `[window-quit]` and `[application-quit]` in the full GUI target, then exercise
+the actual entrypoint in disposable profiles:
+
+```sh
+python3 tests/macos/updater/run_application_quit.py --build build-torrent --mode window
+python3 tests/macos/updater/run_application_quit.py --build build-torrent --mode quit-event
+```
+
+This harness reuses production GUI objects and includes the real `main.cpp`,
+changing only the fixture IPC identity. It requires FORCE_XDG, fresh private
+homes and a localhost-only network policy; protected fixture bytes, hash/queue/
+settings snapshots and the Torrent checkpoint are read back after main returns.
+The private IPC marker must still be owned at quit and during GUI destruction.
+`_Exit` cannot produce the required post-return receipt. This establishes ordinary
+no-update quit, not signed pending-update full-app replacement, OS logout,
+installer activation, or supported-minimum-OS acceptance.

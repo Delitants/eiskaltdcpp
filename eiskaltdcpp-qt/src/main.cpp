@@ -475,10 +475,17 @@ int main(int argc, char *argv[])
     app.setApplicationName("EiskaltDC++ Qt");
     app.setApplicationVersion(QString::fromStdString(eiskaltdcppVersionString));
 
-        QtContext ctx(*dcContext);
+#if defined(Q_OS_MAC)
+    {
+#endif
+    QtContext ctx(*dcContext);
     // Guard: ensure settings are saved on scope exit.
     // The guard runs before ~QtContext.
     auto cleanupGuard = qScopeGuard([&]() {
+#if defined(Q_OS_MAC)
+        if (ctx.mainWindow() && ctx.mainWindow()->normalQuitPrepared())
+            return; // Already persisted by the checked preparation receipt.
+#endif
         qtCtx()->settings()->save();
     });
 
@@ -575,6 +582,20 @@ int main(int argc, char *argv[])
     ctx.createQueuedUsers();
     qtCtx()->arenaWidgetManager()->add(ctx.queuedUsers());
 
+#if defined(Q_OS_MAC)
+    if (!ctx.mainWindow()->enableCheckedQuit())
+        qFatal("Could not enable checked normal quit");
+    QObject::connect(ctx.mainWindow(), &MainWindow::normalQuitReady, &app, [&app, openTarget] {
+        // The retained window fences its own queued events; the application
+        // receiver remains live until the checked session authorizes exit.
+        if (!openTarget || !openTarget->normalQuitPrepared())
+            return;
+        app.pendingOpenEvents().setReady(false);
+        openTarget->close();
+        QCoreApplication::exit(0);
+    }, Qt::QueuedConnection);
+#endif
+
     const QStringList startupArguments = app.arguments();
     const bool showMainWindow = !qtCtx()->settings()->getBool(WB_MAINWINDOW_HIDE) ||
                                 !qtCtx()->settings()->getBool(WB_TRAY_ENABLED);
@@ -604,16 +625,14 @@ int main(int argc, char *argv[])
     ret = app.exec();
 
 #if defined(Q_OS_MAC)
-    // macOS emergency exit path:
-    // background core threads can still fire ClientListener callbacks during
-    // DCContext shutdown/destruction, causing EXC_BAD_ACCESS on exit.
-    // Save settings, release the single-instance marker, flush stdio, and
-    // terminate the process before core teardown.
-    if (qtCtx() && qtCtx()->settings())
-        qtCtx()->settings()->save();
-    app.releaseSingleInstance();
-    fflush(nullptr);
-    std::_Exit(ret);
+    if (!ctx.mainWindow()->normalQuitPrepared()) {
+        // An unsolicited event-loop exit is not normal-quit consent or proof
+        // that callbacks drained. Retain the emergency path for that case.
+        ctx.settings()->save();
+        app.releaseSingleInstance();
+        fflush(nullptr);
+        std::_Exit(ret);
+    }
 #endif
 
 #if !defined(Q_OS_MAC)
@@ -631,6 +650,14 @@ int main(int argc, char *argv[])
 
     dcContext->shutdown();
     dcContext.reset();
+#endif
+#if defined(Q_OS_MAC)
+    } // Destroy GUI owners while the prepared core managers still exist.
+    QtContextAware::setCurrent(nullptr);
+    dcContext->shutdown();
+    dcpp::setContext(nullptr);
+    dcContext.reset();
+    app.releaseSingleInstance();
 #endif
 
     return ret;

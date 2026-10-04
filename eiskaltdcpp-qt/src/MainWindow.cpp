@@ -106,6 +106,8 @@
 #include "ProxyTestRunner.h"
 #include "ShellCommandRunner.h"
 #include "RetainedGuiInputFence.h"
+#include "updates/ApplicationQuitSession.h"
+#include "updates/UpdateController.h"
 #include "SpyFrame.h"
 #include "SideBar.h"
 #include "ActionCustomizer.h"
@@ -164,6 +166,7 @@ public:
         bool quitFenced = false;
         bool quitFenceSaved = false;
         bool windowStateSaved = false;
+        std::unique_ptr<updates::ApplicationQuitSession> checkedQuit;
 
         // position and geometry
         bool showMax = false;
@@ -415,6 +418,7 @@ HashProgress* MainWindow::progress_dialog() {
 }
 
 MainWindow::~MainWindow(){
+    d_ptr->checkedQuit.reset();
 #ifdef USE_TORRENT
     // Stop and join the Torrent worker while DCContext and its managers exist.
     if (qtCtx()->transferView())
@@ -452,8 +456,19 @@ void MainWindow::setUnload(bool b){
 
 void MainWindow::closeEvent(QCloseEvent *e){
     Q_D(MainWindow);
+    if (normalQuitPrepared()) {
+        e->accept();
+        return;
+    }
     if (d->quitFenced) {
         e->ignore();
+        return;
+    }
+    if (d->checkedQuit && (QApplication::activeModalWidget() || QApplication::activePopupWidget())) {
+        e->ignore();
+#if defined(Q_OS_MAC)
+        cancelMacTermination();
+#endif
         return;
     }
 
@@ -522,6 +537,12 @@ void MainWindow::closeEvent(QCloseEvent *e){
         }
     }
 
+    if (d->checkedQuit) {
+        e->ignore();
+        d->checkedQuit->request(3000);
+        return;
+    }
+
     if (qtCtx()->globalTimer()) {
         qtCtx()->globalTimer()->stop();
     }
@@ -584,6 +605,26 @@ void MainWindow::closeEvent(QCloseEvent *e){
 #else
     qApp->quit();
 #endif
+}
+
+bool MainWindow::enableCheckedQuit(updates::UpdateController* updater) {
+    if(QThread::currentThread() != thread() || (updater && updater->thread() != thread())) return false;
+    Q_D(MainWindow);
+    if(d->quitFenced || d->checkedQuit || !qtCtx() || !dcCtx().isRunning()) return false;
+    d->checkedQuit = std::make_unique<updates::ApplicationQuitSession>(*qtCtx(), updater);
+    // Direct delivery is deliberate: queued callbacks targeted at this retained
+    // window are fenced. The session's own loop and receipt receiver are not.
+    connect(d->checkedQuit.get(), &updates::ApplicationQuitSession::exitReady, this,
+        [this] { emit normalQuitReady(); }, Qt::DirectConnection);
+    connect(d->checkedQuit.get(), &updates::ApplicationQuitSession::refused, this,
+        [this](const QString& component) {
+            setStatusMessage(tr("Quit preparation failed: %1. Application retained.").arg(component));
+        }, Qt::DirectConnection);
+    return true;
+}
+
+bool MainWindow::normalQuitPrepared() const {
+    return d_ptr->checkedQuit && d_ptr->checkedQuit->state() == updates::ApplicationQuitSession::State::ExitReady;
 }
 
 void MainWindow::beginExit(){

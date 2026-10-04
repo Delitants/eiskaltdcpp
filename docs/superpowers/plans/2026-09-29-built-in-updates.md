@@ -987,3 +987,30 @@ Verifier cancellation and consent refusal before native startup or at final Read
 require the exact old signed bundle after exit. This is not actual MainWindow
 closeEvent acceptance or supported-minimum-OS verification. Public installation
 capability and runtime selection remain disabled; the emergency exit is unchanged.
+
+### Actual Window And Ordinary Quit Checkpoint
+
+The unparented ApplicationQuitSession now composes retained application
+preparation with the controller's committed handoff. Only NoUpdate or Prepared
+authorizes deferred exit; AwaitingHandoff retains the event loop and owners.
+Refused is sticky because a synthesized controller refusal is not native disarm
+completion. MainWindow preserves Hide, modal input and canceled confirmation.
+
+Production macOS main enables checked no-update quit, receives readiness on the
+application rather than fenced GUI receivers, destroys GUI owners before core
+managers, and returns normally through checked core disposal. Unsolicited
+event-loop exits retain the emergency fallback. The single-instance marker stays
+owned until GUI/core teardown finishes, so a new instance cannot race final
+profile writes. An application Quit event remains
+unaccepted while preparation is pending; the legacy session callback also cancels
+pending termination, without claiming OS-session integration acceptance.
+
+Actual-entrypoint QA includes real main.cpp with only a fresh IPC identity,
+private profiles and a localhost-only network policy. It requires the post-return
+receipt, protected bytes and valid hash/queue/settings/Torrent snapshots. This is
+ordinary no-update acceptance, not signed pending-update full-app replacement.
+Public installation capability/runtime backend selection remain disabled.
+Task 5 stays in progress until full-app native handoff and remaining lifecycle
+acceptance; routed HTTP/DNS, UI/localization, intermittent Torrent bind diagnosis,
+current dual thin builds/minimum-OS QA/fresh whole-branch review and publication
+with signed feeds last remain separate gates.

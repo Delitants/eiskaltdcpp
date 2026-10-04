@@ -48,6 +48,7 @@ class FavoriteHubs;
 class DownloadQueue;
 class ToolBar;
 class MainWindow;
+namespace updates { class UpdateController; }
 #ifdef USE_TORRENT
 class TorrentRuntime;
 class TorrentWindow;
@@ -113,6 +114,8 @@ friend class QtContext;
         void beginExit();
         // Retained GUI/Torrent preparation only, not core shutdown or installer consent.
         [[nodiscard]] bool stopWorkersForQuit();
+        [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
+        bool normalQuitPrepared() const;
 
         /** */
         void newHubFrame(QString, QString);
@@ -143,6 +146,7 @@ ArenaWidget *widgetForRole(ArenaWidget::Role);
 
     Q_SIGNALS:
         void redrawWidgetPanels();
+        void normalQuitReady();
 
     public Q_SLOTS:
          QObject *getToolBar();

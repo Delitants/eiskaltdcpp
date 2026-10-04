@@ -246,6 +246,114 @@ struct IsolatedMainWindow {
     }
 };
 
+template<class T> bool enableCheckedQuit(T& window, updates::UpdateController* updater = nullptr) {
+    if constexpr(requires { window.enableCheckedQuit(updater); }) return window.enableCheckedQuit(updater);
+    else return false;
+}
+template<class T> bool normalQuitPrepared(T& window) {
+    if constexpr(requires { window.normalQuitPrepared(); }) return window.normalQuitPrepared();
+    else return false;
+}
+
+TEST_CASE("Actual window close waits for the committed matching update receipt", "[qt][window-quit]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    REQUIRE(enableCheckedQuit(*window, &updater));
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    const auto route = f.core->getProxyRoute()->snapshot();
+    REQUIRE_FALSE(window->close());
+    CHECK(window->isVisible()); CHECK_FALSE(window->isEnabled());
+    CHECK(route->revoked->load()); CHECK(f.core->isRunning()); CHECK(backend.routeWasRunning);
+    REQUIRE(updater.quitDisposition() == updates::UpdateController::QuitDisposition::AwaitingHandoff);
+    CHECK(backend.installs == 1); REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
+    CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
+    bool delivered = false; QObject outside;
+    QMetaObject::invokeMethod(&outside, [&] { delivered = true; }, Qt::QueuedConnection);
+    emit backend.installHandoffFinished(backend.handoffOperation + 1, true);
+    QCoreApplication::processEvents(); CHECK(delivered); CHECK(ready.isEmpty());
+    CHECK_FALSE(window->close()); CHECK(backend.installs == 1);
+    bool success = true, shutdown = false;
+    SECTION("native preparation") {}
+    SECTION("native refusal retains owners") { success = false; }
+    SECTION("controller cancellation is not native completion") { shutdown = true; }
+    if(shutdown) updater.shutdown();
+    else emit backend.installHandoffFinished(backend.handoffOperation, success);
+    if(success && !shutdown) {
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        CHECK(normalQuitPrepared(*window)); CHECK(window->close());
+        emit backend.installHandoffFinished(backend.handoffOperation, true);
+        QCoreApplication::processEvents(); CHECK(ready.count() == 1);
+    } else {
+        REQUIRE(waitFor([&] { return updater.quitDisposition() == updates::UpdateController::QuitDisposition::Refused; }));
+        QCoreApplication::processEvents(); CHECK(ready.isEmpty());
+        CHECK_FALSE(normalQuitPrepared(*window)); CHECK_FALSE(window->close());
+    }
+    CHECK(f.core->isRunning());
+    CHECK(QFile::exists(f.home.filePath("Queue.xml")));
+    CHECK(QFile::exists(f.home.filePath("torrent/state/jobs.json")));
+}
+
+TEST_CASE("Actual no-update window quit prepares core before deferred exit readiness", "[qt][window-quit]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    REQUIRE(enableCheckedQuit(*window));
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    const auto route = f.core->getProxyRoute()->snapshot();
+    CHECK_FALSE(window->close()); CHECK(ready.isEmpty());
+    CHECK(route->revoked->load()); CHECK_FALSE(window->isEnabled());
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(normalQuitPrepared(*window)); CHECK(window->close());
+    CHECK(QFile::exists(f.home.filePath("DCPlusPlus.xml")));
+    CHECK(QFile::exists(f.home.filePath("Queue.xml")));
+    CHECK(f.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
+}
+
+TEST_CASE("Actual window hide modal and canceled confirmation do not commit quit", "[qt][window-quit]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    REQUIRE(enableCheckedQuit(*window, &updater));
+    f.gui->settings()->setBool(WB_TRAY_ENABLED, true);
+    f.gui->settings()->setBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, true);
+    CHECK_FALSE(window->close()); CHECK_FALSE(window->isVisible()); CHECK(backend.fences == 0);
+    window->show(); f.gui->settings()->setBool(WB_TRAY_ENABLED, false);
+    QDialog modal(window); modal.setModal(true); modal.show(); QCoreApplication::processEvents();
+    CHECK_FALSE(window->close()); CHECK(backend.fences == 0); modal.hide();
+    f.gui->settings()->setBool(WB_EXIT_CONFIRM, true);
+    QTimer::singleShot(0, qApp, [] {
+        auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
+        REQUIRE(box); box->done(QMessageBox::No);
+    });
+    CHECK_FALSE(window->close()); CHECK(backend.fences == 0); CHECK(backend.installs == 0);
+    CHECK(window->isEnabled()); CHECK_FALSE(normalQuitPrepared(*window));
+    CHECK_FALSE(f.core->getProxyRoute()->snapshot()->revoked->load());
+}
+
+TEST_CASE("Actual window checked persistence refusal cannot authorize process exit", "[qt][window-quit]") {
+    IsolatedMainWindow f;
+    f.gui->createSearchBlacklist();
+    const auto blocked = f.home.filePath("searchblacklist"); REQUIRE(QDir().mkpath(blocked));
+    auto* window = f.gui->mainWindow(); REQUIRE(enableCheckedQuit(*window));
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    CHECK_FALSE(window->close()); QCoreApplication::processEvents();
+    CHECK_FALSE(window->isEnabled()); CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
+    REQUIRE(QDir(blocked).removeRecursively());
+    CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window));
+    CHECK(f.core->isRunning());
+}
+
 TEST_CASE("Application quit aggregates real GUI hub Torrent and core saves without install", "[qt][application-quit]") {
     IsolatedMainWindow f;
     f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
