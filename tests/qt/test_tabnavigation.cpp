@@ -414,6 +414,30 @@ TEST_CASE("Multiline close paint stays transparent and exposes input states", "[
     }
 }
 
+TEST_CASE("Tab close hover remains visible with flat native palette roles", "[qt][tabnavigation][tab-followup][tab-hover-flat]")
+{
+    for (bool dark : {false, true}) {
+        auto palette = tabPalette(dark);
+        const QColor background(dark ? "#252a30" : "#ffffff");
+        for (auto role : {QPalette::Window, QPalette::Button, QPalette::Base, QPalette::Midlight})
+            palette.setColor(role, background);
+        ApplicationSheet sheet(palette);
+        QWidget host;
+        host.setPalette(palette);
+        host.setAutoFillBackground(true);
+        auto *close = tab_navigation::makeCloseButton(&host, QStringLiteral("Close"));
+        close->move(12, 12);
+        host.resize(70, 50);
+        host.show();
+        host.activateWindow();
+        settleLayout();
+        close->setPalette(palette);
+        REQUIRE(close->palette().color(QPalette::Midlight) == background);
+        REQUIRE(close->palette().color(QPalette::ButtonText) == palette.color(QPalette::ButtonText));
+        checkClosePaint(*close);
+    }
+}
+
 TEST_CASE("Close hitbox edges do not close or activate the wrong target", "[qt][tabnavigation][tab-followup]")
 {
 #ifdef TAB_NAVIGATION_INTEGRATION

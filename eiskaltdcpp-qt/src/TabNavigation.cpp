@@ -41,8 +41,10 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing);
         const auto pal = palette();
         if (isEnabled() && (underMouse() || isDown())) {
-            QColor fill = pal.color(isDown() ? QPalette::Highlight : QPalette::Midlight);
-            fill.setAlpha(isDown() ? 100 : 160);
+            // Native Midlight can equal the tab surface, making hover invisible.
+            QColor fill = isDown() ? pal.color(QPalette::Highlight)
+                                  : pal.color(QPalette::Active, QPalette::ButtonText);
+            fill.setAlpha(isDown() ? 100 : 32);
             painter.setPen(Qt::NoPen);
             painter.setBrush(fill);
             painter.drawRoundedRect(rect().adjusted(2, 2, -2, -2), 4, 4);

@@ -1144,7 +1144,10 @@ for feed/archive bytes and approved archive redirects, with loopback-only relays
 private DNS, unapproved redirects and origin trust failures cannot commit output.
 This does not establish live provider/feed/archive or signed native whole-route
 acceptance. Scheduler/install capability remain disabled; Task 3 remains open.
-The 2026-10-04 outage checkpoint passes ordinary Qt tests offscreen and native
-updater fixtures on Cocoa separately. The combined Cocoa suite reproduces a
-multiline tab-close hover-image assertion failure outside this transport change;
-native rendering acceptance remains open, and offscreen success does not waive it.
+The follow-up native hover checkpoint traced the tab-close hover-image failure
+to a flat native `Midlight` colour equal to the tab surface, not a lost mouse
+flag. Close buttons now use a low-alpha `ButtonText` tint for hover, preserving
+the pressed highlight, transparent idle surface and keyboard focus ring. A new
+flat-palette regression reproduces the previous failure on Cocoa and offscreen;
+all 468 combined Cocoa/native Qt cases now pass. This resolves that focused
+rendering failure, not the remaining live routing or installation gates.
