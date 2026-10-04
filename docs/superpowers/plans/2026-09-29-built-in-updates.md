@@ -1038,3 +1038,21 @@ This is development-host full-app lifecycle acceptance, not production native
 selection, live routed HTTPS/provider DNS, strict helper isolation or minimum-OS
 proof. Verified runtime identity/scheduler, settings/menu/notification ownership,
 OS logout/additional lifecycle coverage and remaining release gates stay pending.
+
+### Installed Runtime Identity Checkpoint
+
+The application owner now derives identity only from structurally validated
+current-main-bundle metadata. The reader binds canonical executable provenance
+and the validator binds product ID, canonical numeric build, SemVer channel,
+compiled CPU/runtime OS and approved flavor floors. Maintained matching-CPU feed,
+canonical nonzero public key, strict typed native trust switches and local-only
+ATS are mandatory. CF conversion preserves embedded NULs; booleans, integers and
+strings are distinct. No path/environment/profile override is introduced.
+
+Portable adversarial tests and a small native probe cover actual CF XML/binary
+plists and executable aliases. The fixture-only applicationVersion override
+bypasses Qt's pre-reader coercion of malformed CFBundleVersion; no product startup
+repair is claimed. Structural eligibility is not signature/vendor authenticity,
+dependency/minimum-OS acceptance or live routing proof. The production backend
+is still unsupported with no scheduler or native capability. Next is gated native
+factory/config consumption and scheduler/UI ownership after routing acceptance.

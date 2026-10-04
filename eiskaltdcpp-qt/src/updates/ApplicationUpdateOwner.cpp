@@ -1,10 +1,17 @@
 #include "ApplicationUpdateOwner.h"
 #include "UpdateController.h"
 #include "UnsupportedUpdateBackend.h"
+#include "UpdateRuntimeIdentity.h"
 
 namespace updates {
+namespace {
+UpdateIdentity installedIdentity() {
+    const auto runtime = currentMacUpdateRuntime();
+    return runtime ? runtime->identity : UpdateIdentity{};
+}
+}
 ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings, dcpp::DCContext&)
-    : ApplicationUpdateOwner(settings, std::make_unique<UnsupportedUpdateBackend>(), {}) {}
+    : ApplicationUpdateOwner(settings, std::make_unique<UnsupportedUpdateBackend>(), installedIdentity()) {}
 ApplicationUpdateOwner::ApplicationUpdateOwner(WulforSettings& settings,
     std::unique_ptr<UpdateBackend> wire, UpdateIdentity identity)
     : backend(std::move(wire)),

@@ -74,6 +74,9 @@ add_executable(eiskaltdcpp-qt-tests
     test_updatepolicy.cpp
     test_updatecontroller.cpp
     test_applicationupdateowner.cpp
+    test_updateruntimeidentity.cpp
+    ${QT_SRC_DIR}/updates/UpdateRuntimeIdentity.cpp
+    ${QT_SRC_DIR}/updates/MacUpdateRuntime.cpp
     ${QT_SRC_DIR}/updates/ApplicationUpdateOwner.cpp
     test_settingsupdates.cpp
     ${QT_SRC_DIR}/updates/SettingsUpdates.cpp
@@ -234,6 +237,16 @@ endif()
 target_link_libraries(eiskaltdcpp-qt-tests PRIVATE dcpp Catch2::Catch2 Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg Qt6::Test Qt6::Network )
 
 option(EISKALT_TEST_MAC_UPDATE_DISCOVERY "Build the opt-in native Sparkle discovery tests" OFF)
+if(APPLE)
+    target_link_libraries(eiskaltdcpp-qt-tests PRIVATE "-framework CoreFoundation")
+    add_executable(eiskalt-update-runtime-probe EXCLUDE_FROM_ALL
+        ${CMAKE_SOURCE_DIR}/tests/macos/updater/runtime_identity_probe.cpp
+        ${QT_SRC_DIR}/updates/UpdateRuntimeIdentity.cpp
+        ${QT_SRC_DIR}/updates/MacUpdateRuntime.cpp
+        ${QT_SRC_DIR}/updates/UpdateUrlPolicy.cpp)
+    target_include_directories(eiskalt-update-runtime-probe PRIVATE ${QT_SRC_DIR})
+    target_link_libraries(eiskalt-update-runtime-probe PRIVATE Qt6::Core Qt6::Network "-framework CoreFoundation")
+endif()
 if(APPLE AND EISKALT_TEST_MAC_UPDATE_DISCOVERY)
     enable_language(OBJCXX)
     include(${CMAKE_SOURCE_DIR}/cmake/MacUpdater.cmake)

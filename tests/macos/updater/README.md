@@ -772,3 +772,39 @@ This establishes signed pending-update full-app acceptance on the development
 host, not production activation, OS logout, live GOST/provider DNS, or supported
 minimum-OS acceptance. Runtime identity/scheduler/UI/feed integration, platform
 QA and independent whole-branch review remain separate gates.
+
+## Installed Runtime Identity
+
+`currentMacUpdateRuntime` reads only the running process's main CFBundle and
+requires its canonical executable to be the same actual image inside
+`Contents/MacOS/EiskaltDC++`. There is no path, environment or profile override.
+Nonbundled/unsupported processes return no runtime configuration. The application
+owner uses this structurally validated identity, but its production backend and
+scheduler remain disabled.
+
+The portable validator binds the exact product ID/executable, canonical numeric
+build (not display-version ordering), SemVer stable/prerelease channel, compiled
+CPU, runtime OS and approved Intel14/AppleSilicon26 floors. It requires the exact
+maintained flavor feed with only an optional canonical revision, a canonical
+nonzero 32-byte public key and correctly typed native trust switches. CF booleans,
+integers and strings are not interchangeable; string conversion preserves
+embedded NULs. Local-network-only ATS metadata and disabled Sparkle remote
+downloader/scheduling/profiling are mandatory.
+
+Run the portable `[update-runtime-identity]` tests, then exercise real CFBundle
+XML/binary metadata and executable provenance in disposable main bundles:
+
+```sh
+cmake --build build-test --target eiskalt-update-runtime-probe -j2
+python3 tests/macos/updater/test_runtime_identity.py --build build-test
+```
+
+The probe uses private temporary homes and a deny-all-network policy. It overrides
+only Qt's fixture applicationVersion before QCoreApplication construction: Qt can
+abort while coercing a malformed CFBundleVersion before our reader is reachable.
+The independent validator still reads the original CF metadata. This is not a
+product startup repair for malformed local plists. Fixture bundles use a literal
+test public key, not a production key, and are not signature-authentication tests.
+Eligibility does not establish vendor authenticity, a verified dependency OS
+floor, or live routed HTTPS/DNS. Native factory/capability, scheduler, UI and
+release activation remain separate gates.
