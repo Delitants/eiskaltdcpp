@@ -1243,3 +1243,36 @@ delivery, live DC transfers, production update activation or minimum-OS proof.
 Development dependencies still carry newer-OS linker warnings. These remaining
 gates, the unproven intermittent Torrent bind cause, independent review and final
 thin-build/install/publication work remain open; signed feeds remain last.
+
+### 2026-10-04 Queued Notification Delivery Checkpoint
+
+An actual controller/MainWindow/Notification integration test, replacing only
+the platform notification module with a recorder, exposed four late-delivery
+failures: disabling updater notices, destroying the controller, fencing its
+workers for quit, and shutting it down after dispatch still delivered the queued
+notice. A further review regression also reproduced late delivery after Later,
+Skip and Cancel. The existing GUI quit fence already suppressed queued delivery.
+
+Updater notices now carry their offer identity on a dedicated queued signal. The
+final notification slot checks the borrowed controller's lifetime, GUI/controller
+quit fences, current notification preference, matching offer and deferred/skipped
+policy before using the existing Other-event category. The global enabled flag,
+text suppression, activity/visibility filters,
+Other-event mask and sound policy are unchanged. Generic Other notifications
+remain independent of updater ownership. This does not reset user filters or
+turn on the system tray, updater scheduler or native installation capability.
+
+The final Cocoa GUI suite passed 81 cases with 5,039 assertions. Current-source
+updater/widget tests passed 113 cases in each build: 6,695 assertions with Torrent
+and 6,694 without. Ordinary window quit and AppKit termination passed in both
+current-source applications, preserving the expected checkpoints and protected
+fixture data. Signed disposable normal quit installed the exact verified bundle;
+canceled native termination retained the exact old bundle. Both rejected tampered
+feed/archive bytes, preserved data and required no relaunch. Nine protected live
+file hashes remained unchanged. These are bounded author-reviewed receipts, not
+independent release review or minimum-OS acceptance.
+
+The recording-module receipt is not an operating-system banner receipt. Actual
+OS notification delivery, live signed v3 release acceptance, guarded activation,
+logout/live-transfer and release/minimum-OS gates remain open. The installed
+application and live profile are not changed by this checkpoint.

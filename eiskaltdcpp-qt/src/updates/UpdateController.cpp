@@ -200,6 +200,12 @@ UpdateOffer UpdateController::offer() const { return impl->offer; }
 QDateTime UpdateController::lastAttempt() const { return impl->attempt; }
 QDateTime UpdateController::lastSuccess() const { return impl->success; }
 bool UpdateController::supportsInstallation() const { return impl->backend.supportsInstallation(); }
+bool UpdateController::notificationsAllowed(const QString& offerKey) const {
+    return QThread::currentThread() == thread() && !impl->stopped &&
+        !impl->quitFenced && impl->preferences.notifications && impl->offer.build &&
+        impl->offer.key() == offerKey && impl->settings.getStr("updates/deferred") != offerKey &&
+        impl->settings.getStr("updates/skipped") != offerKey;
+}
 void UpdateController::start() {
     impl->assertThread();
     if(impl->started || impl->stopped || impl->quitFenced) return;

@@ -28,6 +28,8 @@ public:
     QDateTime lastAttempt() const;
     QDateTime lastSuccess() const;
     bool supportsInstallation() const;
+    // Recheck policy after a notification crosses another queued delivery boundary.
+    bool notificationsAllowed(const QString& offerKey) const;
     void start();
     void poll();
     void applyPreferences(UpdatePreferences);

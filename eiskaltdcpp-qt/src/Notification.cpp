@@ -61,6 +61,7 @@ Notification::Notification(dcpp::DCContext& ctx, QObject *parent) :
     enableTray(qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
 
     connect(qtCtx()->mainWindow(), &MainWindow::notifyMessage, this, &Notification::showMessage, Qt::QueuedConnection);
+    connect(qtCtx()->mainWindow(), &MainWindow::notifyUpdateMessage, this, &Notification::showUpdateMessage, Qt::QueuedConnection);
 }
 
 Notification::~Notification(){
@@ -178,8 +179,13 @@ void Notification::switchModule(int m){
 #endif
 }
 
+void Notification::showUpdateMessage(const QString& offerKey, const QString& title, const QString& message) {
+    // Preserve offer identity across the last queued hop, then inherit Other-event policy.
+    if (qtCtx()->mainWindow()->mayDeliverUpdateNotification(offerKey))
+        showMessage(ANY, title, message);
+}
+
 void Notification::showMessage(int t, const QString &title, const QString &msg){
-    // On Mac OS X, the Growl notification system must be installed for this function to display messages.
     if (qtCtx()->settings()->getBool(WB_NOTIFY_ENABLED) && !suppressTxt){
         do {
             if (title.isEmpty() || msg.isEmpty())

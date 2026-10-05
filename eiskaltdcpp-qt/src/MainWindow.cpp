@@ -639,9 +639,14 @@ bool MainWindow::attachUpdateController(updates::UpdateController& controller) {
             if(d_ptr->quitFenced) return;
             const auto message = updates::SettingsUpdates::tr("Available version: %1").arg(offer.version);
             setStatusMessage(message);
-            emit notifyMessage(Notification::ANY, Settings::tr("Updates"), message);
+            emit notifyUpdateMessage(offer.key(), Settings::tr("Updates"), message);
         });
     return true;
+}
+
+bool MainWindow::mayDeliverUpdateNotification(const QString& offerKey) const {
+    return QThread::currentThread() == thread() && !d_ptr->quitFenced &&
+        d_ptr->updateController && d_ptr->updateController->notificationsAllowed(offerKey);
 }
 
 bool MainWindow::enableCheckedQuit(updates::UpdateController* updater) {

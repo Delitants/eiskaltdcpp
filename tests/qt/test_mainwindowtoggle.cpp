@@ -101,6 +101,13 @@
 void installQuitFixtureTransport(dcpp::BufferedSocket*, std::unique_ptr<dcpp::Socket>);
 bool startQuitFixtureDownload(dcpp::DCContext&, dcpp::Socket&, const std::string&, const std::string&);
 
+struct NotificationTestAccess {
+    static void replaceModule(Notification& notification, std::unique_ptr<NotifyModule> module) {
+        delete notification.notify;
+        notification.notify = module.release();
+    }
+};
+
 namespace {
 template<class T> bool guiFence(T& owner) {
     if constexpr(requires { owner.stopWorkersForQuit(); }) return owner.stopWorkersForQuit();
@@ -309,7 +316,7 @@ TEST_CASE("Help updater checks show redacted manual results even with notificati
     REQUIRE(window->attachUpdateController(*updater)); CHECK_FALSE(window->attachUpdateController(*updater));
     REQUIRE(action->isEnabled());
     auto prefs = updater->preferences(); prefs.notifications = false; updater->applyPreferences(prefs);
-    QSignalSpy notifications(window, SIGNAL(notifyMessage(int,QString,QString)));
+    QSignalSpy notifications(window, &MainWindow::notifyUpdateMessage);
     auto* logs = f.core->getLogManager(); logs->clearLiveEntries();
     action->trigger(); REQUIRE(backend.checks == 1);
     emit backend.failed(backend.operation, "secret-password@private-proxy.invalid", updates::FailureCategory::Network);
@@ -395,7 +402,7 @@ TEST_CASE("Automatic update notifications obey preferences and retained GUI fenc
     updates::UpdateController updater(*f.gui->settings(), backend,
         {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
     REQUIRE(window->attachUpdateController(updater));
-    QSignalSpy notifications(window, SIGNAL(notifyMessage(int,QString,QString)));
+    QSignalSpy notifications(window, &MainWindow::notifyUpdateMessage);
     const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
         QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
     auto* logs = f.core->getLogManager(); logs->clearLiveEntries();
@@ -409,7 +416,7 @@ TEST_CASE("Automatic update notifications obey preferences and retained GUI fenc
     SECTION("notification dispatch") {
         updater.start(); updater.poll(); REQUIRE(backend.checks == 1); emit backend.available(backend.operation, offer);
         REQUIRE(waitFor([&] { return notifications.count() == 1; }));
-        CHECK(notifications.front().at(0).toInt() == Notification::ANY);
+        CHECK(notifications.front().at(0).toString() == offer.key());
         CHECK(notifications.front().at(2).toString().contains("3.0.0-pre.2"));
         REQUIRE_FALSE(logs->getLiveEntries().empty());
         CHECK(logs->getLiveEntries().back().area == dcpp::LogManager::STATUS);
@@ -423,6 +430,104 @@ TEST_CASE("Automatic update notifications obey preferences and retained GUI fenc
         CHECK_FALSE(window->findChild<QAction*>("checkForUpdates")->isEnabled());
         CHECK_FALSE(window->attachUpdateController(updater));
     }
+}
+
+TEST_CASE("Queued update notices revalidate policy at the notification module boundary", "[qt][update-notification-delivery]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    auto* notification = f.gui->notification();
+    auto* settings = f.gui->settings();
+    settings->setBool(WB_NOTIFY_ENABLED, true);
+    settings->setBool(WB_NOTIFY_SHOW_ON_ACTIVE, true);
+    settings->setBool(WB_NOTIFY_SHOW_ON_VISIBLE, true);
+    settings->setBool(WB_NOTIFY_SND_ENABLED, false);
+    settings->setInt(WI_NOTIFY_EVENTMAP, Notification::ANY);
+    struct Recorder final : NotifyModule {
+        QStringList titles, messages;
+        void showMessage(const QString& title, const QString& message, QObject*) override {
+            titles.append(title); messages.append(message);
+        }
+    };
+    auto recorder = std::make_unique<Recorder>();
+    auto* recorded = recorder.get();
+    NotificationTestAccess::replaceModule(*notification, std::move(recorder));
+    QuitBackend backend(*f.core);
+    auto updater = std::make_unique<updates::UpdateController>(*settings, backend,
+        updates::UpdateIdentity{1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    REQUIRE(window->attachUpdateController(*updater));
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    std::function<void()> afterDispatch;
+    bool expected = false;
+    SECTION("enabled delivery") { expected = true; }
+    SECTION("global notifications disabled") { settings->setBool(WB_NOTIFY_ENABLED, false); }
+    SECTION("global Other events disabled") { settings->setInt(WI_NOTIFY_EVENTMAP, 0x0B); }
+    SECTION("global text suppression") { notification->setSuppressTxt(true); }
+    SECTION("global notifications disabled after dispatch") {
+        afterDispatch = [&] { settings->setBool(WB_NOTIFY_ENABLED, false); };
+    }
+    SECTION("global Other events disabled after dispatch") {
+        afterDispatch = [&] { settings->setInt(WI_NOTIFY_EVENTMAP, 0x0B); };
+    }
+    SECTION("global text suppressed after dispatch") {
+        afterDispatch = [&] { notification->setSuppressTxt(true); };
+    }
+    SECTION("visible window suppression") {
+        settings->setBool(WB_NOTIFY_SHOW_ON_ACTIVE, false);
+        settings->setBool(WB_NOTIFY_SHOW_ON_VISIBLE, false);
+    }
+    SECTION("updater preference revoked after dispatch") {
+        afterDispatch = [&] { auto prefs = updater->preferences(); prefs.notifications = false; updater->applyPreferences(prefs); };
+    }
+    SECTION("GUI quit fence after dispatch") {
+        afterDispatch = [&] { REQUIRE(window->stopWorkersForQuit()); };
+    }
+    SECTION("controller destroyed after dispatch") { afterDispatch = [&] { updater.reset(); }; }
+    SECTION("controller quit fence after dispatch") { afterDispatch = [&] { REQUIRE(updater->stopWorkersForQuit()); }; }
+    SECTION("controller shutdown after dispatch") { afterDispatch = [&] { updater->shutdown(); }; }
+    SECTION("Later after dispatch") { afterDispatch = [&] { updater->later(); }; }
+    SECTION("Skip version after dispatch") { afterDispatch = [&] { updater->skipVersion(); }; }
+    SECTION("Cancel offer after dispatch") { afterDispatch = [&] { updater->cancel(); }; }
+    int dispatched = 0;
+    QObject::connect(window, &MainWindow::notifyUpdateMessage, window, [&](const QString&, const QString&, const QString&) {
+        ++dispatched;
+        if(afterDispatch) afterDispatch();
+    }, Qt::DirectConnection);
+    updater->start(); updater->poll(); REQUIRE(backend.checks == 1);
+    emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return dispatched == 1; }));
+    QTest::qWait(50);
+    REQUIRE(recorded->messages.size() == int(expected));
+    if(expected) {
+        CHECK(recorded->titles.front() == Settings::tr("Updates"));
+        CHECK(recorded->messages.front().contains(offer.version));
+        emit window->notifyUpdateMessage("stale-offer-key", Settings::tr("Updates"), "Stale notice");
+        QTest::qWait(50); CHECK(recorded->messages.size() == 1);
+    }
+}
+
+TEST_CASE("Generic Other notifications do not require an updater owner", "[qt][update-notification-delivery]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    auto* notification = f.gui->notification();
+    auto* settings = f.gui->settings();
+    settings->setBool(WB_NOTIFY_ENABLED, true);
+    settings->setBool(WB_NOTIFY_SHOW_ON_ACTIVE, true);
+    settings->setBool(WB_NOTIFY_SHOW_ON_VISIBLE, true);
+    settings->setBool(WB_NOTIFY_SND_ENABLED, false);
+    settings->setInt(WI_NOTIFY_EVENTMAP, Notification::ANY);
+    struct Recorder final : NotifyModule {
+        int delivered = 0;
+        void showMessage(const QString&, const QString&, QObject*) override { ++delivered; }
+    };
+    auto recorder = std::make_unique<Recorder>();
+    auto* recorded = recorder.get();
+    NotificationTestAccess::replaceModule(*notification, std::move(recorder));
+    emit window->notifyMessage(Notification::ANY, "Other event", "Generic notice");
+    REQUIRE(waitFor([&] { return recorded->delivered == 1; }));
+    emit window->notifyUpdateMessage("unowned-offer", "Updates", "No attached updater");
+    QTest::qWait(50);
+    CHECK(recorded->delivered == 1);
 }
 
 TEST_CASE("Actual window close waits for the committed matching update receipt", "[qt][window-quit]") {

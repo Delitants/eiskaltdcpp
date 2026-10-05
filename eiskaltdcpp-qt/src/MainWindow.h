@@ -117,6 +117,7 @@ friend class QtContext;
         [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
         // Borrow the application-owned controller; no scheduler or native activation.
         [[nodiscard]] bool attachUpdateController(updates::UpdateController&);
+        bool mayDeliverUpdateNotification(const QString& offerKey) const;
         void showSpeedLimitSettings();
         bool normalQuitPrepared() const;
 
@@ -282,6 +283,7 @@ ArenaWidget *widgetForRole(ArenaWidget::Role);
         void coreOpenShare(dcpp::UserPtr, const QString &, const QString&);
         void coreUpdateStats(const QMap<QString, QString> &);
         void notifyMessage(int, const QString&, const QString&);
+        void notifyUpdateMessage(const QString& offerKey, const QString& title, const QString& message);
 
     public:
         MainWindow (dcpp::DCContext& ctx, QWidget *parent=nullptr);

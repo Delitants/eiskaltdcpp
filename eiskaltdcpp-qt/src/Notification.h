@@ -44,6 +44,7 @@ class Notification :
 {
 Q_OBJECT
 friend class QtContext;
+friend struct NotificationTestAccess;
 
 public:
     explicit Notification(dcpp::DCContext& ctx, QObject *parent = nullptr);
@@ -77,6 +78,7 @@ enum Type{
 public Q_SLOTS:
     void switchModule(int);
     void showMessage(int t, const QString&, const QString&);
+    void showUpdateMessage(const QString& offerKey, const QString& title, const QString& message);
 
     void slotShowHide();
     void slotShowSpeedLimits();
