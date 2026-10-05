@@ -4,6 +4,9 @@
 #include <QPointer>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <memory>
+
+class QMessageBox;
 
 namespace updates {
 // Owned outside the retained GUI QObject tree. Borrowed context and updater
@@ -13,6 +16,7 @@ class ApplicationQuitSession final : public QObject {
 public:
     enum class State { Idle, Preparing, AwaitingHandoff, ExitQueued, ExitReady, Refused };
     explicit ApplicationQuitSession(QtContext&, UpdateController* = nullptr);
+    ~ApplicationQuitSession() override;
     State state() const { return current; }
     void request(uint32_t socketDrainTimeoutMs);
 signals:
@@ -22,6 +26,7 @@ private:
     void queueExit();
     void refuse(const QString&);
     void advance();
+    void showRecoveryPrompt(const QString&);
     ApplicationQuitCoordinator coordinator;
     QPointer<UpdateController> updater;
     bool hadUpdater;
@@ -30,5 +35,7 @@ private:
     QElapsedTimer workerDeadline;
     uint32_t drainTimeout = 0;
     bool workerRetryAllowed = false;
+    bool checkpointRetryAllowed = false, retryingCheckpoint = false;
+    std::unique_ptr<QMessageBox> recoveryPrompt;
 };
 }

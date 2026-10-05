@@ -453,7 +453,7 @@ void AntiSpam::saveSettings() {
 
 bool AntiSpam::saveForQuitChecked() {
     if (QThread::currentThread() != thread()) return false;
-    if (quitPrepared) return quitSaved;
+    if (quitPrepared && quitSaved) return true;
     quitPrepared = true;
     const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
     const auto save = [&](const QString& name, const QString& text) {

@@ -37,6 +37,7 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
             return reject("Updater GUI parent");
 
     preparing = true;
+    retainedWindow = window;
     result = {Status::Refused, "Preparing",
               {dcpp::DCContext::ShutdownStatus::UnsupportedContext, "Not prepared"}};
     const char*& failed = firstFailure;
@@ -63,18 +64,68 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     result.core = context.dcCtx().prepareShutdownChecked(timeout);
     if (result.core.status != dcpp::DCContext::ShutdownStatus::Ready && !failed)
         failed = result.core.component;
+    const bool ownersReady = !failed && guiStopped &&
+        result.core.status == dcpp::DCContext::ShutdownStatus::Ready;
     // A failed GUI receipt may leave hub callbacks live. Read auxiliary intent
     // only after either GUI listener retirement or a successful core drain.
     if (guiStopped || result.core.status == dcpp::DCContext::ShutdownStatus::Ready) {
+        searchOwner = context.searchBlacklist(); searchRequired = bool(searchOwner);
+        spamOwner = context.antiSpam(); spamRequired = bool(spamOwner);
         if (context.searchBlacklist())
             check("Search blacklist", [&] { return context.searchBlacklist()->saveForQuitChecked(); });
         if (context.antiSpam())
             check("Anti-spam", [&] { return context.antiSpam()->saveForQuitChecked(); });
     }
-    check("GUI settings", [&] { return context.settings()->saveChecked(); });
+    const bool settingsSaved = check("GUI settings", [&] { return context.settings()->saveChecked(); });
+    checkpointRetryAllowed = ownersReady && settingsSaved && failed;
+    if(checkpointRetryAllowed && hadUpdater) {
+        bool disarmed = false;
+        try { disarmed = updater && updater->disarmForCheckpointRecovery(); } catch(...) {}
+        if(!disarmed) {
+            checkpointRetryAllowed = false;
+            failed = "Updater recovery disarm";
+        }
+    }
     result.status = failed ? Status::Refused : Status::Ready;
     result.component = failed ? failed : "Ready";
     prepared = true;
+    preparing = false;
+    return result;
+}
+
+bool ApplicationQuitCoordinator::canRetryCheckpoint() const {
+    return QThread::currentThread() == thread() && prepared && checkpointRetryAllowed;
+}
+
+ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::retryCheckpoint() noexcept {
+    if(QThread::currentThread() != thread())
+        return {Status::NotAdmitted, "GUI owner",
+                {dcpp::DCContext::ShutdownStatus::UnsupportedContext, "Not prepared"}};
+    const auto reject = [&](const char* name) {
+        return Result{Status::NotAdmitted, name, result.core};
+    };
+    if(!canRetryCheckpoint()) return result;
+    if(preparing) return reject("Preparation active");
+    if(!retainedWindow || context.mainWindow() != retainedWindow || !context.dcCtx().isRunning() ||
+       (searchRequired && !searchOwner) || context.searchBlacklist() != searchOwner ||
+       (spamRequired && !spamOwner) || context.antiSpam() != spamOwner)
+        return reject("Retained checkpoint owners");
+    if(QApplication::activeModalWidget() || QApplication::activePopupWidget()) return reject("Modal input");
+    if(hadUpdater && (!updater || updater->thread() != thread())) return reject("Updater owner");
+    preparing = true;
+    const char* failed = nullptr;
+    const auto check = [&](const char* name, auto&& operation) {
+        bool saved = false;
+        try { saved = operation(); } catch(...) {}
+        if(!saved && !failed) failed = name;
+    };
+    // Successful receipts stay cached; failed writes retain frozen intent.
+    // No producer, core checkpoint, GUI/Torrent fence or settings sync is replayed.
+    if(searchOwner) check("Search blacklist", [&] { return searchOwner->saveForQuitChecked(); });
+    if(spamOwner) check("Anti-spam", [&] { return spamOwner->saveForQuitChecked(); });
+    result.status = failed ? Status::Refused : Status::Ready;
+    result.component = failed ? failed : "Ready";
+    checkpointRetryAllowed = failed != nullptr;
     preparing = false;
     return result;
 }

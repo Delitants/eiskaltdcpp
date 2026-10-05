@@ -42,6 +42,9 @@ public:
     // Terminal input/worker fence, retaining Ready/version consent. The
     // application must still check every other shutdown owner before commit.
     [[nodiscard]] bool stopWorkersForQuit();
+    // Permanently disarm a prepared update before recovering a refused save.
+    // A successful receipt permits only ordinary quit after repaired checkpoints.
+    [[nodiscard]] bool disarmForCheckpointRecovery();
     // Called only after application shutdown has successfully committed.
     // AwaitingHandoff is not permission to exit; retain owners/event loop until
     // a matching terminal receipt. NoUpdate needs no asynchronous handoff.

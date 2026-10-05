@@ -31,6 +31,7 @@ struct UpdateController::Impl {
     quint64 operation = 0;
     bool started = false, stopped = false, busy = false;
     bool quitFenced = false, quitFenceSucceeded = false;
+    bool recoveryDisarmAttempted = false, recoveryDisarmSucceeded = false;
     bool handoffConsentRevoked = false;
 
     Impl(UpdateController& o, WulforSettings& s, UpdateBackend& b, UpdateIdentity i, Clock c)
@@ -262,8 +263,26 @@ bool UpdateController::stopWorkersForQuit() {
     catch(...) { /* Retain owners and permanently refuse installer consent. */ }
     return impl->quitFenceSucceeded;
 }
+bool UpdateController::disarmForCheckpointRecovery() {
+    if(QThread::currentThread() != thread()) return false;
+    if(!impl->quitFenced || !impl->quitFenceSucceeded || impl->stopped ||
+       impl->quitDisposition != QuitDisposition::NotCommitted) return false;
+    if(impl->recoveryDisarmAttempted) return impl->recoveryDisarmSucceeded;
+    impl->recoveryDisarmAttempted = true;
+    impl->ready.clear(); impl->consent.clear();
+    try {
+        impl->backend.revokeInstallConsent();
+        impl->recoveryDisarmSucceeded = true;
+    } catch(...) { /* Unknown native disarm outcome cannot authorize exit. */ }
+    return impl->recoveryDisarmSucceeded;
+}
 void UpdateController::normalQuitCommitted() {
     impl->assertThread(); if(impl->stopped) return;
+    if(impl->recoveryDisarmAttempted) {
+        impl->quitDisposition = impl->recoveryDisarmSucceeded ? QuitDisposition::NoUpdate : QuitDisposition::Refused;
+        impl->stopped = true; impl->setState(State::Stopped);
+        return;
+    }
     if(!stopWorkersForQuit()) {
         impl->quitDisposition = QuitDisposition::Refused;
         impl->stopped = true; impl->ready.clear(); impl->consent.clear();

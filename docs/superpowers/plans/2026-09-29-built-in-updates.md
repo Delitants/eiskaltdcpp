@@ -1595,3 +1595,47 @@ screenshots and prerelease publication still follow. Protected live records,
 accepted dependencies and prior candidate images/notices/seals/archives are
 unchanged. No push, installation, key operation, server or VM mutation. Signed
 feeds remain last; Tasks 7/8 are not complete.
+
+### 2026-10-05 Retained Auxiliary Checkpoint Recovery
+
+An explicit quit retry or an independently owned, modeless "Retry Save and Quit"
+button can now recover a failed search-blacklist or anti-spam snapshot. The main
+window stays fenced and disabled; removing an obstruction alone does not advance
+quit. Retries write only frozen intent, retain the original owners and reuse
+successful primary GUI, Torrent, core, settings-sync and updater-fence receipts.
+They do not restart producers, replay primary shutdown or provide an unsaved exit.
+Foreign/modal callers and lost or replaced snapshot owners cannot certify Ready.
+
+The coordinator, not merely the recovery dialog, permanently disarms update
+consent before admitting this recovery. Disarm is limited to the pre-handoff phase;
+a void cancellation request is not a terminal native-installer receipt. A failed
+or unknown disarm remains blocked. Recovered quit can only select NoUpdate. The
+separate worker-timeout retry and ordinary matching updater handoff remain intact.
+Core, Torrent, physical-durability, primary GUI/settings-sync and native-installer
+failures intentionally remain terminal: their existing receipts cannot establish
+safe retry scope. This repairs the reviewed auxiliary-save obstruction, not every
+possible refused checkpoint or a total filesystem/native quit deadline.
+
+The unchanged baseline failed 11 of 174 assertions in five focused cases. Two
+additional coordinator/foreign-thread regressions failed three of 259 assertions
+before their guards were repaired. Both fresh, matching-ABI2 architecture builds
+pass the focused quit suite (20 cases/799 assertions). Full ARM core passes
+1032/150486, Qt 609/33569 and Torrent 152/18430; Intel/Rosetta passes 1032/150483,
+609/33626 and 152/18430 respectively. Both architectures pass all applicable GUI
+layouts: multiline 90/5397, single-line 90/5489 and sidebar 88/5303. No skips.
+An owned coordinator copy without the retained-owner guard fails exactly one of
+14 assertions; the unmodified single case passes all 14. This extra guard check
+does not replace independent whole-branch review.
+
+Next reviewed source repair: nonblocking Torrent location probes. Earlier
+intermittent Qt/Intel Torrent aggregate failures remain unexplained and are not
+waived by this passing run. New recovery strings still need catalog coverage and
+native-language/control acceptance. Broader native retirement responsiveness,
+linguistic/resource/provenance/reproducibility review, native minimum-OS/platform
+and live acceptance, final whole-branch review and final-source application/material
+rebuilding remain open. Production numeric allocation, signing/signed-v3 acceptance
+and guarded activation, safe closed-app installation/readback, README/wiki/approved
+unredacted screenshots and prerelease publication still follow. Protected live
+records, accepted dependencies and prior candidates remain unchanged. No push,
+installation, private-key, server, VM or Docker change. Signed feeds remain last;
+Tasks 7/8 are not complete.

@@ -122,9 +122,13 @@ template<class T> bool auxiliarySave(T& owner) {
     if constexpr(requires { owner.saveForQuitChecked(); }) return owner.saveForQuitChecked();
     else return false;
 }
+template<class T> auto retryCheckpoint(T& owner) {
+    if constexpr(requires { owner.retryCheckpoint(); }) return owner.retryCheckpoint();
+    else return owner.prepare(3000);
+}
 struct QuitBackend : updates::UpdateBackend {
     dcpp::DCContext& core;
-    int fences = 0, installs = 0, checks = 0;
+    int fences = 0, installs = 0, checks = 0, revocations = 0;
     quint64 operation = 0;
     quint64 handoffOperation = 0;
     std::function<bool()> handoffConsent;
@@ -137,7 +141,11 @@ struct QuitBackend : updates::UpdateBackend {
     void check(quint64 op, updates::Channel, updates::CheckKind) override { ++checks; operation = op; }
     void download(quint64 op, const updates::UpdateOffer&) override { operation = op; }
     void cancel() override {}
-    void revokeInstallConsent() override {}
+    bool rejectRecoveryDisarm = false;
+    void revokeInstallConsent() override {
+        ++revocations;
+        if(fences && rejectRecoveryDisarm) throw std::runtime_error("Fixture disarm refusal");
+    }
     void armInstallOnQuit(const updates::UpdateOffer&, bool) override { ++installs; }
     bool stopWorkersForQuit() override {
         ++fences; routeWasRunning = !core.getProxyRoute()->snapshot()->revoked->load(); return fenceResult;
@@ -725,7 +733,7 @@ TEST_CASE("Actual window hide modal and canceled confirmation do not commit quit
     CHECK_FALSE(f.core->getProxyRoute()->snapshot()->revoked->load());
 }
 
-TEST_CASE("Actual window checked persistence refusal cannot authorize process exit", "[qt][window-quit]") {
+TEST_CASE("Actual window retries a repaired auxiliary checkpoint without restarting producers", "[qt][window-quit][checkpoint-recovery]") {
     IsolatedMainWindow f;
     f.gui->createSearchBlacklist();
     const auto blocked = f.home.filePath("searchblacklist"); REQUIRE(QDir().mkpath(blocked));
@@ -734,8 +742,100 @@ TEST_CASE("Actual window checked persistence refusal cannot authorize process ex
     CHECK_FALSE(window->close()); QCoreApplication::processEvents();
     CHECK_FALSE(window->isEnabled()); CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
     REQUIRE(QDir(blocked).removeRecursively());
-    CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window));
+    CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window));
+    CHECK_FALSE(window->close()); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(normalQuitPrepared(*window)); CHECK(QFile::exists(blocked));
+    CHECK(f.core->getProxyRoute()->snapshot()->revoked->load());
     CHECK(f.core->isRunning());
+}
+
+TEST_CASE("Checkpoint recovery button retains frozen rules and permanently disarms a ready update", "[qt][window-quit][checkpoint-recovery]") {
+    IsolatedMainWindow f; f.gui->createSearchBlacklist(); f.gui->createAntiSpam();
+    f.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"original-rule"});
+    f.gui->antiSpam()->setPhrase("initialize"); f.gui->antiSpam()->setPhrase("original-question");
+    QString blocked = f.home.filePath("searchblacklist");
+    SECTION("search blacklist") {}
+    SECTION("anti-spam") { blocked = f.home.filePath("antispam"); }
+    REQUIRE(QDir().mkpath(blocked));
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    auto* window = f.gui->mainWindow(); REQUIRE(enableCheckedQuit(*window, &updater));
+    const auto route = f.core->getProxyRoute()->snapshot(); auto* hash = f.core->getHashManager();
+    const int priorRevocations = backend.revocations;
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK_FALSE(window->isEnabled());
+    CHECK(backend.revocations > priorRevocations); CHECK(backend.installs == 0);
+    f.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"late-rule"});
+    f.gui->antiSpam()->setPhrase("late-question");
+    QTest::qWait(30); CHECK(ready.isEmpty());
+    CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    REQUIRE(QDir(blocked).removeRecursively());
+    QTest::qWait(30); CHECK(ready.isEmpty());
+    QMessageBox* prompt = nullptr;
+    for(auto* top : QApplication::topLevelWidgets())
+        if(top->objectName() == "quitCheckpointRecovery") prompt = qobject_cast<QMessageBox*>(top);
+    CHECK(prompt != nullptr);
+    if(prompt) {
+        CHECK(prompt->isVisible()); CHECK(prompt->isEnabled()); CHECK_FALSE(prompt->isModal());
+        auto* button = prompt->findChild<QPushButton*>("retryQuitCheckpoint"); REQUIRE(button);
+        CHECK(button->isEnabled()); QTest::mouseClick(button, Qt::LeftButton);
+    } else CHECK_FALSE(window->close());
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(normalQuitPrepared(*window)); CHECK(backend.installs == 0); CHECK(backend.fences == 1);
+    CHECK(updater.quitDisposition() == updates::UpdateController::QuitDisposition::NoUpdate);
+    CHECK(route->revoked->load()); CHECK(f.core->getHashManager() == hash);
+    CHECK(f.core->getClientManager()->getClients().empty());
+    QFile search(f.home.filePath("searchblacklist")); REQUIRE(search.open(QIODevice::ReadOnly));
+    CHECK(search.readAll() == "NAME:original-rule\n");
+    QFile spam(f.home.filePath("antispam")); REQUIRE(spam.open(QIODevice::ReadOnly));
+    CHECK(spam.readAll() == "|ANTISPAM_PHRASE|original-question\n|ANTISPAM_KEY|\n|ATTEMPTS|0\n");
+}
+
+TEST_CASE("A failed updater recovery disarm cannot authorize recovered exit", "[qt][window-quit][checkpoint-recovery]") {
+    IsolatedMainWindow f; f.gui->createSearchBlacklist();
+    const auto blocked = f.home.filePath("searchblacklist"); REQUIRE(QDir().mkpath(blocked));
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    auto cleanup = dcpp::makeScopedFunctor([&] { backend.rejectRecoveryDisarm = false; });
+    auto* window = f.gui->mainWindow(); REQUIRE(enableCheckedQuit(*window, &updater));
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    backend.rejectRecoveryDisarm = true;
+    CHECK_FALSE(window->close()); CHECK(backend.revocations == 1); CHECK(ready.isEmpty());
+    REQUIRE(QDir(blocked).removeRecursively()); backend.rejectRecoveryDisarm = false;
+    CHECK_FALSE(window->close()); QTest::qWait(30);
+    CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window)); CHECK(backend.installs == 0);
+    CHECK(backend.fences == 1); CHECK(backend.revocations == 1);
+}
+
+TEST_CASE("Direct coordinator checkpoint recovery cannot preserve installer consent", "[qt][application-quit][checkpoint-recovery]") {
+    IsolatedMainWindow f; f.gui->createSearchBlacklist();
+    const auto blocked = f.home.filePath("searchblacklist"); REQUIRE(QDir().mkpath(blocked));
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    ApplicationQuitCoordinator coordinator(*f.gui, &updater);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    REQUIRE(QDir(blocked).removeRecursively());
+    REQUIRE(retryCheckpoint(coordinator).status == ApplicationQuitCoordinator::Status::Ready);
+    updater.normalQuitCommitted();
+    CHECK(backend.installs == 0);
+    CHECK(updater.quitDisposition() == updates::UpdateController::QuitDisposition::NoUpdate);
 }
 
 TEST_CASE("Application quit aggregates real GUI hub Torrent and core saves without install", "[qt][application-quit]") {
@@ -948,8 +1048,12 @@ TEST_CASE("Auxiliary GUI quit snapshots freeze intent and refuse persistence fai
         CHECK_FALSE(auxiliarySave(*search)); CHECK_FALSE(auxiliarySave(*spam));
         CHECK(QFile::exists(f.home.filePath("blacklist")));
         REQUIRE(QDir(searchFile).removeRecursively()); REQUIRE(QDir(spamFile).removeRecursively());
-        CHECK_FALSE(auxiliarySave(*search)); CHECK_FALSE(auxiliarySave(*spam));
-        CHECK_FALSE(QFile::exists(searchFile)); CHECK_FALSE(QFile::exists(spamFile));
+        search->setList(SearchBlacklist::NAME, {"late-rule"}); spam->setPhrase("late-question");
+        REQUIRE(auxiliarySave(*search)); REQUIRE(auxiliarySave(*spam));
+        QFile searchSaved(searchFile); REQUIRE(searchSaved.open(QIODevice::ReadOnly));
+        CHECK(searchSaved.readAll() == "NAME:fixture-rule\n");
+        QFile spamSaved(spamFile); REQUIRE(spamSaved.open(QIODevice::ReadOnly));
+        CHECK(spamSaved.readAll() == "|ANTISPAM_PHRASE|fixture-question\n|ANTISPAM_KEY|\n|ATTEMPTS|0\n");
     }
 }
 
@@ -969,6 +1073,8 @@ TEST_CASE("Application quit refuses auxiliary save failure even after a ready co
     REQUIRE(QDir(blocked).removeRecursively());
     CHECK(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
     CHECK_FALSE(QFile::exists(blocked));
+    REQUIRE(retryCheckpoint(coordinator).status == ApplicationQuitCoordinator::Status::Ready);
+    CHECK(QFile::exists(blocked)); CHECK_FALSE(f.gui->mainWindow()->isEnabled());
 }
 
 TEST_CASE("Application quit keeps failed core owners in an isolated child process", "[qt][application-quit]") {
@@ -982,6 +1088,44 @@ TEST_CASE("Application quit keeps failed core owners in an isolated child proces
         INFO(child.readAllStandardOutput().constData()); INFO(child.readAllStandardError().constData());
         REQUIRE(finished); CHECK(child.exitStatus() == QProcess::NormalExit); CHECK(child.exitCode() == 0);
     }
+}
+
+TEST_CASE("Auxiliary retry rejects foreign and modal callers without replaying core saves", "[qt][application-quit][checkpoint-recovery]") {
+    IsolatedMainWindow f; f.gui->createSearchBlacklist();
+    const auto blocked = f.home.filePath("searchblacklist"); REQUIRE(QDir().mkpath(blocked));
+    struct Counter : dcpp::SettingsManagerListener {
+        int saves = 0;
+        void on(Save, dcpp::SimpleXML&) override { ++saves; }
+    } counter;
+    f.core->getSettingsManager()->addListener(&counter);
+    auto cleanup = dcpp::makeScopedFunctor([&] { f.core->getSettingsManager()->removeListener(&counter); });
+    ApplicationQuitCoordinator coordinator(*f.gui);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    CHECK(counter.saves == 1);
+    const auto foreign = std::async(std::launch::async, [&] { return retryCheckpoint(coordinator); }).get();
+    CHECK(foreign.status == ApplicationQuitCoordinator::Status::NotAdmitted);
+    CHECK(foreign.core.status == dcpp::DCContext::ShutdownStatus::UnsupportedContext);
+    QDialog modal(f.gui->mainWindow()); modal.setModal(true); modal.show();
+    QCoreApplication::processEvents();
+    CHECK(retryCheckpoint(coordinator).status == ApplicationQuitCoordinator::Status::NotAdmitted);
+    CHECK(counter.saves == 1); modal.hide();
+    REQUIRE(QDir(blocked).removeRecursively());
+    REQUIRE(retryCheckpoint(coordinator).status == ApplicationQuitCoordinator::Status::Ready);
+    CHECK(counter.saves == 1); CHECK(QFile::exists(blocked));
+    CHECK(f.core->getProxyRoute()->snapshot()->revoked->load());
+    CHECK(f.core->getClientManager()->getClients().empty());
+}
+
+TEST_CASE("Auxiliary retry cannot replace lost frozen intent with a new owner", "[qt][application-quit][checkpoint-recovery]") {
+    IsolatedMainWindow f; f.gui->createAntiSpam();
+    f.gui->antiSpam()->setPhrase("initialize"); f.gui->antiSpam()->setPhrase("retained-question");
+    const auto blocked = f.home.filePath("antispam"); REQUIRE(QDir().mkpath(blocked));
+    ApplicationQuitCoordinator coordinator(*f.gui);
+    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    f.gui->destroyAntiSpam(); f.gui->createAntiSpam();
+    REQUIRE(QDir(blocked).removeRecursively());
+    CHECK(retryCheckpoint(coordinator).status != ApplicationQuitCoordinator::Status::Ready);
+    CHECK_FALSE(QFile::exists(blocked));
 }
 
 TEST_CASE("Application quit failed-core child fixture", "[.][application-quit-child]") {
