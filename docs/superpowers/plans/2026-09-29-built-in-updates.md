@@ -1516,3 +1516,35 @@ production signing/activation, safe installation and documentation/prerelease
 publication still follow. All protected live records and accepted dependency,
 candidate-image/notice, seal and archive contents remain unchanged. No push,
 installation, signing-key operation, server or VM change. Signed feeds remain last.
+
+### 2026-10-04 Integrity Error Classification Repair Checkpoint
+
+TTH mismatches now have a typed, FileException-compatible integrity error. Download
+completion and disconnect cleanup reset the corrupt current segment without
+setting the permanent physical-flush veto. Previously verified queue segments
+remain intact. The Merkle stream explicitly checks its underlying storage even
+when rejecting a hash: an actual write or durability failure takes precedence and
+still blocks checked shutdown, including after a later successful transfer. No
+latched physical failure is cleared, and no translated error-string matching is
+used. Producer admission, cleanup leases and ordinary retry policy are unchanged.
+
+Real completion/disconnect regressions first failed 6 of 48 assertions: valid retry
+still vetoed shutdown, and corruption hid a read-only File write until teardown.
+A separate registered-peer Data regression first failed checked core preparation
+after successful retry. With the repair, both consistent DC-only architectures
+pass 68 assertions in 3 focused cases, 1000 in 104 related cleanup/stream/Merkle/
+snapshot/core-owner cases, and all 1029 non-hidden core tests. Full suites report
+150471 assertions on ARM and 150473 under Intel/Rosetta, with no skips. Coverage
+includes actual recovered target contents, physical-error veto retention, checked
+core snapshots and disposal. This is host core verification, not installed-app,
+native Intel or minimum-OS acceptance. Original RED and intermediate evidence is
+retained; final builds use matching current headers and sources.
+
+Three reviewed source repairs remain: bounded asynchronous GUI worker retirement,
+safe recovery from a refused checkpoint, and nonblocking Torrent location probes.
+The prior Intel aggregate Torrent failures, linguistic/resource/provenance review,
+native/platform acceptance, final-source application/material rebuilding,
+production signing/activation, safe installation and documentation/prerelease
+publication also remain pending. Protected live records and accepted dependencies,
+candidate images/notices, strict seals and archives remain unchanged. No push,
+installation, signing-key operation, server or VM mutation. Signed feeds last.

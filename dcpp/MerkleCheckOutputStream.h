@@ -48,11 +48,18 @@ public:
             cur.finalize();
             finalized = true;
         }
-        if(finalized) {
-            if (cur.getRoot() != real.getRoot())
-                throw FileException(_("TTH inconsistency"));
-        } else {
-            checkTrees();
+        try {
+            if(finalized) {
+                if (cur.getRoot() != real.getRoot())
+                    throw IntegrityException(_("TTH inconsistency"));
+            } else {
+                checkTrees();
+            }
+        } catch(const IntegrityException&) {
+            // Corruption must not hide a buffered write or durability failure.
+            // A physical flush error takes precedence; otherwise reject the hash.
+            s->flush();
+            throw;
         }
         return s->flush();
     }
@@ -114,7 +121,7 @@ private:
             if(cur.getLeaves().size() > real.getLeaves().size() ||
                     !(cur.getLeaves()[verified] == real.getLeaves()[verified]))
             {
-                throw FileException(_("TTH inconsistency"));
+                throw IntegrityException(_("TTH inconsistency"));
             }
             verified++;
         }

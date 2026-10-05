@@ -175,6 +175,20 @@ struct UploadListener : UploadManagerListener {
     void on(Failed, Upload*, const string&) noexcept override { if(!blockComplete) { entered.signal(); release.wait(); } }
     void on(Complete, Upload*) noexcept override { if(blockComplete) { entered.signal(); release.wait(); } }
 };
+struct WriteProbeFile : File {
+    unsigned& attempts;
+    WriteProbeFile(const string& path, unsigned& attempts) : File(path, File::READ, File::OPEN), attempts(attempts) { }
+    size_t write(const void* bytes, size_t count) override {
+        ++attempts;
+        return File::write(bytes, count);
+    }
+};
+struct FailureWriteProbe : DownloadManagerListener {
+    unsigned& attempts;
+    unsigned observed = 0;
+    explicit FailureWriteProbe(unsigned& attempts) : attempts(attempts) { }
+    void on(Failed, Download*, const string&) noexcept override { observed = attempts; }
+};
 }
 
 TEST_CASE("Download cleanup stop joins accepted failure queue tails and concurrent finalizers", "[transfer-cleanup-stop][shutdown]") {
@@ -408,4 +422,67 @@ TEST_CASE("Download cleanup accepts a valid short final hash block without a fal
     CHECK(source->getDownload() == nullptr); CHECK(f.queue().getPos(target) == 192 * 1024 + 123);
     CHECK(File::getSize(target) == 192 * 1024 + 123); CHECK_FALSE(fs::exists(f.path("short-final.part")));
     CHECK(stopCleanup(f.download())); REQUIRE(f.queue().saveQueueChecked(true));
+}
+
+TEST_CASE("Corrupt peer bytes do not veto checked shutdown after a valid retry", "[transfer-cleanup-stop][merkle-flush][integrity-retry][shutdown]") {
+    Fixture f; auto* source = f.source(true);
+    const auto target = f.queued(*source, "integrity-retry", 192 * 1024 + 123);
+    auto* d = f.start(*source);
+    string tail(128 * 1024 + 123, '\0'); tail.back() = 'x';
+    // Both real cleanup paths encounter the short final leaf mismatch at flush.
+    d->addPos(d->getFile()->write(tail.data(), tail.size()), tail.size());
+    SECTION("completion flush") { f.download().endData(source); }
+    SECTION("disconnect flush") { f.download().onFailed(source, "peer disconnected"); }
+    CHECK(source->getDownload() == nullptr);
+    CHECK(f.download().getDownloadCount() == 0);
+    CHECK(f.queue().getPos(target) == 64 * 1024);
+    CHECK_FALSE(fs::exists(target));
+
+    auto* retry = f.source(true);
+    auto* item = f.queue().fileQueue.find(target); REQUIRE(item != nullptr);
+    f.queue().addSource(item, retry->getHintedUser(), 0, false);
+    auto* valid = f.start(*retry);
+    REQUIRE(valid->getStartPos() == 64 * 1024);
+    REQUIRE(valid->getSize() == 128 * 1024 + 123);
+    f.download().stopProducersForShutdown(); f.queue().stopProducersForShutdown();
+    f.bytes(*retry, 128 * 1024 + 123);
+    CHECK(retry->getDownload() == nullptr);
+    CHECK(f.queue().getPos(target) == 192 * 1024 + 123);
+    CHECK(File(target, File::READ, File::OPEN).read() == string(192 * 1024 + 123, '\0'));
+    CHECK(stopCleanup(f.download())); CHECK(stopCleanup(f.download()));
+    REQUIRE(f.queue().saveQueueChecked(true));
+}
+
+TEST_CASE("Corrupt peer bytes cannot hide a physical flush failure even after a valid retry", "[transfer-cleanup-stop][merkle-flush][integrity-retry][shutdown]") {
+    unsigned writeAttempts = 0;
+    Fixture f; auto* source = f.source(true);
+    const auto target = f.queued(*source, "integrity-disk-failure", 192 * 1024 + 123);
+    auto* d = f.start(*source);
+    FailureWriteProbe listener(writeAttempts); f.download().addListener(&listener);
+    ScopedFunctor([&] { f.download().removeListener(&listener); });
+    delete d->getFile();
+    d->setFile(new MerkleCheckOutputStream<TigerTree, true>(d->getTigerTree(),
+        new BufferedOutputStream<true>(new WriteProbeFile(f.path("integrity-disk-failure.part"), writeAttempts), 256 * 1024),
+        d->getStartPos()));
+    string tail(128 * 1024 + 123, '\0'); tail.back() = 'x';
+    d->addPos(d->getFile()->write(tail.data(), tail.size()), tail.size());
+    SECTION("completion flush") { f.download().endData(source); }
+    SECTION("disconnect flush") { f.download().onFailed(source, "peer disconnected"); }
+    // Real writes on a read-only file must be attempted before destruction;
+    // destructor-only failures would be swallowed and cannot veto checked quit.
+    CHECK(listener.observed > 0);
+    CHECK(source->getDownload() == nullptr);
+    CHECK(f.queue().getPos(target) == 64 * 1024); CHECK_FALSE(fs::exists(target));
+
+    auto* retry = f.source(true);
+    auto* item = f.queue().fileQueue.find(target); REQUIRE(item != nullptr);
+    f.queue().addSource(item, retry->getHintedUser(), 0, false);
+    f.start(*retry);
+    f.download().stopProducersForShutdown(); f.queue().stopProducersForShutdown();
+    f.bytes(*retry, 128 * 1024 + 123);
+    CHECK(retry->getDownload() == nullptr);
+    CHECK(f.queue().getPos(target) == 192 * 1024 + 123);
+    CHECK(File(target, File::READ, File::OPEN).read() == string(192 * 1024 + 123, '\0'));
+    CHECK_FALSE(stopCleanup(f.download())); CHECK_FALSE(stopCleanup(f.download()));
+    REQUIRE(f.queue().saveQueueChecked(true));
 }

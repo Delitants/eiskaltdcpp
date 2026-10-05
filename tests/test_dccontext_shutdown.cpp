@@ -348,6 +348,53 @@ TEST_CASE("Checked core transfer cleanup failure prevents dependent snapshots", 
     CHECK(prepare(c).status == Status::Failed);
 }
 
+TEST_CASE("Checked core shutdown saves snapshots after corrupt peer data and a valid retry", "[core-shutdown][integrity-retry]") {
+    Fixture f; auto& c = f.context();
+    c.settingsManager_->set(SettingsManager::KEEP_FINISHED_FILES, true);
+    c.settingsManager_->set(SettingsManager::SEGMENTED_DL, false);
+    c.settingsManager_->set(SettingsManager::SFV_CHECK, false);
+    auto peer = [&] {
+        auto* source = c.connectionManager_->getConnection(false, false);
+        source->setFlag(UserConnection::FLAG_DOWNLOAD | UserConnection::FLAG_SUPPORTS_ADCGET |
+                        UserConnection::FLAG_SUPPORTS_TTHF | UserConnection::FLAG_SUPPORTS_MINISLOTS);
+        source->setUser(UserPtr(new User(CID::generate()))); source->setHubUrl("adc://fixture");
+        source->socket = BufferedSocket::getSocket('\n', c);
+        auto transport = std::make_unique<Socket>(); transport->create(Socket::TYPE_TCP, AF_INET);
+        source->socket->setSocket(std::move(transport));
+        return source;
+    };
+    const string bytes(192 * 1024 + 123, '\0'); TigerTree tree(64 * 1024);
+    tree.update(bytes.data(), bytes.size()); tree.finalize(); c.hashManager_->addTree(tree);
+    const auto part = f.path("integrity.part"), target = f.path("integrity.bin");
+    File(part, File::WRITE, File::CREATE | File::TRUNCATE).write(bytes);
+    auto* item = c.queueManager_->fileQueue.add(target, bytes.size(), 0, QueueItem::NORMAL, part, 1700000000, tree.getRoot());
+    item->addSegment(Segment(0, 64 * 1024));
+    for(bool corrupt : {true, false}) {
+        auto* source = peer();
+        c.queueManager_->addSource(item, source->getHintedUser(), 0, false);
+        c.downloadManager_->addConnection(source);
+        auto* download = source->getDownload(); REQUIRE(download != nullptr);
+        REQUIRE(download->getStartPos() == 64 * 1024);
+        REQUIRE(download->getSize() == 128 * 1024 + 123);
+        c.downloadManager_->startData(source, download->getStartPos(), download->getSize(), false);
+        auto tail = bytes.substr(64 * 1024); if(corrupt) tail.back() = 'x';
+        if(!corrupt) {
+            c.downloadManager_->stopProducersForShutdown(); c.queueManager_->stopProducersForShutdown();
+        }
+        c.downloadManager_->on(UserConnectionListener::Data(), source,
+            reinterpret_cast<const uint8_t*>(tail.data()), tail.size());
+        CHECK(source->getDownload() == nullptr);
+        CHECK(c.queueManager_->getPos(target) == (corrupt ? 64 * 1024 : 192 * 1024 + 123));
+        source->on(BufferedSocketListener::Failed(), "owned disconnect");
+        REQUIRE(BufferedSocket::waitShutdown(3000));
+    }
+    REQUIRE(File(target, File::READ, File::OPEN).read() == bytes);
+    REQUIRE(prepare(c).status == Status::Ready);
+    CHECK(fs::exists(f.path("DCPlusPlus.xml"))); CHECK(fs::exists(f.path("Queue.xml")));
+    CHECK(prepare(c).status == Status::Ready);
+    c.shutdown(); CHECK_FALSE(c.isRunning()); CHECK(c.getDownloadManager() == nullptr);
+}
+
 TEST_CASE("Checked core snapshots preserve the queue CID tail through the Users loader", "[core-shutdown]") {
     Fixture f; auto& c = f.context();
     const CID queued(string(39, 'B')), unrelated(string(39, 'D'));

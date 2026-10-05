@@ -413,6 +413,10 @@ void DownloadManager::endData(UserConnection* aSource) {
 
     try {
         d->getFile()->flush();
+    } catch(const IntegrityException& e) {
+        d->resetPos();
+        failDownload(aSource, e.getError());
+        return;
     } catch(const Exception& e) {
         recordFlushFailure(d);
         failDownload(aSource, e.getError());
@@ -529,6 +533,8 @@ void DownloadManager::removeDownload(Download* d) {
         if(d->getActual() > 0) {
             try {
                 d->getFile()->flush();
+            } catch(const IntegrityException&) {
+                d->resetPos();
             } catch(const Exception&) {
                 recordFlushFailure(d);
             }
