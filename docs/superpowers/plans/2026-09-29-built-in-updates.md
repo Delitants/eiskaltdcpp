@@ -1853,3 +1853,45 @@ acceptance, final app/material rebuilding, numeric allocation/signing/signed-v3
 acceptance, guarded activation/closed-app install, README/wiki/approved unredacted
 screenshots and prerelease/public readback remain open. No push, install, signing,
 activation, provider or live-state changes. Signed feeds last; Tasks 7/8 stay open.
+
+### 2026-10-05 Held Staging Cleanup Boundary Audit
+
+Private append-only probes linked against the consistent current ARM production
+objects hold the actual deletion syscall for 350ms with an owned watchdog.
+Transparent QFile/QTemporaryDir control passes 1/31; the independent descriptor-
+relative control passes 2/54, preserving unlink/unlinkat/rmdir results, flags and
+ENOENT and excluding a component-prefix sibling. Test hooks never load into the
+installed app. Every launcher uses a disposable profile and loopback-only sandbox.
+
+Exact behavioral RED is now retained: transport 1/41 with 11 anticipated failures,
+native staging 1/162 with 10, checked session 1/35 with 10. A strict validator checks
+complete XML, exact cases/counts/failed-expression multisets, no errors/skips,
+explicit process exits and matching hook/provider/direct-network-denial receipts.
+These intentionally failing probes are diagnosis, not green regression acceptance.
+
+Actual GUI-thread unlink blocks cancelled transport completion for 359ms and quit
+retraction for 361ms. Actual GUI-thread rmdir blocks native Ready cancellation for
+368ms and revoked-Ready quit cleanup for 361ms. Valid prior Ready retains its
+archive without entering directory removal. These concrete cleanup operations
+still block after the earlier physical-worker-retirement repair.
+
+The checked session's 50ms request blocks for 425ms, then reaches exit readiness
+and retires its core route rather than refusing while retained. This isolated
+fixture has no selected update and invokes no installer: it establishes late exit
+readiness, not actual update consent, crash installation or a live app exit.
+
+Next repair must own file/directory cleanup through physical retirement, preserve
+terminal removal failure and delivered ownership, and keep checked quit Pending
+while held so its finite timeout refuses without late Ready/consent/automatic exit.
+Explicit post-drain retry remains necessary. Native owner-release paths, including
+installer refusal and destructor fallback, need the same lifetime audit. No
+detach/terminate/nested event pump or arbitrary filesystem hard deadline is implied.
+
+All frozen source/protected state, prior negative logs/binaries, dependencies and
+accepted candidate readbacks match. No production repair, full regression rerun,
+installation, push, signing, activation or live-state mutation in this audit.
+Cleanup repair is next; intermittent causes and broader core/filesystem latency,
+linguistic/resource/provenance/reproducibility, native/minimum-OS/live/benchmarks,
+final app/material rebuild, numeric allocation/signing/signed-v3 acceptance,
+guarded activation/closed-app install and docs/prerelease/public readback remain.
+Signed feeds last; Tasks 7/8 remain open.
