@@ -16,6 +16,7 @@
 #include "TransferViewModel.h"
 #ifdef USE_TORRENT
 #include "TorrentActionMenu.h"
+#include "TorrentLocationProbe.h"
 #endif
 #include "WulforUtil.h"
 #include "WulforSettings.h"
@@ -703,6 +704,24 @@ void TransferView::setTorrentEngine(eiskalt::torrent::TorrentEngine *engine)
     model->setTorrentEngine(engine);
 }
 
+void TransferView::openTorrentLocation(const eiskalt::torrent::Job &job,
+                                      std::function<bool(const QString &)> probe)
+{
+    if (QThread::currentThread() != thread()) return;
+    const auto source = torrentEngine;
+    const auto attachment = torrentAttachment;
+    const auto id = job.id;
+    const auto path = job.savePath;
+    torrent_action_menu::probeDownloadDirectory(this, job, [this, source, attachment, id, path] {
+        if (!source || torrentEngine != source || torrentAttachment != attachment) return false;
+        for (const auto &current : source->jobs())
+            if (current.id == id) return current.savePath == path;
+        return false;
+    }, [this] {
+        QMessageBox::warning(this, torrent_action_menu::locationTitle(), torrent_action_menu::locationError());
+    }, std::move(probe));
+}
+
 void TransferView::torrentContextMenu(const QModelIndexList &selection)
 {
     QList<QPersistentModelIndex> rows;
@@ -765,8 +784,10 @@ void TransferView::torrentContextMenu(const QModelIndexList &selection)
         emit torrentDetailsRequested(*survivingIds.cbegin());
     } else if (action == openLocation && engine && survivingIds.size() == 1) {
         for (const auto &job : engine->jobs()) {
-            if (survivingIds.contains(job.id) && !torrent_action_menu::openDownloadDirectory(job))
-                QMessageBox::warning(this, openLocation->text(), torrent_action_menu::locationError());
+            if (survivingIds.contains(job.id)) {
+                openTorrentLocation(job);
+                break;
+            }
         }
     } else if ((action == shareDc || action == shareTorrent) && !survivingIds.isEmpty()) {
         emit torrentMagnetShareRequested(survivingIds.values(), action == shareDc);

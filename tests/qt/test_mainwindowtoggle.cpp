@@ -26,6 +26,9 @@
 #include <QMessageBox>
 #include "TorrentRuntime.h"
 #include "TorrentWindow.h"
+#if __has_include("TorrentLocationProbe.h")
+#include "TorrentLocationProbe.h"
+#endif
 #include "TransferView.h"
 #include "AutoFitColumns.h"
 #include "TabButton.h"
@@ -65,6 +68,7 @@
 #include <QTest>
 #include <QTimer>
 #include <QThreadPool>
+#include <QSemaphore>
 #include <QFutureWatcher>
 #include <QtConcurrent>
 #include <QTabWidget>
@@ -85,6 +89,15 @@
 #include "dcpp/DownloadManager.h"
 #include "dcpp/QueueManager.h"
 #include "dcpp/File.h"
+
+struct TransferViewTestAccess {
+    template<class View> static void openLocation(View &view, const eiskalt::torrent::Job &job,
+                                                  std::function<bool(const QString &)> probe) {
+        if constexpr (requires { view.openTorrentLocation(job, probe); })
+            view.openTorrentLocation(job, std::move(probe));
+        else FAIL("No guarded asynchronous Transfer location entry point");
+    }
+};
 #include "SearchBlacklist.h"
 #include "Antispam.h"
 #include "updates/UpdateBackend.h"
@@ -2086,7 +2099,7 @@ TEST_CASE("MainWindow Torrent action toggles the real singleton without losing s
     CHECK_FALSE(QFile::exists(fixture.home.filePath("downloads/payload.bin")));
 }
 
-TEST_CASE("Transfer Torrent menu exposes the actual download directory", "[qt][torrent-location][mainwindow]")
+TEST_CASE("Transfer Torrent menu exposes the actual download directory", "[qt][torrent-location][torrent-location-async][mainwindow]")
 {
     IsolatedMainWindow fixture;
     auto *engine = TorrentRuntime::instance()->engine();
@@ -2097,11 +2110,13 @@ TEST_CASE("Transfer Torrent menu exposes the actual download directory", "[qt][t
     REQUIRE(metadata.write(bytes) == bytes.size());
     metadata.close();
     const auto path = fixture.home.filePath("downloads");
-    REQUIRE(QDir().mkpath(path));
+    REQUIRE_FALSE(QFileInfo::exists(path));
     const auto id = engine->add(metadata.fileName(), path, {}, true);
     REQUIRE_FALSE(id.isEmpty());
     // The optimistic admission row has no resolved storage location yet.
     REQUIRE(waitFor([&] { return engine->files(id).size() == 1; }));
+    REQUIRE(QDir().rmdir(path));
+    REQUIRE_FALSE(QFileInfo::exists(path));
     TransferView transfers(*fixture.core);
     transfers.setTorrentEngine(engine);
     transfers.show();
@@ -2127,6 +2142,89 @@ TEST_CASE("Transfer Torrent menu exposes the actual download directory", "[qt][t
     CHECK(enabled);
     CHECK(engine->jobs().first().paused);
     CHECK_FALSE(QFile::exists(QDir(path).filePath("payload.bin")));
+}
+
+TEST_CASE("Transfer location drops a result from a detached engine", "[qt][torrent-location-async][mainwindow]")
+{
+    IsolatedMainWindow fixture;
+    auto *engine = TorrentRuntime::instance()->engine();
+    QFile metadata(fixture.home.filePath("location.torrent"));
+    REQUIRE(metadata.open(QIODevice::WriteOnly));
+    const QByteArray bytes = QByteArray("d4:infod6:lengthi1e4:name11:payload.bin12:piece lengthi16384e6:pieces20:") +
+        QCryptographicHash::hash("x", QCryptographicHash::Sha1) + "ee";
+    REQUIRE(metadata.write(bytes) == bytes.size());
+    metadata.close();
+    const auto id = engine->add(metadata.fileName(), fixture.home.filePath("downloads"), {}, true);
+    REQUIRE(waitFor([&] { return engine->files(id).size() == 1; }));
+    TransferView transfers(*fixture.core);
+    transfers.setTorrentEngine(engine);
+    QSemaphore release;
+    std::atomic_bool entered{false};
+    bool staleWarning = false;
+    QTimer dismissUnexpectedWarning;
+    QObject::connect(&dismissUnexpectedWarning, &QTimer::timeout, &transfers, [&] {
+        if (auto *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget())) {
+            staleWarning = true;
+            warning->reject();
+        }
+    });
+    dismissUnexpectedWarning.start(10);
+    auto cleanup = dcpp::makeScopedFunctor([&] { release.release(8); QThreadPool::globalInstance()->waitForDone(5000); });
+    TransferViewTestAccess::openLocation(transfers, engine->jobs().first(), [&](const QString &path) {
+        entered = true;
+        release.acquire();
+        return QFileInfo(path).isDir();
+    });
+    REQUIRE(waitFor([&] { return entered.load(); }));
+    transfers.setTorrentEngine(nullptr);
+    release.release();
+    REQUIRE(waitFor([&] { return !transfers.property("_torrentLocationPending").toBool(); }));
+    CHECK_FALSE(staleWarning);
+    CHECK_FALSE(QApplication::activeModalWidget());
+    CHECK(engine->jobs().first().paused);
+}
+
+TEST_CASE("Checked quit retains a held location receipt without blocking GUI", "[qt][torrent-location-async][mainwindow]")
+{
+#if __has_include("TorrentLocationProbe.h")
+    IsolatedMainWindow fixture;
+    auto *window = fixture.gui->mainWindow();
+    auto *requester = new QWidget(window);
+    eiskalt::torrent::Job job;
+    job.savePath = fixture.home.path();
+    QSemaphore release;
+    std::atomic_bool entered{false};
+    auto cleanup = dcpp::makeScopedFunctor([&] { release.release(8); QThreadPool::globalInstance()->waitForDone(5000); });
+    int errors = 0;
+    torrent_action_menu::probeDownloadDirectory(requester, job, [] { return true; }, [&] { ++errors; },
+        [&](const QString &path) { entered = true; release.acquire(); return QFileInfo(path).isDir(); });
+    REQUIRE(waitFor([&] { return entered.load(); }));
+    delete requester;
+    const auto receipt = window->findChildren<QFutureWatcherBase *>();
+    REQUIRE(receipt.size() == 1);
+    updates::ApplicationQuitSession session(*fixture.gui);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    const auto route = fixture.core->getProxyRoute()->snapshot();
+    QTimer heartbeat;
+    int ticks = 0;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; });
+    heartbeat.start(1);
+    session.request(30);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(ticks > 0);
+    CHECK(ready.isEmpty());
+    CHECK_FALSE(route->revoked->load());
+    CHECK_FALSE(receipt.first()->isFinished());
+    release.release();
+    REQUIRE(waitFor([&] { return receipt.first()->isFinished(); }));
+    CHECK(ready.isEmpty());
+    CHECK(errors == 0);
+    session.request(3000);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(route->revoked->load());
+#else
+    FAIL("No retained asynchronous location receipt for checked quit");
+#endif
 }
 
 TEST_CASE("Transfer columns persist manual widths through real view reconstruction", "[qt][transfer-columns][mainwindow]")

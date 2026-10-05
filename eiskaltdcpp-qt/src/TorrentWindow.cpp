@@ -5,6 +5,7 @@
 #include "TorrentCreateDialog.h"
 #include "TorrentToolbar.h"
 #include "TorrentActionMenu.h"
+#include "TorrentLocationProbe.h"
 #include "FileExtensionIcons.h"
 #include "AppIconTheme.h"
 #include "CountryNames.h"
@@ -730,14 +731,7 @@ TorrentWindow::TorrentWindow(TorrentEngine *torrentEngine, const QString &layout
     connect(ui->deleteFiles, &QAction::triggered, this, [this] { removeSelected(true); });
     connect(ui->recheck, &QAction::triggered, this, &TorrentWindow::recheckSelected);
     connect(ui->openLocation, &QAction::triggered, this, [this] {
-        const auto id = selectedId();
-        if (!engine || id.isEmpty()) return;
-        for (const auto &job : engine->jobs()) {
-            if (job.id != id) continue;
-            if (!torrent_action_menu::openDownloadDirectory(job))
-                showError(torrent_action_menu::locationError());
-            return;
-        }
+        openLocation();
     });
     connect(ui->jobs, &QTreeWidget::itemSelectionChanged, this, [this] {
         selectionDirty = false;
@@ -918,6 +912,35 @@ QStringList TorrentWindow::selectedIds() const
     for (const auto *item : ui->jobs->selectedItems())
         ids.append(item->data(0, Qt::UserRole).toString());
     return ids;
+}
+
+void TorrentWindow::setState(ArenaWidget::Flags flags)
+{
+    // Closing a singleton keeps it alive; reopening must not revive an old Open request.
+    if ((flags & ArenaWidget::Hidden) && !(state() & ArenaWidget::Hidden))
+        setProperty("_torrentLocationGeneration", property("_torrentLocationGeneration").toULongLong() + 1);
+    ArenaWidget::setState(flags);
+}
+
+void TorrentWindow::openLocation(std::function<bool(const QString &)> probe)
+{
+    if (QThread::currentThread() != thread()) return;
+    const auto id = selectedId();
+    const auto source = engine;
+    const auto generation = property("_torrentLocationGeneration").toULongLong();
+    if (!source || id.isEmpty() || (state() & ArenaWidget::Hidden)) return;
+    for (const auto &job : source->jobs()) {
+        if (job.id != id) continue;
+        const auto path = job.savePath;
+        torrent_action_menu::probeDownloadDirectory(this, job, [this, source, id, path, generation] {
+            if (!source || engine != source || selectedId() != id || (state() & ArenaWidget::Hidden)
+                || property("_torrentLocationGeneration").toULongLong() != generation) return false;
+            for (const auto &current : source->jobs())
+                if (current.id == id) return current.savePath == path;
+            return false;
+        }, [this] { showError(torrent_action_menu::locationError()); }, std::move(probe));
+        return;
+    }
 }
 
 void TorrentWindow::showError(const QString &message)

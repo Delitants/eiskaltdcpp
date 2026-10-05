@@ -1639,3 +1639,84 @@ unredacted screenshots and prerelease publication still follow. Protected live
 records, accepted dependencies and prior candidates remain unchanged. No push,
 installation, private-key, server, VM or Docker change. Signed feeds remain last;
 Tasks 7/8 are not complete.
+
+### 2026-10-05 Staged Nonblocking Torrent Location Probes
+
+Torrent selection and context-menu refresh now admit the actual save directory
+lexically, without querying filesystem availability. Explicit Open probes the
+directory on a worker using only copied path/dependency values. A future watcher
+on the stable top-level window retains pending work after its requesting child
+disappears, integrating with the existing checked-quit future fence. One request
+per requester is admitted; stale job/path/engine/attachment, lost or disabled
+owners and foreign-thread admission cannot open Finder or show a late error.
+Closing the retained singleton invalidates its request generation, including a
+close/reopen before completion. No Torrent activity, priorities or storage paths
+are changed. Existing translated titles/errors are reused.
+
+The corrected frozen baseline fails exactly eight of 42 Qt assertions in four
+cases and three of 37 GUI assertions in three cases. The initial missing-folder
+fixture had overlooked metadata admission creating an empty directory; that run
+is retained but not credited as semantic RED evidence. Before the close-generation
+guard, a held probe reproduced exactly two late opens in 69 assertions: hidden
+and hidden/reopened tabs. Both fresh, matching-ABI2 architecture builds pass the
+focused repair checks: Qt five cases/131 assertions and GUI three cases/61
+assertions each. These are isolated offscreen/Intel-Rosetta checks with held real
+read-only probes and intercepted file URLs, not native Finder or a slow mounted
+filesystem acceptance test.
+
+Full ARM core passes 1032 cases/150482 assertions. GUI multiline passes 92/5437,
+single-line 92/5529 and applicable sidebar 90/5343. Full Qt is NOT green: 612 of
+613 cases pass, with one initial publication deadline failure in the runtime
+stop/resume preservation case (Rechecking 0.0%, no publication or runtime error;
+seed 3982279739). Full Torrent is NOT green: 151 of 152 cases pass, with one
+initial SOCKS5-bootstrap connection deadline failure (seed 1446322059). Same-seed
+isolated controls pass on current and unchanged 2a8bc4866 binaries, but do not
+explain or waive either aggregate failure. No deadline was relaxed. New location
+cases precede runtime cases in Qt linker order, so absence of interference has
+not been established by a passing isolated control. Full Intel regression and
+same-seed aggregate/prefix controls remain pending; earlier intermittent failures
+also remain open. This is a working-source checkpoint, not repair acceptance or
+a release-ready verdict. No commit, installation or publication at this stage.
+
+Next: investigate retained aggregate failures and complete cross-architecture
+regression, then fresh whole-branch review. Broader native quit responsiveness,
+catalog/native-language, resource/dependency attribution, provenance and
+reproducibility work, native Intel/minimum-OS and live notification/logout/DC/
+Torrent/benchmark acceptance remain. Final reviewed source/provider/application/
+material rebuilding, production numeric allocation, signing/signed-v3 acceptance,
+guarded activation and closed-app installation/readback still follow. README,
+wiki, approved unredacted screenshots, prerelease assets and public readback remain
+pending. Signed feeds remain last; Tasks 7/8 are not complete.
+
+### 2026-10-05 Cross-Architecture And Fresh Review Checkpoint
+
+The staged folder-probe repair now has full Intel/Rosetta regression: core
+1032/150482, Qt 613/33662, Torrent 152/18430, GUI multiline 92/5437,
+single-line 92/5529 and applicable sidebar 90/5343 all pass without skips.
+Current ARM full-order controls at the original failure seeds also pass:
+Qt 613/33869 and Torrent 152/18430. These do not waive the original failures.
+The unchanged Qt baseline instead reproduced one listener-bind failure in the
+source-seed unchanged-settings case; its original stop/resume case passed.
+Both unchanged/current backend controls passed. A diagnostic-only traced baseline
+Qt run passed without reproducing the runtime listener failure. Port selection
+uses Qt randomness independently of Catch seeds; no cause is established and no
+deadline or production networking policy was relaxed.
+
+A fresh read-only reviewer inspected the frozen 312-path committed release delta
+plus the working repair. The prior six source findings were not reissued. Two
+Important/P2 findings remain: native updater transport/verification retirement
+still performs blocking GUI-thread joins, and the mandatory ABI2 configure probe
+compiles but does not execute its library ABI comparison. The latter must reject
+ABI2 headers paired with an ABI1 binary, retaining independent runtime/package
+checks and an explicit cross-compilation policy. Both need behavioral regression
+evidence and repairs. Tests/catalogs received focused, not exhaustive inspection.
+The verdict is with fixes, not whole-source acceptance or release approval.
+
+Protected profiles, installed application, dependencies and prior packaging
+candidates remain unchanged. This is a local bounded source checkpoint only;
+no installation, push, signing, activation or publication. Retained aggregate
+failure causes, broader native quit responsiveness, linguistic/resource/
+provenance/reproducibility and native/minimum-OS/live acceptance remain open.
+Final reviewed rebuilding/material refresh, numeric allocation/signing/signed-v3
+acceptance, guarded activation/install, README/wiki/unredacted screenshots and
+prerelease public readback still follow. Signed feeds last; Tasks 7/8 remain open.

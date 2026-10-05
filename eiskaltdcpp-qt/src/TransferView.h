@@ -16,6 +16,7 @@
 #include <QResizeEvent>
 #include <QHideEvent>
 #include <QHeaderView>
+#include <functional>
 
 #include "ui_UITransferView.h"
 #include "TransferViewModel.h"
@@ -192,7 +193,10 @@ private:
     QAction *fitColumnsAction = nullptr;
 #ifdef USE_TORRENT
     void torrentContextMenu(const QModelIndexList &selection);
+    void openTorrentLocation(const eiskalt::torrent::Job &job,
+                             std::function<bool(const QString &)> probe = {});
     QPointer<eiskalt::torrent::TorrentEngine> torrentEngine;
     quint64 torrentAttachment = 0;
+    friend struct TransferViewTestAccess;
 #endif
 };

@@ -10,6 +10,9 @@
 #if __has_include("TorrentActionMenu.h")
 #include "TorrentActionMenu.h"
 #endif
+#if __has_include("TorrentLocationProbe.h")
+#include "TorrentLocationProbe.h"
+#endif
 #include "torrent/TorrentEngine.h"
 #include <QApplication>
 #include <QCheckBox>
@@ -41,11 +44,16 @@
 #include <QTest>
 #include <QTemporaryDir>
 #include <QThread>
+#include <QFutureWatcher>
+#include <QSemaphore>
+#include <QThreadPool>
 #include <QTimer>
 #include <QToolBar>
 #include <QTranslator>
 #include <QTreeWidget>
 #include <functional>
+#include <atomic>
+#include <future>
 
 class TorrentLocationCapture : public QObject {
     Q_OBJECT
@@ -60,6 +68,10 @@ using namespace eiskalt::torrent;
 // Exercise the same snapshot renderer as refreshPeers without starting networking.
 // The requires branches keep the pre-implementation RED build runnable.
 struct TorrentWindowTestAccess {
+    template<class Window> static void openLocation(Window &window, std::function<bool(const QString &)> probe) {
+        if constexpr (requires { window.openLocation(probe); }) window.openLocation(std::move(probe));
+        else FAIL("No asynchronous Torrent location entry point");
+    }
     template<class Window> static void actions(Window &window) { window.updateActions(); }
     template<class Window> static void fileCheck(Window &window, const Job &job) {
         if constexpr (requires { window.renderFileCheck(&job); }) window.renderFileCheck(&job);
@@ -596,14 +608,178 @@ TEST_CASE("Torrent context menu opens current storage without starting a paused 
     auto *action = control<QAction>(tab, "torrentOpenLocation");
     REQUIRE(action->isEnabled());
     action->trigger();
-    REQUIRE(capture.opened.size() == 1);
+    REQUIRE(waitFor([&] { return capture.opened.size() == 1; }));
     CHECK(capture.opened.first() == QUrl::fromLocalFile(engine.jobs().first().savePath));
     CHECK(QFileInfo(capture.opened.first().toLocalFile()).canonicalFilePath() == QFileInfo(path).canonicalFilePath());
     CHECK(engine.jobs().first().paused);
     REQUIRE(QDir(path).removeRecursively());
     action->trigger();
+    REQUIRE(waitFor([&] { return !tab.property("_torrentLocationPending").toBool(); }));
     CHECK(capture.opened.size() == 1);
+    CHECK(control<QLabel>(tab, "torrentNotice")->text() == torrent_action_menu::locationError());
     CHECK_FALSE(QFileInfo::exists(path));
+}
+
+TEST_CASE("Torrent location availability does not stat missing storage", "[qt][torrent-location-async]")
+{
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = pausedFixture(dir, engine);
+    REQUIRE(QDir().rmdir(dir.filePath("payload")));
+    REQUIRE_FALSE(QFileInfo::exists(dir.filePath("payload")));
+    TorrentWindow tab(&engine, dir.filePath("layout.ini"));
+    tab.selectJob(id);
+    CHECK(control<QAction>(tab, "torrentOpenLocation")->isEnabled());
+    Job job;
+    job.savePath = dir.filePath("missing/../downloads");
+    CHECK(torrent_action_menu::downloadDirectory(job) == dir.filePath("downloads"));
+    job.savePath = "relative";
+    CHECK(torrent_action_menu::downloadDirectory(job).isEmpty());
+    job.savePath = dir.path() + QChar(0) + "/invalid";
+    CHECK(torrent_action_menu::downloadDirectory(job).isEmpty());
+    CHECK(engine.jobs().first().paused);
+}
+
+namespace {
+struct HeldLocationProbe {
+    QSemaphore release;
+    std::atomic<bool> entered{false};
+    std::atomic<bool> background{false};
+    std::atomic<int> calls{0};
+    QString path;
+    std::function<bool(const QString &)> function() {
+        const auto guiThread = qApp->thread();
+        return [this, guiThread](const QString &value) {
+            path = value;
+            ++calls;
+            background = QThread::currentThread() != guiThread;
+            entered.store(true, std::memory_order_release);
+            release.acquire();
+            return QFileInfo(value).isDir();
+        };
+    }
+    ~HeldLocationProbe() { release.release(8); QThreadPool::globalInstance()->waitForDone(5000); }
+};
+struct LocationHandlerReset {
+    ~LocationHandlerReset() { QDesktopServices::unsetUrlHandler("file"); }
+};
+}
+
+TEST_CASE("Torrent Open keeps GUI responsive and drops removed job results", "[qt][torrent-location-async]")
+{
+    const int mode = GENERATE(0, 1, 2, 3);
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    const auto id = pausedFixture(dir, engine);
+    REQUIRE(QDir().mkpath(dir.filePath("payload")));
+    TorrentLocationCapture capture;
+    QDesktopServices::setUrlHandler("file", &capture, "open");
+    LocationHandlerReset reset;
+    TorrentWindow tab(&engine, dir.filePath("layout.ini"));
+    tab.selectJob(id);
+    const auto notice = control<QLabel>(tab, "torrentNotice")->text();
+    HeldLocationProbe held;
+    TorrentWindowTestAccess::openLocation(tab, held.function());
+    REQUIRE(waitFor([&] { return held.entered.load(std::memory_order_acquire); }));
+    CHECK(held.background);
+    CHECK(held.path == dir.filePath("payload"));
+    int ticks = 0;
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &tab, [&] { ++ticks; });
+    heartbeat.start(5);
+    TorrentWindowTestAccess::openLocation(tab, held.function());
+    TorrentWindowTestAccess::actions(tab);
+    QTest::qWait(40);
+    CHECK(ticks > 0);
+    CHECK(held.calls == 1);
+    CHECK(capture.opened.isEmpty());
+    CHECK(engine.jobs().first().paused);
+    if (mode == 1) {
+        engine.remove(id, false);
+        REQUIRE(waitFor([&] { return engine.jobs().isEmpty(); }));
+    }
+    if (mode >= 2) tab.setState(ArenaWidget::Flags(tab.state() | ArenaWidget::Hidden));
+    if (mode == 3) tab.setState(ArenaWidget::Flags(tab.state() & ~ArenaWidget::Hidden));
+    held.release.release();
+    REQUIRE(waitFor([&] { return !tab.property("_torrentLocationPending").toBool(); }));
+    if (mode != 0) {
+        CHECK(capture.opened.isEmpty());
+        CHECK(control<QLabel>(tab, "torrentNotice")->text() == notice);
+    }
+    else {
+        REQUIRE(capture.opened.size() == 1);
+        CHECK(capture.opened.first() == QUrl::fromLocalFile(dir.filePath("payload")));
+        CHECK(engine.jobs().first().paused);
+    }
+}
+
+TEST_CASE("Torrent location receipt survives requester deletion", "[qt][torrent-location-async]")
+{
+#if __has_include("TorrentLocationProbe.h")
+    QTemporaryDir dir;
+    QWidget root;
+    auto *requester = new QWidget(&root);
+    Job job;
+    job.savePath = dir.path();
+    TorrentLocationCapture capture;
+    QDesktopServices::setUrlHandler("file", &capture, "open");
+    LocationHandlerReset reset;
+    int validations = 0, errors = 0;
+    HeldLocationProbe held;
+    torrent_action_menu::probeDownloadDirectory(requester, job,
+        [&] { ++validations; return true; }, [&] { ++errors; }, held.function());
+    REQUIRE(waitFor([&] { return held.entered.load(); }));
+    delete requester;
+    const auto receipts = root.findChildren<QFutureWatcherBase *>();
+    REQUIRE(receipts.size() == 1);
+    CHECK(receipts.first()->isStarted());
+    CHECK_FALSE(receipts.first()->isFinished());
+    held.release.release();
+    REQUIRE(waitFor([&] { return root.findChildren<QFutureWatcherBase *>().isEmpty(); }));
+    CHECK(validations == 1);
+    CHECK(errors == 0);
+    CHECK(capture.opened.isEmpty());
+#else
+    FAIL("No retained asynchronous location receipt");
+#endif
+}
+
+TEST_CASE("Torrent location probe rejects disabled owners and stale results", "[qt][torrent-location-async]")
+{
+#if __has_include("TorrentLocationProbe.h")
+    const int mode = GENERATE(0, 1, 2);
+    QTemporaryDir dir;
+    QWidget root;
+    Job job;
+    job.savePath = dir.filePath("absent");
+    int calls = 0, errors = 0;
+    root.setEnabled(false);
+    torrent_action_menu::probeDownloadDirectory(&root, job, [] { return true; }, [&] { ++errors; },
+        [&](const QString &) { ++calls; return false; });
+    CHECK(root.findChildren<QFutureWatcherBase *>().isEmpty());
+    CHECK(calls == 0);
+    root.setEnabled(true);
+    auto foreign = std::async(std::launch::async, [&] {
+        torrent_action_menu::probeDownloadDirectory(&root, job, [] { return true; }, [&] { ++errors; },
+            [&](const QString &) { ++calls; return false; });
+    });
+    foreign.get();
+    CHECK(root.findChildren<QFutureWatcherBase *>().isEmpty());
+    CHECK(calls == 0);
+    CHECK(errors == 0);
+    bool current = true;
+    HeldLocationProbe held;
+    torrent_action_menu::probeDownloadDirectory(&root, job, [&] { return current; },
+        [&] { CHECK(QThread::currentThread() == qApp->thread()); ++errors; }, held.function());
+    REQUIRE(waitFor([&] { return held.entered.load(); }));
+    if (mode == 1) current = false;
+    if (mode == 2) root.setEnabled(false);
+    held.release.release();
+    REQUIRE(waitFor([&] { return !root.property("_torrentLocationPending").toBool(); }));
+    CHECK(errors == (mode == 0 ? 1 : 0));
+#else
+    FAIL("No guarded asynchronous location probe");
+#endif
 }
 
 template<class Snapshot> void markChecking(Snapshot &job, double progress) {
@@ -1757,7 +1933,7 @@ TEST_CASE("Torrent DC sharing controls apply full selection without unsafe singl
     for (const char *name : {"torrentShareDc", "torrentShareTorrent"}) {
         auto *action = control<QAction>(window, name);
         REQUIRE(action->isEnabled());
-        action->trigger();
+    action->trigger();
         const auto ids = share.last().first().toStringList();
         REQUIRE(ids.size() == 2);
         REQUIRE(ids.contains(first));

@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QStringList>
 #include <memory>
+#include <functional>
 
 namespace eiskalt::torrent { class TorrentEngine; }
 class QCloseEvent;
@@ -27,6 +28,7 @@ public:
     QMenu *getMenu() override { return nullptr; }
     const QPixmap &getPixmap() override { return tabPixmap; }
     QIcon getIcon() override { return windowIcon(); }
+    void setState(ArenaWidget::Flags flags) override;
     ArenaWidget::Role role() const override { return ArenaWidget::Torrent; }
 
 public slots:
@@ -57,6 +59,7 @@ private:
     void refreshPeers();
     void renderPeers(const QString &id, const QList<eiskalt::torrent::Peer> &peers);
     void updateActions();
+    void openLocation(std::function<bool(const QString &)> probe = {});
     void scheduleLayoutSave();
     void saveLayout();
     void updateSecurityActions();
