@@ -1394,3 +1394,30 @@ reviewed-source rebuild/material refresh, production signed-v3 acceptance and
 guarded activation. Safe installation, README/wiki/screenshots and pre-release
 publication follow those gates. Signed feeds remain last. No live app/profile,
 production key, server, VM, installation, push or publication was changed here.
+
+### 2026-10-04 Current Resource Attribution Checkpoint
+
+Read-only mapping of both accepted updater-enabled QA candidates records all1215
+copied project resources per CPU and694 app-compiled QRC inputs. Current TS bytes
+and retained QM/MO build outputs are distinguished from the earlier historical
+catalog proof. External default QRC83 inputs and the separate test-only declaration
+are not counted as app-compiled resources. Dependency-framework resources retain
+their earlier package-level mapping; this is not new file-level proof for them.
+
+The inherited copyright inventory incorrectly applied legacy LGPL to new
+Phosphor assets. A scoped MIT/Expat override now covers688 generated SVGs, eight
+notice/attribution files,240 pinned vendor SVGs and the vendor notice. A regression
+first reproduces the incorrect classification, then passes with the correction;
+the full14-test icon suite passes. Legacy Faenza/Haiku/raster license declarations,
+the generator and provenance metadata are not relicensed. Exact MIT notices already
+present in the accepted bundles remain untouched; final rebuilding must refresh
+their older aggregate inventory.
+
+Country/language flags use platform-font glyphs; neither audited bundle contains
+font payloads outside retained notice documents.440 copied legacy icon files per
+CPU still lack original upstream file-level author/revision evidence. Current-byte
+mapping and aggregate notices are not legal or reproducible-build certification.
+Complete resource/dependency attribution, whole-branch/linguistic review and native
+platform/minimum-OS acceptance therefore remain open. Final reviewed-source build,
+production numeric/signature acceptance and guarded activation precede installation
+and README/wiki/screenshots/prerelease publication; signed feeds remain last.

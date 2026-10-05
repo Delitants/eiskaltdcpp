@@ -263,6 +263,52 @@ This prefix has not replaced shared providers or been linked into the installed
 or earlier QA apps. Final reviewed application builds must explicitly consume
 the controlled prefix and regenerate matching source/notice receipts.
 
+## Current Updater Candidate Resource Audit
+
+The 2026-10-04 read-only audit covers the updater-enabled ARM and Intel QA
+candidates built from source `e325cb6cd`. It does not modify the accepted bundles
+or reuse the historical catalog reconstruction as current translation proof.
+Each candidate has 1,215 copied project-resource files mapped to matching current
+source bytes or retained build outputs:
+
+| Resource Class | Files Per CPU | Evidence |
+| --- | --- | --- |
+| Phosphor themes | 696 | 688 SVGs and eight attribution/license files; exact retained MIT notice |
+| Legacy icons | 440 | Matching project bytes and inherited copyright inventory; upstream file-level origin unresolved |
+| Project help and Qt TS files | 28 | Matching current project source bytes |
+| Qt QM catalogs | 25 | Matching current candidate build outputs and recorded TS inputs |
+| Gettext MO catalogs | 25 | Matching current candidate build outputs and recorded PO inputs |
+| Deployment configuration | 1 | Exact output of the actual `write_qt_conf.sh` writer |
+
+The copyright inventory now explicitly distinguishes Phosphor MIT/Expat assets
+from the broader inherited LGPL icon entry. The scoped override includes the
+pinned vendor SVGs and notice, generated SVGs and their attribution/license files;
+it does not relicense the generator or inherited raster/brand assets. The icon
+regression reproduces the previous incorrect classification, checks every
+generated/vendor geometry path and verifies that legacy license overrides remain
+unchanged. The complete 14-test icon suite passes, including offline regeneration
+and deliberate asset-tampering rejection.
+
+The actual app link inputs identify 694 compiled QRC declarations: 688 Phosphor
+SVGs, five inherited brand icons and one Torrent raster fallback. A separate
+test-only QRC declaration is not counted as an app-compiled resource. The default
+external QRC's 83 inputs are recorded separately; declarations and retained object
+hashes are not runtime extraction or immutable compiler-input proof.
+
+Country/language flags are rendered from regional-indicator characters using the
+platform font. No font payloads are present in either audited app outside the
+retained notice documents; this is not redistribution of Apple's font artwork.
+Dependency-framework resources remain under the earlier package-level mapping,
+not newly established file-level source proof in this project-resource audit.
+
+**Remaining attribution gate:** original upstream author/revision evidence for
+the 440 legacy icon files per CPU, full dependency-resource review and final
+source/notice refresh. Matching project bytes does not establish those origins,
+reproducible compilation, linguistic completeness or legal certification. The
+immutable QA candidates still contain the preceding copyright inventory and must
+receive the corrected inventory through the final reviewed-source rebuild, not
+an in-place edit or reseal. Installation and publication remain separate gates.
+
 ## Final Distribution Gate
 
 For the final artifact, enumerate dynamic frameworks/libraries, static linked

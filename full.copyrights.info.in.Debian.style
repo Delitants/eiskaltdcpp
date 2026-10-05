@@ -124,6 +124,28 @@ Copyright: 2020 Gerasim Troeglazov <3dEyes@gmail.com>
            2020 Michele Frau afka zuMi (http://ta.me.ly/)
 License: Expat
 
+Files: eiskaltdcpp-qt/icons/appl/prism/*.svg
+       eiskaltdcpp-qt/icons/appl/contour/*.svg
+       eiskaltdcpp-qt/icons/appl/slate/*.svg
+       eiskaltdcpp-qt/icons/appl/reborn/*.svg
+       eiskaltdcpp-qt/icons/appl/prism/LICENSE
+       eiskaltdcpp-qt/icons/appl/prism/README.md
+       eiskaltdcpp-qt/icons/appl/contour/LICENSE
+       eiskaltdcpp-qt/icons/appl/contour/README.md
+       eiskaltdcpp-qt/icons/appl/slate/LICENSE
+       eiskaltdcpp-qt/icons/appl/slate/README.md
+       eiskaltdcpp-qt/icons/appl/reborn/LICENSE
+       eiskaltdcpp-qt/icons/appl/reborn/README.md
+       tools/icon-themes/vendor/assets/*.svg
+       tools/icon-themes/vendor/LICENSE
+Copyright: 2023 Phosphor Icons
+License: Expat
+Comment: Geometry from @phosphor-icons/core 2.1.1 (MIT).
+         The source lock and vendor provenance in tools/icon-themes pin the
+         upstream archive, retained SVGs and exact copyright/permission notice.
+         Each generated theme retains that notice in its LICENSE file.
+         This entry does not cover inherited brand/raster icons or the generator.
+
 Files: data/emoticons/*
        data/sounds/*.wav
 Copyright: 2010 ApexDC++ Project Team (https://www.apexdc.net/)

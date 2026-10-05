@@ -183,6 +183,34 @@ test('each shipped theme carries the exact upstream license and source attributi
   for (const file of m.supportingFiles) assert.equal(sha256(readFileSync(join(root, file.path))), file.sha256, file.path);
 });
 
+test('copyright inventory distinguishes Phosphor geometry from inherited icon licenses', () => {
+  const inventory = readFileSync(join(root, 'full.copyrights.info.in.Debian.style'), 'utf8');
+  const entries = inventory.split(/\n\n+/).filter(entry => entry.startsWith('Files: ')).map(entry => ({
+    patterns: entry.match(/^Files: ([\s\S]*?)(?=\n\S)/)[1].trim().split(/\s+/),
+    license: entry.match(/^License: (.+)$/m)?.[1],
+    copyright: entry.match(/^Copyright: (.+)$/m)?.[1],
+  }));
+  // DEP-5 uses the last matching Files paragraph, not the broadest one.
+  const match = (path, pattern) => new RegExp(`^${pattern.split('*')
+    .map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*')}$`).test(path);
+  const entryFor = path => entries.filter(entry => entry.patterns.some(pattern => match(path, pattern))).at(-1);
+  const sources = json(join(here, 'vendor/provenance.json')).files.map(file => `tools/icon-themes/vendor/${file.path}`);
+  for (const path of [...manifest().outputs.map(output => output.path),
+    ...manifest().supportingFiles.map(file => file.path), ...sources, 'tools/icon-themes/vendor/LICENSE']) {
+    assert.equal(entryFor(path)?.license, 'Expat', `Wrong MIT/Expat inventory for ${path}`);
+    assert.match(entryFor(path).copyright, /2023 Phosphor Icons/);
+  }
+  for (const [path, license] of [
+    ['eiskaltdcpp-qt/icons/appl/apex/icon_appl.png', 'LGPL-3'],
+    ['eiskaltdcpp-qt/icons/appl/faenza/icon_appl.png', 'GPL-3'],
+    ['eiskaltdcpp-qt/icons/appl/haiku/icon_appl.png', 'Expat'],
+    ['eiskaltdcpp-qt/icons/torrent/torrent.png', 'LGPL-3'],
+    ['eiskaltdcpp-qt/icons/appl/reborn/inherited-brand.png', 'LGPL-3'],
+    ['tools/icon-themes/generate.mjs', 'GPL-3+ with OpenSSL exception'],
+    ['tools/icon-themes/vendor/provenance.json', 'GPL-3+ with OpenSSL exception'],
+  ]) assert.equal(entryFor(path)?.license, license, `Unexpected relicensing: ${path}`);
+});
+
 test('play, pause, close, delete, favorites, directions, and settings retain distinct meanings', () => {
   const m = manifest();
   const icon = stem => m.icons.find(entry => entry.stem === stem);
