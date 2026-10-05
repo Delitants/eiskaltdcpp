@@ -19,7 +19,8 @@ struct Backend : UpdateBackend {
     CheckKind kind = CheckKind::Automatic;
     UpdateOffer selected;
     int fences = 0;
-    bool fenceResult = true;
+    bool fenceResult = true, fencePending = false;
+    bool quitWorkersPending() const override { return fencePending; }
     bool supported = true, throwsOnHandoff = false, defaultHandoff = false;
     std::optional<bool> synchronousReceipt;
     quint64 handoffOperation = 0;
@@ -245,6 +246,22 @@ TEST_CASE("Update controller permanently refuses a failed worker fence", "[updat
     CHECK_FALSE(controllerFence(*f.controller)); CHECK(f.backend.fences == 1);
     f.controller->normalQuitCommitted();
     CHECK(f.backend.installs == 0); CHECK(f.controller->state() == UpdateController::State::Stopped);
+}
+
+TEST_CASE("Update controller polls a pending fence without reopening admission", "[updates][updater-retirement-controller]") {
+    Fixture f;
+    f.ready(); f.controller->installOnNextQuit();
+    f.backend.fenceResult = false; f.backend.fencePending = true;
+    CHECK_FALSE(f.controller->stopWorkersForQuit());
+    CHECK_FALSE(f.controller->stopWorkersForQuit()); CHECK(f.backend.fences == 2);
+    const auto checks = f.backend.checks, downloads = f.backend.downloads;
+    f.controller->checkNow(); f.controller->download(); f.controller->cancel();
+    events(); CHECK(f.backend.checks == checks); CHECK(f.backend.downloads == downloads);
+    CHECK(f.backend.installs == 0);
+    f.backend.fencePending = false; f.backend.fenceResult = true;
+    CHECK(f.controller->stopWorkersForQuit()); CHECK(f.backend.fences == 3);
+    CHECK(f.controller->stopWorkersForQuit()); CHECK(f.backend.fences == 3);
+    CHECK(f.backend.installs == 0);
 }
 
 TEST_CASE("Update controller revalidates persisted consent rules after the worker fence", "[updates][updater-controller-fence]") {

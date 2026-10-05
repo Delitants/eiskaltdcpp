@@ -30,7 +30,7 @@ struct UpdateController::Impl {
     QString ready, consent;
     quint64 operation = 0;
     bool started = false, stopped = false, busy = false;
-    bool quitFenced = false, quitFenceSucceeded = false;
+    bool quitFenced = false, quitFenceSucceeded = false, quitFenceTerminal = false;
     bool recoveryDisarmAttempted = false, recoveryDisarmSucceeded = false;
     bool handoffConsentRevoked = false;
 
@@ -256,12 +256,19 @@ void UpdateController::cancel() {
 }
 bool UpdateController::stopWorkersForQuit() {
     if(QThread::currentThread() != thread()) return false;
-    if(impl->quitFenced) return impl->quitFenceSucceeded;
-    impl->quitFenced = true;
-    impl->timer.stop(); impl->operation = nextOperation(); impl->busy = false;
-    try { impl->quitFenceSucceeded = impl->backend.stopWorkersForQuit(); }
-    catch(...) { /* Retain owners and permanently refuse installer consent. */ }
+    if(impl->quitFenceTerminal) return impl->quitFenceSucceeded;
+    if(!impl->quitFenced) {
+        impl->quitFenced = true;
+        impl->timer.stop(); impl->operation = nextOperation(); impl->busy = false;
+    }
+    try {
+        impl->quitFenceSucceeded = impl->backend.stopWorkersForQuit();
+        impl->quitFenceTerminal = impl->quitFenceSucceeded || !impl->backend.quitWorkersPending();
+    } catch(...) { impl->quitFenceTerminal = true; }
     return impl->quitFenceSucceeded;
+}
+bool UpdateController::quitWorkersPending() const {
+    return QThread::currentThread() == thread() && impl->quitFenced && !impl->quitFenceTerminal;
 }
 bool UpdateController::disarmForCheckpointRecovery() {
     if(QThread::currentThread() != thread()) return false;

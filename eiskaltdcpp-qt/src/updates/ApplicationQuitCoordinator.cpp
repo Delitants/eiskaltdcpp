@@ -49,7 +49,15 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     };
     // Close updater admission before intentional core ProxyRoute revocation.
     if (hadUpdater && !updaterFenced) {
-        check("Updater", [&] { return updater->stopWorkersForQuit(); });
+        bool stopped = false;
+        try { stopped = updater->stopWorkersForQuit(); } catch(...) {}
+        if(!stopped && updater->quitWorkersPending()) {
+            result.status = Status::Pending;
+            result.component = "Updater workers";
+            preparing = false;
+            return result;
+        }
+        if(!stopped && !failed) failed = "Updater";
         updaterFenced = true;
     }
     bool guiStopped = false;

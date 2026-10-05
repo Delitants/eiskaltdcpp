@@ -81,14 +81,14 @@ void ApplicationQuitSession::advance() {
     // installation consent just because the worker finished in the meantime.
     if(workerPoll.isActive() && workerDeadline.elapsed() >= drainTimeout) {
         workerRetryAllowed = true;
-        refuse(QStringLiteral("GUI worker timeout; retry quit after the worker finishes"));
+        refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
         return;
     }
     const auto result = retryingCheckpoint ? coordinator.retryCheckpoint() : coordinator.prepare(drainTimeout);
     if(result.status == ApplicationQuitCoordinator::Status::Pending) {
         if(workerDeadline.elapsed() >= drainTimeout) {
             workerRetryAllowed = true;
-            refuse(QStringLiteral("GUI worker timeout; retry quit after the worker finishes"));
+            refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
         } else workerPoll.start();
         return;
     }

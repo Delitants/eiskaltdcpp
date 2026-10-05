@@ -298,6 +298,7 @@ TEST_CASE("Feed notes byte limit also applies to multibyte UTF8 text", "[updates
 }
 
 #ifdef __APPLE__
+#include <dlfcn.h>
 TEST_CASE("Pinned Sparkle signer and Eiskalt feed verifier interoperate", "[.][updates][update-feed-native]") {
     FeedFixture f;
     const auto signer = qEnvironmentVariable("EISKALT_SPARKLE_SIGNER");
@@ -1029,6 +1030,30 @@ TEST_CASE("Mac backend retained fence preserves Ready staging through core route
     CHECK(archive.readAll() == f.archive); archive.close();
     f.backend.reset(); CHECK_FALSE(QFile::exists(paths.front()));
 }
+
+TEST_CASE("Mac backend retirement retains verification held in a real archive mapping", "[.][updater-retirement-native-io]") {
+    const auto arm = reinterpret_cast<void(*)(const char*, int)>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_arm"));
+    const auto entered = reinterpret_cast<int(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_entered"));
+    const auto release = reinterpret_cast<void(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_release"));
+    REQUIRE(arm); REQUIRE(entered); REQUIRE(release);
+    BackendFixture f; f.discover();
+    arm(QFile::encodeName(QDir::tempPath()).constData(), 2);
+    auto cleanup = dcpp::makeScopedFunctor([&] { release(); });
+    f.backend->download(231, f.offer);
+    REQUIRE(discoveryPump([&] { return entered(); }));
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    auto watchdog = std::async(std::launch::async, [&] { QThread::msleep(350); release(); });
+    QElapsedTimer elapsed; elapsed.start();
+    CHECK_FALSE(backendFence(*f.backend)); CHECK(elapsed.elapsed() < 50);
+    CHECK(QFile::exists(paths.front())); CHECK(f.ready == 0);
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    REQUIRE(discoveryPump([&] { return beats >= 3; }, 100)); CHECK(f.ready == 0);
+    watchdog.get(); REQUIRE(discoveryPump([&] { return backendFence(*f.backend); }));
+    CHECK_FALSE(QFile::exists(paths.front())); CHECK(f.ready == 0); CHECK(f.failures == 0);
+    f.backend->check(232, Channel::Stable, CheckKind::Manual);
+    f.backend->download(233, f.offer); CHECK(f.requests.load() == 2);
+}
 TEST_CASE("Mac backend retained fence rejects staging revoked before preparation", "[.][updater-worker-fence-native]") {
     BackendFixture f; f.discover(); f.backend->download(214, f.offer);
     REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
@@ -1038,7 +1063,7 @@ TEST_CASE("Mac backend retained fence rejects staging revoked before preparation
     CHECK_FALSE(QFile::exists(paths.front()));
     QCoreApplication::processEvents(); CHECK(f.failures == 0); CHECK(f.ready == 1);
 }
-TEST_CASE("Mac backend retained fence joins active transport without queued completion", "[.][updater-worker-fence-native]") {
+TEST_CASE("Mac backend retained fence polls active transport without queued completion", "[.][updater-worker-fence-native]") {
     BackendFixture f;
     bool feed = false;
     SECTION("feed") { feed = true; f.holdFeed = true; f.backend->check(215, Channel::Stable, CheckKind::Manual); }
@@ -1046,7 +1071,7 @@ TEST_CASE("Mac backend retained fence joins active transport without queued comp
     QElapsedTimer start; start.start();
     while(!(feed ? f.feedEntered.load() : f.archiveEntered.load()) && start.elapsed() < 1000) QThread::msleep(1);
     REQUIRE((feed ? f.feedEntered.load() : f.archiveEntered.load()));
-    REQUIRE(backendFence(*f.backend));
+    REQUIRE(discoveryPump([&] { return backendFence(*f.backend); }));
     CHECK(f.workerCancelled.load()); CHECK(f.workerExited.load());
     f.backend->check(217, Channel::Stable, CheckKind::Manual);
     f.backend->download(218, f.offer);

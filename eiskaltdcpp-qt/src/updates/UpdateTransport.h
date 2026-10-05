@@ -33,10 +33,12 @@ public:
     quint64 fetch(const QUrl&, ResourceKind, const QString& destination,
         std::shared_ptr<const dcpp::ProxyRouteSnapshot>);
     void cancel(quint64);
-    /// Owner-thread terminal fence, not installer consent. Joins without an
-    /// event-loop pump; suppresses pending replies and retracts undelivered data.
+    /// Owner-thread terminal fence, not installer consent. Never waits for a
+    /// live worker; poll while quitWorkersPending(), retaining this and context.
+    /// Suppresses pending replies and retracts undelivered data after retirement.
     /// Completed, delivered files belong to staging and are left untouched.
     [[nodiscard]] bool stopWorkersForQuit();
+    bool quitWorkersPending() const;
 signals:
     void progress(quint64 id, quint64 received, quint64 total);
     void finished(quint64 id, const QString& path);

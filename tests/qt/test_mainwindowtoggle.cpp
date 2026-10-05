@@ -19,6 +19,10 @@
 #include "ProxyTestRunner.h"
 #include "ShellCommandRunner.h"
 #include "updates/ApplicationQuitSession.h"
+#include "updates/UpdateTransport.h"
+#ifdef __APPLE__
+#include <dlfcn.h>
+#endif
 #include "Notification.h"
 #include "Settings.h"
 #include "dcpp/ProxyRoute.h"
@@ -64,6 +68,14 @@
 #include <QStandardItemModel>
 #include <QStyleHints>
 #include <QTemporaryDir>
+
+namespace updates {
+struct UpdateTransportTestAccess {
+    static std::unique_ptr<UpdateTransport> create(dcpp::DCContext& context, transport_detail::Backend backend) {
+        return std::unique_ptr<UpdateTransport>(new UpdateTransport(context, std::move(backend), nullptr));
+    }
+};
+}
 #include <QTabBar>
 #include <QTest>
 #include <QTimer>
@@ -149,7 +161,9 @@ struct QuitBackend : updates::UpdateBackend {
     void beginInstallHandoff(quint64 op, const updates::UpdateOffer&, std::function<bool()> consent) override {
         handoffOperation = op; handoffConsent = std::move(consent); ++installs;
     }
-    bool fenceResult = true, routeWasRunning = false;
+    bool fenceResult = true, routeWasRunning = false, fencePending = false;
+    std::unique_ptr<updates::UpdateTransport> transport;
+    bool quitWorkersPending() const override { return transport ? transport->quitWorkersPending() : fencePending; }
     explicit QuitBackend(dcpp::DCContext& c) : core(c) {}
     void check(quint64 op, updates::Channel, updates::CheckKind) override { ++checks; operation = op; }
     void download(quint64 op, const updates::UpdateOffer&) override { operation = op; }
@@ -161,7 +175,8 @@ struct QuitBackend : updates::UpdateBackend {
     }
     void armInstallOnQuit(const updates::UpdateOffer&, bool) override { ++installs; }
     bool stopWorkersForQuit() override {
-        ++fences; routeWasRunning = !core.getProxyRoute()->snapshot()->revoked->load(); return fenceResult;
+        ++fences; routeWasRunning = !core.getProxyRoute()->snapshot()->revoked->load();
+        return transport ? transport->stopWorkersForQuit() : fenceResult;
     }
 };
 #ifndef HAS_APPLICATION_QUIT_COORDINATOR
@@ -686,6 +701,69 @@ TEST_CASE("Worker-drain timeout retains running owners and permits explicit post
     CHECK(session.state() == updates::ApplicationQuitSession::State::ExitReady);
     CHECK(route->revoked->load()); CHECK(refused.count() == 1);
 }
+
+TEST_CASE("Native updater pending retirement times out before core retirement and requires explicit retry", "[qt][window-quit][updater-retirement-session]") {
+    IsolatedMainWindow f;
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    backend.fenceResult = false; backend.fencePending = true;
+    updates::ApplicationQuitSession session(*f.gui, &updater);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    const auto route = f.core->getProxyRoute()->snapshot();
+    QElapsedTimer elapsed; elapsed.start(); session.request(50);
+    CHECK(elapsed.elapsed() < 40);
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Preparing);
+    CHECK_FALSE(route->revoked->load());
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(beats > 0); CHECK_FALSE(route->revoked->load()); CHECK(f.core->isRunning());
+    CHECK(ready.isEmpty()); CHECK(refused.count() == 1); CHECK(backend.installs == 0);
+    backend.fencePending = false; backend.fenceResult = true;
+    QTest::qWait(30); CHECK(ready.isEmpty()); CHECK_FALSE(route->revoked->load());
+    session.request(1000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(route->revoked->load()); CHECK(backend.installs == 0); CHECK(refused.count() == 1);
+}
+
+#ifdef __APPLE__
+TEST_CASE("Real updater filesystem hold reaches finite quit refusal with retained context", "[.][updater-retirement-session-io]") {
+    const auto arm = reinterpret_cast<void(*)(const char*, int)>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_arm"));
+    const auto entered = reinterpret_cast<int(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_entered"));
+    const auto release = reinterpret_cast<void(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_release"));
+    REQUIRE(arm); REQUIRE(entered); REQUIRE(release);
+    IsolatedMainWindow f; QTemporaryDir staging;
+    QuitBackend backend(*f.core);
+    backend.transport = updates::UpdateTransportTestAccess::create(*f.core, [](const auto&, const auto&, const auto& sink) {
+        const QByteArray bytes(65536, 'x'); sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
+    });
+    arm(QFile::encodeName(staging.path()).constData(), 1);
+    auto cleanup = dcpp::makeScopedFunctor([&] { release(); });
+    const auto route = f.core->getProxyRoute()->snapshot();
+    backend.transport->fetch(QUrl("https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/arm64.xml"),
+        updates::ResourceKind::Feed, staging.filePath("resource"), route);
+    QElapsedTimer elapsed; elapsed.start();
+    while(!entered() && elapsed.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(entered());
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    updates::ApplicationQuitSession session(*f.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    auto watchdog = std::async(std::launch::async, [&] { QThread::msleep(350); release(); });
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    elapsed.restart(); session.request(50); CHECK(elapsed.elapsed() < 40);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(beats > 0); CHECK_FALSE(route->revoked->load()); CHECK(f.core->isRunning());
+    CHECK(backend.transport->quitWorkersPending()); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    CHECK_FALSE(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+    watchdog.get(); QTest::qWait(30);
+    CHECK(ready.isEmpty()); CHECK_FALSE(route->revoked->load()); CHECK(backend.installs == 0);
+    session.request(1000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(route->revoked->load()); CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+}
+#endif
 
 TEST_CASE("Worker timeout cannot commit an update even after the worker finishes", "[qt][window-quit][gui-worker-drain]") {
     IsolatedMainWindow f; auto* window = f.gui->mainWindow();

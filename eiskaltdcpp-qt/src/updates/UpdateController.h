@@ -42,6 +42,7 @@ public:
     // Terminal input/worker fence, retaining Ready/version consent. The
     // application must still check every other shutdown owner before commit.
     [[nodiscard]] bool stopWorkersForQuit();
+    bool quitWorkersPending() const;
     // Permanently disarm a prepared update before recovering a refused save.
     // A successful receipt permits only ordinary quit after repaired checkpoints.
     [[nodiscard]] bool disarmForCheckpointRecovery();

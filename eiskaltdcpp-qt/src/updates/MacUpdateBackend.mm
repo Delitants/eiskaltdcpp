@@ -19,7 +19,6 @@
 #include <QThread>
 #include <QTimer>
 #include <atomic>
-#include <thread>
 #include <cerrno>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -68,12 +67,12 @@ struct MacUpdateBackend::Impl {
     };
     struct Verification {
         std::shared_ptr<Stage> stage;
-        std::atomic_bool cancelled{false}, done{false};
+        std::atomic_bool cancelled{false};
         bool valid = false;
         bool restoring = false, authenticated = false;
         quint64 epoch = 0;
-        std::thread worker;
-        ~Verification() { if(worker.joinable()) worker.join(); }
+        std::unique_ptr<QThread> worker;
+        ~Verification() { if(worker) worker->wait(); }
     };
     MacUpdateBackend& owner;
     dcpp::DCContext& context;
@@ -93,7 +92,7 @@ struct MacUpdateBackend::Impl {
     Channel channel = Channel::Stable;
     quint64 operation = 0, epoch = 0, request = 0;
     QByteArray feedBytes;
-    bool quitFenced = false, quitFenceSucceeded = false;
+    bool quitFenced = false, quitFenceSucceeded = false, quitFenceFailed = false, quitWasReady = false;
     std::unique_ptr<MacUpdateInstaller> installer;
     std::shared_ptr<Stage> installerStage;
     QSet<quint64> handoffRequests;
@@ -251,7 +250,7 @@ struct MacUpdateBackend::Impl {
         const auto key = runtime ? publicKey : pinnedKey(fixture);
         const auto cache = cacheDirectory;
         try {
-            job->worker = std::thread([value, key, selection, bytes, selectedRoute, cache] {
+            job->worker.reset(QThread::create([value, key, selection, bytes, selectedRoute, cache] {
                 const auto stopped = [value, selectedRoute] { return value->cancelled.load() || !routeValid(selectedRoute); };
                 try {
                     // Reauthenticate the exact selection under the current installed key.
@@ -272,8 +271,8 @@ struct MacUpdateBackend::Impl {
                         }
                     }
                 } catch(...) { value->valid = false; }
-                value->done.store(true);
-            });
+            }));
+            job->worker->start();
         } catch(...) { fail(FailureCategory::Storage); return; }
         verification = std::move(job); phase = Verifying; timer.start();
     }
@@ -297,7 +296,7 @@ struct MacUpdateBackend::Impl {
     void poll() {
         if(quitFenced) return;
         if(phase != Idle && !routeValid(route)) { fail(FailureCategory::Network); return; }
-        if(verification && verification->done.load()) {
+        if(verification && verification->worker->wait(0)) {
             const bool current = verification->epoch == epoch && phase == Verifying;
             const bool valid = verification->valid && !verification->cancelled.load();
             const bool miss = verification->restoring && verification->authenticated && !verification->cancelled.load();
@@ -317,29 +316,34 @@ struct MacUpdateBackend::Impl {
         if(phase == Idle && !busy()) timer.stop();
     }
     bool stopWorkersForQuit() {
-        if(quitFenced) return quitFenceSucceeded;
-        quitFenced = true;
-        ++epoch; request = 0; timer.stop();
-        const bool wasReady = phase == Ready && stage && selected && routeValid(route);
+        if(quitFenceSucceeded || quitFenceFailed) return quitFenceSucceeded;
         try {
-            discovery->cancel();
-            if(verification) verification->cancelled.store(true);
+            if(!quitFenced) {
+                quitFenced = true;
+                quitWasReady = phase == Ready && stage && selected && routeValid(route);
+                ++epoch; request = 0; timer.stop();
+                discovery->cancel();
+                if(verification) verification->cancelled.store(true);
+            }
             const bool transportDrained = transport->stopWorkersForQuit();
-            if(verification && verification->worker.joinable()) verification->worker.join();
+            if(verification && !verification->worker->wait(0)) return false;
+            if(!transportDrained) {
+                if(!transport->quitWorkersPending()) quitFenceFailed = true;
+                return false;
+            }
             verification.reset();
             // Neither stage owner is released until its worker is physically
             // joined. A transport refusal retains all remaining dependencies.
-            if(!transportDrained) return false;
             transferStage.reset();
             // Freeze only a prior Ready result whose route is still valid.
             // Later intentional core retirement must not trigger poll/clear.
-            if(!wasReady || !routeValid(route)) {
+            if(!quitWasReady || !routeValid(route)) {
                 phase = Idle;
                 selected.reset(); stage.reset(); route.reset(); feedBytes.clear();
             }
             quitFenceSucceeded = true;
         } catch(...) {
-            // Sticky refusal: retain the backend/context, never grant consent.
+            quitFenceFailed = true;
         }
         return quitFenceSucceeded;
     }
@@ -398,6 +402,10 @@ void MacUpdateBackend::cancel() { Q_ASSERT(QThread::currentThread() == thread())
 bool MacUpdateBackend::stopWorkersForQuit() {
     if(QThread::currentThread() != thread()) return false;
     return impl->stopWorkersForQuit();
+}
+bool MacUpdateBackend::quitWorkersPending() const {
+    return QThread::currentThread() == thread() && impl->quitFenced &&
+        !impl->quitFenceSucceeded && !impl->quitFenceFailed;
 }
 void MacUpdateBackend::beginInstallHandoff(quint64 op, const UpdateOffer& offer, std::function<bool()> consent) {
     if(QThread::currentThread() != thread()) {

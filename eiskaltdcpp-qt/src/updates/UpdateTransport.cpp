@@ -10,8 +10,8 @@
 #include <QSaveFile>
 #include <QPointer>
 #include <QThread>
+#include <QTimer>
 #include <atomic>
-#include <thread>
 #include <stdexcept>
 #ifndef _WIN32
 #include <unistd.h>
@@ -68,15 +68,17 @@ struct UpdateTransport::Impl {
         std::atomic_bool cancelled{false}, progressPending{false};
         std::atomic<quint64> bytes{0};
         std::shared_ptr<dcpp::WakeNotifier> notifier = std::make_shared<dcpp::WakeNotifier>();
-        std::thread worker;
+        std::unique_ptr<QThread> worker;
         bool created = false;
         void stop() { cancelled.store(true); notifier->notify(); }
-        void join() { if(worker.joinable()) worker.join(); }
+        void join() { if(worker) worker->wait(); }
     };
     transport_detail::Backend backend;
     std::shared_ptr<Job> job;
     quint64 sequence = 0;
-    bool stopped = false, stopSucceeded = false;
+    QTimer retirementPoll;
+    std::function<void()> finish;
+    bool stopped = false, stopSucceeded = false, stopFailed = false;
 };
 
 UpdateTransport::UpdateTransport(dcpp::DCContext& context, QObject* parent)
@@ -87,6 +89,14 @@ UpdateTransport::UpdateTransport(dcpp::DCContext& context, transport_detail::Bac
         [&context](const auto& policy, const auto& url, const auto& sink) {
             transport_detail::request(context, policy, url, sink);
         });
+    impl->retirementPoll.setInterval(5);
+    connect(&impl->retirementPoll, &QTimer::timeout, this, [this] {
+        const auto job = impl->job;
+        if(!job || (job->worker && !job->worker->wait(0))) return;
+        impl->retirementPoll.stop();
+        auto finish = std::move(impl->finish);
+        if(finish) finish();
+    });
 }
 
 UpdateTransport::~UpdateTransport() {
@@ -113,8 +123,7 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
     job->destination = destination;
     job->route = std::move(route);
     impl->job = job;
-    const auto finish = [this, job] {
-        job->join();
+    impl->finish = [this, job] {
         if(impl->stopped || impl->job != job) return;
         if(job->created && !job->cancelled.load() && !revoked(job->route) && job->error.isEmpty()) {
             QPointer<UpdateTransport> alive(this);
@@ -133,7 +142,7 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
         }
     };
     try {
-        job->worker = std::thread([this, job, url, kind, backend = impl->backend, finish] {
+        job->worker.reset(QThread::create([this, job, url, kind, backend = impl->backend] {
             const auto cancelled = [job] { return job->cancelled.load() || revoked(job->route); };
             try {
                 require(!cancelled() && allowedUrl(url, kind));
@@ -167,12 +176,12 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
             } catch(...) {
                 job->error = tr("Update download failed. No direct-connection fallback was used.");
             }
-            QMetaObject::invokeMethod(this, finish, Qt::QueuedConnection);
-        });
+        }));
+        job->worker->start();
     } catch(...) {
         job->error = tr("Unable to start the update download worker.");
-        QMetaObject::invokeMethod(this, finish, Qt::QueuedConnection);
     }
+    impl->retirementPoll.start();
     return id;
 }
 
@@ -183,24 +192,32 @@ void UpdateTransport::cancel(quint64 id) {
 
 bool UpdateTransport::stopWorkersForQuit() {
     if(QThread::currentThread() != thread()) return false;
-    if(impl->stopped) return impl->stopSucceeded;
-    impl->stopped = true;
+    if(impl->stopSucceeded || impl->stopFailed) return impl->stopSucceeded;
+    if(!impl->stopped) {
+        impl->stopped = true;
+        impl->retirementPoll.stop();
+        impl->finish = {};
+        if(impl->job) impl->job->stop();
+    }
     const auto job = impl->job;
     try {
         if(job) {
-            job->stop();
-            job->join();
-            // Only joined workers publish created/error or release QSaveFile.
+            // Body completion and QThread::isFinished precede TLS teardown.
+            // Only wait(0)'s physical receipt allows result reads and release.
+            if(job->worker && !job->worker->wait(0)) return false;
             const bool removed = !job->created || !QFileInfo::exists(job->destination) || QFile::remove(job->destination);
             impl->job.reset();
-            if(!removed) return false;
+            if(!removed) { impl->stopFailed = true; return false; }
         }
         impl->stopSucceeded = true;
     } catch(...) {
-        // Keep an unjoined job and its owner alive; refusal is permanently
-        // cached, and no completion may masquerade as a successful fence.
+        impl->stopFailed = true;
     }
     return impl->stopSucceeded;
+}
+bool UpdateTransport::quitWorkersPending() const {
+    return QThread::currentThread() == thread() && impl->stopped &&
+        !impl->stopSucceeded && !impl->stopFailed;
 }
 
 dcpp::HttpRequestPolicy transport_detail::policy(ResourceKind kind,

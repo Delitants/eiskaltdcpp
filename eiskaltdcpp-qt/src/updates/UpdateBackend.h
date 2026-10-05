@@ -18,6 +18,9 @@ public:
     /// Owner-thread terminal admission/worker fence. Does not authorize an
     /// installer or certify staging; an unknown backend must fail closed.
     [[nodiscard]] virtual bool stopWorkersForQuit() { return false; }
+    // False fence + true pending means retain all owners and poll the fence.
+    // Unknown backends cannot manufacture a retryable worker receipt.
+    virtual bool quitWorkersPending() const { return false; }
     // Start only after committed application quit. Recheck currentConsent on
     // the owner thread before irreversible handoff; emit one terminal receipt.
     // Throw only before admitting work; retain owners through the receipt.

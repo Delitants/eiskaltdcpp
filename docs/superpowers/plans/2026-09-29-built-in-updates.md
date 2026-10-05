@@ -1767,3 +1767,52 @@ installation, README/wiki/approved unredacted screenshots and prerelease public
 readback still follow. This is a local source checkpoint only, not whole-source
 or release acceptance. No installation, push, signing or live-state mutation.
 Signed feeds remain last; Tasks 7/8 are not complete.
+
+### 2026-10-05 Native Updater Retirement Checkpoint
+
+The other reviewed Important/P2 finding is repaired locally. Transport and
+archive-verification workers are owned QThreads. Normal completion and checked
+quit poll physical `wait(0)` receipts rather than joining live workers on the
+GUI thread or treating body completion as thread-local teardown completion.
+Admission closes once; Pending retains the worker, context and staging owners.
+Controller and coordinator distinguish Pending from terminal refusal. The
+existing finite quit-session timer now covers updater workers too. Timeout
+refuses quit; later retirement does not grant consent or automatically exit.
+An explicit retry can proceed after physical retirement. No detach, forced
+termination or nested event-loop pump was introduced.
+
+Before production changes, unchanged product objects reproduced exactly 22
+intended assertions: transport eight, controller five, session six and native
+archive verification three. Real staging writes, archive mapping and C++
+thread-local teardown were held in disposable test processes. Launcher-stripped
+interposer and read-versus-mapping setup failures were retained, not accepted as
+behavioral RED evidence. Additional combined transport/session I/O coverage was
+added before its final compilation; it is not claimed as a separate baseline RED.
+
+Fresh consistent two-CPU builds completed for all four test targets on ARM and
+thin x86_64. Focused Qt, GUI and native selections pass 225, 701 and 1949 assertions
+respectively on each architecture. All twelve applicable regular phases pass.
+ARM: core 1032/150485, Qt 615/33700, Torrent 152/18430; Intel/Rosetta:
+core 1032/150484, Qt 615/33887, Torrent 152/18430. Both pass GUI multiline
+93/5462, single-line 93/5554 and applicable sidebar 91/5368. Explicit native
+hidden fixtures remain separate from the regular selections. Matching provider,
+loopback-only network denial and isolated profile receipts were checked; the
+test I/O interposer is absent from the regular aggregate and production targets.
+
+The maintained ABI2 provider and protected live state remain unchanged. Source,
+dependency, prior binary and accepted candidate preservation readbacks accompany
+the private evidence. Passing runs do not explain or waive retained aggregate
+negatives. Destructor waits remain final ownership fallbacks; arbitrary core,
+staging and filesystem latency and a hard whole-quit deadline remain open.
+Injected wire/signature fixtures are not live update or installation acceptance.
+Thin x86_64/Rosetta is not native Intel/macOS-14 acceptance; the current ARM host
+does not establish exact minimum macOS-26 acceptance.
+
+Both concrete reviewed P2 source findings now have repairs and regression
+evidence, not whole-source or release acceptance. Linguistic/resource/provenance/
+reproducibility, native/minimum-OS/live and benchmark acceptance remain open.
+Final reviewed application/material rebuilding, production numeric allocation,
+signing/signed-v3 acceptance, guarded activation and closed-app installation,
+README/wiki/approved unredacted screenshots and prerelease public readback still
+follow. No installation, push, signing, activation or live-state mutation occurred.
+Signed feeds remain last; Tasks 7/8 are not complete.

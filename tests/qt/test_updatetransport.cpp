@@ -16,6 +16,10 @@
 #include <atomic>
 #include <thread>
 #include <future>
+#include <QTimer>
+#ifdef __APPLE__
+#include <dlfcn.h>
+#endif
 #include "dcpp/ScopedFunctor.h"
 
 namespace updates {
@@ -48,6 +52,14 @@ auto directRoute() { return std::make_shared<dcpp::ProxyRouteSnapshot>(); }
 template<class T> bool fence(T& transport) {
     if constexpr(requires { transport.stopWorkersForQuit(); }) return transport.stopWorkersForQuit();
     else return false;
+}
+bool retire(UpdateTransport& transport) {
+    QElapsedTimer elapsed; elapsed.start();
+    bool ready = fence(transport);
+    while(!ready && transport.quitWorkersPending() && elapsed.elapsed() < 3000) {
+        QThread::msleep(1); ready = fence(transport);
+    }
+    return ready;
 }
 }
 
@@ -475,7 +487,7 @@ TEST_CASE("Update worker physically routes DNS feed and archive bytes through on
     }
 }
 
-TEST_CASE("Updater quit fence physically joins an admitted worker without pumping callbacks", "[updates][updater-worker-fence]") {
+TEST_CASE("Updater quit fence polls physical retirement without pumping callbacks", "[updates][updater-worker-fence]") {
     dcpp::test::TestContext context;
     QTemporaryDir staging;
     std::atomic_bool entered{false}, cancelled{false}, release{false}, tailDone{false};
@@ -497,14 +509,88 @@ TEST_CASE("Updater quit fence physically joins an admitted worker without pumpin
         while(!cancelled && deadline.elapsed() < 150) QThread::msleep(1);
         QThread::msleep(30); release = true;
     });
-    const bool drained = fence(*transport);
-    CHECK(drained); CHECK(tailDone.load()); CHECK(cancelled.load());
+    CHECK_FALSE(fence(*transport));
     unblock.get();
+    REQUIRE(retire(*transport)); CHECK(tailDone.load()); CHECK(cancelled.load());
     CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
     QCoreApplication::processEvents();
     CHECK_FALSE(result.done()); CHECK(result.progresses == 0);
     CHECK(fence(*transport));
 }
+
+TEST_CASE("Updater retirement does not block the owner during physical TLS teardown", "[updates][updater-retirement]") {
+    dcpp::test::TestContext context;
+    QTemporaryDir staging;
+    std::atomic_bool entered{false}, released{false};
+    struct Tail {
+        std::atomic_bool* entered = nullptr;
+        std::atomic_bool* released = nullptr;
+        ~Tail() {
+            if(!entered) return;
+            entered->store(true);
+            while(!released->load()) QThread::msleep(1);
+        }
+    };
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [&](const auto&, const auto&, const auto& sink) {
+        thread_local Tail tail;
+        tail.entered = &entered; tail.released = &released;
+        const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    auto cleanup = dcpp::makeScopedFunctor([&] { released = true; });
+    Result result(*transport);
+    transport->fetch(feed, ResourceKind::Feed, staging.filePath("resource"), directRoute());
+    QElapsedTimer elapsed; elapsed.start();
+    while(!entered && elapsed.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    // Bound a regression's blocking join without accepting it as a receipt.
+    auto watchdog = std::async(std::launch::async, [&] { QThread::msleep(350); released = true; });
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    SECTION("quit fence remains pending") {
+        elapsed.restart();
+        CHECK_FALSE(fence(*transport));
+        CHECK(elapsed.elapsed() < 50);
+        CHECK_FALSE(released.load());
+        CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
+        QCoreApplication::processEvents(); QThread::msleep(10); QCoreApplication::processEvents();
+        CHECK(beats > 0); CHECK_FALSE(result.done());
+        watchdog.get(); REQUIRE(pump([&] { return fence(*transport); }));
+        CHECK_FALSE(result.done()); CHECK_FALSE(QFileInfo::exists(staging.filePath("resource")));
+    }
+    SECTION("normal completion waits without blocking the event loop") {
+        elapsed.restart(); QCoreApplication::processEvents();
+        CHECK(elapsed.elapsed() < 50); CHECK_FALSE(result.done()); CHECK_FALSE(released.load());
+        QThread::msleep(10); QCoreApplication::processEvents(); CHECK(beats > 0);
+        watchdog.get(); REQUIRE(pump([&] { return result.done(); })); CHECK(result.successes == 1);
+    }
+}
+
+#ifdef __APPLE__
+TEST_CASE("Updater retirement retains a worker held in a real staging write", "[.][updater-retirement-io]") {
+    const auto arm = reinterpret_cast<void(*)(const char*, int)>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_arm"));
+    const auto entered = reinterpret_cast<int(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_entered"));
+    const auto release = reinterpret_cast<void(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_release"));
+    REQUIRE(arm); REQUIRE(entered); REQUIRE(release);
+    dcpp::test::TestContext context; QTemporaryDir staging;
+    arm(QFile::encodeName(staging.path()).constData(), 1);
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto& sink) {
+        const QByteArray bytes(65536, 'x'); sink(reinterpret_cast<const uint8_t*>(bytes.constData()), bytes.size());
+    });
+    auto cleanup = dcpp::makeScopedFunctor([&] { release(); });
+    Result result(*transport);
+    transport->fetch(feed, ResourceKind::Feed, staging.filePath("resource"), directRoute());
+    QElapsedTimer elapsed; elapsed.start();
+    while(!entered() && elapsed.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(entered());
+    auto watchdog = std::async(std::launch::async, [&] { QThread::msleep(350); release(); });
+    elapsed.restart(); CHECK_FALSE(fence(*transport)); CHECK(elapsed.elapsed() < 50);
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    REQUIRE(pump([&] { return beats >= 3; }, 100)); CHECK_FALSE(result.done());
+    watchdog.get(); REQUIRE(pump([&] { return fence(*transport); }));
+    CHECK_FALSE(result.done()); CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
+}
+#endif
 
 TEST_CASE("Updater quit fence retracts queued completion and terminally rejects new fetches", "[updates][updater-worker-fence]") {
     dcpp::test::TestContext context;
@@ -521,7 +607,7 @@ TEST_CASE("Updater quit fence retracts queued completion and terminally rejects 
     REQUIRE(QFileInfo::exists(path));
     // Also leave a busy rejection queued, not just worker completion/progress.
     transport->fetch(feed, ResourceKind::Feed, staging.filePath("busy"), directRoute());
-    CHECK(fence(*transport)); CHECK_FALSE(QFileInfo::exists(path));
+    CHECK(retire(*transport)); CHECK_FALSE(QFileInfo::exists(path));
     CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
     QCoreApplication::processEvents();
     CHECK_FALSE(result.done()); CHECK(result.progresses == 0); CHECK(calls.load() == 1);
@@ -582,7 +668,7 @@ TEST_CASE("Updater quit fence permanently refuses failed undelivered file remova
         QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
     });
     REQUIRE(QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::ExeOwner));
-    CHECK_FALSE(fence(*transport)); CHECK(QFileInfo::exists(path));
+    CHECK_FALSE(retire(*transport)); CHECK(QFileInfo::exists(path));
     REQUIRE(QFile::setPermissions(staging.path(), QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner));
     CHECK_FALSE(fence(*transport));
     CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);

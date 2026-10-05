@@ -901,3 +901,39 @@ external-network-denied sandbox verify that the public application owner selects
 an unparented native backend with the admitted channel, waits past startup delay
 without scheduling work, keeps installation disabled, and disposes safely after
 checked no-update quit. It uses no production key, installed app or user profile.
+
+### Physical Worker Retirement
+
+`[updater-retirement]` covers transport completion and checked quit while C++
+thread-local teardown is held. Completion signals and `isFinished()` are not
+physical-exit receipts; the owner must use `QThread::wait(0)` without blocking.
+`[updater-retirement-controller]` and `[updater-retirement-session]` cover closed
+admission, finite refusal, retained core routing and explicit post-timeout retry.
+
+The hidden filesystem tests require the disposable-process interposer below:
+
+```sh
+qa=$(mktemp -d /private/tmp/eiskalt-retirement.XXXXXX)
+c++ -std=c++20 -dynamiclib -arch arm64 \
+  tests/macos/updater/worker_io_hold.cpp -o "$qa/worker_io_hold.dylib"
+```
+
+For the Intel fixture, build it with `-arch x86_64`. Set
+`DYLD_INSERT_LIBRARIES` only in the environment of the QA executable, after any
+system sandbox launcher (macOS strips this variable from protected launchers).
+Never inject it into the installed app, system processes or release bundles.
+The interposer holds only explicitly armed disposable staging paths and must
+remain test-only. Run with isolated HOME/CFFIXED_USER_HOME/XDG/TMPDIR and an
+external-network-denied, loopback-only child sandbox:
+
+- Qt test target: `[updater-retirement-io]` holds a real staging write.
+- Native Qt target: `[updater-retirement-native-io]` holds an archive mapping.
+  Use Cocoa plus the existing disposable signed discovery fixture and signer.
+- Full-GUI target: `[updater-retirement-session-io]` carries a held real transport
+  worker through session timeout, staging/context retention and explicit retry.
+
+Select the hidden tags explicitly and reject skips or missing interposer symbols.
+Native tests cannot be replaced by the ordinary Qt suite. Destructors still
+require physically retired workers: callers must retain owners through Pending
+or Refused. This removes live-worker GUI joins, not all possible main-thread
+filesystem/staging/core latency and not a total hard quit-deadline guarantee.
