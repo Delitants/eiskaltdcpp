@@ -1816,3 +1816,40 @@ signing/signed-v3 acceptance, guarded activation and closed-app installation,
 README/wiki/approved unredacted screenshots and prerelease public readback still
 follow. No installation, push, signing, activation or live-state mutation occurred.
 Signed feeds remain last; Tasks 7/8 are not complete.
+
+### 2026-10-05 Retained Aggregate Boundary Observations
+
+Private, observation-only copies now timestamp engine commands, bootstrap/socket
+admission, check-state alerts, completion snapshots and DC publication. Exact
+observation reversal was checked before compiling owned outputs against the
+consistent current ARM test objects. Original operations, assertions, deadlines,
+selection filters and loopback-only network policy were retained. Compiler and
+application test processes ran sequentially; no production source changed.
+
+At the original seeds, the bootstrap control passes 1/4 and full Torrent
+152/18430; the publication control passes both original sections, 1/519, and
+full applicable Qt 615/33689. These are current binaries with newer updater tests,
+not byte-identical replays of the older failing binaries. Counts in the existing
+timed stability loop vary with scheduling. Complete XML, no errors/skips, matching
+ABI2 loader and direct-network denial were checked. Rejected launcher/anchor/
+bookkeeping setup attempts remain privately retained, not test results.
+
+The aggregate bootstrap wait is 22.429ms against its unchanged 2000ms limit.
+Bootstrap precedes this fresh session's listener construction, so its own
+libtorrent listen-port collision alone cannot explain the missing first connection.
+This does not exclude previous-session, socket/resource or scheduling problems.
+Aggregate publication waits are 844.947ms and 630.052ms against the unchanged
+10000ms limit; both show check completion followed by successful DC publication.
+Neither original failure reproduced or has an established cause. Observation can
+perturb timing. No fix, failure waiver, native/minimum-OS, live proxy or release
+acceptance is claimed; every earlier negative log remains retained.
+
+All frozen source, protected state, dependencies, prior binary/log and accepted
+candidate readbacks pass. Next independent work is held staging-cleanup
+responsiveness: GUI-side file removal and temporary-directory teardown after
+worker retirement, before any repair. Broader core/filesystem responsiveness,
+linguistic/resource/provenance/reproducibility, native/minimum-OS/live/benchmark
+acceptance, final app/material rebuilding, numeric allocation/signing/signed-v3
+acceptance, guarded activation/closed-app install, README/wiki/approved unredacted
+screenshots and prerelease/public readback remain open. No push, install, signing,
+activation, provider or live-state changes. Signed feeds last; Tasks 7/8 stay open.
