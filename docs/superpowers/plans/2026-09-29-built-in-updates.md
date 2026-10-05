@@ -1314,3 +1314,47 @@ full suites, independent/linguistic review, native minimum-OS/platform and actua
 OS/live-transfer acceptance. Live signed v3 acceptance and guarded activation also
 remain open. Safe installation and README/wiki/screenshots/prerelease publication
 follow those gates; signed feeds remain last.
+
+### 2026-10-04 Updater-Enabled Split Packaging Checkpoint
+
+Fresh, unlaunched Intel and Apple Silicon QA app candidates now compile with
+native updater, trust metadata, audited Sparkle packaging and the maintained
+selected-file recheck provider required. Their exact source snapshot is
+`e325cb6cd`; numeric build 1 remains private QA, not a production allocation.
+Only the recorded production PUBLIC key was used; no private signing-key
+operation, network update check, installation or publication occurred.
+
+The final ARM bundle passes strict signatures and architecture/deployment checks
+across 89 thin images with macOS declarations <=26.0 and 748 closure edges. Intel
+passes across 45 thin images with declarations <=14.0 and 465 closure edges. The
+ARM copied-bundle tiny ABI probe returns 1 on the native macOS27 host; Intel's ABI
+and extension references are statically verified, not native Intel acceptance.
+Actual app-target compile/import and trust-metadata readbacks match both profiles.
+
+Both preserve exact signed Sparkle stages and patched Cocoa while staging matching
+package-level notices (ARM: 39 packages/2697 files; Intel: 17 packages/502 files) and
+resealing only the enclosing app. Fresh project source and controlled ARM static
+build receipts accompany the current image/source mapping. All dependency code/data
+sections match retained provider mappings; this is not reproducible-build proof.
+The current input archive passes byte-exact readback across 2983 files. Package-level
+notices remain conservatively inclusive; resource/file-level attribution is open.
+
+Both private QA ZIPs pass extraction, strict signatures, closure and checksum
+readback, each below the feed asset limit. Focused regressions pass 24 tests with
+no skips: metadata 9, native wiring 3, packaging 12. Restricted-cache Xcode failures
+were retained and resolved by running isolated fixtures with normal build-cache
+access. Incorrect private wrapper path/SDK/fixture selections were preserved and
+corrected without weakening guards or changing product code. The dummy-key plugin
+fixture is never executed and proves packaging only, not runtime trust identity.
+Tracked-source, captured input/recipe and nine protected live-file hashes pass.
+Fresh-context read-only checkpoint review found no actionable findings and checked
+all mapped image/notice hashes, both strict signatures and archive checksums. This
+review does not replace whole-branch release acceptance.
+
+This advances the packaging/materials subset, not completion of Tasks 7/8. Full
+current suites, whole-branch/linguistic review, native minimum-OS/platform and actual
+OS/live-transfer acceptance remain open. Final reviewed-source rebuild/materials,
+production numeric allocation, signed v3 acceptance and guarded activation precede
+safe installation and README/wiki/screenshots/prerelease publication. Signed feeds
+remain last, after accepted exact public assets. No live profile, installed app,
+dependency prefix, production key, VM or server was changed.
