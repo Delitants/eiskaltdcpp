@@ -2,7 +2,9 @@
 """Selected-recheck packaging gates using real Mach-O and CMake fixtures."""
 
 from pathlib import Path
+import os
 import plistlib
+import shlex
 import shutil
 import subprocess
 import sys
@@ -26,8 +28,11 @@ def run(*args):
 class SelectedRecheckBundle(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.tmp = tempfile.TemporaryDirectory(prefix="eiskalt-selected-package-")
-        cls.work = Path(cls.tmp.name)
+        retained = os.environ.get("EISKALT_SELECTED_RECHECK_TEST_ROOT")
+        cls.tmp = None if retained else tempfile.TemporaryDirectory(prefix="eiskalt-selected-package-")
+        cls.work = Path(retained) if retained else Path(cls.tmp.name)
+        if retained:
+            cls.work.mkdir(mode=0o700)
         definitions = "".join(f"void {name}() {{}}\n" for name in OPERATIONS)
         for name, arch, floor, abi in (("good", ARCH, FLOOR, 2),
                                        ("wrong-abi", ARCH, FLOOR, 1),
@@ -55,10 +60,12 @@ class SelectedRecheckBundle(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.tmp.cleanup()
+        if cls.tmp:
+            cls.tmp.cleanup()
 
     def setUp(self):
         self.case = Path(tempfile.mkdtemp(prefix="case with space ", dir=self.work))
+        self.configure_count = 0
         self.app = self.case / "EiskaltDC++.app"
         self.contents = self.app / "Contents"
         (self.contents / "MacOS").mkdir(parents=True)
@@ -219,15 +226,163 @@ class SelectedRecheckBundle(unittest.TestCase):
         project = self.case / "cmake"
         project.mkdir()
         (project / "CMakeLists.txt").write_text(
-            "cmake_minimum_required(VERSION 3.20)\nproject(abi_pair LANGUAGES CXX)\n"
+            "cmake_minimum_required(VERSION 3.20...3.28)\nproject(abi_pair LANGUAGES CXX)\n"
             "add_library(LibtorrentRasterbar::torrent-rasterbar SHARED IMPORTED)\n"
             f'set_target_properties(LibtorrentRasterbar::torrent-rasterbar PROPERTIES IMPORTED_LOCATION "{self.library}" INTERFACE_INCLUDE_DIRECTORIES "{include.parent}")\n'
-            f'include("{ROOT / "cmake/SelectedRecheck.cmake"}")\n')
+            f'include("{ROOT / "cmake/SelectedRecheck.cmake"}")\n'
+            'add_executable(consumer consumer.cpp)\n'
+            'eiskalt_torrent_selected_recheck_capability(consumer)\n')
+        (project / "consumer.cpp").write_text(
+            'int main(int argc, char** argv) {\n'
+            '  if (argc != 2) return 1;\n'
+            "  return EISKALT_SELECTED_RECHECK_AVAILABLE == (argv[1][0] == '1') ? 0 : 1;\n}\n")
         return project, header
 
-    def configure_pair(self, project):
-        return subprocess.run(["cmake", "-S", str(project), "-B", str(self.case / "build"),
-                               "-DEISKALT_REQUIRE_SELECTED_RECHECK=ON"], capture_output=True, text=True)
+    def configure_pair(self, project, *extra, required=True):
+        result = subprocess.run(
+            ["cmake", "-S", str(project), "-B", str(self.case / "build"),
+             "-DCMAKE_OSX_ARCHITECTURES=" + ARCH, "-DCMAKE_OSX_DEPLOYMENT_TARGET=" + FLOOR,
+             "-DEISKALT_REQUIRE_SELECTED_RECHECK=" + ("ON" if required else "OFF"), *extra],
+            capture_output=True, text=True, timeout=60)
+        self.configure_count += 1
+        (self.case / f"configure-{self.configure_count}.log").write_text(
+            f"exit={result.returncode}\n" + result.stdout + result.stderr)
+        return result
+
+    def consumer_capability(self, expected):
+        run("cmake", "--build", self.case / "build", "--target", "consumer", "-j2")
+        result = subprocess.run([str(self.case / "build/consumer"), str(expected)],
+                                capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def emulator(self):
+        log = self.case / "emulator.log"
+        emulator = self.case / "runner with space.sh"
+        emulator.write_text('#!/bin/sh\nset -eu\n'
+                            f'printf "%s\\n" "$1" >> {shlex.quote(str(log))}\n'
+                            '"$@"\n')
+        emulator.chmod(0o755)
+        return emulator, log
+
+    def test_matching_header_and_runtime_abi_enable_consumer(self):
+        project, _ = self.cmake_pair(2)
+        result = self.configure_pair(project)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(1)
+
+    def test_rejects_abi2_header_with_abi1_library_at_configure(self):
+        project, _ = self.cmake_pair(2)
+        shutil.copy2(self.work / "wrong-abi.dylib", self.library)
+        result = self.configure_pair(project)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+
+    def test_reconfigure_cannot_reuse_stale_library_capability(self):
+        project, _ = self.cmake_pair(2)
+        result = self.configure_pair(project)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        shutil.copy2(self.work / "wrong-abi.dylib", self.library)
+        result = self.configure_pair(project)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+        shutil.copy2(self.work / "good.dylib", self.library)
+        result = self.configure_pair(project)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(1)
+
+    def test_rejects_missing_library_marker_at_configure(self):
+        project, _ = self.cmake_pair(2)
+        shutil.copy2(self.work / "missing.dylib", self.library)
+        result = self.configure_pair(project)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+
+    def test_optional_ordinary_provider_keeps_consumer_disabled(self):
+        project, header = self.cmake_pair(2)
+        header.unlink()
+        shutil.copy2(self.work / "missing.dylib", self.library)
+        result = self.configure_pair(project, required=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(0)
+
+    def test_optional_runtime_mismatch_keeps_consumer_disabled(self):
+        project, _ = self.cmake_pair(2)
+        shutil.copy2(self.work / "wrong-abi.dylib", self.library)
+        result = self.configure_pair(project, required=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(0)
+
+    def test_cross_without_runner_rejects_required_capability(self):
+        project, _ = self.cmake_pair(2)
+        result = self.configure_pair(project, "-DCMAKE_SYSTEM_NAME=Darwin")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+
+    def test_cross_without_runner_keeps_optional_consumer_disabled(self):
+        project, _ = self.cmake_pair(2)
+        result = self.configure_pair(project, "-DCMAKE_SYSTEM_NAME=Darwin", required=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(0)
+
+    def test_cross_runner_must_execute_matching_library(self):
+        project, _ = self.cmake_pair(2)
+        emulator, log = self.emulator()
+        result = self.configure_pair(project, "-DCMAKE_SYSTEM_NAME=Darwin",
+                                     "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(emulator))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(log.is_file(), "No ABI probe executed through the runner")
+        self.assertEqual(len(log.read_text().splitlines()), 1)
+        self.consumer_capability(1)
+
+    def test_cross_runner_rejects_mismatched_library(self):
+        project, _ = self.cmake_pair(2)
+        emulator, log = self.emulator()
+        shutil.copy2(self.work / "wrong-abi.dylib", self.library)
+        result = self.configure_pair(project, "-DCMAKE_SYSTEM_NAME=Darwin",
+                                     "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(emulator))
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+        self.assertTrue(log.is_file(), "No ABI probe executed through the runner")
+
+    def test_cross_runner_cannot_reuse_preseeded_run_success(self):
+        project, _ = self.cmake_pair(2)
+        emulator, log = self.emulator()
+        shutil.copy2(self.work / "wrong-abi.dylib", self.library)
+        result = self.configure_pair(
+            project, "-DCMAKE_SYSTEM_NAME=Darwin",
+            "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(emulator),
+            "-DEISKALT_SELECTED_RECHECK_AVAILABLE=1",
+            "-DEISKALT_SELECTED_RECHECK_AVAILABLE_EXITCODE=0")
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+        self.assertTrue(log.is_file(), "A cached result suppressed the ABI probe")
+
+    def test_cross_broken_runner_cannot_grant_capability(self):
+        project, _ = self.cmake_pair(2)
+        args = ("-DCMAKE_SYSTEM_NAME=Darwin",
+                "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(self.case / "missing-runner"))
+        result = self.configure_pair(project, *args, required=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(0)
+
+    def test_cross_broken_runner_rejects_required_capability(self):
+        project, _ = self.cmake_pair(2)
+        result = self.configure_pair(
+            project, "-DCMAKE_SYSTEM_NAME=Darwin",
+            "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(self.case / "missing-runner"))
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn("matching maintained libtorrent extension", result.stderr)
+
+    def test_cross_removing_runner_revokes_previous_capability(self):
+        project, _ = self.cmake_pair(2)
+        emulator, log = self.emulator()
+        result = self.configure_pair(project, "-DCMAKE_SYSTEM_NAME=Darwin",
+                                     "-DCMAKE_CROSSCOMPILING_EMULATOR=" + str(emulator))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(log.is_file(), "No ABI probe executed through the runner")
+        result = self.configure_pair(project, "-DCMAKE_CROSSCOMPILING_EMULATOR=", required=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.consumer_capability(0)
 
     def test_rejects_header_library_abi_mismatch_at_configure(self):
         project, _ = self.cmake_pair(1)

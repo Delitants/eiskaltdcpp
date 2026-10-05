@@ -24,7 +24,15 @@ are never replaced.
 
 Configure a separate application build with `LibtorrentRasterbar_DIR` pointing to
 `PREFIX/lib/cmake/LibtorrentRasterbar` and `EISKALT_REQUIRE_SELECTED_RECHECK=ON`.
-The capability test links the public ABI marker. Consumers prefer the selected
+The capability test compiles the ABI-2 header check and executes the linked
+library's public ABI marker, requiring it to return 2. Run results are cleared
+on every configure, so changing only the library cannot reuse a prior success.
+Cross-compilation requires a runnable `CMAKE_CROSSCOMPILING_EMULATOR` for this
+feature; without one, optional builds disable selected rechecking and required
+builds fail. A preseeded run result is not accepted in place of execution.
+This small configure probe runs the trusted provider, not the application or
+a Torrent session. It does not establish native minimum-OS release acceptance.
+Consumers prefer the selected
 package's headers to transitive system include roots and retain assert-layout ABI
 matching. Ordinary system-library builds can omit the feature.
 
@@ -87,8 +95,8 @@ deployment floor. It rejects escaping symlinks, external/nonrelocatable install
 names, external runpaths and unresolved relative dependencies. The application
 must reference the extension ABI and all five operations exported by the single
 bundled libtorrent. Required CMake configuration separately rechecks matching
-headers and linked capability on every configure, including after header/prefix
-changes, before the application is built.
+headers and the library's returned ABI on every configure, including after
+header/library/prefix changes, before the application is built.
 
 On a matching native host, an isolated tiny caller verifies that the bundled
 library returns ABI 2. It runs at the executable location in a temporary bundle
@@ -106,8 +114,10 @@ ctest --test-dir BUILD -R eiskalt-macos-selected-recheck-bundle --output-on-fail
 Actual thin Mach-O fixtures cover absent/mismatched ABI, missing operations or
 consumer references, reexport chains, loader-relative identities, outside-Homebrew
 links/runpaths, unresolved relative dependencies, wrong CPU/newer OS and escaping
-symlinks. A fresh required
-CMake configure rejects mismatched header ABI and cannot reuse a stale success.
+symlinks. CMake fixtures reject both header/library mismatch directions, missing
+markers, stale library-only successes and invalid cross-runner receipts. A real
+consumer verifies enabled/disabled compile definitions, including ordinary
+unpatched providers and cross-builds without a runner.
 Signing, source/patch provenance,
 full app-bundle audits and matching minimum-OS runtime tests remain separate
 release gates; neither fixtures nor cross-inspection substitute for them.

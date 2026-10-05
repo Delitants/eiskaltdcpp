@@ -1720,3 +1720,50 @@ provenance/reproducibility and native/minimum-OS/live acceptance remain open.
 Final reviewed rebuilding/material refresh, numeric allocation/signing/signed-v3
 acceptance, guarded activation/install, README/wiki/unredacted screenshots and
 prerelease public readback still follow. Signed feeds last; Tasks 7/8 remain open.
+
+### 2026-10-05 ABI2 Configure Admission Checkpoint
+
+The reviewed configure-admission finding is repaired locally. The probe now
+executes the linked library's ABI marker after checking the ABI-2 header, rather
+than merely compiling its return comparison. Probe/run caches are cleared on
+every configure. Independent application-runtime and bundle ABI checks remain
+unchanged; the maintained provider patch and ABI were not changed.
+
+Cross-builds require an explicit runnable emulator to enable selected rechecking.
+Without one, optional builds leave the feature unavailable and required builds
+refuse configuration. Preseeded success cannot replace the actual run. Failed
+execution is normalized in both normal and cache variables, including the newer
+CMake policy under which a normal `FAILED_TO_RUN` value can shadow cached zero.
+This fail-closed policy costs cross-builders an explicit working runner; it does
+not claim native minimum-OS acceptance or validate arbitrary untrusted providers.
+
+Real Mach-O fixtures first reproduced exactly ten intended failures in 33 cases
+against the unchanged compile-only check, with no unrelated errors. Aligning the
+fixture with the application's CMake policy range exposed two additional
+normal/cache-shadow failures in the first repair. Both were reproduced before
+normalization was fixed. Final native fixtures pass 34/34, thin x86_64/Rosetta
+configure fixtures 16/16, and all three macOS packaging suites pass. Both actual
+maintained-provider configurations execute the marker successfully. All 686
+non-generated source compile commands per architecture match the prior
+consistent build after normalizing owned build paths; generated version headers
+also match. Existing compiled application-test binaries were reused, not rebuilt
+or represented as new release bundles.
+
+Both architectures pass all six applicable regular regression phases. ARM:
+core 1032/150484, Qt 613/33702, Torrent 152/18430; Intel/Rosetta:
+core 1032/150482, Qt 613/33766, Torrent 152/18430. Both pass GUI multiline
+92/5437, single-line 92/5529 and applicable sidebar 90/5343. Explicit native
+hidden fixtures, interop and benchmarks remain separate from these selections.
+Earlier aggregate negatives are retained and unexplained, not waived by this
+passing run. Original and interrupted QA evidence is retained privately.
+
+The other reviewed P2, nonblocking native updater transport/verification
+retirement, still needs held-filesystem, physical TLS-teardown, retained-owner
+timeout and explicit-retry regressions. Broader core/staging/filesystem latency,
+linguistic/resource/provenance/reproducibility, native/minimum-OS/live and benchmark
+acceptance remain open. Final reviewed application/material rebuilding, production
+numeric allocation/signing/signed-v3 acceptance, guarded activation and closed-app
+installation, README/wiki/approved unredacted screenshots and prerelease public
+readback still follow. This is a local source checkpoint only, not whole-source
+or release acceptance. No installation, push, signing or live-state mutation.
+Signed feeds remain last; Tasks 7/8 are not complete.
