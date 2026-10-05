@@ -1421,3 +1421,27 @@ Complete resource/dependency attribution, whole-branch/linguistic review and nat
 platform/minimum-OS acceptance therefore remain open. Final reviewed-source build,
 production numeric/signature acceptance and guarded activation precede installation
 and README/wiki/screenshots/prerelease publication; signed feeds remain last.
+
+### 2026-10-04 Independent Pending-Release Review
+
+Fresh read-only domain reviews cover the pending local delta from cached branch
+base18ac3795 to790ee402b:97commits/305assigned paths. Core/network, updater/release
+and Torrent/GUI production paths and contracts were traced independently; test
+fixtures received focused, not exhaustive, inspection. Current catalog checks
+pass18tests, and13relative documentation links resolve in that frozen source.
+Native-speaker, runtime and minimum-OS acceptance are not implied.
+
+Six concrete source findings remain open. First repair is a P1 maintained-engine
+part-file mapping loss after persistent metadata flush failure, across all three
+storage backends. Five P2 findings concern folder-download intent lost at shutdown,
+integrity failures incorrectly latched as physical flush failures, unbounded GUI
+worker joins, absent checkpoint-refusal recovery, and blocking filesystem probes
+during Torrent selection. Each needs a failing regression, bounded repair and
+applicable re-review; this checkpoint does not claim runtime reproduction or fixes.
+
+The review is complete with findings, not approval to publish. Existing QA apps,
+archives, providers and live profile remain unchanged. Start with part-file
+durability in separately owned providers, update the dependency pin and refresh
+final materials only after verification. Remaining attribution, native/platform,
+production signing, installation and documentation/publication gates still apply.
+Signed feeds remain last; no release-ready claim follows from earlier passing tests.
