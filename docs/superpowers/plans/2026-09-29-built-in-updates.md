@@ -1482,3 +1482,37 @@ production signing/activation, safe installation and README/wiki/screenshots/
 prerelease publication remain pending. Protected live records, accepted providers,
 candidate images/notices, strict seals and archives are unchanged. No installation,
 push, publication, key operation, server or VM mutation occurred. Signed feeds last.
+
+### 2026-10-04 Folder-Intent Persistence Repair Checkpoint
+
+Pending folder downloads now persist independently of transient file-list queue
+items and the Keep file lists setting. Optional escaped Directory records retain
+source CID, hub hint, remote folder, destination and requested priority. Startup
+restores and deduplicates valid requests, then requests their file lists within
+ordinary producer admission. Shutdown admission remains closed; no new connection
+or directory expansion is authorized by this persistence change. Consumed intent
+marks the queue dirty, and teardown releases remaining owned requests. Existing
+file-expansion priority policy is unchanged; the saved request retains its value.
+
+A real full/partial list-completion regression first failed four assertions after
+producer closure, checked snapshot and reload. An additional regression caught
+an overly strict one-letter-folder guard before committing. Fresh consistent
+DC-only core builds pass88 assertions in3 folder tests and738 assertions in48
+snapshot/passive-queue tests on both architectures. Full non-hidden core suites
+pass1026cases,150402assertions on ARM and150403 under Intel/Rosetta, with no skips.
+Coverage includes both file-list retention settings, resumed folder expansion,
+escaped destinations, retained hub hints/priority, duplicate/malformed records,
+short names and refused loading after the shutdown fence. The initial RED reused
+unchanged baseline objects read-only; final builds do not mix old DirectoryItem
+layouts with new headers. This is host core verification, not complete app or
+minimum-OS/native Intel acceptance.
+
+Four reviewed P2 repairs remain: integrity-vs-physical-flush error classification,
+bounded GUI worker retirement, safe checkpoint-refusal recovery, and asynchronous
+Torrent location probes. The retained Intel aggregate Torrent failures from the
+prior checkpoint also remain unresolved. Linguistic/resource/provenance review,
+native/platform acceptance, final-source application/material rebuilding,
+production signing/activation, safe installation and documentation/prerelease
+publication still follow. All protected live records and accepted dependency,
+candidate-image/notice, seal and archive contents remain unchanged. No push,
+installation, signing-key operation, server or VM change. Signed feeds remain last.

@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 #include "stdinc.h"
 #include <atomic>
 #include <condition_variable>
@@ -384,6 +385,102 @@ TEST_CASE("Completed filelist cleanup after queue producer fence preserves pendi
     CHECK(f.queue().directories.count(source->getUser()) == 1);
     CHECK_FALSE(fs::exists(f.path("files")));
     CHECK(fs::exists(list + ".xml"));
+}
+
+TEST_CASE("Producer-fenced completed lists preserve folder intent through restart", "[queue-directory-persistence][queue-producers-stop][shutdown]") {
+    const auto partial = GENERATE(false, true);
+    const auto keepLists = GENERATE(false, true);
+    INFO("partial list=" << partial);
+    INFO("keep lists=" << keepLists);
+    Fixture f;
+    f.context().getSettingsManager()->set(SettingsManager::KEEP_LISTS, keepLists);
+    auto* source = f.source();
+    const auto remote = source->getHintedUser();
+    const auto destination = f.path("saved & files/");
+    f.queue().addDirectory("Pack\\", remote, destination, QueueItem::HIGH);
+    const auto list = f.queue().getListPath(remote);
+    auto* item = f.queue().fileQueue.find(list);
+    REQUIRE(item);
+    if(partial) item->setFlag(QueueItem::FLAG_PARTIAL_LIST);
+    auto* d = f.queue().getDownload(*source, false);
+    REQUIRE(d);
+    REQUIRE(d->getType() == (partial ? Transfer::TYPE_PARTIAL_LIST : Transfer::TYPE_FULL_LIST));
+    f.queue().setFile(d);
+    auto contents = File(f.listing(), File::READ, File::OPEN).read();
+    d->setSize(contents.size()); item->setSize(contents.size());
+    d->getFile()->write(contents.data(), contents.size());
+    d->addPos(contents.size(), contents.size());
+    stopProducers(f.queue());
+    f.queue().putDownload(d, true);
+    REQUIRE(source->getDownload() == nullptr);
+    REQUIRE(f.queue().fileQueue.getSize() == 0);
+    REQUIRE(f.queue().directories.count(remote.user) == 1);
+    CHECK_FALSE(fs::exists(destination));
+    const auto snapshot = f.path("folder-intent.xml");
+    f.queue().setQueueFile(snapshot);
+    REQUIRE(f.queue().saveQueueChecked(true));
+    const auto xml = File(snapshot, File::READ, File::OPEN).read();
+    CHECK(xml.find("<Directory ") != string::npos);
+    for(auto& entry : f.queue().directories) delete entry.second;
+    f.queue().directories.clear();
+    f.context().queueManager_ = std::make_unique<QueueManager>(f.context());
+    f.queue().setQueueFile(snapshot);
+    f.queue().loadQueue();
+    REQUIRE(f.queue().directories.size() == 1);
+    auto* retained = f.queue().directories.begin()->second;
+    CHECK(retained->getUser()->getCID() == remote.user->getCID());
+    CHECK(retained->getName() == "Pack\\");
+    CHECK(retained->getTarget() == destination);
+    CHECK(retained->getPriority() == QueueItem::HIGH);
+    CHECK(retained->getHubHint() == remote.hint);
+    f.queue().loadQueue();
+    CHECK(f.queue().directories.size() == 1);
+    CHECK(f.queue().fileQueue.getSize() == 1);
+    f.queue().processList(f.listing(), {retained->getUser(), remote.hint}, QueueItem::FLAG_DIRECTORY_DOWNLOAD);
+    CHECK(f.queue().directories.empty());
+    CHECK(f.queue().fileQueue.find(destination + "Pack/A.bin") != nullptr);
+    CHECK(f.queue().fileQueue.find(destination + "Pack/B.bin") != nullptr);
+}
+
+TEST_CASE("Folder queue restore ignores invalid records and stays fenced during shutdown", "[queue-directory-persistence][queue-producers-stop][shutdown]") {
+    Fixture f;
+    const auto user = f.user();
+    const auto cid = user->getCID().toBase32();
+    const auto snapshot = f.path("directory-records.xml");
+    const auto target = f.path("restored/");
+    const auto record = [&](const string& id, const string& remote, const string& destination, const string& priority) {
+        return "<Directory CID=\"" + id + "\" Hub=\"adc://fixture\" Name=\"" + remote + "\" Target=\"" + destination + "\" Priority=\"" + priority + "\"/>";
+    };
+    File(snapshot, File::WRITE, File::CREATE | File::TRUNCATE).write("<Downloads>" +
+        record(cid, "Pack\\", target, "3") + record(cid, "pack\\", target, "4") +
+        record("bad", "Pack\\", target, "3") + record(cid, "Missing separator", target, "3") +
+        record(cid, "Other\\", "relative/", "3") + record(cid, "Other\\", target, "999") + "</Downloads>");
+    f.queue().setQueueFile(snapshot);
+    stopProducers(f.queue());
+    f.queue().loadQueue();
+    CHECK(f.queue().directories.empty());
+    CHECK(f.queue().fileQueue.getSize() == 0);
+    f.context().queueManager_ = std::make_unique<QueueManager>(f.context());
+    f.queue().setQueueFile(snapshot);
+    f.queue().loadQueue();
+    REQUIRE(f.queue().directories.size() == 1);
+    CHECK(f.queue().directories.begin()->second->getPriority() == QueueItem::NORMAL);
+    CHECK(f.queue().fileQueue.getSize() == 1);
+}
+
+TEST_CASE("Folder queue preserves a single-character remote folder name", "[queue-directory-persistence][queue-directory-short-name]") {
+    Fixture f;
+    f.context().getSettingsManager()->set(SettingsManager::KEEP_LISTS, false);
+    const auto remote = f.hinted(f.user());
+    f.queue().addDirectory("A\\", remote, f.path("short/"));
+    const auto snapshot = f.path("short-directory.xml");
+    f.queue().setQueueFile(snapshot);
+    REQUIRE(f.queue().saveQueueChecked(true));
+    f.context().queueManager_ = std::make_unique<QueueManager>(f.context());
+    f.queue().setQueueFile(snapshot);
+    f.queue().loadQueue();
+    REQUIRE(f.queue().directories.size() == 1);
+    CHECK(f.queue().directories.begin()->second->getName() == "A\\");
 }
 
 TEST_CASE("Accepted file cleanup and moves remain live after queue producer fence", "[queue-producers-stop][shutdown]") {

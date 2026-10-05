@@ -659,6 +659,9 @@ QueueManager::QueueManager(DCContext& ctx) :
 QueueManager::~QueueManager() {
     stopCleanupForShutdown();
 
+    for(auto& entry : directories) delete entry.second;
+    directories.clear();
+
     if(!CTX_BOOLSETTING(KEEP_LISTS)) {
         string path = Util::getListPath();
 
@@ -1776,6 +1779,7 @@ void QueueManager::processList(const string& name, const HintedUser& user, int f
                 dl.push_back(i->second);
             }
             directories.erase(user);
+            if(!dl.empty()) setDirty();
         }
 
         for(auto di: dl) {
@@ -2069,6 +2073,26 @@ bool QueueManager::saveQueueChecked(bool force) {
             }
         }
 
+        // Accepted list completion may be fenced before folder expansion. Save
+        // that intent independently of the transient list and KEEP_LISTS.
+        for(const auto& entry : directories) {
+            const auto& directory = *entry.second;
+            if(!directory.getUser()) continue;
+            const auto& cid = directory.getUser()->getCID();
+            f.write(LIT("\t<Directory CID=\""));
+            f.write(cid.toBase32());
+            f.write(LIT("\" Hub=\""));
+            f.write(SimpleXML::escape(directory.getHubHint(), tmp, true));
+            f.write(LIT("\" Name=\""));
+            f.write(SimpleXML::escape(directory.getName(), tmp, true));
+            f.write(LIT("\" Target=\""));
+            f.write(SimpleXML::escape(directory.getTarget(), tmp, true));
+            f.write(LIT("\" Priority=\""));
+            f.write(Util::toString(int(directory.getPriority())));
+            f.write(LIT("\"/>\r\n"));
+            cids.push_back(cid);
+        }
+
         f.write(LIT("</Downloads>\r\n"));
         f.flush();
         ff.close();
@@ -2117,6 +2141,18 @@ void QueueManager::loadQueue() {
         File f(getQueueFile(), File::READ, File::OPEN);
         SimpleXMLReader(&l).parse(f);
         dirty = false;
+        std::unordered_map<UserPtr, string, User::Hash> pendingLists;
+        {
+            Lock lock(cs);
+            for(const auto& entry : directories)
+                pendingLists.emplace(entry.first, entry.second->getHubHint());
+        }
+        // This ordinary startup operation is admitted by beginProducer above;
+        // a checked shutdown never reaches here or reopens list producers.
+        for(const auto& [user, hint] : pendingLists) {
+            try { addList({user, hint}, QueueItem::FLAG_DIRECTORY_DOWNLOAD); }
+            catch(const Exception&) { }
+        }
     } catch(const Exception&) {
         // ...
     }
@@ -2132,6 +2168,7 @@ static const string sPriority = "Priority";
 static const string sSource = "Source";
 static const string sNick = "Nick";
 static const string sDirectory = "Directory";
+static const string sName = "Name";
 static const string sAdded = "Added";
 static const string sTTH = "TTH";
 static const string sCID = "CID";
@@ -2144,7 +2181,31 @@ void QueueLoader::startTag(const string& name, StringPairList& attribs, bool sim
     if(!inDownloads && name == sDownloads) {
         inDownloads = true;
     } else if(inDownloads) {
-        if(cur == nullptr && name == sDownload) {
+        if(cur == nullptr && name == sDirectory) {
+            const auto& cid = getAttrib(attribs, sCID, 0);
+            const auto& hub = getAttrib(attribs, sHubHint, 1);
+            const auto& remote = getAttrib(attribs, sName, 2);
+            const auto& destination = getAttrib(attribs, sTarget, 3);
+            const auto& priority = getAttrib(attribs, sPriority, 4);
+            if(cid.size() != 39 || !std::all_of(cid.begin(), cid.end(), [](char c) {
+                return (c >= 'A' && c <= 'Z') || (c >= '2' && c <= '7');
+            }) || remote.empty() || remote.back() != '\\' || destination.empty())
+                return;
+#ifdef _WIN32
+            if(destination.size() < 3) return;
+#endif
+            const int p = priority.empty() ? QueueItem::DEFAULT : Util::toInt(priority);
+            if(p < QueueItem::DEFAULT || p >= QueueItem::LAST) return;
+            try {
+                const auto target = QueueManager::checkTarget(destination, false);
+                const auto user = ctx().getClientManager()->getUser(CID(cid));
+                Lock lock(qm->cs);
+                const auto range = qm->directories.equal_range(user);
+                for(auto i = range.first; i != range.second; ++i)
+                    if(Util::stricmp(remote.c_str(), i->second->getName().c_str()) == 0) return;
+                qm->directories.emplace(user, new DirectoryItem(HintedUser(user, hub), remote, target, QueueItem::Priority(p)));
+            } catch(const Exception&) { }
+        } else if(cur == nullptr && name == sDownload) {
             int64_t size = Util::toInt64(getAttrib(attribs, sSize, 1));
             if(size == 0)
                 return;

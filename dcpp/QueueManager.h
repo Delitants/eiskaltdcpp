@@ -61,14 +61,18 @@ public:
     DirectoryItem() : priority(QueueItem::DEFAULT) { }
     DirectoryItem(const UserPtr& aUser, const string& aName, const string& aTarget,
                   QueueItem::Priority p) : name(aName), target(aTarget), priority(p), user(aUser) { }
+    DirectoryItem(const HintedUser& aUser, const string& aName, const string& aTarget,
+                  QueueItem::Priority p) : DirectoryItem(aUser.user, aName, aTarget, p) { hubHint = aUser.hint; }
     ~DirectoryItem() { }
 
     UserPtr& getUser() { return user; }
+    const UserPtr& getUser() const { return user; }
     void setUser(const UserPtr& aUser) { user = aUser; }
 
     GETSET(string, name, Name);
     GETSET(string, target, Target);
     GETSET(QueueItem::Priority, priority, Priority);
+    GETSET(string, hubHint, HubHint);
 private:
     UserPtr user;
 };
