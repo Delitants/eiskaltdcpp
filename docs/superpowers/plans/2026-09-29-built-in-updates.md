@@ -1276,3 +1276,41 @@ The recording-module receipt is not an operating-system banner receipt. Actual
 OS notification delivery, live signed v3 release acceptance, guarded activation,
 logout/live-transfer and release/minimum-OS gates remain open. The installed
 application and live profile are not changed by this checkpoint.
+
+### 2026-10-04 Current Thin Dependency-Consumption Checkpoint
+
+Fresh Intel/macOS14 and Apple Silicon/macOS26 application bundles now compile
+from the current notification-fix source, with the maintained selected-file
+recheck provider required in both configurations. These are private dependency
+acceptance candidates: native updater activation, trust metadata and Sparkle
+packaging remain OFF. Their numeric internal build is a QA value, not a production
+allocation; these bundles must not be used as final updater-enabled release assets.
+
+The ARM app consumes the controlled static c-ares and MaxMind prefix. Its final
+bundle passed strict signatures, architecture/deployment checks across 84 images,
+703 dependency-closure edges and a selected-recheck ABI1 copied-bundle probe on
+the macOS27 Apple Silicon host. Intel's copied universal Qt payloads were thinned
+without modifying the input prefix; its final bundle passed strict signatures,
+static ABI/import checks across 40 images and 420 dependency-closure edges.
+
+Actual linked-provider regressions passed 17 cases with 586 assertions per flavor
+using temporary profiles and loopback-only networking. ARM execution was native;
+Intel execution was through Rosetta, not native Intel acceptance. Loader receipts
+confirm the private providers. Copied recheck-provider and patched Cocoa executable
+sections match their inputs in both bundles. Before/after tracked-source and
+recorded private dependency file-content checks passed, as did nine protected live
+file hashes. Complete SDK/header/symlink provenance is not inferred from these
+bounded inventories.
+
+Two private runner failures were retained: macOS Bash3.2 rejected an empty-array
+expansion before auditing, and the standalone ARM test initially resolved stock
+Homebrew libtorrent before running cases. Corrected wrapper arguments and explicit
+post-sandbox test-loader inputs produced the receipts above; neither is claimed as
+a product bundle fix. No live app launch, profile change, installation, signing-key
+operation, push or publication occurred.
+
+Tasks 7/8 remain open for final updater-enabled builds, matching complete materials,
+full suites, independent/linguistic review, native minimum-OS/platform and actual
+OS/live-transfer acceptance. Live signed v3 acceptance and guarded activation also
+remain open. Safe installation and README/wiki/screenshots/prerelease publication
+follow those gates; signed feeds remain last.
