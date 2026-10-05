@@ -43,6 +43,7 @@ Q_OBJECT
 public:
     explicit FileHasher(QWidget *parent = nullptr);
     virtual ~FileHasher();
+    // Fences admission and polls physical completion without blocking the GUI.
     [[nodiscard]] bool stopWorkersForQuit();
 
     private slots:

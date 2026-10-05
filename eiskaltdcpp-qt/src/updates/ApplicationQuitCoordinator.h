@@ -12,7 +12,7 @@ class UpdateController;
 // This coordinator borrows them; it never disposes owners or grants install consent.
 class ApplicationQuitCoordinator final : public QObject {
 public:
-    enum class Status { NotAdmitted, Ready, Refused };
+    enum class Status { NotAdmitted, Ready, Refused, Pending };
     struct Result {
         Status status;
         const char* component;
@@ -25,6 +25,8 @@ private:
     QtContext& context;
     QPointer<UpdateController> updater;
     bool hadUpdater, preparing = false, prepared = false;
+    bool updaterFenced = false;
+    const char* firstFailure = nullptr;
     Result result{Status::NotAdmitted, "Not prepared",
                   {dcpp::DCContext::ShutdownStatus::UnsupportedContext, "Not prepared"}};
 };

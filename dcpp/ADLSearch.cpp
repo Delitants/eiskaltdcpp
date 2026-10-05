@@ -352,7 +352,8 @@ bool ADLSearchManager::writeSnapshotChecked() noexcept {
     }
 }
 
-void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing::File *currentFile, string& fullPath) {
+void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing::File *currentFile, string& fullPath, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
     // Add to any substructure being stored
     for(auto& id: destDirVector) {
         if(id.subdir != NULL) {
@@ -372,6 +373,7 @@ void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing:
     string filePath = fullPath + "\\" + currentFile->getName();
     // Match searches
     for(auto& is: collection) {
+        checkListingCancellation(cancel);
         if(destDirVector[is.ddIndex].fileAdded) {
             continue;
         }
@@ -381,6 +383,7 @@ void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing:
             destDirVector[is.ddIndex].fileAdded = true;
 
             if(is.isAutoQueue){
+                checkListingCancellation(cancel);
                 try {
                     ctx().getQueueManager()->add(CTX_SETTING(DOWNLOAD_DIRECTORY) + currentFile->getName(),
                                                      currentFile->getSize(), currentFile->getTTH(), getUser());
@@ -395,7 +398,8 @@ void ADLSearchManager::matchesFile(DestDirList& destDirVector, DirectoryListing:
     }
 }
 
-void ADLSearchManager::matchesDirectory(DestDirList& destDirVector, DirectoryListing::Directory* currentDir, string& fullPath) {
+void ADLSearchManager::matchesDirectory(DestDirList& destDirVector, DirectoryListing::Directory* currentDir, string& fullPath, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
     // Add to any substructure being stored
     for(auto& id: destDirVector) {
         if(id.subdir != NULL) {
@@ -413,6 +417,7 @@ void ADLSearchManager::matchesDirectory(DestDirList& destDirVector, DirectoryLis
 
     // Match searches
     for(auto& is: collection) {
+        checkListingCancellation(cancel);
         if(destDirVector[is.ddIndex].subdir != NULL) {
             continue;
         }
@@ -439,7 +444,7 @@ void ADLSearchManager::stepUpDirectory(DestDirList& destDirVector) {
     }
 }
 
-void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirs, DirectoryListing::Directory* root, ParamMap& params) {
+void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirs, DirectoryListing::Directory* root, ParamMap& params, const std::function<bool()>& cancel) {
     // Load default destination directory (index = 0)
     destDirs.clear();
     DestDir dir = { "ADLSearch", new DirectoryListing::Directory(root, "<<<ADLSearch>>>", true, true), nullptr, false };
@@ -447,6 +452,7 @@ void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirs, Dire
 
     // Scan all loaded searches
     for(auto& is: collection) {
+        checkListingCancellation(cancel);
         // Check empty destination directory
         if(is.destDir.empty()) {
             // Set to default
@@ -475,6 +481,7 @@ void ADLSearchManager::prepareDestinationDirectories(DestDirList& destDirs, Dire
     }
     // Prepare all searches
     for(auto& ip: collection) {
+        checkListingCancellation(cancel);
         ip.prepare(params);
     }
 }
@@ -494,7 +501,8 @@ void ADLSearchManager::finalizeDestinationDirectories(DestDirList& destDirs, Dir
     }
 }
 
-void ADLSearchManager::matchListing(DirectoryListing& aDirList) {
+void ADLSearchManager::matchListing(DirectoryListing& aDirList, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
     StringMap params;
     params["userNI"] = ctx().getClientManager()->getNicks(aDirList.getUser())[0];
     params["userCID"] = aDirList.getUser().user->getCID().toBase32();
@@ -507,24 +515,31 @@ void ADLSearchManager::matchListing(DirectoryListing& aDirList) {
     const auto root = aDirList.getRoot();
 
     DestDirList destDirs;
-    prepareDestinationDirectories(destDirs, root, params);
-    setBreakOnFirst(CTX_BOOLSETTING(ADLS_BREAK_ON_FIRST));
-
-    string path(root->getName());
-    matchRecurse(destDirs, root, path);
+    try {
+        prepareDestinationDirectories(destDirs, root, params, cancel);
+        setBreakOnFirst(CTX_BOOLSETTING(ADLS_BREAK_ON_FIRST));
+        string path(root->getName());
+        matchRecurse(destDirs, root, path, cancel);
+        checkListingCancellation(cancel);
+    } catch (...) {
+        // Provisional ADL trees have not been inserted into the source listing.
+        for (auto& destination : destDirs) delete destination.dir;
+        throw;
+    }
 
     finalizeDestinationDirectories(destDirs, root);
 }
 
-void ADLSearchManager::matchRecurse(DestDirList &aDestList, DirectoryListing::Directory* aDir, string &aPath) {
+void ADLSearchManager::matchRecurse(DestDirList &aDestList, DirectoryListing::Directory* aDir, string &aPath, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
     for(auto& dirIt: aDir->directories) {
         string tmpPath = aPath + "\\" + dirIt->getName();
-        matchesDirectory(aDestList, dirIt, tmpPath);
-        matchRecurse(aDestList, dirIt, tmpPath);
+        matchesDirectory(aDestList, dirIt, tmpPath, cancel);
+        matchRecurse(aDestList, dirIt, tmpPath, cancel);
     }
 
     for(auto& fileIt: aDir->files) {
-        matchesFile(aDestList, fileIt, aPath);
+        matchesFile(aDestList, fileIt, aPath, cancel);
     }
 
     stepUpDirectory(aDestList);

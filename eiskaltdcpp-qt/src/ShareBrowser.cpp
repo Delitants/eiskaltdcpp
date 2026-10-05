@@ -62,7 +62,7 @@ AsyncRunner::~AsyncRunner(){
 }
 
 void AsyncRunner::run(){
-    runFunc();
+    if (!isInterruptionRequested() && runFunc) runFunc();
 }
 
 void AsyncRunner::setRunFunction(const std::function<void()> &f){
@@ -460,11 +460,14 @@ QMenu  *ShareBrowser::getMenu(){
 }
 
 void ShareBrowser::buildList(){
+    const auto cancelled = [] { return QThread::currentThread()->isInterruptionRequested(); };
     try {
-        listing.loadFile(file.toStdString());
+        listing.loadFile(file.toStdString(), cancelled);
+        checkListingCancellation(cancelled);
         listing.getRoot()->setName(nick.toStdString());
-        qtCtx()->dcCtx().getADLSearchManager()->matchListing(listing);
+        qtCtx()->dcCtx().getADLSearchManager()->matchListing(listing, cancelled);
     }
+    catch (const DirectoryListingCancelled&) {}
     catch (const Exception &e){
         emit die(tr("Share browser error: %1").arg(_q(e.what())));
     }

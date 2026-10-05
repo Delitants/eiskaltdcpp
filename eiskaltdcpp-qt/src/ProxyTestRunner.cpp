@@ -1,8 +1,10 @@
 #include "dcpp/stdinc.h"
 #include "dcpp/format.h"
 #include "ProxyTestRunner.h"
+#include "RetainedGuiInputFence.h"
 #include "dcpp/GostProtocol.h"
 #include <QEventLoop>
+#include <QCoreApplication>
 #include <QHostInfo>
 #include <QNetworkProxy>
 #include <QRandomGenerator>
@@ -448,7 +450,13 @@ ProxyTestRunner::ProxyTestRunner(QObject* parent) : QObject(parent) {
     qRegisterMetaType<Result>();
 }
 
-ProxyTestRunner::~ProxyTestRunner() { (void)stopWorkersForQuit(); }
+ProxyTestRunner::~ProxyTestRunner() {
+    (void)stopWorkersForQuit();
+    cancel();
+    // Direct destruction outside checked quit must not delete a live QThread.
+    for (auto* retained : findChildren<QThread*>(QString(), Qt::FindDirectChildrenOnly))
+        retained->wait();
+}
 
 bool ProxyTestRunner::start(const Config& snapshot, bool requestUdp, int timeoutMs) {
     return start(snapshot, ProbeTargets(QStringLiteral("example.com"),
@@ -537,14 +545,17 @@ bool ProxyTestRunner::isRunning() const { return bool(state); }
 
 bool ProxyTestRunner::stopWorkersForQuit() {
     if (QThread::currentThread() != thread()) return false;
-    if (quitFenced) return quitFenceSaved;
-    quitFenced = true;
+    if (quitFenceSaved) return true;
+    if (!quitFenced) {
+        quitFenced = true;
+        if (qApp) qApp->installEventFilter(new RetainedGuiInputFence({this}, this));
+    }
     cancel();
-    if (worker && !worker->wait()) return false;
+    if (worker && !worker->wait(0)) return false;
     // A finished signal may precede TLS teardown; older worker objects can
     // remain owned here while a newer diagnostic is already running.
     for (auto* retained : findChildren<QThread*>(QString(), Qt::FindDirectChildrenOnly))
-        if (retained != worker && !retained->wait()) return false;
+        if (retained != worker && !retained->wait(0)) return false;
     state.reset();
     quitFenceSaved = true;
     return true;

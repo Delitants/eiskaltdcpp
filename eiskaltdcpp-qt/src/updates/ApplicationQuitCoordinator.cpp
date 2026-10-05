@@ -39,7 +39,7 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     preparing = true;
     result = {Status::Refused, "Preparing",
               {dcpp::DCContext::ShutdownStatus::UnsupportedContext, "Not prepared"}};
-    const char* failed = nullptr;
+    const char*& failed = firstFailure;
     const auto check = [&](const char* name, auto&& operation) {
         bool saved = false;
         try { saved = operation(); } catch (...) {}
@@ -47,8 +47,19 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
         return saved;
     };
     // Close updater admission before intentional core ProxyRoute revocation.
-    if (hadUpdater) check("Updater", [&] { return updater->stopWorkersForQuit(); });
-    const bool guiStopped = check("GUI", [&] { return window->stopWorkersForQuit(); });
+    if (hadUpdater && !updaterFenced) {
+        check("Updater", [&] { return updater->stopWorkersForQuit(); });
+        updaterFenced = true;
+    }
+    bool guiStopped = false;
+    try { guiStopped = window->stopWorkersForQuit(); } catch (...) {}
+    if (!guiStopped && window->quitWorkersPending()) {
+        result.status = Status::Pending;
+        result.component = "GUI workers";
+        preparing = false;
+        return result;
+    }
+    if (!guiStopped && !failed) failed = "GUI";
     result.core = context.dcCtx().prepareShutdownChecked(timeout);
     if (result.core.status != dcpp::DCContext::ShutdownStatus::Ready && !failed)
         failed = result.core.component;

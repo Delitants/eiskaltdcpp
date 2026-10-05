@@ -19,6 +19,8 @@
 #pragma once
 
 #include <set>
+#include <functional>
+#include "Exception.h"
 
 #include "NonCopyable.h"
 
@@ -39,6 +41,15 @@ class DCContext;
 using std::set;
 
 class ListLoader;
+
+class DirectoryListingCancelled final : public Exception {
+public:
+    DirectoryListingCancelled() : Exception("File list loading cancelled") {}
+};
+
+inline void checkListingCancellation(const std::function<bool()>& cancel) {
+    if (cancel && cancel()) throw DirectoryListingCancelled();
+}
 
 class DirectoryListing : private NonCopyable
 {
@@ -140,10 +151,10 @@ public:
 
     DCContext& ctx() const { return ctx_; }
 
-    void loadFile(const string& path);
+    void loadFile(const string& path, const std::function<bool()>& cancel = {});
 
     string updateXML(const std::string&);
-    string loadXML(InputStream& xml, bool updating);
+    string loadXML(InputStream& xml, bool updating, const std::function<bool()>& cancel = {});
 
     void download(const string& aDir, const string& aTarget, bool highPrio);
     void download(Directory* aDir, const string& aTarget, bool highPrio);

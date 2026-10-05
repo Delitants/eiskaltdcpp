@@ -401,6 +401,10 @@ public:
     bool persistUserListLayoutChanges;
     bool quitPrepared = false;
     bool quitPreparationSucceeded = false;
+    bool quitDrainComplete = false;
+    bool quitWorkersWaiting = false;
+    bool quitIntentSaved = true;
+    QList<QPointer<QThread>> quitThreads;
     QString userListLayoutKey;
 
     QStringList status_msg_history;
@@ -1425,35 +1429,51 @@ HubFrame::~HubFrame(){
     delete d;
 }
 
+bool HubFrame::quitWorkersPending() const {
+    Q_D(const HubFrame);
+    return d->quitWorkersWaiting;
+}
+
 bool HubFrame::prepareForQuit() {
     if (QThread::currentThread() != thread()) return false;
     Q_D(HubFrame);
-    if (d->quitPrepared) return d->quitPreparationSucceeded;
+    if (d->quitDrainComplete) return d->quitPreparationSucceeded;
     auto* ctx = qtCtx();
-    if (!ctx || !ctx->settings() || !ctx->hubManager() ||
-        !ctx->dcCtx().getClientManager() || !ctx->dcCtx().getFavoriteManager() ||
-        QApplication::activeModalWidget() || QApplication::activePopupWidget()) return false;
+    if (!d->quitPrepared) {
+        if (!ctx || !ctx->settings() || !ctx->hubManager() ||
+            !ctx->dcCtx().getClientManager() || !ctx->dcCtx().getFavoriteManager() ||
+            QApplication::activeModalWidget() || QApplication::activePopupWidget()) return false;
 
-    d->quitPrepared = true;
-    qApp->installEventFilter(new RetainedGuiInputFence({this}, this));
-    bool ready = true;
-    try { save(); } catch (...) { ready = false; }
-    d->persistUserListLayoutChanges = false;
-    setEnabled(false);
-    for (auto* action : findChildren<QAction*>()) {
-        action->setEnabled(false);
-        action->blockSignals(true);
+        d->quitPrepared = true;
+        bool ready = true;
+        try { save(); } catch (...) { ready = false; }
+        d->persistUserListLayoutChanges = false;
+        setEnabled(false);
+        for (auto* action : findChildren<QAction*>()) {
+            action->setEnabled(false);
+            action->blockSignals(true);
+        }
+        QSet<QThread*> workers;
+        for (auto* worker : findChildren<QThread*>()) workers.insert(worker);
+        // A /sh command can belong to a PM widget rather than this hub subtree.
+        for (auto* command : d->shell_list) workers.insert(command);
+        QList<QObject*> roots{this};
+        for (auto* worker : workers) {
+            d->quitThreads.append(worker);
+            if (worker->parent() && !roots.contains(worker->parent())) roots.append(worker->parent());
+            if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
+            worker->requestInterruption();
+            worker->quit();
+        }
+        qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
+        d->quitIntentSaved = ready;
     }
-    QSet<QThread*> workers;
-    for (auto* worker : findChildren<QThread*>()) workers.insert(worker);
-    // A /sh command can belong to a PM widget rather than this hub subtree.
-    for (auto* command : d->shell_list) workers.insert(command);
-    for (auto* worker : workers) {
-        if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
-        worker->requestInterruption();
-        worker->quit();
-        ready = worker->wait() && ready;
-    }
+    bool ready = d->quitIntentSaved;
+    bool pending = false;
+    for (const auto& worker : d->quitThreads)
+        if (worker) pending |= !worker->wait(0); else ready = false;
+    d->quitWorkersWaiting = pending;
+    if (pending) return false;
     try {
         ctx->dcCtx().getFavoriteManager()->removeListener(this);
         if (d->client) {
@@ -1470,6 +1490,7 @@ bool HubFrame::prepareForQuit() {
     } catch (...) { ready = false; }
     // PM tabs, core context and this disabled frame remain owned by the caller.
     d->quitPreparationSucceeded = ready;
+    d->quitDrainComplete = true;
     return ready;
 }
 

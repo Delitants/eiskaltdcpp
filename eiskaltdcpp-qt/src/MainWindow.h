@@ -112,8 +112,10 @@ friend class QtContext;
         Q_PROPERTY (QMenuBar* MenuBar READ menuBar);
 
         void beginExit();
-        // Retained GUI/Torrent preparation only, not core shutdown or installer consent.
+        // Nonblocking retained GUI/Torrent preparation; poll while workers are
+        // pending. No core shutdown or installer consent is granted here.
         [[nodiscard]] bool stopWorkersForQuit();
+        bool quitWorkersPending() const;
         [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
         // Borrow the application-owned controller; no scheduler or native activation.
         [[nodiscard]] bool attachUpdateController(updates::UpdateController&);

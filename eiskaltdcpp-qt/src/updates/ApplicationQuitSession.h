@@ -2,6 +2,8 @@
 #include "ApplicationQuitCoordinator.h"
 #include <QObject>
 #include <QPointer>
+#include <QTimer>
+#include <QElapsedTimer>
 
 namespace updates {
 // Owned outside the retained GUI QObject tree. Borrowed context and updater
@@ -19,9 +21,14 @@ signals:
 private:
     void queueExit();
     void refuse(const QString&);
+    void advance();
     ApplicationQuitCoordinator coordinator;
     QPointer<UpdateController> updater;
     bool hadUpdater;
     State current = State::Idle;
+    QTimer workerPoll;
+    QElapsedTimer workerDeadline;
+    uint32_t drainTimeout = 0;
+    bool workerRetryAllowed = false;
 };
 }

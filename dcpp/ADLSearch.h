@@ -137,7 +137,7 @@ public:
     GETSET(HintedUser, user, User)
 
     /// @remarks Used to add ADLSearch directories to an existing DirectoryListing
-    void matchListing(DirectoryListing& aDirList);
+    void matchListing(DirectoryListing& aDirList, const std::function<bool()>& cancel = {});
 
 private:
     bool shutdownSnapshotRequested = false;
@@ -145,15 +145,15 @@ private:
     bool writeSnapshotChecked() noexcept;
 
     // Recurse through the directories
-    void matchRecurse(DestDirList& aDestList, DirectoryListing::Directory* aDir, string& aPath);
+    void matchRecurse(DestDirList& aDestList, DirectoryListing::Directory* aDir, string& aPath, const std::function<bool()>& cancel);
     // Search for file match
-    void matchesFile(DestDirList& destDirVector, DirectoryListing::File *currentFile, string& fullPath);
+    void matchesFile(DestDirList& destDirVector, DirectoryListing::File *currentFile, string& fullPath, const std::function<bool()>& cancel);
     // Search for directory match
-    void matchesDirectory(DestDirList& destDirVector, DirectoryListing::Directory* currentDir, string& fullPath);
+    void matchesDirectory(DestDirList& destDirVector, DirectoryListing::Directory* currentDir, string& fullPath, const std::function<bool()>& cancel);
     // Step up directory
     void stepUpDirectory(DestDirList& destDirVector);
     // Prepare destination directory indexing
-    void prepareDestinationDirectories(DestDirList& destDirs, DirectoryListing::Directory* root, ParamMap& params);
+    void prepareDestinationDirectories(DestDirList& destDirs, DirectoryListing::Directory* root, ParamMap& params, const std::function<bool()>& cancel);
     // Finalize destination directories
     void finalizeDestinationDirectories(DestDirList& destDirs, DirectoryListing::Directory* root);
 

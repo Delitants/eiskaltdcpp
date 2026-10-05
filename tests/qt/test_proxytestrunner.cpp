@@ -78,7 +78,7 @@ TEST_CASE("Proxy diagnostic quit fence physically retires the worker and silence
     QElapsedTimer wait; wait.start();
     while(!proxy.accepted && wait.elapsed() < 1000) QThread::msleep(1);
     REQUIRE(proxy.accepted.load());
-    REQUIRE(proxyFence(runner));
+    REQUIRE(pumpUntil([&] { return proxyFence(runner); }));
     CHECK_FALSE(runner.isRunning());
     const auto workers = runner.findChildren<QThread*>(); REQUIRE(workers.size() == 1);
     CHECK(workers.front()->isFinished());
@@ -97,7 +97,8 @@ TEST_CASE("Proxy quit fence also joins retained earlier worker objects", "[qt][p
     while(!entered && start.elapsed() < 1000) QThread::msleep(1);
     REQUIRE(entered.load());
     auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
-    REQUIRE(proxyFence(runner));
+    CHECK_FALSE(proxyFence(runner));
+    REQUIRE(pumpUntil([&] { return proxyFence(runner); }));
     CHECK(finished.load()); CHECK(earlier->isFinished()); release.get();
 }
 

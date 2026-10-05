@@ -81,7 +81,8 @@ UserPtr DirectoryListing::getUserFromFilename(DCContext& ctx, const string& file
     return ctx.getClientManager()->getUser(cid);
 }
 
-void DirectoryListing::loadFile(const string& path) {
+void DirectoryListing::loadFile(const string& path, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
     string actualPath;
     if(dcpp::File::getSize(path + ".bz2") != -1) {
         actualPath = path + ".bz2";
@@ -91,12 +92,13 @@ void DirectoryListing::loadFile(const string& path) {
     auto ext = Util::getFileExt(actualPath.empty() ? path : actualPath);
 
     {
+        checkListingCancellation(cancel);
         dcpp::File file(actualPath.empty() ? path : actualPath, dcpp::File::READ, dcpp::File::OPEN);
         if(Util::stricmp(ext, ".bz2") == 0) {
             FilteredInputStream<UnBZFilter, false> f(&file);
-            loadXML(f, false);
+            loadXML(f, false, cancel);
         } else if(Util::stricmp(ext, ".xml") == 0) {
-            loadXML(file, false);
+            loadXML(file, false, cancel);
         } else {
             throw Exception(_("Invalid file list extension (must be .xml or .bz2)"));
         }
@@ -105,11 +107,11 @@ void DirectoryListing::loadFile(const string& path) {
 
 class ListLoader : public SimpleXMLReader::CallBack {
 public:
-    ListLoader(DirectoryListing::Directory* root, bool aUpdating) :
+    ListLoader(DirectoryListing::Directory* root, bool aUpdating, const std::function<bool()>& aCancel) :
         cur(root),
         base("/"),
         inListing(false),
-        updating(aUpdating)
+        updating(aUpdating), cancel(aCancel)
     {
     }
 
@@ -130,6 +132,7 @@ private:
     string base;
     bool inListing;
     bool updating;
+    const std::function<bool()>& cancel;
 };
 
 string DirectoryListing::updateXML(const string& xml) {
@@ -137,10 +140,22 @@ string DirectoryListing::updateXML(const string& xml) {
     return loadXML(mis, true);
 }
 
-string DirectoryListing::loadXML(InputStream& is, bool updating) {
-    ListLoader ll(getRoot(), updating);
+string DirectoryListing::loadXML(InputStream& is, bool updating, const std::function<bool()>& cancel) {
+    checkListingCancellation(cancel);
+    ListLoader ll(getRoot(), updating, cancel);
+    class CancellableInput final : public InputStream {
+    public:
+        CancellableInput(InputStream& source, const std::function<bool()>& cancel) : source(source), cancel(cancel) {}
+        size_t read(void* bytes, size_t& length) override {
+            checkListingCancellation(cancel);
+            return source.read(bytes, length);
+        }
+    private:
+        InputStream& source;
+        const std::function<bool()>& cancel;
+    } input(is, cancel);
 
-    SimpleXMLReader(&ll).parse(is, CTX_SETTING(MAX_FILELIST_SIZE) ? (size_t)CTX_SETTING(MAX_FILELIST_SIZE)*1024*1024 : 0);
+    SimpleXMLReader(&ll).parse(input, CTX_SETTING(MAX_FILELIST_SIZE) ? (size_t)CTX_SETTING(MAX_FILELIST_SIZE)*1024*1024 : 0);
 
     return ll.getBase();
 }
@@ -202,6 +217,7 @@ void ListLoader::updateMetadata(DirectoryListing::File& file, StringPairList& at
 }
 
 void ListLoader::startTag(const string& name, StringPairList& attribs, bool simple) {
+    checkListingCancellation(cancel);
     if(inListing) {
         if(name == sFile) {
             const string& n = getAttrib(attribs, sName, 0);
@@ -299,6 +315,7 @@ void ListLoader::startTag(const string& name, StringPairList& attribs, bool simp
 }
 
 void ListLoader::endTag(const string& name) {
+    checkListingCancellation(cancel);
     if(inListing) {
         if(name == sDirectory) {
             cur = cur->getParent();

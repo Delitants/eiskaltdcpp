@@ -18,6 +18,7 @@
 #include "FileHasher.h"
 #include "ProxyTestRunner.h"
 #include "ShellCommandRunner.h"
+#include "updates/ApplicationQuitSession.h"
 #include "Notification.h"
 #include "Settings.h"
 #include "dcpp/ProxyRoute.h"
@@ -593,6 +594,114 @@ TEST_CASE("Actual no-update window quit prepares core before deferred exit readi
     CHECK(f.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
 }
 
+TEST_CASE("Window quit drains held workers without blocking heartbeat or admitting retained input", "[qt][window-quit][gui-worker-drain]") {
+    IsolatedMainWindow f; auto* window = f.gui->mainWindow();
+    REQUIRE(enableCheckedQuit(*window));
+    QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
+    std::atomic_bool entered{false}, released{false};
+    AsyncRunner* worker = nullptr; QFutureWatcher<void>* future = nullptr;
+    auto cleanup = dcpp::makeScopedFunctor([&] {
+        released = true; if(worker) worker->wait(); if(future) future->waitForFinished();
+    });
+    auto work = [&] { entered = true; while(!released) QThread::msleep(1); };
+    SECTION("window thread") { worker = new AsyncRunner(window); worker->setRunFunction(work); worker->start(); }
+    SECTION("notification thread") { worker = new AsyncRunner(f.gui->notification()); worker->setRunFunction(work); worker->start(); }
+    SECTION("future") { future = new QFutureWatcher<void>(window); future->setFuture(QtConcurrent::run(work)); }
+    SECTION("thread-local teardown after finished signal") {
+        struct HeldTeardown {
+            std::atomic_bool& released;
+            ~HeldTeardown() { while(!released) QThread::msleep(1); }
+        };
+        worker = new AsyncRunner(window);
+        worker->setRunFunction([&] { thread_local HeldTeardown held{released}; entered = true; });
+        worker->start();
+        QElapsedTimer finish; finish.start();
+        while(!worker->isFinished() && finish.elapsed() < 2000) QThread::msleep(1);
+        REQUIRE(worker->isFinished()); CHECK_FALSE(worker->wait(0));
+    }
+    QElapsedTimer elapsed; elapsed.start();
+    while(!entered && elapsed.elapsed() < 2000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    bool late = false;
+    QPointer<QObject> retained = new QObject(window); retained->deleteLater();
+    QMetaObject::invokeMethod(window, [&] { late = true; }, Qt::QueuedConnection);
+    QTimer heartbeat; int beats = 0;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++beats; }); heartbeat.start(1);
+    const auto route = f.core->getProxyRoute()->snapshot();
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(200); released = true; });
+    elapsed.restart(); CHECK_FALSE(window->close()); CHECK(elapsed.elapsed() < 50);
+    CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
+    QTest::qWait(35); CHECK(beats > 0); CHECK_FALSE(late); REQUIRE(retained);
+    CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
+    release.get(); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(normalQuitPrepared(*window)); CHECK(route->revoked->load()); REQUIRE(retained);
+}
+
+TEST_CASE("Worker-drain timeout retains running owners and permits explicit post-drain retry", "[qt][window-quit][gui-worker-drain]") {
+    IsolatedMainWindow f; auto* window = f.gui->mainWindow();
+    updates::ApplicationQuitSession session(*f.gui);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    std::atomic_bool entered{false}, released{false};
+    auto* worker = new AsyncRunner(window);
+    worker->setRunFunction([&] { entered = true; while(!released) QThread::msleep(1); });
+    auto cleanup = dcpp::makeScopedFunctor([&] { released = true; worker->wait(); });
+    worker->start(); QElapsedTimer elapsed; elapsed.start();
+    while(!entered && elapsed.elapsed() < 2000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    const auto route = f.core->getProxyRoute()->snapshot();
+    auto release = std::async(std::launch::async, [&] { QThread::msleep(200); released = true; });
+    bool lateTick = false;
+    SECTION("deadline observed while worker is held") {}
+    SECTION("worker ends after deadline before timer delivery") { lateTick = true; }
+    elapsed.restart(); session.request(50); CHECK(elapsed.elapsed() < 40);
+    if(lateTick) { QThread::msleep(80); released = true; REQUIRE(worker->wait(2000)); }
+    REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(refused.count() == 1); CHECK(ready.isEmpty()); CHECK(worker->isRunning() == !lateTick);
+    CHECK_FALSE(route->revoked->load()); CHECK(f.core->isRunning()); CHECK_FALSE(window->isEnabled());
+    release.get(); REQUIRE(worker->wait(2000)); QTest::qWait(20); CHECK(ready.isEmpty());
+    session.request(1000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::ExitReady);
+    CHECK(route->revoked->load()); CHECK(refused.count() == 1);
+}
+
+TEST_CASE("Worker timeout cannot commit an update even after the worker finishes", "[qt][window-quit][gui-worker-drain]") {
+    IsolatedMainWindow f; auto* window = f.gui->mainWindow();
+    QuitBackend backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    updates::ApplicationQuitSession session(*f.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    std::atomic_bool entered{false}, released{false};
+    auto* worker = new AsyncRunner(window);
+    worker->setRunFunction([&] { entered = true; while(!released) QThread::msleep(1); });
+    auto cleanup = dcpp::makeScopedFunctor([&] { released = true; worker->wait(); });
+    worker->start(); QElapsedTimer elapsed; elapsed.start();
+    while(!entered && elapsed.elapsed() < 2000) QThread::msleep(1);
+    REQUIRE(entered.load());
+    const auto route = f.core->getProxyRoute()->snapshot();
+    session.request(50);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(backend.fences == 1); CHECK(backend.installs == 0); CHECK_FALSE(backend.handoffConsent);
+    CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
+    released = true; REQUIRE(worker->wait(2000)); QTest::qWait(25);
+    CHECK(backend.installs == 0); CHECK(ready.isEmpty()); CHECK_FALSE(route->revoked->load());
+    session.request(1000);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff; }));
+    CHECK(backend.fences == 1); CHECK(backend.installs == 1); REQUIRE(backend.handoffConsent);
+    CHECK(backend.handoffConsent()); CHECK(route->revoked->load()); CHECK(ready.isEmpty());
+    emit backend.installHandoffFinished(backend.handoffOperation, true);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+}
+
 TEST_CASE("Actual window hide modal and canceled confirmation do not commit quit", "[qt][window-quit]") {
     IsolatedMainWindow f;
     auto* window = f.gui->mainWindow();
@@ -1038,7 +1147,7 @@ TEST_CASE("Hub preparation drains shell work owned by a separate chat widget", "
     auto drain = dcpp::makeScopedFunctor([&] { worker->cancel(); worker->wait(); });
     REQUIRE(waitFor([&] { return QFile::exists(ready); }));
     REQUIRE(worker->isRunning());
-    REQUIRE(hubFence(*hub));
+    REQUIRE(waitFor([&] { return hubFence(*hub); }));
     CHECK_FALSE(worker->isRunning());
     CHECK(worker->wait(0));
 }
@@ -1081,7 +1190,8 @@ TEST_CASE("GUI quit preparation joins retained workers without pumping pending i
     QMetaObject::invokeMethod(&unrelated, [&] { otherInput = true; }, Qt::QueuedConnection);
     auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
     CHECK_FALSE(std::async(std::launch::async, [&] { return guiFence(*window); }).get());
-    REQUIRE(guiFence(*window)); release.get();
+    CHECK_FALSE(guiFence(*window));
+    REQUIRE(waitFor([&] { return guiFence(*window); })); release.get();
     CHECK(finished.load()); CHECK(worker->isFinished()); CHECK_FALSE(window->isEnabled());
     QCoreApplication::processEvents(); CHECK_FALSE(lateInput); CHECK(otherInput);
     CHECK(guiFence(*window));
@@ -1113,6 +1223,15 @@ TEST_CASE("File hasher cooperates with interruption before touching its source",
     QObject::connect(&thread, &QThread::started, &thread, [&] { thread.requestInterruption(); }, Qt::DirectConnection);
     thread.start(); REQUIRE(thread.wait(2000));
     CHECK(thread.getHash().isEmpty());
+}
+
+TEST_CASE("File-list runner skips work cancelled before its callback", "[qt][gui-worker-cancel-runner]") {
+    AsyncRunner worker;
+    bool ran = false;
+    worker.setRunFunction([&] { ran = true; });
+    QObject::connect(&worker, &QThread::started, &worker, [&] { worker.requestInterruption(); }, Qt::DirectConnection);
+    worker.start(); REQUIRE(worker.wait(2000));
+    CHECK_FALSE(ran);
 }
 
 TEST_CASE("GUI settings sync refusal remains sticky while retaining the core", "[qt][mainwindow][gui-quit-fence]") {
@@ -1165,7 +1284,8 @@ TEST_CASE("GUI preparation drains a future and fences direct file hashing and IP
     while(!entered && start.elapsed() < 1000) QThread::msleep(1);
     REQUIRE(entered.load());
     auto release = std::async(std::launch::async, [&] { QThread::msleep(40); released = true; });
-    REQUIRE(guiFence(*window)); release.get(); CHECK(watcher->isFinished());
+    CHECK_FALSE(guiFence(*window));
+    REQUIRE(waitFor([&] { return guiFence(*window); })); release.get(); CHECK(watcher->isFinished());
     REQUIRE(QMetaObject::invokeMethod(&dialog, "slotStart", Qt::DirectConnection));
     CHECK_FALSE(dialog.findChild<HashThread*>()->isRunning());
     window->parseInstanceLine("eiskaltdcpp-qt adc://127.0.0.1:1");
@@ -1194,7 +1314,7 @@ TEST_CASE("GUI preparation cancels and joins its own running shell command", "[q
     QElapsedTimer start; start.start();
     while(!QFile::exists(ready) && start.elapsed() < 2000) QThread::msleep(1);
     REQUIRE(QFile::exists(ready)); REQUIRE(worker->isRunning());
-    start.restart(); REQUIRE(guiFence(*f.gui->mainWindow()));
+    start.restart(); REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
     CHECK(worker->isFinished()); CHECK(start.elapsed() < 3000);
 }
 
@@ -1212,7 +1332,8 @@ TEST_CASE("GUI preparation includes the separately owned notification service", 
     bool delivered = false;
     QMetaObject::invokeMethod(notifications, [&] { delivered = true; }, Qt::QueuedConnection);
     auto release = std::async(std::launch::async, [&] { QThread::msleep(80); released = true; });
-    REQUIRE(guiFence(*f.gui->mainWindow()));
+    CHECK_FALSE(guiFence(*f.gui->mainWindow()));
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
     CHECK(finished.load()); CHECK(worker->isFinished()); release.get();
     QCoreApplication::processEvents(); CHECK_FALSE(delivered);
 }

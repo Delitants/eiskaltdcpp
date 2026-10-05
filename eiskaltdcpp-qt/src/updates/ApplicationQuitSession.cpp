@@ -7,6 +7,8 @@
 namespace updates {
 ApplicationQuitSession::ApplicationQuitSession(QtContext& context, UpdateController* update)
     : coordinator(context, update), updater(update), hadUpdater(update != nullptr) {
+    workerPoll.setInterval(10);
+    connect(&workerPoll, &QTimer::timeout, this, &ApplicationQuitSession::advance);
     if(update) {
         connect(update, &UpdateController::installHandoffFinished, this, [this](bool prepared) {
             if(current != State::AwaitingHandoff) return;
@@ -21,6 +23,7 @@ ApplicationQuitSession::ApplicationQuitSession(QtContext& context, UpdateControl
 }
 void ApplicationQuitSession::refuse(const QString& component) {
     if(current == State::ExitReady || current == State::Refused) return;
+    workerPoll.stop();
     current = State::Refused;
     emit refused(component);
 }
@@ -34,9 +37,32 @@ void ApplicationQuitSession::queueExit() {
     });
 }
 void ApplicationQuitSession::request(uint32_t timeout) {
-    if(QThread::currentThread() != thread() || current != State::Idle) return;
+    if(QThread::currentThread() != thread()) return;
+    if(current != State::Idle && !(current == State::Refused && workerRetryAllowed)) return;
+    workerRetryAllowed = false;
+    drainTimeout = timeout;
+    workerDeadline.start();
     current = State::Preparing;
-    const auto result = coordinator.prepare(timeout);
+    advance();
+}
+void ApplicationQuitSession::advance() {
+    if(current != State::Preparing) return;
+    // A delayed event-loop tick cannot turn an expired pending phase into
+    // installation consent just because the worker finished in the meantime.
+    if(workerPoll.isActive() && workerDeadline.elapsed() >= drainTimeout) {
+        workerRetryAllowed = true;
+        refuse(QStringLiteral("GUI worker timeout; retry quit after the worker finishes"));
+        return;
+    }
+    const auto result = coordinator.prepare(drainTimeout);
+    if(result.status == ApplicationQuitCoordinator::Status::Pending) {
+        if(workerDeadline.elapsed() >= drainTimeout) {
+            workerRetryAllowed = true;
+            refuse(QStringLiteral("GUI worker timeout; retry quit after the worker finishes"));
+        } else workerPoll.start();
+        return;
+    }
+    workerPoll.stop();
     if(result.status == ApplicationQuitCoordinator::Status::NotAdmitted) {
         current = State::Idle;
         emit refused(QString::fromLatin1(result.component));

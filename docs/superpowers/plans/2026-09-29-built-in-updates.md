@@ -1548,3 +1548,50 @@ production signing/activation, safe installation and documentation/prerelease
 publication also remain pending. Protected live records and accepted dependencies,
 candidate images/notices, strict seals and archives remain unchanged. No push,
 installation, signing-key operation, server or VM mutation. Signed feeds last.
+
+### 2026-10-05 Asynchronous GUI Worker Retirement Checkpoint
+
+Checked quit now polls retained GUI threads and futures without blocking their
+owner event loop. An independently owned quit-session timer bounds this worker
+phase. Pending work prevents core retirement, process exit and update commitment;
+timeout retains owners and permits only an explicit worker-phase quit retry.
+Late completion, including completion before a delayed timer delivery, does not
+grant installation consent. Physical thread receipts include thread-local teardown.
+Queued input, results and deferred owner deletion remain fenced while an unrelated
+heartbeat can run. Proxy probes, file hashers and separately owned hub/PM shell
+workers participate. Parser reads/rows and ADL traversal cooperate with cancellation;
+cancelled provisional ADL trees are discarded without publishing partial results.
+
+Real held-worker/timeout regressions first failed 19 of 100 assertions against the
+unchanged baseline; parser/ADL cancellation failed 7 of 9, and pre-interrupted
+runner cancellation failed 1 of 2. Both fresh matching-ABI2 architectures now pass
+the focused parser/ADL suite (32 cases, 276 assertions), proxy suite (23, 588) and
+GUI quit suite (29, 881), with no skips. Full core suites pass 1032 cases with
+150482 assertions on ARM and 150483 under Intel/Rosetta. Both Torrent suites pass
+152 cases/18430 assertions. All three applicable GUI layouts pass on both CPUs:
+multiline 85/5227, single-line 85/5319, sidebar 83/5133 (cases/assertions).
+
+The first full ARM Qt run failed 8 assertions in 6 updater-callback cases. Its
+complete negative log is retained. Reduced tests, an owned tracing comparison and
+unchanged-baseline/current prefix controls passed. The final unmodified full ARM
+repeat with the original failing seed passes 609 cases/33571 assertions; the full
+Intel Qt suite passes 609/33562. These passes do not explain or waive the initial
+aggregate failure. Prior intermittent Intel Torrent aggregate failures likewise
+remain unresolved despite this passing run. No test deadline was relaxed.
+
+This checkpoint covers GUI-owned worker retirement, not a hard deadline for every
+quit operation. Native updater transport/verification still uses its existing
+synchronous checked fence; core/checkpoint/filesystem I/O can still block. Ordinary
+manual probe/hasher destruction retains safety joins. Host offscreen/Rosetta tests
+are not native Intel, minimum-OS, live notification/logout or installed-app proof.
+
+Next reviewed source repairs: safe recovery from a refused checkpoint, then
+nonblocking Torrent location probes. Aggregate-failure investigation and broader
+native retirement responsiveness, linguistic/resource/provenance/reproducibility
+review, platform/live acceptance and final whole-branch review remain open.
+Final-source application/material rebuilding, production numeric allocation and
+signing/activation, safe installation/readback, README/wiki/approved unredacted
+screenshots and prerelease publication still follow. Protected live records,
+accepted dependencies and prior candidate images/notices/seals/archives are
+unchanged. No push, installation, key operation, server or VM mutation. Signed
+feeds remain last; Tasks 7/8 are not complete.

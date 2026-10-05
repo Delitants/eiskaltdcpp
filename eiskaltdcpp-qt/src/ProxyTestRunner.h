@@ -54,6 +54,7 @@ public:
     static QString validateTargets(const ProbeTargets& targets, bool requestUdp);
     void cancel();
     bool isRunning() const;
+    // Fences admission and polls physical completion without blocking the GUI.
     [[nodiscard]] bool stopWorkersForQuit();
 
 signals:

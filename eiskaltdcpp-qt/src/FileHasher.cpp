@@ -13,6 +13,7 @@
 #include "FileHasher.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
+#include "RetainedGuiInputFence.h"
 
 #include <QFile>
 #include <QFileInfo>
@@ -66,16 +67,23 @@ FileHasher::FileHasher(QWidget *parent) :
 
 FileHasher::~FileHasher() {
     (void)stopWorkersForQuit();
+    // Ordinary dialog destruction still owns the worker; checked quit polls
+    // before destruction, while this last-resort join protects direct callers.
+    hasher->requestInterruption();
+    hasher->wait();
 }
 
 bool FileHasher::stopWorkersForQuit() {
     if (QThread::currentThread() != thread()) return false;
-    if (quitFenced) return quitFenceSaved;
-    saveWindowSize();
-    quitFenced = true;
-    setEnabled(false);
-    hasher->requestInterruption();
-    quitFenceSaved = hasher->wait();
+    if (quitFenceSaved) return true;
+    if (!quitFenced) {
+        saveWindowSize();
+        quitFenced = true;
+        qApp->installEventFilter(new RetainedGuiInputFence({this}, this));
+        setEnabled(false);
+        hasher->requestInterruption();
+    }
+    quitFenceSaved = hasher->wait(0);
     return quitFenceSaved;
 }
 

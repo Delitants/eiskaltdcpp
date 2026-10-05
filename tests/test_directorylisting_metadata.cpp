@@ -5,6 +5,8 @@
 #include "DirectoryListing.h"
 #include "Streams.h"
 #include "Util.h"
+#include "ADLSearch.h"
+#include "ClientManager.h"
 
 #include <chrono>
 #include <filesystem>
@@ -26,7 +28,7 @@ struct MetadataFixture {
     DCContext context;
     DirectoryListing listing{context, HintedUser()};
 
-    MetadataFixture()
+    explicit MetadataFixture(bool full = false)
     {
         temporaryPath = std::filesystem::temp_directory_path() /
             ("eiskalt_metadata_" + std::to_string(reinterpret_cast<uintptr_t>(this)) + "_" +
@@ -41,7 +43,7 @@ struct MetadataFixture {
         // Explicitly reset Util so prior tests cannot suppress our path overrides.
         Util::uninitialize();
         Util::initialize(isolatedPaths);
-        context.startupMinimal();
+        if(full) context.startup(); else context.startupMinimal();
     }
 
     ~MetadataFixture()
@@ -78,6 +80,59 @@ struct MetadataFixture {
 };
 
 } // namespace
+
+namespace {
+template<class Listing> void loadCancellable(Listing& listing, InputStream& input, const std::function<bool()>& cancel) {
+    if constexpr(requires { listing.loadXML(input, false, cancel); }) listing.loadXML(input, false, cancel);
+    else listing.loadXML(input, false);
+}
+template<class Manager> void matchCancellable(Manager& manager, DirectoryListing& listing, const std::function<bool()>& cancel) {
+    if constexpr(requires { manager.matchListing(listing, cancel); }) manager.matchListing(listing, cancel);
+    else manager.matchListing(listing);
+}
+}
+
+TEST_CASE("File-list cancellation stops reads and individual buffered XML rows", "[gui-worker-cancel]") {
+    MetadataFixture f;
+    struct CountedInput : MemoryInputStream {
+        int reads = 0;
+        explicit CountedInput(const string& xml) : MemoryInputStream(xml) {}
+        size_t read(void* bytes, size_t& length) override { ++reads; return MemoryInputStream::read(bytes, length); }
+    } input("<FileListing Base=\"/\">" + fileTag("one") + fileTag("two") + "</FileListing>");
+    int checks = 0; bool cancelled = false;
+    bool beforeRead = false;
+    SECTION("before the first read") { beforeRead = true; }
+    SECTION("between rows in one input buffer") {}
+    try { loadCancellable(f.listing, input, [&] { return beforeRead || ++checks >= 5; }); }
+    catch(const DirectoryListingCancelled&) { cancelled = true; }
+    CHECK(cancelled);
+    if(beforeRead) CHECK(input.reads == 0);
+    else { CHECK(input.reads == 1); CHECK(f.listing.getRoot()->files.size() < 2); }
+}
+
+TEST_CASE("ADL cancellation discards provisional result directories", "[gui-worker-cancel]") {
+    MetadataFixture f(true);
+    DirectoryListing listing(f.context, HintedUser(f.context.getClientManager()->getMe(), ""));
+    MemoryInputStream input("<FileListing Base=\"/\">" + fileTag("clip1") + fileTag("clip2") + "</FileListing>");
+    listing.loadXML(input, false);
+    auto* manager = f.context.getADLSearchManager(); REQUIRE(manager);
+    ADLSearch rule; rule.searchString = "clip"; manager->collection.push_back(rule);
+    int checks = 0; bool cancelled = false;
+    try { matchCancellable(*manager, listing, [&] { return ++checks >= 7; }); }
+    catch(const DirectoryListingCancelled&) { cancelled = true; }
+    CHECK(cancelled); CHECK(listing.getRoot()->directories.empty());
+    CHECK(listing.getRoot()->files.size() == 2);
+    manager->matchListing(listing);
+    REQUIRE(listing.getRoot()->directories.size() == 1);
+    CHECK((*listing.getRoot()->directories.begin())->files.size() == 2);
+    manager->collection.clear();
+}
+
+TEST_CASE("Cancelled file-list loading does not open an absent source", "[gui-worker-cancel]") {
+    MetadataFixture f;
+    REQUIRE_THROWS_AS(f.listing.loadFile((f.temporaryPath / "absent.xml").string(), [] { return true; }),
+                      DirectoryListingCancelled);
+}
 
 TEST_CASE("Directory metadata does not require a timestamp", "[directorylisting-metadata]")
 {
