@@ -5,8 +5,14 @@
 #include <QUuid>
 class IsolatedQuitApp final : public EiskaltApp {
 public:
+    int quitEvents = 0;
     IsolatedQuitApp(int& argc, char** argv, const QString&)
         : EiskaltApp(argc, argv, "eiskalt-quit-qa-" + QUuid::createUuid().toString()) {}
+protected:
+    bool event(QEvent* event) override {
+        if(event && event->type() == QEvent::Quit) ++quitEvents;
+        return EiskaltApp::event(event);
+    }
 };
 #define EiskaltApp IsolatedQuitApp
 #ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
@@ -20,14 +26,25 @@ public:
 #ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
 #undef ApplicationUpdateOwner
 #endif
+#ifdef USE_TORRENT
 #include "TorrentRuntime.h"
 #include "torrent/TorrentSettings.h"
+#endif
 #include <QTimer>
 #include <QDir>
 #include <QFile>
 #include <QElapsedTimer>
+#include <QPointer>
 
 static bool fixtureQuitObserved = false;
+bool fixtureRequestNativeTermination();
+static void requestNativeTermination() {
+    auto* application = static_cast<IsolatedQuitApp*>(qApp);
+    const auto before = application->quitEvents;
+    if(!fixtureRequestNativeTermination()) qFatal("Native application termination driver unavailable");
+    fprintf(stdout, "NATIVE_QUIT_DELIVERED=%d\n", int(application->quitEvents > before));
+    fflush(stdout);
+}
 static void startQuitDriver() {
     auto* timer = new QTimer(qApp);
     timer->setInterval(25);
@@ -86,21 +103,44 @@ static void startQuitDriver() {
             if(window->normalQuitPrepared() || updater->quitDisposition() != updates::UpdateController::QuitDisposition::NotCommitted)
                 qFatal("Hide committed installation");
             fprintf(stdout, "NO_INSTALL_BOUNDARY=hide\n"); updater->later();
-        } else if(mode == "cancel-quit") {
+        } else if(mode == "cancel-quit" || mode == "native-cancel-terminate") {
             context->settings()->setBool(WB_EXIT_CONFIRM, true);
             QTimer::singleShot(0, qApp, [] {
                 auto* box = qobject_cast<QMessageBox*>(QApplication::activeModalWidget());
                 if(!box) qFatal("Expected quit confirmation");
                 box->done(QMessageBox::No);
             });
-            if(window->close() || window->normalQuitPrepared() ||
+            bool closed = false;
+            if(mode == "native-cancel-terminate") requestNativeTermination();
+            else closed = window->close();
+            if(closed || window->normalQuitPrepared() ||
                 updater->quitDisposition() != updates::UpdateController::QuitDisposition::NotCommitted)
                 qFatal("Canceled confirmation committed installation");
+            if(mode == "native-cancel-terminate") {
+                fprintf(stdout, "NATIVE_TERMINATION_CANCELED=1\n"); fflush(stdout);
+                // A rejected native request must leave the real event loop and
+                // all borrowed GUI/core owners alive before a later cleanup quit.
+                QTimer::singleShot(100, qApp, [window = QPointer<MainWindow>(window),
+                                              updater = QPointer<updates::UpdateController>(updater), context] {
+                    if(!window || !updater || qtCtx() != context || window->normalQuitPrepared() ||
+                       updater->quitDisposition() != updates::UpdateController::QuitDisposition::NotCommitted)
+                        qFatal("Rejected native quit committed asynchronously");
+                    fprintf(stdout, "NATIVE_CANCEL_EVENT_LOOP_CONTINUED=1\n"); fflush(stdout);
+                    context->settings()->setBool(WB_EXIT_CONFIRM, false);
+                    updater->later(); window->beginExit(); window->close();
+                });
+                return;
+            }
             fprintf(stdout, "NO_INSTALL_BOUNDARY=cancel-quit\n");
             context->settings()->setBool(WB_EXIT_CONFIRM, false); updater->later();
         }
 #endif
-        if(QCoreApplication::arguments().contains(QStringLiteral("--quit-via-event"))) {
+        if(QCoreApplication::arguments().contains(QStringLiteral("--quit-via-native")) ||
+           qEnvironmentVariable("EISKALT_APPLICATION_TEST_MODE") == "native-terminate") {
+            requestNativeTermination();
+            fprintf(stdout, "NATIVE_TERMINATION_DEFERRED=%d\n", int(!window->normalQuitPrepared()));
+            fflush(stdout);
+        } else if(QCoreApplication::arguments().contains(QStringLiteral("--quit-via-event"))) {
             QEvent quit(QEvent::Quit);
             QCoreApplication::sendEvent(qApp, &quit);
             fprintf(stdout, "QUIT_EVENT_DEFERRED=%d\n", int(!quit.isAccepted() && !window->normalQuitPrepared()));
@@ -118,6 +158,12 @@ int main(int argc, char** argv) {
     const auto home = qEnvironmentVariable("HOME");
     if(!home.startsWith("/private/tmp/eiskalt-app-quit-") || home != qEnvironmentVariable("CFFIXED_USER_HOME") ||
         qEnvironmentVariable("XDG_CONFIG_HOME") != home + "/.config") return 72;
+#ifdef USE_TORRENT
+    fprintf(stdout, "COMPILED_TORRENT=1\n");
+#else
+    fprintf(stdout, "COMPILED_TORRENT=0\n");
+#endif
+    fflush(stdout);
 #ifdef EISKALT_APPLICATION_NATIVE_FIXTURE
     QFile fixtureInfo(QFileInfo(QString::fromLocal8Bit(argv[0])).absolutePath() + "/../Info.plist");
     if(!fixtureInfo.open(QIODevice::ReadOnly)) return 76;
@@ -151,11 +197,13 @@ int main(int argc, char** argv) {
     settings->set(dcpp::SettingsManager::USE_LUA, false);
 #endif
     settings->save();
+#ifdef USE_TORRENT
     eiskalt::torrent::Settings torrent;
     torrent.downloadPath = home + "/downloads";
     torrent.dht = torrent.pex = torrent.localDiscovery = torrent.portMapping = false;
     torrent.shareCompleted = false; torrent.bootstrapNodes.clear();
     if(!eiskalt::torrent::saveSettings(TorrentRuntime::settingsPath(), torrent)) return 74;
+#endif
     seed.shutdown(); dcpp::setContext(nullptr);
     const auto result = eiskaltApplicationMain(argc, argv);
     // _Exit cannot produce this receipt. Both GUI/core and QApplication have

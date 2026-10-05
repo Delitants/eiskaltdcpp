@@ -1211,3 +1211,35 @@ lifecycle/logout/notification/DC-only runtime QA and the unproven Torrent bind
 root cause; thin Intel/macOS 14 and Apple Silicon/macOS 26 release/minimum-OS QA
 and independent linguistic/whole-branch review; closed-app installation,
 README/wiki/screenshots and pre.1 publication. Signed feeds remain last.
+
+### 2026-10-04 Native Termination And DC-Only Entrypoint Checkpoint
+
+The disposable actual-main fixture now calls AppKit's `NSApplication` termination
+API without replacing Qt's delegate or synthesizing a Qt Quit event. Receipts
+require real Quit delivery, native-request return before checked preparation,
+normal main return and retained IPC ownership through GUI/core teardown. Native
+confirmation refusal also proves that the event loop and borrowed owners remain
+alive before a later consent-revoked cleanup quit.
+
+The signed full-application matrix now includes seven modes: normal quit, no
+consent, Hide, canceled confirmation, owned precommit kill, native termination
+and canceled native termination. Confirmed ordinary/native quit require the exact
+signed new bundle; the other modes require the exact old bundle. No relaunch and
+unchanged protected fixture data remain mandatory. The production updater remains
+inactive; the signed bytes, credentials and signing identities are disposable.
+
+The fixture also supports Torrent-disabled applications without seeding Torrent
+settings. A compiled flavor receipt must match the actual CMake cache. All three
+ordinary entrypoint modes (window, Qt Quit and AppKit termination) passed in both
+DC-only and Torrent builds, with valid DC/GUI snapshots and unchanged protected
+bytes. DC-only profiles contain no Torrent settings/state; Torrent-enabled ones
+retain the valid empty job checkpoint. The focused Cocoa quit-composition suite
+passed 12 cases with 446 assertions.
+
+Only acceptance fixtures and documentation changed. The old fixture's unguarded
+TorrentRuntime reference was a DC-only compile limitation, not a product failure.
+Native Cocoa callback acceptance is not actual OS logout/shutdown, OS notification
+delivery, live DC transfers, production update activation or minimum-OS proof.
+Development dependencies still carry newer-OS linker warnings. These remaining
+gates, the unproven intermittent Torrent bind cause, independent review and final
+thin-build/install/publication work remain open; signed feeds remain last.

@@ -12,7 +12,7 @@ from types import SimpleNamespace
 import xml.etree.ElementTree as ET
 
 import fixtures
-from run_application_quit import compile_entrypoint
+from run_application_quit import compile_entrypoint, torrent_enabled
 
 
 def run_mode(root, binary, sparkle, mode):
@@ -25,7 +25,8 @@ def run_mode(root, binary, sparkle, mode):
     fixtures.verify(SimpleNamespace(root=fixture))
     app = fixture / "old/UpdaterProbe.app"
     before_bundle = fixtures.bundle_snapshot(app)
-    expected = fixtures.bundle_snapshot(fixture / "new/UpdaterProbe.app") if mode == "normal" else before_bundle
+    installs = mode in ("normal", "native-terminate")
+    expected = fixtures.bundle_snapshot(fixture / "new/UpdaterProbe.app") if installs else before_bundle
     home = root / "home"
     home.mkdir(mode=0o700)
     for leaf in (".config", ".local/share", "cache", "tmp", "downloads", "shares"):
@@ -62,10 +63,16 @@ def run_mode(root, binary, sparkle, mode):
         else:
             if child.returncode != 0 or "PRODUCTION_MAIN_RETURNED=0 CHECKED=1" not in output:
                 raise RuntimeError("actual application did not return through checked teardown")
-            required = ["IPC_HELD_AT_QUIT=1", "IPC_HELD_DURING_GUI_TEARDOWN=1",
-                        "NATIVE_QUIT_PREPARED=" + str(int(mode == "normal")) + " FIXTURE_REQUESTS=2"]
+            required = ["COMPILED_TORRENT=1", "IPC_HELD_AT_QUIT=1", "IPC_HELD_DURING_GUI_TEARDOWN=1",
+                        "NATIVE_QUIT_PREPARED=" + str(int(installs)) + " FIXTURE_REQUESTS=2"]
             if mode in ("hide", "cancel-quit"):
                 required.append("NO_INSTALL_BOUNDARY=" + mode)
+            if mode in ("native-terminate", "native-cancel-terminate"):
+                required.extend(("NATIVE_TERMINATION_REQUESTED=1", "NATIVE_QUIT_DELIVERED=1"))
+                required.append("NATIVE_TERMINATION_DEFERRED=1" if installs
+                                else "NATIVE_TERMINATION_CANCELED=1")
+            if mode == "native-cancel-terminate":
+                required.append("NATIVE_CANCEL_EVENT_LOOP_CONTINUED=1")
             if not all(marker in output for marker in required):
                 raise RuntimeError("application handoff/consent/owner receipts missing")
             config = home / ".config/eiskaltdc++"
@@ -93,7 +100,7 @@ def run_mode(root, binary, sparkle, mode):
         for path, data in protected.items():
             if path.read_bytes() != data:
                 raise RuntimeError("protected download/share data changed")
-        receipt = {"mode": mode, "normal_return": mode != "kill-before-commit", "installed": mode == "normal",
+        receipt = {"mode": mode, "normal_return": mode != "kill-before-commit", "installed": installs,
                    "exact_signed_bundle": True, "no_relaunch": True, "protected_data_unchanged": True}
         (root / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
         print("PASS:", mode, receipt, flush=True)
@@ -105,6 +112,8 @@ def run_mode(root, binary, sparkle, mode):
 
 
 def run(args):
+    if not torrent_enabled(args.build):
+        raise RuntimeError("signed Torrent checkpoint fixture requires a Torrent-enabled application build")
     root = Path(tempfile.mkdtemp(prefix="eiskalt-app-quit-native-", dir="/private/tmp"))
     root.chmod(0o700)
     print("Disposable signed application root:", root, flush=True)
@@ -118,5 +127,6 @@ if __name__ == "__main__":
     parser.add_argument("--build", type=Path, required=True)
     parser.add_argument("--native-build", type=Path, required=True)
     parser.add_argument("--sparkle", type=Path, required=True)
-    parser.add_argument("--mode", action="append", choices=("normal", "no-consent", "hide", "cancel-quit", "kill-before-commit"))
+    parser.add_argument("--mode", action="append", choices=("normal", "no-consent", "hide", "cancel-quit", "kill-before-commit",
+                                                           "native-terminate", "native-cancel-terminate"))
     run(parser.parse_args())

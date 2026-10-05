@@ -10,6 +10,14 @@ import tempfile
 import xml.etree.ElementTree as ET
 
 
+def torrent_enabled(build):
+    values = [line.split("=", 1)[1] for line in (build / "CMakeCache.txt").read_text().splitlines()
+              if line.startswith("USE_TORRENT:BOOL=")]
+    if len(values) != 1 or values[0] not in ("ON", "OFF"):
+        raise RuntimeError("unknown configured Torrent flavor")
+    return values[0] == "ON"
+
+
 def compile_entrypoint(build, root, native_build=None):
     build = build.resolve()
     source = Path(__file__).resolve().parent / "application_quit_main.cpp"
@@ -34,6 +42,11 @@ def compile_entrypoint(build, root, native_build=None):
     command[command.index(main_object)] = str(output)
     binary = root / "eiskalt-quit-entry"
     command[command.index("-o") + 1] = str(binary)
+    native_driver = root / "native-terminate.o"
+    subprocess.run(["/usr/bin/c++", *flags["CXX_DEFINES"], *flags["CXX_INCLUDES"], *flags["CXX_FLAGS"],
+                    "-c", str(source.with_name("application_native_terminate.mm")),
+                    "-o", str(native_driver)], check=True)
+    command.extend([str(native_driver), "-framework", "AppKit"])
     if native_build:
         native_build = native_build.resolve()
         subprocess.run(["cmake", "--build", str(native_build), "--target", "eiskaltdcpp-qt-tests", "-j2"], check=True)
@@ -62,6 +75,7 @@ def compile_entrypoint(build, root, native_build=None):
 
 
 def run(args):
+    with_torrent = torrent_enabled(args.build)
     root = Path(tempfile.mkdtemp(prefix="eiskalt-app-quit-", dir="/private/tmp"))
     root.chmod(0o700)
     print("Disposable full-entrypoint root:", root, flush=True)
@@ -81,7 +95,9 @@ def run(args):
               '(allow network-outbound (remote ip "localhost:*"))' \
               '(allow network-bind (local ip "localhost:*"))' \
               '(allow network-inbound (local ip "localhost:*"))'
-    arguments = [str(binary)] + (["--quit-via-event"] if args.mode == "quit-event" else [])
+    mode_arguments = {"window": [], "quit-event": ["--quit-via-event"],
+                      "native-terminate": ["--quit-via-native"]}
+    arguments = [str(binary), *mode_arguments[args.mode]]
     completed = subprocess.run(["/usr/bin/sandbox-exec", "-p", sandbox, *arguments],
                                env=environment, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                text=True, timeout=60)
@@ -89,10 +105,17 @@ def run(args):
     print(completed.stdout[-5000:], flush=True)
     if completed.returncode != 0 or "PRODUCTION_MAIN_RETURNED=0 CHECKED=1" not in completed.stdout:
         raise RuntimeError("production normal quit did not return through checked GUI/core teardown")
+    if "COMPILED_TORRENT=" + str(int(with_torrent)) not in completed.stdout:
+        raise RuntimeError("entrypoint did not attest the configured Torrent flavor")
     if "IPC_HELD_AT_QUIT=1" not in completed.stdout or "IPC_HELD_DURING_GUI_TEARDOWN=1" not in completed.stdout:
         raise RuntimeError("profile owner was released before GUI/core teardown")
     if args.mode == "quit-event" and "QUIT_EVENT_DEFERRED=1" not in completed.stdout:
         raise RuntimeError("application Quit event was accepted before checked exit readiness")
+    if args.mode == "native-terminate":
+        required = ("NATIVE_TERMINATION_REQUESTED=1", "NATIVE_QUIT_DELIVERED=1",
+                    "NATIVE_TERMINATION_DEFERRED=1")
+        if not all(marker in completed.stdout for marker in required):
+            raise RuntimeError("AppKit termination did not reach the deferred production Quit path")
     for path, data in protected.items():
         if path.read_bytes() != data:
             raise RuntimeError("protected fixture data changed")
@@ -106,9 +129,12 @@ def run(args):
     tree = hashes.find("./Trees/Hash")
     if tree is None or tree.get("Root") != entries[0].get("Root") or tree.get("Size") != "13":
         raise RuntimeError("hash tree snapshot does not match the fixture file")
-    torrent_state = json.loads((config / "torrent/state/jobs.json").read_text())
-    if torrent_state.get("version") != 2 or torrent_state.get("jobs") != []:
-        raise RuntimeError("Torrent checkpoint not persisted")
+    if with_torrent:
+        torrent_state = json.loads((config / "torrent/state/jobs.json").read_text())
+        if torrent_state.get("version") != 2 or torrent_state.get("jobs") != []:
+            raise RuntimeError("Torrent checkpoint not persisted")
+    elif (config / "torrent").exists():
+        raise RuntimeError("DC-only application generated Torrent settings or state")
     if not (config / "EiskaltDC++_Qt.conf").is_file():
         raise RuntimeError("GUI settings not persisted")
     print("PASS: checked production main returned; valid persisted snapshots and unchanged data", flush=True)
@@ -117,5 +143,5 @@ def run(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", type=Path, required=True)
-    parser.add_argument("--mode", choices=("window", "quit-event"), default="window")
+    parser.add_argument("--mode", choices=("window", "quit-event", "native-terminate"), default="window")
     run(parser.parse_args())

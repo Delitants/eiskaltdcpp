@@ -718,16 +718,32 @@ the actual entrypoint in disposable profiles:
 ```sh
 python3 tests/macos/updater/run_application_quit.py --build build-torrent --mode window
 python3 tests/macos/updater/run_application_quit.py --build build-torrent --mode quit-event
+python3 tests/macos/updater/run_application_quit.py --build build-torrent --mode native-terminate
 ```
 
 This harness reuses production GUI objects and includes the real `main.cpp`,
-changing only the fixture IPC identity. It requires FORCE_XDG, fresh private
+using a fixture IPC identity and a test-only AppKit termination driver. It
+requires FORCE_XDG, fresh private
 homes and a localhost-only network policy; protected fixture bytes, hash/queue/
 settings snapshots and the Torrent checkpoint are read back after main returns.
 The private IPC marker must still be owned at quit and during GUI destruction.
 `_Exit` cannot produce the required post-return receipt. This establishes ordinary
 no-update quit, not signed pending-update full-app replacement, OS logout,
 installer activation, or supported-minimum-OS acceptance.
+
+`native-terminate` calls `[NSApp terminate:nil]` in the disposable process, without
+replacing Qt's delegate or sending a synthetic Qt Quit event. The fixture requires
+actual Quit delivery, return from the native request before checked preparation,
+and the same checked-main/IPC/persistence receipts. Qt's
+[Cocoa termination delegate](https://github.com/qt/qtbase/blob/v6.11.1/src/plugins/platforms/cocoa/qcocoaapplicationdelegate.mm)
+routes native termination through session management and application termination.
+This tests the callback path, not a host logout, shutdown or forced OS termination.
+
+The same three modes support a `USE_TORRENT=OFF` application build, for example
+`--build build-dc-only --mode native-terminate`. The runner requires a compiled
+flavor receipt matching CMake, validates the same DC/GUI persistence and protected
+bytes, and requires no Torrent settings or state directory in a DC-only profile.
+Torrent-enabled profiles must instead contain the valid empty job checkpoint.
 
 ## Application Updater Lifetime And Signed Full-App Quit
 
@@ -746,10 +762,12 @@ python3 tests/macos/updater/run_application_update.py \
   --build build-torrent --native-build build-test \
   --sparkle /path/to/pinned/sparkle \
   --mode normal --mode no-consent --mode hide \
-  --mode cancel-quit --mode kill-before-commit
+  --mode cancel-quit --mode kill-before-commit \
+  --mode native-terminate --mode native-cancel-terminate
 ```
 
-The native test build must opt into the pinned framework. The wrapper substitutes
+The application build for this signed checkpoint fixture must enable Torrent;
+the native test build must opt into the pinned framework. The wrapper substitutes
 only a test-owned updater factory and unique IPC identity, never a production
 profile/environment endpoint override. Fixture-only capability delegates to the
 real backend; signed feed/archive bytes enter its injected test wire, not live
@@ -765,6 +783,12 @@ must keep the exact old bundle; the latter two revoke consent with Later before
 normal fixture cleanup. The kill case targets only its owned QA child after Ready
 but before committed quit, requires abnormal exit without the post-main receipt,
 and preserves the old bundle/data without asserting final persistence on a crash.
+
+The two native modes use AppKit rather than window close. Confirmed native quit
+must install the exact signed fixture update; rejected native confirmation must
+keep the old bundle and demonstrate that the event loop and GUI/core owners
+remain alive before consent is revoked for the later ordinary cleanup quit.
+Neither mode changes the live application or logs out the host.
 Private JSON receipts record the outcomes. The profile IPC lease must remain held
 at quit and during GUI destruction in every normally returning case.
 
