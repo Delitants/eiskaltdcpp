@@ -2123,7 +2123,7 @@ void TorrentEngine::shutdown() {
 }
 bool TorrentEngine::supportsFileRecheck() const {
 #if EISKALT_SELECTED_RECHECK_AVAILABLE && !defined(Q_OS_WIN)
-    return lt::eiskalt_selected_recheck_abi() == 1;
+    return lt::eiskalt_selected_recheck_abi() == 2;
 #else
     return false;
 #endif

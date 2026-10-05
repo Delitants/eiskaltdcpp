@@ -33,6 +33,11 @@ worker-thread snapshot APIs through `libtorrent/eiskalt_selected_recheck.hpp`.
 Preparation drains one torrent's writes and prevents peers from restarting it.
 Storage fences reload persisted partfile slot maps before fresh reads, so a
 cached map cannot authenticate bytes that a new session would not read.
+ABI 2 adds an error-reporting disk fence: a failed partfile metadata save retains
+dirty slot mappings and fails preparation without admitting a selected hash.
+Successful saves still reload persisted maps. Custom disk backends must implement
+the stronger fence explicitly; the default rejects it. ABI 1 providers must be
+rebuilt and cannot enable selected checking in this application.
 Start clears only requested piece availability and disk-cache state, then uses
 native disk hashing. v2 results compare fresh block Merkle roots with authenticated
 native nodes; absent hashes yield unavailable. Terminal results remain paused
@@ -86,7 +91,7 @@ headers and linked capability on every configure, including after header/prefix
 changes, before the application is built.
 
 On a matching native host, an isolated tiny caller verifies that the bundled
-library returns ABI 1. It runs at the executable location in a temporary bundle
+library returns ABI 2. It runs at the executable location in a temporary bundle
 copy, preserving loader-relative dependency identities. It loads that library
 and its initializers, not the application or a Torrent session; use only trusted
 build artifacts. The source bundle is not modified. Cross-architecture

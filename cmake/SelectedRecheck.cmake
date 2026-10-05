@@ -5,12 +5,12 @@ set(CMAKE_REQUIRED_LIBRARIES LibtorrentRasterbar::torrent-rasterbar)
 unset(EISKALT_SELECTED_RECHECK_AVAILABLE CACHE)
 unset(EISKALT_SELECTED_RECHECK_AVAILABLE)
 check_cxx_source_compiles("#include <libtorrent/eiskalt_selected_recheck.hpp>
-static_assert(LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI == 1);
-int main() { return libtorrent::eiskalt_selected_recheck_abi() != 1; }"
+static_assert(LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI == 2);
+int main() { return libtorrent::eiskalt_selected_recheck_abi() != 2; }"
     EISKALT_SELECTED_RECHECK_AVAILABLE)
 unset(CMAKE_REQUIRED_LIBRARIES)
 if(EISKALT_REQUIRE_SELECTED_RECHECK AND NOT EISKALT_SELECTED_RECHECK_AVAILABLE)
-    message(FATAL_ERROR "Selected rechecking requires the matching maintained libtorrent extension (ABI 1)")
+    message(FATAL_ERROR "Selected rechecking requires the matching maintained libtorrent extension (ABI 2)")
 endif()
 
 function(eiskalt_torrent_selected_recheck_capability target)

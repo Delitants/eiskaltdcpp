@@ -1,5 +1,8 @@
 #pragma once
 #include <libtorrent/disk_interface.hpp>
+#if __has_include(<libtorrent/eiskalt_selected_recheck.hpp>)
+#include <libtorrent/eiskalt_selected_recheck.hpp>
+#endif
 #include <mutex>
 #include <optional>
 
@@ -10,7 +13,9 @@ struct Reads {
     std::vector<lt::piece_index_t> pieces;
     int writes = 0;
     std::optional<lt::storage_index_t> storage;
+    lt::disk_interface* disk = nullptr;
     bool holdHashes = false;
+    bool supportsFence = true;
     lt::error_code hashError;
     std::vector<std::function<void()>> pending;
     void release() {
@@ -25,7 +30,7 @@ struct CountingDisk final : lt::disk_interface {
     std::unique_ptr<lt::disk_interface> disk;
     std::shared_ptr<Reads> reads;
     CountingDisk(std::unique_ptr<lt::disk_interface> d, std::shared_ptr<Reads> r)
-        : disk(std::move(d)), reads(std::move(r)) {}
+        : disk(std::move(d)), reads(std::move(r)) { reads->disk = this; }
     lt::storage_holder new_torrent(lt::storage_params const& p, std::shared_ptr<void> const& t) override {
         auto ret=disk->new_torrent(p,t);
         { std::lock_guard l(reads->mutex); if(!reads->storage) reads->storage=static_cast<lt::storage_index_t>(ret); }
@@ -50,6 +55,16 @@ struct CountingDisk final : lt::disk_interface {
     void async_release_files(lt::storage_index_t s, std::function<void()> h) override { disk->async_release_files(s,std::move(h)); }
     void async_check_files(lt::storage_index_t s, lt::add_torrent_params const* p, lt::aux::vector<std::string,lt::file_index_t> v, std::function<void(lt::status_t,lt::storage_error const&)> h) override { disk->async_check_files(s,p,std::move(v),std::move(h)); }
     void async_stop_torrent(lt::storage_index_t s, std::function<void()> h) override { disk->async_stop_torrent(s,std::move(h)); }
+#if __has_include(<libtorrent/eiskalt_selected_recheck.hpp>)
+#if LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI >= 2
+    void async_selected_recheck_fence(lt::storage_index_t s, std::function<void(lt::storage_error const&)> h) override {
+        bool supported;
+        { std::lock_guard l(reads->mutex); supported = reads->supportsFence; }
+        if(supported) disk->async_selected_recheck_fence(s,std::move(h));
+        else lt::disk_interface::async_selected_recheck_fence(s,std::move(h));
+    }
+#endif
+#endif
     void async_rename_file(lt::storage_index_t s, lt::file_index_t i, std::string n, std::function<void(std::string const&,lt::file_index_t,lt::storage_error const&)> h) override { disk->async_rename_file(s,i,std::move(n),std::move(h)); }
     void async_delete_files(lt::storage_index_t s, lt::remove_flags_t f, std::function<void(lt::storage_error const&)> h) override { disk->async_delete_files(s,f,std::move(h)); }
     void async_set_file_priority(lt::storage_index_t s, lt::aux::vector<lt::download_priority_t,lt::file_index_t> p, std::function<void(lt::storage_error const&,lt::aux::vector<lt::download_priority_t,lt::file_index_t>)> h) override { disk->async_set_file_priority(s,std::move(p),std::move(h)); }

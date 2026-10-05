@@ -1,3 +1,101 @@
+--- a/include/libtorrent/aux_/disk_job.hpp
++++ b/include/libtorrent/aux_/disk_job.hpp
+@@ -225,6 +225,7 @@
+ 	struct stop_torrent
+ 	{
+ 		std::function<void()> handler;
++		std::function<void(storage_error const&)> error_handler;
+ 	};
+ 
+ 	struct file_priority
+--- a/include/libtorrent/aux_/peer_list.hpp
++++ b/include/libtorrent/aux_/peer_list.hpp
+@@ -182,6 +182,7 @@
+ 		void set_max_failcount(torrent_state* st);
+ 
+ 	private:
++		friend struct torrent;
+ 
+ 		void recalculate_connect_candidates(torrent_state* state);
+ 
+--- a/include/libtorrent/aux_/posix_storage.hpp
++++ b/include/libtorrent/aux_/posix_storage.hpp
+@@ -53,7 +53,7 @@
+ 			, aux::vector<std::string, file_index_t> const& links
+ 			, storage_error& ec);
+ 
+-		void release_files();
++		void release_files(storage_error& error);
+ 
+ 		void delete_files(remove_flags_t options, storage_error& error);
+ 
+--- a/include/libtorrent/aux_/torrent.hpp
++++ b/include/libtorrent/aux_/torrent.hpp
+@@ -604,6 +604,14 @@
+ 		bool is_paused() const;
+ 		bool is_torrent_paused() const { return m_paused; }
+ 		void force_recheck();
++		void prepare_selected_recheck(std::uint64_t token);
++		void start_selected_recheck(selected_recheck_request request);
++		void cancel_selected_recheck(std::uint64_t token);
++		void finish_selected_recheck(std::uint64_t token, bool resume_network);
++		selected_recheck_status query_selected_recheck(std::uint64_t token) const;
++		void selected_recheck_next();
++		void selected_recheck_hashed(std::uint64_t token, aux::vector<sha256_hash> hashes,
++			piece_index_t piece, sha1_hash const& hash, storage_error const& error);
+ 		void save_resume_data(resume_data_flags_t flags);
+ 
+ 		bool need_save_resume_data(resume_data_flags_t flags) const
+@@ -1151,7 +1159,7 @@
+ 			TORRENT_ASSERT(m_picker.get());
+ 			return *m_picker;
+ 		}
+-		void need_picker();
++		void need_picker(bool force = false);
+ 		bool has_picker() const
+ 		{
+ 			return m_picker.get() != nullptr;
+@@ -1898,6 +1906,15 @@
+ 		// prevent us from sending it again to anyone
+ 		std::uint32_t m_complete_sent:1;
+ 
++		selected_recheck_status m_selected_status;
++		std::vector<piece_index_t> m_selected_pieces;
++		std::size_t m_selected_cursor = 0;
++		bool m_selected_active = false;
++		bool m_selected_inflight = false;
++		bool m_selected_cancel = false;
++		bool m_selected_auto_managed = false;
++		bool m_selected_was_finished = false;
++
+ #if TORRENT_USE_ASSERTS
+ 		// set to true when torrent is start()ed. It may only be started once
+ 		bool m_was_started = false;
+--- a/include/libtorrent/disk_interface.hpp
++++ b/include/libtorrent/disk_interface.hpp
+@@ -23,6 +23,7 @@
+ #include "libtorrent/aux_/vector.hpp"
+ #include "libtorrent/aux_/export.hpp"
+ #include "libtorrent/storage_defs.hpp"
++#include "libtorrent/error_code.hpp"
+ #include "libtorrent/time.hpp"
+ #include "libtorrent/sha1_hash.hpp"
+ #include "libtorrent/flags.hpp"
+@@ -296,6 +297,14 @@
+ 		virtual void async_stop_torrent(storage_index_t storage
+ 			, std::function<void()> handler = std::function<void()>()) = 0;
+ 
++		// Eiskalt ABI 2: drain writes and report part-file metadata durability.
++		// Custom backends must explicitly implement this stronger fence.
++		virtual void async_selected_recheck_fence(storage_index_t
++			, std::function<void(storage_error const&)> handler)
++		{
++			handler(storage_error(make_error_code(boost::system::errc::operation_not_supported)));
++		}
++
+ 		// This function is called when the name of a file in the specified
+ 		// storage has been requested to be renamed. The disk I/O object is
+ 		// responsible for renaming the file without racing with other
 --- a/include/libtorrent/eiskalt_selected_recheck.hpp
 +++ b/include/libtorrent/eiskalt_selected_recheck.hpp
 @@ -0,0 +1,35 @@
@@ -11,7 +109,7 @@
 +#include <cstdint>
 +#include <vector>
 +
-+#define LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI 1
++#define LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI 2
 +namespace libtorrent {
 +enum class selected_recheck_phase { idle, preparing, quiesced, progress, complete, canceled, failed };
 +struct selected_recheck_request {
@@ -58,69 +156,273 @@
  
  		template<typename Fun, typename... Args>
  		void async_call(Fun f, Args&&... a) const;
---- a/include/libtorrent/aux_/torrent.hpp
-+++ b/include/libtorrent/aux_/torrent.hpp
-@@ -604,6 +604,14 @@
- 		bool is_paused() const;
- 		bool is_torrent_paused() const { return m_paused; }
- 		void force_recheck();
-+		void prepare_selected_recheck(std::uint64_t token);
-+		void start_selected_recheck(selected_recheck_request request);
-+		void cancel_selected_recheck(std::uint64_t token);
-+		void finish_selected_recheck(std::uint64_t token, bool resume_network);
-+		selected_recheck_status query_selected_recheck(std::uint64_t token) const;
-+		void selected_recheck_next();
-+		void selected_recheck_hashed(std::uint64_t token, aux::vector<sha256_hash> hashes,
-+			piece_index_t piece, sha1_hash const& hash, storage_error const& error);
- 		void save_resume_data(resume_data_flags_t flags);
+--- a/src/disk_job.cpp
++++ b/src/disk_job.cpp
+@@ -75,8 +75,8 @@
  
- 		bool need_save_resume_data(resume_data_flags_t flags) const
-@@ -1151,7 +1159,7 @@
- 			TORRENT_ASSERT(m_picker.get());
- 			return *m_picker;
- 		}
--		void need_picker();
-+		void need_picker(bool force = false);
- 		bool has_picker() const
+ 		void operator()(job::stop_torrent& j) const
  		{
- 			return m_picker.get() != nullptr;
-@@ -1898,6 +1906,15 @@
- 		// prevent us from sending it again to anyone
- 		std::uint32_t m_complete_sent:1;
+-			if (!j.handler) return;
+-			j.handler();
++			if (j.error_handler) j.error_handler(m_job.error);
++			if (j.handler) j.handler();
+ 		}
  
-+		selected_recheck_status m_selected_status;
-+		std::vector<piece_index_t> m_selected_pieces;
-+		std::size_t m_selected_cursor = 0;
-+		bool m_selected_active = false;
-+		bool m_selected_inflight = false;
-+		bool m_selected_cancel = false;
-+		bool m_selected_auto_managed = false;
-+		bool m_selected_was_finished = false;
+ 		void operator()(job::file_priority& j) const
+--- a/src/mmap_disk_io.cpp
++++ b/src/mmap_disk_io.cpp
+@@ -121,6 +121,8 @@
+ 		, std::function<void(std::string const&, file_index_t, storage_error const&)> handler) override;
+ 	void async_stop_torrent(storage_index_t storage
+ 		, std::function<void()> handler) override;
++	void async_selected_recheck_fence(storage_index_t storage
++		, std::function<void(storage_error const&)> handler) override;
+ 	void async_set_file_priority(storage_index_t storage
+ 		, aux::vector<download_priority_t, file_index_t> prio
+ 		, std::function<void(storage_error const&
+@@ -821,6 +823,15 @@
+ 			m_torrents[storage]->shared_from_this(),
+ 			std::move(handler)
+ 		);
++		add_fence_job(j);
++	}
 +
- #if TORRENT_USE_ASSERTS
- 		// set to true when torrent is start()ed. It may only be started once
- 		bool m_was_started = false;
---- a/src/torrent_handle.cpp
-+++ b/src/torrent_handle.cpp
-@@ -375,6 +375,18 @@
- 	{
- 		async_call(&aux::torrent::force_recheck);
++	void mmap_disk_io::async_selected_recheck_fence(storage_index_t const storage
++		, std::function<void(storage_error const&)> handler)
++	{
++		abort_hash_jobs(storage);
++		auto* j = m_job_pool.allocate_job<aux::job::stop_torrent>(
++			{}, m_torrents[storage]->shared_from_this(), std::function<void()>{}, std::move(handler));
+ 		add_fence_job(j);
  	}
-+
-+	int eiskalt_selected_recheck_abi() { return LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI; }
-+	void prepare_selected_recheck(torrent_handle h, std::uint64_t token)
-+	{ h.async_call(&aux::torrent::prepare_selected_recheck, token); }
-+	void start_selected_recheck(torrent_handle h, selected_recheck_request request)
-+	{ h.async_call(&aux::torrent::start_selected_recheck, std::move(request)); }
-+	void cancel_selected_recheck(torrent_handle h, std::uint64_t token)
-+	{ h.async_call(&aux::torrent::cancel_selected_recheck, token); }
-+	void finish_selected_recheck(torrent_handle h, std::uint64_t token, bool resume_network)
-+	{ h.async_call(&aux::torrent::finish_selected_recheck, token, resume_network); }
-+	selected_recheck_status query_selected_recheck(torrent_handle h, std::uint64_t token)
-+	{ return h.sync_call_ret<selected_recheck_status>({}, &aux::torrent::query_selected_recheck, token); }
  
- 	void torrent_handle::resume() const
+--- a/src/mmap_storage.cpp
++++ b/src/mmap_storage.cpp
+@@ -99,6 +99,18 @@
+ {
+ 	TORRENT_ASSERT(files().num_files() > 0);
+ 	TORRENT_ASSERT(m_v1 || m_v2);
++	// Read-only partfile initialization for local checks that skip full resume
++	// verification. No payload file or directory is created here.
++	filenames const fs = names();
++	for (file_index_t i : m_file_priority.range())
++	{
++		if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
++		file_status status;
++		error_code ec;
++		stat_file(fs.file_path(i,m_save_path), &status, ec);
++		if (!ec && status.file_size > 0) use_partfile(i,false);
++		else need_partfile();
++	}
+ 
+ #if TORRENT_HAVE_MAP_VIEW_OF_FILE
+ 		m_file_open_unmap_lock.reset(new std::mutex[files().num_files()]
+@@ -488,12 +500,22 @@
+ 		m_renamed_files.rename_file(files(), index, new_filename);
+ 	}
+ 
+-	void mmap_storage::release_files(storage_error&)
++	void mmap_storage::release_files(storage_error& error)
  	{
+ 		if (m_part_file)
+ 		{
+-			error_code ignore;
+-			m_part_file->flush_metadata(ignore);
++			m_part_file->flush_metadata(error.ec);
++			if (error)
++			{
++				error.file(torrent_status::error_file_partfile);
++				error.operation = operation_t::partfile_write;
++			}
++			else
++			{
++				// Reload persisted maps only after dirty slot mappings were saved.
++				m_part_file.reset();
++				need_partfile();
++			}
+ 		}
+ 
+ 		// make sure we don't have the files open
+--- a/src/part_file.cpp
++++ b/src/part_file.cpp
+@@ -275,6 +275,7 @@
+ 				if (ec) return {};
+ 				return {fn, 0, mode};
+ 			}
++			ec = e.ec;
+ 			return {};
+ 		}
+ 	}
+--- a/src/posix_disk_io.cpp
++++ b/src/posix_disk_io.cpp
+@@ -259,7 +259,8 @@
+ 		void async_release_files(storage_index_t storage, std::function<void()> handler) override
+ 		{
+ 			posix_storage* st = m_torrents[storage].get();
+-			st->release_files();
++			storage_error ignore;
++			st->release_files(ignore);
+ 			if (!handler) return;
+ 			post(m_ios, [=]{ handler(); });
+ 		}
+@@ -325,10 +326,17 @@
+ 				{ h(std::move(n), idx, error); });
+ 		}
+ 
+-		void async_stop_torrent(storage_index_t, std::function<void()> handler) override
+-		{
+-			if (!handler) return;
+-			post(m_ios, std::move(handler));
++		void async_stop_torrent(storage_index_t storage, std::function<void()> handler) override
++		{
++			async_release_files(storage, std::move(handler));
++		}
++
++		void async_selected_recheck_fence(storage_index_t storage
++			, std::function<void(storage_error const&)> handler) override
++		{
++			storage_error error;
++			m_torrents[storage]->release_files(error);
++			post(m_ios, [error, h = std::move(handler)] { h(error); });
+ 		}
+ 
+ 		void async_set_file_priority(storage_index_t const storage
+--- a/src/posix_part_file.cpp
++++ b/src/posix_part_file.cpp
+@@ -445,7 +445,7 @@
+ 		std::memset(ptr, 0, std::size_t(m_header_size - (ptr - header.data())));
+ 
+ 		auto const written = std::fwrite(header.data(), 1, header.size(), f.file());
+-		if (written != header.size())
++		if (written != header.size() || std::fflush(f.file()) != 0)
+ 		{
+ 			ec.assign(errno, generic_category());
+ 			return;
+--- a/src/posix_storage.cpp
++++ b/src/posix_storage.cpp
+@@ -46,7 +46,20 @@
+ 		, m_part_file_dir(p.part_file_dir)
+ 		, m_file_priority(p.priorities)
+ 		, m_part_file_name("." + to_hex(p.info_hash) + ".parts")
+-	{}
++	{
++		// Local-only resume may bypass initialize(); partfile reads still need
++		// their metadata mapping. This does not create files or allocate payload.
++		filenames const fs = names();
++		for (file_index_t i : m_file_priority.range())
++		{
++			if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
++			file_status status;
++			error_code ec;
++			stat_file(fs.file_path(i,m_save_path), &status, ec);
++			if (!ec && status.file_size > 0) use_partfile(i,false);
++			else need_partfile();
++		}
++	}
+ 
+ 	filenames posix_storage::names() const
+ 	{
+@@ -284,13 +297,23 @@
+ 			, m_file_priority, m_stat_cache, m_save_path, ec);
+ 	}
+ 
+-	void posix_storage::release_files()
++	void posix_storage::release_files(storage_error& error)
+ 	{
+ 		m_stat_cache.clear();
+ 		if (m_part_file)
+ 		{
+-			error_code ignore;
+-			m_part_file->flush_metadata(ignore);
++			m_part_file->flush_metadata(error.ec);
++			if (error)
++			{
++				error.file(torrent_status::error_file_partfile);
++				error.operation = operation_t::partfile_write;
++			}
++			else
++			{
++				// Reload persisted maps only after dirty slot mappings were saved.
++				m_part_file.reset();
++				need_partfile();
++			}
+ 		}
+ 	}
+ 
+--- a/src/pread_disk_io.cpp
++++ b/src/pread_disk_io.cpp
+@@ -143,6 +143,8 @@
+ 		, std::function<void(std::string const&, file_index_t, storage_error const&)> handler) override;
+ 	void async_stop_torrent(storage_index_t storage
+ 		, std::function<void()> handler) override;
++	void async_selected_recheck_fence(storage_index_t storage
++		, std::function<void(storage_error const&)> handler) override;
+ 	void async_set_file_priority(storage_index_t storage
+ 		, aux::vector<download_priority_t, file_index_t> prio
+ 		, std::function<void(storage_error const&
+@@ -1079,6 +1081,15 @@
+ 	add_fence_job(j);
+ }
+ 
++void pread_disk_io::async_selected_recheck_fence(storage_index_t const storage
++	, std::function<void(storage_error const&)> handler)
++{
++	abort_hash_jobs(storage);
++	auto* j = m_job_pool.allocate_job<aux::job::stop_torrent>(
++		{}, m_torrents[storage]->shared_from_this(), std::function<void()>{}, std::move(handler));
++	add_fence_job(j);
++}
++
+ void pread_disk_io::async_set_file_priority(storage_index_t const storage
+ 	, aux::vector<download_priority_t, file_index_t> prios
+ 	, std::function<void(storage_error const&
+--- a/src/pread_storage.cpp
++++ b/src/pread_storage.cpp
+@@ -55,6 +55,18 @@
+ 		// a torrent must be either v1 or v2 (or both)
+ 		TORRENT_ASSERT(m_v1 || m_v2);
+ 		TORRENT_ASSERT(files().num_files() > 0);
++		// Establish read-only partfile mappings even when resume verification is
++		// bypassed for a stopped job. Normal initialize() retains allocation policy.
++		filenames const fs = names();
++		for (file_index_t i : m_file_priority.range())
++		{
++			if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
++			file_status status;
++			error_code ec;
++			stat_file(fs.file_path(i,m_save_path), &status, ec);
++			if (!ec && status.file_size > 0) use_partfile(i,false);
++			else need_partfile();
++		}
+ 	}
+ 
+ 	pread_storage::~pread_storage()
+@@ -371,12 +383,22 @@
+ 		m_renamed_files.rename_file(files(), index, new_filename);
+ 	}
+ 
+-	void pread_storage::release_files(storage_error&)
++	void pread_storage::release_files(storage_error& error)
+ 	{
+ 		if (m_part_file)
+ 		{
+-			error_code ignore;
+-			m_part_file->flush_metadata(ignore);
++			m_part_file->flush_metadata(error.ec);
++			if (error)
++			{
++				error.file(torrent_status::error_file_partfile);
++				error.operation = operation_t::partfile_write;
++			}
++			else
++			{
++				// Reload persisted maps only after dirty slot mappings were saved.
++				m_part_file.reset();
++				need_partfile();
++			}
+ 		}
+ 
+ 		// make sure we don't have the files open
 --- a/src/torrent.cpp
 +++ b/src/torrent.cpp
 @@ -1335,7 +1335,7 @@
@@ -140,11 +442,10 @@
  			|| settings().get_int(settings_pack::suggest_mode)
  			== settings_pack::suggest_read_cache);
  
-@@ -2447,10 +2448,220 @@
- 		m_need_save_resume_data = need_save_resume_data;
+@@ -2448,9 +2449,225 @@
  	}
  	catch (...) { handle_exception(); }
-+
+ 
 +	static std::int64_t selected_recheck_payload_bytes(file_storage const& fs, piece_index_t const piece)
 +	{
 +		std::int64_t bytes = 0;
@@ -189,8 +490,14 @@
 +		disconnect_all(errors::torrent_paused, operation_t::bittorrent);
 +		stop_announcing();
 +		// A per-storage fence drains cached writes before client journal admission.
-+		m_ses.disk_thread().async_stop_torrent(m_storage, [self = shared_from_this(), token] {
++		m_ses.disk_thread().async_selected_recheck_fence(m_storage, [self = shared_from_this(), token](storage_error const& error) {
 +			if (self->m_abort || !self->m_selected_active || self->m_selected_status.token != token) return;
++			if (error)
++			{
++				self->m_selected_status.error = error.ec;
++				self->m_selected_status.phase = selected_recheck_phase::failed;
++				return;
++			}
 +			self->m_selected_status.phase = self->m_selected_cancel
 +				? selected_recheck_phase::canceled : selected_recheck_phase::quiesced;
 +		});
@@ -230,7 +537,7 @@
 +		m_selected_status.phase = selected_recheck_phase::progress;
 +		selected_recheck_next();
 +	}
- 
++
 +	void torrent::selected_recheck_next()
 +	{
 +		if (m_abort || !m_selected_active || m_selected_inflight) return;
@@ -361,7 +668,7 @@
  
  		if (!valid_metadata()) return;
  
-@@ -7472,7 +7683,9 @@
+@@ -7472,7 +7689,9 @@
  		// for the piece
  		// bit 0: set if we have the piece
  		// bit 1: set if we have verified the piece (in seed mode)
@@ -372,7 +679,7 @@
  
  		// if we are checking, only save the have_pieces bitfield up to the piece
  		// we have actually checked. This allows us to resume the checking when we
-@@ -9813,6 +10026,7 @@
+@@ -9813,6 +10032,7 @@
  
  	void torrent::auto_managed(bool const a)
  	{
@@ -380,7 +687,7 @@
  		TORRENT_ASSERT(is_single_thread());
  		INVARIANT_CHECK;
  
-@@ -10291,6 +10505,7 @@
+@@ -10291,6 +10511,7 @@
  
  	void torrent::resume()
  	{
@@ -388,7 +695,7 @@
  		TORRENT_ASSERT(is_single_thread());
  		INVARIANT_CHECK;
  
-@@ -10843,7 +11058,7 @@
+@@ -10843,7 +11064,7 @@
  
  	void torrent::maybe_connect_web_seeds()
  	{
@@ -397,124 +704,24 @@
  
  		// if we have everything we want we don't need to connect to any web-seed
  		if (m_web_seeds.empty()
---- a/src/posix_storage.cpp
-+++ b/src/posix_storage.cpp
-@@ -46,7 +46,20 @@
- 		, m_part_file_dir(p.part_file_dir)
- 		, m_file_priority(p.priorities)
- 		, m_part_file_name("." + to_hex(p.info_hash) + ".parts")
--	{}
-+	{
-+		// Local-only resume may bypass initialize(); partfile reads still need
-+		// their metadata mapping. This does not create files or allocate payload.
-+		filenames const fs = names();
-+		for (file_index_t i : m_file_priority.range())
-+		{
-+			if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
-+			file_status status;
-+			error_code ec;
-+			stat_file(fs.file_path(i,m_save_path), &status, ec);
-+			if (!ec && status.file_size > 0) use_partfile(i,false);
-+			else need_partfile();
-+		}
-+	}
+--- a/src/torrent_handle.cpp
++++ b/src/torrent_handle.cpp
+@@ -376,6 +376,18 @@
+ 		async_call(&aux::torrent::force_recheck);
+ 	}
  
- 	filenames posix_storage::names() const
++	int eiskalt_selected_recheck_abi() { return LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI; }
++	void prepare_selected_recheck(torrent_handle h, std::uint64_t token)
++	{ h.async_call(&aux::torrent::prepare_selected_recheck, token); }
++	void start_selected_recheck(torrent_handle h, selected_recheck_request request)
++	{ h.async_call(&aux::torrent::start_selected_recheck, std::move(request)); }
++	void cancel_selected_recheck(torrent_handle h, std::uint64_t token)
++	{ h.async_call(&aux::torrent::cancel_selected_recheck, token); }
++	void finish_selected_recheck(torrent_handle h, std::uint64_t token, bool resume_network)
++	{ h.async_call(&aux::torrent::finish_selected_recheck, token, resume_network); }
++	selected_recheck_status query_selected_recheck(torrent_handle h, std::uint64_t token)
++	{ return h.sync_call_ret<selected_recheck_status>({}, &aux::torrent::query_selected_recheck, token); }
++
+ 	void torrent_handle::resume() const
  	{
-@@ -291,6 +304,9 @@
- 		{
- 			error_code ignore;
- 			m_part_file->flush_metadata(ignore);
-+			// The drained storage fence must also discard stale piece-to-slot maps.
-+			m_part_file.reset();
-+			need_partfile();
- 		}
- 	}
- 
---- a/src/pread_storage.cpp
-+++ b/src/pread_storage.cpp
-@@ -55,6 +55,18 @@
- 		// a torrent must be either v1 or v2 (or both)
- 		TORRENT_ASSERT(m_v1 || m_v2);
- 		TORRENT_ASSERT(files().num_files() > 0);
-+		// Establish read-only partfile mappings even when resume verification is
-+		// bypassed for a stopped job. Normal initialize() retains allocation policy.
-+		filenames const fs = names();
-+		for (file_index_t i : m_file_priority.range())
-+		{
-+			if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
-+			file_status status;
-+			error_code ec;
-+			stat_file(fs.file_path(i,m_save_path), &status, ec);
-+			if (!ec && status.file_size > 0) use_partfile(i,false);
-+			else need_partfile();
-+		}
- 	}
- 
- 	pread_storage::~pread_storage()
-@@ -377,6 +389,9 @@
- 		{
- 			error_code ignore;
- 			m_part_file->flush_metadata(ignore);
-+			// The drained storage fence must also discard stale piece-to-slot maps.
-+			m_part_file.reset();
-+			need_partfile();
- 		}
- 
- 		// make sure we don't have the files open
---- a/src/mmap_storage.cpp
-+++ b/src/mmap_storage.cpp
-@@ -99,6 +99,18 @@
- {
- 	TORRENT_ASSERT(files().num_files() > 0);
- 	TORRENT_ASSERT(m_v1 || m_v2);
-+	// Read-only partfile initialization for local checks that skip full resume
-+	// verification. No payload file or directory is created here.
-+	filenames const fs = names();
-+	for (file_index_t i : m_file_priority.range())
-+	{
-+		if (m_file_priority[i] != dont_download || fs.pad_file_at(i) || fs.file_size(i) == 0) continue;
-+		file_status status;
-+		error_code ec;
-+		stat_file(fs.file_path(i,m_save_path), &status, ec);
-+		if (!ec && status.file_size > 0) use_partfile(i,false);
-+		else need_partfile();
-+	}
- 
- #if TORRENT_HAVE_MAP_VIEW_OF_FILE
- 		m_file_open_unmap_lock.reset(new std::mutex[files().num_files()]
-@@ -494,6 +506,9 @@
- 		{
- 			error_code ignore;
- 			m_part_file->flush_metadata(ignore);
-+			// The drained storage fence must also discard stale piece-to-slot maps.
-+			m_part_file.reset();
-+			need_partfile();
- 		}
- 
- 		// make sure we don't have the files open
---- a/include/libtorrent/aux_/peer_list.hpp
-+++ b/include/libtorrent/aux_/peer_list.hpp
-@@ -182,6 +182,7 @@
- 		void set_max_failcount(torrent_state* st);
- 
- 	private:
-+		friend struct torrent;
- 
- 		void recalculate_connect_candidates(torrent_state* state);
- 
---- a/src/posix_disk_io.cpp
-+++ b/src/posix_disk_io.cpp
-@@ -325,10 +325,9 @@
- 				{ h(std::move(n), idx, error); });
- 		}
- 
--		void async_stop_torrent(storage_index_t, std::function<void()> handler) override
-+		void async_stop_torrent(storage_index_t storage, std::function<void()> handler) override
- 		{
--			if (!handler) return;
--			post(m_ios, std::move(handler));
-+			async_release_files(storage, std::move(handler));
- 		}
- 
- 		void async_set_file_priority(storage_index_t const storage
+ 		async_call(&aux::torrent::resume);

@@ -12,6 +12,13 @@ target_compile_features(eiskalt-selected-recheck-dependency-tests PRIVATE cxx_st
 target_link_libraries(eiskalt-selected-recheck-dependency-tests PRIVATE Qt6::Core Qt6::Network
     LibtorrentRasterbar::torrent-rasterbar Catch2::Catch2WithMain)
 eiskalt_torrent_match_dependency_abi(eiskalt-selected-recheck-dependency-tests)
+if(APPLE)
+    add_library(eiskalt-partfile-write-fault SHARED EXCLUDE_FROM_ALL PartfileWriteFault.cpp)
+    target_compile_features(eiskalt-partfile-write-fault PRIVATE cxx_std_20)
+    target_compile_definitions(eiskalt-partfile-write-fault PRIVATE EISKALT_TEST_INTERPOSE_PARTFILE_PWRITE)
+    target_compile_definitions(eiskalt-selected-recheck-dependency-tests PRIVATE EISKALT_TEST_INTERPOSE_PARTFILE_PWRITE)
+    target_link_libraries(eiskalt-selected-recheck-dependency-tests PRIVATE eiskalt-partfile-write-fault)
+endif()
 
 # Compile the engine in this test translation unit for the private test probe.
 # The public library contains neither a peer-injection API nor test hooks.

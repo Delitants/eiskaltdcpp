@@ -192,9 +192,9 @@ def check(app, arch, floor, static_only):
         run(*args)
         env = {key: value for key, value in os.environ.items() if not key.startswith("DYLD_")}
         value = run(probe, env=env).strip()
-        if value != "1":
-            raise ValueError("bundled extension runtime ABI must be 1, got " + value)
-    print(f"PASS: selected-recheck ABI 1; {len(binaries)} thin {arch} binaries, macOS <= {floor}; "
+        if value != "2":
+            raise ValueError("bundled extension runtime ABI must be 2, got " + value)
+    print(f"PASS: selected-recheck ABI 2; {len(binaries)} thin {arch} binaries, macOS <= {floor}; "
           "native minimum-OS acceptance remains a separate gate")
 
 

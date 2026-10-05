@@ -29,10 +29,10 @@ class SelectedRecheckBundle(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory(prefix="eiskalt-selected-package-")
         cls.work = Path(cls.tmp.name)
         definitions = "".join(f"void {name}() {{}}\n" for name in OPERATIONS)
-        for name, arch, floor, abi in (("good", ARCH, FLOOR, 1),
-                                       ("wrong-abi", ARCH, FLOOR, 2),
-                                       ("wrong-cpu", OTHER, FLOOR, 1),
-                                       ("newer", ARCH, "27.0", 1),
+        for name, arch, floor, abi in (("good", ARCH, FLOOR, 2),
+                                       ("wrong-abi", ARCH, FLOOR, 1),
+                                       ("wrong-cpu", OTHER, FLOOR, 2),
+                                       ("newer", ARCH, "27.0", 2),
                                        ("missing", ARCH, FLOOR, None)):
             source = cls.work / (name + ".cpp")
             marker = "" if abi is None else f"int eiskalt_selected_recheck_abi() {{ return {abi}; }}"
@@ -45,7 +45,7 @@ class SelectedRecheckBundle(unittest.TestCase):
         calls = "".join(f"libtorrent::{name}();\n" for name in OPERATIONS)
         source.write_text("namespace libtorrent {\n" + declarations +
                           "int eiskalt_selected_recheck_abi();\n}\nint main() {\n" + calls +
-                          "return libtorrent::eiskalt_selected_recheck_abi() != 1;\n}\n")
+                          "return libtorrent::eiskalt_selected_recheck_abi() != 2;\n}\n")
         run("xcrun", "clang++", "-arch", ARCH, "-mmacosx-version-min=" + FLOOR,
             source, cls.work / "good.dylib", "-Wl,-rpath,@executable_path/../Frameworks",
             "-o", cls.work / "main")
@@ -139,7 +139,7 @@ class SelectedRecheckBundle(unittest.TestCase):
                           "".join(f"void {name}();\n" for name in OPERATIONS) +
                           "int eiskalt_selected_recheck_abi();\n}\nint main() {\n" +
                           "".join(f"libtorrent::{name}();\n" for name in OPERATIONS) +
-                          "return libtorrent::eiskalt_selected_recheck_abi() != 1;\n}\n")
+                          "return libtorrent::eiskalt_selected_recheck_abi() != 2;\n}\n")
         run("xcrun", "clang++", "-arch", ARCH, "-mmacosx-version-min=" + FLOOR,
             source, wrapper, "-L" + str(wrapper.parent),
             "-Wl,-rpath,@executable_path/../Frameworks", "-o", self.main)
@@ -166,7 +166,7 @@ class SelectedRecheckBundle(unittest.TestCase):
         source = self.case / "partial.cpp"
         source.write_text("namespace libtorrent {\n" +
                           "".join(f"void {name}() {{}}\n" for name in OPERATIONS[:-1]) +
-                          "int eiskalt_selected_recheck_abi() { return 1; }\n}\n")
+                          "int eiskalt_selected_recheck_abi() { return 2; }\n}\n")
         run("xcrun", "clang++", "-arch", ARCH, "-mmacosx-version-min=" + FLOOR,
             "-dynamiclib", source, "-Wl,-install_name,@rpath/libtorrent-rasterbar.2.1.dylib",
             "-o", self.library)
@@ -230,16 +230,16 @@ class SelectedRecheckBundle(unittest.TestCase):
                                "-DEISKALT_REQUIRE_SELECTED_RECHECK=ON"], capture_output=True, text=True)
 
     def test_rejects_header_library_abi_mismatch_at_configure(self):
-        project, _ = self.cmake_pair(2)
+        project, _ = self.cmake_pair(1)
         result = self.configure_pair(project)
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn("matching maintained libtorrent extension", result.stderr)
 
     def test_reconfigure_cannot_reuse_stale_header_capability(self):
-        project, header = self.cmake_pair(1)
+        project, header = self.cmake_pair(2)
         result = self.configure_pair(project)
         self.assertEqual(result.returncode, 0, result.stderr)
-        header.write_text(header.read_text().replace("ABI 1", "ABI 2"))
+        header.write_text(header.read_text().replace("ABI 2", "ABI 1"))
         result = self.configure_pair(project)
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn("matching maintained libtorrent extension", result.stderr)

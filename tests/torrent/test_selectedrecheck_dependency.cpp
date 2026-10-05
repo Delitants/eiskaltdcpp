@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
+#include <catch2/generators/catch_generators_range.hpp>
 
 #if __has_include(<libtorrent/eiskalt_selected_recheck.hpp>)
 #include <libtorrent/eiskalt_selected_recheck.hpp>
@@ -21,9 +22,11 @@
 #include <chrono>
 #include <mutex>
 #include <optional>
+#include <future>
 #include <thread>
 
 #include "SelectedRecheckDisk.h"
+#include "PartfileWriteFault.h"
 namespace {
 namespace lt = libtorrent;
 using namespace std::chrono_literals;
@@ -54,7 +57,7 @@ struct Fixture {
     std::shared_ptr<Reads> reads = std::make_shared<Reads>();
     std::unique_ptr<lt::session> session;
     lt::torrent_handle handle;
-    Fixture(lt::create_flags_t flags = lt::create_torrent::v1_only, bool omitLayers = false, bool allPresent = true, bool skipBoundaryFile = false, int lastSize = 32768, bool v1Pad = false, int diskBackend = 0) {
+    Fixture(lt::create_flags_t flags = lt::create_torrent::v1_only, bool omitLayers = false, bool allPresent = true, bool skipBoundaryFile = false, int lastSize = 32768, bool v1Pad = false, int diskBackend = 0, bool skipLastFile = false) {
         REQUIRE(temp.isValid());
         REQUIRE(QDir().mkpath(temp.path()+"/fixture"));
         put(temp.path()+"/fixture/A",8192,'a');
@@ -74,6 +77,10 @@ struct Fixture {
         if(skipBoundaryFile) {
             REQUIRE(QFile::remove(temp.path()+"/fixture/B"));
             params.file_priorities={lt::default_priority,lt::dont_download,lt::default_priority};
+        }
+        if(skipLastFile) {
+            REQUIRE(QFile::remove(temp.path()+"/fixture/C"));
+            params.file_priorities={lt::default_priority,lt::dont_download,lt::dont_download};
         }
         params.save_path = temp.path().toStdString();
         params.flags &= ~(lt::torrent_flags::auto_managed | lt::torrent_flags::seed_mode);
@@ -95,14 +102,25 @@ struct Fixture {
         lt::prepare_selected_recheck(handle,token);
         REQUIRE(wait([&]{return lt::query_selected_recheck(handle,token).phase == lt::selected_recheck_phase::quiesced;}));
     }
+    void writeFragment(lt::piece_index_t piece, int offset, QByteArray data) {
+        auto done = std::make_shared<std::promise<lt::storage_error>>();
+        auto result = done->get_future();
+        boost::asio::post(session->get_context(), [r=reads, done, piece, offset, data=std::move(data)] {
+            r->disk->async_write(*r->storage, {piece, offset, int(data.size())}, data.constData(), {},
+                [done, data](lt::storage_error const& error) { done->set_value(error); }, {});
+            r->disk->submit_jobs();
+        });
+        REQUIRE(result.wait_for(5s) == std::future_status::ready);
+        REQUIRE_FALSE(result.get());
+    }
 };
 }
 #endif
 
 TEST_CASE("Selected recheck requires the linked engine capability", "[selected-recheck-dependency]") {
 #if __has_include(<libtorrent/eiskalt_selected_recheck.hpp>)
-    REQUIRE(LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI == 1);
-    REQUIRE(libtorrent::eiskalt_selected_recheck_abi() == 1);
+    REQUIRE(LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI == 2);
+    REQUIRE(libtorrent::eiskalt_selected_recheck_abi() == 2);
 #else
     FAIL("Linked libtorrent does not provide selected rechecking");
 #endif
@@ -429,6 +447,106 @@ TEST_CASE("Storage fences reload persisted partfile maps before selected hashing
     CHECK(backing.readAll() == before);
     lt::finish_selected_recheck(f.handle, 12, false);
 }
+
+TEST_CASE("Failed partfile metadata fences retain dirty slots and fail preparation", "[selected-recheck-dependency][selected-recheck-partmap][selected-recheck-flush-failure]") {
+    const auto backend = GENERATE(0, 1, 2);
+#ifdef EISKALT_TEST_INTERPOSE_PARTFILE_PWRITE
+    std::vector<int> faultKinds{0, EIO, ENOSPC};
+    if(backend == 1) { faultKinds.push_back(-EIO); faultKinds.push_back(-ENOSPC); }
+    const auto fault = GENERATE_COPY(Catch::Generators::from_range(faultKinds));
+#else
+    const auto fault = 0;
+#endif
+    INFO("disk backend=" << backend);
+    INFO("metadata fault=" << fault);
+    Fixture f(lt::create_torrent::v1_only, false, false, true, 32768, false, backend, true);
+    f.writeFragment(lt::piece_index_t(0), 8192, QByteArray(8192, 'b'));
+    const auto priorities = f.handle.get_file_priorities();
+    const auto names = QDir(f.temp.path()).entryList({"*.parts"}, QDir::Files | QDir::Hidden);
+    REQUIRE(names.size() == 1);
+    const auto partPath = f.temp.path() + '/' + names.first();
+    QFile backing(partPath);
+    REQUIRE(backing.open(QIODevice::ReadOnly));
+    const auto before = backing.readAll();
+    backing.close();
+    REQUIRE(before.size() > 1024);
+    // There is fragment payload, but no persisted header for its dirty slot.
+    REQUIRE(before.left(8) == QByteArray(8, char(0)));
+    const auto permissions = QFile::permissions(partPath);
+#ifdef EISKALT_TEST_INTERPOSE_PARTFILE_PWRITE
+    REQUIRE(backing.open(QIODevice::ReadOnly));
+    selected_recheck_test::ScopedPartfileWriteFault writeFault(backing.handle(), fault);
+    backing.close();
+#endif
+    if(!fault) {
+        REQUIRE(QFile::setPermissions(partPath, QFileDevice::ReadOwner));
+        REQUIRE_FALSE(backing.open(QIODevice::ReadWrite));
+    }
+    for (const auto token : {21u, 22u}) {
+        { std::lock_guard l(f.reads->mutex); f.reads->pieces.clear(); f.reads->writes = 0; }
+        lt::prepare_selected_recheck(f.handle, token);
+        REQUIRE(wait([&] {
+            const auto phase = lt::query_selected_recheck(f.handle, token).phase;
+            return phase == lt::selected_recheck_phase::failed || phase == lt::selected_recheck_phase::quiesced;
+        }));
+        const auto result = lt::query_selected_recheck(f.handle, token);
+        CHECK(result.phase == lt::selected_recheck_phase::failed);
+        CHECK(result.error == (fault ? boost::system::errc::errc_t(fault < 0 ? -fault : fault) : boost::system::errc::permission_denied));
+        CHECK(result.passed.empty());
+        CHECK(result.failed.empty());
+        CHECK(result.checked_bytes == 0);
+        lt::start_selected_recheck(f.handle, {token, {lt::piece_index_t(0)}});
+        lt::cancel_selected_recheck(f.handle, token);
+        REQUIRE(wait([&] {
+            const auto phase = lt::query_selected_recheck(f.handle, token).phase;
+            return phase == lt::selected_recheck_phase::failed || phase == lt::selected_recheck_phase::canceled || phase == lt::selected_recheck_phase::complete;
+        }));
+        lt::finish_selected_recheck(f.handle, token, true);
+        CHECK(bool(f.handle.status().flags & lt::torrent_flags::paused));
+        CHECK_FALSE(f.handle.have_piece(lt::piece_index_t(0)));
+        CHECK(f.handle.get_file_priorities() == priorities);
+        { std::lock_guard l(f.reads->mutex); CHECK(f.reads->pieces.empty()); CHECK(f.reads->writes == 0); }
+    }
+    REQUIRE(backing.open(QIODevice::ReadOnly));
+    CHECK(backing.readAll() == before);
+    backing.close();
+#ifdef EISKALT_TEST_INTERPOSE_PARTFILE_PWRITE
+    if(fault) {
+        CHECK(writeFault.failures() >= 2);
+    }
+    writeFault.clear();
+#endif
+    REQUIRE(QFile::setPermissions(partPath, permissions));
+    // A different skipped piece must not reuse the first fragment's dirty slot.
+    f.writeFragment(lt::piece_index_t(1), 0, QByteArray(16384, 'c'));
+    f.prepare(23);
+    { std::lock_guard l(f.reads->mutex); f.reads->pieces.clear(); f.reads->writes = 0; }
+    lt::start_selected_recheck(f.handle, {23, {lt::piece_index_t(0), lt::piece_index_t(1)}});
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 23).phase == lt::selected_recheck_phase::complete; }));
+    CHECK(lt::query_selected_recheck(f.handle, 23).passed == std::vector<lt::piece_index_t>{lt::piece_index_t(0), lt::piece_index_t(1)});
+    CHECK(f.handle.get_file_priorities() == priorities);
+    CHECK_FALSE(QFile::exists(f.temp.path() + "/fixture/B"));
+    CHECK_FALSE(QFile::exists(f.temp.path() + "/fixture/C"));
+    { std::lock_guard l(f.reads->mutex); CHECK(f.reads->writes == 0); }
+    lt::finish_selected_recheck(f.handle, 23, false);
+}
+
+#if LIBTORRENT_EISKALT_SELECTED_RECHECK_ABI >= 2
+TEST_CASE("A custom disk without the durable fence rejects preparation", "[selected-recheck-dependency][selected-recheck-fence-required]") {
+    Fixture f;
+    const auto priorities = f.handle.get_file_priorities();
+    { std::lock_guard lock(f.reads->mutex); f.reads->supportsFence = false; f.reads->pieces.clear(); f.reads->writes = 0; }
+    lt::prepare_selected_recheck(f.handle, 31);
+    REQUIRE(wait([&] { return lt::query_selected_recheck(f.handle, 31).phase == lt::selected_recheck_phase::failed; }));
+    CHECK(lt::query_selected_recheck(f.handle, 31).error == boost::system::errc::operation_not_supported);
+    lt::start_selected_recheck(f.handle, {31, {lt::piece_index_t(0)}});
+    lt::finish_selected_recheck(f.handle, 31, true);
+    CHECK(bool(f.handle.status().flags & lt::torrent_flags::paused));
+    CHECK(f.handle.get_file_priorities() == priorities);
+    CHECK(f.handle.have_piece(lt::piece_index_t(0)));
+    { std::lock_guard lock(f.reads->mutex); CHECK(f.reads->pieces.empty()); CHECK(f.reads->writes == 0); }
+}
+#endif
 
 TEST_CASE("An empty piece scope finishes without disk reads or changing availability", "[selected-recheck-dependency]") {
     auto const kind=GENERATE(0,1,2);

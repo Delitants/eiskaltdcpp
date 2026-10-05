@@ -1445,3 +1445,40 @@ durability in separately owned providers, update the dependency pin and refresh
 final materials only after verification. Remaining attribution, native/platform,
 production signing, installation and documentation/publication gates still apply.
 Signed feeds remain last; no release-ready claim follows from earlier passing tests.
+
+### 2026-10-04 Part-File Durability Repair Checkpoint
+
+The maintained engine retains dirty part-file slot maps when metadata saves fail
+on mmap, pread and POSIX storage. Selected preparation now receives the native
+storage error through a stronger disk fence, stays paused and admits no hashes.
+Successful saves still reload persisted maps. The POSIX path checks buffered
+metadata flushes before marking the map clean, and native open failures retain
+their original error code. Custom disk backends reject preparation unless they
+implement the stronger fence. The private extension is explicitly ABI2; existing
+ABI1 release candidates remain immutable and final applications must be rebuilt.
+
+Native fault regressions first failed on permission denial, EIO and ENOSPC across
+all three backends, including buffered POSIX writes. Fresh matching ARM and Intel
+providers pass630 fault assertions and the full19-case/1234-assertion dependency
+suite, also through the public test target. ARM's152-case/18430-assertion engine
+suite and20 bundle-policy tests pass. All1653 staged source files match the new
+patch pin, and loader readbacks confirm matching providers and test-only injection.
+
+Intel aggregate acceptance is NOT clean: two152-case runs each had one failure,
+first the stopped-local-check1500ms deadline and then large-scope checked shutdown.
+The stopped case passed three isolated repetitions; both affected cases passed
+two isolated comparisons each with the accepted and repaired providers, unchanged
+deadlines. The full-run failures are retained, not waived or attributed to the
+repair without evidence. Rosetta execution and declared macOS14/26 floors are
+not native Intel or minimum-OS acceptance. This is a verified native data-loss
+repair checkpoint, not whole-application release approval.
+
+The next folder-intent regression reproduces lost full and partial list requests
+after producer-fenced completion, queue snapshot and restart. It remains unfixed;
+the repair must persist intent without reopening shutdown producer admission.
+The other four reviewed P2 repairs, Intel aggregate investigation, linguistic and
+resource/provenance review, native/platform acceptance, final-source rebuilding,
+production signing/activation, safe installation and README/wiki/screenshots/
+prerelease publication remain pending. Protected live records, accepted providers,
+candidate images/notices, strict seals and archives are unchanged. No installation,
+push, publication, key operation, server or VM mutation occurred. Signed feeds last.
