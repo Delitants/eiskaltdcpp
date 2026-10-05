@@ -30,4 +30,6 @@ target_link_libraries(eiskalt-torrent-tests PRIVATE Qt6::Core Qt6::Network
 eiskalt_torrent_match_dependency_abi(eiskalt-torrent-tests)
 eiskalt_torrent_selected_recheck_capability(eiskalt-torrent-tests)
 add_test(NAME torrent-backend COMMAND eiskalt-torrent-tests)
-set_tests_properties(torrent-backend PROPERTIES TIMEOUT 180)
+# The full engine suite includes process-recovery and bounded-backoff fixtures.
+# Keep their individual deadlines; allow enough time for the aggregate suite.
+set_tests_properties(torrent-backend PROPERTIES TIMEOUT 600)

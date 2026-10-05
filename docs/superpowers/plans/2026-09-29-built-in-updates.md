@@ -1358,3 +1358,39 @@ production numeric allocation, signed v3 acceptance and guarded activation prece
 safe installation and README/wiki/screenshots/prerelease publication. Signed feeds
 remain last, after accepted exact public assets. No live profile, installed app,
 dependency prefix, production key, VM or server was changed.
+
+### 2026-10-04 Current Host Suite Checkpoint
+
+Fresh test-only builds use the matching verified ARM and thin Intel dependencies,
+native updater configuration and required selected-recheck provider. Both profiles
+pass core 1023 cases, local Qt 609, real GOST interoperability 8, Torrent engine
+152, GUI multiline/singleline 81 each, and sidebar-applicable GUI 79, without
+skips in those runs. GOST uses its documented disposable coordinator and confined
+children; the other suites use isolated profiles and external-network denial.
+Actual loader receipts confirm private providers and matching Qt. ARM is native
+on macOS27; x86_64 is Rosetta, not native Intel or minimum-OS acceptance.
+
+The expanded Torrent suite takes 235-237 seconds, longer than its former aggregate
+CTest limit of 180 seconds. That registration now permits 600 seconds, without
+changing individual fixture deadlines, responsiveness assertions or product code.
+The generated-budget check fails against the original configuration and passes
+both final profiles. Actual ARM CTest execution passes in 234.27 seconds.
+
+Two failures from an overbroad sidebar probe are retained: tab-strip-only cases
+expect controls absent by design in sidebar mode. They pass in their registered
+multiline/singleline modes; sidebar's applicable 79 cases pass. Private harness
+launch, parser and shell bookkeeping errors are separately retained and corrected,
+not claimed as product fixes. Fresh bounded patch/scope review finds no actionable
+findings, but does not replace whole-branch release review.
+
+Final readbacks preserve all134 candidate images/3199 notices, both strict seals
+and archives, 12591 recorded dependency contents and nine protected live hashes.
+The accepted packaging candidates remain immutable at source e325cb6cd; this
+checkpoint does not allocate a production build or produce a new release asset.
+
+Remaining: whole-branch/linguistic and resource/provenance review, native/platform
+and minimum-OS acceptance, separately scoped native/live lifecycle gates, final
+reviewed-source rebuild/material refresh, production signed-v3 acceptance and
+guarded activation. Safe installation, README/wiki/screenshots and pre-release
+publication follow those gates. Signed feeds remain last. No live app/profile,
+production key, server, VM, installation, push or publication was changed here.
