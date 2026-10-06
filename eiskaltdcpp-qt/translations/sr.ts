@@ -4082,6 +4082,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Шта тестирати (само дијагностика)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP порт:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS порт:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Подешавања проксија су промењена; тест је отказан. Тестирајте поново са новим вредностима.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Пре тестирања унесите исправан прокси сервер и порт.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Тестирање TCP-а и UDP-а преко %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6686,6 +6706,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Уметни торент магнетне везе у ћаскање</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Изабрано је више торената</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Тренутно стање: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Заустави торент</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Заустави све активности торента до наставка; задржи задатак и преузете датотеке.</translation>
         </message>
     </context>
     <context>

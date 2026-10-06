@@ -4059,6 +4059,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Šta testirati (samo dijagnostika)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Podešavanja proksija su promenjena; test je otkazan. Testirajte ponovo sa novim vrednostima.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Pre testiranja unesite ispravan proksi server i port.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Testiranje TCP-a i UDP-a preko %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6662,6 +6682,22 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Umetni torent magnetne veze u ćaskanje</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Izabrano je više torenata</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Trenutno stanje: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Zaustavi torent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Zaustavi sve aktivnosti torenta do nastavka; zadrži zadatak i preuzete datoteke.</translation>
         </message>
     </context>
     <context>

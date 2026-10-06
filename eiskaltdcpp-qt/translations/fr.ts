@@ -4063,6 +4063,26 @@ UDP : %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Cible du test (diagnostic uniquement)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Port TCP :</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Port DNS UDP :</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Les paramètres du proxy ont changé ; le test a été annulé. Relancez le test avec les nouvelles valeurs.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Saisissez un serveur proxy et un port valides avant le test.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Test de TCP et UDP via %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6666,6 +6686,22 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Coller les liens magnet des torrents dans le chat</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Plusieurs torrents sélectionnés</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>État actuel : %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Arrêter le torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Arrêter toute activité du torrent jusqu'à sa reprise ; conserver la tâche et les fichiers téléchargés.</translation>
         </message>
     </context>
     <context>

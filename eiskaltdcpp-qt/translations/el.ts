@@ -4065,6 +4065,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Τι να δοκιμαστεί (μόνο διαγνωστικά)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Θύρα TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Θύρα UDP DNS:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Οι ρυθμίσεις διαμεσολαβητή άλλαξαν· η δοκιμή ακυρώθηκε. Δοκιμάστε ξανά με τις νέες τιμές.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Εισαγάγετε έγκυρο διακομιστή διαμεσολάβησης και θύρα πριν από τη δοκιμή.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Δοκιμή TCP και UDP μέσω %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6668,6 +6688,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Επικόλληση συνδέσμων magnet torrent στη συνομιλία</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Επιλέχθηκαν πολλά torrent</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Τρέχουσα κατάσταση: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Διακοπή torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Διακοπή κάθε δραστηριότητας torrent μέχρι τη συνέχιση· διατήρηση της εργασίας και των ληφθέντων αρχείων.</translation>
         </message>
     </context>
     <context>

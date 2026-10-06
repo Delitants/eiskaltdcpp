@@ -4060,6 +4060,26 @@ UDP：%2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>测试目标（仅用于诊断）</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP 端口：</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS 端口：</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>代理设置已更改；测试已取消。请使用新值重新测试。</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>测试前请输入有效的代理服务器和端口。</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>正在通过 %1:%2 测试 TCP 和 UDP...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6649,6 +6669,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>将种子磁力链接粘贴到聊天中</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>已选择多个种子</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>当前状态：%1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>停止种子</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>停止该种子的所有活动，直到恢复；保留任务和已下载的文件。</translation>
         </message>
     </context>
     <context>

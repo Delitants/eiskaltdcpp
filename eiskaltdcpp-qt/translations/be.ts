@@ -4078,6 +4078,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Што праверыць (толькі дыягностыка)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Порт TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Порт UDP DNS:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Налады проксі зменены; тэст скасаваны. Паўтарыце тэст з новымі значэннямі.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Перад тэставаннем увядзіце сапраўдны сервер проксі і порт.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Тэставанне TCP і UDP праз %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6682,6 +6702,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Уставіць торэнт magnet-спасылкі ў чат</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Выбрана некалькі торэнтаў</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Бягучы стан: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Спыніць торэнт</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Спыніць усю дзейнасць торэнта да аднаўлення; захаваць заданне і спампаваныя файлы.</translation>
         </message>
     </context>
     <context>

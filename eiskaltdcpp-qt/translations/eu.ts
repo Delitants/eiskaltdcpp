@@ -3988,6 +3988,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Zer probatu (diagnostikoa soilik)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP ataka:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS ataka:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Proxyaren ezarpenak aldatu dira; proba bertan behera utzi da. Probatu berriro balio berriekin.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Sartu baliozko proxy zerbitzaria eta ataka probatu aurretik.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>TCP eta UDP probatzen %1:%2 bidez...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6577,6 +6597,22 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Itsatsi torrent magnet estekak txatean</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Hainbat torrent hautatuta</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Uneko egoera: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Gelditu torrenta</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Gelditu torrentaren jarduera guztia berriro ekin arte; mantendu lana eta deskargatutako fitxategiak.</translation>
         </message>
     </context>
     <context>

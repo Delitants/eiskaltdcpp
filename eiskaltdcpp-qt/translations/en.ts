@@ -4055,6 +4055,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>What to test (diagnostics only)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Proxy settings changed; test cancelled. Test again with the new values.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Enter a valid proxy server and port before testing.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Testing TCP and UDP through %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6623,6 +6643,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Paste Torrent Magnet(s) in chat</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Multiple Torrents selected</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Current state: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Stop Torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Stop all Torrent activity until Resume; keep the job and downloaded files.</translation>
         </message>
     </context>
     <context>

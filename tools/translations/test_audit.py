@@ -14,6 +14,49 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_proxy_diagnostics_and_torrent_menu_survive_compilation(self):
+        required = {
+            "SettingsConnection": {
+                "TCP port:", "UDP DNS port:",
+                "Proxy settings changed; test cancelled. Test again with the new values.",
+                "Enter a valid proxy server and port before testing.",
+                "Testing TCP and UDP through %1:%2...",
+            },
+            "TransferView": {
+                "Multiple Torrents selected", "Current state: %1", "Stop Torrent",
+                "Stop all Torrent activity until Resume; keep the job and downloaded files.",
+            },
+        }
+        with tempfile.TemporaryDirectory(prefix="eiskalt-proxy-menu-catalogs-") as work:
+            for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+                binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+                subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                               check=True, capture_output=True, text=True)
+                subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                               check=True, capture_output=True, text=True)
+                def entries(catalog):
+                    return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                            for c in ET.parse(catalog).getroot().findall("context")
+                            for m in c.findall("message")}
+                original, compiled = entries(path), entries(output)
+                for context, sources in required.items():
+                    for source in sorted(sources):
+                        with self.subTest(language=path.stem, context=context, source=source):
+                            key = context, source
+                            self.assertIn(key, original)
+                            value = original[key]
+                            self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                            text = "".join(value.itertext())
+                            self.assertTrue(text.strip())
+                            self.assertIn(key, compiled)
+                            self.assertEqual(text, "".join(compiled[key].itertext()))
+                            self.assertEqual(Counter(re.findall(r"%[1-9][0-9]*", source)),
+                                             Counter(re.findall(r"%[1-9][0-9]*", text)))
+                            if path.stem != "en" and len(source) > 40:
+                                self.assertNotEqual(source, text)
+
     def test_application_update_entry_points_are_translated(self):
         for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
             entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")

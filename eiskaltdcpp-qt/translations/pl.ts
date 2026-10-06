@@ -4054,6 +4054,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Cel testu (tylko diagnostyka)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Port TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Port DNS UDP:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Ustawienia proxy zostały zmienione; test anulowano. Przetestuj ponownie z nowymi wartościami.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Przed testem podaj prawidłowy serwer proxy i port.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Testowanie TCP i UDP przez %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6658,6 +6678,22 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Wklej linki magnet torrentów na czacie</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Wybrano wiele torrentów</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Bieżący stan: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Zatrzymaj torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Zatrzymaj całą aktywność torrenta do wznowienia; zachowaj zadanie i pobrane pliki.</translation>
         </message>
     </context>
     <context>

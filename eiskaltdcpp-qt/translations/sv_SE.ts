@@ -4082,6 +4082,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Vad ska testas (endast diagnostik)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP-port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS-port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Proxyinställningarna har ändrats; testet avbröts. Testa igen med de nya värdena.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Ange en giltig proxyserver och port innan du testar.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Testar TCP och UDP via %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6686,6 +6706,22 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Klistra in torrent-magnetlänkar i chatten</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Flera torrenter valda</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Aktuellt tillstånd: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Stoppa torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Stoppa all torrentaktivitet tills den återupptas; behåll jobbet och de hämtade filerna.</translation>
         </message>
     </context>
     <context>

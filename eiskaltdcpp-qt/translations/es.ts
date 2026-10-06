@@ -4081,6 +4081,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Destino de la prueba (solo diagnóstico)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Puerto TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Puerto DNS UDP:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>La configuración del proxy ha cambiado; se ha cancelado la prueba. Repítala con los nuevos valores.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Introduzca un servidor proxy y un puerto válidos antes de la prueba.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Probando TCP y UDP a través de %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6685,6 +6705,22 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Pegar enlaces magnet de torrents en el chat</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Varios torrents seleccionados</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Estado actual: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Detener torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Detener toda la actividad del torrent hasta reanudarlo; conservar la tarea y los archivos descargados.</translation>
         </message>
     </context>
     <context>

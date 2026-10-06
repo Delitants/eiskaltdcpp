@@ -4082,6 +4082,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Test hedefi (yalnızca tanılama)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP portu:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS portu:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Vekil sunucu ayarları değişti; test iptal edildi. Yeni değerlerle tekrar test edin.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Test etmeden önce geçerli bir vekil sunucu ve port girin.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>TCP ve UDP, %1:%2 üzerinden test ediliyor...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6686,6 +6706,22 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Torrent magnet bağlantılarını sohbete yapıştır</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Birden fazla torrent seçildi</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Geçerli durum: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Torrenti durdur</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Sürdürülene kadar tüm torrent etkinliğini durdur; işi ve indirilen dosyaları koru.</translation>
         </message>
     </context>
     <context>

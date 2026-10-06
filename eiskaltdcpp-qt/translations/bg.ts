@@ -4075,6 +4075,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Какво да се тества (само диагностика)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP порт:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS порт:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Настройките на проксито са променени; тестът е отменен. Тествайте отново с новите стойности.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Въведете валиден прокси сървър и порт преди теста.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Тестване на TCP и UDP през %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6679,6 +6699,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Поставяне на торент magnet връзки в чата</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Избрани са няколко торента</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Текущо състояние: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Спиране на торента</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Спиране на цялата дейност на торента до възобновяване; задачата и изтеглените файлове се запазват.</translation>
         </message>
     </context>
     <context>

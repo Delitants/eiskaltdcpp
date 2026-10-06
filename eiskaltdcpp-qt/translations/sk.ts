@@ -4043,6 +4043,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Čo testovať (iba diagnostika)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Port TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Port UDP DNS:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Nastavenia proxy sa zmenili; test bol zrušený. Spustite test znova s novými hodnotami.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Pred testovaním zadajte platný proxy server a port.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Testovanie TCP a UDP cez %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6647,6 +6667,22 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Vložiť torrent magnet(y) do chatu</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Vybraných viac torrentov</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Aktuálny stav: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Zastaviť torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Zastaviť všetku činnosť torrentu do obnovenia; zachovať úlohu a stiahnuté súbory.</translation>
         </message>
     </context>
     <context>

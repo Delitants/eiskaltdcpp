@@ -68,8 +68,19 @@ Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent
 bootstrap, publication and bind causes are not waived by green reruns.
 
+Peer-policy test failures now include the policy variant, listener ports, proxy
+forwarding and available leech peer/alert state. A deliberately invalid loopback
+endpoint reproduces the counter failure without payload transfer and verifies
+the diagnostic output. It does not establish the cause of the retained natural
+failure or justify changing the security policy.
+The diagnostic observers were reviewed and corrected to freeze the original
+assertion values before collecting extra details. A controlled late-counter
+change verifies that boundary. Corrected full Torrent suites pass on ARM and
+Intel/Rosetta (152 cases each); the original intermittent failure remains open.
+
+Nine proxy-test and Torrent-menu runtime keys have been added in all 25 catalogs.
 Catalog format and compiled-string checks do not establish complete localization:
-32 extracted runtime entries per catalog, inherited unfinished translations and
+23 extracted runtime entries per catalog, inherited unfinished translations and
 native-speaker review remain pending. Complete resource/dependency provenance,
 reproducibility and independent whole-branch review also remain separate gates.
 

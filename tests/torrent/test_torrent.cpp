@@ -2044,6 +2044,7 @@ TEST_CASE("Country and unidentified client policies reject payload before exchan
     SECTION("Country over SOCKS") { settings.blockedCountries = {"UA"}; outgoing = proxied = true; }
     SECTION("Recognized client remains allowed") { settings.blockUnknownClients = true; blocked = false; }
     SECTION("Other countries remain allowed") { settings.blockedCountries = {"US"}; blocked = false; }
+    CAPTURE(unidentified, outgoing, blocked, proxied);
     TorrentEngine seed(dir.filePath("seed-state"), nullptr, [](const QString &) { return QStringLiteral("UA"); });
     auto proxy = proxied ? udpProxy(bridge) : ProxyConfig{};
     proxy.udp = false;
@@ -2063,14 +2064,42 @@ TEST_CASE("Country and unidentified client policies reject payload before exchan
     params.flags &= ~(lt::torrent_flags::paused | lt::torrent_flags::auto_managed);
     const auto handle = leech.add_torrent(params);
     REQUIRE(eventually([&] { return handle.status().state == lt::torrent_status::downloading; }));
+    const auto seedPortAtConnect = TorrentEngineTestAccess::port(seed);
+    const auto leechPortAtConnect = leech.listen_port();
+    CAPTURE(seedPortAtConnect, leechPortAtConnect);
     if (outgoing) REQUIRE(TorrentEngineTestAccess::connect(seed, id, leech.listen_port()));
     else handle.connect_peer({lt::make_address("127.0.0.1"), static_cast<unsigned short>(TorrentEngineTestAccess::port(seed))});
     if (blocked) {
-        REQUIRE_FALSE(eventually([&] { return handle.status().total_payload_download > 0; }, 3000));
-        REQUIRE(jobSnapshot(seed, id).uploaded == 0);
-        REQUIRE(TorrentEngineTestAccess::call(seed, [=](auto &d) {
+        const auto receivedPayload = eventually([&] { return handle.status().total_payload_download > 0; }, 3000);
+        // Freeze the original observations before best-effort diagnostics can
+        // delay the counter check or change the state being asserted.
+        const auto uploaded = receivedPayload ? -1 : jobSnapshot(seed, id).uploaded;
+        const auto rejected = !receivedPayload && uploaded == 0 && TorrentEngineTestAccess::call(seed, [=](auto &d) {
             return (unidentified ? d.peerPolicy->clientRejects.load() : d.peerPolicy->countryRejects.load()) > 0;
-        }));
+        });
+        std::vector<lt::peer_info> peers;
+        QStringList peerEvidence;
+        QStringList alertEvidence;
+        int leechState = -1;
+        try {
+            handle.get_peer_info(peers);
+            for (const auto &peer : peers)
+                peerEvidence << QString::fromStdString(peer.ip.address().to_string())
+                    + ":" + QString::number(peer.ip.port()) + " client=" + QString::fromStdString(peer.client);
+            std::vector<lt::alert *> alerts;
+            leech.pop_alerts(&alerts);
+            for (const auto *alert : alerts) alertEvidence << QString::fromStdString(alert->message());
+            leechState = int(handle.status().state);
+        } catch (const std::exception &error) {
+            alertEvidence << QStringLiteral("Diagnostic unavailable: ") + QString::fromUtf8(error.what());
+        }
+        INFO("authenticated=" << bridge.authenticated << " forwarded=" << bridge.forwarded
+             << " leech-state=" << leechState
+             << " peers=" << peerEvidence.join(';').toStdString()
+             << " alerts=" << alertEvidence.join(';').toStdString());
+        REQUIRE_FALSE(receivedPayload);
+        REQUIRE(uploaded == 0);
+        REQUIRE(rejected);
     } else {
         REQUIRE(eventually([&] { return handle.status().is_seeding; }));
         // Libtorrent can report completion before its disk worker flushes the file.

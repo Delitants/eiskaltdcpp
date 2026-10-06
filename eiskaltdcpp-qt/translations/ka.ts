@@ -4035,6 +4035,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>რა შემოწმდეს (მხოლოდ დიაგნოსტიკა)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP პორტი:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS პორტი:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>პროქსის პარამეტრები შეიცვალა; ტესტი გაუქმდა. გაიმეორეთ ტესტი ახალი მნიშვნელობებით.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>ტესტირებამდე შეიყვანეთ მოქმედი პროქსი სერვერი და პორტი.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>TCP-ისა და UDP-ის ტესტირება %1:%2-ის გავლით...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6632,6 +6652,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>ტორენტის მაგნიტური ბმულების ჩასმა ჩატში</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>არჩეულია რამდენიმე ტორენტი</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>მიმდინარე მდგომარეობა: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>ტორენტის შეჩერება</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>ტორენტის ყველა მოქმედების შეჩერება გაგრძელებამდე; ამოცანისა და ჩამოტვირთული ფაილების შენარჩუნება.</translation>
         </message>
     </context>
     <context>

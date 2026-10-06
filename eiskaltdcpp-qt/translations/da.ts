@@ -3980,6 +3980,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Hvad skal testes (kun diagnostik)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP-port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS-port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Proxyindstillingerne er ændret; testen er annulleret. Test igen med de nye værdier.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Indtast en gyldig proxyserver og port før testen.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Tester TCP og UDP via %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6569,6 +6589,22 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Indsæt torrent-magnetlinks i chatten</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Flere torrents valgt</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Aktuel tilstand: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Stop torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Stop al torrentaktivitet indtil genoptagelse; behold opgaven og de downloadede filer.</translation>
         </message>
     </context>
     <context>

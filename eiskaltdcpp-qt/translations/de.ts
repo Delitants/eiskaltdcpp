@@ -4078,6 +4078,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Testziel (nur Diagnose)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP-Port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP-DNS-Port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Die Proxy-Einstellungen wurden geändert; der Test wurde abgebrochen. Testen Sie erneut mit den neuen Werten.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Geben Sie vor dem Test einen gültigen Proxyserver und Port ein.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>TCP und UDP werden über %1:%2 getestet...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6682,6 +6702,22 @@ Zum schreibgeschützten Seeding hinzugefügt. Die Quelldateien werden anhand ihr
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Torrent-Magnet-Links im Chat einfügen</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Mehrere Torrents ausgewählt</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Aktueller Status: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Torrent stoppen</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Alle Torrent-Aktivitäten bis zum Fortsetzen stoppen; Auftrag und heruntergeladene Dateien behalten.</translation>
         </message>
     </context>
     <context>

@@ -4083,6 +4083,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Что проверять (только диагностика)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Порт TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Порт UDP DNS:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Настройки прокси изменены; тест отменён. Повторите тест с новыми значениями.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Перед тестированием укажите корректный прокси-сервер и порт.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Проверка TCP и UDP через %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6687,6 +6707,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Вставить magnet-ссылки торрентов в чат</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Выбрано несколько торрентов</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Текущее состояние: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Остановить торрент</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Остановить всю активность торрента до возобновления; сохранить задание и загруженные файлы.</translation>
         </message>
     </context>
     <context>

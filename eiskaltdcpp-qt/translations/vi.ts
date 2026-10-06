@@ -3993,6 +3993,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Nội dung kiểm tra (chỉ chẩn đoán)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>Cổng TCP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>Cổng DNS UDP:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>Thiết lập proxy đã thay đổi; phép thử đã bị hủy. Thử lại với các giá trị mới.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>Nhập máy chủ proxy và cổng hợp lệ trước khi thử.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>Đang thử TCP và UDP qua %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6582,6 +6602,22 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Dán liên kết magnet torrent vào trò chuyện</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Đã chọn nhiều torrent</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Trạng thái hiện tại: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Dừng torrent</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>Dừng mọi hoạt động torrent cho đến khi tiếp tục; giữ tác vụ và các tệp đã tải xuống.</translation>
         </message>
     </context>
     <context>

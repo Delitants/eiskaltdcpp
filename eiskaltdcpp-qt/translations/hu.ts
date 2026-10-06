@@ -4074,6 +4074,26 @@ UDP: %2</translation>
             <source>What to test (diagnostics only)</source>
             <translation>Mit teszteljünk (csak diagnosztika)</translation>
         </message>
+        <message>
+            <source>TCP port:</source>
+            <translation>TCP-port:</translation>
+        </message>
+        <message>
+            <source>UDP DNS port:</source>
+            <translation>UDP DNS-port:</translation>
+        </message>
+        <message>
+            <source>Proxy settings changed; test cancelled. Test again with the new values.</source>
+            <translation>A proxybeállítások megváltoztak; a teszt megszakítva. Teszteljen újra az új értékekkel.</translation>
+        </message>
+        <message>
+            <source>Enter a valid proxy server and port before testing.</source>
+            <translation>A teszt előtt adjon meg érvényes proxykiszolgálót és portot.</translation>
+        </message>
+        <message>
+            <source>Testing TCP and UDP through %1:%2...</source>
+            <translation>TCP és UDP tesztelése a következőn keresztül: %1:%2...</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6678,6 +6698,22 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <source>Paste Torrent Magnet(s) in chat</source>
             <translation>Torrent-magnetlinkek beillesztése a csevegésbe</translation>
+        </message>
+        <message>
+            <source>Multiple Torrents selected</source>
+            <translation>Több torrent kijelölve</translation>
+        </message>
+        <message>
+            <source>Current state: %1</source>
+            <translation>Jelenlegi állapot: %1</translation>
+        </message>
+        <message>
+            <source>Stop Torrent</source>
+            <translation>Torrent leállítása</translation>
+        </message>
+        <message>
+            <source>Stop all Torrent activity until Resume; keep the job and downloaded files.</source>
+            <translation>A torrent minden tevékenységének leállítása a folytatásig; a feladat és a letöltött fájlok megőrzése.</translation>
         </message>
     </context>
     <context>
