@@ -50,6 +50,7 @@ public:
     QMenu *getMenu() override { return nullptr; }
     const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFAVUSERS); }
     ArenaWidget::Role role() const override { return ArenaWidget::FavoriteUsers; }
+    bool saveForQuitChecked() override;
 
 Q_SIGNALS:
     void coreUserAdded(VarMap);

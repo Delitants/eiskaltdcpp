@@ -43,6 +43,7 @@ public:
     QWidget *getWidget() { return this; }
     const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiSPY); }
     ArenaWidget::Role role() const { return ArenaWidget::SearchSpy; }
+    bool saveForQuitChecked() override;
     void requestClear() { slotClear(); }
 
 protected:

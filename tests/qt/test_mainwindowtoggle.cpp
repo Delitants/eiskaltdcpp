@@ -39,6 +39,14 @@
 #include "TabNavigation.h"
 #include "ToolBar.h"
 #include "PublicHubs.h"
+#include "FavoriteHubs.h"
+#include "FavoriteUsers.h"
+#include "DownloadQueue.h"
+#include "ADLS.h"
+#include "SpyFrame.h"
+#include "QueuedUsers.h"
+#include "SearchFrame.h"
+#include "FinishedTransfers.h"
 #include "FileBrowserModel.h"
 #include "ShareBrowser.h"
 #include "UserListModel.h"
@@ -65,6 +73,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QSignalSpy>
+#include <QSettings>
 #include <QStandardItemModel>
 #include <QStyleHints>
 #include <QTemporaryDir>
@@ -947,12 +956,19 @@ TEST_CASE("Checkpoint recovery button retains frozen rules and permanently disar
     QTest::qWait(30); CHECK(ready.isEmpty());
     QMessageBox* prompt = checkpointRecoveryPrompt();
     CHECK(prompt != nullptr);
+    int retryClicks = -1;
     if(prompt) {
         CHECK(prompt->isVisible()); CHECK(prompt->isEnabled()); CHECK_FALSE(prompt->isModal());
         auto* button = prompt->findChild<QPushButton*>("retryQuitCheckpoint"); REQUIRE(button);
-        CHECK(button->isEnabled()); QTest::mouseClick(button, Qt::LeftButton);
+        CHECK(button->isEnabled());
+        QSignalSpy clicked(button, &QPushButton::clicked);
+        QTest::mouseClick(button, Qt::LeftButton);
+        retryClicks = clicked.count(); CHECK(retryClicks == 1);
     } else CHECK_FALSE(window->close());
-    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    const bool recovered = waitFor([&] { return ready.count() == 1; });
+    INFO("checkpoint-recovery retry clicks=" << retryClicks << " ready=" << ready.count()
+         << " prompt=" << (prompt ? prompt->text().toStdString() : "none"));
+    REQUIRE(recovered);
     CHECK(normalQuitPrepared(*window)); CHECK(backend.installs == 0); CHECK(backend.fences == 1);
     CHECK(updater.quitDisposition() == updates::UpdateController::QuitDisposition::NoUpdate);
     CHECK(route->revoked->load()); CHECK(f.core->getHashManager() == hash);
@@ -1521,6 +1537,261 @@ TEST_CASE("GUI quit preparation saves history intent and caches Torrent persiste
     if(!expected) REQUIRE(QDir(f.home.filePath("torrent/state/jobs.json")).removeRecursively());
     CHECK(guiFence(*f.gui->mainWindow()) == expected);
     CHECK(runtime->shutdownChecked() == expected);
+}
+
+TEST_CASE("Checked GUI quit snapshots retained hidden layouts before syncing", "[qt][mainwindow][gui-layout-receipt]") {
+    IsolatedMainWindow f;
+    f.gui->createDownloadQueue(); f.gui->createFavoriteHubs(); f.gui->createFavoriteUsers();
+    f.gui->createPublicHubs(); f.gui->createADLS(); f.gui->createSpyFrame(); f.gui->createQueuedUsers();
+    auto* search = new SearchFrame(f.gui->mainWindow());
+    struct View { QWidget* widget; QString key; bool base64; };
+    const QList<View> views{
+        {f.gui->transferView(), WS_TRANSFERS_STATE, true},
+        {f.gui->downloadQueue(), WS_DQUEUE_STATE, false},
+        {f.gui->favoriteHubs(), WS_FAV_HUBS_STATE, false},
+        {f.gui->favoriteUsers(), WS_FAVUSERS_STATE, false},
+        {f.gui->publicHubs(), WS_PUBLICHUBS_STATE, false},
+        {f.gui->adls(), WS_ADLS_STATE, false},
+        {f.gui->spyFrame(), "spyframe-header-state", false},
+        {f.gui->queuedUsers(), "queued-users/headerstate", false},
+        {search, WS_SEARCH_STATE, true}
+    };
+    QHash<QString, QByteArray> expected;
+    for(const auto& view : views) {
+        REQUIRE(view.widget);
+        if(view.widget != f.gui->transferView()) view.widget->setParent(f.gui->mainWindow());
+        auto* tree = view.widget->findChild<QTreeView*>(); REQUIRE(tree);
+        tree->header()->resizeSection(0, 247);
+        expected.insert(view.key, tree->header()->saveState());
+    }
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
+    // A different filename prevents QSettings' per-path shared cache from
+    // substituting pending in-memory values for a physical persistence read.
+    const auto snapshot = f.home.filePath("checked-layout-copy.ini");
+    REQUIRE(QFile::copy(f.home.filePath("EiskaltDC++_Qt.conf"), snapshot));
+    QSettings disk(snapshot, QSettings::IniFormat);
+    for(const auto& view : views) {
+        INFO(view.key.toStdString());
+        const auto value = disk.value(view.key);
+        CHECK((view.base64 ? QByteArray::fromBase64(value.toString().toUtf8()) : value.toByteArray()) == expected.value(view.key));
+    }
+}
+
+TEST_CASE("Checked GUI quit freezes late settings mutations and teardown layouts", "[qt][mainwindow][gui-layout-receipt]") {
+    IsolatedMainWindow f;
+    auto* settings = f.gui->settings();
+    settings->setStr("receipt/string", "before"); settings->setInt("receipt/int", 7);
+    settings->setBool("receipt/bool", true); settings->setVar("receipt/variant", QByteArray("before"));
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
+    QSignalSpy strings(settings, &WulforSettings::strValueChanged);
+    QSignalSpy ints(settings, &WulforSettings::intValueChanged);
+    QSignalSpy variants(settings, &WulforSettings::varValueChanged);
+    settings->setStr("receipt/string", "after"); settings->setInt("receipt/int", 8);
+    settings->setBool("receipt/bool", false); settings->setVar("receipt/variant", QByteArray("after"));
+    CHECK(settings->getStr("receipt/string") == "before"); CHECK(settings->getInt("receipt/int") == 7);
+    CHECK(settings->getBool("receipt/bool")); CHECK(settings->getVar("receipt/variant").toByteArray() == "before");
+    CHECK(strings.isEmpty()); CHECK(ints.isEmpty()); CHECK(variants.isEmpty());
+    const auto layout = settings->getStr(WS_TRANSFERS_STATE);
+    auto* tree = f.gui->transferView()->findChild<QTreeView*>(); REQUIRE(tree);
+    tree->header()->resizeSection(0, 359);
+    f.gui->transferView()->close();
+    CHECK(settings->getStr(WS_TRANSFERS_STATE) == layout);
+    CHECK(settings->saveChecked());
+}
+
+TEST_CASE("Torrent layout write refusal blocks the checked GUI quit receipt", "[qt][mainwindow][gui-layout-receipt]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow(); window->showTorrents();
+    QPointer<TorrentWindow> tab(window->findChild<TorrentWindow*>()); REQUIRE(tab);
+    const auto layout = QDir(QFileInfo(TorrentRuntime::settingsPath()).absolutePath()).filePath("window.ini");
+    if(QFile::exists(layout)) REQUIRE(QFile::remove(layout));
+    REQUIRE(QDir().mkpath(layout));
+    REQUIRE(waitFor([&] { return guiFence(*window) || !window->quitWorkersPending(); }));
+    CHECK_FALSE(guiFence(*window));
+    REQUIRE(QDir(layout).removeRecursively());
+    CHECK_FALSE(guiFence(*window));
+    tab->close(); QCoreApplication::processEvents();
+    CHECK_FALSE(QFile::exists(layout));
+    REQUIRE(tab);
+}
+
+TEST_CASE("GUI quit waits for initially parentless hidden history workers", "[qt][mainwindow][gui-layout-review]") {
+    IsolatedMainWindow f;
+    f.gui->createFinishedDownloads();
+    auto* history = f.gui->finishedDownloads(); REQUIRE(history);
+    REQUIRE(history->parent() == nullptr);
+    REQUIRE((history->state() & ArenaWidget::Hidden) != 0);
+    QSemaphore entered, released;
+    auto* worker = new AsyncRunner(history);
+    worker->setRunFunction([&] { entered.release(); released.acquire(); });
+    auto cleanup = dcpp::makeScopedFunctor([&] {
+        released.release(); worker->wait(); history->setParent(f.gui->mainWindow());
+    });
+    worker->start(); REQUIRE(entered.tryAcquire(1, 5000));
+    auto* window = f.gui->mainWindow();
+    CHECK_FALSE(guiFence(*window));
+    CHECK(window->quitWorkersPending());
+    CHECK(worker->isInterruptionRequested());
+    CHECK_FALSE(history->isEnabled());
+    released.release(); REQUIRE(worker->wait(5000));
+    REQUIRE(waitFor([&] { return guiFence(*window); }));
+}
+
+TEST_CASE("Shared layout keys retain the most recently edited tab at quit", "[qt][mainwindow][gui-layout-review]") {
+    IsolatedMainWindow f;
+    QWidget* first = nullptr; QWidget* second = nullptr; QString key; bool base64 = false;
+    const auto browserPair = [&](bool reverse) {
+        const auto path = f.home.filePath("shared-files.xml");
+        QFile listing(path); REQUIRE(listing.open(QIODevice::WriteOnly));
+        REQUIRE(listing.write("<FileListing Version=\"1\" Base=\"/\"><Directory Name=\"fixture\"/></FileListing>") > 0);
+        listing.close();
+        auto* older = new ShareBrowser(f.core->getClientManager()->getUser(CID(std::string(39, 'A'))), path, "");
+        REQUIRE(waitFor([&] { return older->findChild<QTreeView*>("treeView_LPANE") != nullptr; }));
+        auto* newer = new ShareBrowser(f.core->getClientManager()->getUser(CID(std::string(39, 'A'))), path, "");
+        REQUIRE(waitFor([&] { return newer->findChild<QTreeView*>("treeView_LPANE") != nullptr; }));
+        first = reverse ? newer : older; second = reverse ? older : newer;
+        key = WS_SHARE_LPANE_STATE; base64 = true;
+    };
+    SECTION("first search edited last") {
+        first = new SearchFrame(f.gui->mainWindow()); second = new SearchFrame(f.gui->mainWindow());
+        key = WS_SEARCH_STATE; base64 = true;
+    }
+    SECTION("second search edited last") {
+        second = new SearchFrame(f.gui->mainWindow()); first = new SearchFrame(f.gui->mainWindow());
+        key = WS_SEARCH_STATE; base64 = true;
+    }
+    SECTION("upload history edited last") {
+        f.gui->createFinishedUploads(); f.gui->createFinishedDownloads();
+        first = f.gui->finishedUploads(); second = f.gui->finishedDownloads(); key = WS_FTRANSFERS_FILES_STATE;
+    }
+    SECTION("download history edited last") {
+        f.gui->createFinishedUploads(); f.gui->createFinishedDownloads();
+        first = f.gui->finishedDownloads(); second = f.gui->finishedUploads(); key = WS_FTRANSFERS_FILES_STATE;
+    }
+    SECTION("first file browser edited last") { browserPair(false); }
+    SECTION("second file browser edited last") { browserPair(true); }
+    REQUIRE(first); REQUIRE(second);
+    first->setParent(f.gui->mainWindow()); second->setParent(f.gui->mainWindow());
+    const auto treeName = key == WS_SHARE_LPANE_STATE ? QStringLiteral("treeView_LPANE") : QString();
+    auto* firstTree = first->findChild<QTreeView*>(treeName); auto* secondTree = second->findChild<QTreeView*>(treeName);
+    REQUIRE(firstTree); REQUIRE(secondTree);
+    firstTree->header()->resizeSection(0, 251);
+    secondTree->header()->resizeSection(0, 273);
+    firstTree->header()->resizeSection(0, 319);
+    const auto expected = firstTree->header()->saveState();
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
+    const auto snapshot = f.home.filePath("shared-layout-copy.ini");
+    REQUIRE(QFile::copy(f.home.filePath("EiskaltDC++_Qt.conf"), snapshot));
+    QSettings disk(snapshot, QSettings::IniFormat);
+    CHECK((base64 ? QByteArray::fromBase64(disk.value(key).toString().toUtf8()) : disk.value(key).toByteArray()) == expected);
+}
+
+TEST_CASE("History mode switches preserve the latest inactive layout at quit", "[qt][mainwindow][gui-layout-mode]") {
+    IsolatedMainWindow f;
+    f.gui->createFinishedUploads(); f.gui->createFinishedDownloads();
+    QWidget* edited = nullptr; QWidget* other = nullptr; int from = 0;
+    SECTION("uploads leave Files") { edited = f.gui->finishedUploads(); other = f.gui->finishedDownloads(); }
+    SECTION("downloads leave Files") { edited = f.gui->finishedDownloads(); other = f.gui->finishedUploads(); }
+    SECTION("uploads leave Users") { edited = f.gui->finishedUploads(); other = f.gui->finishedDownloads(); from = 1; }
+    SECTION("downloads leave Users") { edited = f.gui->finishedDownloads(); other = f.gui->finishedUploads(); from = 1; }
+    REQUIRE(edited); REQUIRE(other);
+    edited->setParent(f.gui->mainWindow()); other->setParent(f.gui->mainWindow());
+    const auto changeMode = [&](QWidget* view, int index) {
+        auto* combo = view->findChild<QComboBox*>("comboBox"); REQUIRE(combo);
+        combo->setCurrentIndex(index);
+        REQUIRE(QMetaObject::invokeMethod(combo, "activated", Qt::DirectConnection, Q_ARG(int, index)));
+    };
+    if(from != 0) { changeMode(edited, from); changeMode(other, from); }
+    auto* latest = edited->findChild<QTreeView*>(); auto* stale = other->findChild<QTreeView*>();
+    REQUIRE(latest); REQUIRE(stale);
+    stale->header()->resizeSection(0, 251); latest->header()->resizeSection(0, 319);
+    const auto expected = latest->header()->saveState();
+    const QString key = from == 0 ? WS_FTRANSFERS_FILES_STATE : WS_FTRANSFERS_USERS_STATE;
+    changeMode(edited, 1 - from);
+    REQUIRE(f.gui->settings()->getVar(key).toByteArray() == expected);
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
+    const auto snapshot = f.home.filePath("inactive-history-copy.ini");
+    REQUIRE(QFile::copy(f.home.filePath("EiskaltDC++_Qt.conf"), snapshot));
+    QSettings disk(snapshot, QSettings::IniFormat);
+    CHECK(disk.value(key).toByteArray() == expected);
+}
+
+TEST_CASE("History mode restore keeps actual model sorting aligned with its header", "[qt][mainwindow][gui-layout-sort]") {
+    IsolatedMainWindow f;
+    QStandardItemModel columns(0, 7);
+    QHeaderView saved(Qt::Horizontal); saved.setModel(&columns);
+    saved.setSortIndicator(4, Qt::AscendingOrder);
+    f.gui->settings()->setVar(WS_FTRANSFERS_USERS_STATE, saved.saveState());
+    f.gui->createFinishedDownloads();
+    auto* history = f.gui->finishedDownloads(); REQUIRE(history);
+    history->setParent(f.gui->mainWindow());
+    // Finish the database producer before installing synthetic sorting rows.
+    for (auto* runner : history->findChildren<AsyncRunner*>())
+        REQUIRE(runner->wait(5000));
+    auto* tree = history->findChild<QTreeView*>(); REQUIRE(tree);
+    auto* proxy = qobject_cast<QSortFilterProxyModel*>(tree->model()); REQUIRE(proxy);
+    auto* source = qobject_cast<FinishedTransfersModel*>(proxy->sourceModel()); REQUIRE(source);
+    source->clearModel();
+    for (int i = 0; i < 3; ++i) {
+        const QString name = QStringLiteral("row-%1").arg(i);
+        source->addFile({{"TARGET", name}, {"FNAME", name}, {"TIME", QString::number(3 - i)}, {"FULL", true}});
+        const quint64 speeds[] = {2, 3, 1};
+        source->addUser({{"CID", name}, {"NICK", name}, {"TIME", QString::number(3 - i)},
+                         {"SPEED", QVariant::fromValue(speeds[i])}, {"FULL", true}});
+    }
+    const auto visibleNames = [&] {
+        QStringList names;
+        for (int row = 0; row < proxy->rowCount(); ++row)
+            names.append(proxy->index(row, 0).data().toString());
+        return names;
+    };
+    auto* combo = history->findChild<QComboBox*>("comboBox"); REQUIRE(combo);
+    tree->sortByColumn(2, Qt::DescendingOrder);
+    REQUIRE(visibleNames() == QStringList{"row-0", "row-1", "row-2"});
+    combo->setCurrentIndex(1);
+    REQUIRE(QMetaObject::invokeMethod(combo, "activated", Qt::DirectConnection, Q_ARG(int, 1)));
+    REQUIRE(tree->header()->sortIndicatorSection() == 4);
+    REQUIRE(tree->header()->sortIndicatorOrder() == Qt::AscendingOrder);
+    CHECK(visibleNames() == QStringList{"row-2", "row-0", "row-1"});
+    combo->setCurrentIndex(0);
+    REQUIRE(QMetaObject::invokeMethod(combo, "activated", Qt::DirectConnection, Q_ARG(int, 0)));
+    REQUIRE(tree->header()->sortIndicatorSection() == 2);
+    REQUIRE(tree->header()->sortIndicatorOrder() == Qt::DescendingOrder);
+    CHECK(visibleNames() == QStringList{"row-0", "row-1", "row-2"});
+    REQUIRE(waitFor([&] { return guiFence(*f.gui->mainWindow()); }));
+}
+
+TEST_CASE("GUI quit safely retains a file browser before queued UI initialization", "[qt][mainwindow][gui-layout-review]") {
+    QTemporaryDir output; REQUIRE(output.isValid());
+    QProcess child;
+    child.start(QCoreApplication::applicationFilePath(), {"[gui-layout-uninitialized-child]", "--reporter", "xml",
+                                                         "--out", output.filePath("child.xml")});
+    REQUIRE(child.waitForStarted());
+    const bool finished = child.waitForFinished(30000);
+    if(!finished) { child.kill(); child.waitForFinished(); }
+    const auto stdoutBytes = child.readAllStandardOutput();
+    const auto stderrBytes = child.readAllStandardError();
+    INFO(stdoutBytes.constData()); INFO(stderrBytes.constData());
+    REQUIRE(finished);
+    REQUIRE(stderrBytes.contains("uninitialized-browser-before-fence"));
+    CHECK(child.exitStatus() == QProcess::NormalExit);
+    CHECK(child.exitCode() == 0);
+}
+
+TEST_CASE("Uninitialized file browser quit child", "[.][gui-layout-uninitialized-child]") {
+    IsolatedMainWindow f;
+    const auto path = f.home.filePath("files.xml");
+    QFile listing(path); REQUIRE(listing.open(QIODevice::WriteOnly));
+    REQUIRE(listing.write("<FileListing Version=\"1\" Base=\"/\"><Directory Name=\"fixture\"/></FileListing>") > 0);
+    listing.close();
+    auto* browser = new ShareBrowser(UserPtr(new User(CID::generate())), path, "");
+    const auto runners = browser->findChildren<AsyncRunner*>(); REQUIRE(runners.size() == 1);
+    REQUIRE(runners.front()->wait(5000));
+    REQUIRE(browser->findChildren<QTreeView*>().isEmpty());
+    std::fputs("uninitialized-browser-before-fence\n", stderr); std::fflush(stderr);
+    REQUIRE(guiFence(*f.gui->mainWindow()));
+    CHECK(browser->findChildren<QTreeView*>().isEmpty());
+    delete browser;
 }
 
 TEST_CASE("File hasher cooperates with interruption before touching its source", "[qt][mainwindow][gui-hash-fence]") {

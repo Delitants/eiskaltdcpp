@@ -110,6 +110,11 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
         slotHubChanged(comboBox_HUBS->currentIndex());
 }
 
+bool PublicHubs::saveForQuitChecked(){
+    qtCtx()->settings()->setVar(WS_PUBLICHUBS_STATE, treeView->header()->saveState());
+    return true;
+}
+
 PublicHubs::~PublicHubs(){
     qtCtx()->settings()->setVar(WS_PUBLICHUBS_STATE, treeView->header()->saveState());
     

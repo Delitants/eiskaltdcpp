@@ -30,6 +30,7 @@
 #include <QListWidgetItem>
 
 #include "SearchFrame.h"
+#include "ViewLayout.h"
 #include "MainWindow.h"
 #include "HubFrame.h"
 #include "HubManager.h"
@@ -556,6 +557,7 @@ void SearchFrame::init(){
     connect(qtCtx()->settings(), &WulforSettings::strValueChanged, this, &SearchFrame::slotSettingsChanged);
 
     load();
+    view_layout::watchEdits(this, treeView_RESULTS->header());
 
     setAttribute(Qt::WA_DeleteOnClose);
 

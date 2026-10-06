@@ -106,6 +106,7 @@ public:
     const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiOWN_FILELIST); }
     void requestFilter() { slotFilter(); }
     ArenaWidget::Role role() const { return ArenaWidget::ShareBrowser; }
+    bool saveForQuitChecked() override { save(); return true; }
 
 protected:
     virtual void closeEvent(QCloseEvent *);
@@ -157,7 +158,8 @@ private:
         QModelIndex index;
     };
 
-    QMenu *arena_menu;
+    QMenu *arena_menu = nullptr;
+    bool layoutInitialized = false;
 
     QSortFilterProxyModel *proxy;
 

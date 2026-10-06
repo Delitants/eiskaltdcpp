@@ -82,6 +82,11 @@ FavoriteUsers::FavoriteUsers(dcpp::DCContext& ctx, QWidget *parent) :
     ArenaWidget::setState( ArenaWidget::Flags(ArenaWidget::state() | ArenaWidget::Singleton | ArenaWidget::Hidden) );
 }
 
+bool FavoriteUsers::saveForQuitChecked(){
+    qtCtx()->settings()->setVar(WS_FAVUSERS_STATE, treeView->header()->saveState());
+    return true;
+}
+
 FavoriteUsers::~FavoriteUsers(){
     qtCtx()->settings()->setVar(WS_FAVUSERS_STATE, treeView->header()->saveState());
     

@@ -125,6 +125,7 @@ public:
     QMenu   *getMenu();
     const QPixmap &getPixmap();
     ArenaWidget::Role role() const { return ArenaWidget::Search; }
+    bool saveForQuitChecked() override { save(); return true; }
 
     void requestFilter() { slotFilter(); }
     void requestFocus() { lineEdit_SEARCHSTR->setFocus(); }

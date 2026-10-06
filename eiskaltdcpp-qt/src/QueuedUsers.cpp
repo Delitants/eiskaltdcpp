@@ -45,6 +45,11 @@ QueuedUsers::QueuedUsers(dcpp::DCContext& ctx) : QtContextAware(ctx) {
     ArenaWidget::setState( ArenaWidget::Flags(ArenaWidget::state() | ArenaWidget::Singleton | ArenaWidget::Hidden) );
 }
 
+bool QueuedUsers::saveForQuitChecked(){
+    qtCtx()->settings()->setVar("queued-users/headerstate", treeView_USERS->header()->saveState());
+    return true;
+}
+
 QueuedUsers::~QueuedUsers(){
     dcCtx().getUploadManager()->removeListener(this);
 }

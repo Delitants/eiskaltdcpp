@@ -168,6 +168,7 @@ private Q_SLOTS:
 public:
     TransferView(dcpp::DCContext& ctx, QWidget* = nullptr);
     ~TransferView() override;
+    bool saveForQuitChecked();
 
 
 private:

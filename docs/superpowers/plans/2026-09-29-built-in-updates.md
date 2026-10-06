@@ -2128,3 +2128,67 @@ language review; retained Torrent/quit diagnoses; independent whole-branch and
 native/minimum-OS/live/benchmark acceptance; final-source rebuild, production
 numbering/signing/updater acceptance, guarded install/readback and public
 documentation/screenshots/prerelease readback. Signed feeds last; Tasks 7/8 open.
+
+### 2026-10-05 Independently Sourced Metadata and Resource Origins
+
+The unchanged full 33-file reconstruction gate now passes. The ten retained
+Intel Qt plists were reproduced using source-derived Qt properties and the
+unchanged official CMake 3.30.6 framework template, independently retrieved from
+immutable commit `817707b904746a87af996254edad93a419eea4af`. The original ten
+failures and a CMake 3.31.0 newer-template control still reject exactly those ten
+cases. CMake's primary 3.31 release notes identify the added bundle-name property.
+No observed-output editing or normalization was used to force acceptance.
+
+All 440 inherited icon/resource files per retained bundle now have exact public
+repository source records: 283 match upstream commit
+`697db4b03e3d9ffa48b3d4c74fd043dee7663266`, and 157 match fork commit
+`18ac3795b380e202c544931f6f8faff6af16f829`. Public recursive Git trees, object
+identities and independently calculated SHA-256 values were cross-checked.
+The two historical CPU resource sets are identical. Project authors/edit dates
+do not establish original artistic authorship or derivative-work legal history.
+
+Both historical bundle trees and strict seals, five package/notice pins, 58
+provider resources, nine protected live files, 17 prior audit and 11 negative
+evidence hashes, and 139 prior checkpoint artifacts remain unchanged. Original
+source-proof classifications remain intact: reconstruction and repository-origin
+records are additional evidence tiers, not historical producer identification,
+whole-build reproducibility or final current-source package acceptance.
+
+Fresh isolated ARM core, Qt, Torrent and three applicable window-layout suites
+pass, with six additional peer-policy repetitions. Original intermittent
+failures remain retained and unexplained. The first sidebar coordinator used a
+wrong filter; its run is retained and the established sidebar filter passed in
+a separate corrected run. No assertion or release gate was waived.
+
+Independent read-only static review of all 323 paths in the complete updater
+range `8740d09dc68756f91a5ae57241d4fcaecef539ee..a2bd3d63a04215e4d4732522216de0936eac80c7`
+found two P2 receipt defects. Matching backend failures were discarded after an
+offer became Available/Ready, and GUI quit did not snapshot every retained view
+or check the separate Torrent layout file. Behavioral RED regressions confirm
+both; repair and verification are tracked in
+`2026-10-05-updater-review-receipts.md`. Review does not certify native/minimum-OS,
+live lifecycle, linguistic/legal or exhaustive security acceptance.
+
+Those receipt repairs and the residual review corrections are now implemented
+and independently reviewed. Strict retained REDs cover late offer revocation,
+missing view snapshots, uninitialized browser saving, hidden history workers,
+shared-key precedence and inactive history modes. Latest isolated ARM and fresh
+Intel/Rosetta full suites pass, including all three applicable GUI layouts and
+26/293 focused controller checks per architecture. Corrected sorting coverage
+uses real source rows, physically retires its database loader and calls the
+checked GUI fence before teardown. Earlier wrong-property and teardown-failure
+test fixtures remain retained, not classified as product failures.
+
+An earlier full single-line checkpoint-recovery button timeout is still retained
+and unexplained. Added click/receipt diagnostics and passing focused/full reruns
+do not waive that natural intermittent failure. Neither architecture's host QA
+establishes native minimum-OS or live deployment acceptance.
+
+Remaining: retained Torrent/quit causes and filesystem responsiveness,
+historical toolchain and broader input
+provenance/reproducibility, inherited translations/native-language review,
+native/minimum-OS/live/benchmark acceptance, final source/material rebuild,
+production numbering/signing/updater acceptance, guarded install/readback and
+public documentation/screenshots/prerelease readback. GitHub CLI access works;
+wiki Git initialization still needs a signed-in browser. Signed feeds last;
+Tasks 7/8 remain open.

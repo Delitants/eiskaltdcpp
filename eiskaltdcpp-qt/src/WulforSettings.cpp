@@ -67,6 +67,7 @@ bool WulforSettings::hasKey(const QString &key) const{
 }
 
 void WulforSettings::load(){
+    if (quitFrozen) return;
 #ifdef _DEBUG_QT_UI
     qDebug() << settings.fileName();
 #endif
@@ -412,6 +413,10 @@ bool WulforSettings::saveChecked(){
     return settings.status() == QSettings::NoError;
 }
 
+void WulforSettings::freezeForQuit(){
+    quitFrozen = true;
+}
+
 void WulforSettings::parseCmd(const QString &cmd, QString& res) {
     QStringList args = cmd.split(" ", Qt::SkipEmptyParts);
 
@@ -539,12 +544,14 @@ QVariant WulforSettings::getVar(const QString &key, const QVariant &default_valu
 }
 
 void WulforSettings::setStr(const QString & key, const QString &value) {
+    if (quitFrozen) return;
     settings.setValue(key, value);
 
     emit strValueChanged(key, value);
 }
 
 void WulforSettings::setInt(const QString & key, int value) {
+    if (quitFrozen) return;
     settings.setValue(key, value);
 
     emit intValueChanged(key, value);
@@ -555,6 +562,7 @@ void WulforSettings::setBool(const QString & key, bool value) {
 }
 
 void WulforSettings::setVar(const QString &key, const QVariant &value){
+    if (quitFrozen) return;
     settings.setValue(key, value);
 
     emit varValueChanged(key, value);

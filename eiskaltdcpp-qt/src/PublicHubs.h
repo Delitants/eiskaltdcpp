@@ -46,6 +46,7 @@ public:
     const QPixmap &getPixmap(){ return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiSERVER); }
     void requestFilter() { slotFilter(); }
     ArenaWidget::Role role() const { return ArenaWidget::PublicHubs; }
+    bool saveForQuitChecked() override;
 
 protected:
     virtual void closeEvent(QCloseEvent *);

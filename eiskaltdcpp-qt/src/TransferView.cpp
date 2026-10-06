@@ -225,6 +225,12 @@ void TransferView::save(){
         qtCtx()->settings()->setVar(QStringLiteral("transferview/column-layout-v1"), columnLayout->saveState());
 }
 
+bool TransferView::saveForQuitChecked(){
+    save();
+    qtCtx()->settings()->setInt(WI_TRANSFER_HEIGHT, height());
+    return true;
+}
+
 void TransferView::load(){
     int h = qtCtx()->settings()->getInt(WI_TRANSFER_HEIGHT);
 

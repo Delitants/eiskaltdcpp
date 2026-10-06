@@ -83,23 +83,45 @@ runtime keys now have entries in all 25 catalogs. The unchanged production
 extraction contains 2,065 keys, with no missing active keys in those catalogs.
 Catalog format and compiled-string checks do not establish complete localization:
 inherited unfinished translations and native-speaker review remain pending.
-Complete resource/dependency provenance, reproducibility and independent
-whole-branch review also remain separate gates.
+Complete resource/dependency provenance and reproducibility remain separate
+gates. Independent static review of the complete updater change range found two
+receipt defects: late backend offer revocation and incomplete GUI layout saving.
+The repairs also cover uninitialized file-browser snapshots, hidden history
+loaders and shared/inactive history layout keys. Final narrow static review
+finds no remaining actionable issue in that correction. Latest ARM layout and
+recovery checks pass, including complete single-line, multiline and applicable
+sidebar suites. Fresh Intel/Rosetta core, Qt, Torrent and all three applicable
+GUI-layout suites also pass; focused controller checks pass on both architectures.
+An earlier complete single-line checkpoint-recovery timeout remains unexplained
+despite passing reruns. A sorting-test teardown abort was traced to that fixture
+destroying a live database loader; the corrected fixture joins it and retires
+GUI workers before destruction. Failed evidence is retained. Static review and
+isolated tests are not native release acceptance or security certification.
+These receipt repairs are implemented and reviewed; the retained intermittent
+failures and the final release gates below remain open.
+The current catalog audit also passes all 23 tests without skips; this checks
+extraction, formats and compiled strings, not native-language quality.
 
 The retained historical QA bundles now have file-level framework mappings for
 114 Apple Silicon and 96 Intel non-code files, including shipped headers and
 helper metadata. All match the pinned Sparkle SDK or deployed Qt providers.
 Across both bundles, 93 files match source bytes and 72 localization dictionaries
 match source values; 12 generated resources have source associations, not
-reconstructed-build proof. A subsequent current-generator check reproduces 23 of
-the 33 initially unresolved metadata/module-map files byte for byte: 19 ARM Qt
-plists and four Sparkle files. Ten Intel Qt plists still differ because the
-current CMake template includes an empty bundle-name field absent from that SDK.
-The full reconstruction gate retains exactly those ten failures; separate
-evidence and rejection controls pass. Original producer/toolchain history remains
-unproven even for matching files. This does not complete legacy icon attribution,
-legal review or reproducibility, and these bundles are not current-source release
-assets. Retained bundles/providers and protected live files remain unchanged.
+reconstructed-build proof. All 33 initially unresolved metadata/module-map files
+now have byte-exact reconstruction evidence. Nineteen ARM Qt plists and four
+Sparkle files matched current-generator fixtures. The ten Intel Qt plists match
+an unchanged, independently retrieved official CMake 3.30.6 template; CMake added
+the bundle-name field in 3.31. The original ten failures and the newer-template
+rejection control remain retained. A matching template does not identify the
+historical SDK producer, compiler or complete framework build recipe.
+
+The 440 inherited icon/resource files in each historical bundle also have
+byte-exact immutable public project repository origins: 283 in upstream Eiskalt
+and 157 in this fork. Project edit history is not proof of the original artist
+or derivative-work licensing chain. Inherited notices remain unchanged; legal
+review and reproducibility are not certified. These bundles are not current-
+source release assets. Retained bundles/providers and protected live files remain
+unchanged.
 
 ## Before Prerelease Publication
 

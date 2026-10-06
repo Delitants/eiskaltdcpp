@@ -180,6 +180,7 @@ public:
     void save();
     // QSettings retains errors for this store's lifetime; fail closed on any.
     bool saveChecked();
+    void freezeForQuit();
 
     void loadTranslation();
     void loadTheme();
@@ -216,6 +217,7 @@ private:
                            const QString &path);
 
     QSettings settings;
+    bool quitFrozen = false;
 
     QString configFileOld;
 

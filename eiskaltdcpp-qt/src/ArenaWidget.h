@@ -83,6 +83,8 @@ public:
     virtual bool isUnload() const { return _arenaUnload; }
 
     virtual Role role() const = 0;
+    // Snapshot retained view intent before the owner freezes and syncs settings.
+    virtual bool saveForQuitChecked() { return true; }
 
 protected:
     virtual ~ArenaWidget();

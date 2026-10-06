@@ -1459,11 +1459,25 @@ void TorrentWindow::applyFileSelection()
 
 void TorrentWindow::scheduleLayoutSave()
 {
-    if (!ui->dragTarget)
+    if (!quitLayoutFrozen && !ui->dragTarget)
         ui->layoutTimer->start();
 }
 
 void TorrentWindow::saveLayout()
+{
+    if (!quitLayoutFrozen) (void)writeLayoutChecked();
+}
+
+bool TorrentWindow::saveForQuitChecked()
+{
+    if (quitLayoutFrozen) return quitLayoutSaved;
+    quitLayoutFrozen = true;
+    ui->layoutTimer->stop();
+    quitLayoutSaved = writeLayoutChecked();
+    return quitLayoutSaved;
+}
+
+bool TorrentWindow::writeLayoutChecked()
 {
     ui->layoutTimer->stop();
     QSettings saved(layoutPath, QSettings::IniFormat);
@@ -1474,6 +1488,8 @@ void TorrentWindow::saveLayout()
     saved.setValue(QStringLiteral("jobs/selected"), selectedId().isEmpty() ? ui->restoreJobId : selectedId());
     saved.setValue(QStringLiteral("window/detailTab"), ui->details->currentIndex());
     saved.setValue(QStringLiteral("window/splitter"), ui->splitter->saveState());
+    saved.sync();
+    return saved.status() == QSettings::NoError;
 }
 
 void TorrentWindow::closeEvent(QCloseEvent *event)

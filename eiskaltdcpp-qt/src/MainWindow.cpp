@@ -13,6 +13,7 @@
 #include "MainWindow.h"
 #include "AppIconTheme.h"
 #include "DockCursorGuard.h"
+#include "ViewLayout.h"
 #ifdef WITH_DHT
 #include "dht/DHT.h"
 #endif
@@ -1036,6 +1037,17 @@ bool MainWindow::stopWorkersForQuit() {
     Q_D(MainWindow);
     if (d->quitDrainComplete) return d->quitFenceSaved;
     auto* ctx = qtCtx();
+    if (!ctx || !ctx->settings()) return false;
+    QList<ArenaWidget*> layouts;
+    const auto retain = [&](ArenaWidget* arena) {
+        if (arena && !layouts.contains(arena)) layouts.append(arena);
+    };
+    for (auto* arena : QList<ArenaWidget*>{
+        ctx->favoriteHubs(), ctx->favoriteUsers(), ctx->publicHubs(), ctx->downloadQueue(),
+        ctx->spyFrame(), ctx->adls(), ctx->queuedUsers(), ctx->finishedUploads(), ctx->finishedDownloads(),
+        ctx->cmdDebug(), ctx->secretary(), ctx->liveLog()}) retain(arena);
+    for (auto* action : d->menuWidgets->actions()) retain(d->menuWidgetsHash.value(action));
+    for (auto* child : findChildren<QWidget*>()) retain(qobject_cast<ArenaWidget*>(child));
     if (!d->quitFenced) {
         // Do not fence a suspended modal handler that can resume and start new work.
         if (!ctx || !ctx->settings() || QApplication::activeModalWidget() ||
@@ -1057,8 +1069,11 @@ bool MainWindow::stopWorkersForQuit() {
         if (ctx->notification()) roots.append(ctx->notification());
         if (ctx->searchBlacklist()) roots.append(ctx->searchBlacklist());
         if (ctx->antiSpam()) roots.append(ctx->antiSpam());
-        for (auto* arena : d->menuWidgetsHash)
+        // Initially hidden singleton views can be parentless and have loaders.
+        // Use the same inventory for input fencing, physical joins and snapshots.
+        for (auto* arena : layouts)
             if (auto* widget = arena->getWidget(); widget && !roots.contains(widget)) roots.append(widget);
+        if (ctx->transferView() && !roots.contains(ctx->transferView())) roots.append(ctx->transferView());
         qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
         if (ctx->globalTimer()) ctx->globalTimer()->stop();
 
@@ -1113,10 +1128,22 @@ bool MainWindow::stopWorkersForQuit() {
         if (future) pending |= future->isStarted() && !future->isFinished(); else saved = false;
     d->quitWorkersWaiting = pending;
     if (pending) return false;
+    // Shared keys use the most recently edited retained tab, not hash iteration.
+    std::stable_sort(layouts.begin(), layouts.end(), [](ArenaWidget* lhs, ArenaWidget* rhs) {
+        return view_layout::editSequence(lhs->getWidget()) < view_layout::editSequence(rhs->getWidget());
+    });
+    for (auto* arena : layouts) {
+        if (!arena) continue;
+        try { saved = arena->saveForQuitChecked() && saved; } catch (...) { saved = false; }
+    }
+    if (ctx->transferView()) {
+        try { saved = ctx->transferView()->saveForQuitChecked() && saved; } catch (...) { saved = false; }
+    }
 #ifdef USE_TORRENT
     if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
     if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;
 #endif
+    ctx->settings()->freezeForQuit();
     saved = ctx->settings()->saveChecked() && saved;
     d->quitFenceSaved = saved;
     d->quitDrainComplete = true;

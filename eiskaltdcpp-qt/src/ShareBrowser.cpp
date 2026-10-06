@@ -11,6 +11,7 @@
  */
 
 #include "ShareBrowser.h"
+#include "ViewLayout.h"
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforUtil.h"
@@ -366,6 +367,10 @@ void ShareBrowser::continueInit(){
     list_model->repaint();
 
     load();
+    layoutInitialized = true;
+    view_layout::watchEdits(this, treeView_LPANE->header());
+    view_layout::watchEdits(this, treeView_RPANE->header());
+    connect(splitter, &QSplitter::splitterMoved, this, [this] { view_layout::markEdited(this); });
 
     if (user == qtCtx()->dcCtx().getClientManager()->getMe()){
         tree_model->loadRestrictions();
@@ -436,6 +441,7 @@ void ShareBrowser::load(){
 }
 
 void ShareBrowser::save(){
+    if (!layoutInitialized) return;
     qtCtx()->settings()->setStr(WS_SHARE_LPANE_STATE, treeView_LPANE->header()->saveState().toBase64());
     qtCtx()->settings()->setStr(WS_SHARE_RPANE_STATE, treeView_RPANE->header()->saveState().toBase64());
 

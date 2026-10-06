@@ -47,6 +47,11 @@ SpyFrame::SpyFrame(dcpp::DCContext& ctx, QWidget *parent)
     ArenaWidget::setState( ArenaWidget::Flags(ArenaWidget::state() | ArenaWidget::Singleton | ArenaWidget::Hidden) );
 }
 
+bool SpyFrame::saveForQuitChecked(){
+    qtCtx()->settings()->setVar("spyframe-header-state", treeView->header()->saveState());
+    return true;
+}
+
 SpyFrame::~SpyFrame(){
     qtCtx()->settings()->setVar("spyframe-header-state", treeView->header()->saveState());
     

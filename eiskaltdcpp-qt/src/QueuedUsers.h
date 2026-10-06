@@ -106,6 +106,7 @@ public:
     QMenu *getMenu() override { return nullptr; }
     const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiUSERS); }
     ArenaWidget::Role role() const override { return ArenaWidget::QueuedUsers; }
+    bool saveForQuitChecked() override;
 
 Q_SIGNALS:
     void coreWaitingAddFile(const VarMap&);

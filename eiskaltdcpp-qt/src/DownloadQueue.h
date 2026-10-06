@@ -94,6 +94,7 @@ public:
     const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiDOWNLOAD); }
 
     ArenaWidget::Role role() const override { return ArenaWidget::Downloads; }
+    bool saveForQuitChecked() override { save(); return true; }
 
 protected:
     void closeEvent(QCloseEvent*) override;

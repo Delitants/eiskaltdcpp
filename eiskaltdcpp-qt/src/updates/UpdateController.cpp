@@ -126,7 +126,10 @@ struct UpdateController::Impl {
         backend.download(operation, offer);
     }
     void fail(quint64 id, FailureCategory category) {
-        if(stopped || quitFenced || !busy || operation != id) return;
+        // A route can revoke an authenticated offer after discovery or download
+        // has completed. Those idle phases still belong to this operation.
+        const bool retainedOffer = state == State::Available || state == State::Ready;
+        if(stopped || quitFenced || operation != id || (!busy && !retainedOffer)) return;
         const bool manual = kind == CheckKind::Manual;
         cancelOperation();
         offer = {}; setState(State::Idle);

@@ -35,6 +35,7 @@
 
 #include "ui_UIFinishedTransfers.h"
 #include "ArenaWidget.h"
+#include "ViewLayout.h"
 #include "WulforUtil.h"
 #include "FinishedTransfersModel.h"
 #include "ShareBrowser.h"
@@ -91,6 +92,11 @@ public:
     QString getArenaShortTitle(){ return getArenaTitle(); }
     QMenu *getMenu() { return nullptr; }
     ArenaWidget::Role role() const;
+    bool saveForQuitChecked() override {
+        const QString key = comboBox->currentIndex() == 0 ? WS_FTRANSFERS_FILES_STATE : WS_FTRANSFERS_USERS_STATE;
+        saveHeaderLayout(key);
+        return true;
+    }
 
     const QPixmap &getPixmap(){
         if (isUpload)
@@ -163,13 +169,16 @@ public:
 
         FinishedTransfers::slotSwitchOnlyFull(false);
         FinishedTransfers::slotTypeChanged(0);
+        view_layout::watchEdits(this, treeView->header(), [this](quint64 revision) {
+            headerRevision = revision;
+        });
 
         ArenaWidget::setState( ArenaWidget::Flags(ArenaWidget::state() | ArenaWidget::Singleton | ArenaWidget::Hidden) );
     }
 
     ~FinishedTransfers(){
         QString key = (comboBox->currentIndex() == 0)? WS_FTRANSFERS_FILES_STATE : WS_FTRANSFERS_USERS_STATE;
-        qtCtx()->settings()->setVar(key, treeView->header()->saveState());
+        saveHeaderLayout(key);
 
         dcCtx().getFinishedManager()->removeListener(this);
 
@@ -352,14 +361,20 @@ public:
 #endif
     }
 
+    void saveHeaderLayout(const QString& key) {
+        auto* settings = qtCtx()->settings();
+        if (view_layout::canSaveKey(settings, key, headerRevision))
+            settings->setVar(key, treeView->header()->saveState());
+    }
+
     void slotTypeChanged(int index){
         QString from_key = (index == 0)? WS_FTRANSFERS_USERS_STATE : WS_FTRANSFERS_FILES_STATE;
         QString to_key = (index == 0)? WS_FTRANSFERS_FILES_STATE : WS_FTRANSFERS_USERS_STATE;
-        QByteArray old_state = treeView->header()->saveState();
-
         if (sender() == comboBox)
-            qtCtx()->settings()->setVar(from_key, old_state);
+            saveHeaderLayout(from_key);
 
+        // Loading an inactive mode is not a newer user edit of that key.
+        const QSignalBlocker restoring(treeView->header());
         treeView->header()->restoreState(qtCtx()->settings()->getVar(to_key, QByteArray()).toByteArray());
         treeView->setSortingEnabled(true);
 
@@ -369,6 +384,7 @@ public:
             proxy->setFilterKeyColumn(COLUMN_FINISHED_FULL);
         else
             proxy->setFilterKeyColumn(COLUMN_FINISHED_CRC32);
+        headerRevision = 0;
     }
 
     void slotClear(){
@@ -594,6 +610,7 @@ public:
     QString db_file;
 #endif
     bool db_opened;
+    quint64 headerRevision = 0;
 };
 
 template <>
@@ -604,5 +621,3 @@ inline ArenaWidget::Role FinishedTransfers<true>::role() const { return ArenaWid
 
 typedef FinishedTransfers<true>  FinishedUploads;
 typedef FinishedTransfers<false> FinishedDownloads;
-
-

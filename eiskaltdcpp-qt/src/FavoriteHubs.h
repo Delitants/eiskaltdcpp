@@ -65,6 +65,7 @@ public:
     QMenu *getMenu() override;
     const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFAVSERVER); }
     ArenaWidget::Role role() const override { return ArenaWidget::FavoriteHubs; }
+    bool saveForQuitChecked() override { save(); return true; }
 
 protected:
     void closeEvent(QCloseEvent *) override;

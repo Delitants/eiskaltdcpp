@@ -340,6 +340,35 @@ TEST_CASE("Cancelled and failed downloads discard invalidated offers before retr
     emit f.backend.downloadReady(old, 2, f.offer().sha256); events();
     CHECK(f.controller->state() == UpdateController::State::Downloading);
 }
+TEST_CASE("Matching backend invalidation revokes an idle available or ready offer", "[updates][update-controller][update-offer-revocation]") {
+    Fixture f;
+    SECTION("available") { f.controller->checkNow(); f.available(); }
+    SECTION("ready with consent") { f.ready(); f.controller->installOnNextQuit(); }
+    const auto key = f.controller->offer().key();
+    const auto operation = f.backend.operation;
+    REQUIRE(f.controller->notificationsAllowed(key));
+    const auto revocations = f.backend.revocations;
+    emit f.backend.failed(operation + 1, "foreign failure", FailureCategory::Network); events();
+    CHECK(f.controller->notificationsAllowed(key));
+    CHECK(f.backend.revocations == revocations);
+    QSignalSpy states(f.controller.get(), &UpdateController::stateChanged);
+    emit f.backend.failed(operation, "private route details", FailureCategory::Network); events();
+    CHECK(f.controller->state() == UpdateController::State::Idle);
+    CHECK(f.controller->offer().build == 0);
+    CHECK_FALSE(f.controller->notificationsAllowed(key));
+    CHECK(f.backend.revocations == revocations + 1);
+    CHECK(f.errors == 1);
+    CHECK(f.manualErrors == 1);
+    CHECK(states.count() == 1);
+    emit f.backend.failed(operation, "duplicate invalidation", FailureCategory::Network); events();
+    CHECK(f.errors == 1);
+    const auto downloads = f.backend.downloads;
+    f.controller->download(); CHECK(f.backend.downloads == downloads);
+    f.controller->normalQuitCommitted();
+    CHECK(f.backend.installs == 0);
+    CHECK(quitDispositionIs(*f.controller, "NoUpdate"));
+}
+
 TEST_CASE("Update installation requires version bound consent at committed normal quit", "[updates][update-controller][update-shutdown]") {
     Fixture f; f.ready(); CHECK(f.backend.installs == 0);
     SECTION("ordinary shutdown is not consent") { f.controller->installOnNextQuit(); f.controller->shutdown(); }

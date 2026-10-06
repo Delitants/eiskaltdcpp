@@ -30,6 +30,7 @@ public:
     QIcon getIcon() override { return windowIcon(); }
     void setState(ArenaWidget::Flags flags) override;
     ArenaWidget::Role role() const override { return ArenaWidget::Torrent; }
+    bool saveForQuitChecked() override;
 
 public slots:
     void addSource(const QString &fileOrMagnet);
@@ -62,6 +63,7 @@ private:
     void openLocation(std::function<bool(const QString &)> probe = {});
     void scheduleLayoutSave();
     void saveLayout();
+    bool writeLayoutChecked();
     void updateSecurityActions();
     QStringList checkedCountries() const;
     void removeSelected(bool deleteFiles);
@@ -80,6 +82,7 @@ private:
     QStringList manuallySharedDirectories;
     QPixmap tabPixmap;
     bool selectionDirty = false;
+    bool quitLayoutFrozen = false, quitLayoutSaved = false;
     friend struct TorrentWindowTestAccess;
 };
 #endif
