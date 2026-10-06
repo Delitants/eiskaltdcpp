@@ -145,6 +145,13 @@ failures in the retained recovery-button case: `prompt->isVisible()` and
 `recovered`, on ARM multiline and Intel sidebar. All settings-specific checks
 pass. Overall QA and Task 3 remain open; the earlier green result does not waive
 this recurrence. Failed evidence and protected-state readbacks are preserved.
+
+The subsequent fresh post-commit Ready-update/thread-exit check fails two
+responsiveness assertions: a 100ms-budget request takes 354ms with no GUI
+heartbeat progress. The writer is off the GUI; saved bytes are correct and exit
+and installation remain refused. A private same-seed join-tracing comparison
+passes without explaining the failed run. This failure is retained and unwaived;
+settings responsiveness and plan Task 3 are not accepted as complete.
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

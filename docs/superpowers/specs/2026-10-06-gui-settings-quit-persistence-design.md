@@ -3,7 +3,8 @@
 Status: written design approved by the maintainer on 2026-10-06 after checkpoint
 `bcf1c1390`. Native/inline implementation and local settings-specific checks are
 recorded at source checkpoint `af796efbf` and fixture checkpoint `612ae2e3c`.
-Final acceptance stays open after the retained recovery failure recurred.
+Final acceptance stays open after retained recovery and fresh thread-exit
+responsiveness failures.
 This repair extends
 the approved built-in updater quit contract; it does not authorize installation,
 signing, publication, profile changes or production feed activation.
@@ -211,6 +212,13 @@ in the previously retained recovery-button test: hidden prompt and incomplete
 retry, on ARM multiline and Intel sidebar. All settings-specific checks pass,
 but overall acceptance and plan Task 3 remain open. These failed outputs are
 retained, not waived by the earlier green matrix. Protected-state readbacks pass.
+
+The next fresh post-commit Ready-update check also fails timely request and
+heartbeat assertions in thread-exit mode 6: 354ms, no heartbeat progress, writer
+off the GUI, no exit or install. Bytes and refusal checks still pass. A private
+same-seed join-tracing comparison passes without identifying the cause; that
+green diagnostic does not waive the failed check. Responsiveness acceptance
+therefore remains incomplete within this design, not merely a release gate.
 
 This is isolated source-level acceptance for the bounded repair, not native
 Windows/other-Qt/minimum-OS, real-GOST interop, forced/crash teardown or installed

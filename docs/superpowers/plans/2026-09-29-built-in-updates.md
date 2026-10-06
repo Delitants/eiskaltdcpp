@@ -2495,6 +2495,13 @@ incomplete retry), on ARM multiline and Intel sidebar. All settings-specific
 checks pass; no green-rerun waiver is used. All failed evidence remains retained
 and protected-state/hash readbacks pass. Task 3 final acceptance is NOT complete.
 
+The following fresh post-commit Ready-update selector also fails timely request
+and GUI heartbeat checks during held thread exit: 354ms against a 100ms budget,
+writer off the GUI, correct bytes and no exit/install. A same-seed private join
+trace passes without identifying the cause; it is not a waiver. This is an open
+responsiveness acceptance issue within the settings repair itself. No deadline
+was widened, no assertion relaxed and no additional production change guessed.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,
