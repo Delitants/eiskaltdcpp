@@ -2370,3 +2370,70 @@ review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final review
 source/material rebuild, numeric production build allocation, signing/notarization
 and updater acceptance, guarded closed-app installation/readback and authenticated
 wiki/prerelease publication/readback. Signed feeds remain last; Tasks 7/8 stay open.
+
+### GUI Settings Physical-Write Diagnostic (2026-10-06)
+
+At source checkpoint `0143aad17`, `MainWindow::stopWorkersForQuit()` freezes
+settings and calls `WulforSettings::saveChecked()` on the GUI owner. That method
+calls the live `QSettings::sync()` before the coordinator's final settings check.
+The session's existing expired-pending guard does not cover a first preparation
+call that blocks and returns Ready without first returning Pending.
+
+Disposable, external-network-denied ARM and Intel/Rosetta fixtures hold the
+actual settings write and flush syscalls for 350ms. Core retirement is completed
+before arming the hold to isolate GUI settings I/O from other retirement work.
+At a requested 100ms budget, observed call durations are 394/381ms on ARM and
+381/387ms on Intel/Rosetta. Both operations run on the GUI thread, no heartbeat
+advances during the hold, and the session emits exit readiness after release.
+Each architecture fails precisely ten expected checks, with sixty passing
+assertions and no exceptions, fatal errors or skips. The frozen setting's
+physical bytes remain correct and post-freeze edits remain rejected.
+
+A second fixture stages a Ready, explicitly consented update before retiring the
+core. It uses only the existing fake backend, never Sparkle or a real installer.
+Held write/flush calls take 406/400ms on ARM and 388/402ms on Intel/Rosetta.
+The expired request reaches fake installer handoff with a valid consent callback;
+delivering its matching fake completion then emits exit readiness. Each
+architecture fails precisely fourteen expected checks, with fifty-two passing
+assertions and no exceptions, fatal errors or skips. This proves the composed
+deadline/consent gap in the isolated fixture, not a real installed update.
+
+The private copied-test build initially failed because a relative probe-header
+include lost its original test-parent search path. The corrected harness adds
+that include path and builds into separate directories. The failed output and
+all four controlled diagnostic results remain retained. No production code,
+public test, installed app, live profile or historical binary was changed.
+
+Repair remains pending. It must preserve settings format, frozen values,
+sticky-error refusal, GUI reader responsiveness and physical worker ownership,
+including thread teardown and deferred settings writes. Qt documents automatic
+sync from the event loop and destructor, and reentrancy for distinct settings
+objects; see [QSettings](https://doc.qt.io/qt-6/qsettings.html#sync) and
+[its threading guidance](https://doc.qt.io/qt-6/qsettings.html#accessing-settings-from-multiple-threads-or-processes-simultaneously).
+Do not put an unowned asynchronous call around the existing live QObject or
+allow a late Ready receipt to restore an expired quit request's install consent.
+The proposed next step is a focused written ownership/receipt design before
+changing this path. The diagnostic is not a repair and does not close any
+retained natural failure, native minimum-OS or release acceptance gate.
+
+Adjacent ordinary checks select `[checkpoint-recovery],[application-quit],
+[gui-worker-drain]`, with no I/O interposer. Intel/Rosetta passes 17 cases /
+659 assertions. The copied ARM test binary passes 16 cases and fails the existing
+`Checkpoint recovery button retains frozen rules and permanently disarms a ready
+update` case: `prompt->isVisible()` and `recovered` fail in its anti-spam branch
+(646 passing assertions, two failures, no exceptions or skips). Its diagnostic
+records one retry click and no exit signal. An unchanged accepted ARM binary
+passes the same selector and seed, 17 cases / 659 assertions. Preserve both
+results; this comparison does not identify the intermittent cause or waive it.
+
+All eight original binary pins and the four latest accepted Qt/GUI binary pins
+still match. Both historical bundle trees and strict signatures, five material
+pins, 58 provider resources, nine protected live files, 17 prior audit outputs
+and eleven retained negative outputs also match their preserved hashes. These
+are preservation checks, not new installed/native/release acceptance.
+
+The maintainer approved preparing the focused written design after reviewing
+the diagnosis. It is available in
+[`2026-10-06-gui-settings-quit-persistence-design.md`](../specs/2026-10-06-gui-settings-quit-persistence-design.md).
+Written-design review remains pending before a new implementation plan and
+production ownership changes. No repair, installation or publication is claimed.

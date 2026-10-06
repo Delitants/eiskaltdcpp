@@ -93,8 +93,24 @@ receipt for four files: a partial failure retries that batch, not only individua
 failed files. GUI settings sync and broader filesystem responsiveness remain
 separate acceptance work.
 
-Focused persistence/quit checks and all three applicable window layouts pass on
-ARM and Intel/Rosetta. Regular core and Qt suites also pass on both; the Intel
+The next isolated diagnostic confirms that the primary GUI settings sync still
+blocks the event loop. Actual settings writes and flushes held for 350ms make a
+100ms quit request return after 381-406ms on ARM and Intel/Rosetta. The session
+can subsequently emit exit readiness; with a Ready, consented update fixture it
+also reaches fake installer handoff after the deadline. No real installation was
+performed. Frozen values are saved correctly. This is a reproduced quit-path
+gap, not the cause of the earlier natural recovery timeout or Torrent freezes.
+An ownership-safe settings persistence repair and its deadline/consent checks
+remain pending; merely calling the existing settings object from another thread
+is not the accepted repair design.
+
+Prior persistence/quit checks and all three applicable window layouts passed on
+ARM and Intel/Rosetta. The latest adjacent ARM run has an intermittent anti-spam
+recovery failure: the existing recovery-button case finds a hidden prompt and
+fails to complete its retry. The same selector passes on Intel and an unchanged
+accepted ARM binary; this does not explain or waive the failure. A focused
+settings-ownership repair design is prepared for review, not implemented.
+Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent
 bootstrap, publication and bind causes are not waived by green reruns.
