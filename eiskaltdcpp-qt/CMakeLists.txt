@@ -587,6 +587,10 @@ if(APPLE AND TARGET eiskaltdcpp-qt)
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/translations"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/locale"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${EISKALT_RES_DIR}/help"
+        COMMAND ${CMAKE_COMMAND}
+            "-DEISKALT_APP_ICON_SOURCE_DIR=${CMAKE_SOURCE_DIR}/data/icons"
+            "-DEISKALT_APP_ICON_NOTICE_DIR=${EISKALT_RES_DIR}/ThirdPartyNotices/AppIcon"
+            -P "${CMAKE_SOURCE_DIR}/cmake/AppIconNotices.cmake"
         VERBATIM
     )
 

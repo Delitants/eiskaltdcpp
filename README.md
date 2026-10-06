@@ -1,5 +1,7 @@
 # EiskaltDC++ 3 Development
 
+<img src="data/icons/icon_128x128.png" alt="EiskaltDC++ Modern Classic app icon" width="96" height="96">
+
 A native Qt desktop client for **Direct Connect and BitTorrent**, with shared
 transfer monitoring, hub chat and controlled publication of completed Torrent
 files to DC++.

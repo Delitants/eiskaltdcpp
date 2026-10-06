@@ -2192,3 +2192,48 @@ production numbering/signing/updater acceptance, guarded install/readback and
 public documentation/screenshots/prerelease readback. GitHub CLI access works;
 wiki Git initialization still needs a signed-in browser. Signed feeds last;
 Tasks 7/8 remain open.
+
+### 2026-10-06 Approved App Icon Integration
+
+The maintainer chose Modern Classic variant 1 from the three generated concepts.
+The exact approved image is retained as `data/icons/modern-classic-master.png`;
+its SHA-256 is
+`680af070714219501476f20b22e9c39ed4e2c840aec2b41237ab109e228bc442`.
+No retouching or alternate design was substituted.
+
+Current source assets include macOS standard/Retina ICNS entries, seven Windows
+ICO resolutions, ten desktop PNG sizes and the same app brand in all five legacy
+Qt theme directories. Modern toolbar themes keep their existing brand-resource
+paths. Non-brand theme artwork and other original icon files remain unchanged.
+The source README uses the selected icon. The original attribution and generated
+reference provenance travel with macOS packaging through a directly tested
+CMake notice step, alongside a 23-asset checksum manifest.
+
+Format, provenance-copy, unapproved-input rejection and current-tool byte
+reproduction checks pass. This reproduction claim covers the observed tools,
+not different macOS encoder versions or historical artistic authorship.
+The exact six initial asset failures and four old-embedded-resource hash failures
+are retained. An identical iconset conversion failed inside the sandbox and
+succeeded outside it; that environment failure was not treated as invalid art.
+
+Eight packaging checks and 22 completed Qt/GUI/recovery runs pass without
+failures, errors or skips. Both full Qt runs cover 617 cases; the three GUI layouts
+cover 101/101/99 cases per architecture, plus six recovery repetitions each.
+The ARM Qt run records 33,729 assertions and Intel/Rosetta 33,725. Core and
+standalone Torrent binaries are unchanged; their earlier receipts were preserved,
+not rerun as part of this asset-only matrix.
+
+Resource-updated ARM and Intel/Rosetta test binaries are separate from the
+retained accepted binaries. No core or Torrent implementation object was changed
+for this asset-only verification. Both architecture runs include all three GUI
+layouts and repeated checkpoint recovery; full Qt verification is recorded with
+the checkpoint receipts. Passing repetitions do not explain or waive the earlier
+natural recovery timeout. No final current-source app, installer, native
+minimum-OS, Windows/Linux runtime or public release acceptance follows.
+
+The wiki availability check confirms it is enabled and the CLI has repository
+access. Its Git remote remains uninitialized, the browser is signed out and the
+wiki URL redirects to the repository. Wiki sources remain local until the initial
+browser page is created. No signing key, live profile, installed app, service,
+feed or historical release artifact was changed. All remaining release gates
+above stay open, and signed feeds remain last.

@@ -17,6 +17,22 @@ QPalette background(const QColor &color)
 }
 }
 
+TEST_CASE("App branding: modern themes use the approved Modern Classic icon", "[qt][icontheme][app-icon]")
+{
+    for (const auto &theme : app_icon_theme::modernIds()) {
+        const auto path = app_icon_theme::assetPath(app_icon_theme::resourcePath(theme),
+                                                   "icon_appl_big", background(Qt::white));
+        QFile file(path);
+        REQUIRE(file.open(QIODevice::ReadOnly));
+        const auto bytes = file.readAll();
+        CHECK(QCryptographicHash::hash(bytes, QCryptographicHash::Sha256).toHex() ==
+              "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63");
+        const auto image = QImage::fromData(bytes);
+        CHECK(image.size() == QSize(128, 128));
+        CHECK(image.hasAlphaChannel());
+    }
+}
+
 TEST_CASE("Icon themes: four approved styles with Reborn fourth", "[qt][icontheme]")
 {
     CHECK(app_icon_theme::modernIds() == QStringList{"prism", "contour", "slate", "reborn"});

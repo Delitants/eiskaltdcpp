@@ -1,0 +1,32 @@
+{
+  "approved": "2026-10-06",
+  "generation": "OpenAI image_gen; generated 2026-10-05; selected by maintainer",
+  "packaging": "sips resizing; iconutil ICNS; PNG-in-ICO; no retouching",
+  "reference": "data/icons/eiskaltdcpp-borderless.icns at 31cc27e83",
+  "sha256": {
+    "data/icons/eiskaltdcpp-borderless.icns": "f2c17e2cf30ec11032320c4abdff9df7e29b61df23f8788f1204833ac4c5a4c5",
+    "data/icons/eiskaltdcpp.ico": "8c59140d9e30bb0559572a8eb39f50db55ea3892f308f3d7ecccf10a19a9a7ac",
+    "data/icons/icon_1024x1024.png": "0f33e1bb983b4cb9b7c3344fe68a81e8e22ad846bed3aaee56ced6350377dea7",
+    "data/icons/icon_128x128.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63",
+    "data/icons/icon_16x16.png": "7eb79d61414c9b61b76a073d18bcea93dc0d898d9750d31c30ee70d283aa2f34",
+    "data/icons/icon_22x22.png": "540ba265b9f4897d096c29e22d78e198cdbcef0a615bc07d6c5a587c933c6c3e",
+    "data/icons/icon_24x24.png": "55982689f60593525949ae540a8c90a2443a72ba42cdbc583291307ef754adff",
+    "data/icons/icon_256x256.png": "5fc99211b5e1245fa6865331df25007ab7a42573d0966690d8e1d243592f8fb8",
+    "data/icons/icon_32x32.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "data/icons/icon_48x48.png": "8c026876dd9ed31fa1755fcff5c4b6da1b8e36f4441163c4374e2e02aac0f522",
+    "data/icons/icon_512x512.png": "e8a737b652c2a6f29efb2746d6bd6eba46bb59590f792f817b9ef926d5be6418",
+    "data/icons/icon_64x64.png": "19cb1930bb407ca682cceab599176a9a44c65e4a4ca8c77f727dd32677450a01",
+    "data/icons/modern-classic-master.png": "680af070714219501476f20b22e9c39ed4e2c840aec2b41237ab109e228bc442",
+    "eiskaltdcpp-qt/icons/appl/apex/icon_appl.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "eiskaltdcpp-qt/icons/appl/apex/icon_appl_big.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63",
+    "eiskaltdcpp-qt/icons/appl/default/icon_appl.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "eiskaltdcpp-qt/icons/appl/default/icon_appl_big.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63",
+    "eiskaltdcpp-qt/icons/appl/faenza/icon_appl.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "eiskaltdcpp-qt/icons/appl/faenza/icon_appl_big.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63",
+    "eiskaltdcpp-qt/icons/appl/haiku/icon_appl.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "eiskaltdcpp-qt/icons/appl/haiku/icon_appl_big.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63",
+    "eiskaltdcpp-qt/icons/appl/monochrome/icon_appl.png": "7cb16f8a960378eb151ac3f638cc772c6ccab600a7b736024d2faaa059fe4238",
+    "eiskaltdcpp-qt/icons/appl/monochrome/icon_appl_big.png": "dee510a7862b2b7ace129e2b50411b779fe0d913500b36eb1a7892a682c44d63"
+  },
+  "variant": "Modern Classic (variant 1)"
+}

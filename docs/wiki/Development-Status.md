@@ -1,8 +1,19 @@
 # Development Status
 
-Checkpoint: 2026-10-05. `v3.0.0-pre.1` remains this development checkpoint's release target.
+Checkpoint: 2026-10-06. `v3.0.0-pre.1` remains this development checkpoint's release target.
 
 ## Implemented In Development
+
+The maintainer-selected Modern Classic globe app icon (variant 1) is integrated
+as source assets for macOS ICNS, Windows ICO, desktop PNG resolutions and all
+five legacy Qt app-brand directories. Modern toolbar themes use the same brand
+resources. Original artwork attribution and generated-reference provenance are
+retained, with a checksum manifest and reproducible current-tool packaging
+recipe. This is not an installed-app or Windows/Linux runtime acceptance claim.
+The asset-update verification passes eight packaging checks, 617 Qt cases per
+architecture and all three GUI layouts (101/101/99 cases) on ARM and
+Intel/Rosetta. Six recovery repetitions per architecture also pass; the earlier
+natural intermittent recovery timeout remains unexplained and unwaived.
 
 The integrated Torrent UI and proxy routing, managed DC publication, native UI
 updates and selective upstream maintenance are present in the development tree.
