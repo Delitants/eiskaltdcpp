@@ -38,14 +38,34 @@
 #include <QStyle>
 #include <QBrush>
 #include <QUrl>
+#include <QThread>
+#include <future>
+#include <thread>
 
 #include <QtDebug>
 
 using namespace dcpp;
 
+namespace {
+QString settingsKey(const QString& key) {
+    auto normalized = key.split(QLatin1Char('/'), Qt::SkipEmptyParts).join(QLatin1Char('/'));
+#ifdef Q_OS_WIN
+    normalized = normalized.toLower();
+#endif
+    return normalized;
+}
+}
+
+struct WulforSettings::QuitWrite {
+    std::unique_ptr<QSettings> storage;
+    std::future<bool> receipt;
+    std::thread worker;
+    ~QuitWrite() { if(worker.joinable()) worker.join(); }
+};
+
 WulforSettings::WulforSettings(dcpp::DCContext& ctx)
     : QtContextAware(ctx)
-    , settings(_q(Util::getPath(Util::PATH_USER_CONFIG)) + "EiskaltDC++_Qt.conf", QSettings::IniFormat)
+    , settings(std::make_unique<QSettings>(_q(Util::getPath(Util::PATH_USER_CONFIG)) + "EiskaltDC++_Qt.conf", QSettings::IniFormat))
     , configFileOld(_q(Util::getPath(Util::PATH_USER_CONFIG)) + "EiskaltDC++.xml")
     , appTranslator(nullptr)
     , qtTranslator(nullptr)
@@ -69,18 +89,18 @@ bool WulforSettings::hasKey(const QString &key) const{
 void WulforSettings::load(){
     if (quitFrozen) return;
 #ifdef _DEBUG_QT_UI
-    qDebug() << settings.fileName();
+    qDebug() << settings->fileName();
 #endif
-    if (QFile::exists(configFileOld) && settings.value("app/firstrun", true).toBool()){
+    if (QFile::exists(configFileOld) && settings->value("app/firstrun", true).toBool()){
         loadOldConfig();
 
         //And load old config into QSettings
         for (auto it = strmap.begin(); it != strmap.end(); ++it) {
-            settings.setValue(it.key(), it.value());
+            settings->setValue(it.key(), it.value());
         }
 
         for (auto iit = intmap.begin(); iit != intmap.end(); ++iit) {
-            settings.setValue(iit.key(), iit.value());
+            settings->setValue(iit.key(), iit.value());
         }
 
         // QFile(configFileOld).remove();
@@ -88,151 +108,151 @@ void WulforSettings::load(){
         intmap.clear();
         strmap.clear();
 
-        settings.setValue("app/firstrun", false);
+        settings->setValue("app/firstrun", false);
     }
 
-    if (settings.value("app/firstrun", true).toBool()){
-        settings.setValue("app/firstrun", false);
+    if (settings->value("app/firstrun", true).toBool()){
+        settings->setValue("app/firstrun", false);
         //Load default values
         {
-            settings.setValue(WS_CHAT_LOCAL_COLOR,      "#078010");
-            settings.setValue(WS_CHAT_OP_COLOR,         "#000000");
-            settings.setValue(WS_CHAT_BOT_COLOR,        "#838383");
-            settings.setValue(WS_CHAT_FIND_COLOR,       "#FFFF00");
-            settings.setValue(WS_CHAT_PRIV_LOCAL_COLOR, "#078010");
-            settings.setValue(WS_CHAT_PRIV_USER_COLOR,  "#ac0000");
-            settings.setValue(WS_CHAT_SAY_NICK,         "#2344e7");
-            settings.setValue(WS_CHAT_CORE_COLOR,       "#ff0000");
-            settings.setValue(WS_CHAT_STAT_COLOR,       "#ac0000");
-            settings.setValue(WS_CHAT_USER_COLOR,       "#ac0000");
-            settings.setValue(WS_CHAT_FAVUSER_COLOR,    "#00ff7f");
-            settings.setValue(WS_CHAT_TIME_COLOR,       qApp->palette().text().color().name());
-            settings.setValue(WS_CHAT_MSG_COLOR,        qApp->palette().text().color().name());
-            settings.setValue(WS_CHAT_USERLIST_STATE,   "");
-            settings.setValue(WS_CHAT_CMD_ALIASES,      "");
-            settings.setValue(WS_CHAT_FONT,             "");
-            settings.setValue(WS_CHAT_ULIST_FONT,       "");
-            settings.setValue(WS_CHAT_PM_FONT,          "");
-            settings.setValue(WS_CHAT_SEPARATOR,        ":");
-            settings.setValue(WS_CHAT_TIMESTAMP,        "hh:mm:ss");
-            settings.setValue(WS_QCONNECT_HISTORY,      "");
-            settings.setValue(WS_DEFAULT_LOCALE,        "System default");
-            settings.setValue(WS_DOWNLOAD_DIR_HISTORY,  "");
-            settings.setValue(WS_DQUEUE_STATE,          "");
-            settings.setValue(WS_SEARCH_STATE,          "");
-            settings.setValue(WS_SEARCH_HISTORY,        "");
-            settings.setValue(WS_TRANSLATION_FILE,      "");
-            settings.setValue(WS_TRANSFERS_STATE,       "");
-            settings.setValue(WS_SHARE_LPANE_STATE,     "");
-            settings.setValue(WS_SHARE_RPANE_STATE,     "");
-            settings.setValue(WS_MAINWINDOW_STATE,      "");
-            settings.setValue(WS_MAINWINDOW_TOOLBAR_ACTS,"");
-            settings.setValue(WS_FTRANSFERS_FILES_STATE,"");
-            settings.setValue(WS_FTRANSFERS_USERS_STATE,"");
-            settings.setValue(WS_FAV_HUBS_STATE,        "");
-            settings.setValue(WS_ADLS_STATE,            "");
-            settings.setValue(WS_APP_THEME,             "");
-            settings.setValue(WS_APP_ICONTHEME,         "reborn");
-            settings.setValue(WS_APP_USERTHEME,         "apex");
-            settings.setValue(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
-            settings.setValue(WS_NOTIFY_SOUNDS,         "");
-            settings.setValue(WS_NOTIFY_SND_CMD,        "");
-            settings.setValue(WS_FAVUSERS_STATE,        "");
-            settings.setValue(WS_SHAREHEADER_STATE,     "");
-            settings.setValue(WS_DOWNLOADTO_ALIASES,    "");
-            settings.setValue(WS_DOWNLOADTO_PATHS,      "");
-            settings.setValue(WS_APP_EMOTICON_THEME,    "default");
-            settings.setValue(WS_APP_ASPELL_LANG,       "");
-            settings.setValue(WS_APP_ENABLED_SCRIPTS,   "");
-            settings.setValue(WS_CHAT_PICTURE_DIR,      "");
-            settings.setValue(WS_PUBLICHUBS_STATE,      "");
-            settings.setValue(WS_SETTINGS_GUI_FONTS_STATE, "");
+            settings->setValue(WS_CHAT_LOCAL_COLOR,      "#078010");
+            settings->setValue(WS_CHAT_OP_COLOR,         "#000000");
+            settings->setValue(WS_CHAT_BOT_COLOR,        "#838383");
+            settings->setValue(WS_CHAT_FIND_COLOR,       "#FFFF00");
+            settings->setValue(WS_CHAT_PRIV_LOCAL_COLOR, "#078010");
+            settings->setValue(WS_CHAT_PRIV_USER_COLOR,  "#ac0000");
+            settings->setValue(WS_CHAT_SAY_NICK,         "#2344e7");
+            settings->setValue(WS_CHAT_CORE_COLOR,       "#ff0000");
+            settings->setValue(WS_CHAT_STAT_COLOR,       "#ac0000");
+            settings->setValue(WS_CHAT_USER_COLOR,       "#ac0000");
+            settings->setValue(WS_CHAT_FAVUSER_COLOR,    "#00ff7f");
+            settings->setValue(WS_CHAT_TIME_COLOR,       qApp->palette().text().color().name());
+            settings->setValue(WS_CHAT_MSG_COLOR,        qApp->palette().text().color().name());
+            settings->setValue(WS_CHAT_USERLIST_STATE,   "");
+            settings->setValue(WS_CHAT_CMD_ALIASES,      "");
+            settings->setValue(WS_CHAT_FONT,             "");
+            settings->setValue(WS_CHAT_ULIST_FONT,       "");
+            settings->setValue(WS_CHAT_PM_FONT,          "");
+            settings->setValue(WS_CHAT_SEPARATOR,        ":");
+            settings->setValue(WS_CHAT_TIMESTAMP,        "hh:mm:ss");
+            settings->setValue(WS_QCONNECT_HISTORY,      "");
+            settings->setValue(WS_DEFAULT_LOCALE,        "System default");
+            settings->setValue(WS_DOWNLOAD_DIR_HISTORY,  "");
+            settings->setValue(WS_DQUEUE_STATE,          "");
+            settings->setValue(WS_SEARCH_STATE,          "");
+            settings->setValue(WS_SEARCH_HISTORY,        "");
+            settings->setValue(WS_TRANSLATION_FILE,      "");
+            settings->setValue(WS_TRANSFERS_STATE,       "");
+            settings->setValue(WS_SHARE_LPANE_STATE,     "");
+            settings->setValue(WS_SHARE_RPANE_STATE,     "");
+            settings->setValue(WS_MAINWINDOW_STATE,      "");
+            settings->setValue(WS_MAINWINDOW_TOOLBAR_ACTS,"");
+            settings->setValue(WS_FTRANSFERS_FILES_STATE,"");
+            settings->setValue(WS_FTRANSFERS_USERS_STATE,"");
+            settings->setValue(WS_FAV_HUBS_STATE,        "");
+            settings->setValue(WS_ADLS_STATE,            "");
+            settings->setValue(WS_APP_THEME,             "");
+            settings->setValue(WS_APP_ICONTHEME,         "reborn");
+            settings->setValue(WS_APP_USERTHEME,         "apex");
+            settings->setValue(WS_APP_SHARED_FILES_COLOR,"#1f8f1f");
+            settings->setValue(WS_NOTIFY_SOUNDS,         "");
+            settings->setValue(WS_NOTIFY_SND_CMD,        "");
+            settings->setValue(WS_FAVUSERS_STATE,        "");
+            settings->setValue(WS_SHAREHEADER_STATE,     "");
+            settings->setValue(WS_DOWNLOADTO_ALIASES,    "");
+            settings->setValue(WS_DOWNLOADTO_PATHS,      "");
+            settings->setValue(WS_APP_EMOTICON_THEME,    "default");
+            settings->setValue(WS_APP_ASPELL_LANG,       "");
+            settings->setValue(WS_APP_ENABLED_SCRIPTS,   "");
+            settings->setValue(WS_CHAT_PICTURE_DIR,      "");
+            settings->setValue(WS_PUBLICHUBS_STATE,      "");
+            settings->setValue(WS_SETTINGS_GUI_FONTS_STATE, "");
 
-            settings.setValue(WB_APP_AUTOAWAY_BY_TIMER, static_cast<int>(false));
-            settings.setValue(WB_CHAT_SHOW_TIMESTAMP,   static_cast<int>(true));
-            settings.setValue(WB_SHOW_FREE_SPACE,       static_cast<int>(true));
-            settings.setValue(WB_LAST_STATUS,           static_cast<int>(true));
-            settings.setValue(WB_USERS_STATISTICS,      static_cast<int>(true));
-            settings.setValue(WB_CHAT_SHOW_JOINS,       static_cast<int>(false));
-            settings.setValue(WB_CHAT_REDIRECT_BOT_PMS, static_cast<int>(true));
-            settings.setValue(WB_CHAT_KEEPFOCUS,        static_cast<int>(true));
-            settings.setValue(WB_CHAT_SHOW_JOINS_FAV,   static_cast<int>(true));
-            settings.setValue(WB_CHAT_HIGHLIGHT_FAVS,   static_cast<int>(true));
-            settings.setValue(WB_CHAT_ROTATING_MSGS,    static_cast<int>(true));
-            settings.setValue(WB_CHAT_USE_SMILE_PANEL,  static_cast<int>(false));
-            settings.setValue(WB_CHAT_HIDE_SMILE_PANEL, static_cast<bool>(true));
-            settings.setValue(WB_MAINWINDOW_MAXIMIZED,  static_cast<int>(true));
-            settings.setValue(WB_MAINWINDOW_HIDE,       static_cast<int>(false));
-            settings.setValue(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, static_cast<int>(false));
-            settings.setValue(WB_MAINWINDOW_REMEMBER,   static_cast<int>(false));
-            settings.setValue(WB_MAINWINDOW_USE_M_TABBAR, static_cast<int>(true));
-            settings.setValue(WB_MAINWINDOW_USE_SIDEBAR, static_cast<int>(false));
-            settings.setValue(WB_SEARCHFILTER_NOFREE,   static_cast<int>(false));
-            settings.setValue(WB_SEARCH_DONTHIDEPANEL,  static_cast<int>(false));
-            settings.setValue(WB_ANTISPAM_ENABLED,      static_cast<int>(false));
-            settings.setValue(WB_ANTISPAM_AS_FILTER,    static_cast<int>(false));
-            settings.setValue(WB_ANTISPAM_FILTER_OPS,   static_cast<int>(false));
-            settings.setValue(WB_TRAY_ENABLED,          static_cast<int>(true));
-            settings.setValue(WB_TRAY_ICON_MONOCHROME,  static_cast<int>(false));
-            settings.setValue(WB_EXIT_CONFIRM,          static_cast<int>(false));
-            settings.setValue(WB_SHOW_IP_IN_CHAT,       static_cast<int>(false));
-            settings.setValue(WB_SHOW_HIDDEN_USERS,     static_cast<int>(false));
-            settings.setValue(WB_SHOW_JOINS,            static_cast<int>(false));
-            settings.setValue(WB_NOTIFY_ENABLED,        static_cast<int>(true));
-            settings.setValue(WB_NOTIFY_SND_ENABLED,    static_cast<int>(false));
-            settings.setValue(WB_NOTIFY_SND_EXTERNAL,   static_cast<int>(false));
-            settings.setValue(WB_NOTIFY_CH_ICON_ALWAYS, static_cast<int>(false));
-            settings.setValue(WB_NOTIFY_SHOW_ON_ACTIVE, static_cast<int>(false));
-            settings.setValue(WB_NOTIFY_SHOW_ON_VISIBLE, static_cast<int>(false));
-            settings.setValue(WB_FAVUSERS_AUTOGRANT,    static_cast<int>(true));
-            settings.setValue(WB_APP_ENABLE_EMOTICON,   static_cast<int>(true));
-            settings.setValue(WB_APP_FORCE_EMOTICONS,   static_cast<int>(false));
-            settings.setValue(WB_APP_ENABLE_ASPELL,     static_cast<int>(true));
-            settings.setValue(WB_CHAT_PICTURE_AUTOCLEAN,static_cast<int>(true));
-            settings.setValue(WB_APP_REMOVE_NOT_EX_DIRS,static_cast<int>(false));
-            settings.setValue(WB_APP_AUTO_AWAY,         static_cast<int>(false));
-            settings.setValue(WB_APP_TBAR_SHOW_CL_BTNS, static_cast<int>(true));
-            settings.setValue(WB_WIDGETS_PANEL_VISIBLE, static_cast<int>(true));
-            settings.setValue(WB_TOOLS_PANEL_VISIBLE,   static_cast<int>(true));
-            settings.setValue(WB_SEARCH_PANEL_VISIBLE,  static_cast<int>(false));
-            settings.setValue(WB_MAIN_MENU_VISIBLE,     static_cast<int>(true));
-            settings.setValue(WB_USE_CTRL_ENTER,        static_cast<int>(false));
-            settings.setValue(WB_SIMPLE_SHARE_MODE,     static_cast<int>(true));
-            settings.setValue(WI_APP_UNIT_BASE,         1024);
-            settings.setValue(WI_APP_AUTOAWAY_INTERVAL, 60);
-            settings.setValue(WI_APP_SHARED_FILES_ALPHA, 127);
-            settings.setValue(WI_CHAT_PICTURE_CLEAN_DAYS, 7);
-            settings.setValue(WI_CHAT_MAXPARAGRAPHS,    1000);
-            settings.setValue(WI_DEF_MAGNET_ACTION,     0);
-            settings.setValue(WI_CHAT_WIDTH,            -1);
-            settings.setValue(WI_CHAT_USERLIST_WIDTH,   -1);
-            settings.setValue(WI_CHAT_SORT_COLUMN,      0);
-            settings.setValue(WI_CHAT_SORT_ORDER,       0);
-            settings.setValue(WI_CHAT_DBLCLICK_ACT,     0);//nick in chat
-            settings.setValue(WI_CHAT_MDLCLICK_ACT,     1);//browse files
-            settings.setValue(WI_CHAT_FIND_COLOR_ALPHA, 127);
-            settings.setValue(WI_CHAT_STATUS_HISTORY_SZ,5);
-            settings.setValue(WI_CHAT_STATUS_MSG_MAX_LEN, 128);
-            settings.setValue(WI_STATUSBAR_HISTORY_SZ,  5);
-            settings.setValue(WI_MAINWINDOW_HEIGHT,     -1);
-            settings.setValue(WI_MAINWINDOW_WIDTH,      -1);
-            settings.setValue(WI_MAINWINDOW_X,          -1);
-            settings.setValue(WI_MAINWINDOW_Y,          -1);
-            settings.setValue(WI_SEARCH_SORT_COLUMN,    1);
-            settings.setValue(WI_SEARCH_SORT_ORDER,     0);
-            settings.setValue(WI_SEARCH_SHARED_ACTION,  0);
-            settings.setValue(WI_SEARCH_LAST_TYPE,      0);
-            settings.setValue(WI_TRANSFER_HEIGHT,       -1);
-            settings.setValue(WI_SHARE_RPANE_WIDTH,     -1);
-            settings.setValue(WI_SHARE_WIDTH,           -1);
-            settings.setValue(WI_NOTIFY_EVENTMAP,       0x0B);// 0b00001011, (transfer done = off)
-            settings.setValue(WI_NOTIFY_MODULE,         1);//default
-            settings.setValue(WI_NOTIFY_SNDMAP,         0x0F);// 0b00001111, all events
-            settings.setValue(WI_OUT_IN_HIST,           50);//number of output messages in history
+            settings->setValue(WB_APP_AUTOAWAY_BY_TIMER, static_cast<int>(false));
+            settings->setValue(WB_CHAT_SHOW_TIMESTAMP,   static_cast<int>(true));
+            settings->setValue(WB_SHOW_FREE_SPACE,       static_cast<int>(true));
+            settings->setValue(WB_LAST_STATUS,           static_cast<int>(true));
+            settings->setValue(WB_USERS_STATISTICS,      static_cast<int>(true));
+            settings->setValue(WB_CHAT_SHOW_JOINS,       static_cast<int>(false));
+            settings->setValue(WB_CHAT_REDIRECT_BOT_PMS, static_cast<int>(true));
+            settings->setValue(WB_CHAT_KEEPFOCUS,        static_cast<int>(true));
+            settings->setValue(WB_CHAT_SHOW_JOINS_FAV,   static_cast<int>(true));
+            settings->setValue(WB_CHAT_HIGHLIGHT_FAVS,   static_cast<int>(true));
+            settings->setValue(WB_CHAT_ROTATING_MSGS,    static_cast<int>(true));
+            settings->setValue(WB_CHAT_USE_SMILE_PANEL,  static_cast<int>(false));
+            settings->setValue(WB_CHAT_HIDE_SMILE_PANEL, static_cast<bool>(true));
+            settings->setValue(WB_MAINWINDOW_MAXIMIZED,  static_cast<int>(true));
+            settings->setValue(WB_MAINWINDOW_HIDE,       static_cast<int>(false));
+            settings->setValue(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, static_cast<int>(false));
+            settings->setValue(WB_MAINWINDOW_REMEMBER,   static_cast<int>(false));
+            settings->setValue(WB_MAINWINDOW_USE_M_TABBAR, static_cast<int>(true));
+            settings->setValue(WB_MAINWINDOW_USE_SIDEBAR, static_cast<int>(false));
+            settings->setValue(WB_SEARCHFILTER_NOFREE,   static_cast<int>(false));
+            settings->setValue(WB_SEARCH_DONTHIDEPANEL,  static_cast<int>(false));
+            settings->setValue(WB_ANTISPAM_ENABLED,      static_cast<int>(false));
+            settings->setValue(WB_ANTISPAM_AS_FILTER,    static_cast<int>(false));
+            settings->setValue(WB_ANTISPAM_FILTER_OPS,   static_cast<int>(false));
+            settings->setValue(WB_TRAY_ENABLED,          static_cast<int>(true));
+            settings->setValue(WB_TRAY_ICON_MONOCHROME,  static_cast<int>(false));
+            settings->setValue(WB_EXIT_CONFIRM,          static_cast<int>(false));
+            settings->setValue(WB_SHOW_IP_IN_CHAT,       static_cast<int>(false));
+            settings->setValue(WB_SHOW_HIDDEN_USERS,     static_cast<int>(false));
+            settings->setValue(WB_SHOW_JOINS,            static_cast<int>(false));
+            settings->setValue(WB_NOTIFY_ENABLED,        static_cast<int>(true));
+            settings->setValue(WB_NOTIFY_SND_ENABLED,    static_cast<int>(false));
+            settings->setValue(WB_NOTIFY_SND_EXTERNAL,   static_cast<int>(false));
+            settings->setValue(WB_NOTIFY_CH_ICON_ALWAYS, static_cast<int>(false));
+            settings->setValue(WB_NOTIFY_SHOW_ON_ACTIVE, static_cast<int>(false));
+            settings->setValue(WB_NOTIFY_SHOW_ON_VISIBLE, static_cast<int>(false));
+            settings->setValue(WB_FAVUSERS_AUTOGRANT,    static_cast<int>(true));
+            settings->setValue(WB_APP_ENABLE_EMOTICON,   static_cast<int>(true));
+            settings->setValue(WB_APP_FORCE_EMOTICONS,   static_cast<int>(false));
+            settings->setValue(WB_APP_ENABLE_ASPELL,     static_cast<int>(true));
+            settings->setValue(WB_CHAT_PICTURE_AUTOCLEAN,static_cast<int>(true));
+            settings->setValue(WB_APP_REMOVE_NOT_EX_DIRS,static_cast<int>(false));
+            settings->setValue(WB_APP_AUTO_AWAY,         static_cast<int>(false));
+            settings->setValue(WB_APP_TBAR_SHOW_CL_BTNS, static_cast<int>(true));
+            settings->setValue(WB_WIDGETS_PANEL_VISIBLE, static_cast<int>(true));
+            settings->setValue(WB_TOOLS_PANEL_VISIBLE,   static_cast<int>(true));
+            settings->setValue(WB_SEARCH_PANEL_VISIBLE,  static_cast<int>(false));
+            settings->setValue(WB_MAIN_MENU_VISIBLE,     static_cast<int>(true));
+            settings->setValue(WB_USE_CTRL_ENTER,        static_cast<int>(false));
+            settings->setValue(WB_SIMPLE_SHARE_MODE,     static_cast<int>(true));
+            settings->setValue(WI_APP_UNIT_BASE,         1024);
+            settings->setValue(WI_APP_AUTOAWAY_INTERVAL, 60);
+            settings->setValue(WI_APP_SHARED_FILES_ALPHA, 127);
+            settings->setValue(WI_CHAT_PICTURE_CLEAN_DAYS, 7);
+            settings->setValue(WI_CHAT_MAXPARAGRAPHS,    1000);
+            settings->setValue(WI_DEF_MAGNET_ACTION,     0);
+            settings->setValue(WI_CHAT_WIDTH,            -1);
+            settings->setValue(WI_CHAT_USERLIST_WIDTH,   -1);
+            settings->setValue(WI_CHAT_SORT_COLUMN,      0);
+            settings->setValue(WI_CHAT_SORT_ORDER,       0);
+            settings->setValue(WI_CHAT_DBLCLICK_ACT,     0);//nick in chat
+            settings->setValue(WI_CHAT_MDLCLICK_ACT,     1);//browse files
+            settings->setValue(WI_CHAT_FIND_COLOR_ALPHA, 127);
+            settings->setValue(WI_CHAT_STATUS_HISTORY_SZ,5);
+            settings->setValue(WI_CHAT_STATUS_MSG_MAX_LEN, 128);
+            settings->setValue(WI_STATUSBAR_HISTORY_SZ,  5);
+            settings->setValue(WI_MAINWINDOW_HEIGHT,     -1);
+            settings->setValue(WI_MAINWINDOW_WIDTH,      -1);
+            settings->setValue(WI_MAINWINDOW_X,          -1);
+            settings->setValue(WI_MAINWINDOW_Y,          -1);
+            settings->setValue(WI_SEARCH_SORT_COLUMN,    1);
+            settings->setValue(WI_SEARCH_SORT_ORDER,     0);
+            settings->setValue(WI_SEARCH_SHARED_ACTION,  0);
+            settings->setValue(WI_SEARCH_LAST_TYPE,      0);
+            settings->setValue(WI_TRANSFER_HEIGHT,       -1);
+            settings->setValue(WI_SHARE_RPANE_WIDTH,     -1);
+            settings->setValue(WI_SHARE_WIDTH,           -1);
+            settings->setValue(WI_NOTIFY_EVENTMAP,       0x0B);// 0b00001011, (transfer done = off)
+            settings->setValue(WI_NOTIFY_MODULE,         1);//default
+            settings->setValue(WI_NOTIFY_SNDMAP,         0x0F);// 0b00001111, all events
+            settings->setValue(WI_OUT_IN_HIST,           50);//number of output messages in history
         }
     }
-    settings.setValue(WS_APP_ICONTHEME,
-                      app_icon_theme::canonicalId(settings.value(WS_APP_ICONTHEME).toString()));
+    settings->setValue(WS_APP_ICONTHEME,
+                      app_icon_theme::canonicalId(settings->value(WS_APP_ICONTHEME).toString()));
 }
 
 void WulforSettings::loadOldConfig(){
@@ -409,12 +429,79 @@ void WulforSettings::save(){
 }
 
 bool WulforSettings::saveChecked(){
-    settings.sync();
-    return settings.status() == QSettings::NoError;
+    if(quitFrozen) return saveForQuitChecked() == QuitSaveStatus::Ready;
+    settings->sync();
+    return settings->status() == QSettings::NoError;
 }
 
 void WulforSettings::freezeForQuit(){
+    if(quitFrozen || QThread::currentThread() != thread()) return;
+    QMap<QString, QVariant> snapshot;
+    for(const auto& key : settings->allKeys())
+        snapshot.insert(settingsKey(key), settings->value(key));
+    quitValues = std::move(snapshot);
     quitFrozen = true;
+}
+
+WulforSettings::QuitSaveStatus WulforSettings::saveForQuitChecked(bool asynchronous) noexcept {
+    if(QThread::currentThread() != thread()) return QuitSaveStatus::Refused;
+    if(quitSaveStatus == QuitSaveStatus::Ready || quitSaveStatus == QuitSaveStatus::Refused)
+        return quitSaveStatus;
+    try {
+        if(quitWrite) {
+            if(quitWrite->receipt.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+                return QuitSaveStatus::Pending;
+            // Only a successfully delivered at-thread-exit value permits a join.
+            // A broken/failed receipt refuses while retaining the owned worker.
+            const bool saved = quitWrite->receipt.get();
+            quitWrite->worker.join();
+            quitSaveStatus = saved ? QuitSaveStatus::Ready : QuitSaveStatus::Refused;
+            if(!quitWrite->storage) quitWrite.reset();
+            return quitSaveStatus;
+        }
+        freezeForQuit();
+        if(!settings || settings->parent() || settings->thread() != thread())
+            return quitSaveStatus = QuitSaveStatus::Refused;
+        if(!asynchronous) {
+            settings->sync();
+            const bool saved = settings->status() == QSettings::NoError;
+            settings.reset();
+            return quitSaveStatus = saved ? QuitSaveStatus::Ready : QuitSaveStatus::Refused;
+        }
+        auto write = std::make_unique<QuitWrite>();
+        std::promise<bool> receipt;
+        write->receipt = receipt.get_future();
+        (void)settings->moveToThread(nullptr);
+        if(settings->thread()) return quitSaveStatus = QuitSaveStatus::Refused;
+        write->storage = std::move(settings);
+        quitWrite = std::move(write);
+        // The lambda owns no storage temporary: a failed launch cannot flush it
+        // by destroying dirty QSettings on the GUI. The job retains it instead.
+        auto* job = quitWrite.get();
+        job->worker = std::thread([job, receipt = std::move(receipt)]() mutable {
+            bool saved = false, acquired = false;
+            try {
+                (void)job->storage->moveToThread(QThread::currentThread());
+                acquired = job->storage->thread() == QThread::currentThread();
+                if(acquired) {
+                    job->storage->sync();
+                    saved = job->storage->status() == QSettings::NoError;
+                }
+            } catch(...) {}
+            if(acquired) job->storage.reset();
+            // Readiness follows storage destruction and physical TLS teardown.
+            try { receipt.set_value_at_thread_exit(saved); } catch(...) {}
+        });
+        return quitSaveStatus = QuitSaveStatus::Pending;
+    } catch(...) {
+        return quitSaveStatus = QuitSaveStatus::Refused;
+    }
+}
+
+QVariant WulforSettings::value(const QString& key, const QVariant& fallback) const {
+    if(!quitFrozen) return settings->value(key, fallback);
+    if(key.isEmpty()) return {};
+    return quitValues.value(settingsKey(key), fallback);
 }
 
 void WulforSettings::parseCmd(const QString &cmd, QString& res) {
@@ -519,8 +606,9 @@ void WulforSettings::installTranslator(QTranslator &translator,
 }
 
 void WulforSettings::loadTheme(){
+    if(quitFrozen) return;
 #if defined(Q_OS_MAC)
-    settings.setValue(WS_APP_THEME, "");
+    settings->setValue(WS_APP_THEME, "");
     return;
 #endif
     if (!getStr(WS_APP_THEME).isEmpty())
@@ -528,11 +616,11 @@ void WulforSettings::loadTheme(){
 }
 
 QString WulforSettings::getStr(const QString & key, const QString &default_value) {
-    return settings.value(key, default_value).toString();
+    return value(key, default_value).toString();
 }
 
 int WulforSettings::getInt(const QString & key, const int &default_value) {
-    return settings.value(key, default_value).toInt();
+    return value(key, default_value).toInt();
 }
 
 bool WulforSettings::getBool(const QString & key, const bool &default_value) {
@@ -540,19 +628,19 @@ bool WulforSettings::getBool(const QString & key, const bool &default_value) {
 }
 
 QVariant WulforSettings::getVar(const QString &key, const QVariant &default_value){
-    return settings.value(key, default_value);
+    return value(key, default_value);
 }
 
 void WulforSettings::setStr(const QString & key, const QString &value) {
     if (quitFrozen) return;
-    settings.setValue(key, value);
+    settings->setValue(key, value);
 
     emit strValueChanged(key, value);
 }
 
 void WulforSettings::setInt(const QString & key, int value) {
     if (quitFrozen) return;
-    settings.setValue(key, value);
+    settings->setValue(key, value);
 
     emit intValueChanged(key, value);
 }
@@ -563,7 +651,7 @@ void WulforSettings::setBool(const QString & key, bool value) {
 
 void WulforSettings::setVar(const QString &key, const QVariant &value){
     if (quitFrozen) return;
-    settings.setValue(key, value);
+    settings->setValue(key, value);
 
     emit varValueChanged(key, value);
 }

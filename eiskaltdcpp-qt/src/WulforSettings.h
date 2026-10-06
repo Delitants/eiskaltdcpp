@@ -14,6 +14,7 @@
 #include <QTranslator>
 #include <QFont>
 #include <QSettings>
+#include <memory>
 
 #include "dcpp/stdinc.h"
 
@@ -181,6 +182,8 @@ public:
     // QSettings retains errors for this store's lifetime; fail closed on any.
     bool saveChecked();
     void freezeForQuit();
+    enum class QuitSaveStatus { NotStarted, Pending, Ready, Refused };
+    QuitSaveStatus saveForQuitChecked(bool asynchronous = false) noexcept;
 
     void loadTranslation();
     void loadTheme();
@@ -208,6 +211,7 @@ Q_SIGNALS:
 
 private:
     friend class QtContext;  // QtContext owns and constructs us
+    friend struct WulforSettingsTestAccess;
 
     void loadOldConfig(); //load old version of config
     void loadQtTranslation(const QString &lcName);
@@ -216,7 +220,12 @@ private:
                            const QString &fallbackName,
                            const QString &path);
 
-    QSettings settings;
+    QVariant value(const QString& key, const QVariant& fallback) const;
+    struct QuitWrite;
+    std::unique_ptr<QSettings> settings;
+    QMap<QString, QVariant> quitValues;
+    std::unique_ptr<QuitWrite> quitWrite;
+    QuitSaveStatus quitSaveStatus = QuitSaveStatus::NotStarted;
     bool quitFrozen = false;
 
     QString configFileOld;

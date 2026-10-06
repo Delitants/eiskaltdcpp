@@ -422,6 +422,34 @@ else (APPLE)
     target_link_libraries (${PROJECT_NAME} PRIVATE ${LIBS} extra dcpp)
 endif (APPLE)
 
+if (BUILD_TESTS)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    set(_settings_quit_sources ${SRCS})
+    list(FILTER _settings_quit_sources EXCLUDE REGEX "(^|/)main\\.cpp$")
+    add_executable(eiskalt-settings-quit-tests
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsquit.cpp
+        ${M_SRCS} ${U_SRCS} ${_settings_quit_sources} ${HDRS} ${MOC_HDRS})
+    target_link_libraries(eiskalt-settings-quit-tests PRIVATE
+        ${LIBS} extra dcpp Catch2::Catch2 Qt6::Test)
+    if (USE_TORRENT)
+        target_link_libraries(eiskalt-settings-quit-tests PRIVATE eiskalt-torrent)
+        qt6_add_resources(eiskalt-settings-quit-tests torrent_settings_quit_icons
+            PREFIX "/torrent" BASE "${PROJECT_SOURCE_DIR}/icons/torrent"
+            FILES "${PROJECT_SOURCE_DIR}/icons/torrent/torrent.png")
+    endif ()
+    if (APPLE)
+        target_link_libraries(eiskalt-settings-quit-tests PRIVATE iconv)
+    elseif (HAIKU)
+        target_link_libraries(eiskalt-settings-quit-tests PRIVATE be)
+    endif ()
+    eiskalt_add_icon_themes(eiskalt-settings-quit-tests)
+    add_test(NAME eiskalt-settings-quit
+        COMMAND $<TARGET_FILE:eiskalt-settings-quit-tests> "[settings-quit]")
+    set_tests_properties(eiskalt-settings-quit PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_ACCESSIBILITY=0" TIMEOUT 90)
+endif ()
+
 if (BUILD_TESTS AND USE_TORRENT)
     # Exercise actual QAction/arena wiring without linking the minimal Qt stubs.
     find_package(Qt6 REQUIRED COMPONENTS Test)
@@ -430,6 +458,7 @@ if (BUILD_TESTS AND USE_TORRENT)
     add_executable(eiskalt-mainwindow-toggle-tests
         ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_mainwindowtoggle.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsquit.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/applicationquit_fixture_access.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_chatformatbar.cpp
         ${M_SRCS} ${U_SRCS} ${_toggle_gui_sources} ${HDRS} ${MOC_HDRS})

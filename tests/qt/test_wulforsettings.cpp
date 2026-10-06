@@ -279,3 +279,38 @@ TEST_CASE("WulforSettings: parseCmd with one arg returns current value", "[qt][w
     REQUIRE(!result.isEmpty());
     REQUIRE(result.contains("my-value"));
 }
+
+TEST_CASE("Frozen GUI settings keep defaults and late theme changes out of the checkpoint", "[qt][wulforsettings][gui-settings-freeze]") {
+    ensureSettings();
+    QTemporaryDir directory;
+    REQUIRE(directory.isValid());
+    dcpp::Util::PathsMap previous;
+    for(int i = 0; i < dcpp::Util::PATH_LAST; ++i) {
+        const auto key = static_cast<dcpp::Util::Paths>(i);
+        previous[key] = dcpp::Util::getPath(key);
+    }
+    struct RestorePaths {
+        dcpp::Util::PathsMap paths;
+        ~RestorePaths() { dcpp::Util::uninitialize(); dcpp::Util::initialize(paths); }
+    } restore{previous};
+    auto isolated = previous;
+    isolated[dcpp::Util::PATH_USER_CONFIG] = directory.path().toStdString() + PATH_SEPARATOR;
+    dcpp::Util::uninitialize(); dcpp::Util::initialize(isolated);
+    WulforSettings settings(*g_tc->ownedCtx);
+    settings.setStr("/qa//name/", "frozen");
+    settings.setVar("qa/list", QStringList{"one", "two"});
+    settings.setVar("qa/invalid", QVariant());
+    settings.setStr("qa/empty", "");
+    settings.setStr(WS_APP_THEME, "untouched");
+    settings.freezeForQuit();
+    settings.setStr("qa/name", "late");
+    settings.setVar("qa/list", QStringList{"late"});
+    settings.loadTheme();
+    CHECK(settings.getStr("qa/name") == "frozen");
+    CHECK(settings.getVar("qa/list").toStringList() == QStringList{"one", "two"});
+    CHECK_FALSE(settings.getVar("qa/invalid", "missing").isValid());
+    CHECK(settings.getStr("qa/empty", "missing").isEmpty());
+    CHECK(settings.getStr("qa/missing", "fallback") == "fallback");
+    CHECK(settings.getStr(WS_APP_THEME) == "untouched");
+    CHECK_FALSE(settings.hasKey("qa/name"));
+}
