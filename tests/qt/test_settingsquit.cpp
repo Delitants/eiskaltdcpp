@@ -163,6 +163,9 @@ TEST_CASE("Held GUI settings quit writes preserve event-loop progress and refuse
     fixture.gui->settings()->setStr("qa/gui-settings-probe", "late-value");
     QTest::qWait(30); CHECK(ready.isEmpty());
     CHECK(fixture.gui->settings()->getStr("qa/gui-settings-probe") == "frozen-value");
+    // Releasing a held syscall does not complete the physical save receipt.
+    REQUIRE(waitFor([&] { return quitSave(*fixture.gui->settings()) != SaveResult::Pending; }));
+    REQUIRE(quitSave(*fixture.gui->settings()) == SaveResult::Ready);
     QFile physical(config); REQUIRE(physical.open(QIODevice::ReadOnly));
     const auto bytes = physical.readAll();
     CHECK(bytes.contains("gui-settings-probe=frozen-value")); CHECK_FALSE(bytes.contains("late-value"));
@@ -219,6 +222,8 @@ TEST_CASE("Held GUI settings cannot commit a ready update after the quit deadlin
     // matching completion checks whether this expired request can exit later.
     if(backend.installs) emit backend.installHandoffFinished(backend.handoffOperation, true);
     QTest::qWait(30); CHECK(ready.isEmpty());
+    REQUIRE(waitFor([&] { return quitSave(*fixture.gui->settings()) != SaveResult::Pending; }));
+    REQUIRE(quitSave(*fixture.gui->settings()) == SaveResult::Ready);
     QFile physical(config); REQUIRE(physical.open(QIODevice::ReadOnly));
     CHECK(physical.readAll().contains("gui-settings-probe=ready-frozen-value"));
     CHECK(backend.fences == 1);
