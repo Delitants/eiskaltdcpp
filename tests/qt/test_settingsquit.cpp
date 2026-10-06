@@ -3,6 +3,10 @@
 #include "updates/ApplicationQuitCoordinator.h"
 #include "updates/ApplicationQuitSession.h"
 #include "updates/UpdateController.h"
+#include "SearchBlacklist.h"
+#include "Antispam.h"
+#include <QDir>
+#include <QFileInfo>
 #include <QFile>
 #include <QSettings>
 #include <QSignalSpy>
@@ -126,6 +130,7 @@ TEST_CASE("Held GUI settings quit writes preserve event-loop progress and refuse
     int mode = 1;
     SECTION("settings write") {}
     SECTION("settings flush") { mode = 3; }
+    SECTION("settings thread exit") { mode = 6; }
     REQUIRE(waitFor([&] {
         return fixture.core->prepareShutdownAsyncChecked(3000).status != dcpp::DCContext::ShutdownStatus::Pending;
     }));
@@ -173,6 +178,7 @@ TEST_CASE("Held GUI settings cannot commit a ready update after the quit deadlin
     int mode = 1;
     SECTION("ready update settings write") {}
     SECTION("ready update settings flush") { mode = 3; }
+    SECTION("ready update settings thread exit") { mode = 6; }
     QuitBackend backend(*fixture.core);
     updates::UpdateController updater(*fixture.gui->settings(), backend,
         {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
@@ -359,5 +365,119 @@ TEST_CASE("Failed settings worker launch retains dirty storage without a GUI flu
     CHECK(quitSave(store) == SaveResult::Refused);
     CHECK_FALSE(store.saveChecked());
     REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == original);
+}
+#endif
+TEST_CASE("A first Ready preparation cannot commit an expired zero-budget quit", "[qt][settings-quit][settings-first-ready]") {
+    IsolatedMainWindow fixture;
+    bool withUpdate = false;
+    SECTION("ordinary exit") {}
+    SECTION("consented update") { withUpdate = true; }
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(*fixture.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    if(withUpdate) {
+        updater.checkNow(); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+        updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+        updater.installOnNextQuit();
+    }
+    updates::ApplicationQuitCoordinator prior(*fixture.gui);
+    REQUIRE(waitFor([&] { return prior.prepare(3000).status != updates::ApplicationQuitCoordinator::Status::Pending; }));
+    REQUIRE(prior.prepare(3000).status == updates::ApplicationQuitCoordinator::Status::Ready);
+    updates::ApplicationQuitSession session(*fixture.gui, withUpdate ? &updater : nullptr);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    session.request(0);
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(backend.installs == 0);
+    QCoreApplication::processEvents();
+    CHECK(ready.isEmpty());
+    if(session.state() == updates::ApplicationQuitSession::State::Refused) {
+        session.request(3000);
+        if(withUpdate) {
+            REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff; }));
+            CHECK(backend.installs == 1);
+            REQUIRE(backend.handoffConsent);
+            CHECK(backend.handoffConsent());
+            CHECK(ready.isEmpty());
+            emit backend.installHandoffFinished(backend.handoffOperation, true);
+        }
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        CHECK(session.state() == updates::ApplicationQuitSession::State::ExitReady);
+    }
+}
+#ifdef __APPLE__
+TEST_CASE("Explicit retry after settings timeout consumes successful receipts without replay", "[.gui-settings-ready-retirement][settings-timeout-retry]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->createSearchBlacklist(); fixture.gui->createAntiSpam();
+    fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"original-rule"});
+    fixture.gui->antiSpam()->setPhrase("initialize");
+    fixture.gui->antiSpam()->setPhrase("original-question");
+    REQUIRE(fixture.gui->searchBlacklist()->saveForQuitChecked());
+    REQUIRE(fixture.gui->antiSpam()->saveForQuitChecked());
+#ifdef USE_TORRENT
+    fixture.gui->mainWindow()->showTorrents();
+#endif
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(*fixture.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    REQUIRE(fixture.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
+    REQUIRE(fixture.gui->settings()->saveChecked());
+    fixture.gui->settings()->setStr("qa/retry", "frozen");
+    const auto config = fixture.home.filePath("EiskaltDC++_Qt.conf");
+    updates::ApplicationQuitSession session(*fixture.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; }); heartbeat.start(1);
+    probe.arm(QFile::encodeName(config).constData(), 1);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    QElapsedTimer elapsed; elapsed.start(); session.request(100);
+    CHECK(elapsed.elapsed() < 100);
+    REQUIRE(waitFor([&] { return probe.entered(); }));
+    REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+    REQUIRE(watchdog.get()); CHECK(advanced.load());
+    REQUIRE(waitFor([&] { return quitSave(*fixture.gui->settings()) == SaveResult::Ready; }));
+    const QByteArray marker("already-saved-retry-marker\n");
+    const auto mark = [&](const QString& filename) {
+        QFile file(filename); REQUIRE(file.exists());
+        REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+        REQUIRE(file.write(marker) == marker.size());
+    };
+    QStringList cached{config, fixture.home.filePath("DCPlusPlus.xml")};
+#ifdef USE_TORRENT
+    const auto torrentRoot = QFileInfo(TorrentRuntime::settingsPath()).absolutePath();
+    cached.append(QDir(torrentRoot).filePath("window.ini"));
+    cached.append(TorrentRuntime::settingsPath());
+#endif
+    for(const auto& filename : cached) mark(filename);
+    // These auxiliary owners were fully saved before arming the settings hold.
+    // Mark completed bytes only; no competing writer is introduced by the test.
+    for(const auto& filename : QStringList{"searchblacklist", "antispam", "blacklist", "graylist", "whitelist"}) {
+        cached.append(fixture.home.filePath(filename)); mark(cached.last());
+    }
+    if(session.state() == updates::ApplicationQuitSession::State::Refused) {
+        session.request(3000);
+        REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff; }));
+        CHECK(backend.installs == 1); CHECK(backend.fences == 1);
+        REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent()); CHECK(ready.isEmpty());
+        for(const auto& filename : cached) {
+            QFile file(filename); REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == marker);
+        }
+        emit backend.installHandoffFinished(backend.handoffOperation, true);
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    }
 }
 #endif

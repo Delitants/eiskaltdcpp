@@ -106,6 +106,13 @@ void ApplicationQuitSession::advance() {
         checkpointRetryAllowed = coordinator.canRetryCheckpoint();
         refuse(QString::fromLatin1(result.component)); return;
     }
+    // Ready can be the first result, or synchronous preparation can outlast
+    // the budget. Neither path authorizes commitment after the deadline.
+    if(workerDeadline.elapsed() >= drainTimeout) {
+        workerRetryAllowed = true;
+        refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
+        return;
+    }
     if(!hadUpdater) { queueExit(); return; }
     if(!updater) { refuse(QStringLiteral("Updater owner")); return; }
     try { updater->normalQuitCommitted(); }

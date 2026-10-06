@@ -168,6 +168,8 @@ public:
         bool quitFenced = false;
         bool quitFenceSaved = false;
         bool quitDrainComplete = false;
+        bool quitSnapshotsComplete = false;
+        bool quitSnapshotsSaved = false;
         bool quitWorkersWaiting = false;
         bool quitIntentSaved = true;
         QList<QPointer<QThread>> quitThreads;
@@ -1032,119 +1034,125 @@ bool MainWindow::quitWorkersPending() const {
     return d->quitWorkersWaiting;
 }
 
-bool MainWindow::stopWorkersForQuit() {
+bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
     if (QThread::currentThread() != thread()) return false;
     Q_D(MainWindow);
     if (d->quitDrainComplete) return d->quitFenceSaved;
     auto* ctx = qtCtx();
     if (!ctx || !ctx->settings()) return false;
-    QList<ArenaWidget*> layouts;
-    const auto retain = [&](ArenaWidget* arena) {
-        if (arena && !layouts.contains(arena)) layouts.append(arena);
-    };
-    for (auto* arena : QList<ArenaWidget*>{
-        ctx->favoriteHubs(), ctx->favoriteUsers(), ctx->publicHubs(), ctx->downloadQueue(),
-        ctx->spyFrame(), ctx->adls(), ctx->queuedUsers(), ctx->finishedUploads(), ctx->finishedDownloads(),
-        ctx->cmdDebug(), ctx->secretary(), ctx->liveLog()}) retain(arena);
-    for (auto* action : d->menuWidgets->actions()) retain(d->menuWidgetsHash.value(action));
-    for (auto* child : findChildren<QWidget*>()) retain(qobject_cast<ArenaWidget*>(child));
-    if (!d->quitFenced) {
-        // Do not fence a suspended modal handler that can resume and start new work.
-        if (!ctx || !ctx->settings() || QApplication::activeModalWidget() ||
-            QApplication::activePopupWidget()) return false;
-#ifdef USE_JS
-        if (ctx->scriptEngine()) return false;
-#endif
-        d->quitFenced = true;
-        bool saved = true;
-        try {
-            saveSettings();
-            if (ctx->settings()->getBool("app/clear-search-history-on-exit", false))
-                ctx->settings()->setStr(WS_SEARCH_HISTORY, "");
-            if (ctx->settings()->getBool("app/clear-download-directories-history-on-exit", false))
-                ctx->settings()->setStr(WS_DOWNLOAD_DIR_HISTORY, "");
-        } catch (...) { saved = false; }
+    if (!d->quitSnapshotsComplete) {
+        QList<ArenaWidget*> layouts;
+        const auto retain = [&](ArenaWidget* arena) {
+            if (arena && !layouts.contains(arena)) layouts.append(arena);
+        };
+        for (auto* arena : QList<ArenaWidget*>{
+            ctx->favoriteHubs(), ctx->favoriteUsers(), ctx->publicHubs(), ctx->downloadQueue(),
+            ctx->spyFrame(), ctx->adls(), ctx->queuedUsers(), ctx->finishedUploads(), ctx->finishedDownloads(),
+            ctx->cmdDebug(), ctx->secretary(), ctx->liveLog()}) retain(arena);
+        for (auto* action : d->menuWidgets->actions()) retain(d->menuWidgetsHash.value(action));
+        for (auto* child : findChildren<QWidget*>()) retain(qobject_cast<ArenaWidget*>(child));
+        if (!d->quitFenced) {
+            // Do not fence a suspended modal handler that can resume and start new work.
+            if (!ctx || !ctx->settings() || QApplication::activeModalWidget() ||
+                QApplication::activePopupWidget()) return false;
+    #ifdef USE_JS
+            if (ctx->scriptEngine()) return false;
+    #endif
+            d->quitFenced = true;
+            bool saved = true;
+            try {
+                saveSettings();
+                if (ctx->settings()->getBool("app/clear-search-history-on-exit", false))
+                    ctx->settings()->setStr(WS_SEARCH_HISTORY, "");
+                if (ctx->settings()->getBool("app/clear-download-directories-history-on-exit", false))
+                    ctx->settings()->setStr(WS_DOWNLOAD_DIR_HISTORY, "");
+            } catch (...) { saved = false; }
 
-        QList<QObject*> roots{this};
-        if (ctx->notification()) roots.append(ctx->notification());
-        if (ctx->searchBlacklist()) roots.append(ctx->searchBlacklist());
-        if (ctx->antiSpam()) roots.append(ctx->antiSpam());
-        // Initially hidden singleton views can be parentless and have loaders.
-        // Use the same inventory for input fencing, physical joins and snapshots.
-        for (auto* arena : layouts)
-            if (auto* widget = arena->getWidget(); widget && !roots.contains(widget)) roots.append(widget);
-        if (ctx->transferView() && !roots.contains(ctx->transferView())) roots.append(ctx->transferView());
-        qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
-        if (ctx->globalTimer()) ctx->globalTimer()->stop();
+            QList<QObject*> roots{this};
+            if (ctx->notification()) roots.append(ctx->notification());
+            if (ctx->searchBlacklist()) roots.append(ctx->searchBlacklist());
+            if (ctx->antiSpam()) roots.append(ctx->antiSpam());
+            // Initially hidden singleton views can be parentless and have loaders.
+            // Use the same inventory for input fencing, physical joins and snapshots.
+            for (auto* arena : layouts)
+                if (auto* widget = arena->getWidget(); widget && !roots.contains(widget)) roots.append(widget);
+            if (ctx->transferView() && !roots.contains(ctx->transferView())) roots.append(ctx->transferView());
+            qApp->installEventFilter(new RetainedGuiInputFence(roots, this));
+            if (ctx->globalTimer()) ctx->globalTimer()->stop();
 
-        QSet<QThread*> threads;
-        QSet<QFutureWatcherBase*> futures;
-        QSet<ProxyTestRunner*> probes;
-        QSet<FileHasher*> hashers;
-        QSet<HubFrame*> hubs;
-        for (auto* root : roots) {
-            if (auto* hub = qobject_cast<HubFrame*>(root)) hubs.insert(hub);
-            for (auto* hub : root->findChildren<HubFrame*>()) hubs.insert(hub);
-            if (auto* widget = qobject_cast<QWidget*>(root)) widget->setEnabled(false);
-            for (auto* action : root->findChildren<QAction*>()) {
-                action->setEnabled(false);
-                action->blockSignals(true);
+            QSet<QThread*> threads;
+            QSet<QFutureWatcherBase*> futures;
+            QSet<ProxyTestRunner*> probes;
+            QSet<FileHasher*> hashers;
+            QSet<HubFrame*> hubs;
+            for (auto* root : roots) {
+                if (auto* hub = qobject_cast<HubFrame*>(root)) hubs.insert(hub);
+                for (auto* hub : root->findChildren<HubFrame*>()) hubs.insert(hub);
+                if (auto* widget = qobject_cast<QWidget*>(root)) widget->setEnabled(false);
+                for (auto* action : root->findChildren<QAction*>()) {
+                    action->setEnabled(false);
+                    action->blockSignals(true);
+                }
+                for (auto* worker : root->findChildren<QThread*>()) threads.insert(worker);
+                for (auto* future : root->findChildren<QFutureWatcherBase*>()) futures.insert(future);
+                for (auto* probe : root->findChildren<ProxyTestRunner*>()) probes.insert(probe);
+                for (auto* hasher : root->findChildren<FileHasher*>()) hashers.insert(hasher);
             }
-            for (auto* worker : root->findChildren<QThread*>()) threads.insert(worker);
-            for (auto* future : root->findChildren<QFutureWatcherBase*>()) futures.insert(future);
-            for (auto* probe : root->findChildren<ProxyTestRunner*>()) probes.insert(probe);
-            for (auto* hasher : root->findChildren<FileHasher*>()) hashers.insert(hasher);
+            d->quitIntentSaved = saved;
+            for (auto* probe : probes) d->quitProbes.append(probe);
+            for (auto* hasher : hashers) d->quitHashers.append(hasher);
+            for (auto* hub : hubs) d->quitHubs.append(hub);
+            for (auto* future : futures) d->quitFutures.append(future);
+            for (auto* worker : threads) {
+                d->quitThreads.append(worker);
+                if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
+                worker->requestInterruption();
+                worker->quit();
+            }
         }
-        d->quitIntentSaved = saved;
-        for (auto* probe : probes) d->quitProbes.append(probe);
-        for (auto* hasher : hashers) d->quitHashers.append(hasher);
-        for (auto* hub : hubs) d->quitHubs.append(hub);
-        for (auto* future : futures) d->quitFutures.append(future);
-        for (auto* worker : threads) {
-            d->quitThreads.append(worker);
-            if (auto* command = qobject_cast<ShellCommandRunner*>(worker)) command->cancel();
-            worker->requestInterruption();
-            worker->quit();
+        bool saved = d->quitIntentSaved;
+        bool pending = false;
+        for (const auto& probe : d->quitProbes)
+            if (probe) pending |= !probe->stopWorkersForQuit(); else saved = false;
+        for (const auto& hasher : d->quitHashers)
+            if (hasher) pending |= !hasher->stopWorkersForQuit(); else saved = false;
+        for (const auto& hub : d->quitHubs) {
+            if (!hub) { saved = false; continue; }
+            if (!hub->prepareForQuit()) {
+                if (hub->quitWorkersPending()) pending = true;
+                else saved = false;
+            }
         }
-    }
-    bool saved = d->quitIntentSaved;
-    bool pending = false;
-    for (const auto& probe : d->quitProbes)
-        if (probe) pending |= !probe->stopWorkersForQuit(); else saved = false;
-    for (const auto& hasher : d->quitHashers)
-        if (hasher) pending |= !hasher->stopWorkersForQuit(); else saved = false;
-    for (const auto& hub : d->quitHubs) {
-        if (!hub) { saved = false; continue; }
-        if (!hub->prepareForQuit()) {
-            if (hub->quitWorkersPending()) pending = true;
-            else saved = false;
+        // wait(0) is a physical thread receipt, including thread-local teardown.
+        // Finished signals alone do not authorize owner destruction.
+        for (const auto& worker : d->quitThreads)
+            if (worker) pending |= !worker->wait(0); else saved = false;
+        for (const auto& future : d->quitFutures)
+            if (future) pending |= future->isStarted() && !future->isFinished(); else saved = false;
+        d->quitWorkersWaiting = pending;
+        if (pending) return false;
+        // Shared keys use the most recently edited retained tab, not hash iteration.
+        std::stable_sort(layouts.begin(), layouts.end(), [](ArenaWidget* lhs, ArenaWidget* rhs) {
+            return view_layout::editSequence(lhs->getWidget()) < view_layout::editSequence(rhs->getWidget());
+        });
+        for (auto* arena : layouts) {
+            if (!arena) continue;
+            try { saved = arena->saveForQuitChecked() && saved; } catch (...) { saved = false; }
         }
+        if (ctx->transferView()) {
+            try { saved = ctx->transferView()->saveForQuitChecked() && saved; } catch (...) { saved = false; }
+        }
+    #ifdef USE_TORRENT
+        if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
+        if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;
+    #endif
+        d->quitSnapshotsSaved = saved;
+        d->quitSnapshotsComplete = true;
     }
-    // wait(0) is a physical thread receipt, including thread-local teardown.
-    // Finished signals alone do not authorize owner destruction.
-    for (const auto& worker : d->quitThreads)
-        if (worker) pending |= !worker->wait(0); else saved = false;
-    for (const auto& future : d->quitFutures)
-        if (future) pending |= future->isStarted() && !future->isFinished(); else saved = false;
-    d->quitWorkersWaiting = pending;
-    if (pending) return false;
-    // Shared keys use the most recently edited retained tab, not hash iteration.
-    std::stable_sort(layouts.begin(), layouts.end(), [](ArenaWidget* lhs, ArenaWidget* rhs) {
-        return view_layout::editSequence(lhs->getWidget()) < view_layout::editSequence(rhs->getWidget());
-    });
-    for (auto* arena : layouts) {
-        if (!arena) continue;
-        try { saved = arena->saveForQuitChecked() && saved; } catch (...) { saved = false; }
-    }
-    if (ctx->transferView()) {
-        try { saved = ctx->transferView()->saveForQuitChecked() && saved; } catch (...) { saved = false; }
-    }
-#ifdef USE_TORRENT
-    if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
-    if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;
-#endif
-    ctx->settings()->freezeForQuit();
-    saved = ctx->settings()->saveChecked() && saved;
+    const auto settings = ctx->settings()->saveForQuitChecked(asynchronousPersistence);
+    d->quitWorkersWaiting = settings == WulforSettings::QuitSaveStatus::Pending;
+    if (d->quitWorkersWaiting) return false;
+    const bool saved = d->quitSnapshotsSaved && settings == WulforSettings::QuitSaveStatus::Ready;
     d->quitFenceSaved = saved;
     d->quitDrainComplete = true;
     return saved;

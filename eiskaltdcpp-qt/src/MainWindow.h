@@ -114,7 +114,7 @@ friend class QtContext;
         void beginExit();
         // Nonblocking retained GUI/Torrent preparation; poll while workers are
         // pending. No core shutdown or installer consent is granted here.
-        [[nodiscard]] bool stopWorkersForQuit();
+        [[nodiscard]] bool stopWorkersForQuit(bool asynchronousPersistence = false);
         bool quitWorkersPending() const;
         [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
         // Borrow the application-owned controller; no scheduler or native activation.

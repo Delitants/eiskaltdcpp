@@ -122,22 +122,23 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
         updaterFenced = true;
     }
     bool guiStopped = false;
-    try { guiStopped = window->stopWorkersForQuit(); } catch (...) {}
-    if (!guiStopped && window->quitWorkersPending()) {
+    try { guiStopped = window->stopWorkersForQuit(asynchronousPersistence); } catch (...) {}
+    const bool guiPending = !guiStopped && window->quitWorkersPending();
+    // GUI retirement has fenced input even while settings or workers remain
+    // pending. Freeze rules now, before yielding to the live event loop.
+    if(asynchronousPersistence && (guiStopped || guiPending)) {
+        if(context.searchBlacklist())
+            check("Search blacklist", [&] { return context.searchBlacklist()->freezeForQuitChecked(); });
+        if(context.antiSpam())
+            check("Anti-spam", [&] { return context.antiSpam()->freezeForQuitChecked(); });
+    }
+    if (guiPending) {
         result.status = Status::Pending;
         result.component = "GUI workers";
         preparing = false;
         return result;
     }
     if (!guiStopped && !failed) failed = "GUI";
-    // An asynchronous core receipt leaves the event loop live. Close rule
-    // mutations now, but keep physical auxiliary writes after core retirement.
-    if(asynchronousPersistence && guiStopped) {
-        if(context.searchBlacklist())
-            check("Search blacklist", [&] { return context.searchBlacklist()->freezeForQuitChecked(); });
-        if(context.antiSpam())
-            check("Anti-spam", [&] { return context.antiSpam()->freezeForQuitChecked(); });
-    }
     result.core = asynchronousPersistence ? context.dcCtx().prepareShutdownAsyncChecked(timeout)
                                          : context.dcCtx().prepareShutdownChecked(timeout);
     if(result.core.status == dcpp::DCContext::ShutdownStatus::Pending) {
