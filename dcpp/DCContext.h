@@ -19,6 +19,7 @@
 #pragma once
 
 #include <functional>
+#include <future>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -123,7 +124,7 @@ public:
     /// Flush state, stop threads, tear down in reverse order.
     void shutdown();
 
-    enum class ShutdownStatus { Ready, Failed, SocketTimedOut, UnsupportedContext };
+    enum class ShutdownStatus { Ready, Failed, SocketTimedOut, UnsupportedContext, Pending };
     struct ShutdownResult {
         ShutdownStatus status;
         const char* component;  ///< Static diagnostic; no allocation on failure.
@@ -135,6 +136,11 @@ public:
     /// only BufferedSocket resource drain, not all joins or persistence I/O.
     /// Retain this OBJECT after Failed/SocketTimedOut; destroying it is fatal.
     [[nodiscard]] ShutdownResult prepareShutdownChecked(uint32_t socketDrainTimeoutMs) noexcept;
+
+    /// Same owner/admission/retention contract. Poll on that owner while Pending.
+    /// Writes quiescent snapshots on owned threads; Save listeners remain owner-bound.
+    /// Ready requires thread-exit receipts, including thread-local destruction.
+    [[nodiscard]] ShutdownResult prepareShutdownAsyncChecked(uint32_t socketDrainTimeoutMs) noexcept;
 
     [[nodiscard]] bool isRunning() const { return running_; }
     [[nodiscard]] ProxyRoute* getProxyRoute() const { return proxyRoute_.get(); }
@@ -170,12 +176,21 @@ public:
 #endif
 
 private:
-    enum class ShutdownPhase { Idle, Preparing, Finished, Disposed };
+    enum class ShutdownPhase { Idle, Preparing, Finished, Disposed, SnapshotWriting, SettingsWriting };
     std::mutex shutdownMutex_;
     std::thread::id shutdownOwner_;
     ShutdownPhase shutdownPhase_ = ShutdownPhase::Idle;
     ShutdownResult shutdownResult_{ShutdownStatus::Failed, "Not prepared"};
     bool timerShutdownAttempted_ = false;
+    std::thread persistenceWorker_;
+    std::future<ShutdownResult> persistenceReceipt_;
+    ShutdownResult precedingSnapshots_{ShutdownStatus::Ready, "Ready"};
+    ShutdownResult prepareShutdownImpl(uint32_t, bool asynchronous) noexcept;
+    ShutdownResult writeQuiescentSnapshots() noexcept;
+    ShutdownResult pollPersistence() noexcept;
+    void startPersistence(std::function<ShutdownResult()> write, ShutdownPhase);
+    void setShutdownComponent(const char*);
+    ShutdownResult finishShutdown(ShutdownStatus, const char*);
     void disposeManagers();
 
     bool running_ = false;

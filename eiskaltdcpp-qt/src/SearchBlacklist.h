@@ -43,6 +43,8 @@ public:
     bool ok(const QString &exp, Argument type);
     QList<QString> getList(Argument arg) const { return (list[arg]); }
     void setList(Argument arg, const QList<QString> &l) { if (!quitPrepared) list[arg] = l; }
+    // Close owner-thread mutations without performing physical I/O.
+    [[nodiscard]] bool freezeForQuitChecked();
     [[nodiscard]] bool saveForQuitChecked();
 
 private:

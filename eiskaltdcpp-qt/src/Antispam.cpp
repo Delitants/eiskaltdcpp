@@ -451,10 +451,15 @@ void AntiSpam::saveSettings() {
     file.close();
 }
 
-bool AntiSpam::saveForQuitChecked() {
+bool AntiSpam::freezeForQuitChecked() {
     if (QThread::currentThread() != thread()) return false;
-    if (quitPrepared && quitSaved) return true;
     quitPrepared = true;
+    return true;
+}
+
+bool AntiSpam::saveForQuitChecked() {
+    if (!freezeForQuitChecked()) return false;
+    if (quitPrepared && quitSaved) return true;
     const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
     const auto save = [&](const QString& name, const QString& text) {
         QSaveFile file(root + name);

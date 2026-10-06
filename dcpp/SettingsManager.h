@@ -23,6 +23,7 @@
 #include "DCContext.h"
 #include "Exception.h"
 #include "DCPlusPlus.h"
+#include <optional>
 
 namespace dcpp {
 
@@ -283,6 +284,10 @@ public:
     // False includes native I/O failure or incomplete Save listener delivery.
     bool saveChecked() { return saveChecked(getConfigFile()); }
     bool saveChecked(const string& aFileName);
+    // Freeze intent and invoke Save listeners on the caller's owner thread.
+    struct SaveSnapshot { string path; string bytes; };
+    std::optional<SaveSnapshot> prepareSaveSnapshot(const string& path = getConfigFile());
+    static bool writeSaveSnapshot(const SaveSnapshot&) noexcept;
 
     bool getType(const char* name, int& n, Types& type) const;
     // Search types

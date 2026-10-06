@@ -23,7 +23,7 @@ public:
     };
     // Keep this object and updater outside the GUI roots fenced by MainWindow.
     explicit ApplicationQuitCoordinator(QtContext&, UpdateController* updater = nullptr);
-    [[nodiscard]] Result prepare(uint32_t socketDrainTimeoutMs) noexcept;
+    [[nodiscard]] Result prepare(uint32_t socketDrainTimeoutMs, bool asynchronousPersistence = false) noexcept;
     bool canRetryCheckpoint() const;
     // Retry only frozen auxiliary snapshots after all primary owners are safe.
     // This never repeats shutdown or grants updater installation consent.

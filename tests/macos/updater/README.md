@@ -953,3 +953,32 @@ installer handoff may release staging after the quit fence; cleanup-only polling
 must still drain it without reopening network or installer admission. Installer
 refusal alone is not a filesystem retirement receipt. These hidden tests retain
 the same isolated environment and loopback-only policy described above.
+
+### Core Persistence Retirement
+
+The normal quit session opts into `DCContext::prepareShutdownAsyncChecked`.
+Lifecycle barriers remain on the startup owner. Owned workers write quiescent
+non-Settings snapshots, then frozen Settings bytes; Settings Save listeners run
+on the owner after the earlier writes finish. Native flush must succeed before
+Settings replacement. The legacy synchronous API is unchanged.
+
+Explicitly select `[.core-write-retirement]` in the full-GUI target with the
+test-only interposer above. It holds real Queue and Settings writes, the Settings
+native flush, and C++ thread-local teardown. Assertions require an advancing GUI
+heartbeat, off-GUI I/O, finite refusal, no late automatic exit, frozen auxiliary
+rules and one exit receipt only after explicit retry. A promise result made ready
+at thread exit is consumed and its owned thread joined before core Ready.
+
+Select `[.core-launch-failure]` in the core target with the same interposer. It
+returns EAGAIN for the next armed `pthread_create`, in disposable child processes
+only, and checks each persistence phase reports stable Failed while retaining its
+owners. This fault is not path-scoped; never arm or inject it outside the dedicated
+QA process. Ordinary `[core-shutdown]` and `[settings-save]` tests independently
+cover owner admission, Save ordering, sticky failure, synchronous compatibility,
+native flush refusal and snapshot replacement.
+
+No pending or failed receipt authorizes updater commitment or context destruction.
+These tests do not establish a total quit deadline for lifecycle joins, XML
+construction, auxiliary GUI writes, arbitrary filesystem stalls or every native
+thread-exit failure. Retain the context on refusal; never detach, force-stop a
+worker, or infer installation consent from a completed callback alone.

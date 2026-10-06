@@ -84,7 +84,7 @@ void ApplicationQuitSession::advance() {
         refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
         return;
     }
-    const auto result = retryingCheckpoint ? coordinator.retryCheckpoint() : coordinator.prepare(drainTimeout);
+    const auto result = retryingCheckpoint ? coordinator.retryCheckpoint() : coordinator.prepare(drainTimeout, true);
     if(result.status == ApplicationQuitCoordinator::Status::Pending) {
         if(workerDeadline.elapsed() >= drainTimeout) {
             workerRetryAllowed = true;

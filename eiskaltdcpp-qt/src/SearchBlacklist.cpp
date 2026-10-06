@@ -86,10 +86,15 @@ void SearchBlacklist::saveLists(){
     f.close();
 }
 
-bool SearchBlacklist::saveForQuitChecked() {
+bool SearchBlacklist::freezeForQuitChecked() {
     if (QThread::currentThread() != thread()) return false;
-    if (quitPrepared && quitSaved) return true;
     quitPrepared = true;
+    return true;
+}
+
+bool SearchBlacklist::saveForQuitChecked() {
+    if (!freezeForQuitChecked()) return false;
+    if (quitPrepared && quitSaved) return true;
     QString text;
     for (const auto& line : list[NAME]) text += "NAME:" + line + '\n';
     for (const auto& line : list[TTH]) text += "TTH:" + line + '\n';

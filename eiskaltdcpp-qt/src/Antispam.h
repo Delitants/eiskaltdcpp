@@ -51,6 +51,7 @@ public:
     void loadLists();
     void saveLists();
     // Called after hub callback retirement; freezes intent and checks every file.
+    [[nodiscard]] bool freezeForQuitChecked();
     [[nodiscard]] bool saveForQuitChecked();
 
     QString getPhrase() const;

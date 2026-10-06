@@ -301,6 +301,11 @@ template<class T> bool normalQuitPrepared(T& window) {
     if constexpr(requires { window.normalQuitPrepared(); }) return window.normalQuitPrepared();
     else return false;
 }
+QMessageBox* checkpointRecoveryPrompt() {
+    for(auto* top : QApplication::topLevelWidgets())
+        if(top->objectName() == "quitCheckpointRecovery") return qobject_cast<QMessageBox*>(top);
+    return nullptr;
+}
 
 TEST_CASE("Real Preferences exposes shared Updates settings without applying rejected edits", "[qt][update-ui-owner]") {
     IsolatedMainWindow f;
@@ -586,7 +591,7 @@ TEST_CASE("Actual window close waits for the committed matching update receipt",
     REQUIRE_FALSE(window->close());
     CHECK(window->isVisible()); CHECK_FALSE(window->isEnabled());
     CHECK(route->revoked->load()); CHECK(f.core->isRunning()); CHECK(backend.routeWasRunning);
-    REQUIRE(updater.quitDisposition() == updates::UpdateController::QuitDisposition::AwaitingHandoff);
+    REQUIRE(waitFor([&] { return updater.quitDisposition() == updates::UpdateController::QuitDisposition::AwaitingHandoff; }));
     CHECK(backend.installs == 1); REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
     CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
     bool delivered = false; QObject outside;
@@ -664,14 +669,82 @@ TEST_CASE("Window quit drains held workers without blocking heartbeat or admitti
     QTimer heartbeat; int beats = 0;
     QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++beats; }); heartbeat.start(1);
     const auto route = f.core->getProxyRoute()->snapshot();
-    auto release = std::async(std::launch::async, [&] { QThread::msleep(200); released = true; });
+    std::promise<void> releaseGate;
+    auto releaseSignal = releaseGate.get_future();
+    // Explicit release keeps the held-state checks valid under delayed scheduling.
+    // The watchdog still retires a worker if a regressed close blocks the caller.
+    auto release = std::async(std::launch::async, [&, signal = std::move(releaseSignal)] {
+        signal.wait_for(std::chrono::seconds(2)); released = true;
+    });
     elapsed.restart(); CHECK_FALSE(window->close()); CHECK(elapsed.elapsed() < 50);
+    CHECK_FALSE(released.load());
     CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
     QTest::qWait(35); CHECK(beats > 0); CHECK_FALSE(late); REQUIRE(retained);
+    CHECK_FALSE(released.load());
     CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
+    releaseGate.set_value();
     release.get(); REQUIRE(waitFor([&] { return ready.count() == 1; }));
     CHECK(normalQuitPrepared(*window)); CHECK(route->revoked->load()); REQUIRE(retained);
 }
+
+#ifdef __APPLE__
+#include "../macos/updater/CoreWriteProbe.h"
+template<class C> constexpr bool hasAsyncCorePersistence() {
+    return requires(C& c) { c.prepareShutdownAsyncChecked(3000); };
+}
+TEST_CASE("Core persistence hold refuses quit without blocking or exiting late", "[.core-write-retirement][mainwindow]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->createSearchBlacklist(); fixture.gui->createAntiSpam();
+    auto* search = fixture.gui->searchBlacklist(); auto* spam = fixture.gui->antiSpam();
+    search->setList(SearchBlacklist::NAME, {"original-rule"});
+    spam->setPhrase("initialize"); spam->setPhrase("original-question");
+    REQUIRE(waitFor([&] { return fixture.gui->mainWindow()->stopWorkersForQuit(); }));
+    updates::ApplicationQuitSession session(*fixture.gui);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    int mode = 1;
+    QString file = "DCPlusPlus.xml.tmp";
+    SECTION("actual Settings write") { mode = 1; }
+    SECTION("actual Queue write before Settings") { file = "Queue.xml.tmp"; }
+    SECTION("native Settings flush") { mode = 3; }
+    SECTION("thread-local exit after write") {
+        // The baseline writes on the GUI thread; holding its process-exit TLS
+        // would hang the fixture. An absent async path fails this case explicitly.
+        if constexpr(!hasAsyncCorePersistence<dcpp::DCContext>()) {
+            FAIL("No asynchronous core persistence receipt");
+        }
+        mode = 6;
+    }
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; });
+    heartbeat.start(1);
+    probe.arm(QFile::encodeName(fixture.home.filePath(file)).constData(), mode);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    QElapsedTimer elapsed; elapsed.start();
+    session.request(100);
+    const auto duration = elapsed.elapsed();
+    CHECK(duration < 100);
+    CHECK(waitFor([&] { return probe.entered(); }));
+    CHECK(probe.writer() != probe.gui);
+    search->setList(SearchBlacklist::NAME, {"late-rule"}); spam->setPhrase("late-question");
+    CHECK(search->getList(SearchBlacklist::NAME) == QList<QString>{"original-rule"});
+    CHECK(spam->getPhrase() == "original-question");
+    CHECK(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(ready.isEmpty());
+    CHECK(waitFor([&] { return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready; }));
+    CHECK(watchdog.get());
+    CHECK(advanced.load());
+    CHECK(ready.isEmpty());
+    if(session.state() == updates::ApplicationQuitSession::State::Refused) {
+        session.request(3000);
+        CHECK(waitFor([&] { return ready.count() == 1; }));
+    }
+    std::fprintf(stderr, "CORE_RETIREMENT mode=%d file=%s request_ms=%lld on_gui=%d heartbeat=%d exits=%d\n",
+        mode, file.toUtf8().constData(), static_cast<long long>(duration),
+        probe.writer() == probe.gui, advanced.load(), int(ready.count()));
+}
+#endif
 
 TEST_CASE("Worker-drain timeout retains running owners and permits explicit post-drain retry", "[qt][window-quit][gui-worker-drain]") {
     IsolatedMainWindow f; auto* window = f.gui->mainWindow();
@@ -832,6 +905,7 @@ TEST_CASE("Actual window retries a repaired auxiliary checkpoint without restart
     QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
     CHECK_FALSE(window->close()); QCoreApplication::processEvents();
     CHECK_FALSE(window->isEnabled()); CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
+    REQUIRE(waitFor([&] { auto* prompt = checkpointRecoveryPrompt(); return prompt && prompt->isVisible(); }));
     REQUIRE(QDir(blocked).removeRecursively());
     CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window));
     CHECK_FALSE(window->close()); REQUIRE(waitFor([&] { return ready.count() == 1; }));
@@ -863,16 +937,15 @@ TEST_CASE("Checkpoint recovery button retains frozen rules and permanently disar
     const int priorRevocations = backend.revocations;
     QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
     CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK_FALSE(window->isEnabled());
-    CHECK(backend.revocations > priorRevocations); CHECK(backend.installs == 0);
+    CHECK(backend.installs == 0);
     f.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"late-rule"});
     f.gui->antiSpam()->setPhrase("late-question");
+    REQUIRE(waitFor([&] { return backend.revocations > priorRevocations; }));
     QTest::qWait(30); CHECK(ready.isEmpty());
     CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
     REQUIRE(QDir(blocked).removeRecursively());
     QTest::qWait(30); CHECK(ready.isEmpty());
-    QMessageBox* prompt = nullptr;
-    for(auto* top : QApplication::topLevelWidgets())
-        if(top->objectName() == "quitCheckpointRecovery") prompt = qobject_cast<QMessageBox*>(top);
+    QMessageBox* prompt = checkpointRecoveryPrompt();
     CHECK(prompt != nullptr);
     if(prompt) {
         CHECK(prompt->isVisible()); CHECK(prompt->isEnabled()); CHECK_FALSE(prompt->isModal());
@@ -900,7 +973,7 @@ TEST_CASE("A failed updater recovery disarm cannot authorize recovered exit", "[
     auto* window = f.gui->mainWindow(); REQUIRE(enableCheckedQuit(*window, &updater));
     QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
     backend.rejectRecoveryDisarm = true;
-    CHECK_FALSE(window->close()); CHECK(backend.revocations == 1); CHECK(ready.isEmpty());
+    CHECK_FALSE(window->close()); REQUIRE(waitFor([&] { return backend.revocations == 1; })); CHECK(ready.isEmpty());
     REQUIRE(QDir(blocked).removeRecursively()); backend.rejectRecoveryDisarm = false;
     CHECK_FALSE(window->close()); QTest::qWait(30);
     CHECK(ready.isEmpty()); CHECK_FALSE(normalQuitPrepared(*window)); CHECK(backend.installs == 0);

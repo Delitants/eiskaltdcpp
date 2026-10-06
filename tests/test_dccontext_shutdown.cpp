@@ -3,6 +3,9 @@
 #include <filesystem>
 #include <future>
 #include <ranges>
+#ifdef __APPLE__
+#include <dlfcn.h>
+#endif
 #ifndef _WIN32
 #include <sys/wait.h>
 #include <unistd.h>
@@ -55,13 +58,30 @@
 using namespace dcpp;
 namespace fs = std::filesystem;
 namespace {
-enum class Status { Ready, Failed, SocketTimedOut, UnsupportedContext };
+enum class Status { Ready, Failed, SocketTimedOut, UnsupportedContext, Pending };
 struct Result { Status status; string component; };
 template<class C> Result prepare(C& c, uint32_t timeout = 3000) {
     if constexpr(requires { c.prepareShutdownChecked(timeout); }) {
         auto r = c.prepareShutdownChecked(timeout);
         return {static_cast<Status>(r.status), r.component};
     } else return {Status::UnsupportedContext, "missing checked shutdown"};
+}
+template<class C> Result prepareAsync(C& c, uint32_t timeout = 3000) {
+    if constexpr(requires { c.prepareShutdownAsyncChecked(timeout); }) {
+        auto r = c.prepareShutdownAsyncChecked(timeout);
+        return {static_cast<Status>(r.status), r.component};
+    } else {
+        return {Status::UnsupportedContext, "missing async shutdown"};
+    }
+}
+template<class C> Result awaitAsync(C& c) {
+    const auto end = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+    auto result = prepareAsync(c);
+    while(result.status == Status::Pending && std::chrono::steady_clock::now() < end) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        result = prepareAsync(c);
+    }
+    return result;
 }
 template<class C> void armOwner(C& c) {
     if constexpr(requires { c.shutdownOwner_; }) c.shutdownOwner_ = std::this_thread::get_id();
@@ -461,5 +481,113 @@ TEST_CASE("Checked core failed-context destructor cannot fall through to member 
     REQUIRE(waitpid(child, &status, 0) == child);
     REQUIRE(WIFEXITED(status));
     CHECK(WEXITSTATUS(status) == 81);
+}
+#endif
+
+TEST_CASE("Async core persistence retains admission and synchronous compatibility", "[core-shutdown][core-persistence]") {
+    Fixture f; auto& c = f.context();
+    const auto route = c.getProxyRoute()->snapshot();
+    auto wrong = std::async(std::launch::async, [&] { return prepareAsync(c); }).get();
+    CHECK(wrong.status == Status::UnsupportedContext);
+    CHECK_FALSE(route->revoked->load());
+    REQUIRE(prepareAsync(c).status == Status::Pending);
+    CHECK(prepare(c).status == Status::UnsupportedContext);
+    CHECK(c.isRunning());
+    CHECK_THROWS(c.shutdown());
+    REQUIRE(awaitAsync(c).status == Status::Ready);
+    CHECK(prepare(c).status == Status::Ready);
+    CHECK(prepareAsync(c).status == Status::Ready);
+    c.shutdown();
+}
+
+TEST_CASE("Async core settings intent and Save listeners remain owner bound", "[core-shutdown][core-persistence]") {
+    Fixture f; auto& c = f.context();
+    struct OwnerSave : SettingsManagerListener {
+        DCContext& context;
+        std::thread::id owner = std::this_thread::get_id();
+        bool onOwner = false, priorSaved = false;
+        Status reentrant = Status::Ready;
+        int calls = 0;
+        explicit OwnerSave(DCContext& c) : context(c) {}
+        void on(Save, SimpleXML&) override {
+            ++calls;
+            onOwner = owner == std::this_thread::get_id();
+            priorSaved = fs::exists(Util::getPath(Util::PATH_USER_LOCAL) + "Users.xml") &&
+                fs::exists(Util::getPath(Util::PATH_USER_CONFIG) + "Queue.xml");
+            reentrant = prepareAsync(context).status;
+            context.getSettingsManager()->set(SettingsManager::NICK, "changed-after-frozen-xml");
+        }
+    } listener(c);
+    c.settingsManager_->set(SettingsManager::NICK, "frozen-owner-intent");
+    c.settingsManager_->addListener(&listener);
+    auto remove = makeScopedFunctor([&] { c.settingsManager_->removeListener(&listener); });
+    REQUIRE(prepareAsync(c).status == Status::Pending);
+    REQUIRE(awaitAsync(c).status == Status::Ready);
+    CHECK(listener.calls == 1);
+    CHECK(listener.onOwner);
+    CHECK(listener.priorSaved);
+    CHECK(listener.reentrant == Status::UnsupportedContext);
+    const auto saved = File(f.path("DCPlusPlus.xml"), File::READ, File::OPEN).read();
+    CHECK(saved.find("frozen-owner-intent") != string::npos);
+    CHECK(saved.find("changed-after-frozen-xml") == string::npos);
+    CHECK(prepareAsync(c).status == Status::Ready);
+    CHECK(listener.calls == 1);
+}
+
+TEST_CASE("Async core write failure preserves first failure and retained owners", "[core-shutdown][core-persistence]") {
+    Fixture f; auto& c = f.context();
+    fs::create_directory(f.path("Favorites.xml.tmp"));
+    SaveListener listener; listener.fail = true;
+    c.settingsManager_->addListener(&listener);
+    auto remove = makeScopedFunctor([&] { c.settingsManager_->removeListener(&listener); });
+    REQUIRE(prepareAsync(c).status == Status::Pending);
+    const auto result = awaitAsync(c);
+    REQUIRE(result.status == Status::Failed);
+    CHECK(result.component == "Favorites");
+    CHECK(listener.calls == 1);
+    CHECK(fs::exists(f.path("Queue.xml")));
+    CHECK(c.isRunning());
+    CHECK_THROWS(c.shutdown());
+    listener.fail = false;
+    CHECK(prepareAsync(c).status == Status::Failed);
+    CHECK(listener.calls == 1);
+}
+
+#ifdef __APPLE__
+TEST_CASE("Core persistence thread launch failure is terminal and retains owners", "[.core-launch-failure]") {
+    auto arm = reinterpret_cast<void(*)(const char*, int)>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_arm"));
+    auto entered = reinterpret_cast<int(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_hold_entered"));
+    REQUIRE(arm); REQUIRE(entered);
+    for(bool settings : {false, true}) {
+        const auto child = fork();
+        REQUIRE(child >= 0);
+        if(child == 0) {
+            std::set_terminate([] { std::_Exit(81); });
+            Fixture f; auto& c = f.context();
+            struct ArmSave : SettingsManagerListener {
+                void (*arm)(const char*, int);
+                explicit ArmSave(void (*function)(const char*, int)) : arm(function) {}
+                void on(Save, SimpleXML&) override { arm("", 7); }
+            } listener(arm);
+            if(settings) c.settingsManager_->addListener(&listener);
+            else arm("", 7);
+            const auto result = awaitAsync(c);
+            bool retained = false;
+            try { c.shutdown(); } catch(const std::logic_error&) { retained = c.isRunning(); }
+            const bool stable = prepareAsync(c).status == Status::Failed;
+            std::fprintf(stderr, "CORE_LAUNCH phase=%s injected=%d status=%d component=%s retained=%d stable=%d\n",
+                settings ? "Settings" : "Snapshots", entered(), int(result.status),
+                result.component.c_str(), retained, stable);
+            const bool accepted = result.status == Status::Failed && retained && stable &&
+                result.component == (settings ? "Settings" : "Core persistence");
+            // Failed contexts must survive; only this disposable child exits.
+            std::fflush(stderr);
+            std::_Exit(!entered() ? 83 : accepted ? 0 : 82);
+        }
+        int status = 0;
+        REQUIRE(waitpid(child, &status, 0) == child);
+        REQUIRE(WIFEXITED(status));
+        CHECK(WEXITSTATUS(status) == 0);
+    }
 }
 #endif

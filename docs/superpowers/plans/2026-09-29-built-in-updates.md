@@ -2000,3 +2000,65 @@ Intel/minimum-OS/live lifecycle and benchmark acceptance, final reviewed-source
 app/material rebuild, numeric allocation/signing/signed-v3 acceptance and guarded
 activation, closed-app installation/readback, README/wiki/approved unredacted
 screenshots/prerelease/public readback. Signed feeds last; Tasks 7/8 stay open.
+
+### 2026-10-05 Owned Core Persistence Repair
+
+The normal-quit session now opts into an owned asynchronous core persistence
+path. Existing startup-owner lifecycle barriers remain in place. After they
+retire, the first worker writes independent quiescent snapshots in their original
+order, including Queue's CID tail before Users. Its thread-exit receipt is
+consumed and joined before the owner serializes Settings and invokes Save
+listeners. A second worker writes only frozen Settings bytes. Native flush must
+succeed before close/replacement. Pending or failed contexts retain their owners;
+first failure is sticky, independent snapshots still run, and late completion
+after timeout cannot authorize exit without an explicit retry.
+
+Auxiliary rules freeze after successful GUI worker retirement and before core
+background persistence, preventing late edits from corrupting recovery intent.
+Their physical writes remain after core retirement. Legacy synchronous callers
+and result enum ordinals are preserved. Thread launch failure is terminal Failed,
+not a cached Pending state. Opt-in interposers are disposable test-process tools,
+never application dependencies.
+
+Behavioral baseline failures were observed before the repair for owner admission,
+actual Settings write latency, C++ thread-local retirement, late rule mutation
+and worker launch failure. The first full suite additionally caught a missing
+native flush in the new frozen writer; explicit flush was restored without
+relaxing the existing failure/replacement test. Final ARM and Intel/Rosetta focused
+runs each pass 43 case executions and 1273 assertions, including held Queue/Settings writes,
+native flush and thread-local exit, both worker-launch failure phases, retained
+recovery and normal quit. All four holds preserve the GUI heartbeat and require
+explicit retry after refusal.
+
+The final ARM regular core, applicable Qt and three window layouts pass. The
+Torrent aggregate has one rejection-counter failure in its country/unidentified
+peer-policy test; its no-payload assertions did not fail. A same-seed focused
+rerun passes, but does not establish the cause or waive the original negative.
+Fresh four-target Intel builds and its core, applicable Qt and Torrent suites
+pass, as do all three final Intel window layouts. Intel/Rosetta is not native
+Intel/macOS 14 or exact ARM minimum-OS acceptance.
+
+An earlier Intel multiline run also exposed a GUI test-fixture race: its independent
+200ms worker release could precede the post-heartbeat held-state assertion after
+delayed scheduling. A private 250ms delay reproduces exactly four route assertion
+failures with observed release/retirement and no other failures. Explicit release
+after the held-state checks fixes that control (110 assertions), with a 2s deadlock
+watchdog. The 50ms close assertion and heartbeat/input checks are unchanged, and
+two explicit unreleased checks strengthen the fixture. All six final layouts pass.
+The natural negative and its unrecorded precise scheduling duration are retained;
+the controlled result does not retrospectively measure that duration. Only the
+affected GUI harnesses were rebuilt for this test-only refinement; six backend
+binaries and their compiled production sources remain unchanged.
+
+Fresh catalog checks pass 20 tests and icon checks pass 14, without skips.
+
+This is not a total hard quit deadline: owner lifecycle joins, Settings XML/Save
+listeners, GUI auxiliary settings and other filesystem operations remain separate
+responsiveness gates. Author delta review does not replace independent whole-
+branch review. Remaining catalog omissions, language/resources/dependency
+provenance, native/minimum-OS/live lifecycle and benchmark checks, final reviewed
+app/material rebuild, production numbering/signing/signed-v3 acceptance, guarded
+activation, closed-app install/readback and documentation/prerelease publication
+remain open. Profile, installed app, providers, keys, services and prior release
+candidates are unchanged. No push/install/signing/activation. Signed feeds last;
+Tasks 7/8 remain open.

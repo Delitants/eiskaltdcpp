@@ -23,10 +23,31 @@ void hold(int fd, int operation) {
         const char suffix[] = "/update.zip";
         if(length < sizeof(suffix) - 1 || std::strcmp(path + length - (sizeof(suffix) - 1), suffix) != 0) return;
     }
+    uint64_t id = 0; pthread_threadid_np(nullptr, &id);
+    threadId.store(id);
     entered.store(true);
     while(!released.load()) usleep(1000);
 }
-ssize_t heldWrite(int fd, const void* data, size_t size) { hold(fd, 1); return ::write(fd, data, size); }
+struct ExitHold {
+    bool active = false;
+    ~ExitHold() {
+        if(!active) return;
+        entered.store(true);
+        while(!released.load()) usleep(1000);
+    }
+};
+ssize_t heldWrite(int fd, const void* data, size_t size) {
+    if(mode.load() == 6) {
+        char path[PATH_MAX]{};
+        if(fcntl(fd, F_GETPATH, path) == 0 && std::strncmp(path, prefix, std::strlen(prefix)) == 0) {
+            uint64_t id = 0; pthread_threadid_np(nullptr, &id);
+            threadId.store(id);
+            thread_local ExitHold tail;
+            tail.active = true;
+        }
+    }
+    hold(fd, 1); return ::write(fd, data, size);
+}
 ssize_t heldRead(int fd, void* data, size_t size) { hold(fd, 2); return ::read(fd, data, size); }
 int heldSync(int fd) { hold(fd, 3); return ::fsync(fd); }
 void* heldMap(void* address, size_t size, int protection, int flags, int fd, off_t offset) {
@@ -59,6 +80,15 @@ int heldUnlinkAt(int fd, const char* path, int flags) {
     return ::unlinkat(fd, path, flags);
 }
 int heldRmdir(const char* path) { holdPath(path, 5, 3); return ::rmdir(path); }
+int failedThreadCreate(pthread_t* thread, const pthread_attr_t* attributes,
+                       void* (*entry)(void*), void* argument) {
+    int expected = 7;
+    if(mode.compare_exchange_strong(expected, 0)) {
+        entered.store(true);
+        return EAGAIN;
+    }
+    return ::pthread_create(thread, attributes, entry, argument);
+}
 }
 extern "C" void eiskalt_qa_hold_arm(const char* path, int operation) {
     mode.store(0);
@@ -80,5 +110,6 @@ __attribute__((used, section("__DATA,__interpose"))) static const struct {
     {reinterpret_cast<const void*>(heldMap), reinterpret_cast<const void*>(::mmap)},
     {reinterpret_cast<const void*>(heldUnlink), reinterpret_cast<const void*>(::unlink)},
     {reinterpret_cast<const void*>(heldUnlinkAt), reinterpret_cast<const void*>(::unlinkat)},
-    {reinterpret_cast<const void*>(heldRmdir), reinterpret_cast<const void*>(::rmdir)}
+    {reinterpret_cast<const void*>(heldRmdir), reinterpret_cast<const void*>(::rmdir)},
+    {reinterpret_cast<const void*>(failedThreadCreate), reinterpret_cast<const void*>(::pthread_create)}
 };

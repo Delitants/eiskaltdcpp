@@ -76,6 +76,8 @@ DCContext::~DCContext() {
     {
         std::lock_guard<std::mutex> lock(shutdownMutex_);
         if (shutdownPhase_ == ShutdownPhase::Preparing ||
+            shutdownPhase_ == ShutdownPhase::SnapshotWriting ||
+            shutdownPhase_ == ShutdownPhase::SettingsWriting ||
             (shutdownPhase_ == ShutdownPhase::Finished &&
              (shutdownResult_.status != ShutdownStatus::Ready || shutdownOwner_ != std::this_thread::get_id())))
             std::terminate();
@@ -217,14 +219,112 @@ void DCContext::startup(ProgressFn progress) {
 }
 
 DCContext::ShutdownResult DCContext::prepareShutdownChecked(uint32_t timeout) noexcept {
+    return prepareShutdownImpl(timeout, false);
+}
+
+DCContext::ShutdownResult DCContext::prepareShutdownAsyncChecked(uint32_t timeout) noexcept {
+    return prepareShutdownImpl(timeout, true);
+}
+
+void DCContext::setShutdownComponent(const char* name) {
+    std::lock_guard<std::mutex> lock(shutdownMutex_);
+    shutdownResult_.component = name;
+}
+
+DCContext::ShutdownResult DCContext::finishShutdown(ShutdownStatus status, const char* name) {
+    std::lock_guard<std::mutex> lock(shutdownMutex_);
+    shutdownResult_ = {status, name};
+    shutdownPhase_ = ShutdownPhase::Finished;
+    return shutdownResult_;
+}
+
+void DCContext::startPersistence(std::function<ShutdownResult()> write, ShutdownPhase phase) {
+    std::promise<ShutdownResult> completed;
+    persistenceReceipt_ = completed.get_future();
+    {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        shutdownPhase_ = phase;
+        shutdownResult_.status = ShutdownStatus::Pending;
+    }
+    persistenceWorker_ = std::thread([write = std::move(write), completed = std::move(completed)]() mutable {
+        ShutdownResult result{ShutdownStatus::Failed, "Core persistence"};
+        try { result = write(); } catch(...) {}
+        // A result alone is insufficient: TLS teardown can still own resources.
+        completed.set_value_at_thread_exit(result);
+    });
+}
+
+DCContext::ShutdownResult DCContext::pollPersistence() noexcept {
+    ShutdownPhase phase;
+    {
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        phase = shutdownPhase_;
+        if(persistenceReceipt_.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+            return shutdownResult_;
+        shutdownPhase_ = ShutdownPhase::Preparing;
+    }
+    try {
+        const auto written = persistenceReceipt_.get();
+        persistenceWorker_.join();
+        if(phase == ShutdownPhase::SettingsWriting)
+            return finishShutdown(written.status, written.component);
+        precedingSnapshots_ = written;
+        setShutdownComponent("Settings");
+        auto snapshot = settingsManager_->prepareSaveSnapshot();
+        if(!snapshot) {
+            const bool priorFailed = precedingSnapshots_.status != ShutdownStatus::Ready;
+            return finishShutdown(ShutdownStatus::Failed, priorFailed ? precedingSnapshots_.component : "Settings");
+        }
+        const auto prior = precedingSnapshots_;
+        startPersistence([snapshot = std::move(*snapshot), prior] {
+            const bool saved = SettingsManager::writeSaveSnapshot(snapshot);
+            if(prior.status != ShutdownStatus::Ready) return prior;
+            return ShutdownResult{saved ? ShutdownStatus::Ready : ShutdownStatus::Failed, saved ? "Ready" : "Settings"};
+        }, ShutdownPhase::SettingsWriting);
+        std::lock_guard<std::mutex> lock(shutdownMutex_);
+        return shutdownResult_;
+    } catch(...) {
+        return finishShutdown(ShutdownStatus::Failed,
+            precedingSnapshots_.status == ShutdownStatus::Ready ? "Settings" : precedingSnapshots_.component);
+    }
+}
+
+DCContext::ShutdownResult DCContext::writeQuiescentSnapshots() noexcept {
+    const char* failed = nullptr;
+    auto check = [&](const char* name, auto&& operation) {
+        setShutdownComponent(name);
+        bool succeeded = false;
+        try { succeeded = operation(); } catch (...) {}
+        if(!succeeded && !failed) failed = name;
+    };
+    // Queue's CID tail precedes Users. Settings and its Save listeners are last.
+    check("Hash data", [&] { return hashManager_->dataStorageSucceeded(); });
+    check("Hash index", [&] { return hashManager_->saveIndexChecked(); });
+    check("Share cache", [&] { return shareManager_->managedCacheRevocationsSucceeded(); });
+    check("Queue", [&] { return queueManager_->saveQueueChecked(true); });
+    check("Users", [&] { return clientManager_->saveUsersChecked(); });
+#ifdef WITH_DHT
+    check("DHT snapshot", [&] { return dht_->saveDataChecked(); });
+#endif
+    check("Favorites", [&] { return favoriteManager_->saveChecked(); });
+    check("IP filter", [&] { return ipFilter_->saveListChecked(); });
+    check("ADL", [&] { return adlSearchManager_->saveForShutdownChecked(); });
+    return {failed ? ShutdownStatus::Failed : ShutdownStatus::Ready, failed ? failed : "Ready"};
+}
+
+DCContext::ShutdownResult DCContext::prepareShutdownImpl(uint32_t timeout, bool asynchronous) noexcept {
+    bool polling = false;
     {
         std::lock_guard<std::mutex> lock(shutdownMutex_);
         if (shutdownOwner_ != std::this_thread::get_id())
             return {ShutdownStatus::UnsupportedContext, "Startup owner"};
         if (shutdownPhase_ == ShutdownPhase::Finished) return shutdownResult_;
-        if (shutdownPhase_ != ShutdownPhase::Idle)
+        polling = asynchronous && (shutdownPhase_ == ShutdownPhase::SnapshotWriting ||
+                                   shutdownPhase_ == ShutdownPhase::SettingsWriting);
+        if(!polling && shutdownPhase_ != ShutdownPhase::Idle)
             return {ShutdownStatus::UnsupportedContext, "Context phase"};
-        if (!running_ || minimalMode_ || !resourceManager_ || !settingsManager_ || !proxyRoute_ ||
+        if(!polling) {
+            if (!running_ || minimalMode_ || !resourceManager_ || !settingsManager_ || !proxyRoute_ ||
             !logManager_ || !timerManager_ || !hashManager_ || !cryptoManager_ || !searchManager_ ||
             !clientManager_ || !connectionManager_ || !downloadManager_ || !uploadManager_ ||
             !throttleManager_ || !queueManager_ || !shareManager_ || !favoriteManager_ ||
@@ -236,20 +336,14 @@ DCContext::ShutdownResult DCContext::prepareShutdownChecked(uint32_t timeout) no
 #ifdef LUA_SCRIPT
             || !scriptManager_
 #endif
-        ) return {ShutdownStatus::UnsupportedContext, "Full context"};
-        shutdownPhase_ = ShutdownPhase::Preparing;
-        shutdownResult_ = {ShutdownStatus::Failed, "Preparing"};
+            ) return {ShutdownStatus::UnsupportedContext, "Full context"};
+            shutdownPhase_ = ShutdownPhase::Preparing;
+            shutdownResult_ = {ShutdownStatus::Failed, "Preparing"};
+        }
     }
-    auto component = [this](const char* name) {
-        std::lock_guard<std::mutex> lock(shutdownMutex_);
-        shutdownResult_.component = name;
-    };
-    auto finish = [this](ShutdownStatus status, const char* name) {
-        std::lock_guard<std::mutex> lock(shutdownMutex_);
-        shutdownResult_ = {status, name};
-        shutdownPhase_ = ShutdownPhase::Finished;
-        return shutdownResult_;
-    };
+    if(polling) return pollPersistence();
+    auto component = [this](const char* name) { setShutdownComponent(name); };
+    auto finish = [this](ShutdownStatus status, const char* name) { return finishShutdown(status, name); };
     try {
         // No lifecycle mutex is held across a callback barrier, join or I/O.
         component("Proxy route"); proxyRoute_->stop();
@@ -290,31 +384,21 @@ DCContext::ShutdownResult DCContext::prepareShutdownChecked(uint32_t timeout) no
         }
         timerManager_->shutdown();
 
-        // Now quiescent: attempt every independent checked snapshot, preserving
-        // the first failure. Queue's CID tail must precede the Users snapshot;
-        // Settings is last with Share's Save listener still attached.
-        const char* failed = nullptr;
-        auto check = [&](const char* name, auto&& operation) {
-            component(name);
-            bool succeeded = false;
-            try { succeeded = operation(); } catch (...) {}
-            if (!succeeded && !failed) failed = name;
-        };
-        check("Hash data", [&] { return hashManager_->dataStorageSucceeded(); });
-        check("Hash index", [&] { return hashManager_->saveIndexChecked(); });
-        check("Share cache", [&] { return shareManager_->managedCacheRevocationsSucceeded(); });
-        check("Queue", [&] { return queueManager_->saveQueueChecked(true); });
-        check("Users", [&] { return clientManager_->saveUsersChecked(); });
-#ifdef WITH_DHT
-        check("DHT snapshot", [&] { return dht_->saveDataChecked(); });
-#endif
-        check("Favorites", [&] { return favoriteManager_->saveChecked(); });
-        check("IP filter", [&] { return ipFilter_->saveListChecked(); });
-        check("ADL", [&] { return adlSearchManager_->saveForShutdownChecked(); });
-        check("Settings", [&] { return settingsManager_->saveChecked(); });
-        return finish(failed ? ShutdownStatus::Failed : ShutdownStatus::Ready, failed ? failed : "Ready");
+        if(asynchronous) {
+            component("Core persistence");
+            startPersistence([this] { return writeQuiescentSnapshots(); }, ShutdownPhase::SnapshotWriting);
+            std::lock_guard<std::mutex> lock(shutdownMutex_);
+            return shutdownResult_;
+        }
+        const auto snapshots = writeQuiescentSnapshots();
+        component("Settings");
+        bool settingsSaved = false;
+        try { settingsSaved = settingsManager_->saveChecked(); } catch(...) {}
+        if(snapshots.status != ShutdownStatus::Ready) return finish(snapshots.status, snapshots.component);
+        return finish(settingsSaved ? ShutdownStatus::Ready : ShutdownStatus::Failed, settingsSaved ? "Ready" : "Settings");
     } catch (...) {
         std::lock_guard<std::mutex> lock(shutdownMutex_);
+        shutdownResult_.status = ShutdownStatus::Failed;
         shutdownPhase_ = ShutdownPhase::Finished;
         return shutdownResult_;
     }

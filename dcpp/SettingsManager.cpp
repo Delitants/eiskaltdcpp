@@ -570,6 +570,11 @@ void SettingsManager::save(string const& aFileName) {
 }
 
 bool SettingsManager::saveChecked(string const& aFileName) {
+    auto snapshot = prepareSaveSnapshot(aFileName);
+    return snapshot && writeSaveSnapshot(*snapshot);
+}
+
+std::optional<SettingsManager::SaveSnapshot> SettingsManager::prepareSaveSnapshot(const string& path) {
 
     SimpleXML xml;
     xml.addTag("DCPlusPlus");
@@ -626,17 +631,19 @@ bool SettingsManager::saveChecked(string const& aFileName) {
     xml.stepOut();
 
     if(!fireChecked(SettingsManagerListener::Save(), xml))
-        return false;
+        return std::nullopt;
 
+    return SaveSnapshot{path, SimpleXML::utf8Header + xml.toXML()};
+}
+
+bool SettingsManager::writeSaveSnapshot(const SaveSnapshot& snapshot) noexcept {
     try {
-        File out(aFileName + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
-        BufferedOutputStream<false> f(&out);
-        f.write(SimpleXML::utf8Header);
-        xml.toXML(&f);
-        f.flush();
+        File out(snapshot.path + ".tmp", File::WRITE, File::CREATE | File::TRUNCATE);
+        out.write(snapshot.bytes);
+        out.flush();
         out.close();
-        File::replaceFile(aFileName + ".tmp", aFileName);
-    } catch(const FileException&) {
+        File::replaceFile(snapshot.path + ".tmp", snapshot.path);
+    } catch(...) {
         return false;
     }
     return true;
