@@ -3954,6 +3954,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Hautatu proxy modua probatu aurretik.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Utzi proba</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocksek zifratu gabeko HTTP HEAD probatzen du TCP ostalarian eta atakan, ez edozein TLS zerbitzu. UDP probatzea ez da onartzen. Ordezko zuzeneko konexiorik gabe.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP ostalaria / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCPk SOCKS CONNECT probatzen du, ez deskarga edo TLS negoziazioa. UDPk DNS A kontsulta bereizi bat bidaltzen du proxyaren errelearen bidez; ordezko zuzeneko konexiorik gabe.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>UDP DNS kontsultaren izena:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS ebazlea (zenbakizko IPa):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Zer probatu (diagnostikoa soilik)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6535,6 +6569,14 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <source>Fit to content</source>
             <translation>Egokitu edukira</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Itsatsi DC++ magnet estekak txatean</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Itsatsi torrent magnet estekak txatean</translation>
         </message>
     </context>
     <context>
@@ -10821,6 +10863,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Ezin izan da eguneratzearen deskarga-prozesua abiarazi.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Irteteko prestaketak huts egin du</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Saiatu berriro gordetzen eta irteten</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Mantendu irekita</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Ezin izan da %1 gorde. Aplikazioaren datuak eta gelditutako saioak mantentzen dira. Konpondu fitxategi-sistemaren arazoa, eta saiatu berriro gordetzen eta irteten. Berreskuratzean ez da eguneratzerik instalatuko.</translation>
         </message>
     </context>
 </TS>

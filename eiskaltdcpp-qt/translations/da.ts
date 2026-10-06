@@ -3946,6 +3946,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Vælg en proxytilstand før testen.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Annuller test</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks tester ukrypteret HTTP HEAD på TCP-værten og porten, ikke en vilkårlig TLS-tjeneste. UDP-test understøttes ikke. Ingen direkte reserveforbindelse.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP-vært / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP tester SOCKS CONNECT, ikke en download eller TLS-håndtryk. UDP sender en separat DNS A-forespørgsel gennem proxyrelæet; ingen direkte reserveforbindelse.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Navn til UDP DNS-forespørgsel:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS-resolver (numerisk IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Hvad skal testes (kun diagnostik)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6527,6 +6561,14 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <source>Fit to content</source>
             <translation>Tilpas til indhold</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Indsæt DC++-magnetlinks i chatten</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Indsæt torrent-magnetlinks i chatten</translation>
         </message>
     </context>
     <context>
@@ -10789,6 +10831,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Kunne ikke starte opdateringens overførselsproces.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Forberedelse til afslutning mislykkedes</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Prøv at gemme og afslutte igen</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Hold åben</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Kunne ikke gemme %1. Programmets data og stoppede sessioner bevares. Ret problemet med filsystemet, og prøv derefter at gemme og afslutte igen. Opdateringer bliver ikke installeret under genoprettelsen.</translation>
         </message>
     </context>
 </TS>

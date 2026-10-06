@@ -1950,3 +1950,53 @@ notification/logout/Gatekeeper/notarization/DC/Torrent/benchmarks; final reviewe
 app/material rebuild; numeric allocation/signing/signed-v3 acceptance/guarded
 activation; closed-app install/readback; README/wiki/approved unredacted
 screenshots/prerelease/public readback. Signed feeds last; Tasks 7/8 remain open.
+
+### 2026-10-05 Core Write Boundary And Catalog Completeness
+
+The next bounded diagnostic holds an actual `write()` to a disposable profile's
+`DCPlusPlus.xml.tmp` after GUI worker retirement. It reuses coherent current
+production objects and adds observation only in private fixture/interposer copies.
+The watchdog releases the syscall after 350ms; the successful write control
+preserves its return value and contents. Matching ARM and Rosetta Intel runs under
+the unchanged loopback-only child policy each reproduce exactly four anticipated
+failures, with no unrelated exceptions or skips. Quit takes 404/360ms, the writer
+is the GUI owner, the heartbeat cannot advance during the hold, and the session
+queues exit rather than refusing at the requested 50ms worker/socket budget.
+
+This establishes a remaining core checkpoint responsiveness problem, not an
+updater cleanup regression or a repaired hard deadline. Core preparation remains
+startup-owner-bound, with terminal persistence receipts and retained failure
+ownership. Moving the whole method to a worker would violate those contracts.
+The next repair needs an explicit split between owner-thread lifecycle work,
+frozen persistence intent, asynchronous owned writes and checked completion.
+No production core/session behavior or existing timeout was changed here.
+
+Fresh extraction finds four missing quit-recovery messages in all 25 catalogs.
+The baseline runtime audit fails exactly 100 message checks; independent baseline
+QM compilation reproduces the same 100 omissions. All four messages are now
+translated. Ten additional proxy-test and magnet-sharing captions already have
+completed translations in other contexts in every language. Exactly 250 texts
+are reused unchanged in the actual Connection/Transfers runtime contexts, after
+a regression reproduces 250 missing entries. The compiled baseline control also
+reproduces exactly those 250 omissions. No pre-existing message content changes.
+
+The final full catalog suite passes 20 tests without skips, including extraction,
+Qt placeholders, gettext formats and all 350 additions surviving QM compilation
+with their intended contexts. All 14 icon tests pass. Five legacy QRC declarations
+reference 415 existing inputs; this is not the complete package resource inventory.
+The broader project-manifest extraction finds 2065 keys and 32 further missing
+entries per language, plus inherited unfinished translations. An Objective-C++
+parser warning in the installer helper is retained; this extraction is not a
+guarantee that every possible runtime literal was discovered. Native-speaker
+review and complete resource/dependency provenance remain open.
+
+This checkpoint changes catalogs/tests/documentation only. The installed app,
+profile, providers, signing material, servers and VM are not modified. No new
+release app, native/minimum-OS acceptance, production signature or publication is
+claimed. Remaining: the demonstrated core write latency, earlier intermittent
+Torrent causes, other filesystem/staging responsiveness, the 32 catalog entries
+and linguistic review, resource/dependency provenance/reproducibility, native
+Intel/minimum-OS/live lifecycle and benchmark acceptance, final reviewed-source
+app/material rebuild, numeric allocation/signing/signed-v3 acceptance and guarded
+activation, closed-app installation/readback, README/wiki/approved unredacted
+screenshots/prerelease/public readback. Signed feeds last; Tasks 7/8 stay open.

@@ -46,6 +46,84 @@ class CatalogRegressionTests(unittest.TestCase):
             with self.subTest(language=language):
                 self.assertEqual(expected, entries[(context, source)])
 
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_quit_recovery_messages_survive_catalog_compilation(self):
+        context_name = "updates::ApplicationQuitSession"
+        sources = {"Quit preparation failed", "Retry Save and Quit", "Keep Open",
+                   "Could not save %1. Application data and stopped sessions remain retained. "
+                   "Fix the filesystem problem, then retry saving and quitting. "
+                   "Updates will not be installed during recovery."}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-recovery-catalogs-") as work:
+            for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+                binary = Path(work) / f"{path.stem}.qm"
+                compiled = Path(work) / f"{path.stem}.ts"
+                subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                               check=True, capture_output=True, text=True)
+                subprocess.run(["lconvert", "-i", str(binary), "-o", str(compiled)],
+                               check=True, capture_output=True, text=True)
+                def recovery_entries(catalog):
+                    return {m.findtext("source"): m.findtext("translation")
+                            for c in ET.parse(catalog).getroot().findall("context")
+                            if c.findtext("name") == context_name
+                            for m in c.findall("message")}
+                original = recovery_entries(path)
+                actual = recovery_entries(compiled)
+                for source in sorted(sources):
+                    with self.subTest(language=path.stem, source=source):
+                        self.assertIn(source, actual)
+                        if source not in actual:
+                            continue
+                        self.assertTrue(actual[source].strip())
+                        self.assertEqual(original[source], actual[source])
+                        self.assertEqual(source.count("%1"), actual[source].count("%1"))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_shared_proxy_and_magnet_messages_cover_runtime_contexts(self):
+        required = {
+            "SettingsConnection": {
+                "Cancel test", "TCP host / IP:", "TCP: %1\nUDP: %2",
+                "UDP DNS query name:", "UDP DNS resolver (numeric IP):",
+                "What to test (diagnostics only)",
+                "Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary "
+                "TLS service. UDP testing is unsupported. No direct fallback.",
+                "TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a "
+                "separate DNS A query through the proxy relay; no direct fallback.",
+            },
+            "TransferView": {"Paste DC++ magnet(s) in chat", "Paste Torrent Magnet(s) in chat"},
+        }
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            with tempfile.TemporaryDirectory(prefix="eiskalt-shared-catalog-") as work:
+                binary = Path(work) / "catalog.qm"
+                output = Path(work) / "compiled.ts"
+                subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                               check=True, capture_output=True, text=True)
+                subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                               check=True, capture_output=True, text=True)
+                compiled = {(c.findtext("name"), m.findtext("source")): m.findtext("translation")
+                            for c in ET.parse(output).getroot().findall("context")
+                            for m in c.findall("message")}
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(language=path.stem, context=context, source=source):
+                        actual = entries.get((context, source))
+                        self.assertIsNotNone(actual)
+                        if actual is None:
+                            continue
+                        self.assertNotIn(actual.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(actual.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertEqual(text, compiled.get((context, source)))
+                        peers = {"".join(value.itertext()) for (other, caption), value in entries.items()
+                                 if caption == source and other != context and value is not None
+                                 and value.get("type") not in {"unfinished", "obsolete", "vanished"}
+                                 and "".join(value.itertext()).strip()}
+                        self.assertEqual({text}, peers)
+
     def test_public_hub_filter_and_counter_are_translated(self):
         captions = {("PublicHubs", "Hubs: %1 / %2"),
                     ("UIPublicHubs", "Filter hubs"),

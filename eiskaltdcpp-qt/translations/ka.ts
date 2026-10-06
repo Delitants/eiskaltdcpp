@@ -4001,6 +4001,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>ტესტირებამდე აირჩიეთ პროქსის რეჟიმი.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>ტესტის გაუქმება</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks TCP ჰოსტსა და პორტზე დაუშიფრავ HTTP HEAD-ს ამოწმებს და არა ნებისმიერ TLS სერვისს. UDP-ის ტესტირება მხარდაჭერილი არ არის. სარეზერვო პირდაპირი კავშირის გარეშე.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP ჰოსტი / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP ამოწმებს SOCKS CONNECT-ს და არა ჩამოტვირთვას ან TLS კავშირის შეთანხმებას. UDP ცალკე DNS A მოთხოვნას აგზავნის პროქსის გადამცემით; სარეზერვო პირდაპირი კავშირის გარეშე.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>UDP DNS მოთხოვნის სახელი:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS ამომხსნელი (რიცხვითი IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>რა შემოწმდეს (მხოლოდ დიაგნოსტიკა)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6590,6 +6624,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>შიგთავსზე მორგება</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>DC++ მაგნიტური ბმულების ჩასმა ჩატში</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>ტორენტის მაგნიტური ბმულების ჩასმა ჩატში</translation>
         </message>
     </context>
     <context>
@@ -10916,6 +10958,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>განახლების ჩამოტვირთვის პროცესის დაწყება ვერ მოხერხდა.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>გასვლის მომზადება ვერ მოხერხდა</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>ხელახლა შენახვა და გასვლა</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>ღიად დატოვება</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>%1 ვერ შეინახა. პროგრამის მონაცემები და გაჩერებული სესიები შენარჩუნებულია. მოაგვარეთ ფაილური სისტემის პრობლემა, შემდეგ ხელახლა სცადეთ შენახვა და გასვლა. აღდგენის დროს განახლებები არ დაინსტალირდება.</translation>
         </message>
     </context>
 </TS>

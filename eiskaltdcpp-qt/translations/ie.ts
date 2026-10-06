@@ -3942,6 +3942,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Selecte un mode de proxy ante li test.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Anullar li prova</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks prova HTTP HEAD sin ciffration che li host e port TCP, ne un arbitrari servicie TLS. Provas UDP ne es supportat. Sin conexion direct alternativ.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Host TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP prova SOCKS CONNECT, ne un descarga o un negotiation TLS. UDP invia un separat question DNS A tra li relé del proxy; sin conexion direct alternativ.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Nómine por li question DNS via UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>Resolver DNS via UDP (IP numeric):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Quo provar (solmen diagnostica)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6519,6 +6553,14 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
         <message>
             <source>Fit to content</source>
             <translation>Adaptar al contenete</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Collar ligamentes magnet DC++ in li conversation</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Collar ligamentes magnet de torrentes in li conversation</translation>
         </message>
     </context>
     <context>
@@ -10777,6 +10819,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Ne posse lansar li processu de descargo del actualisation.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Preparation por surtir ne successat</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Reprovar conservar e surtir</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Lassar apert</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Ne posset conservar %1. Li data del application e li stoppat sessiones resta conservat. Correcte li problema del sistema de files, poy reprove conservar e surtir. Actualisationes ne va esser installat durant li recuperation.</translation>
         </message>
     </context>
 </TS>

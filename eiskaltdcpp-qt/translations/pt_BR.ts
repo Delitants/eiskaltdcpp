@@ -4001,6 +4001,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Selecione um modo de proxy antes do teste.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Cancelar teste</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>O Shadowsocks testa HTTP HEAD sem criptografia no host e na porta TCP, não um serviço TLS arbitrário. O teste de UDP não é suportado. Não há alternativa por conexão direta.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Host TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>O TCP testa SOCKS CONNECT, não um download nem uma negociação TLS. O UDP envia uma consulta DNS A separada pelo retransmissor do proxy; não há alternativa por conexão direta.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Nome da consulta DNS UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>Resolvedor DNS UDP (IP numérico):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Destino do teste (apenas diagnóstico)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6590,6 +6624,14 @@ Adicionado para distribuição somente leitura. Os hashes dos arquivos de origem
         <message>
             <source>Fit to content</source>
             <translation>Ajustar ao conteúdo</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Colar links magnet DC++ no chat</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Colar links magnet de torrents no chat</translation>
         </message>
     </context>
     <context>
@@ -10860,6 +10902,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Não foi possível iniciar o processo de download da atualização.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Falha na preparação para sair</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Tentar salvar e sair novamente</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Manter aberto</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Não foi possível salvar %1. Os dados do aplicativo e as sessões interrompidas são preservados. Corrija o problema do sistema de arquivos e tente salvar e sair novamente. Nenhuma atualização será instalada durante a recuperação.</translation>
         </message>
     </context>
 </TS>

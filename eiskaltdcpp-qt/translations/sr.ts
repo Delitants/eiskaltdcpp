@@ -4048,6 +4048,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Пре тестирања изаберите режим проксија.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Откажи тест</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks тестира нешифровани HTTP HEAD на TCP домаћину и порту, а не произвољну TLS услугу. UDP тестирање није подржано. Без резервне директне везе.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP домаћин / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP тестира SOCKS CONNECT, а не преузимање или TLS руковање. UDP шаље засебан DNS A упит кроз прокси релеј; без резервне директне везе.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Име за DNS упит преко UDP-а:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS разрешивач (бројчана IP адреса):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Шта тестирати (само дијагностика)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6644,6 +6678,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>Прилагоди садржају</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Уметни DC++ магнетне везе у ћаскање</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Уметни торент магнетне везе у ћаскање</translation>
         </message>
     </context>
     <context>
@@ -11082,6 +11124,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Није могуће покренути процес преузимања ажурирања.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Припрема за излазак није успела</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Понови чување и изађи</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Остави отворено</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Није могуће сачувати %1. Подаци програма и заустављене сесије остају сачувани. Отклоните проблем са системом датотека, па поново покушајте чување и излазак. Ажурирања неће бити инсталирана током опоравка.</translation>
         </message>
     </context>
 </TS>

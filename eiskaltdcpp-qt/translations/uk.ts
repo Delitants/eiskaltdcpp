@@ -4048,6 +4048,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Перед перевіркою виберіть режим проксі.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Скасувати перевірку</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks перевіряє звичайний HTTP HEAD на вказаному вузлі та порту TCP, а не довільну службу TLS. Перевірка UDP не підтримується. Переходу на пряме з'єднання немає.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Вузол TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP перевіряє SOCKS CONNECT, а не завантаження чи узгодження TLS. UDP надсилає окремий DNS-запит A через ретранслятор проксі; переходу на пряме з'єднання немає.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Ім'я для DNS-запиту через UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>DNS-сервер UDP (числова IP-адреса):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Що перевіряти (лише діагностика)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6644,6 +6678,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>За вмістом</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Вставити DC++ magnet-посилання в чат</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Вставити magnet-посилання торентів у чат</translation>
         </message>
     </context>
     <context>
@@ -11119,6 +11161,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Не вдалося запустити потік завантаження оновлення.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Не вдалося підготуватися до виходу</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Повторити збереження та вийти</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Залишити відкритим</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Не вдалося зберегти %1. Дані програми та зупинені сеанси зберігаються. Усуньте проблему файлової системи, потім повторіть збереження та вихід. Під час відновлення оновлення не встановлюватимуться.</translation>
         </message>
     </context>
 </TS>

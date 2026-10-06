@@ -4044,6 +4044,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Перад праверкай выберыце рэжым проксі.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Скасаваць тэст</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks правярае незашыфраваны HTTP HEAD на зададзеным TCP-вузле і порце, а не адвольны сэрвіс TLS. Праверка UDP не падтрымліваецца. Без пераходу на прамое злучэнне.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Вузел TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP правярае SOCKS CONNECT, а не спампоўванне ці ўзгадненне TLS. UDP адпраўляе асобны DNS-запыт тыпу A праз рэтранслятар проксі; без пераходу на прамое злучэнне.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Імя ў DNS-запыце праз UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>DNS-рэзалвер UDP (лікавы IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Што праверыць (толькі дыягностыка)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6640,6 +6674,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>Падагнаць да змесціва</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Уставіць DC++ magnet-спасылкі ў чат</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Уставіць торэнт magnet-спасылкі ў чат</translation>
         </message>
     </context>
     <context>
@@ -11119,6 +11161,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Не ўдалося запусціць рабочы паток спампоўвання абнаўлення.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Падрыхтоўка да выхаду не ўдалася</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Паўтарыць захаванне і выйсці</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Пакінуць адкрытым</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Не ўдалося захаваць %1. Даныя праграмы і спыненыя сеансы захоўваюцца. Выправіце праблему файлавай сістэмы, затым паўтарыце захаванне і выхад. Падчас аднаўлення абнаўленні не будуць усталяваныя.</translation>
         </message>
     </context>
 </TS>

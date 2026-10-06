@@ -4031,6 +4031,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Επιλέξτε λειτουργία μεσολάβησης πριν από τη δοκιμή.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Ακύρωση δοκιμής</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Το Shadowsocks δοκιμάζει μη κρυπτογραφημένο HTTP HEAD στον υπολογιστή και τη θύρα TCP, όχι αυθαίρετη υπηρεσία TLS. Δεν υποστηρίζεται δοκιμή UDP. Χωρίς εφεδρική απευθείας σύνδεση.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Υπολογιστής TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>Το TCP δοκιμάζει SOCKS CONNECT, όχι λήψη ή χειραψία TLS. Το UDP στέλνει ξεχωριστό ερώτημα DNS A μέσω της αναμετάδοσης του διαμεσολαβητή· χωρίς εφεδρική απευθείας σύνδεση.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Όνομα ερωτήματος DNS μέσω UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>Επιλυτής DNS μέσω UDP (αριθμητική IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Τι να δοκιμαστεί (μόνο διαγνωστικά)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6626,6 +6660,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>Προσαρμογή στο περιεχόμενο</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Επικόλληση συνδέσμων magnet DC++ στη συνομιλία</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Επικόλληση συνδέσμων magnet torrent στη συνομιλία</translation>
         </message>
     </context>
     <context>
@@ -10928,6 +10970,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Δεν είναι δυνατή η εκκίνηση της διεργασίας λήψης ενημέρωσης.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Η προετοιμασία εξόδου απέτυχε</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Επανάληψη αποθήκευσης και έξοδος</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Διατήρηση ανοικτού</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Δεν ήταν δυνατή η αποθήκευση του %1. Τα δεδομένα της εφαρμογής και οι διακοπείσες συνεδρίες διατηρούνται. Διορθώστε το πρόβλημα του συστήματος αρχείων και δοκιμάστε ξανά την αποθήκευση και την έξοδο. Δεν θα εγκατασταθούν ενημερώσεις κατά την ανάκτηση.</translation>
         </message>
     </context>
 </TS>

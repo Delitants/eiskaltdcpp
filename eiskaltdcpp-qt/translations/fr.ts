@@ -4029,6 +4029,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Sélectionnez un mode proxy avant le test.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Annuler le test</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks teste une requête HTTP HEAD en clair sur l'hôte et le port TCP, pas un service TLS quelconque. Les tests UDP ne sont pas pris en charge. Aucun repli vers une connexion directe.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Hôte TCP / IP :</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP teste SOCKS CONNECT, pas un téléchargement ni une négociation TLS. UDP envoie une requête DNS A distincte via le relais du proxy ; aucun repli vers une connexion directe.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP : %1
+UDP : %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Nom de la requête DNS UDP :</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>Résolveur DNS UDP (IP numérique) :</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Cible du test (diagnostic uniquement)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6624,6 +6658,14 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
         <message>
             <source>Fit to content</source>
             <translation>Adapter au contenu</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Coller les liens magnet DC++ dans le chat</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Coller les liens magnet des torrents dans le chat</translation>
         </message>
     </context>
     <context>
@@ -11050,6 +11092,25 @@ SHA-256 : %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Impossible de démarrer le processus de téléchargement de la mise à jour.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Échec de la préparation à la fermeture</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Réessayer d'enregistrer et de quitter</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Garder ouvert</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Impossible d'enregistrer %1. Les données de l'application et les sessions arrêtées sont conservées. Corrigez le problème du système de fichiers, puis réessayez d'enregistrer et de quitter. Aucune mise à jour ne sera installée pendant la récupération.</translation>
         </message>
     </context>
 </TS>

@@ -3959,6 +3959,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Chọn chế độ proxy trước khi kiểm tra.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Hủy kiểm tra</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks kiểm tra HTTP HEAD không mã hóa tại máy chủ và cổng TCP, không phải dịch vụ TLS tùy ý. Không hỗ trợ kiểm tra UDP. Không có kết nối trực tiếp dự phòng.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>Máy chủ TCP / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP kiểm tra SOCKS CONNECT, không phải tải xuống hay bắt tay TLS. UDP gửi một truy vấn DNS A riêng qua bộ chuyển tiếp proxy; không có kết nối trực tiếp dự phòng.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Tên truy vấn DNS qua UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>Bộ phân giải DNS qua UDP (IP dạng số):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Nội dung kiểm tra (chỉ chẩn đoán)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6540,6 +6574,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>Vừa với nội dung</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Dán liên kết magnet DC++ vào trò chuyện</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Dán liên kết magnet torrent vào trò chuyện</translation>
         </message>
     </context>
     <context>
@@ -10810,6 +10852,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Không thể khởi động tiến trình tải bản cập nhật.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Chuẩn bị thoát thất bại</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Thử lưu và thoát lại</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Giữ mở</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Không thể lưu %1. Dữ liệu ứng dụng và các phiên đã dừng vẫn được giữ lại. Khắc phục sự cố hệ thống tệp, rồi thử lưu và thoát lại. Các bản cập nhật sẽ không được cài đặt trong quá trình khôi phục.</translation>
         </message>
     </context>
 </TS>

@@ -4026,6 +4026,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>测试前请选择代理模式。</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>取消测试</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks 测试 TCP 主机和端口上的明文 HTTP HEAD 请求，而非任意 TLS 服务。不支持 UDP 测试。不会回退到直连。</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP 主机 / IP：</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP 测试 SOCKS CONNECT，而非下载或 TLS 握手。UDP 通过代理中继发送独立的 DNS A 查询；不会回退到直连。</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP：%1
+UDP：%2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>UDP DNS 查询域名：</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS 解析服务器（数字 IP 地址）：</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>测试目标（仅用于诊断）</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6607,6 +6641,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>适应内容</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>将 DC++ 磁力链接粘贴到聊天中</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>将种子磁力链接粘贴到聊天中</translation>
         </message>
     </context>
     <context>
@@ -10877,6 +10919,25 @@ SHA-256：%4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>无法启动更新下载工作线程。</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>退出准备失败</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>重试保存并退出</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>保持打开</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>无法保存 %1。应用程序数据和已停止的会话仍被保留。请修复文件系统问题，然后重试保存并退出。恢复期间不会安装更新。</translation>
         </message>
     </context>
 </TS>

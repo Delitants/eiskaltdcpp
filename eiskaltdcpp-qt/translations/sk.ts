@@ -4009,6 +4009,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Pred testovaním vyberte režim proxy.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Zrušiť test</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks testuje nešifrovaný HTTP HEAD na zadanom TCP hostiteľovi a porte, nie ľubovoľnú službu TLS. Testovanie UDP nie je podporované. Bez náhradného priameho pripojenia.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP hostiteľ / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP testuje SOCKS CONNECT, nie sťahovanie ani nadviazanie TLS. UDP posiela samostatný DNS dotaz typu A cez relé proxy; bez náhradného priameho pripojenia.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Názov pre DNS dotaz cez UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>DNS resolver pre UDP (číselná IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Čo testovať (iba diagnostika)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6605,6 +6639,14 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <source>Fit to content</source>
             <translation>Prispôsobiť obsahu</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Vložiť DC++ magnet(y) do chatu</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Vložiť torrent magnet(y) do chatu</translation>
         </message>
     </context>
     <context>
@@ -10944,6 +10986,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Nemožno spustiť pracovné vlákno na stiahnutie aktualizácie.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Príprava na ukončenie zlyhala</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Znova uložiť a ukončiť</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Ponechať otvorené</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Nepodarilo sa uložiť %1. Údaje aplikácie a zastavené relácie zostávajú zachované. Opravte problém so súborovým systémom a potom znova skúste uloženie a ukončenie. Počas obnovy sa nebudú inštalovať aktualizácie.</translation>
         </message>
     </context>
 </TS>

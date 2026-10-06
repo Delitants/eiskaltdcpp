@@ -4041,6 +4041,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Изберете режим на прокси преди теста.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Отказ от теста</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks тества некриптирана HTTP HEAD заявка към TCP хоста и порта, а не произволна TLS услуга. Тестване на UDP не се поддържа. Без резервна директна връзка.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP хост / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP тества SOCKS CONNECT, а не изтегляне или TLS договаряне. UDP изпраща отделна DNS заявка тип A през релето на проксито; без резервна директна връзка.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Име за DNS заявката през UDP:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>DNS резолвер за UDP (числов IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Какво да се тества (само диагностика)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6637,6 +6671,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <source>Fit to content</source>
             <translation>Побиране според съдържанието</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Поставяне на DC++ magnet връзки в чата</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Поставяне на торент magnet връзки в чата</translation>
         </message>
     </context>
     <context>
@@ -11105,6 +11147,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Не може да се стартира процесът за изтегляне на обновяването.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Подготовката за изход е неуспешна</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Повторно запазване и изход</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Оставяне отворено</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Неуспешно запазване на %1. Данните на приложението и спряните сесии се запазват. Отстранете проблема с файловата система, след което опитайте отново да запазите и излезете. По време на възстановяването няма да се инсталират актуализации.</translation>
         </message>
     </context>
 </TS>

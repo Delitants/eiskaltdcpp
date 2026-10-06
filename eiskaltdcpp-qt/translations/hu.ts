@@ -4040,6 +4040,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>A tesztelés előtt válasszon proxymódot.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Teszt megszakítása</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>A Shadowsocks titkosítatlan HTTP HEAD kérést tesztel a TCP-gépen és porton, nem tetszőleges TLS-szolgáltatást. Az UDP tesztelése nem támogatott. Nincs közvetlen tartalékkapcsolat.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP-gép / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>A TCP-teszt SOCKS CONNECT kérést vizsgál, nem letöltést vagy TLS-kézfogást. Az UDP külön DNS A lekérdezést küld a proxyátjátszón keresztül; nincs közvetlen tartalékkapcsolat.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>UDP DNS-lekérdezés neve:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS-feloldó (számszerű IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Mit teszteljünk (csak diagnosztika)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6636,6 +6670,14 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <source>Fit to content</source>
             <translation>Igazítás a tartalomhoz</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>DC++-magnetlinkek beillesztése a csevegésbe</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Torrent-magnetlinkek beillesztése a csevegésbe</translation>
         </message>
     </context>
     <context>
@@ -11078,6 +11120,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>A frissítés letöltését végző munkafolyamat nem indítható el.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>A kilépés előkészítése sikertelen</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Mentés és kilépés újra</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Maradjon nyitva</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Nem sikerült menteni: %1. Az alkalmazás adatai és a leállított munkamenetek megmaradnak. Javítsa ki a fájlrendszer problémáját, majd próbálja újra a mentést és a kilépést. A helyreállítás során nem lesznek frissítések telepítve.</translation>
         </message>
     </context>
 </TS>

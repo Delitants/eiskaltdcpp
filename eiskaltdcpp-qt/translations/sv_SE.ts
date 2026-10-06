@@ -4048,6 +4048,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Välj ett proxyläge före testet.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Avbryt test</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks testar okrypterad HTTP HEAD på TCP-värden och porten, inte en godtycklig TLS-tjänst. UDP-testning stöds inte. Ingen direkt reservanslutning.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP-värd / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP testar SOCKS CONNECT, inte nedladdning eller TLS-handskakning. UDP skickar en separat DNS A-fråga genom proxyreläet; ingen direkt reservanslutning.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>Namn för UDP DNS-fråga:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS-resolver (numerisk IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Vad ska testas (endast diagnostik)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6644,6 +6678,14 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
         <message>
             <source>Fit to content</source>
             <translation>Anpassa till innehåll</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>Klistra in DC++-magnetlänkar i chatten</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Klistra in torrent-magnetlänkar i chatten</translation>
         </message>
     </context>
     <context>
@@ -11100,6 +11142,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Kunde inte starta uppdateringens hämtningsprocess.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Förberedelsen för avslut misslyckades</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Försök spara och avsluta igen</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Håll öppet</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>Kunde inte spara %1. Programmets data och stoppade sessioner bevaras. Åtgärda problemet med filsystemet och försök sedan spara och avsluta igen. Inga uppdateringar installeras under återställningen.</translation>
         </message>
     </context>
 </TS>

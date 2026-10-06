@@ -4048,6 +4048,40 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <source>Select a proxy mode before testing.</source>
         <translation>Testten önce bir vekil sunucu kipi seçin.</translation>
     </message>
+        <message>
+            <source>Cancel test</source>
+            <translation>Testi iptal et</translation>
+        </message>
+        <message>
+            <source>Shadowsocks tests plain HTTP HEAD at the TCP host and port, not an arbitrary TLS service. UDP testing is unsupported. No direct fallback.</source>
+            <translation>Shadowsocks, rastgele bir TLS hizmetini değil, TCP ana makinesi ve bağlantı noktasında şifrelenmemiş HTTP HEAD isteğini test eder. UDP testi desteklenmez. Doğrudan bağlantıya geri dönüş yoktur.</translation>
+        </message>
+        <message>
+            <source>TCP host / IP:</source>
+            <translation>TCP ana makinesi / IP:</translation>
+        </message>
+        <message>
+            <source>TCP tests SOCKS CONNECT, not a download or TLS handshake. UDP sends a separate DNS A query through the proxy relay; no direct fallback.</source>
+            <translation>TCP testi indirme veya TLS el sıkışması değil, SOCKS CONNECT işlemini denetler. UDP, vekil sunucu aktarıcısı üzerinden ayrı bir DNS A sorgusu gönderir; doğrudan bağlantıya geri dönüş yoktur.</translation>
+        </message>
+        <message>
+            <source>TCP: %1
+UDP: %2</source>
+            <translation>TCP: %1
+UDP: %2</translation>
+        </message>
+        <message>
+            <source>UDP DNS query name:</source>
+            <translation>UDP DNS sorgu adı:</translation>
+        </message>
+        <message>
+            <source>UDP DNS resolver (numeric IP):</source>
+            <translation>UDP DNS çözümleyicisi (sayısal IP):</translation>
+        </message>
+        <message>
+            <source>What to test (diagnostics only)</source>
+            <translation>Test hedefi (yalnızca tanılama)</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -6644,6 +6678,14 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
         <message>
             <source>Fit to content</source>
             <translation>İçeriğe sığdır</translation>
+        </message>
+        <message>
+            <source>Paste DC++ magnet(s) in chat</source>
+            <translation>DC++ magnet bağlantılarını sohbete yapıştır</translation>
+        </message>
+        <message>
+            <source>Paste Torrent Magnet(s) in chat</source>
+            <translation>Torrent magnet bağlantılarını sohbete yapıştır</translation>
         </message>
     </context>
     <context>
@@ -11104,6 +11146,25 @@ SHA-256: %4</translation>
         <message>
             <source>Unable to start the update download worker.</source>
             <translation>Güncelleme indirme işlemi başlatılamadı.</translation>
+        </message>
+    </context>
+    <context>
+        <name>updates::ApplicationQuitSession</name>
+        <message>
+            <source>Quit preparation failed</source>
+            <translation>Çıkış hazırlığı başarısız oldu</translation>
+        </message>
+        <message>
+            <source>Retry Save and Quit</source>
+            <translation>Kaydetmeyi ve çıkmayı yeniden dene</translation>
+        </message>
+        <message>
+            <source>Keep Open</source>
+            <translation>Açık tut</translation>
+        </message>
+        <message>
+            <source>Could not save %1. Application data and stopped sessions remain retained. Fix the filesystem problem, then retry saving and quitting. Updates will not be installed during recovery.</source>
+            <translation>%1 kaydedilemedi. Uygulama verileri ve durdurulmuş oturumlar korunur. Dosya sistemi sorununu giderin, ardından kaydetmeyi ve çıkmayı yeniden deneyin. Kurtarma sırasında güncellemeler yüklenmeyecektir.</translation>
         </message>
     </context>
 </TS>
