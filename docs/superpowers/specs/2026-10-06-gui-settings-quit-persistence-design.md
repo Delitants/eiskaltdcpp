@@ -1,7 +1,8 @@
 # GUI Settings Persistence During Checked Quit
 
-Status: proposed written design, awaiting maintainer review. On 2026-10-06 the
-maintainer approved preparing this design, not its implementation. This extends
+Status: written design approved by the maintainer on 2026-10-06 after checkpoint
+`bcf1c1390`. The implementation plan is prepared for review; no runtime
+repair is implemented by this document. This extends
 the approved built-in updater quit contract; it does not authorize installation,
 signing, publication, profile changes or production feed activation.
 
@@ -173,9 +174,11 @@ failures by name; green reruns do not erase them.
 
 ## Review And Remaining Gates
 
-The maintainer must review this written design before an implementation plan is
-prepared. Implementation then follows that reviewed plan inline; this document
-alone is not implemented behavior or authorization for a release.
+The maintainer approved this written design after checkpoint `bcf1c1390`.
+The implementation plan is now available in
+[`2026-10-06-gui-settings-quit-persistence.md`](../plans/2026-10-06-gui-settings-quit-persistence.md)
+for review before Native/inline implementation. This document alone is not
+implemented behavior or authorization for a release.
 
 The retained natural recovery and Torrent/bootstrap/publication/bind/peer-counter
 causes remain separate investigations. Localization/native-language quality,

@@ -109,7 +109,12 @@ ARM and Intel/Rosetta. The latest adjacent ARM run has an intermittent anti-spam
 recovery failure: the existing recovery-button case finds a hidden prompt and
 fails to complete its retry. The same selector passes on Intel and an unchanged
 accepted ARM binary; this does not explain or waive the failure. A focused
-settings-ownership repair design is prepared for review, not implemented.
+settings-ownership repair design is now approved. Its
+[implementation plan](../superpowers/plans/2026-10-06-gui-settings-quit-persistence.md)
+is prepared for review before Native execution, not implemented. The plan includes
+cached settings reads, owned physical-write receipts, post-Ready deadline checks
+and a dedicated no-Torrent settings/quit fixture; these are planned checks, not
+new passing test results. Installed state and release gates remain unchanged.
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

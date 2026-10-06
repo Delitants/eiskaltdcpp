@@ -2435,5 +2435,12 @@ are preservation checks, not new installed/native/release acceptance.
 The maintainer approved preparing the focused written design after reviewing
 the diagnosis. It is available in
 [`2026-10-06-gui-settings-quit-persistence-design.md`](../specs/2026-10-06-gui-settings-quit-persistence-design.md).
-Written-design review remains pending before a new implementation plan and
-production ownership changes. No repair, installation or publication is claimed.
+The maintainer subsequently approved that written design. The implementation
+plan is prepared in
+[`2026-10-06-gui-settings-quit-persistence.md`](2026-10-06-gui-settings-quit-persistence.md)
+and awaits review before Native/inline execution. It covers owned frozen storage,
+cached GUI retirement, post-Ready deadline admission and full-source test rebuilds.
+A dedicated settings/quit fixture will provide actual no-Torrent execution;
+the existing full-GUI toggle target depends on Torrent and cannot prove that path.
+No runtime repair, new test result, installation or publication is claimed by
+this documentation checkpoint. All retained failures and release gates stay open.
