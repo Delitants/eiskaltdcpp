@@ -124,6 +124,39 @@ Copyright: 2020 Gerasim Troeglazov <3dEyes@gmail.com>
            2020 Michele Frau afka zuMi (http://ta.me.ly/)
 License: Expat
 
+Files: data/icons/modern-classic-master.png
+       data/icons/eiskaltdcpp-borderless.icns
+       data/icons/eiskaltdcpp.ico
+       data/icons/icon_16x16.png
+       data/icons/icon_22x22.png
+       data/icons/icon_24x24.png
+       data/icons/icon_32x32.png
+       data/icons/icon_48x48.png
+       data/icons/icon_64x64.png
+       data/icons/icon_128x128.png
+       data/icons/icon_256x256.png
+       data/icons/icon_512x512.png
+       data/icons/icon_1024x1024.png
+       eiskaltdcpp-qt/icons/appl/default/icon_appl.png
+       eiskaltdcpp-qt/icons/appl/default/icon_appl_big.png
+       eiskaltdcpp-qt/icons/appl/apex/icon_appl.png
+       eiskaltdcpp-qt/icons/appl/apex/icon_appl_big.png
+       eiskaltdcpp-qt/icons/appl/faenza/icon_appl.png
+       eiskaltdcpp-qt/icons/appl/faenza/icon_appl_big.png
+       eiskaltdcpp-qt/icons/appl/haiku/icon_appl.png
+       eiskaltdcpp-qt/icons/appl/haiku/icon_appl_big.png
+       eiskaltdcpp-qt/icons/appl/monochrome/icon_appl.png
+       eiskaltdcpp-qt/icons/appl/monochrome/icon_appl_big.png
+Copyright: not-applicable
+License: LGPL-3
+Comment: Modern Classic variant 1, generated using OpenAI image_gen on
+ 2026-10-05 and approved by the maintainer on 2026-10-06. Reference artwork:
+ 2010 Uladzimir Bely (WiseLord) <wiselord1983@gmail.com>. This provenance is
+ not a claim of exclusive artistic authorship. The original reference
+ attribution is retained in data/icons/READ_ME.txt; exact generated assets
+ are pinned by data/icons/modern-classic-manifest.json. Other legacy theme
+ artwork keeps its original authorship and licensing above.
+
 Files: eiskaltdcpp-qt/icons/appl/prism/*.svg
        eiskaltdcpp-qt/icons/appl/contour/*.svg
        eiskaltdcpp-qt/icons/appl/slate/*.svg

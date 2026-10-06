@@ -118,9 +118,12 @@ set (WIN_RESOURCES)
 if (MINGW AND WIN32)
     add_custom_command (OUTPUT "${PROJECT_BINARY_DIR}/eiskaltdcpp-qt_rc.o"
                         COMMAND ${CMAKE_RC_COMPILER}
-                                -I"${PROJECT_SOURCE_DIR}/"
+                                "-I${PROJECT_SOURCE_DIR}/"
                                 -i "${PROJECT_SOURCE_DIR}/eiskaltdcpp-qt.rc"
-                                -o "${PROJECT_BINARY_DIR}/eiskaltdcpp-qt_rc.o")
+                                -o "${PROJECT_BINARY_DIR}/eiskaltdcpp-qt_rc.o"
+                        DEPENDS "${PROJECT_SOURCE_DIR}/eiskaltdcpp-qt.rc"
+                                "${PROJECT_SOURCE_DIR}/../data/icons/eiskaltdcpp.ico"
+                        VERBATIM)
     set (WIN_RESOURCES ${PROJECT_BINARY_DIR}/eiskaltdcpp-qt_rc.o)
 elseif (NOT MINGW AND WIN32)
     set (WIN_RESOURCES "${PROJECT_SOURCE_DIR}/eiskaltdcpp-qt.rc")

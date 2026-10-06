@@ -10,10 +10,21 @@ five legacy Qt app-brand directories. Modern toolbar themes use the same brand
 resources. Original artwork attribution and generated-reference provenance are
 retained, with a checksum manifest and reproducible current-tool packaging
 recipe. This is not an installed-app or Windows/Linux runtime acceptance claim.
-The asset-update verification passes eight packaging checks, 617 Qt cases per
+The asset-update verification passes eleven packaging checks, 617 Qt cases per
 architecture and all three GUI layouts (101/101/99 cases) on ARM and
 Intel/Rosetta. Six recovery repetitions per architecture also pass; the earlier
 natural intermittent recovery timeout remains unexplained and unwaived.
+
+A separate icon-checkpoint review found and corrected incremental MinGW resource
+dependencies, generated-brand copyright metadata and missing non-Mac notice
+installation. Tests exercise the real CMake resource dependency graph with a
+substitute compiler, exact provenance scopes and actual install rules with
+Linux/Windows destination layouts. This is not native Windows/Linux acceptance.
+Two additional full single-line GUI runs pass in randomized order. Independently,
+held search-blacklist and anti-spam write/flush calls reproduce a GUI-thread
+stall on both ARM and Intel/Rosetta. Auxiliary checkpoint writes still need an
+owned asynchronous snapshot/receipt repair; the original recovery timeout is
+not attributed to this diagnostic.
 
 The integrated Torrent UI and proxy routing, managed DC publication, native UI
 updates and selective upstream maintenance are present in the development tree.

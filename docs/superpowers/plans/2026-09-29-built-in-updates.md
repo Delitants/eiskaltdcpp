@@ -2237,3 +2237,65 @@ wiki URL redirects to the repository. Wiki sources remain local until the initia
 browser page is created. No signing key, live profile, installed app, service,
 feed or historical release artifact was changed. All remaining release gates
 above stay open, and signed feeds remain last.
+
+### 2026-10-06 Icon Review Repairs And Auxiliary Write Diagnostic
+
+A fresh, read-only reviewer inspected the complete 33-path icon checkpoint
+730cf03d6 against its parent. Three Important findings were confirmed:
+incremental MinGW builds lacked RC/ICO dependencies, broad Faenza/Haiku
+copyright entries misidentified the replaced brand PNGs, and non-Apple installs
+omitted the new icon notice and manifest. The bounded repairs add explicit
+resource dependencies and quoted command arguments, a specific provenance entry
+for all 23 generated assets while retaining other theme metadata, and notice
+installation under the existing platform documentation directory.
+
+The same independent reviewer checked the bounded four-file repair and found no
+remaining Important findings in that scope. This is not a fresh review of the
+entire historical release branch or independently repeated runtime verification.
+
+The three new regression tests first fail exactly 26 assertions/subtests with no
+errors: one stale-ICO incremental build, 23 missing generated-provenance entries,
+and two missing install notices. All eleven icon checks then pass without skips.
+The dependency regression builds the real extracted CMake command graph with a
+substitute compiler that records its inputs; it is not native windres acceptance.
+The install regression executes the actual data install rules using Linux and
+Windows destination layouts on this Mac, not those platforms' runtime acceptance.
+Approved artwork bytes and the asset manifest are unchanged.
+
+Adjacent packaging suites also pass: 30 release-profile, 21 dependency-closure
+and 34 selected-recheck tests, plus the library-ID normalization shell fixture.
+Together with the eleven icon tests, 96 Python tests complete without skips.
+These use disposable Mach-O/CMake fixtures, not final rebuilt release apps.
+
+Two randomized full single-line GUI suites pass on ARM, seeds 619587 and 619588.
+They retain the original 5000ms recovery wait. This does not waive or identify the
+cause of the earlier natural checkpoint-recovery button timeout.
+
+A separate bounded syscall hold diagnostic now reproduces the remaining
+auxiliary checkpoint responsiveness gap. After primary GUI/core retirement,
+actual search-blacklist and anti-spam write() and fsync() calls are held for
+350ms in a disposable profile. ARM requests take 356/366/360/378ms; matching
+Intel/Rosetta requests take 356/361/382/387ms. All eight holds run on the GUI
+owner and prevent heartbeat progress. Both architectures fail exactly sixteen
+anticipated assertions across four sections, without exceptions, fatal errors
+or skips. The session reaches ExitQueued rather than Refused at its requested
+100ms pending-phase budget; no installer is started. The watchdog releases each
+hold, and original syscall return values and bytes are preserved.
+
+This is a demonstrated auxiliary-write stall, not a claim of an arbitrary hard
+filesystem deadline or a cause-proven explanation for the natural recovery
+failure. The next bounded repair must freeze immutable search/anti-spam payloads
+on the GUI owner, retain owned background persistence through thread-exit
+receipts, refuse without late automatic exit after a pending-phase timeout, and
+retry only failed auxiliary snapshots on an explicit request. Do not move live
+QObjects or replay core shutdown/settings saves. Other GUI settings/filesystem
+latency remains a separate gate. No production quit behavior is changed by this
+diagnostic; its private test copies do not enter normal release binaries.
+
+Remaining: the auxiliary repair and retained intermittent Torrent/recovery
+causes, broader filesystem responsiveness, translations/native-language review,
+historical provenance/reproducibility and independent final-candidate review,
+native minimum-OS/live/lifecycle/benchmark/soak acceptance, final source/material
+rebuild, numeric production build allocation, signing/notarization/signed-v3
+updater acceptance, guarded closed-app installation/readback and authenticated
+wiki/prerelease publication/readback. Signed feeds last; Tasks 7/8 remain open.

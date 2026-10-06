@@ -1,6 +1,11 @@
 project(data)
 
 if (USE_QT6 OR USE_GTK3)
+    if (NOT APPLE)
+        install (FILES icons/READ_ME.txt icons/modern-classic-manifest.json
+                 DESTINATION "${CLIENT_DOCS_DIR}/AppIcon")
+    endif ()
+
     if (WITH_EXAMPLES)
         install (DIRECTORY examples/ DESTINATION ${CLIENT_DATA_DIR}/examples
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)

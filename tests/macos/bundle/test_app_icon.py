@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Check the approved artwork and platform icon containers without launching apps."""
 import hashlib
+import fnmatch
 import json
 from pathlib import Path
+import re
 import struct
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -22,6 +25,100 @@ def png_size(data):
 
 
 class AppIcon(unittest.TestCase):
+    def test_mingw_icon_and_rc_changes_rebuild_resource(self):
+        source = (ROOT / "eiskaltdcpp-qt/CMakeLists.txt").read_text()
+        command = re.search(r'    add_custom_command \(OUTPUT.*?(?=    set \(WIN_RESOURCES)',
+                            source, re.S).group()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            qt = root / "eiskaltdcpp-qt"
+            qt.mkdir()
+            icon = root / "data/icons/eiskaltdcpp.ico"
+            icon.parent.mkdir(parents=True)
+            icon.write_bytes(b"icon one")
+            rc = qt / "eiskaltdcpp-qt.rc"
+            rc.write_bytes((ROOT / "eiskaltdcpp-qt/eiskaltdcpp-qt.rc").read_bytes())
+            compiler = root / "resource-compiler.py"
+            # Record the command's inputs, not a native Windows compiler result.
+            compiler.write_text(
+                "import pathlib,sys\n"
+                "args=sys.argv[1:]\n"
+                "rc=pathlib.Path(args[args.index('-i')+1])\n"
+                "out=pathlib.Path(args[args.index('-o')+1])\n"
+                "out.write_bytes(rc.read_bytes()+"
+                "(rc.parent/'../data/icons/eiskaltdcpp.ico').read_bytes())\n")
+            (root / "CMakeLists.txt").write_text(
+                "cmake_minimum_required(VERSION 3.20)\nproject(icon_graph NONE)\n"
+                f'set(PROJECT_SOURCE_DIR "{qt}")\n'
+                f'set(CMAKE_RC_COMPILER "{sys.executable}" "{compiler}")\n'
+                + command + '\nadd_custom_target(icon ALL DEPENDS "${PROJECT_BINARY_DIR}/eiskaltdcpp-qt_rc.o")\n')
+            build = root / "build"
+            subprocess.run(["cmake", "-S", str(root), "-B", str(build), "-G", "Ninja"],
+                           check=True, capture_output=True)
+            def rebuild():
+                subprocess.run(["cmake", "--build", str(build)], check=True, capture_output=True)
+                self.assertEqual((build / "eiskaltdcpp-qt_rc.o").read_bytes(),
+                                 rc.read_bytes() + icon.read_bytes())
+            rebuild()
+            time.sleep(0.02)
+            icon.write_bytes(b"icon two")
+            rebuild()
+            time.sleep(0.02)
+            rc.write_bytes(rc.read_bytes() + b"\n// changed resource script\n")
+            rebuild()
+
+    def test_generated_assets_have_specific_provenance_entries(self):
+        paragraphs = (ROOT / "full.copyrights.info.in.Debian.style").read_text().split("\n\n")
+        records = []
+        for paragraph in paragraphs:
+            fields = {}
+            current = None
+            for line in paragraph.splitlines():
+                if line.startswith(" ") and current:
+                    fields[current] += " " + line.strip()
+                elif ":" in line:
+                    current, value = line.split(":", 1)
+                    fields[current] = value.strip()
+            if "Files" in fields:
+                records.append(fields)
+        def metadata(path):
+            return [r for r in records if any(fnmatch.fnmatchcase(path, p)
+                                              for p in r["Files"].split())][-1]
+        manifest = json.loads((ROOT / "data/icons/modern-classic-manifest.json").read_text())
+        for path in manifest["sha256"]:
+            with self.subTest(asset=path):
+                entry = metadata(path)
+                self.assertEqual(entry["License"], "LGPL-3")
+                self.assertIn("Modern Classic", entry.get("Comment", ""))
+                self.assertIn("OpenAI image_gen", entry["Comment"])
+        # Specific brand entries must not relabel other legacy theme artwork.
+        for theme, license in (("faenza", "GPL-3"), ("haiku", "Expat")):
+            self.assertEqual(metadata(f"eiskaltdcpp-qt/icons/appl/{theme}/icon_user.png")["License"], license)
+
+    def test_nonapple_installs_retain_artwork_notices(self):
+        # Exercise actual install rules with platform paths on the current host.
+        for platform, docs in (("linux", "share/eiskaltdcpp/docs"), ("windows", "docs")):
+            with self.subTest(platform=platform), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                build = root / "build"
+                destination = root / "install"
+                (root / "CMakeLists.txt").write_text(
+                    "cmake_minimum_required(VERSION 3.20)\nproject(icon_install NONE)\n"
+                    "set(USE_QT6 ON)\nset(APPLE FALSE)\nset(HAIKU FALSE)\n"
+                    f'set(UNIX {"TRUE" if platform == "linux" else "FALSE"})\n'
+                    f'set(WIN32 {"TRUE" if platform == "windows" else "FALSE"})\n'
+                    f'set(CLIENT_DOCS_DIR "{docs}")\nset(SHARE_DIR "share")\n'
+                    'set(CLIENT_ICONS_DEST "icons")\n'
+                    f'add_subdirectory("{ROOT / "data"}" data)\n')
+                subprocess.run(["cmake", "-S", str(root), "-B", str(build)],
+                               check=True, capture_output=True)
+                subprocess.run(["cmake", "--install", str(build), "--prefix", str(destination)],
+                               check=True, capture_output=True)
+                for name in ("READ_ME.txt", "modern-classic-manifest.json"):
+                    actual = destination / docs / "AppIcon" / name
+                    self.assertTrue(actual.is_file(), str(actual))
+                    self.assertEqual(actual.read_bytes(), (ROOT / "data/icons" / name).read_bytes())
+
     def test_approved_master_is_exact(self):
         master = ROOT / "data/icons/modern-classic-master.png"
         self.assertTrue(master.is_file(), "approved master has not been integrated")
