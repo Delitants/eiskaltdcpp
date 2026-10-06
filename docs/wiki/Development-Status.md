@@ -86,6 +86,15 @@ inherited unfinished translations and native-speaker review remain pending.
 Complete resource/dependency provenance, reproducibility and independent
 whole-branch review also remain separate gates.
 
+The retained historical QA bundles now have file-level framework mappings for
+114 Apple Silicon and 96 Intel non-code files, including shipped headers and
+helper metadata. All match the pinned Sparkle SDK or deployed Qt providers.
+Across both bundles, 93 files match source bytes and 72 localization dictionaries
+match source values; 12 generated resources have source associations, not
+reconstructed-build proof. Source-generation evidence remains unresolved for 33
+metadata/module-map files. This does not complete legacy icon attribution, legal
+review or reproducibility, and these bundles are not current-source release assets.
+
 ## Before Prerelease Publication
 
 1. Finish retained regression diagnoses, localization, resource/provenance checks

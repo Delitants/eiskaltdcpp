@@ -2062,3 +2062,35 @@ activation, closed-app install/readback and documentation/prerelease publication
 remain open. Profile, installed app, providers, keys, services and prior release
 candidates are unchanged. No push/install/signing/activation. Signed feeds last;
 Tasks 7/8 remain open.
+
+### 2026-10-05 Framework File-Level Provenance Checkpoint
+
+The retained historical updater QA candidates now have complete inventories of
+non-code framework files:114ARM and96Intel, including shipped headers, module
+maps and helper metadata. Their previous package-only receipts reproduce exactly
+210 missing mapping checks. Completed file-level coverage and four disposable
+rejection controls pass with no skips; omission and changed-hash controls each
+produce exactly one intended rejection. Inside-framework link confinement is
+verified. No candidate is mutated for negative controls.
+
+All210 copied files match the pinned Sparkle SDK or exact Qt deployment-provider
+bytes. Combined source evidence:93byte-exact files,72localization dictionaries
+with identical source values,12generated resources associated with source inputs.
+A renamed private Sparkle module map is verified against its actual source member.
+Source-generation linkage remains unresolved for33files:29Qt framework Info.plist
+files, two public Sparkle module maps and two helper PkgInfo files. SDK/provider
+matches do not establish original generator recipes or file-level legal licensing.
+
+Both whole candidate trees retain bytes/types/link targets/executable bits and
+pass strict signature readback. Five archive/notice pins,58Qt provider resource
+files and nine protected live-file hashes pass preservation checks. The bundles
+remain historical sourcee325cb6cd; this audit is not a final current-source rebuild
+or reproducibility/native minimum-OS acceptance. No code/dependency changes,
+application launch, signing, installation, push or feed activation occurred.
+
+Legacy icon origin evidence, generated-resource/toolchain linkage, broader input
+provenance/reproducibility, inherited unfinished/native-language review, retained
+Torrent/quit causes, independent whole-branch and native/minimum-OS/live/benchmark
+acceptance remain open. Final-source application/material rebuild, numeric build
+allocation, signing/updater acceptance, guarded installation and public release
+readback still follow. Signed feeds remain last.
