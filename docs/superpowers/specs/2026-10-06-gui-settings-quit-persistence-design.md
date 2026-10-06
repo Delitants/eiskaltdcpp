@@ -220,6 +220,16 @@ same-seed join-tracing comparison passes without identifying the cause; that
 green diagnostic does not waive the failed check. Responsiveness acceptance
 therefore remains incomplete within this design, not merely a release gate.
 
+The next bounded diagnostic at source `6364345bd` executes 14 nonempty runs /
+28 case instances with the original seed, test bodies, interposer, runner,
+holds and deadlines. Eight private stage-probe runs and two sampled runs pass;
+one of four unchanged-binary runs fails the explicit retry case's request and
+heartbeat checks (180ms against 100ms). A passing exact-PID sample observes
+synchronous Torrent-engine shutdown joining on the GUI; it does not establish
+the cause of either natural responsiveness failure. All 262 public objects,
+the public target, instrumented public sources, protected state and retained
+failure pins remain unchanged. No production repair or acceptance is claimed.
+
 This is isolated source-level acceptance for the bounded repair, not native
 Windows/other-Qt/minimum-OS, real-GOST interop, forced/crash teardown or installed
 update acceptance. Historical intermittent failures remain open independently.

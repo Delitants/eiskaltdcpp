@@ -152,6 +152,16 @@ heartbeat progress. The writer is off the GUI; saved bytes are correct and exit
 and installation remain refused. A private same-seed join-tracing comparison
 passes without explaining the failed run. This failure is retained and unwaived;
 settings responsiveness and plan Task 3 are not accepted as complete.
+
+A bounded unchanged-seed diagnostic then executes 14 runs / 28 case instances:
+13 runs pass, while one unchanged-binary run fails initial retry-request latency
+(180ms against 100ms) and held-write heartbeat progress. Private stage probes
+do not reproduce a slow phase. A passing read-only process sample observes a
+synchronous Torrent-engine join on the GUI, but does not identify the natural
+failure's cause. Original timings/assertions, source/object/binary pins, live
+state and failed evidence remain preserved. No production fix is claimed;
+both responsiveness and recovery acceptance remain open.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

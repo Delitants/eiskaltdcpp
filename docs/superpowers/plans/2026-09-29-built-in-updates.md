@@ -2502,6 +2502,17 @@ trace passes without identifying the cause; it is not a waiver. This is an open
 responsiveness acceptance issue within the settings repair itself. No deadline
 was widened, no assertion relaxed and no additional production change guessed.
 
+The next bounded same-seed diagnostic at `6364345bd` retains two cases, the
+original interposer/runner, holds and budgets across 14 runs. Eight private
+stage-probe runs pass without a >=40ms span. One of four unchanged-binary runs
+fails explicit retry-request latency (180ms against 100ms) and held-write
+heartbeat progress; two exact-PID read-only sampled runs pass. The useful
+sample observes a synchronous Torrent-engine join on the GUI, but cannot
+establish temporal overlap with either retained natural failure. Total: 28
+case instances / 2,658 passing assertions / two failures, no expected failures
+or skips. Protected-state, source/object/binary and prior failure readbacks
+pass. No production repair is made; Task 3 remains incomplete.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,
