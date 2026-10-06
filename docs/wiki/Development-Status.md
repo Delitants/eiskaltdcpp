@@ -84,6 +84,15 @@ receipts retain the application; a timed-out quit requires explicit retry and
 cannot install an update merely because its worker finishes later. This is not a
 total hard deadline for lifecycle joins, serialization or every filesystem call.
 
+Search-blacklist and anti-spam quit saves also use an owned background batch.
+Immutable paths and rule bytes are captured on the GUI owner; worker completion
+includes physical thread teardown. A pending-phase timeout retains the application
+until explicit retry. Auxiliary recovery preserves successful owner receipts and
+permanently cancels update-install consent. Anti-spam retains its existing single
+receipt for four files: a partial failure retries that batch, not only individual
+failed files. GUI settings sync and broader filesystem responsiveness remain
+separate acceptance work.
+
 Focused persistence/quit checks and all three applicable window layouts pass on
 ARM and Intel/Rosetta. Regular core and Qt suites also pass on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is

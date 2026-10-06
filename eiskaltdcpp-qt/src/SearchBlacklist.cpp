@@ -94,14 +94,21 @@ bool SearchBlacklist::freezeForQuitChecked() {
 
 bool SearchBlacklist::saveForQuitChecked() {
     if (!freezeForQuitChecked()) return false;
-    if (quitPrepared && quitSaved) return true;
+    quitSaved = quitSaveOperation()();
+    return quitSaved;
+}
+
+std::function<bool()> SearchBlacklist::quitSaveOperation() const {
+    if (quitSaved) return [] { return true; };
     QString text;
     for (const auto& line : list[NAME]) text += "NAME:" + line + '\n';
     for (const auto& line : list[TTH]) text += "TTH:" + line + '\n';
     const auto data = text.toUtf8();
-    QSaveFile file(_q(Util::getPath(Util::PATH_USER_CONFIG)) + "searchblacklist");
-    quitSaved = file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit();
-    return quitSaved;
+    const auto path = _q(Util::getPath(Util::PATH_USER_CONFIG)) + "searchblacklist";
+    return [path, data] {
+        QSaveFile file(path);
+        return file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit();
+    };
 }
 
 bool SearchBlacklist::ok(const QString &exp, Argument type){

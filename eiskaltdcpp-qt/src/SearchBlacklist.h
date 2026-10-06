@@ -16,11 +16,14 @@
 #include <QList>
 #include <QRegularExpression>
 #include <QString>
+#include <functional>
 
 #include "dcpp/stdinc.h"
 #include "dcpp/NonCopyable.h"
 
 #include "QtContextAware.h"
+
+namespace updates { class ApplicationQuitCoordinator; }
 
 class SearchBlacklist:
         public QObject,
@@ -48,6 +51,8 @@ public:
     [[nodiscard]] bool saveForQuitChecked();
 
 private:
+    friend class updates::ApplicationQuitCoordinator;
+    std::function<bool()> quitSaveOperation() const;
     friend class QtContext;  // QtContext owns and constructs us
 
     void loadLists();

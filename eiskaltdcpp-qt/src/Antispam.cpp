@@ -459,13 +459,13 @@ bool AntiSpam::freezeForQuitChecked() {
 
 bool AntiSpam::saveForQuitChecked() {
     if (!freezeForQuitChecked()) return false;
-    if (quitPrepared && quitSaved) return true;
+    quitSaved = quitSaveOperation()();
+    return quitSaved;
+}
+
+std::function<bool()> AntiSpam::quitSaveOperation() const {
+    if (quitSaved) return [] { return true; };
     const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
-    const auto save = [&](const QString& name, const QString& text) {
-        QSaveFile file(root + name);
-        const auto data = text.toUtf8();
-        return file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit();
-    };
     const auto lines = [](const QList<QString>& list) {
         QString text;
         for (const auto& item : list) text += item + '\n';
@@ -473,13 +473,21 @@ bool AntiSpam::saveForQuitChecked() {
     };
     QString words;
     for (const auto& key : keys) words += key.toUpper() + '|';
-    bool saved = save("antispam", "|ANTISPAM_PHRASE|" + phrase + "\n|ANTISPAM_KEY|" + words +
-                                "\n|ATTEMPTS|" + QString::number(try_count) + '\n');
-    saved = save("blacklist", lines(black_list)) && saved;
-    saved = save("graylist", lines(gray_list)) && saved;
-    saved = save("whitelist", lines(white_list)) && saved;
-    quitSaved = saved;
-    return saved;
+    const QList<QPair<QString, QByteArray>> files{
+        {root + "antispam", ("|ANTISPAM_PHRASE|" + phrase + "\n|ANTISPAM_KEY|" + words +
+                            "\n|ATTEMPTS|" + QString::number(try_count) + '\n').toUtf8()},
+        {root + "blacklist", lines(black_list).toUtf8()},
+        {root + "graylist", lines(gray_list).toUtf8()},
+        {root + "whitelist", lines(white_list).toUtf8()}};
+    return [files] {
+        bool saved = true;
+        for(const auto& entry : files) {
+            QSaveFile file(entry.first);
+            const auto& data = entry.second;
+            saved = (file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit()) && saved;
+        }
+        return saved;
+    };
 }
 
 void AntiSpam::setPhrase(const QString &phrase_) {

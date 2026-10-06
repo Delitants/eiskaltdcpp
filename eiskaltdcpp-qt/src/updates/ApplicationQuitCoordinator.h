@@ -3,6 +3,7 @@
 #include "dcpp/DCContext.h"
 #include <QObject>
 #include <QPointer>
+#include <memory>
 
 class QtContext;
 class MainWindow;
@@ -23,12 +24,17 @@ public:
     };
     // Keep this object and updater outside the GUI roots fenced by MainWindow.
     explicit ApplicationQuitCoordinator(QtContext&, UpdateController* updater = nullptr);
+    ~ApplicationQuitCoordinator() override;
     [[nodiscard]] Result prepare(uint32_t socketDrainTimeoutMs, bool asynchronousPersistence = false) noexcept;
     bool canRetryCheckpoint() const;
     // Retry only frozen auxiliary snapshots after all primary owners are safe.
     // This never repeats shutdown or grants updater installation consent.
-    [[nodiscard]] Result retryCheckpoint() noexcept;
+    [[nodiscard]] Result retryCheckpoint(bool asynchronousPersistence = false) noexcept;
 private:
+    struct AuxiliaryWrite;
+    struct AuxiliaryResult { Status status; const char* component; };
+    AuxiliaryResult saveAuxiliary(bool asynchronousPersistence) noexcept;
+    std::unique_ptr<AuxiliaryWrite> auxiliary;
     QtContext& context;
     QPointer<UpdateController> updater;
     bool hadUpdater, preparing = false, prepared = false;

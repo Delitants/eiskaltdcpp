@@ -16,6 +16,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDateTime>
+#include <functional>
 
 #include "dcpp/stdinc.h"
 #include "dcpp/User.h"
@@ -27,6 +28,8 @@ enum AntiSpamObjectState {
 };
 
 #include "QtContextAware.h"
+
+namespace updates { class ApplicationQuitCoordinator; }
 
 class AntiSpam :
         public QObject,
@@ -86,6 +89,8 @@ public slots:
     void clearAll();
 
 private:
+    friend class updates::ApplicationQuitCoordinator;
+    std::function<bool()> quitSaveOperation() const;
 
     inline void addToList(QList<QString>&, const QList<QString>&);
     inline void remFromList(QList<QString>&, const QList<QString>&);

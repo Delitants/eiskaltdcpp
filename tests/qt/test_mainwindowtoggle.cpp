@@ -316,6 +316,12 @@ QMessageBox* checkpointRecoveryPrompt() {
     return nullptr;
 }
 
+#ifdef __APPLE__
+template<class C> constexpr bool hasAsyncAuxiliaryPersistence() {
+    return requires(C& c) { c.retryCheckpoint(true); };
+}
+#endif
+
 TEST_CASE("Real Preferences exposes shared Updates settings without applying rejected edits", "[qt][update-ui-owner]") {
     IsolatedMainWindow f;
     QuitBackend backend(*f.core);
@@ -3698,5 +3704,165 @@ TEST_CASE("Held undelivered cleanup reaches finite refusal before core retiremen
     CHECK(ready.isEmpty()); CHECK_FALSE(route->revoked->load()); CHECK(backend.installs == 0);
     session.request(1000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
     CHECK(route->revoked->load()); CHECK_FALSE(QFile::exists(path));
+}
+#endif
+
+#ifdef __APPLE__
+TEST_CASE("Auxiliary checkpoint syscall hold preserves event-loop progress and refuses late exit", "[.auxiliary-write-retirement][mainwindow]") {
+    IsolatedMainWindow fixture;
+    int mode = 1;
+    QString file = "searchblacklist";
+    SECTION("search blacklist write") {}
+    SECTION("search blacklist flush") { mode = 3; }
+    SECTION("anti-spam write") { file = "antispam"; }
+    SECTION("anti-spam flush") { file = "antispam"; mode = 3; }
+    SECTION("physical worker thread teardown") {
+        if constexpr(!hasAsyncAuxiliaryPersistence<ApplicationQuitCoordinator>())
+            FAIL("No asynchronous auxiliary persistence receipt");
+        mode = 6;
+    }
+    if(file == "searchblacklist") {
+        fixture.gui->createSearchBlacklist();
+        fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"frozen-rule"});
+    } else {
+        fixture.gui->createAntiSpam();
+        fixture.gui->antiSpam()->setPhrase("initialize");
+        fixture.gui->antiSpam()->setPhrase("frozen-question");
+    }
+    REQUIRE(waitFor([&] { return fixture.gui->mainWindow()->stopWorkersForQuit(); }));
+    dcpp::DCContext::ShutdownResult coreResult{};
+    REQUIRE(waitFor([&] {
+        coreResult = fixture.core->prepareShutdownAsyncChecked(3000);
+        return coreResult.status != dcpp::DCContext::ShutdownStatus::Pending;
+    }));
+    REQUIRE(coreResult.status == dcpp::DCContext::ShutdownStatus::Ready);
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(*fixture.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    updates::ApplicationQuitSession session(*fixture.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; });
+    heartbeat.start(1);
+    probe.arm(QFile::encodeName(fixture.home.filePath(file)).constData(), mode);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    QElapsedTimer elapsed; elapsed.start();
+    session.request(100);
+    const auto duration = elapsed.elapsed();
+    CHECK(duration < 100);
+    REQUIRE(waitFor([&] { return probe.entered(); }));
+    CHECK(probe.writer() != probe.gui);
+    if(file == "searchblacklist")
+        fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"late-rule"});
+    else fixture.gui->antiSpam()->setPhrase("late-question");
+    CHECK(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    REQUIRE(watchdog.get()); CHECK(advanced.load());
+    QTest::qWait(30);
+    CHECK(ready.isEmpty());
+    if(session.state() == updates::ApplicationQuitSession::State::Refused) {
+        session.request(3000);
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        CHECK(backend.installs == 0); CHECK(backend.fences == 1);
+        QFile saved(fixture.home.filePath(file)); REQUIRE(saved.open(QIODevice::ReadOnly));
+        CHECK(saved.readAll() == (file == "searchblacklist" ? QByteArray("NAME:frozen-rule\n") :
+            QByteArray("|ANTISPAM_PHRASE|frozen-question\n|ANTISPAM_KEY|\n|ATTEMPTS|0\n")));
+    }
+    std::fprintf(stderr, "AUXILIARY_RETIREMENT mode=%d file=%s request_ms=%lld on_gui=%d heartbeat=%d exits=%d\n",
+        mode, file.toUtf8().constData(), static_cast<long long>(duration),
+        probe.writer() == probe.gui, advanced.load(), int(ready.count()));
+}
+
+TEST_CASE("Auxiliary worker launch failure permits only frozen checkpoint retry", "[.auxiliary-write-retirement][mainwindow]") {
+    if constexpr(!hasAsyncAuxiliaryPersistence<ApplicationQuitCoordinator>())
+        FAIL("No asynchronous auxiliary persistence receipt");
+    IsolatedMainWindow fixture;
+    fixture.gui->createSearchBlacklist();
+    fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"retained-rule"});
+    REQUIRE(waitFor([&] { return fixture.gui->mainWindow()->stopWorkersForQuit(); }));
+    REQUIRE(waitFor([&] {
+        return fixture.core->prepareShutdownAsyncChecked(3000).status != dcpp::DCContext::ShutdownStatus::Pending;
+    }));
+    updates::ApplicationQuitSession session(*fixture.gui);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe; probe.arm("", 7);
+    session.request(3000);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(probe.entered()); CHECK(ready.isEmpty());
+    fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"late-rule"});
+    probe.release();
+    session.request(3000);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    QFile saved(fixture.home.filePath("searchblacklist")); REQUIRE(saved.open(QIODevice::ReadOnly));
+    CHECK(saved.readAll() == "NAME:retained-rule\n");
+}
+
+TEST_CASE("Held checkpoint recovery retains its worker and permanently disarmed update", "[.auxiliary-write-retirement][mainwindow]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->createSearchBlacklist(); fixture.gui->createAntiSpam();
+    fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"original-rule"});
+    fixture.gui->antiSpam()->setPhrase("initialize");
+    fixture.gui->antiSpam()->setPhrase("original-question");
+    const auto blocked = fixture.home.filePath("searchblacklist");
+    REQUIRE(QDir().mkpath(blocked));
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(*fixture.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+        QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+    updater.checkNow(); emit backend.available(backend.operation, offer);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+    updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+    REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+    updater.installOnNextQuit();
+    updates::ApplicationQuitSession session(*fixture.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    session.request(3000);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    fixture.gui->searchBlacklist()->setList(SearchBlacklist::NAME, {"late-rule"});
+    fixture.gui->antiSpam()->setPhrase("late-question");
+    // Mark already-receipted saves to detect any physical replay during recovery.
+    const auto marker = QByteArray("already-saved-receipt\n");
+    const QStringList cached{"antispam", "DCPlusPlus.xml", "EiskaltDC++_Qt.conf"};
+    for(const auto& name : cached) {
+        QFile file(fixture.home.filePath(name)); REQUIRE(file.exists());
+        REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+        REQUIRE(file.write(marker) == marker.size());
+    }
+    REQUIRE(QDir(blocked).removeRecursively());
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; }); heartbeat.start(1);
+    probe.arm(QFile::encodeName(blocked).constData(), 1);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    QElapsedTimer elapsed; elapsed.start(); session.request(100);
+    CHECK(elapsed.elapsed() < 100);
+    REQUIRE(waitFor([&] { return probe.entered(); })); CHECK(probe.writer() != probe.gui);
+    REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(ready.isEmpty()); REQUIRE(watchdog.get()); CHECK(advanced.load());
+    QTest::qWait(30); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    {
+        QFile saved(blocked); REQUIRE(saved.open(QIODevice::ReadOnly));
+        CHECK(saved.readAll() == "NAME:original-rule\n"); saved.close();
+        REQUIRE(saved.open(QIODevice::WriteOnly | QIODevice::Truncate));
+        REQUIRE(saved.write(marker) == marker.size());
+    }
+    if(session.state() == updates::ApplicationQuitSession::State::Refused) {
+        session.request(3000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        CHECK(backend.fences == 1); CHECK(backend.installs == 0);
+        CHECK(updater.quitDisposition() == updates::UpdateController::QuitDisposition::NoUpdate);
+        QFile saved(blocked); REQUIRE(saved.open(QIODevice::ReadOnly));
+        CHECK(saved.readAll() == marker);
+        for(const auto& name : cached) {
+            QFile file(fixture.home.filePath(name)); REQUIRE(file.open(QIODevice::ReadOnly));
+            CHECK(file.readAll() == marker);
+        }
+    }
 }
 #endif

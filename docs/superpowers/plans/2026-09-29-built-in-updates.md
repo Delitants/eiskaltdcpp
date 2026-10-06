@@ -2299,3 +2299,74 @@ native minimum-OS/live/lifecycle/benchmark/soak acceptance, final source/materia
 rebuild, numeric production build allocation, signing/notarization/signed-v3
 updater acceptance, guarded closed-app installation/readback and authenticated
 wiki/prerelease publication/readback. Signed feeds last; Tasks 7/8 remain open.
+
+### 2026-10-06 Owned Auxiliary Persistence Repair
+
+Search-blacklist and anti-spam serialization now capture immutable paths and
+bytes on the GUI owner. The application quit coordinator retains an asynchronous
+physical-write batch; its future is fulfilled at thread exit, after TLS teardown.
+Polling never reads live GUI/context owners from the worker. The session uses this
+path for both initial preparation and explicit auxiliary recovery. A timed-out
+recovery subsequently polls the original owned worker rather than replaying core,
+GUI/Torrent retirement, settings sync or successful auxiliary owner receipts.
+Synchronous direct coordinator callers retain their existing behavior.
+
+The approved receipt unit remains one SearchBlacklist save and one four-file
+AntiSpam batch. AntiSpam still retries its entire batch after a partial failure;
+per-file recovery receipts are not implemented or claimed by this stall repair.
+The coordinator continues to reject lost/replaced owners and foreign/modal
+recovery, and failed auxiliary recovery permanently disarms updater consent.
+
+The initial regression runs against baseline production objects fail exactly
+27 anticipated checks without exceptions, fatal errors or skips. This includes
+five occurrences of each stall/GUI-writer/timeout/heartbeat/late-exit assertion
+and two absent-async-API checks. The fifth default hold is Catch section traversal
+after the absent-API fatal section, not a fifth named syscall section. A separate
+private synchronous-retry control fails exactly five anticipated assertions,
+with a 374ms GUI call at a requested 100ms pending budget. Its initial missing-
+header compile is retained as a private fixture setup error, corrected by adding
+the source-parent include path; no production change was needed.
+
+A fresh bounded independent static review finds no confirmed remaining issue
+under the owner-level receipt contract. It is not whole-branch review or runtime
+acceptance. Pending-owner destruction/replacement, launch failure with a Ready
+consented update and AntiSpam per-file partial-failure recovery remain additional
+coverage opportunities. The regression now uses completed-file markers to catch
+physical rewrite rather than merely comparing identical frozen bytes.
+
+Verification completion and exact current matrix counts follow below. Historical
+failures remain retained and unwaived. Native minimum-OS/live/lifecycle acceptance,
+broader GUI settings/filesystem responsiveness and all final release gates remain
+open. No installation or public feed activation follows from this source repair.
+
+The final repaired hidden regressions pass three cases / 245 assertions on each
+architecture. They cover real write and flush holds, physical TLS teardown,
+worker launch failure, frozen rule bytes, heartbeat progress, finite refusal,
+no late automatic exit, explicit receipt consumption without physical rewrite,
+successful owner/core/settings receipt preservation and permanent update disarm
+after an auxiliary failure. The final synchronous-retry control again fails only
+the five expected assertions, without errors or skips.
+
+Full regular Qt suites pass 617 cases on each architecture (33,734 ARM and
+33,717 Intel/Rosetta assertions). Each applicable GUI layout passes: single-line
+101 cases / 5,878 assertions, multiline 101 / 5,786 and sidebar 99 / 5,692.
+All final repaired runs have zero failures, exceptions, fatal errors or skips.
+The original 5000ms recovery wait is unchanged. These green runs do not identify
+or waive the earlier natural recovery timeout or retained Torrent/bootstrap,
+publication, bind and peer-counter failures.
+
+Changed Qt/GUI consumers are rebuilt into private coherent relinks; accepted
+original binaries and provider resources remain separate. Core/Torrent objects
+are unchanged, and their prior suite receipts are not represented as fresh runs.
+Real GOST interoperability is also not rerun here. Host ARM and Intel/Rosetta
+verification is not native macOS-14 Intel or macOS-26 ARM acceptance, a full
+current-source application rebuild, an installed-app result or signed-v3 updater
+acceptance.
+
+Remaining: broader GUI settings/filesystem responsiveness and retained causes,
+additional coverage and per-file AntiSpam recovery noted above, localization /
+native-language and provenance/reproducibility work, independent final-candidate
+review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final reviewed
+source/material rebuild, numeric production build allocation, signing/notarization
+and updater acceptance, guarded closed-app installation/readback and authenticated
+wiki/prerelease publication/readback. Signed feeds remain last; Tasks 7/8 stay open.
