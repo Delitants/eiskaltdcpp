@@ -49,6 +49,7 @@ struct MacUpdateDiscoveryTestAccess {
     }
 };
 struct MacUpdateBackendTestAccess {
+    static bool pending(const MacUpdateBackend& backend) { return backend.hasPendingWork(); }
     static std::unique_ptr<MacUpdateBackend> make(dcpp::DCContext& context, const QString& bundle, transport_detail::Backend transport,
         const QString& cache = {}, std::optional<UpdateRuntimeConfig> config = {}) {
         if(config) return std::unique_ptr<MacUpdateBackend>(new MacUpdateBackend(context, bundle, std::move(transport), cache, std::move(*config), nullptr));
@@ -945,8 +946,10 @@ TEST_CASE("Mac backend restore completion cannot outlive cancellation route or q
     QThread::msleep(40);
     SECTION("cancel") { f.backend->cancel(); }
     SECTION("revoke route") { f.context.ownedCtx->getProxyRoute()->stop(); revoked = true; }
-    SECTION("committed worker fence") { REQUIRE(backendFence(*f.backend)); }
+    SECTION("committed worker fence") { REQUIRE(discoveryPump([&] { return backendFence(*f.backend); })); }
     SECTION("owner destruction") { f.backend.reset(); }
+    if(f.backend) REQUIRE(discoveryPump([&] { return !MacUpdateBackendTestAccess::pending(*f.backend); }));
+    if(revoked) REQUIRE(discoveryPump([&] { return f.failures != 0; }));
     QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 100; }));
     CHECK(f.ready == 0); CHECK(f.failures == (revoked ? 1 : 0)); CHECK(f.requests.load() == 1);
     CHECK(stagedArchives().size() == (miss ? 0 : 1));
@@ -1059,7 +1062,7 @@ TEST_CASE("Mac backend retained fence rejects staging revoked before preparation
     REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
     const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
     f.context.ownedCtx->getProxyRoute()->stop();
-    REQUIRE(backendFence(*f.backend));
+    REQUIRE(discoveryPump([&] { return backendFence(*f.backend); }));
     CHECK_FALSE(QFile::exists(paths.front()));
     QCoreApplication::processEvents(); CHECK(f.failures == 0); CHECK(f.ready == 1);
 }
@@ -1103,7 +1106,7 @@ TEST_CASE("Mac backend hands retained staging to the real installer after route 
     // This process is intentionally not the selected signed app. The real
     // installer must refuse its missing bundle policy, never prepare an update.
     CHECK_FALSE(prepared); CHECK(receipts == 1); CHECK(f.requests.load() == 2);
-    CHECK_FALSE(QFile::exists(paths.front()));
+    REQUIRE(discoveryPump([&] { return !QFile::exists(paths.front()); }));
     if(f.backend) f.backend->beginInstallHandoff(402, f.offer, [] { return true; });
     QCoreApplication::processEvents(); CHECK(receipts == 1);
 }
@@ -1121,7 +1124,7 @@ TEST_CASE("Mac backend handoff admission refuses unsafe staging or absent consen
     SECTION("consent refused") { approved = false; expectedChecks = 1; }
     SECTION("consent throws") { throwing = true; expectedChecks = 1; }
     SECTION("consent absent") { missing = true; }
-    if(fenced) REQUIRE(backendFence(*f.backend));
+    if(fenced) REQUIRE(discoveryPump([&] { return backendFence(*f.backend); }));
     int receipts = 0, checks = 0; bool prepared = true;
     QObject::connect(f.backend.get(), &UpdateBackend::installHandoffFinished, f.backend.get(),
         [&](quint64 op, bool value) { CHECK(op == 412); ++receipts; prepared = value; });
@@ -1149,7 +1152,7 @@ TEST_CASE("Mac backend cancellation retains installer files until terminal refus
     if(ordinaryCancel) f.backend->cancel(); else f.backend->revokeInstallConsent();
     CHECK(receipts == 0); CHECK(QFile::exists(paths.front()));
     REQUIRE(discoveryPump([&] { return receipts != 0; }));
-    CHECK(receipts == 1); CHECK_FALSE(QFile::exists(paths.front()));
+    CHECK(receipts == 1); REQUIRE(discoveryPump([&] { return !QFile::exists(paths.front()); }));
 }
 
 TEST_CASE("Mac backend pending installer destruction joins before removing staging", "[.][update-backend-native][backend-handoff-native]") {
@@ -1249,7 +1252,7 @@ TEST_CASE("Mac backend installs only the retained signed main bundle on committe
         // Keep the prepared native owner and staging through process exit.
         backend.release();
     } else {
-        CHECK_FALSE(QFile::exists(paths.front()));
+        REQUIRE(discoveryPump([&] { return !QFile::exists(paths.front()); }));
         CHECK(checks == (mode == "cancel-verifier" ? 1 : mode == "cancel-before-native" ? 2 : 3));
     }
 }
@@ -1286,6 +1289,8 @@ TEST_CASE("Mac backend cancels an in-flight archive without stale readiness", "[
     SECTION("owner destroyed") { f.backend.reset(); destroyed = true; }
     CHECK(cancellation.elapsed() < 500);
     REQUIRE(discoveryPump([&] { return f.workerCancelled.load(); }));
+    if(!destroyed) REQUIRE(discoveryPump([&] { return !MacUpdateBackendTestAccess::pending(*f.backend); }));
+    if(revoked) REQUIRE(discoveryPump([&] { return f.failures != 0; }));
     QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 150; }));
     CHECK(f.ready == 0); CHECK(f.failures == (revoked ? 1 : 0)); CHECK(f.requests.load() == 2);
     if(!revoked && !destroyed) {
@@ -1317,5 +1322,59 @@ TEST_CASE("Real Mac backend advances controller to staged Ready and honors Later
     controller.later(); controller.normalQuitCommitted();
     CHECK(controller.state() == UpdateController::State::Stopped);
     CHECK(f.failures == 0); CHECK(f.requests.load() == 2);
+}
+#endif
+
+#ifdef EISKALT_TEST_MAC_UPDATE_DISCOVERY
+#include "tests/macos/updater/RemovalProbe.h"
+TEST_CASE("Held native stage teardown does not block cancellation or quit", "[.][cleanup-probe-native]") {
+    BackendFixture f; f.discover(); f.backend->download(651, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1); REQUIRE(f.failures == 0);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    const auto path = paths.front(); const auto directory = QFileInfo(path).absolutePath();
+    RemovalProbe probe; probe.start(directory, 5);
+    bool retained = false;
+    SECTION("Ready cancellation") {
+        auto watchdog = probe.watchdog(); QElapsedTimer elapsed; elapsed.start(); f.backend->cancel();
+        probe.trace("native-cancel", elapsed.elapsed());
+        CHECK(elapsed.elapsed() < 50);
+        REQUIRE(discoveryPump([&] { return probe.entered(); })); CHECK_FALSE(probe.released());
+        CHECK(QDir(directory).exists()); CHECK(probe.workerThread() != probe.guiThread);
+        REQUIRE(watchdog.get());
+    }
+    SECTION("revoked Ready quit fence") {
+        f.context.ownedCtx->getProxyRoute()->stop(); auto watchdog = probe.watchdog();
+        QElapsedTimer elapsed; elapsed.start(); const auto complete = f.backend->stopWorkersForQuit();
+        probe.trace("native-quit", elapsed.elapsed());
+        CHECK_FALSE(complete); CHECK(elapsed.elapsed() < 50); CHECK(f.backend->quitWorkersPending());
+        REQUIRE(discoveryPump([&] { return probe.entered(); })); CHECK_FALSE(probe.released());
+        CHECK(QDir(directory).exists()); CHECK(probe.workerThread() != probe.guiThread);
+        REQUIRE(watchdog.get()); REQUIRE(discoveryPump([&] { return backendFence(*f.backend); }));
+    }
+    SECTION("prior Ready survives valid fence") {
+        REQUIRE(f.backend->stopWorkersForQuit()); CHECK_FALSE(probe.entered());
+        CHECK(QFile::exists(path)); retained = true;
+    }
+    QElapsedTimer drain; drain.start(); REQUIRE(discoveryPump([&] { return drain.elapsed() > 50; }));
+    CHECK(f.ready == 1); CHECK(f.failures == 0); CHECK(f.requests.load() == 2);
+    CHECK(QFile::exists(path) == retained);
+}
+TEST_CASE("Native cleanup removal failure permanently refuses quit", "[.][cleanup-refusal-native]") {
+    BackendFixture f; f.discover(); f.backend->download(652, f.offer);
+    REQUIRE(discoveryPump([&] { return f.ready || f.failures; })); REQUIRE(f.ready == 1);
+    const auto paths = stagedArchives(); REQUIRE(paths.size() == 1);
+    const auto directory = QFileInfo(paths.front()).absolutePath();
+    const auto parent = QFileInfo(directory).absolutePath();
+    REQUIRE(parent == QDir::tempPath());
+    const auto restore = dcpp::makeScopedFunctor([&] { ::chmod(QFile::encodeName(parent).constData(), 0700); });
+    REQUIRE(::chmod(QFile::encodeName(parent).constData(), 0500) == 0);
+    f.backend->cancel();
+    QElapsedTimer elapsed; elapsed.start(); bool retired = f.backend->stopWorkersForQuit();
+    while(!retired && f.backend->quitWorkersPending() && elapsed.elapsed() < 3000) {
+        QThread::msleep(1); retired = f.backend->stopWorkersForQuit();
+    }
+    CHECK_FALSE(retired); CHECK_FALSE(f.backend->quitWorkersPending()); CHECK(QDir(directory).exists());
+    REQUIRE(::chmod(QFile::encodeName(parent).constData(), 0700) == 0);
+    CHECK_FALSE(f.backend->stopWorkersForQuit());
 }
 #endif

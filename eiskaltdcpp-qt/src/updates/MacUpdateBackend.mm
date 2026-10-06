@@ -62,8 +62,15 @@ struct MacUpdateBackend::Impl {
     enum Phase { Idle, Feed, Discovering, Available, Archive, Verifying, Ready };
     struct Stage {
         QTemporaryDir directory;
+        Stage() { directory.setAutoRemove(false); }
         QString feed() const { return directory.filePath("appcast.xml"); }
         QString archive() const { return directory.filePath("update.zip"); }
+    };
+    struct Cleanup {
+        std::shared_ptr<Stage> stage;
+        std::unique_ptr<QThread> worker;
+        bool removed = false;
+        ~Cleanup() { if(worker) worker->wait(); }
     };
     struct Verification {
         std::shared_ptr<Stage> stage;
@@ -87,6 +94,9 @@ struct MacUpdateBackend::Impl {
     std::shared_ptr<const dcpp::ProxyRouteSnapshot> route;
     std::optional<SignedUpdate> selected;
     std::unique_ptr<Verification> verification;
+    std::vector<std::shared_ptr<Stage>> retiredStages;
+    std::vector<std::unique_ptr<Cleanup>> cleanups;
+    bool cleanupFailed = false;
     QTimer timer;
     Phase phase = Idle;
     Channel channel = Channel::Stable;
@@ -114,7 +124,7 @@ struct MacUpdateBackend::Impl {
             [this](quint64 id, const QString& path) { transferred(id, path); }, Qt::QueuedConnection);
         QObject::connect(transport.get(), &UpdateTransport::failed, &owner, [this](quint64 id, const QString&) {
             if(quitFenced || id != request) return;
-            request = 0; transferStage.reset();
+            request = 0; releaseStage(transferStage);
             if(phase == Feed || phase == Archive) fail(FailureCategory::Network);
         }, Qt::QueuedConnection);
         QObject::connect(transport.get(), &UpdateTransport::progress, &owner, [this](quint64 id, quint64 bytes, quint64) {
@@ -140,12 +150,53 @@ struct MacUpdateBackend::Impl {
     ~Impl() {
         clear(); timer.stop();
         // The installer joins its verifier before releasing the staged files.
-        installer.reset(); installerStage.reset();
+        installer.reset(); releaseStage(installerStage);
         // Transport joins its cancelable network worker before QObject teardown.
         transport.reset();
-        verification.reset();
+        releaseStage(transferStage);
+        if(verification) {
+            if(verification->worker) verification->worker->wait();
+            releaseStage(verification->stage); verification.reset();
+        }
+        timer.stop();
+        pollCleanup();
+        for(auto& job : cleanups) if(job->worker) job->worker->wait();
     }
-    bool busy() const { return request || verification || phase == Discovering; }
+    // Every last Stage reference is transferred before QObject-side release.
+    // No directory destruction is delegated to a detached worker/deleter.
+    void releaseStage(std::shared_ptr<Stage>& value) {
+        if(value && value.use_count() == 1) retiredStages.push_back(value);
+        value.reset();
+        if(!retiredStages.empty()) timer.start();
+    }
+    bool pollCleanup() {
+        for(auto it = cleanups.begin(); it != cleanups.end();) {
+            const auto& job = *it;
+            if(job->worker && !job->worker->wait(0)) { ++it; continue; }
+            if(!job->removed) { cleanupFailed = true; ++it; }
+            else it = cleanups.erase(it);
+        }
+        if(!cleanupFailed) {
+            while(!retiredStages.empty()) {
+                try {
+                    auto job = std::make_unique<Cleanup>();
+                    job->stage = retiredStages.back();
+                    auto* value = job.get();
+                    job->worker.reset(QThread::create([value] {
+                        value->removed = !value->stage->directory.isValid() || value->stage->directory.remove();
+                    }));
+                    cleanups.push_back(std::move(job));
+                    value->worker->start();
+                    retiredStages.pop_back();
+                } catch(...) { cleanupFailed = true; break; }
+            }
+        }
+        return !cleanupFailed && retiredStages.empty() && cleanups.empty();
+    }
+    bool busy() const {
+        return request || verification || phase == Discovering || cleanupFailed ||
+            !retiredStages.empty() || !cleanups.empty();
+    }
     void clear() {
         revokeHandoff();
         ++epoch;
@@ -153,7 +204,7 @@ struct MacUpdateBackend::Impl {
         discovery->cancel();
         if(request) transport->cancel(request);
         if(verification) verification->cancelled.store(true);
-        selected.reset(); stage.reset(); route.reset(); feedBytes.clear();
+        selected.reset(); releaseStage(stage); route.reset(); feedBytes.clear();
         // transferStage / Verification retain files until their worker exits.
     }
     void revokeHandoff() {
@@ -174,8 +225,8 @@ struct MacUpdateBackend::Impl {
         if(!handoffPending || op != handoffOperation) return;
         handoffPending = false;
         if(!prepared) {
-            stage.reset(); selected.reset(); route.reset(); feedBytes.clear(); phase = Idle;
-            installerStage.reset();
+            releaseStage(stage); selected.reset(); route.reset(); feedBytes.clear(); phase = Idle;
+            releaseStage(installerStage);
         }
         // Forward the native terminal fact, never invent a disarm receipt after
         // irreversible preparation. Prepared owners survive through process exit.
@@ -224,13 +275,20 @@ struct MacUpdateBackend::Impl {
         if(quitFenced) return;
         const auto generation = epoch;
         QTimer::singleShot(0, &owner, [this, op, category, generation] {
-            if(quitFenced || epoch != generation) return;
-            const auto message = category == FailureCategory::Unsupported ? owner.tr("Update installation is not available in this build.") :
+            deliverReport(op, category, generation);
+        });
+    }
+    void deliverReport(quint64 op, FailureCategory category, quint64 generation) {
+        if(quitFenced || epoch != generation) return;
+        if(!cleanupFailed && (request || verification || !retiredStages.empty() || !cleanups.empty())) {
+            QTimer::singleShot(20, &owner, [this, op, category, generation] { deliverReport(op, category, generation); });
+            return;
+        }
+        const auto message = category == FailureCategory::Unsupported ? owner.tr("Update installation is not available in this build.") :
                 category == FailureCategory::Verification ? owner.tr("Update verification failed. No update was installed.") :
                 category == FailureCategory::Storage ? owner.tr("Unable to create private update staging.") :
                 owner.tr("Update operation cancelled, busy, or unavailable on the selected connection route.");
-            emit owner.failed(op, message, category);
-        });
+        emit owner.failed(op, message, category);
     }
     void fail(FailureCategory category) { const auto op = operation; clear(); report(op, category); }
     void fetch(const QUrl& url, ResourceKind kind, const QString& path) {
@@ -249,8 +307,9 @@ struct MacUpdateBackend::Impl {
         // preload NSBundle there; production always uses the admitted snapshot.
         const auto key = runtime ? publicKey : pinnedKey(fixture);
         const auto cache = cacheDirectory;
+        verification = std::move(job);
         try {
-            job->worker.reset(QThread::create([value, key, selection, bytes, selectedRoute, cache] {
+            verification->worker.reset(QThread::create([value, key, selection, bytes, selectedRoute, cache] {
                 const auto stopped = [value, selectedRoute] { return value->cancelled.load() || !routeValid(selectedRoute); };
                 try {
                     // Reauthenticate the exact selection under the current installed key.
@@ -272,13 +331,13 @@ struct MacUpdateBackend::Impl {
                     }
                 } catch(...) { value->valid = false; }
             }));
-            job->worker->start();
+            verification->worker->start();
         } catch(...) { fail(FailureCategory::Storage); return; }
-        verification = std::move(job); phase = Verifying; timer.start();
+        phase = Verifying; timer.start();
     }
     void transferred(quint64 id, const QString& path) {
         if(quitFenced || id != request) return;
-        request = 0; transferStage.reset();
+        request = 0; releaseStage(transferStage);
         if(phase != Feed && phase != Archive) return;
         if(!stage || !routeValid(route)) { fail(FailureCategory::Network); return; }
         if(phase == Feed) {
@@ -294,13 +353,19 @@ struct MacUpdateBackend::Impl {
         }
     }
     void poll() {
-        if(quitFenced) return;
+        const bool cleaned = pollCleanup();
+        if(quitFenced) {
+            // Refused installer handoffs can release staging after the fence.
+            // Only cleanup may run here; discovery and downloads stay closed.
+            if(cleaned || cleanupFailed) timer.stop();
+            return;
+        }
         if(phase != Idle && !routeValid(route)) { fail(FailureCategory::Network); return; }
-        if(verification && verification->worker->wait(0)) {
+        if(verification && (!verification->worker || verification->worker->wait(0))) {
             const bool current = verification->epoch == epoch && phase == Verifying;
             const bool valid = verification->valid && !verification->cancelled.load();
             const bool miss = verification->restoring && verification->authenticated && !verification->cancelled.load();
-            verification.reset();
+            releaseStage(verification->stage); verification.reset();
             if(current) {
                 if(!valid && miss && selected && routeValid(route)) {
                     phase = Archive;
@@ -326,20 +391,24 @@ struct MacUpdateBackend::Impl {
                 if(verification) verification->cancelled.store(true);
             }
             const bool transportDrained = transport->stopWorkersForQuit();
-            if(verification && !verification->worker->wait(0)) return false;
+            if(verification && verification->worker && !verification->worker->wait(0)) return false;
             if(!transportDrained) {
                 if(!transport->quitWorkersPending()) quitFenceFailed = true;
                 return false;
             }
-            verification.reset();
+            if(verification) { releaseStage(verification->stage); verification.reset(); }
             // Neither stage owner is released until its worker is physically
             // joined. A transport refusal retains all remaining dependencies.
-            transferStage.reset();
+            releaseStage(transferStage);
             // Freeze only a prior Ready result whose route is still valid.
             // Later intentional core retirement must not trigger poll/clear.
             if(!quitWasReady || !routeValid(route)) {
                 phase = Idle;
-                selected.reset(); stage.reset(); route.reset(); feedBytes.clear();
+                selected.reset(); releaseStage(stage); route.reset(); feedBytes.clear();
+            }
+            if(!pollCleanup()) {
+                if(cleanupFailed) quitFenceFailed = true;
+                return false;
             }
             quitFenceSucceeded = true;
         } catch(...) {
@@ -369,10 +438,11 @@ MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, t
     const QString& cache, UpdateRuntimeConfig config, QObject* p)
     : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, std::move(config), true)) {}
 MacUpdateBackend::~MacUpdateBackend() = default;
+bool MacUpdateBackend::hasPendingWork() const { return impl->busy(); }
 void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     Q_ASSERT(QThread::currentThread() == thread());
     if(impl->quitFenced || !op) return;
-    if(impl->busy()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
+    if(hasPendingWork()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
     impl->clear(); impl->operation = op; impl->channel = channel;
     if((impl->requiresRuntime && !impl->runtime) || impl->feedUrl.isEmpty() ||
         (channel != Channel::Stable && channel != Channel::Preview)) {
@@ -388,7 +458,7 @@ void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
 void MacUpdateBackend::download(quint64 op, const UpdateOffer& requested) {
     Q_ASSERT(QThread::currentThread() == thread());
     if(impl->quitFenced || !op) return;
-    if(impl->busy()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
+    if(hasPendingWork()) { if(op != impl->operation) impl->report(op, FailureCategory::Network); return; }
     impl->operation = op;
     if(impl->phase != Impl::Available || !impl->selected || !sameOffer(requested, impl->selected->offer)) {
         impl->fail(FailureCategory::Verification); return;

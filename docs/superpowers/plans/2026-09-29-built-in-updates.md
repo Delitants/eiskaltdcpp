@@ -1895,3 +1895,58 @@ linguistic/resource/provenance/reproducibility, native/minimum-OS/live/benchmark
 final app/material rebuild, numeric allocation/signing/signed-v3 acceptance,
 guarded activation/closed-app install and docs/prerelease/public readback remain.
 Signed feeds last; Tasks 7/8 remain open.
+
+### 2026-10-05 Owned Cleanup Repair And Socket-Boundary Continuation
+
+Transport file retraction and native staging-directory deletion now use owned
+cleanup workers. Results and last-reference release require physical `wait(0)`
+receipts; held cleanup stays Pending, and removal failure remains a sticky quit
+refusal. Prior valid Ready/delivered ownership is preserved. Native temporary
+directories no longer auto-delete on GUI-side reference release. Cleanup-only
+polling also drains refused installer handoffs after the quit fence without
+reopening discovery, downloads or installation. Destructor fallback is joined,
+not detached; arbitrary staging/core/filesystem hard deadlines remain unproven.
+
+Public regression probes first retain exactly 33 anticipated baseline failures:
+transport 1/41 with 11, native 1/162 with 10, real session 1/35 with 10, and native
+permanent removal refusal 1/42 with two. Strict case/count/expression-multiset,
+exit, loader and sandbox validation rejects unrelated failures or skips. A real
+post-fence cleanup polling defect found in the first repair iteration is fixed;
+older sleep-based checks now await physical retirement and separate error facts.
+No production timeout is extended. A final test-only review permits an immediate
+completed fence when unheld cleanup has already retired; held probes still require
+Pending. Earlier failing repair/setup evidence remains retained.
+
+Fresh four-target ARM/Intel builds and final affected Qt rebuilds pass serially
+at j2. Eight final focused phases pass: per CPU control 1/31, transport 25/314,
+native 24/2723 and real session 3/88. Actual held deletion returns in 0-1ms off GUI;
+the finite quit request refuses before core retirement, never exits late, and
+requires explicit post-drain retry. The final twelve ordinary phases pass without
+interposer: ten unchanged phases plus two freshly rebuilt Qt reruns, 4152 case
+executions. Both full Qt reruns have 615 cases. Complete XML/output, matching ABI2
+providers and inner loopback-only network denial are verified. This is host ARM
+and Rosetta Intel QA, not native Intel/macOS14 or separate minimum-OS acceptance.
+
+The independent Torrent diagnostic adds private transparent kernel socket
+observations, not production networking changes. Real success/refusal/invalid-fd
+controls verify syscall results and errno before original-seed aggregate runs.
+Bootstrap control passes 1/4 and full Torrent 152/18430 at seed1446322059;
+publication control passes both original sections, 1/511, and full applicable Qt
+615/33900 at seed3982279739. Within the target bootstrap scope, listen succeeds,
+connect reports EINPROGRESS, SO_ERROR is zero, the fixture accepts and Qt delivers
+connected; its repeated EISCONN probe is completion, not refusal. Aggregate wait
+is 41.547ms under the unchanged 2000ms deadline. Publication waits are
+850.846/613.981ms under unchanged 10000ms limits and both publish successfully.
+Instrumentation can perturb timing. Neither retained original cause is established
+or waived; these coherent observer binaries are not byte-identical old failures.
+
+Frozen unaffected source, guarded profile/installed executable, dependencies,
+providers, prior negative logs/binaries and old accepted packaging candidates,
+seals and archives all read back unchanged. Old candidates are not the final
+rebuilt release. No push, install, signing, activation or live-state mutation.
+Remaining: intermittent causes; broader core/staging/filesystem responsiveness;
+language/resources/dependency provenance/reproducibility; native/minimum-OS/live
+notification/logout/Gatekeeper/notarization/DC/Torrent/benchmarks; final reviewed
+app/material rebuild; numeric allocation/signing/signed-v3 acceptance/guarded
+activation; closed-app install/readback; README/wiki/approved unredacted
+screenshots/prerelease/public readback. Signed feeds last; Tasks 7/8 remain open.

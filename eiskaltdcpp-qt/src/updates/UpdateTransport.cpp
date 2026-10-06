@@ -68,10 +68,24 @@ struct UpdateTransport::Impl {
         std::atomic_bool cancelled{false}, progressPending{false};
         std::atomic<quint64> bytes{0};
         std::shared_ptr<dcpp::WakeNotifier> notifier = std::make_shared<dcpp::WakeNotifier>();
-        std::unique_ptr<QThread> worker;
-        bool created = false;
+        std::unique_ptr<QThread> worker, cleanupWorker;
+        bool created = false, cleanupStarted = false, removed = false;
         void stop() { cancelled.store(true); notifier->notify(); }
-        void join() { if(worker) worker->wait(); }
+        void join() {
+            if(worker) worker->wait();
+            if(cleanupWorker) cleanupWorker->wait();
+        }
+        bool retract() {
+            if(cleanupStarted) return bool(cleanupWorker);
+            cleanupStarted = true;
+            try {
+                cleanupWorker.reset(QThread::create([this] {
+                    removed = !QFileInfo::exists(destination) || QFile::remove(destination);
+                }));
+                cleanupWorker->start();
+                return true;
+            } catch(...) { return false; }
+        }
     };
     transport_detail::Backend backend;
     std::shared_ptr<Job> job;
@@ -92,7 +106,8 @@ UpdateTransport::UpdateTransport(dcpp::DCContext& context, transport_detail::Bac
     impl->retirementPoll.setInterval(5);
     connect(&impl->retirementPoll, &QTimer::timeout, this, [this] {
         const auto job = impl->job;
-        if(!job || (job->worker && !job->worker->wait(0))) return;
+        if(!job || (job->worker && !job->worker->wait(0)) ||
+            (job->cleanupWorker && !job->cleanupWorker->wait(0))) return;
         impl->retirementPoll.stop();
         auto finish = std::move(impl->finish);
         if(finish) finish();
@@ -103,7 +118,7 @@ UpdateTransport::~UpdateTransport() {
     if(impl->job) {
         impl->job->stop();
         impl->job->join();
-        if(impl->job->created) QFile::remove(impl->job->destination);
+        if(impl->job->created && !impl->job->cleanupStarted) QFile::remove(impl->job->destination);
     }
 }
 
@@ -133,7 +148,19 @@ quint64 UpdateTransport::fetch(const QUrl& url, ResourceKind kind, const QString
         }
         const bool cancelled = job->cancelled.load() || revoked(job->route);
         const bool success = job->created && !cancelled && job->error.isEmpty();
-        if(!success && job->created) QFile::remove(job->destination);
+        if(!success && job->created) {
+            const auto complete = [this, job, cancelled] {
+                if(impl->stopped || impl->job != job) return;
+                if(!job->removed) {
+                    impl->stopped = impl->stopFailed = true;
+                } else impl->job.reset();
+                emit failed(job->id, cancelled ? tr("Update download cancelled or proxy settings changed.") : job->error);
+            };
+            if(!job->retract()) { complete(); return; }
+            impl->finish = complete;
+            impl->retirementPoll.start();
+            return;
+        }
         impl->job.reset();
         if(success) {
             emit finished(job->id, job->destination);
@@ -205,9 +232,12 @@ bool UpdateTransport::stopWorkersForQuit() {
             // Body completion and QThread::isFinished precede TLS teardown.
             // Only wait(0)'s physical receipt allows result reads and release.
             if(job->worker && !job->worker->wait(0)) return false;
-            const bool removed = !job->created || !QFileInfo::exists(job->destination) || QFile::remove(job->destination);
+            if(job->created) {
+                if(!job->retract()) { impl->stopFailed = true; return false; }
+                if(!job->cleanupWorker->wait(0)) return false;
+                if(!job->removed) { impl->stopFailed = true; return false; }
+            }
             impl->job.reset();
-            if(!removed) { impl->stopFailed = true; return false; }
         }
         impl->stopSucceeded = true;
     } catch(...) {

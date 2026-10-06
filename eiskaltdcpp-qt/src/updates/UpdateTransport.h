@@ -34,7 +34,7 @@ public:
         std::shared_ptr<const dcpp::ProxyRouteSnapshot>);
     void cancel(quint64);
     /// Owner-thread terminal fence, not installer consent. Never waits for a
-    /// live worker; poll while quitWorkersPending(), retaining this and context.
+    /// live download or cleanup worker; poll while quitWorkersPending(), retaining this and context.
     /// Suppresses pending replies and retracts undelivered data after retirement.
     /// Completed, delivered files belong to staging and are left untouched.
     [[nodiscard]] bool stopWorkersForQuit();

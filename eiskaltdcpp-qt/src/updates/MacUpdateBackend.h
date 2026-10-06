@@ -25,6 +25,7 @@ public:
     void revokeInstallConsent() override;
 private:
     friend struct MacUpdateBackendTestAccess;
+    bool hasPendingWork() const;
     MacUpdateBackend(dcpp::DCContext&, const QString& fixtureBundle, transport_detail::Backend, const QString& cacheDirectory, QObject*);
     MacUpdateBackend(dcpp::DCContext&, const QString& fixtureBundle, transport_detail::Backend,
         const QString& cacheDirectory, UpdateRuntimeConfig, QObject*);

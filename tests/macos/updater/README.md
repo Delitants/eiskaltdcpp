@@ -937,3 +937,19 @@ Native tests cannot be replaced by the ordinary Qt suite. Destructors still
 require physically retired workers: callers must retain owners through Pending
 or Refused. This removes live-worker GUI joins, not all possible main-thread
 filesystem/staging/core latency and not a total hard quit-deadline guarantee.
+
+### Staging Cleanup Retirement
+
+The same interposer can hold actual `unlink`, `unlinkat` and `rmdir` calls.
+`[cleanup-probe-control]` checks real file/directory removal and errno behavior;
+`[cleanup-probe-transport]` and `[cleanup-probe-native]` check off-owner cleanup,
+retained staging, prior Ready preservation and nonblocking Pending fences.
+`[cleanup-refusal-native]` requires a private disposable TMPDIR and checks sticky
+quit refusal after a removal error. `[cleanup-probe-session]` verifies finite
+refusal before core retirement, no late automatic exit, and explicit retry.
+
+Cleanup workers remain owned until `wait(0)` confirms physical exit. A refused
+installer handoff may release staging after the quit fence; cleanup-only polling
+must still drain it without reopening network or installer admission. Installer
+refusal alone is not a filesystem retirement receipt. These hidden tests retain
+the same isolated environment and loopback-only policy described above.

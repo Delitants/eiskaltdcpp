@@ -3320,3 +3320,39 @@ TEST_CASE("Generated large hub updates preserve selected identities", "[.][hub-s
                   << " updates_ms=" << updatesMs << " max_update_ms=" << maxUpdateMs << '\n';
     }
 }
+
+#ifdef __APPLE__
+#include "tests/macos/updater/RemovalProbe.h"
+TEST_CASE("Held undelivered cleanup reaches finite refusal before core retirement", "[.][cleanup-probe-session]") {
+    IsolatedMainWindow f; QTemporaryDir staging; QuitBackend backend(*f.core);
+    backend.transport = updates::UpdateTransportTestAccess::create(*f.core, [](const auto&, const auto&, const auto& sink) {
+        const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    const auto route = f.core->getProxyRoute()->snapshot(); const auto path = staging.filePath("undelivered");
+    backend.transport->fetch(QUrl("https://raw.githubusercontent.com/Delitants/eiskaltdcpp/codex-2.5.2-release/updates/arm64.xml"),
+        updates::ResourceKind::Feed, path, route);
+    QElapsedTimer elapsed; elapsed.start();
+    while(!QFileInfo::exists(path) && elapsed.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(QFileInfo::exists(path)); QThread::msleep(20);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    updates::ApplicationQuitSession session(*f.gui, &updater);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    RemovalProbe probe; probe.start(path, 4); auto watchdog = probe.watchdog();
+    int beats = 0; QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { ++beats; }); heartbeat.start(1);
+    elapsed.restart(); session.request(50); probe.trace("session-request", elapsed.elapsed());
+    CHECK(elapsed.elapsed() < 40);
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Preparing);
+    CHECK_FALSE(route->revoked->load()); CHECK(f.core->isRunning());
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused || !ready.isEmpty(); }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(refused.count() == 1); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    CHECK_FALSE(route->revoked->load()); CHECK(backend.transport->quitWorkersPending());
+    REQUIRE(watchdog.get()); QTest::qWait(30);
+    CHECK(ready.isEmpty()); CHECK_FALSE(route->revoked->load()); CHECK(backend.installs == 0);
+    session.request(1000); REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(route->revoked->load()); CHECK_FALSE(QFile::exists(path));
+}
+#endif

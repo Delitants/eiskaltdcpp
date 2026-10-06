@@ -644,10 +644,14 @@ TEST_CASE("Updater quit fence from final progress suppresses the rest of complet
     });
     Result result(*transport); bool stopped = false;
     QObject::connect(transport.get(), &UpdateTransport::progress, transport.get(), [&](auto, auto, auto total) {
-        if(total) stopped = fence(*transport);
+        if(total) {
+            stopped = true;
+            if(!fence(*transport)) CHECK(transport->quitWorkersPending());
+        }
     });
     transport->fetch(feed, ResourceKind::Feed, staging.filePath("feed"), directRoute());
     REQUIRE(pump([&] { return stopped || result.done(); }));
+    REQUIRE(retire(*transport));
     CHECK(stopped); CHECK_FALSE(result.done());
     CHECK(QDir(staging.path()).entryList(QDir::Files | QDir::Hidden).isEmpty());
 }
@@ -674,4 +678,66 @@ TEST_CASE("Updater quit fence permanently refuses failed undelivered file remova
     CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
     QCoreApplication::processEvents(); CHECK_FALSE(result.done()); CHECK(result.progresses == 0);
 }
+#endif
+
+#ifdef __APPLE__
+#include "tests/macos/updater/RemovalProbe.h"
+
+TEST_CASE("Deletion probe preserves actual QFile and QTemporaryDir behavior", "[.][cleanup-probe-control]") {
+    QTemporaryDir root; REQUIRE(root.isValid());
+    RemovalProbe probe;
+    const auto target = root.filePath("target");
+    const auto sibling = root.filePath("target-sibling");
+    for(const auto& path : {target, sibling}) {
+        QFile file(path); REQUIRE(file.open(QIODevice::WriteOnly)); REQUIRE(file.write("keep") == 4);
+    }
+    probe.start(target, 4);
+    REQUIRE(QFile::remove(sibling)); CHECK_FALSE(probe.entered());
+    auto watchdog = probe.watchdog();
+    REQUIRE(QFile::remove(target)); REQUIRE(watchdog.get());
+    CHECK(probe.call() == 1); CHECK(probe.workerThread() == probe.guiThread);
+    CHECK_FALSE(QFile::exists(target));
+    errno = 0; CHECK(::unlink(QFile::encodeName(target).constData()) == -1); CHECK(errno == ENOENT);
+    CHECK(::unlinkat(AT_FDCWD, QFile::encodeName(sibling).constData(), 0) == -1); CHECK(errno == ENOENT);
+    QTemporaryDir directory(root.filePath("directory-XXXXXX")); REQUIRE(directory.isValid());
+    const auto path = directory.path(); probe.start(path, 5);
+    auto directoryWatchdog = probe.watchdog();
+    REQUIRE(directory.remove()); REQUIRE(directoryWatchdog.get());
+    CHECK(probe.call() == 3); CHECK(probe.workerThread() == probe.guiThread); CHECK_FALSE(QDir(path).exists());
+    errno = 0; CHECK(::rmdir(QFile::encodeName(path).constData()) == -1); CHECK(errno == ENOENT);
+}
+
+TEST_CASE("Held undelivered deletion does not block completion or quit", "[.][cleanup-probe-transport]") {
+    dcpp::test::TestContext context; QTemporaryDir staging; REQUIRE(staging.isValid());
+    auto transport = UpdateTransportTestAccess::create(*context.ownedCtx, [](const auto&, const auto&, const auto& sink) {
+        const uint8_t byte = 'x'; sink(&byte, 1);
+    });
+    Result result(*transport); const auto path = staging.filePath("undelivered");
+    const auto id = transport->fetch(feed, ResourceKind::Feed, path, directRoute());
+    QElapsedTimer elapsed; elapsed.start();
+    while(!QFileInfo::exists(path) && elapsed.elapsed() < 3000) QThread::msleep(1);
+    REQUIRE(QFileInfo::exists(path)); QThread::msleep(20);
+    RemovalProbe probe; probe.start(path, 4); auto watchdog = probe.watchdog();
+    SECTION("cancelled completion") {
+        transport->cancel(id); elapsed.restart();
+        REQUIRE(pump([&] { return probe.entered(); }));
+        probe.trace("transport-completion", elapsed.elapsed());
+        CHECK(elapsed.elapsed() < 50);
+        CHECK_FALSE(probe.released()); CHECK_FALSE(result.done()); CHECK(QFileInfo::exists(path));
+        CHECK(probe.workerThread() != probe.guiThread);
+        REQUIRE(watchdog.get()); REQUIRE(pump([&] { return result.done(); }));
+        CHECK(result.failures == 1); CHECK(result.successes == 0);
+    }
+    SECTION("quit fence") {
+        elapsed.restart(); const auto complete = fence(*transport);
+        probe.trace("transport-quit", elapsed.elapsed());
+        CHECK_FALSE(complete); CHECK(elapsed.elapsed() < 50); CHECK(transport->quitWorkersPending());
+        REQUIRE(pump([&] { return probe.entered(); }));
+        CHECK_FALSE(probe.released()); CHECK(QFileInfo::exists(path)); CHECK(probe.workerThread() != probe.guiThread);
+        CHECK(transport->fetch(feed, ResourceKind::Feed, staging.filePath("late"), directRoute()) == 0);
+        REQUIRE(watchdog.get()); REQUIRE(retire(*transport)); CHECK_FALSE(result.done());
+    }
+    CHECK_FALSE(QFileInfo::exists(path));
+}
+
 #endif
