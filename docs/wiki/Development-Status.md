@@ -100,21 +100,39 @@ can subsequently emit exit readiness; with a Ready, consented update fixture it
 also reaches fake installer handoff after the deadline. No real installation was
 performed. Frozen values are saved correctly. This is a reproduced quit-path
 gap, not the cause of the earlier natural recovery timeout or Torrent freezes.
-An ownership-safe settings persistence repair and its deadline/consent checks
-remain pending; merely calling the existing settings object from another thread
-is not the accepted repair design.
+The owned settings persistence repair and its deadline/consent checks are now
+locally implemented and verified; the historical diagnostic remains retained.
+The original parentless writer transfers to an owned settings-only worker;
+GUI getters use frozen values, and readiness follows checked sync, destruction
+and thread exit. Cached retirement prevents replay of successful saves.
 
 Prior persistence/quit checks and all three applicable window layouts passed on
 ARM and Intel/Rosetta. The latest adjacent ARM run has an intermittent anti-spam
 recovery failure: the existing recovery-button case finds a hidden prompt and
 fails to complete its retry. The same selector passes on Intel and an unchanged
 accepted ARM binary; this does not explain or waive the failure. A focused
-settings-ownership repair design is now approved. Its
+settings-ownership repair design and its
 [implementation plan](../superpowers/plans/2026-10-06-gui-settings-quit-persistence.md)
-is prepared for review before Native execution, not implemented. The plan includes
-cached settings reads, owned physical-write receipts, post-Ready deadline checks
-and a dedicated no-Torrent settings/quit fixture; these are planned checks, not
-new passing test results. Installed state and release gates remain unchanged.
+were approved for Native execution. Local source checkpoints `e68f50545`,
+`09b83854b` and `af796efbf` implement the repair. One fresh review found two
+Important issues: pending GUI settings postponed core admission closure, and
+pre-transfer refusal left queued automatic writes. Exact RED-to-GREEN checks
+cover both fixes, including held settings with an unprepared core and a real
+private snapshot-allocation failure. Core admission now closes only after the
+safe GUI producer milestone; terminal settings refusal quiesces deferred writes
+and preserves original intent. No post-fix reviewer approval is claimed.
+
+The final post-fix matrix passes 30 nonempty runs / 4,281 case instances /
+443,362 assertions, with zero failures/errors/skips. Both main CPUs pass core
+1,035, Qt 618, Torrent 152 and ordinary settings 5 cases, plus GUI layouts
+106/106/104 and explicit held retirement checks. The separate no-Torrent build
+executes six selections / 13 case instances. Private broken controls detect
+exactly seven/four defects. Actual Qt is 6.11.1; host/Rosetta execution and
+minimum-OS metadata are not native macOS-14/macOS-26 acceptance. Windows and
+other Qt versions remain unverified. Opt-in real-GOST cases are not part of this
+matrix. Protected profiles, historical bundles/binaries, providers and prior
+failure evidence pass preservation checks. Installed state and release gates
+remain unchanged; forced/crash teardown responsiveness is not covered.
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

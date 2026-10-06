@@ -1,8 +1,8 @@
 # GUI Settings Persistence During Checked Quit
 
 Status: written design approved by the maintainer on 2026-10-06 after checkpoint
-`bcf1c1390`. The implementation plan is prepared for review; no runtime
-repair is implemented by this document. This extends
+`bcf1c1390`. Native/inline implementation is locally verified through source
+checkpoint `af796efbf`; see the execution checkpoint below. This extends
 the approved built-in updater quit contract; it does not authorize installation,
 signing, publication, profile changes or production feed activation.
 
@@ -50,6 +50,9 @@ public getter/setter interfaces, file path, `IniFormat` or atomic-sync policy.
 
 After GUI producers and layout snapshots are retired, freeze exactly once:
 capture the readable key/value state and reject every subsequent mutation.
+Quiesce queued storage `UpdateRequest` events before capture allocation so a
+refused capture or transfer cannot later auto-sync on the GUI. Terminal refusal
+also fences explicit save/load/theme/mutation while retaining original intent.
 Snapshot capture is GUI-owned and must finish before storage transfer. Getters
 then use only the immutable snapshot, including while a physical write is held.
 They must preserve default values, invalid variants, conversions, Unicode keys
@@ -120,6 +123,10 @@ settings are Pending, expose that pending state through the existing coordinator
 and session poll path, keeping event delivery outside retained GUI roots live.
 An asynchronous session explicitly selects asynchronous settings persistence;
 direct legacy callers retain their default synchronous contract.
+Once GUI producer and snapshot retirement is complete, core preparation must
+close admission even if physical settings persistence remains Pending. Preserve
+the updater fence before core preparation and do not admit auxiliary writes,
+ordinary exit or update commitment until all required receipts are Ready.
 
 Check elapsed time again after a Ready preparation result and immediately before
 calling `normalQuitCommitted()`, even if the first call never returned Pending.
@@ -175,10 +182,26 @@ failures by name; green reruns do not erase them.
 ## Review And Remaining Gates
 
 The maintainer approved this written design after checkpoint `bcf1c1390`.
-The implementation plan is now available in
+The implemented plan and local execution evidence are summarized in
 [`2026-10-06-gui-settings-quit-persistence.md`](../plans/2026-10-06-gui-settings-quit-persistence.md)
-for review before Native/inline implementation. This document alone is not
-implemented behavior or authorization for a release.
+at checkpoints `e68f50545`, `09b83854b` and `af796efbf`. This is not authorization
+or acceptance for a release.
+
+The one fresh-context review found two Important issues (late core admission
+closure and queued auto-sync after pre-transfer refusal), no Critical or Minor
+findings. Both have exact RED-to-GREEN regressions from the one fix pass; no
+second-review approval is claimed. The final matrix has 30 runs, 4,281 executed
+case instances and 443,362 passing assertions, with zero failures/errors/skips,
+on ARM and Intel/Rosetta using Qt 6.11.1. It includes all three applicable GUI
+layouts, held write/flush/teardown, timeout/retry/Ready admission and a separately
+executed no-Torrent configuration. Private broken controls detect their exact
+seven/four defects; parent and snapshot-allocation refusal checks retain dirty
+intent without deferred GUI writes. Protected live state, historical binaries,
+providers, bundles, material and failed evidence pass readback checks.
+
+This is isolated source-level acceptance for the bounded repair, not native
+Windows/other-Qt/minimum-OS, real-GOST interop, forced/crash teardown or installed
+update acceptance. Historical intermittent failures remain open independently.
 
 The retained natural recovery and Torrent/bootstrap/publication/bind/peer-counter
 causes remain separate investigations. Localization/native-language quality,

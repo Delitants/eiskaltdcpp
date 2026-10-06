@@ -2444,3 +2444,51 @@ A dedicated settings/quit fixture will provide actual no-Torrent execution;
 the existing full-GUI toggle target depends on Torrent and cannot prove that path.
 No runtime repair, new test result, installation or publication is claimed by
 this documentation checkpoint. All retained failures and release gates stay open.
+
+### GUI settings owned persistence repair checkpoint (2026-10-06)
+
+The later approved Native/inline plan is now implemented locally at
+`e68f50545`, `09b83854b` and `af796efbf`. See the
+[execution checkpoint](2026-10-06-gui-settings-quit-persistence.md) and
+[updated spec](../specs/2026-10-06-gui-settings-quit-persistence-design.md).
+The original settings writer transfers to an owned worker; immutable GUI reads,
+checked sync/destruction/thread-exit receipts and cached retirement avoid GUI
+physical-write blocking and save replay. A post-Ready deadline check refuses an
+expired quit attempt before exit or update commitment; explicit retry is required.
+
+One fresh review of the Tasks 1/2 range found two Important issues, no Critical
+or Minor findings. The one fix pass reproduced both before changing production
+code: settings Pending must not postpone core admission closure after safe GUI
+producer retirement, and pre-transfer refusal must quiesce queued Qt auto-sync.
+The new milestone preserves updater-before-core and auxiliary/commitment gates.
+Parent refusal and a private actual snapshot `bad_alloc` control verify retained
+intent, fenced mutations/saves and unchanged physical bytes while GUI events run.
+No second-review approval is claimed.
+
+The final current-source matrix executes 30 runs / 4,281 case instances /
+443,362 passing assertions, with zero failures/errors/skips. Exact binary case
+inventories agree. Per CPU: core 1,035, Qt 618, Torrent 152, ordinary settings 5,
+GUI single-line/multiline/sidebar 106/106/104, plus hidden settings/core/auxiliary
+retirement and Ready-update/unprepared-core admission. A separate no-Torrent
+build executes six selections / 13 case instances. Private bypass-async and
+remove-Ready-guard controls detect exactly seven/four expected failures, with
+opposite-boundary positives. Full baseline failures, RED inputs and failed
+harness outputs remain archived. Original natural recovery deadlines/assertions
+were not widened or waived.
+
+Qt is actually 6.11.1 on both host architectures. ARM minimum macOS 26 and Intel
+minimum macOS 14 metadata are confirmed, but native minimum-OS, Windows and
+other-Qt acceptance remain open. Opt-in real-GOST interop cases are excluded
+from this matrix. Both historical bundle trees/strict seals, five material pins,
+58 providers, nine live files, 17 audit outputs, eleven negative outputs, all
+original/latest accepted binaries and sealed RED/current/control inputs pass
+preservation readback. No installed profile, app, key, VM, server or feed changed.
+
+This closes only the bounded local settings/quit repair. Historical natural
+recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
+coverage, localization, provenance/reproducibility, whole-candidate review,
+native/live/lifecycle/benchmark/soak acceptance, final app/material rebuild and
+numeric build allocation, signing/notarization/signed-v3 acceptance, guarded
+installation/readback and authenticated wiki/prerelease publication remain open.
+Forced/crash teardown responsiveness is outside this bounded guarantee. Parent
+Tasks 7/8 stay open; signed feeds remain last.
