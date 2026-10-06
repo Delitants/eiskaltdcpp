@@ -2737,6 +2737,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Bilatu eguneratzeak</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Irteera prestatzeak huts egin du: %1. Aplikazioak irekita jarraitzen du.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Partekatu magnet estekak</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Ireki lehenik hub bateko txata edo mezu pribatu bat.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Itsatsi txataren zirriborroan:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ magnet estekak</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Ez dago DC++ bidez partekatzeko prest dagoen hautatutako fitxategi osaturik. Itxaron DC hash kalkulua amaitu arte. Torrent pribatuak eta DC partekatzea desgaituta duten torrentak kanpoan geratzen dira.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Hautatu DC++ magnet esteketarako fitxategiak</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++ magnet estekek banakako fitxategiak identifikatzen dituzte, ez karpetak. Hautatu gehienez 100 fitxategi. DC++ bidez dagoeneko partekatutako fitxategi osatu eta hautatuak baino ez dira zerrendatzen.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Fitxategia</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Tamaina</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Itsatsi hautatutako magnet estekak</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Partekatzea aldatu egin da fitxategiak hautatu bitartean. Hautatu berriro fitxategiak.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Torrent magnet estekak</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Hautatutako torrent bat jada ez dago erabilgarri edo oraindik ez du partekatzeko hashik.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6739,6 +6795,48 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Deskargako pareak: %1; igoerako pareak: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Deskargako pareak: %1; igoerako pareak: %2
+Konektatutako pareak: %3
+Datu erabilgarrien abiadurak segundoan behin neurtzen dira; pare bat bi noranzkoetan zenbatu daiteke.
+Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Deskarga- eta igoera-abiadurak; bien segundoko byteen baturaren arabera ordenatuta.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: zatien SHA-1 hashak (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256 Merkle zuhaitzak (BEP 52). v1 eta v2 batera agertzeak torrent hibridoa adierazten du.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Torrent pribatua (BEP 27): trackerrak kudeatutako pareen aurkikuntza; DHT eta PEX desgaituta daude.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Deskargatuta %2 (%3%) | Igota %4</translation>
         </message>
     </context>
     <context>

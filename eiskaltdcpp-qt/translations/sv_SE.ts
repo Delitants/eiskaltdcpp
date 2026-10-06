@@ -2796,6 +2796,62 @@ Favoritanvändare</translation>
             <source>Check for Updates</source>
             <translation>Sök efter uppdateringar</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Förberedelse för avslut misslyckades: %1. Programmet förblir öppet.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Dela magnetlänkar</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Öppna först en hubbchatt eller ett privat meddelande.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Klistra in i chattutkastet:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++-magnetlänkar</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Inga färdiga, valda filer är redo för DC++-delning. Vänta tills DC-hashberäkningen är klar. Privata torrenter och torrenter med inaktiverad DC-delning utesluts.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Välj filer för DC++-magnetlänkar</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++-magnetlänkar identifierar enskilda filer, inte mappar. Välj högst 100 filer. Endast färdiga, valda filer som redan delas i DC++ visas.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Fil</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Storlek</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Klistra in valda magnetlänkar</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Delningen ändrades under filvalet. Välj filerna igen.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Torrent-magnetlänkar</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>En vald torrent är inte längre tillgänglig eller saknar ännu en hash som kan delas.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6848,6 +6904,48 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Färdiga</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Nedladdningspeers: %1; uppladdningspeers: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Nedladdningspeers: %1; uppladdningspeers: %2
+Anslutna peers: %3
+Hastigheter för nyttodata mäts en gång per sekund; en peer kan räknas i båda riktningarna.
+Sorterat efter nedladdningspeers, sedan uppladdningspeers.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Nedladdnings- och uppladdningshastigheter; sorterat efter deras sammanlagda byte per sekund.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: SHA-1-hashar för delar (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256-Merkleträd (BEP 52). Både v1 och v2 anger en hybridtorrent.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Privat torrent (BEP 27): trackern hanterar peer-upptäckt; DHT och PEX är inaktiverade.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Nedladdat %2 (%3%) | Uppladdat %4</translation>
         </message>
     </context>
     <context>

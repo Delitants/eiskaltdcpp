@@ -2742,6 +2742,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Kiểm tra bản cập nhật</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Chuẩn bị thoát thất bại: %1. Ứng dụng vẫn mở.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Chia sẻ liên kết magnet</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Trước tiên hãy mở phòng trò chuyện hub hoặc tin nhắn riêng.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Dán vào bản nháp trò chuyện:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Liên kết magnet DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Chưa có tệp đã hoàn tất và được chọn nào sẵn sàng chia sẻ trong DC++. Hãy đợi quá trình tính hàm băm DC hoàn tất. Torrent riêng tư và torrent đã tắt chia sẻ DC bị loại trừ.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Chọn tệp cho liên kết magnet DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Liên kết magnet DC++ xác định từng tệp, không phải thư mục. Chọn tối đa 100 tệp. Chỉ liệt kê các tệp đã hoàn tất, được chọn và đang được chia sẻ trong DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Tệp</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Kích thước</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Dán các liên kết magnet đã chọn</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Chia sẻ đã thay đổi trong lúc chọn tệp. Hãy chọn lại các tệp.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Liên kết magnet torrent</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Một torrent đã chọn không còn khả dụng hoặc chưa có hàm băm để chia sẻ.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6744,6 +6800,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Peer tải xuống: %1; peer tải lên: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Peer tải xuống: %1; peer tải lên: %2
+Peer đã kết nối: %3
+Tốc độ dữ liệu hữu ích được đo mỗi giây một lần; một peer có thể được tính ở cả hai hướng.
+Sắp xếp theo peer tải xuống, rồi peer tải lên.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Tốc độ tải xuống và tải lên; sắp xếp theo tổng số byte mỗi giây.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: hàm băm SHA-1 của các phần (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: cây Merkle SHA-256 (BEP 52). Có cả v1 và v2 nghĩa là torrent lai.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Torrent riêng tư (BEP 27): tracker quản lý việc tìm peer; DHT và PEX bị tắt.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Đã tải xuống %2 (%3%) | Đã tải lên %4</translation>
         </message>
     </context>
     <context>

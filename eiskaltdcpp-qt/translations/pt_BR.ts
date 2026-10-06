@@ -2780,6 +2780,62 @@ Usuário favorito</translation>
             <source>Check for Updates</source>
             <translation>Verificar atualizações</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>A preparação para sair falhou: %1. O aplicativo permanece aberto.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Compartilhar links magnet</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Abra primeiro um chat de hub ou uma mensagem privada.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Colar no rascunho do chat:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Links magnet DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Nenhum arquivo selecionado e concluído está pronto para compartilhar no DC++. Aguarde o término do cálculo de hashes DC. Torrents privados e torrents com compartilhamento DC desativado são excluídos.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Escolher arquivos para links magnet DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Links magnet DC++ identificam arquivos individuais, não pastas. Selecione até 100 arquivos. Apenas arquivos selecionados e concluídos já compartilhados no DC++ são listados.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Arquivo</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Tamanho</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Colar os links magnet selecionados</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>O compartilhamento mudou durante a seleção dos arquivos. Selecione os arquivos novamente.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Links magnet de torrent</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Um torrent selecionado não está mais disponível ou ainda não tem um hash compartilhável.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6794,6 +6850,48 @@ Adicionado para distribuição somente leitura. Os hashes dos arquivos de origem
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Pares de download: %1; pares de upload: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Pares de download: %1; pares de upload: %2
+Pares conectados: %3
+As taxas de dados úteis são medidas uma vez por segundo; um par pode ser contado nas duas direções.
+Ordenado por pares de download, depois por pares de upload.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Taxas de download e upload; ordenadas pela soma dos bytes por segundo.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: hashes SHA-1 dos pedaços (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: árvores Merkle SHA-256 (BEP 52). A presença de v1 e v2 indica um torrent híbrido.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Torrent privado (BEP 27): descoberta de pares gerenciada pelo tracker; DHT e PEX estão desativados.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Baixado %2 (%3%) | Enviado %4</translation>
         </message>
     </context>
     <context>

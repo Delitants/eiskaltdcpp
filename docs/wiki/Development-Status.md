@@ -78,11 +78,13 @@ assertion values before collecting extra details. A controlled late-counter
 change verifies that boundary. Corrected full Torrent suites pass on ARM and
 Intel/Rosetta (152 cases each); the original intermittent failure remains open.
 
-Nine proxy-test and Torrent-menu runtime keys have been added in all 25 catalogs.
+The 32 previously missing proxy-test, Torrent-menu, magnet-sharing and transfer
+runtime keys now have entries in all 25 catalogs. The unchanged production
+extraction contains 2,065 keys, with no missing active keys in those catalogs.
 Catalog format and compiled-string checks do not establish complete localization:
-23 extracted runtime entries per catalog, inherited unfinished translations and
-native-speaker review remain pending. Complete resource/dependency provenance,
-reproducibility and independent whole-branch review also remain separate gates.
+inherited unfinished translations and native-speaker review remain pending.
+Complete resource/dependency provenance, reproducibility and independent
+whole-branch review also remain separate gates.
 
 ## Before Prerelease Publication
 

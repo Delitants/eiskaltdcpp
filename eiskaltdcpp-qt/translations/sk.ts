@@ -2777,6 +2777,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Skontrolovať aktualizácie</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Príprava ukončenia zlyhala: %1. Aplikácia zostáva otvorená.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Zdieľať magnetické odkazy</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Najprv otvorte chat hubu alebo súkromnú správu.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Vložiť do konceptu chatu:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Magnetické odkazy DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Žiadne dokončené vybrané súbory nie sú pripravené na zdieľanie v DC++. Počkajte na dokončenie hashovania DC. Súkromné torrenty a torrenty s vypnutým zdieľaním DC sú vylúčené.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Vybrať súbory pre magnetické odkazy DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Magnetické odkazy DC++ označujú jednotlivé súbory, nie priečinky. Vyberte najviac 100 súborov. Zobrazené sú len dokončené vybrané súbory už zdieľané v DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Súbor</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Veľkosť</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Vložiť vybrané magnetické odkazy</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Zdieľanie sa počas výberu súborov zmenilo. Vyberte súbory znova.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Magnetické odkazy torrentov</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Vybraný torrent už nie je dostupný alebo zatiaľ nemá hash na zdieľanie.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6809,6 +6865,48 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Ukončené</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Partneri sťahovania: %1; partneri odosielania: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Partneri sťahovania: %1; partneri odosielania: %2
+Pripojení partneri: %3
+Rýchlosti užitočných dát sa merajú raz za sekundu; partner sa môže počítať v oboch smeroch.
+Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Rýchlosti sťahovania a odosielania; zoradené podľa ich súčtu bajtov za sekundu.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: hashe častí SHA-1 (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: Merkleove stromy SHA-256 (BEP 52). Súčasné v1 a v2 označujú hybridný torrent.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Súkromný torrent (BEP 27): vyhľadávanie partnerov spravuje tracker; DHT a PEX sú vypnuté.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Stiahnuté %2 (%3%) | Odoslané %4</translation>
         </message>
     </context>
     <context>

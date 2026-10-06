@@ -2786,6 +2786,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>检查更新</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>退出准备失败：%1。应用程序保持打开。</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>分享磁力链接</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>请先打开集线器聊天或私信。</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>粘贴到聊天草稿：</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ 磁力链接</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>DC++ 共享中没有已完成且已选择的文件可用。请等待 DC 哈希计算完成。私有种子及禁用 DC 共享的种子不在此列。</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>选择用于 DC++ 磁力链接的文件</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++ 磁力链接标识单个文件，而不是文件夹。最多可选择 100 个文件。仅列出已完成、已选择且已在 DC++ 中共享的文件。</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>文件</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>大小</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>粘贴所选磁力链接</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>选择文件期间共享发生了变化。请重新选择文件。</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>种子磁力链接</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>所选种子已不可用，或尚无可分享的哈希值。</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6811,6 +6867,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>下载对等节点：%1；上传对等节点：%2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>下载对等节点：%1；上传对等节点：%2
+已连接的对等节点：%3
+每秒采样一次有效数据传输速率；同一对等节点可能同时计入两个方向。
+先按下载对等节点排序，再按上传对等节点排序。</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>下载与上传速率；按每秒字节数的总和排序。</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1：分块的 SHA-1 哈希（BEP 3）。</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2：SHA-256 Merkle 树（BEP 52）。同时具有 v1 和 v2 表示混合种子。</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>私有种子（BEP 27）：由跟踪器管理对等节点发现；DHT 和 PEX 已禁用。</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | 已下载 %2 (%3%) | 已上传 %4</translation>
         </message>
     </context>
     <context>

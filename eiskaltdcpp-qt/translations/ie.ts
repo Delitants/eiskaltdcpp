@@ -2725,6 +2725,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Serchar actualisationes</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Li preparation por surtir ha fallit: %1. Li application resta apert.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Partir ligamentes magnet</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Aperte in prim un conversation de hub o un missage privat.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Collar in li esquisse del conversation:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Ligamentes magnet DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Null complet, selectet files es pret por distribution in DC++. Atende li completion del calculation de hashes DC. Privat torrentes e torrentes con distribution DC desactivat es excluset.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Selecter files por ligamentes magnet DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Ligamentes magnet DC++ identifica individual files, ne fólderes. Selecte til 100 files. Solmen complet, selectet files ja distribuet in DC++ es listat.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>File</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Grandore</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Collar li selectet ligamentes magnet</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Li distribution ha changeat durante li selection de files. Ples selecter li files denov.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Ligamentes magnet de torrentes</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Un selectet torrente ne es plu disponibil o ancor ne have un hash partibil.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6723,6 +6779,48 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation type="unfinished" />
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Peers por descarga: %1; peers por carga: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Peers por descarga: %1; peers por carga: %2
+Conexet peers: %3
+Li velocitás de util data es mesurat un vez per seconde; un peer posse esser contat in ambi directiones.
+Ordinat secun peers por descarga, poy peers por carga.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Velocitás de descarga e carga; ordinat secun lor summe de octetes per seconde.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: hashes SHA-1 del partes (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: árbores Merkle SHA-256 (BEP 52). Li presentie de v1 e v2 indica un torrente hibrid.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Torrente privat (BEP 27): li tracker administra li decovrition de peers; DHT e PEX es desactivat.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Descargat %2 (%3%) | Cargat %4</translation>
         </message>
     </context>
     <context>

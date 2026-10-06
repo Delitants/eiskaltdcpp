@@ -2783,6 +2783,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Έλεγχος για ενημερώσεις</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Η προετοιμασία εξόδου απέτυχε: %1. Η εφαρμογή παραμένει ανοιχτή.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Κοινοποίηση συνδέσμων magnet</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Ανοίξτε πρώτα μια συνομιλία κόμβου ή ένα ιδιωτικό μήνυμα.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Επικόλληση στο πρόχειρο της συνομιλίας:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Σύνδεσμοι magnet DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Δεν υπάρχουν ολοκληρωμένα, επιλεγμένα αρχεία έτοιμα για κοινή χρήση στο DC++. Περιμένετε να ολοκληρωθεί ο υπολογισμός hash του DC. Εξαιρούνται τα ιδιωτικά torrent και τα torrent με απενεργοποιημένη κοινή χρήση DC.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Επιλογή αρχείων για συνδέσμους magnet DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Οι σύνδεσμοι magnet DC++ προσδιορίζουν μεμονωμένα αρχεία, όχι φακέλους. Επιλέξτε έως 100 αρχεία. Εμφανίζονται μόνο ολοκληρωμένα, επιλεγμένα αρχεία που ήδη διαμοιράζονται στο DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Αρχείο</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Μέγεθος</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Επικόλληση επιλεγμένων συνδέσμων magnet</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Η κοινή χρήση άλλαξε κατά την επιλογή αρχείων. Επιλέξτε ξανά τα αρχεία.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Σύνδεσμοι magnet torrent</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Ένα επιλεγμένο torrent δεν είναι πλέον διαθέσιμο ή δεν έχει ακόμη hash για κοινοποίηση.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6830,6 +6886,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Ολοκληρώθηκε</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Ομότιμοι για λήψη: %1· ομότιμοι για αποστολή: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Ομότιμοι για λήψη: %1· ομότιμοι για αποστολή: %2
+Συνδεδεμένοι ομότιμοι: %3
+Οι ρυθμοί ωφέλιμων δεδομένων μετρώνται μία φορά ανά δευτερόλεπτο· ένας ομότιμος μπορεί να μετράται και στις δύο κατευθύνσεις.
+Ταξινόμηση κατά ομότιμους λήψης και έπειτα αποστολής.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Ρυθμοί λήψης και αποστολής· ταξινόμηση κατά το άθροισμα των byte ανά δευτερόλεπτο.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: hash SHA-1 των τμημάτων (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: δέντρα Merkle SHA-256 (BEP 52). Η παρουσία v1 και v2 δηλώνει υβριδικό torrent.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Ιδιωτικό torrent (BEP 27): η ανακάλυψη ομότιμων διαχειρίζεται από τον tracker· τα DHT και PEX είναι απενεργοποιημένα.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Λήφθηκαν %2 (%3%) | Απεστάλησαν %4</translation>
         </message>
     </context>
     <context>

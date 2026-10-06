@@ -14,6 +14,68 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def _assert_compiled_runtime_messages(self, context_name, sources):
+        with tempfile.TemporaryDirectory(prefix="eiskalt-runtime-catalogs-") as work:
+            for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+                binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+                subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                               check=True, capture_output=True, text=True)
+                subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                               check=True, capture_output=True, text=True)
+                def entries(catalog):
+                    return {m.findtext("source"): m.find("translation")
+                            for c in ET.parse(catalog).getroot().findall("context")
+                            if c.findtext("name") == context_name
+                            for m in c.findall("message")}
+                original, compiled = entries(path), entries(output)
+                for source in sorted(sources):
+                    with self.subTest(language=path.stem, context=context_name, source=source):
+                        self.assertTrue(source in original, f"Missing runtime key: {source!r}")
+                        value = original[source]
+                        self.assertIsNotNone(value)
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertTrue(source in compiled, f"Missing compiled key: {source!r}")
+                        self.assertEqual(text, "".join(compiled[source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%[1-9][0-9]*", source)),
+                                         Counter(re.findall(r"%[1-9][0-9]*", text)))
+                        self.assertEqual(source.count("%"), text.count("%"))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        if path.stem != "en" and len(source) > 40:
+                            self.assertNotEqual(source, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_mainwindow_magnet_and_recovery_runtime_messages(self):
+        self._assert_compiled_runtime_messages("MainWindow", {
+            "Quit preparation failed: %1. Application retained.", "Share magnets",
+            "Open a hub chat or private message first.", "Paste into chat draft:", "DC++ magnets",
+            "No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. "
+            "Private Torrents and disabled DC sharing are excluded.",
+            "Choose files for DC++ magnets",
+            "DC++ magnets identify individual files, not folders. Select up to 100 files. "
+            "Only completed, selected files already shared in DC++ are listed.",
+            "File", "Size", "Paste selected magnets",
+            "The share changed while choosing files. Please select the files again.", "Torrent magnets",
+            "A selected Torrent is no longer available or has no shareable hash yet.",
+        })
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_transfer_status_and_specification_runtime_messages(self):
+        self._assert_compiled_runtime_messages("TransferViewModel", {
+            "D: %1/s | U: %2/s", "Downloading peers: %1; uploading peers: %2",
+            "Downloading peers: %1; uploading peers: %2\nConnected peers: %3\n"
+            "Active payload rates sampled once per second; a peer may count in both directions.\n"
+            "Sorted by downloading peers, then uploading peers.",
+            "Download and upload rates; sorted by their combined bytes per second.",
+            "v1: SHA-1 piece hashes (BEP 3).",
+            "v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.",
+            "Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.",
+            "D: %1 | U: %2", "%1 | Downloaded %2 (%3%) | Uploaded %4",
+        })
+
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_proxy_diagnostics_and_torrent_menu_survive_compilation(self):

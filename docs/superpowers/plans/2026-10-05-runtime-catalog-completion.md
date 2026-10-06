@@ -1,0 +1,47 @@
+# Runtime Catalog Completion Plan
+
+> **For agentic workers:** Use superpowers:executing-plans inline. The user approved the next two pending tasks without stopping.
+
+**Goal:** Close the remaining MainWindow14 and TransferViewModel9 extracted-key gaps in all 25 catalogs.
+
+**Architecture:** Add context-specific finished/QM regression checks before inserting translations. Preserve every pre-existing catalog message and TS attribute. Use the unchanged production extraction to inventory missing keys independently of compilation tests.
+
+**Tech Stack:** Qt TS/QM, Python unittest, lrelease/lconvert.
+
+**Spec:** Approved localization/acceptance requirements in `docs/superpowers/plans/2026-09-29-built-in-updates.md` and its referenced design.
+
+## Constraints And Review Focus
+- No production C++ behavior changes, installation, signing, push or feed activation.
+- Preserve profile, installed app, providers, unrelated files and all failed evidence.
+- Preserve placeholders, literal percentages, multiline tooltip structure, BEP numbers and DC sharing restrictions.
+- Missing extracted keys and inherited unfinished translations are different inventories; native-language certification remains separate.
+- Current catalog-only acceptance is not a full rebuilt-app, native OS or whole-branch release verdict. Signed feeds last.
+
+## Task 1: MainWindow Runtime Messages
+- [x] Add compiled-QM/context checks for the 14 missing MainWindow messages.
+- [x] Observe exactly 350 missing-key failures in 25 locales.
+- [x] Add localized translations; reuse exact completed file/size labels when unambiguous.
+- [x] Run focused and full catalog checks and verify all prior messages are unchanged.
+
+## Task 2: TransferViewModel Runtime Messages
+- [x] Add compiled-QM/context checks for the nine missing status/flag/peer tooltips.
+- [x] Observe exactly 225 missing-key failures before adding those translations.
+- [x] Preserve peer-direction semantics, sorting explanation, hash/BEP meanings and private-torrent discovery restrictions.
+- [x] Run all catalog/icon tests without skips; inventory zero missing active runtime keys while reporting inherited unfinished entries.
+- [x] Obtain a fresh bounded-delta review and record remaining release gates for the explicit local checkpoint.
+
+## Bounded Outcome
+
+Both focused compiled-QM checks and the full 23-test catalog suite pass. All 14
+icon tests pass, without skips. Exactly 575 entries were added, and every prior
+message and TS attribute is preserved. The unchanged 2,065-key production
+extraction has no missing active entries in all 25 catalogs; inherited unfinished
+counts are unchanged. A fresh read-only reviewer found no actionable delta issue.
+
+This closes these two source-only tasks, not complete localization or release
+acceptance. Native-language review, retained Torrent/quit diagnostics,
+resource/dependency provenance, reproducibility, native minimum-OS/live checks,
+independent whole-branch review, final application/material rebuilds, numeric
+production build allocation, signing/notarization, updater acceptance, guarded
+closed-app installation/readback and documentation/prerelease publication remain
+separate gates. Signed feeds remain last. No app installation or push occurred.

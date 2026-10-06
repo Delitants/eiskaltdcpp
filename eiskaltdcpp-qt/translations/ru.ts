@@ -2796,6 +2796,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Проверить обновления</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Подготовка к выходу не удалась: %1. Приложение остаётся открытым.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Поделиться magnet-ссылками</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Сначала откройте чат хаба или личное сообщение.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Вставить в черновик чата:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Magnet-ссылки DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Нет завершённых выбранных файлов, готовых к раздаче в DC++. Дождитесь завершения хэширования DC. Приватные торренты и торренты с отключённой раздачей в DC исключены.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Выбрать файлы для magnet-ссылок DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Magnet-ссылки DC++ указывают на отдельные файлы, а не папки. Выберите до 100 файлов. Показаны только завершённые выбранные файлы, уже доступные для раздачи в DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Файл</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Размер</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Вставить выбранные magnet-ссылки</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Раздача изменилась во время выбора файлов. Выберите файлы ещё раз.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Magnet-ссылки торрентов</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Выбранный торрент больше недоступен или ещё не имеет хэша для обмена.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6849,6 +6905,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Завершено</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Пиры для загрузки: %1; пиры для отдачи: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Пиры для загрузки: %1; пиры для отдачи: %2
+Подключённые пиры: %3
+Скорости полезных данных измеряются раз в секунду; один пир может учитываться в обоих направлениях.
+Сортировка сначала по пирам для загрузки, затем по пирам для отдачи.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Скорости загрузки и отдачи; сортировка по суммарному числу байтов в секунду.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: хэши частей SHA-1 (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: деревья Меркла SHA-256 (BEP 52). Наличие v1 и v2 означает гибридный торрент.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Приватный торрент (BEP 27): обнаружением пиров управляет трекер; DHT и PEX отключены.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Загружено %2 (%3%) | Отдано %4</translation>
         </message>
     </context>
     <context>

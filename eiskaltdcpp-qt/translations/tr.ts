@@ -2796,6 +2796,62 @@ Favori kullanıcı</translation>
             <source>Check for Updates</source>
             <translation>Güncellemeleri denetle</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Çıkış hazırlığı başarısız: %1. Uygulama açık kalıyor.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Magnet bağlantılarını paylaş</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Önce bir hub sohbeti veya özel mesaj açın.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Sohbet taslağına yapıştır:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ magnet bağlantıları</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>DC++ paylaşımına hazır tamamlanmış, seçili dosya yok. DC karma hesaplamasının bitmesini bekleyin. Özel torrentler ve DC paylaşımı devre dışı olan torrentler hariç tutulur.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>DC++ magnet bağlantıları için dosya seç</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++ magnet bağlantıları klasörleri değil, tek tek dosyaları tanımlar. En fazla 100 dosya seçin. Yalnızca tamamlanmış, seçili ve DC++ üzerinden zaten paylaşılan dosyalar listelenir.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Dosya</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Boyut</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Seçili magnet bağlantılarını yapıştır</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Dosyalar seçilirken paylaşım değişti. Dosyaları yeniden seçin.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Torrent magnet bağlantıları</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Seçili bir torrent artık kullanılamıyor veya henüz paylaşılabilir bir karmaya sahip değil.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6848,6 +6904,48 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Tamamlandı</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>İndirme eşleri: %1; yükleme eşleri: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>İndirme eşleri: %1; yükleme eşleri: %2
+Bağlı eşler: %3
+Yararlı veri hızları saniyede bir ölçülür; bir eş her iki yönde de sayılabilir.
+Önce indirme eşlerine, sonra yükleme eşlerine göre sıralanır.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>İndirme ve yükleme hızları; saniyedeki toplam bayt sayısına göre sıralanır.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: SHA-1 parça karmaları (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256 Merkle ağaçları (BEP 52). v1 ve v2'nin birlikte bulunması melez torrent belirtir.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Özel torrent (BEP 27): eş keşfini izleyici yönetir; DHT ve PEX devre dışıdır.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | İndirilen %2 (%3%) | Yüklenen %4</translation>
         </message>
     </context>
     <context>

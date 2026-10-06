@@ -2772,6 +2772,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>განახლებების შემოწმება</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>გასვლის მომზადება ვერ მოხერხდა: %1. აპლიკაცია ღია რჩება.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>მაგნიტური ბმულების გაზიარება</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>ჯერ გახსენით ჰაბის ჩატი ან პირადი შეტყობინება.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>ჩატის მონახაზში ჩასმა:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ მაგნიტური ბმულები</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>DC++-ში გასაზიარებლად მზად არ არის დასრულებული, არჩეული ფაილები. დაელოდეთ DC ჰეშირების დასრულებას. კერძო ტორენტები და გამორთული DC გაზიარების მქონე ტორენტები გამორიცხულია.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>DC++ მაგნიტური ბმულებისთვის ფაილების არჩევა</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++ მაგნიტური ბმულები განსაზღვრავს ცალკეულ ფაილებს და არა საქაღალდეებს. აირჩიეთ მაქსიმუმ 100 ფაილი. ნაჩვენებია მხოლოდ დასრულებული, არჩეული ფაილები, რომლებიც უკვე გაზიარებულია DC++-ში.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>ფაილი</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>ზომა</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>არჩეული მაგნიტური ბმულების ჩასმა</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>ფაილების არჩევისას გაზიარება შეიცვალა. გთხოვთ, ხელახლა აირჩიოთ ფაილები.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>ტორენტის მაგნიტური ბმულები</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>არჩეული ტორენტი აღარ არის ხელმისაწვდომი ან ჯერ არ აქვს გასაზიარებელი ჰეში.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6794,6 +6850,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>დასრულებულია</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>ჩამოტვირთვის პარტნიორები: %1; ატვირთვის პარტნიორები: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>ჩამოტვირთვის პარტნიორები: %1; ატვირთვის პარტნიორები: %2
+დაკავშირებული პარტნიორები: %3
+სასარგებლო მონაცემების სიჩქარეები იზომება წამში ერთხელ; პარტნიორი შეიძლება ორივე მიმართულებით ჩაითვალოს.
+დალაგებულია ჯერ ჩამოტვირთვის, შემდეგ ატვირთვის პარტნიორების მიხედვით.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>ჩამოტვირთვისა და ატვირთვის სიჩქარეები; დალაგებულია წამში ბაიტების საერთო რაოდენობის მიხედვით.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: ნაწილების SHA-1 ჰეშები (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256 მერკლის ხეები (BEP 52). v1-ისა და v2-ის ერთდროული არსებობა ჰიბრიდულ ტორენტს აღნიშნავს.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>კერძო ტორენტი (BEP 27): პარტნიორების აღმოჩენას ტრეკერი მართავს; DHT და PEX გამორთულია.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | ჩამოტვირთულია %2 (%3%) | ატვირთულია %4</translation>
         </message>
     </context>
     <context>

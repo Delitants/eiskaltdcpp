@@ -2796,6 +2796,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Провери ажурирања</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Припрема за излазак није успела: %1. Апликација остаје отворена.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Подели магнетне везе</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Прво отворите разговор на чворишту или приватну поруку.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Налепи у нацрт разговора:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ магнетне везе</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Нема завршених, изабраних датотека спремних за DC++ дељење. Сачекајте завршетак DC хеширања. Приватни торенти и торенти са искљученим DC дељењем су изузети.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Изабери датотеке за DC++ магнетне везе</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>DC++ магнетне везе означавају појединачне датотеке, не фасцикле. Изаберите до 100 датотека. Приказане су само завршене, изабране датотеке које се већ деле у DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Фајл</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Величина</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Налепи изабране магнетне везе</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Дељење се променило током избора датотека. Изаберите датотеке поново.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Магнетне везе торената</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Изабрани торент више није доступан или још нема хеш за дељење.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6848,6 +6904,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Завршено</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Партнери за преузимање: %1; партнери за слање: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Партнери за преузимање: %1; партнери за слање: %2
+Повезани партнери: %3
+Брзине корисних података мере се једном у секунди; партнер се може бројати у оба смера.
+Поређано по партнерима за преузимање, затим по партнерима за слање.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Брзине преузимања и слања; поређано по збирном броју бајтова у секунди.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: SHA-1 хешеви делова (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256 Мерклова стабла (BEP 52). Присуство v1 и v2 означава хибридни торент.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Приватни торент (BEP 27): откривањем партнера управља трекер; DHT и PEX су искључени.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Преузето %2 (%3%) | Послато %4</translation>
         </message>
     </context>
     <context>

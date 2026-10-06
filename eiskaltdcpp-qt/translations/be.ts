@@ -2796,6 +2796,62 @@ Favorite user</source>
             <source>Check for Updates</source>
             <translation>Праверыць наяўнасць абнаўленняў</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>Не ўдалося падрыхтавацца да выхаду: %1. Праграма застаецца адкрытай.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Падзяліцца магнітнымі спасылкамі</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Спачатку адкрыйце чат хаба або асабістае паведамленне.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Уставіць у чарнавік чата:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>Магнітныя спасылкі DC++</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Завершаныя выбраныя файлы яшчэ не гатовыя да абмену ў DC++. Дачакайцеся завяршэння хэшавання DC. Прыватныя торэнты і торэнты з выключаным абменам DC не ўключаюцца.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Выбраць файлы для магнітных спасылак DC++</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>Магнітныя спасылкі DC++ вызначаюць асобныя файлы, а не папкі. Выберыце да 100 файлаў. Паказаны толькі завершаныя выбраныя файлы, ужо даступныя для абмену ў DC++.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Файл</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Памер</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Уставіць выбраныя магнітныя спасылкі</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>Даныя абмену змяніліся падчас выбару файлаў. Выберыце файлы яшчэ раз.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Магнітныя спасылкі торэнтаў</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Выбраны торэнт больш не даступны або яшчэ не мае хэша для абмену.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6844,6 +6900,48 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Скончылі</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Піры для спампоўвання: %1; піры для адпраўкі: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Піры для спампоўвання: %1; піры для адпраўкі: %2
+Падлучаныя піры: %3
+Хуткасці карысных даных вымяраюцца раз на секунду; адзін пір можа ўлічвацца ў абодвух напрамках.
+Сартаванне спачатку па пірах для спампоўвання, потым па пірах для адпраўкі.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Хуткасці спампоўвання і адпраўкі; сартаванне па суме іх байтаў за секунду.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: хэшы частак SHA-1 (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: дрэвы Меркла SHA-256 (BEP 52). Наяўнасць v1 і v2 азначае гібрыдны торэнт.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Прыватны торэнт (BEP 27): пошукам піраў кіруе трэкер; DHT і PEX выключаны.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Спампавана %2 (%3%) | Адпраўлена %4</translation>
         </message>
     </context>
     <context>

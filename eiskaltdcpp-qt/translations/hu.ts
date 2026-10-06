@@ -2792,6 +2792,62 @@ Kedvenc felhasználó</translation>
             <source>Check for Updates</source>
             <translation>Frissítések keresése</translation>
         </message>
+        <message>
+            <source>Quit preparation failed: %1. Application retained.</source>
+            <translation>A kilépés előkészítése sikertelen: %1. Az alkalmazás nyitva marad.</translation>
+        </message>
+        <message>
+            <source>Share magnets</source>
+            <translation>Magnet hivatkozások megosztása</translation>
+        </message>
+        <message>
+            <source>Open a hub chat or private message first.</source>
+            <translation>Először nyisson meg egy hubcsevegést vagy privát üzenetet.</translation>
+        </message>
+        <message>
+            <source>Paste into chat draft:</source>
+            <translation>Beillesztés a csevegés piszkozatába:</translation>
+        </message>
+        <message>
+            <source>DC++ magnets</source>
+            <translation>DC++ magnet hivatkozások</translation>
+        </message>
+        <message>
+            <source>No completed, selected files are ready in the DC++ share. Wait for DC hashing to finish. Private Torrents and disabled DC sharing are excluded.</source>
+            <translation>Nincs DC++ megosztásra kész, befejezett és kijelölt fájl. Várja meg a DC hash-számítás befejezését. A privát torrentek és a letiltott DC megosztású torrentek kizárva.</translation>
+        </message>
+        <message>
+            <source>Choose files for DC++ magnets</source>
+            <translation>Fájlok kiválasztása DC++ magnet hivatkozásokhoz</translation>
+        </message>
+        <message>
+            <source>DC++ magnets identify individual files, not folders. Select up to 100 files. Only completed, selected files already shared in DC++ are listed.</source>
+            <translation>A DC++ magnet hivatkozások egyedi fájlokat azonosítanak, nem mappákat. Legfeljebb 100 fájlt válasszon. Csak a befejezett, kijelölt és már DC++-ban megosztott fájlok jelennek meg.</translation>
+        </message>
+        <message>
+            <source>File</source>
+            <translation>Fájl</translation>
+        </message>
+        <message>
+            <source>Size</source>
+            <translation>Méret</translation>
+        </message>
+        <message>
+            <source>Paste selected magnets</source>
+            <translation>Kijelölt magnet hivatkozások beillesztése</translation>
+        </message>
+        <message>
+            <source>The share changed while choosing files. Please select the files again.</source>
+            <translation>A megosztás megváltozott a fájlok kiválasztása közben. Válassza ki újra a fájlokat.</translation>
+        </message>
+        <message>
+            <source>Torrent magnets</source>
+            <translation>Torrent magnet hivatkozások</translation>
+        </message>
+        <message>
+            <source>A selected Torrent is no longer available or has no shareable hash yet.</source>
+            <translation>Egy kijelölt torrent már nem érhető el, vagy még nincs megosztható hash-értéke.</translation>
+        </message>
     </context>
     <context>
         <name>MultiLineToolBar</name>
@@ -6840,6 +6896,48 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
             <translation>Befejezve</translation>
+        </message>
+        <message>
+            <source>D: %1/s | U: %2/s</source>
+            <translation>D: %1/s | U: %2/s</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2</source>
+            <translation>Letöltési partnerek: %1; feltöltési partnerek: %2</translation>
+        </message>
+        <message>
+            <source>Downloading peers: %1; uploading peers: %2
+Connected peers: %3
+Active payload rates sampled once per second; a peer may count in both directions.
+Sorted by downloading peers, then uploading peers.</source>
+            <translation>Letöltési partnerek: %1; feltöltési partnerek: %2
+Csatlakozott partnerek: %3
+A hasznosadat-sebességek mérése másodpercenként történik; egy partner mindkét irányban beleszámíthat.
+Rendezés először letöltési, majd feltöltési partnerek szerint.</translation>
+        </message>
+        <message>
+            <source>Download and upload rates; sorted by their combined bytes per second.</source>
+            <translation>Letöltési és feltöltési sebességek; rendezés a másodpercenkénti bájtjaik összege szerint.</translation>
+        </message>
+        <message>
+            <source>v1: SHA-1 piece hashes (BEP 3).</source>
+            <translation>v1: a darabok SHA-1 hash-értékei (BEP 3).</translation>
+        </message>
+        <message>
+            <source>v2: SHA-256 Merkle trees (BEP 52). Both v1 and v2 indicate a hybrid torrent.</source>
+            <translation>v2: SHA-256 Merkle-fák (BEP 52). A v1 és v2 együttes jelenléte hibrid torrentet jelöl.</translation>
+        </message>
+        <message>
+            <source>Private torrent (BEP 27): tracker-managed peer discovery; DHT and PEX are disabled.</source>
+            <translation>Privát torrent (BEP 27): a partnerfelderítést a tracker kezeli; a DHT és a PEX letiltva.</translation>
+        </message>
+        <message>
+            <source>D: %1 | U: %2</source>
+            <translation>D: %1 | U: %2</translation>
+        </message>
+        <message>
+            <source>%1 | Downloaded %2 (%3%) | Uploaded %4</source>
+            <translation>%1 | Letöltve %2 (%3%) | Feltöltve %4</translation>
         </message>
     </context>
     <context>
