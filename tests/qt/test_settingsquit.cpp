@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFile>
+#include <QEvent>
 #include <QSettings>
 #include <QSignalSpy>
 #include <QTimer>
@@ -242,6 +243,10 @@ TEST_CASE("Foreign quit requests do not poison the owner's settings receipt", "[
 TEST_CASE("Parented settings storage refuses quit without resetting frozen intent", "[qt][settings-quit]") {
     IsolatedMainWindow fixture;
     auto& store = *fixture.gui->settings();
+    REQUIRE(store.saveChecked());
+    const auto config = fixture.home.filePath("EiskaltDC++_Qt.conf");
+    QFile physical(config); REQUIRE(physical.open(QIODevice::ReadOnly));
+    const auto before = physical.readAll(); physical.close();
     auto* storage = WulforSettingsTestAccess::storage(store);
     REQUIRE(storage);
     storage->setParent(&store);
@@ -251,7 +256,59 @@ TEST_CASE("Parented settings storage refuses quit without resetting frozen inten
     CHECK(store.getStr("qa/intent") == "retained");
     CHECK_FALSE(store.saveChecked());
     CHECK(quitSave(store) == SaveResult::Refused);
+    QCoreApplication::sendPostedEvents(storage, QEvent::UpdateRequest);
+    QCoreApplication::processEvents();
+    REQUIRE(physical.open(QIODevice::ReadOnly));
+    CHECK(physical.readAll() == before);
 }
+
+#ifdef __APPLE__
+TEST_CASE("Pending GUI settings closes core admission before timeout without early handoff",
+          "[.gui-settings-admission-retirement]") {
+    IsolatedMainWindow fixture;
+    auto& store = *fixture.gui->settings();
+    REQUIRE(store.saveChecked());
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(store, backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    bool withUpdate = false;
+    SECTION("ordinary quit") {}
+    SECTION("ready update") { withUpdate = true; }
+    if(withUpdate) {
+        const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+            QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+        updater.checkNow(); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+        updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+        updater.installOnNextQuit();
+    }
+    store.setStr("qa/admission", "frozen");
+    const auto route = fixture.core->getProxyRoute()->snapshot();
+    REQUIRE_FALSE(route->revoked->load());
+    updates::ApplicationQuitSession session(*fixture.gui, withUpdate ? &updater : nullptr);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; }); heartbeat.start(1);
+    const auto config = fixture.home.filePath("EiskaltDC++_Qt.conf");
+    probe.arm(QFile::encodeName(config).constData(), 1);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    session.request(100);
+    CHECK(route->revoked->load());
+    REQUIRE(waitFor([&] { return probe.entered(); }));
+    CHECK(probe.writer() != probe.gui);
+    REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    REQUIRE(watchdog.get()); CHECK(advanced.load());
+    QTest::qWait(30); CHECK(ready.isEmpty());
+    if(withUpdate) { CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); }
+    CHECK(fixture.core->isRunning());
+    CHECK(store.getStr("qa/admission") == "frozen");
+}
+#endif
 
 TEST_CASE("Malformed and previously failed settings stores stay refused after repair", "[qt][settings-quit]") {
     IsolatedMainWindow fixture;

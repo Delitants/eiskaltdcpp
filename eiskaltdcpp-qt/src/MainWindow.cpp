@@ -1034,6 +1034,11 @@ bool MainWindow::quitWorkersPending() const {
     return d->quitWorkersWaiting;
 }
 
+bool MainWindow::quitProducersRetired() const {
+    Q_D(const MainWindow);
+    return d->quitSnapshotsComplete;
+}
+
 bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
     if (QThread::currentThread() != thread()) return false;
     Q_D(MainWindow);

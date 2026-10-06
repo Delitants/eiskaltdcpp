@@ -132,18 +132,26 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
         if(context.antiSpam())
             check("Anti-spam", [&] { return context.antiSpam()->freezeForQuitChecked(); });
     }
-    if (guiPending) {
+    if (guiPending && !window->quitProducersRetired()) {
         result.status = Status::Pending;
         result.component = "GUI workers";
         preparing = false;
         return result;
     }
-    if (!guiStopped && !failed) failed = "GUI";
+    if (!guiStopped && !guiPending && !failed) failed = "GUI";
     result.core = asynchronousPersistence ? context.dcCtx().prepareShutdownAsyncChecked(timeout)
                                          : context.dcCtx().prepareShutdownChecked(timeout);
     if(result.core.status == dcpp::DCContext::ShutdownStatus::Pending) {
         result.status = Status::Pending;
         result.component = result.core.component;
+        preparing = false;
+        return result;
+    }
+    // Settings I/O can remain pending after GUI producers are physically safe.
+    // Close core admission now, but do not admit auxiliary saves or commitment.
+    if (guiPending) {
+        result.status = Status::Pending;
+        result.component = "GUI workers";
         preparing = false;
         return result;
     }

@@ -39,6 +39,7 @@
 #include <QBrush>
 #include <QUrl>
 #include <QThread>
+#include <QEvent>
 #include <future>
 #include <thread>
 
@@ -87,7 +88,7 @@ bool WulforSettings::hasKey(const QString &key) const{
 }
 
 void WulforSettings::load(){
-    if (quitFrozen) return;
+    if (quitFrozen || quitSaveStatus == QuitSaveStatus::Refused) return;
 #ifdef _DEBUG_QT_UI
     qDebug() << settings->fileName();
 #endif
@@ -429,13 +430,16 @@ void WulforSettings::save(){
 }
 
 bool WulforSettings::saveChecked(){
-    if(quitFrozen) return saveForQuitChecked() == QuitSaveStatus::Ready;
+    if(quitFrozen || quitSaveStatus == QuitSaveStatus::Refused)
+        return saveForQuitChecked() == QuitSaveStatus::Ready;
     settings->sync();
     return settings->status() == QSettings::NoError;
 }
 
 void WulforSettings::freezeForQuit(){
-    if(quitFrozen || QThread::currentThread() != thread()) return;
+    if(quitFrozen || quitSaveStatus == QuitSaveStatus::Refused || QThread::currentThread() != thread()) return;
+    // A refused capture or transfer must not leave Qt auto-sync on the GUI.
+    QCoreApplication::removePostedEvents(settings.get(), QEvent::UpdateRequest);
     QMap<QString, QVariant> snapshot;
     for(const auto& key : settings->allKeys())
         snapshot.insert(settingsKey(key), settings->value(key));
@@ -606,7 +610,7 @@ void WulforSettings::installTranslator(QTranslator &translator,
 }
 
 void WulforSettings::loadTheme(){
-    if(quitFrozen) return;
+    if(quitFrozen || quitSaveStatus == QuitSaveStatus::Refused) return;
 #if defined(Q_OS_MAC)
     settings->setValue(WS_APP_THEME, "");
     return;
@@ -632,14 +636,14 @@ QVariant WulforSettings::getVar(const QString &key, const QVariant &default_valu
 }
 
 void WulforSettings::setStr(const QString & key, const QString &value) {
-    if (quitFrozen) return;
+    if (quitFrozen || quitSaveStatus == QuitSaveStatus::Refused) return;
     settings->setValue(key, value);
 
     emit strValueChanged(key, value);
 }
 
 void WulforSettings::setInt(const QString & key, int value) {
-    if (quitFrozen) return;
+    if (quitFrozen || quitSaveStatus == QuitSaveStatus::Refused) return;
     settings->setValue(key, value);
 
     emit intValueChanged(key, value);
@@ -650,7 +654,7 @@ void WulforSettings::setBool(const QString & key, bool value) {
 }
 
 void WulforSettings::setVar(const QString &key, const QVariant &value){
-    if (quitFrozen) return;
+    if (quitFrozen || quitSaveStatus == QuitSaveStatus::Refused) return;
     settings->setValue(key, value);
 
     emit varValueChanged(key, value);
