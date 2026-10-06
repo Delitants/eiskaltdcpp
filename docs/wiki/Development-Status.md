@@ -91,9 +91,15 @@ The retained historical QA bundles now have file-level framework mappings for
 helper metadata. All match the pinned Sparkle SDK or deployed Qt providers.
 Across both bundles, 93 files match source bytes and 72 localization dictionaries
 match source values; 12 generated resources have source associations, not
-reconstructed-build proof. Source-generation evidence remains unresolved for 33
-metadata/module-map files. This does not complete legacy icon attribution, legal
-review or reproducibility, and these bundles are not current-source release assets.
+reconstructed-build proof. A subsequent current-generator check reproduces 23 of
+the 33 initially unresolved metadata/module-map files byte for byte: 19 ARM Qt
+plists and four Sparkle files. Ten Intel Qt plists still differ because the
+current CMake template includes an empty bundle-name field absent from that SDK.
+The full reconstruction gate retains exactly those ten failures; separate
+evidence and rejection controls pass. Original producer/toolchain history remains
+unproven even for matching files. This does not complete legacy icon attribution,
+legal review or reproducibility, and these bundles are not current-source release
+assets. Retained bundles/providers and protected live files remain unchanged.
 
 ## Before Prerelease Publication
 

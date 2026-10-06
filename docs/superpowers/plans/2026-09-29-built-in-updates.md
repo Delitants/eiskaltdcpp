@@ -2094,3 +2094,37 @@ Torrent/quit causes, independent whole-branch and native/minimum-OS/live/benchma
 acceptance remain open. Final-source application/material rebuild, numeric build
 allocation, signing/updater acceptance, guarded installation and public release
 readback still follow. Signed feeds remain last.
+
+### 2026-10-05 Current-Generator Reconstruction Checkpoint
+
+The generated-resource follow-up captures pinned Qt/Sparkle source members,
+six Qt package version declarations, current CMake 4.4.2 template/license/recipe
+and Xcode 27 identity. Nineteen ARM Qt plists match the source-property projection
+byte for byte. A minimal unsigned, two-worker native Xcode fixture reproduces
+the two public Sparkle module maps and two helper PkgInfo files exactly. It uses
+dummy code/headers, never launches, and is not a Sparkle or Eiskalt rebuild.
+
+Ten Intel Qt plists remain unreconstructed: the current CMake template adds an
+empty CFBundleName field omitted by the retained Intel SDK. No normalization or
+substitution from observed metadata is accepted. The first byte mismatch and
+initial sandbox/Xcode cache configure failure remain recorded; a fresh explicit-
+compiler configure with developer-cache access succeeded. The CoreDevice warning
+did not prevent that retry. No Xcode repair or global setting change was made.
+
+The original full 33-file reconstruction gate now rejects exactly ten Intel
+cases, rather than being weakened to pass. Eleven evidence/control tests and
+the unchanged 210-file mapping test pass with no skips. The 23 reconstructions
+are an additional proof tier; all historical source-proof labels stay intact.
+Neither current-generator output nor a future matching older template proves
+the original SDK generator/compiler/source patches or reproducible build.
+
+Whole historical candidate trees, strict signature readback, five prior pins,
+58 provider files, nine protected live-file hashes and 28 retained evidence
+hashes remain unchanged. This is a documentation/private-QA checkpoint, not
+product deployment or public release. Remaining: matching independent Intel
+template evidence and historical toolchain provenance; legacy icon attribution
+and broader dependency/reproducibility review; inherited translations/native
+language review; retained Torrent/quit diagnoses; independent whole-branch and
+native/minimum-OS/live/benchmark acceptance; final-source rebuild, production
+numbering/signing/updater acceptance, guarded install/readback and public
+documentation/screenshots/prerelease readback. Signed feeds last; Tasks 7/8 open.
