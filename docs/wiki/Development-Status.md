@@ -101,7 +101,8 @@ also reaches fake installer handoff after the deadline. No real installation was
 performed. Frozen values are saved correctly. This is a reproduced quit-path
 gap, not the cause of the earlier natural recovery timeout or Torrent freezes.
 The owned settings persistence repair and its deadline/consent checks are now
-locally implemented and verified; the historical diagnostic remains retained.
+locally implemented with settings-specific checks passing; final acceptance
+remains open. The historical diagnostic remains retained.
 The original parentless writer transfers to an owned settings-only worker;
 GUI getters use frozen values, and readiness follows checked sync, destruction
 and thread exit. Cached retirement prevents replay of successful saves.
@@ -122,7 +123,7 @@ private snapshot-allocation failure. Core admission now closes only after the
 safe GUI producer milestone; terminal settings refusal quiesces deferred writes
 and preserves original intent. No post-fix reviewer approval is claimed.
 
-The final post-fix matrix passes 30 nonempty runs / 4,281 case instances /
+The first complete post-fix matrix passed 30 nonempty runs / 4,281 case instances /
 443,362 assertions, with zero failures/errors/skips. Both main CPUs pass core
 1,035, Qt 618, Torrent 152 and ordinary settings 5 cases, plus GUI layouts
 106/106/104 and explicit held retirement checks. The separate no-Torrent build
@@ -133,6 +134,17 @@ other Qt versions remain unverified. Opt-in real-GOST cases are not part of this
 matrix. Protected profiles, historical bundles/binaries, providers and prior
 failure evidence pass preservation checks. Installed state and release gates
 remain unchanged; forced/crash teardown responsiveness is not covered.
+
+A fresh post-commit check then exposed a fixture reading settings bytes before
+physical completion. A private delayed-fsync diagnostic proves the value is
+absent while Pending and present after Ready. Both byte checks now await the
+checked receipt (`612ae2e3c`); original assertions, holds and deadlines are
+unchanged. The control passes three cases / 301 assertions. The latest complete
+matrix executes 4,281 case instances / 443,781 passing assertions but has four
+failures in the retained recovery-button case: `prompt->isVisible()` and
+`recovered`, on ARM multiline and Intel sidebar. All settings-specific checks
+pass. Overall QA and Task 3 remain open; the earlier green result does not waive
+this recurrence. Failed evidence and protected-state readbacks are preserved.
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

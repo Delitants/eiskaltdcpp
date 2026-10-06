@@ -2465,7 +2465,7 @@ Parent refusal and a private actual snapshot `bad_alloc` control verify retained
 intent, fenced mutations/saves and unchanged physical bytes while GUI events run.
 No second-review approval is claimed.
 
-The final current-source matrix executes 30 runs / 4,281 case instances /
+The first complete current-source matrix executed 30 runs / 4,281 case instances /
 443,362 passing assertions, with zero failures/errors/skips. Exact binary case
 inventories agree. Per CPU: core 1,035, Qt 618, Torrent 152, ordinary settings 5,
 GUI single-line/multiline/sidebar 106/106/104, plus hidden settings/core/auxiliary
@@ -2484,7 +2484,18 @@ from this matrix. Both historical bundle trees/strict seals, five material pins,
 original/latest accepted binaries and sealed RED/current/control inputs pass
 preservation readback. No installed profile, app, key, VM, server or feed changed.
 
-This closes only the bounded local settings/quit repair. Historical natural
+The later fresh contract check found a settings-byte fixture reading before
+physical completion. Private delayed-fsync RED evidence shows Pending bytes
+become correct at Ready. Checkpoint `612ae2e3c` adds checked receipt completion
+before the unchanged byte assertions, without widening budgets/holds/waits.
+That control passes three cases / 301 assertions. The latest complete rebuilt
+matrix executes 30 runs / 4,281 case instances / 443,781 passing assertions,
+but has four failures in the retained recovery-button case (hidden prompt and
+incomplete retry), on ARM multiline and Intel sidebar. All settings-specific
+checks pass; no green-rerun waiver is used. All failed evidence remains retained
+and protected-state/hash readbacks pass. Task 3 final acceptance is NOT complete.
+
+This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,
 native/live/lifecycle/benchmark/soak acceptance, final app/material rebuild and

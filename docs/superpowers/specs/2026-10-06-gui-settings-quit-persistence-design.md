@@ -1,8 +1,10 @@
 # GUI Settings Persistence During Checked Quit
 
 Status: written design approved by the maintainer on 2026-10-06 after checkpoint
-`bcf1c1390`. Native/inline implementation is locally verified through source
-checkpoint `af796efbf`; see the execution checkpoint below. This extends
+`bcf1c1390`. Native/inline implementation and local settings-specific checks are
+recorded at source checkpoint `af796efbf` and fixture checkpoint `612ae2e3c`.
+Final acceptance stays open after the retained recovery failure recurred.
+This repair extends
 the approved built-in updater quit contract; it does not authorize installation,
 signing, publication, profile changes or production feed activation.
 
@@ -190,7 +192,7 @@ or acceptance for a release.
 The one fresh-context review found two Important issues (late core admission
 closure and queued auto-sync after pre-transfer refusal), no Critical or Minor
 findings. Both have exact RED-to-GREEN regressions from the one fix pass; no
-second-review approval is claimed. The final matrix has 30 runs, 4,281 executed
+second-review approval is claimed. The first complete matrix has 30 runs, 4,281 executed
 case instances and 443,362 passing assertions, with zero failures/errors/skips,
 on ARM and Intel/Rosetta using Qt 6.11.1. It includes all three applicable GUI
 layouts, held write/flush/teardown, timeout/retry/Ready admission and a separately
@@ -198,6 +200,17 @@ executed no-Torrent configuration. Private broken controls detect their exact
 seven/four defects; parent and snapshot-allocation refusal checks retain dirty
 intent without deferred GUI writes. Protected live state, historical binaries,
 providers, bundles, material and failed evidence pass readback checks.
+
+A later post-commit check caught a test observation before physical completion.
+A private delayed-fsync control proves Pending bytes become correct at Ready;
+both affected fixtures now await the checked receipt before their unchanged byte
+assertions. The 100ms budget, 350ms hold and 5000ms waits are unchanged. The
+controlled correction passes three cases / 301 assertions. The latest complete
+matrix has 4,281 case instances / 443,781 passing assertions and four failures
+in the previously retained recovery-button test: hidden prompt and incomplete
+retry, on ARM multiline and Intel sidebar. All settings-specific checks pass,
+but overall acceptance and plan Task 3 remain open. These failed outputs are
+retained, not waived by the earlier green matrix. Protected-state readbacks pass.
 
 This is isolated source-level acceptance for the bounded repair, not native
 Windows/other-Qt/minimum-OS, real-GOST interop, forced/crash teardown or installed
