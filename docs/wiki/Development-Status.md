@@ -532,3 +532,22 @@ build allocation, signing/notarization, guarded install/readback, authenticated
 GitHub/wiki/screenshots/prerelease publication and signed-v3 acceptance remain
 pending. GUI-settings Task3 and updater Tasks7/8 stay open. No deployment or
 publication occurred; signed feeds remain last.
+
+### Torrent Bind Diagnostic Follow-Up (2026-10-07)
+
+The [bind investigation](../research/2026-10-07-torrent-bind-diagnostic.md)
+replayed the pinned historical telemetry consumer's complete ordinary ARM Qt
+suite: 755 case instances / 34,361 assertions, no failures/errors/skips and the
+same historical case/section inventory. The original bind error did not recur.
+Private TCP-only and UDP-only occupied-port controls each reproduce the exact
+source-seed assertion with native `sock_bind` / `EADDRINUSE`; their released-port
+counterparts pass. Runtime chooses a random number, not an OS-selected free
+port, contrary to the fixture comment. Production source/assertions, listener
+policy and live state are unchanged.
+
+This confirms a possible collision mechanism, not the historical error's native
+cause: the original receipt lacks its code. That failure remains unwaived and
+Task5 remains not accepted. A focused native bind-diagnostic design is next;
+broader review, lifecycle/timing, localization/provenance, native/live acceptance,
+final build/signing/install/publication gates remain open. Signed feeds remain
+last.
