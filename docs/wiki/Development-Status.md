@@ -585,3 +585,31 @@ minimum-OS/live/benchmark/soak gates remain pending. Final reviewed builds,
 production build allocation, signing/notarization, signed-v3 acceptance, guarded
 install/readback and authenticated publication remain gated. No deployment or
 publication occurs; signed feeds remain last.
+
+### Swarm Endpoint Ownership Spike (2026-10-07)
+
+The [fixture ownership investigation](../research/2026-10-07-swarm-endpoint-ownership.md)
+uses throwaway consumers only. On both CPUs, original/released-reservation swarm
+runs pass 67 assertions each; held UDP reservations reproduce exactly the two
+original traffic REQUIRE failures (v1/hybrid), with the matching injected
+descriptor captured. This confirms the TCP-only fixture selection gap without
+changing production port policy, assertions or deadlines.
+
+One traced full ordinary Intel/Rosetta Qt replay passes 756 instances / 34,218
+assertions, with the same inventory. No natural collision recurs, so the owner
+from the earlier `61112` UDP failure remains unknown and unwaived. Historical
+ARM bind diagnosis also stays open. The 269 control inputs, preceding 297
+diagnostic inputs, source snapshots and 194/73/519-file seals verify. Earlier
+seven-file local repairs are byte-identical. Compiler/duplicate-label setup
+attempts and the original driver exit 1 remain recorded separately from exact
+behavioral control results.
+
+Next proposed bounded repair: paired TCP/UDP fixture reservations held through
+metadata preparation, released immediately before each session starts, with
+native listener-readiness and deterministic rejection/lifetime/handoff tests.
+The residual release-to-bind race must fail explicitly; no production retries,
+fallback, restarts or assertion weakening. The probe does not authorize retaining
+its throwaway code as a repair. Task5, GUI-settings Task3 and updater Tasks7/8,
+independent/lifecycle/timing/native/localization/provenance/live/soak and final
+build/signing/install/publication gates remain open. Nothing deployed or
+published; signed feeds stay last.
