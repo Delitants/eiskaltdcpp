@@ -196,4 +196,37 @@ The next bounded diagnostic at source `6364345bd` keeps the original test bodies
 
 The subsequent wider private wait probe at `d62ef62d2` covers armed GUI joins before hold entry and is validated by two standalone held-worker controls. Twelve original/passively observed runs / 24 case instances have 2,279 passing assertions and one flush-section heartbeat failure (68ms request). That run captures a 63ms Torrent-engine GUI join before settings hold entry; the join does not establish the later heartbeat failure's cause. A private late-watchdog scheduling control separately proves a fixture false-negative: GUI ticks advance before blocking `watchdog.get()`, then a late snapshot observes no further progress because collection blocks the event loop. RED fails exactly three heartbeat assertions; adding event-pumped physical watchdog readiness before the unchanged get/check passes 117 assertions. Original request deadline, assertions and 350ms watchdog sleep remain; the scheduling gate intentionally starts the controlled observation later and is not natural acceptance. Four refusal-path collectors are proposed for a bounded fixture-only correction; two storage/destructor collectors already await release and remain unchanged. No production owner/API change or merged fixture correction is made here, and natural latency/recovery failures remain unwaived. Task 3 stays open.
 
+### Approved Watchdog Collector Correction
+
+After checkpoint `918bf54b5`, the maintainer approved event-pumped physical
+watchdog readiness at the four refusal-path collectors. The source delta adds
+only four requirements before unchanged `watchdog.get()` and heartbeat checks.
+Both storage/destructor collectors remain unchanged, as do the 100ms request
+budget, 350ms watchdog sleep, 5000ms wait helper and all byte, thread, consent,
+Refused and exit assertions. No production ownership or updater API changes.
+
+Fresh controlled late-snapshot RED reproduces exactly three heartbeat failures
+with 111 other assertions passing. GREEN against the edited fixture passes all
+117 assertions. This deliberately delayed observation is sensitivity evidence,
+not natural latency acceptance. All five fixture consumers are rebuilt into
+new private outputs using their original full-target compile/link inputs:
+ARM settings/toggle, Intel settings/toggle and ARM no-Torrent settings. Original
+targets and all 262/272/262/272/261 link objects are retained unchanged. The
+edited source's historical pins resolve to its exact archived before-copy;
+no historical manifest is rewritten. The serial matrix matches all 32 exact
+nonempty inventories: 4,287 case instances, 443,977 passing assertions and six
+failures across five runs, with one fatal abort and no skips or expected failures.
+ARM Qt fails initial DC publication (`ready`, published file/magnet present but
+status Preparing); ARM sidebar repeats recovery visibility/retry failures;
+ARM Ready-update flush takes 102ms against 100ms while heartbeat progresses;
+ARM admission passes 64 ordinary assertions then aborts during teardown with
+`Checked shutdown must retain its context`; Intel Torrent fails the stopped
+selected-check terminal-state wait at its original 1500ms bound. The core
+ownership guard rejects non-Ready, pending or wrong-owner disposal; its exact
+failed teardown precondition still needs diagnosis, not a guessed guard change.
+Intel held settings and all no-Torrent selections pass. Original Qt/Torrent
+suite binaries are unchanged by this fixture correction. No passing rerun
+waives these failures or the retained 180/354ms stalls. Task 3 remains incomplete.
+No installation, signing, push or publication occurred.
+
 This plan does not close retained natural recovery/Torrent/bootstrap/publication/bind/peer-counter causes, pending-owner/Ready-update coverage or per-file AntiSpam recovery, translation/native-language quality, provenance/reproducibility, whole-candidate independent review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final app/material rebuild, numeric production build allocation, signing/notarization/signed-v3 acceptance, guarded installation/readback or authenticated wiki/prerelease publication/readback. Signed feeds remain last; parent Tasks 7/8 stay open.

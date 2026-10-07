@@ -174,6 +174,22 @@ request budget or original checks. This is control evidence, not a waiver of
 natural stalls or a merged fix. Fixture-only collection correction is proposed;
 production ownership and Task 3 acceptance remain unchanged.
 
+The subsequent approved fixture-only correction adds event-pumped watchdog
+completion at four refusal-path collectors, leaving all original assertions,
+deadlines and storage/destructor collectors intact. Fresh late-snapshot RED
+fails exactly three heartbeat checks; current-fixture GREEN passes all 117
+assertions. Five consumers are rebuilt into separate ARM, Intel/Rosetta and
+no-Torrent test outputs while original targets/objects and failed evidence are
+preserved. The complete 32-selection matrix matches exact inventories: 4,287
+case instances, 443,977 passing assertions and six failures across five runs,
+including one isolated teardown abort, with no skips/expected failures.
+Failures cover ARM initial DC publication, sidebar recovery, a 102ms
+Ready-update request against 100ms, checked-context teardown, and Intel stopped
+selected-file recheck completion at the original 1500ms limit. Intel held
+settings and no-Torrent checks pass; none waives a failed run. This does not fix
+natural quit-latency/recovery failures; production ownership, Task 3 acceptance
+and release gates remain unchanged.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

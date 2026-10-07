@@ -159,6 +159,9 @@ TEST_CASE("Held GUI settings quit writes preserve event-loop progress and refuse
     CHECK(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
     CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
     CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    REQUIRE(waitFor([&] {
+        return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+    }));
     REQUIRE(watchdog.get()); CHECK(advanced.load());
     fixture.gui->settings()->setStr("qa/gui-settings-probe", "late-value");
     QTest::qWait(30); CHECK(ready.isEmpty());
@@ -215,6 +218,9 @@ TEST_CASE("Held GUI settings cannot commit a ready update after the quit deadlin
     REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
     CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
     CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+    REQUIRE(waitFor([&] {
+        return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+    }));
     REQUIRE(watchdog.get()); CHECK(advanced.load());
     const bool consented = backend.handoffConsent && backend.handoffConsent();
     CHECK_FALSE(consented);
@@ -307,6 +313,9 @@ TEST_CASE("Pending GUI settings closes core admission before timeout without ear
     REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
     CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
     CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    REQUIRE(waitFor([&] {
+        return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+    }));
     REQUIRE(watchdog.get()); CHECK(advanced.load());
     QTest::qWait(30); CHECK(ready.isEmpty());
     if(withUpdate) { CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); }
@@ -510,6 +519,9 @@ TEST_CASE("Explicit retry after settings timeout consumes successful receipts wi
     REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
     CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
     CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+    REQUIRE(waitFor([&] {
+        return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+    }));
     REQUIRE(watchdog.get()); CHECK(advanced.load());
     REQUIRE(waitFor([&] { return quitSave(*fixture.gui->settings()) == SaveResult::Ready; }));
     const QByteArray marker("already-saved-retry-marker\n");

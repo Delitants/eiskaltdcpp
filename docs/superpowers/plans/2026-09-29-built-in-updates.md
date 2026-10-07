@@ -2525,6 +2525,22 @@ refusal-path collectors are proposed for fixture-only correction, without
 changing deadlines, checks or production ownership. No correction is merged;
 natural latency/recovery failures remain open and unwaived.
 
+After `918bf54b5`, the approved test-only correction adds four event-pumped
+watchdog readiness requirements before unchanged result/heartbeat checks.
+Original deadlines, holds and all production code remain unchanged. Fresh
+controlled RED has exactly three heartbeat failures and 111 passing assertions;
+current-fixture GREEN has 117 passing assertions. Five consumers are rebuilt in
+separate private outputs with the original targets/objects retained. The complete
+32-selection readback matches exact inventories: 4,287 case instances / 443,977
+passing assertions / six failures across five runs, including one fatal abort,
+with no skips/expected failures. ARM failures are initial DC publication,
+sidebar recovery visibility/retry, a 102ms Ready-update request against 100ms,
+and admission-test teardown rejecting checked-context disposal. Intel fails
+stopped selected-check completion at its unchanged 1500ms limit. Intel held
+settings and no-Torrent checks pass. Neither these passes nor the controlled
+GREEN waive natural failures; the 180/354ms stalls, Task 3 and parent release
+gates remain open.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,
