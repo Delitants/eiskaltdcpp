@@ -173,6 +173,34 @@ struct ApplicationQuitCoordinator {
 using ApplicationQuitCoordinator = updates::ApplicationQuitCoordinator;
 #endif
 
+// Observation succeeds on either terminal outcome; saving may still fail.
+bool waitForGuiQuitTerminal(MainWindow& window, bool& saved) {
+    bool observed = false;
+    return waitFor([&] {
+        if(!observed) {
+            saved = window.stopWorkersForQuit();
+            observed = saved || !window.quitWorkersPending();
+        }
+        return observed;
+    });
+}
+
+bool waitForCoordinatorQuitTerminal(ApplicationQuitCoordinator& coordinator, uint32_t timeoutMs,
+                                   ApplicationQuitCoordinator::Result& terminal) {
+    bool observed = false;
+    return waitFor([&] {
+        if(!observed) {
+            terminal = coordinator.prepare(timeoutMs);
+#ifdef HAS_APPLICATION_QUIT_COORDINATOR
+            observed = terminal.status != ApplicationQuitCoordinator::Status::Pending;
+#else
+            observed = true;
+#endif
+        }
+        return observed;
+    });
+}
+
 template<class T> bool enableCheckedQuit(T& window, updates::UpdateController* updater = nullptr) {
     if constexpr(requires { window.enableCheckedQuit(updater); }) return window.enableCheckedQuit(updater);
     else return false;
@@ -351,7 +379,9 @@ TEST_CASE("Automatic update notifications obey preferences and retained GUI fenc
     }
     SECTION("retained GUI suppresses pending callbacks") {
         updater.checkNow(); REQUIRE(backend.checks == 1);
-        REQUIRE(window->stopWorkersForQuit());
+        bool saved = false;
+        REQUIRE(waitForGuiQuitTerminal(*window, saved));
+        REQUIRE(saved);
         emit backend.failed(backend.operation, "secret-password", updates::FailureCategory::Network);
         QTest::qWait(50); CHECK(notifications.isEmpty());
         for(const auto& entry : logs->getLiveEntries()) CHECK(entry.message.find("No direct fallback") == std::string::npos);
@@ -386,6 +416,7 @@ TEST_CASE("Queued update notices revalidate policy at the notification module bo
     const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
         QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
     std::function<void()> afterDispatch;
+    bool expectGuiFence = false, guiFenceRequested = false, guiFenceSaved = false, guiFencePending = false;
     bool expected = false;
     SECTION("enabled delivery") { expected = true; }
     SECTION("global notifications disabled") { settings->setBool(WB_NOTIFY_ENABLED, false); }
@@ -408,7 +439,12 @@ TEST_CASE("Queued update notices revalidate policy at the notification module bo
         afterDispatch = [&] { auto prefs = updater->preferences(); prefs.notifications = false; updater->applyPreferences(prefs); };
     }
     SECTION("GUI quit fence after dispatch") {
-        afterDispatch = [&] { REQUIRE(window->stopWorkersForQuit()); };
+        expectGuiFence = true;
+        afterDispatch = [&] {
+            guiFenceRequested = true;
+            guiFenceSaved = window->stopWorkersForQuit();
+            guiFencePending = window->quitWorkersPending();
+        };
     }
     SECTION("controller destroyed after dispatch") { afterDispatch = [&] { updater.reset(); }; }
     SECTION("controller quit fence after dispatch") { afterDispatch = [&] { REQUIRE(updater->stopWorkersForQuit()); }; }
@@ -424,6 +460,14 @@ TEST_CASE("Queued update notices revalidate policy at the notification module bo
     updater->start(); updater->poll(); REQUIRE(backend.checks == 1);
     emit backend.available(backend.operation, offer);
     REQUIRE(waitFor([&] { return dispatched == 1; }));
+    if(expectGuiFence) {
+        REQUIRE(guiFenceRequested);
+        CHECK((guiFenceSaved || guiFencePending));
+        CHECK_FALSE(window->isEnabled());
+        CHECK(recorded->messages.isEmpty());
+        REQUIRE(waitForGuiQuitTerminal(*window, guiFenceSaved));
+        REQUIRE(guiFenceSaved);
+    }
     QTest::qWait(50);
     REQUIRE(recorded->messages.size() == int(expected));
     if(expected) {
@@ -476,7 +520,9 @@ TEST_CASE("Actual window close waits for the committed matching update receipt",
     const auto route = f.core->getProxyRoute()->snapshot();
     REQUIRE_FALSE(window->close());
     CHECK(window->isVisible()); CHECK_FALSE(window->isEnabled());
-    CHECK(route->revoked->load()); CHECK(f.core->isRunning()); CHECK(backend.routeWasRunning);
+    CHECK(f.core->isRunning()); CHECK(backend.routeWasRunning);
+    REQUIRE(waitFor([&] { return window->quitProducersRetired(); }));
+    CHECK(route->revoked->load());
     REQUIRE(waitFor([&] { return updater.quitDisposition() == updates::UpdateController::QuitDisposition::AwaitingHandoff; }));
     CHECK(backend.installs == 1); REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
     CHECK_FALSE(normalQuitPrepared(*window)); CHECK(ready.isEmpty());
@@ -513,7 +559,9 @@ TEST_CASE("Actual no-update window quit prepares core before deferred exit readi
     QSignalSpy ready(window, SIGNAL(normalQuitReady())); REQUIRE(ready.isValid());
     const auto route = f.core->getProxyRoute()->snapshot();
     CHECK_FALSE(window->close()); CHECK(ready.isEmpty());
-    CHECK(route->revoked->load()); CHECK_FALSE(window->isEnabled());
+    CHECK_FALSE(window->isEnabled());
+    REQUIRE(waitFor([&] { return window->quitProducersRetired(); }));
+    CHECK(route->revoked->load());
     REQUIRE(waitFor([&] { return ready.count() == 1; }));
     CHECK(normalQuitPrepared(*window)); CHECK(window->close());
     CHECK(QFile::exists(f.home.filePath("DCPlusPlus.xml")));
@@ -892,7 +940,9 @@ TEST_CASE("Direct coordinator checkpoint recovery cannot preserve installer cons
     REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
     updater.installOnNextQuit();
     ApplicationQuitCoordinator coordinator(*f.gui, &updater);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Refused);
     REQUIRE(QDir(blocked).removeRecursively());
     REQUIRE(retryCheckpoint(coordinator).status == ApplicationQuitCoordinator::Status::Ready);
     updater.normalQuitCommitted();
@@ -949,7 +999,9 @@ TEST_CASE("Application quit aggregates real GUI hub Torrent and core saves witho
     unrelatedDelivered = false;
     QMetaObject::invokeMethod(&unrelated, [&] { unrelatedDelivered = true; }, Qt::QueuedConnection);
     QMetaObject::invokeMethod(f.gui->mainWindow(), [&] { late = true; }, Qt::QueuedConnection);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Ready);
     CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); CHECK(backend.installs == 0);
     CHECK(route->revoked->load()); CHECK(f.core->isRunning());
     CHECK(f.core->getClientManager()->getClients().empty());
@@ -996,7 +1048,9 @@ TEST_CASE("Prepared application owners remain alive through a matching update ha
     SECTION("refused") { updater.installOnNextQuit(); prepared = false; }
     SECTION("ordinary no update") { install = false; }
     ApplicationQuitCoordinator coordinator(*f.gui, &updater);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Ready);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Ready);
     auto* core = f.core.get(); QPointer<MainWindow> window = f.gui->mainWindow();
     CHECK(core->getProxyRoute()->snapshot()->revoked->load()); CHECK(backend.installs == 0);
     QSignalSpy receipt(&updater, &updates::UpdateController::installHandoffFinished);
@@ -1033,7 +1087,8 @@ TEST_CASE("Application quit retains an earlier updater or GUI refusal after core
     }
     auto* hash = f.core->getHashManager(); QPointer<MainWindow> window = f.gui->mainWindow();
     ApplicationQuitCoordinator coordinator(*f.gui, &updater);
-    const auto result = coordinator.prepare(3000);
+    ApplicationQuitCoordinator::Result result{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, result));
     REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
     CHECK(QString(result.component) == component);
     CHECK(f.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
@@ -1073,7 +1128,9 @@ TEST_CASE("GUI refusal delays auxiliary snapshot reads until core callback drain
     const auto config = f.home.filePath("EiskaltDC++_Qt.conf");
     REQUIRE(QFile::remove(config)); REQUIRE(QDir().mkpath(config));
     ApplicationQuitCoordinator coordinator(*f.gui);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Refused);
     CHECK(observer.beforeAuxiliary);
     CHECK(QFile::exists(observer.path));
     REQUIRE(QDir(config).removeRecursively());
@@ -1125,7 +1182,8 @@ TEST_CASE("Application quit refuses auxiliary save failure even after a ready co
     const auto blocked = f.home.filePath("searchblacklist");
     REQUIRE(QDir().mkpath(blocked));
     ApplicationQuitCoordinator coordinator(*f.gui);
-    const auto result = coordinator.prepare(3000);
+    ApplicationQuitCoordinator::Result result{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, result));
     REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
     CHECK(QString(result.component) == "Search blacklist");
     CHECK(result.core.status == dcpp::DCContext::ShutdownStatus::Ready);
@@ -1162,7 +1220,9 @@ TEST_CASE("Auxiliary retry rejects foreign and modal callers without replaying c
     f.core->getSettingsManager()->addListener(&counter);
     auto cleanup = dcpp::makeScopedFunctor([&] { f.core->getSettingsManager()->removeListener(&counter); });
     ApplicationQuitCoordinator coordinator(*f.gui);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Refused);
     CHECK(counter.saves == 1);
     const auto foreign = std::async(std::launch::async, [&] { return retryCheckpoint(coordinator); }).get();
     CHECK(foreign.status == ApplicationQuitCoordinator::Status::NotAdmitted);
@@ -1183,7 +1243,9 @@ TEST_CASE("Auxiliary retry cannot replace lost frozen intent with a new owner", 
     f.gui->antiSpam()->setPhrase("initialize"); f.gui->antiSpam()->setPhrase("retained-question");
     const auto blocked = f.home.filePath("antispam"); REQUIRE(QDir().mkpath(blocked));
     ApplicationQuitCoordinator coordinator(*f.gui);
-    REQUIRE(coordinator.prepare(3000).status == ApplicationQuitCoordinator::Status::Refused);
+    ApplicationQuitCoordinator::Result terminal{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, 3000, terminal));
+    REQUIRE(terminal.status == ApplicationQuitCoordinator::Status::Refused);
     f.gui->destroyAntiSpam(); f.gui->createAntiSpam();
     REQUIRE(QDir(blocked).removeRecursively());
     CHECK(retryCheckpoint(coordinator).status != ApplicationQuitCoordinator::Status::Ready);
@@ -1224,7 +1286,8 @@ TEST_CASE("Application quit failed-core child fixture", "[.][application-quit-ch
         REQUIRE(entered.wait(3000));
     }
     ApplicationQuitCoordinator coordinator(*f.gui, &updater);
-    const auto result = coordinator.prepare(mode == "snapshot" ? 3000 : 25);
+    ApplicationQuitCoordinator::Result result{};
+    REQUIRE(waitForCoordinatorQuitTerminal(coordinator, mode == "snapshot" ? 3000 : 25, result));
     REQUIRE(result.status == ApplicationQuitCoordinator::Status::Refused);
     REQUIRE(f.core.get() == core); REQUIRE(core->isRunning()); REQUIRE(core->getHashManager() == hash);
     REQUIRE(window); REQUIRE_FALSE(window->isEnabled()); REQUIRE(backend.installs == 0);
@@ -1288,7 +1351,9 @@ TEST_CASE("GUI quit preparation retires connected and inactive hub clients but r
     hubs.front()->setParent(nullptr);
     bool late = false;
     QMetaObject::invokeMethod(hubs.front(), [&] { late = true; }, Qt::QueuedConnection);
-    REQUIRE(guiFence(*f.gui->mainWindow()));
+    bool saved = false;
+    REQUIRE(waitForGuiQuitTerminal(*f.gui->mainWindow(), saved));
+    REQUIRE(saved);
     CHECK(f.core->getClientManager()->getClients().empty());
     CHECK(f.gui->hubManager()->getHubs().isEmpty());
     CHECK(f.gui->hubManager()->activeHub() == nullptr);
@@ -1414,7 +1479,12 @@ TEST_CASE("GUI quit preparation saves history intent and caches Torrent persiste
     SECTION("failed Torrent checkpoint") {
         REQUIRE(QDir().mkpath(f.home.filePath("torrent/state/jobs.json"))); expected = false;
     }
-    CHECK(guiFence(*f.gui->mainWindow()) == expected);
+    auto* window = f.gui->mainWindow();
+    bool saved = false;
+    REQUIRE(waitForGuiQuitTerminal(*window, saved));
+    CHECK(saved == expected);
+    CHECK_FALSE(window->quitWorkersPending());
+    CHECK(runtime->shutdownChecked() == expected);
     CHECK(f.gui->settings()->getStr(WS_SEARCH_HISTORY).isEmpty());
     if(!expected) REQUIRE(QDir(f.home.filePath("torrent/state/jobs.json")).removeRecursively());
     CHECK(guiFence(*f.gui->mainWindow()) == expected);
@@ -1671,7 +1741,9 @@ TEST_CASE("Uninitialized file browser quit child", "[.][gui-layout-uninitialized
     REQUIRE(runners.front()->wait(5000));
     REQUIRE(browser->findChildren<QTreeView*>().isEmpty());
     std::fputs("uninitialized-browser-before-fence\n", stderr); std::fflush(stderr);
-    REQUIRE(guiFence(*f.gui->mainWindow()));
+    bool saved = false;
+    REQUIRE(waitForGuiQuitTerminal(*f.gui->mainWindow(), saved));
+    REQUIRE(saved);
     CHECK(browser->findChildren<QTreeView*>().isEmpty());
     delete browser;
 }
@@ -1711,6 +1783,9 @@ TEST_CASE("GUI settings sync refusal remains sticky while retaining the core", "
     REQUIRE(hub);
     CHECK_FALSE(hub->isEnabled());
     CHECK_FALSE(f.gui->settings()->getStr(view_layout::hubStateKey("adc://127.0.0.1:1")).isEmpty());
+    bool saved = true;
+    REQUIRE(waitForGuiQuitTerminal(*f.gui->mainWindow(), saved));
+    CHECK_FALSE(saved);
     REQUIRE(QDir(config).removeRecursively());
     CHECK_FALSE(guiFence(*f.gui->mainWindow()));
     auto* runtime = f.gui->mainWindow()->findChild<TorrentRuntime*>(); REQUIRE(runtime);
@@ -1723,7 +1798,9 @@ TEST_CASE("GUI quit preparation rejects nested modal input before consuming its 
     QCoreApplication::processEvents(); REQUIRE(QApplication::activeModalWidget() == &dialog);
     CHECK_FALSE(guiFence(*f.gui->mainWindow())); CHECK(f.gui->mainWindow()->isEnabled());
     dialog.close(); QCoreApplication::processEvents();
-    CHECK(guiFence(*f.gui->mainWindow()));
+    bool saved = false;
+    REQUIRE(waitForGuiQuitTerminal(*f.gui->mainWindow(), saved));
+    CHECK(saved);
 }
 
 TEST_CASE("GUI preparation drains a future and fences direct file hashing and IPC", "[qt][mainwindow][gui-quit-fence]") {
@@ -1804,7 +1881,9 @@ TEST_CASE("Prepared GUI retains deferred owners and rejects the legacy window-cl
     auto* window = f.gui->mainWindow();
     QPointer<QObject> retained = new QObject(window);
     retained->deleteLater();
-    REQUIRE(guiFence(*window));
+    bool saved = false;
+    REQUIRE(waitForGuiQuitTerminal(*window, saved));
+    REQUIRE(saved);
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
     CHECK(retained);
     window->close();
