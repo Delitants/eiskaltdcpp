@@ -889,6 +889,79 @@ TEST_CASE("Listener snapshot follows actual dual-stack binds and clears on route
     REQUIRE(engine.effectiveListeners().isEmpty());
 }
 
+TEST_CASE("Listener diagnostic formatting preserves scoped addresses and excludes private text", "[torrent][listeners][bind-diagnostics]") {
+    application();
+    struct PrivateCategory : boost::system::error_category {
+        const char *name() const noexcept override { return "private/password.pem"; }
+        std::string message(int) const override { return "proxy-password /private/key.pem"; }
+    };
+    static const PrivateCategory privateCategory;
+    lt::address_v6 address = lt::address_v6::loopback();
+    address.scope_id(3);
+    lt::socket_type_t type = lt::socket_type_t::tcp;
+    QString transport = "TCP";
+    SECTION("TCP scoped IPv6") {}
+    SECTION("UDP scoped IPv6") { type = lt::socket_type_t::utp; transport = "UDP"; }
+    SECTION("TLS TCP") { type = lt::socket_type_t::tcp_ssl; transport = "TCP/TLS"; }
+    SECTION("TLS UDP") { type = lt::socket_type_t::utp_ssl; transport = "UDP/TLS"; }
+    SECTION("Unknown transport") { type = lt::socket_type_t(255); transport = "unknown(255)"; }
+    const lt::error_code error(73, privateCategory);
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString message) { errors << message; });
+    REQUIRE(TorrentEngineTestAccess::call(engine, [&](auto &d) {
+        // The old handler discards these fields; keep the RED consumer executable.
+        if constexpr (requires { d.listenerFailed(lt::operation_t::sock_bind, address, 6881, type, error); })
+            d.listenerFailed(lt::operation_t::sock_bind, address, 6881, type, error);
+        else d.listenerFailed(lt::operation_t::sock_bind);
+        return true;
+    }));
+    REQUIRE(eventually([&] { return !errors.isEmpty(); }));
+    REQUIRE(errors.size() == 1);
+    CHECK(errors.front().contains("op=sock_bind"));
+    CHECK(errors.front().contains("transport=" + transport));
+    CHECK(errors.front().contains("local=[::1%3]:6881"));
+    CHECK(errors.front().contains("error=unknown:73"));
+    CHECK_FALSE(errors.front().contains("password"));
+    CHECK_FALSE(errors.front().contains(".pem"));
+    CHECK_FALSE(errors.front().contains("proxy-password"));
+    CHECK(engine.effectiveListeners().isEmpty());
+}
+
+TEST_CASE("Listener bind diagnostics retain the native TCP or UDP failure", "[torrent][listeners][bind-diagnostics]") {
+    application();
+    QTcpServer tcp;
+    QUdpSocket udp;
+    const bool udpFailure = GENERATE(false, true);
+    quint16 port = 0;
+    if (udpFailure) {
+        REQUIRE(udp.bind(QHostAddress::LocalHost, quint16(0), QUdpSocket::DontShareAddress));
+        port = udp.localPort();
+    } else {
+        REQUIRE(tcp.listen(QHostAddress::LocalHost, 0));
+        port = tcp.serverPort();
+    }
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    auto settings = isolated(dir.filePath("downloads"));
+    settings.randomizePort = false;
+    settings.listenPort = port;
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString error) { errors << error; });
+    engine.configure(settings, {});
+    engine.add(fixture(dir.filePath("source")));
+    REQUIRE(eventually([&] { return !errors.isEmpty(); }));
+    REQUIRE(errors.size() == 1);
+    const auto message = errors.front();
+    CHECK(message.startsWith("Torrent could not bind a configured listening endpoint."));
+    CHECK(message.contains("op=sock_bind"));
+    CHECK(message.contains(udpFailure ? "transport=UDP" : "transport=TCP"));
+    CHECK(message.contains("local=127.0.0.1:" + QString::number(port)));
+    CHECK(message.contains("error=system:" + QString::number(int(boost::asio::error::address_in_use))));
+    CHECK(engine.effectiveListeners().isEmpty());
+}
+
 TEST_CASE("Occupied fixed listener is never reported as successful or moved silently", "[torrent][listeners]") {
     application();
     QTcpServer tcp;
@@ -3115,10 +3188,11 @@ TEST_CASE("Recoverable accept failure does not revoke a live listener", "[torren
     const auto port = TorrentEngineTestAccess::port(engine);
     QStringList errors;
     QObject::connect(&engine, &TorrentEngine::error, &engine, [&](QString error) { errors << error; });
-    REQUIRE(TorrentEngineTestAccess::call(engine, [](auto &d) {
+    REQUIRE(TorrentEngineTestAccess::call(engine, [port](auto &d) {
         // Exercise the production alert handler without exhausting process
         // descriptors. The actual loopback listener remains open.
-        d.listenerFailed(lt::operation_t::sock_accept);
+        d.listenerFailed(lt::operation_t::sock_accept, lt::make_address("127.0.0.1"), port,
+                         lt::socket_type_t::tcp, boost::asio::error::no_descriptors);
         return true;
     }));
     REQUIRE(eventually([&] { return !errors.isEmpty(); }));

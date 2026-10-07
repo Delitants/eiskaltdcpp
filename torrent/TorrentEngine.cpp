@@ -82,6 +82,43 @@ QString socks5Failure(lt::operation_t operation, const lt::tcp::endpoint &endpoi
              QString::fromLatin1(error.category().name())).arg(error.value());
 }
 
+QString listenerFailure(lt::operation_t operation, const lt::address &address, int port,
+                        lt::socket_type_t type, const lt::error_code &error) {
+    QString transport;
+    switch (type) {
+    case lt::socket_type_t::tcp: transport = QStringLiteral("TCP"); break;
+    case lt::socket_type_t::utp: transport = QStringLiteral("UDP"); break;
+    case lt::socket_type_t::tcp_ssl: transport = QStringLiteral("TCP/TLS"); break;
+    case lt::socket_type_t::utp_ssl: transport = QStringLiteral("UDP/TLS"); break;
+    default: transport = QStringLiteral("unknown(%1)").arg(int(type)); break;
+    }
+    QString host;
+    if (address.is_v6()) {
+        auto ipv6 = address.to_v6();
+        const auto scope = ipv6.scope_id();
+        ipv6.scope_id(0);
+        host = text(ipv6.to_string());
+        if (scope) host += '%' + QString::number(qulonglong(scope));
+        host = '[' + host + ']';
+    } else host = text(address.to_string());
+    const auto endpoint = host + ':' + QString::number(port);
+    // Only SDK-native category names are diagnostic data. Never reflect a
+    // custom category's name/message, raw alert text, device name or config.
+    static const QStringList categories = {
+        QStringLiteral("system"), QStringLiteral("generic"), QStringLiteral("libtorrent"),
+        QStringLiteral("asio.misc"), QStringLiteral("asio.netdb"), QStringLiteral("asio.addrinfo"),
+        QStringLiteral("asio.ssl"), QStringLiteral("asio.ssl.stream")};
+    const auto category = QString::fromLatin1(error.category().name());
+    const auto safeCategory = categories.contains(category) ? category : QStringLiteral("unknown");
+    const auto prefix = operation == lt::operation_t::sock_accept ?
+        TorrentEngineText::tr("Torrent could not accept an incoming connection.") :
+        TorrentEngineText::tr("Torrent could not bind a configured listening endpoint.");
+    // One substitution pass preserves numeric IPv6 scopes such as %3.
+    return prefix + QStringLiteral(" [op=%1 transport=%2 local=%3 error=%4:%5]")
+        .arg(QString::fromLatin1(lt::operation_name(operation)), transport, endpoint,
+             safeCategory, QString::number(error.value()));
+}
+
 ProxyConfig effectiveProxy(const Settings &s, const ProxyConfig &p) {
     return s.proxyMode == ProxyMode::Direct ? ProxyConfig{} : p;
 }
@@ -472,11 +509,11 @@ struct TorrentEngine::Impl {
         }
         emit q->listenersChanged();
     }
-    void listenerFailed(lt::operation_t operation) {
+    void listenerFailed(lt::operation_t operation, const lt::address &address, int port,
+                        lt::socket_type_t type, const lt::error_code &error) {
         // These alerts are not close notifications: e.g. an accept failure can
         // leave its acceptor open. Preserve last-confirmed bind history.
-        report(operation == lt::operation_t::sock_accept ? tr("Torrent could not accept an incoming connection.") :
-            tr("Torrent could not bind a configured listening endpoint."));
+        report(listenerFailure(operation, address, port, type, error));
     }
     bool enqueue(std::function<void()> command) {
         {
@@ -1526,7 +1563,7 @@ struct TorrentEngine::Impl {
             } else if (auto *a = lt::alert_cast<lt::listen_succeeded_alert>(alert)) {
                 listenerSucceeded(a->address, a->port, a->socket_type);
             } else if (auto *a = lt::alert_cast<lt::listen_failed_alert>(alert)) {
-                listenerFailed(a->op);
+                listenerFailed(a->op, a->address, a->port, a->socket_type, a->error);
             } else if (auto *a = lt::alert_cast<lt::socks5_alert>(alert)) {
                 reportSocks5(a->op, a->ip, a->error);
             }

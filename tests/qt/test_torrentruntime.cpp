@@ -477,6 +477,37 @@ TEST_CASE("Runtime stop and resume preserve verified publication without recheck
     }
 }
 
+TEST_CASE("Runtime error propagation retains native listener diagnostics", "[qt][torrent][runtime][bind-diagnostics]")
+{
+    QTcpServer tcp;
+    QUdpSocket udp;
+    const bool udpFailure = GENERATE(false, true);
+    quint16 port = 0;
+    if (udpFailure) {
+        REQUIRE(udp.bind(QHostAddress::LocalHost, quint16(0), QUdpSocket::DontShareAddress));
+        port = udp.localPort();
+    } else {
+        REQUIRE(tcp.listen(QHostAddress::LocalHost, 0));
+        port = tcp.serverPort();
+    }
+    RuntimeFixture f;
+    f.settings.randomizePort = false;
+    f.settings.listenPort = port;
+    f.reload();
+    QSignalSpy errors(f.runtime.get(), &TorrentRuntime::error);
+    const auto id = f.add(false, true);
+    f.awaitPublished(id);
+    REQUIRE(waitFor([&] { return !errors.isEmpty(); }));
+    REQUIRE(errors.size() == 1);
+    const auto message = errors.first().at(0).toString();
+    CHECK(f.runtime->lastError() == message);
+    CHECK(message.startsWith("Torrent could not bind a configured listening endpoint."));
+    CHECK(message.contains("op=sock_bind"));
+    CHECK(message.contains(udpFailure ? "transport=UDP" : "transport=TCP"));
+    CHECK(message.contains("local=127.0.0.1:" + QString::number(port)));
+    CHECK(message.contains("error=system:"));
+}
+
 TEST_CASE("Runtime unchanged settings proxy and country path do not reconfigure or republish", "[qt][torrent][runtime][managedhash-reuse]")
 {
     // Outlive Runtime so its session closes before the idle proxy controls disappear.

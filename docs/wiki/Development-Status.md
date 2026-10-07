@@ -551,3 +551,37 @@ Task5 remains not accepted. A focused native bind-diagnostic design is next;
 broader review, lifecycle/timing, localization/provenance, native/live acceptance,
 final build/signing/install/publication gates remain open. Signed feeds remain
 last.
+
+### Native Torrent Listener Diagnostics (2026-10-07)
+
+The approved [native listener diagnostics](../research/2026-10-07-native-torrent-bind-diagnostics.md)
+retain the original error prefix plus operation, transport, numeric local
+endpoint and safe category/code. Credentials, paths, arbitrary category/message
+text and raw alerts are excluded. Listener history, ports, retries, routing and
+no-direct-fallback policy are unchanged.
+
+Both CPU RED consumers reproduce exactly 72 missing-field CHECK failures.
+Focused GREEN passes 14 instances / 1,178 assertions, including real TCP/UDP
+collisions, formatting/privacy, recoverable accept and runtime propagation.
+Complete serial backend/ordinary Qt runs record 2,000 instances / 105,654
+assertions, one failure and no errors/skips/fatal exits. Inventories retain all
+preceding cases; 297 actual link-input hashes, current-source snapshots and the
+73/519-file prior seals verify. These are private incremental ARM/macOS 27 and
+Intel/Rosetta consumers, not final app/native minimum-OS or installed acceptance.
+
+The Intel Qt shared-transfers swarm fails its original traffic assertion with
+native `sock_bind` / UDP / `127.0.0.1:61112` / `system:48` (`EADDRINUSE`). Its
+unchanged fixture chooses ports with TCP-only reservations; UDP availability and
+the conflicting owner were not captured. Both original full-suite and all-green
+checker exits remain 1. No green rerun waives this failure. Next: focused fixture
+endpoint-ownership and dual-transport regression design, with assertions,
+deadlines, production policy and live state preserved.
+
+The original historical ARM bind cause remains unknown/unwaived. Task5,
+GUI-settings Task3 and updater Tasks7/8 remain open. Earlier reviewed retirement
+repairs remain local and separate. Broader independent review, lifecycle/timing,
+native/localization/provenance/reproducibility, real peer/selected-check/bootstrap,
+minimum-OS/live/benchmark/soak gates remain pending. Final reviewed builds,
+production build allocation, signing/notarization, signed-v3 acceptance, guarded
+install/readback and authenticated publication remain gated. No deployment or
+publication occurs; signed feeds remain last.
