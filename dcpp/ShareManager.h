@@ -104,6 +104,8 @@ public:
                                       std::function<bool()> externalCancelled = {},
                                       std::function<void()> hashingStarted = {});
     void removeManagedFiles(const string& owner);
+    // True also for an absent owner; false means producer admission is closed.
+    bool removeManagedFilesChecked(const string& owner);
     // Explicit rechecks discard reusable hashes after retracting the owner.
     void forgetManagedFileHashes(const string& owner);
     void forgetManagedFileHashes(const string& owner, const StringList& absoluteFiles);

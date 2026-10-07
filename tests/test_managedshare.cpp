@@ -1405,3 +1405,32 @@ TEST_CASE("External invalidation after hashing prevents managed commit", "[manag
     CHECK_THROWS_AS(f.shares().toReal("/Completed/next.txt"), ShareException);
     CHECK_FALSE(f.shares().isTTHShared(expected.getRoot()));
 }
+
+namespace {
+template<class Manager> bool removeCheckedForQuit(Manager& manager, const string& owner) {
+    if constexpr(requires { manager.removeManagedFilesChecked(owner); })
+        return manager.removeManagedFilesChecked(owner);
+    manager.removeManagedFiles(owner);
+    return false; // Baseline void API cannot prove accepted retraction.
+}
+}
+
+TEST_CASE("Checked managed-share retraction distinguishes absence from closed admission", "[managedshare-checked-retract]") {
+    ManagedShareFixture f;
+    auto& manager = f.shares();
+    const auto path = f.file("checked.txt");
+    REQUIRE(manager.replaceManagedFiles("job", "Completed", {path}));
+    const auto tth = manager.getTTH("/Completed/checked.txt");
+    CHECK(removeCheckedForQuit(manager, "job"));
+    CHECK(f.list().find("checked.txt") == string::npos);
+    CHECK_FALSE(manager.isTTHShared(tth));
+    CHECK_THROWS_AS(manager.toReal("TTH/" + tth.toBase32()), ShareException);
+    CHECK(removeCheckedForQuit(manager, "job"));
+    REQUIRE(manager.replaceManagedFiles("retained", "Completed", {path}));
+    stopShares(manager);
+    CHECK_FALSE(removeCheckedForQuit(manager, "retained"));
+    CHECK_FALSE(removeCheckedForQuit(manager, "absent"));
+    manager.removeManagedFiles("retained");
+    CHECK(manager.isTTHShared(tth));
+    CHECK(f.list().find("checked.txt") != string::npos);
+}

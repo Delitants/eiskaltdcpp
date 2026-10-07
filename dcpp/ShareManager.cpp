@@ -475,11 +475,16 @@ bool ShareManager::replaceManagedFiles(const string& owner, const string& virtua
 }
 
 void ShareManager::removeManagedFiles(const string& owner) {
-    if(!beginProducer()) return;
+    (void)removeManagedFilesChecked(owner);
+}
+
+bool ShareManager::removeManagedFilesChecked(const string& owner) {
+    if(!beginProducer()) return false;
     ScopedFunctor([this] { finishProducer(); });
     Lock l(cs);
     managedReplacements.erase(owner);
     if(managedShares.erase(owner)) rebuildManagedDirectories();
+    return true;
 }
 
 void ShareManager::forgetManagedFileHashes(const string& owner) {
