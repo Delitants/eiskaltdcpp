@@ -478,3 +478,16 @@ intended assertions each. Thirty-six input pins and protected/prior-evidence
 readbacks pass. Task5, overall GUI-settings Task3, parent Tasks7/8,
 historical natural-failure, native/language/provenance/soak and release gates
 remain open. No installation, publication, key, server, VM or feed change occurs.
+
+Task4 source checkpoint `ee6d707b` is locally committed. Fresh completion runs
+repeat both CPU runtime/composed focus and validate the unchanged complete
+suite receipts with all36 input hashes. Tested inputs are frozen for later
+Task5 work. This is an isolated source checkpoint, not deployment or final
+integrated acceptance. Next: Task5 complete core/Qt/Torrent/GUI/hidden/no-Torrent
+matrix, remaining bounded broken controls and one independent immutable-range
+review. Broader localization/native quality, provenance/reproducibility,
+whole-candidate/native minimum-OS/live/lifecycle/benchmark/soak checks, final
+reviewed app/material rebuild and numeric production build, signing/notarization,
+signed-v3 acceptance, guarded closed-app install/readback, authenticated
+GitHub/wiki/screenshots/prerelease publication/readback remain pending. Overall
+GUI-settings Task3 and parent Tasks7/8 remain open. Signed feeds remain last.

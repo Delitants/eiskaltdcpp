@@ -215,7 +215,7 @@ open. Installed app/profile, servers, keys, VM and feeds are unchanged.
 - [x] **Step 4: Implement phased runtime composition.** On first fence set runtime stopped/disarm publication and fence all three child admissions. Configure the publisher's checked core callback. Retire each dependency in order; accumulate the first credential-free error but continue physically draining later phases. While any worker remains, report Pending with its actual component; terminal Refused only after all required retirement is collected. Retain all owners/context/route. Existing synchronous runtime shutdown uses the same outcomes and preserves legacy semantics.
 - [x] **Step 5: Implement separate cached layout milestone.** Add `quitLayoutsComplete` and `quitLayoutsSaved` to MainWindow's private state. Save retained layouts/transfer view and detach observation once; poll runtime outside that one-shot block. Keep `quitSnapshotsComplete` false and `quitWorkersWaiting` true while Torrent is Pending. After terminal physical retirement cache the aggregate snapshot outcome and then continue the existing async settings/core/auxiliary path. Do not change updater-first fencing, session deadlines, auxiliary recovery/disarm or serialization formats.
 - [x] **Step 6: Run composed GREEN and original hidden selectors.** Under holds check request<100ms, GUI heartbeat, off-GUI writer, correct final bytes, timeout Refused and zero late exit/installs. After physical completion alone retain Refused; explicit request3000 reuses markers and permits only the correctly revalidated fake handoff. Repeat all four original settings selectors and no-Torrent settings/freezing cases on both applicable configurations. Refused physical outcome remains cached on retry.
-- [ ] **Step 7: Curated checkpoint.** Commit `fix(quit): compose nonblocking Torrent retirement before core drain` after readback; no product installation or activation.
+- [x] **Step 7: Curated checkpoint.** Commit `fix(quit): compose nonblocking Torrent retirement before core drain` after readback; no product installation or activation.
 
 **Task4 initial candidate status, 2026-10-07:** Runtime/MainWindow composition
 was implemented locally but was not accepted or committed. The final blocking
@@ -252,6 +252,11 @@ the authorized producer-readiness wait before the unchanged route assertion.
 Task4's local curated checkpoint follows these results. Task5's fresh complete
 integrated/no-Torrent matrix, remaining broken controls and independent review
 stay open; no installation, push or release is authorized by isolated QA.
+
+Task4 source checkpoint: `ee6d707b`. The completion gate reruns both CPU runtime
+and composed selectors and validates unchanged full-suite receipts against all
+36 pinned inputs. All pass. Accepted sources, helpers and test/control binaries
+are frozen before further mutable rebuilds. Task4 is complete; Task5 is next.
 
 ### Task 5: Final Regression, Review And Acceptance Evidence
 
