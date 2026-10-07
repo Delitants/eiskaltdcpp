@@ -2,6 +2,7 @@
 
 #include "TorrentTypes.h"
 #include "SelectedRecheck.h"
+#include "QuitRetirement.h"
 #include <QObject>
 #include <QMap>
 #include <memory>
@@ -62,6 +63,10 @@ public:
     // Joins the worker and reports its final resume/atomic-write result.
     // Repeated calls return the same result; success is not updater consent.
     bool shutdownChecked();
+    // Owner-only terminal admission fence; does not stop or join the worker.
+    bool fenceForQuitChecked() noexcept;
+    // Polls physical thread exit and the final checkpoint without waiting.
+    QuitRetirementResult retireForQuitChecked() noexcept;
 
 signals:
     // Emitted inline before public configure/selection/recheck/remove mutations.

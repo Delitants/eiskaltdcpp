@@ -33,6 +33,14 @@
 #include <functional>
 #include <future>
 #include <atomic>
+#if __has_include("torrent/QuitRetirement.h")
+#include "torrent/QuitRetirement.h"
+#else
+namespace eiskalt::torrent {
+enum class QuitRetirementStatus { Pending, Ready, Refused };
+struct QuitRetirementResult { QuitRetirementStatus status; const char *component; };
+}
+#endif
 #include <libtorrent/magnet_uri.hpp>
 #include "LocalSocksProxy.h"
 #if EISKALT_SELECTED_RECHECK_AVAILABLE
@@ -962,6 +970,208 @@ template<class Engine> bool checkedTorrentShutdown(Engine& engine) {
     if constexpr(requires { engine.shutdownChecked(); }) return engine.shutdownChecked();
     engine.shutdown();
     return false;
+}
+
+namespace {
+template<class Engine> constexpr bool hasEngineRetirement() {
+    return requires(Engine &engine) { engine.fenceForQuitChecked(); engine.retireForQuitChecked(); };
+}
+template<class Engine> bool fenceEngine(Engine &engine) {
+    if constexpr (hasEngineRetirement<Engine>()) return engine.fenceForQuitChecked();
+    return true; // Baseline retirement below exercises the existing blocking path.
+}
+template<class Engine> QuitRetirementResult retireEngine(Engine &engine) {
+    if constexpr (hasEngineRetirement<Engine>()) return engine.retireForQuitChecked();
+    return {engine.shutdownChecked() ? QuitRetirementStatus::Ready : QuitRetirementStatus::Refused, "engine"};
+}
+struct EngineExitHold {
+    std::atomic_bool entered{false}, released{false}, exited{false};
+    std::mutex mutex;
+    std::condition_variable wake;
+    void wait() {
+        entered = true;
+        std::unique_lock lock(mutex);
+        wake.wait(lock, [&] { return released.load(); });
+        exited = true;
+    }
+    void release() { std::lock_guard lock(mutex); released = true; wake.notify_all(); }
+};
+struct EngineHoldRelease {
+    std::shared_ptr<EngineExitHold> hold;
+    std::thread watchdog;
+    explicit EngineHoldRelease(std::shared_ptr<EngineExitHold> value) : hold(std::move(value)) {}
+    void arm() {
+        watchdog = std::thread([value = hold] {
+            std::unique_lock lock(value->mutex);
+            value->wake.wait_for(lock, 350ms, [&] { return value->released.load(); });
+            value->released = true;
+            value->wake.notify_all();
+        });
+    }
+    ~EngineHoldRelease() { hold->release(); if (watchdog.joinable()) watchdog.join(); }
+};
+struct EngineTlsHold {
+    std::shared_ptr<EngineExitHold> hold;
+    ~EngineTlsHold() { hold->wait(); }
+};
+}
+
+TEST_CASE("Engine checked retirement retains the worker through checkpoint and thread exit", "[torrent-quit-engine]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")), {}, {0}, true);
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    auto hold = std::make_shared<EngineExitHold>();
+    EngineHoldRelease release(hold);
+    SECTION("queued operation stays owned while GUI advances") {
+        REQUIRE(TorrentEngineTestAccess::call(engine, [hold](auto &d) {
+            return d.enqueue([hold] { hold->wait(); });
+        }));
+        REQUIRE(eventually([&] { return hold->entered.load(); }));
+    }
+    SECTION("thread-local destruction is part of physical completion") {
+        REQUIRE(TorrentEngineTestAccess::call(engine, [hold](auto &) {
+            thread_local std::unique_ptr<EngineTlsHold> tail;
+            tail = std::make_unique<EngineTlsHold>();
+            tail->hold = hold;
+            return true;
+        }));
+    }
+    int beats = 0;
+    QTimer heartbeat;
+    heartbeat.setInterval(5);
+    QObject::connect(&heartbeat, &QTimer::timeout, &engine, [&] { if (!hold->released) ++beats; });
+    heartbeat.start();
+    CHECK(hasEngineRetirement<TorrentEngine>());
+    REQUIRE(fenceEngine(engine));
+    release.arm();
+    QElapsedTimer clock;
+    clock.start();
+    const auto result = retireEngine(engine);
+    const auto requestMs = clock.elapsed();
+    const bool threadExitReleased = hold->released;
+    CHECK(requestMs < 100);
+    CHECK(result.status == QuitRetirementStatus::Pending);
+    CHECK_FALSE(threadExitReleased);
+    REQUIRE(eventually([&] { return hold->entered.load(); }, 5000));
+    clock.restart();
+    const auto heldPoll = retireEngine(engine);
+    const auto heldPollMs = clock.elapsed();
+    CHECK(heldPollMs < 100);
+    CHECK(heldPoll.status == QuitRetirementStatus::Pending);
+    CHECK_FALSE(hold->released);
+    const bool heartbeatAdvanced = eventually([&] { return beats >= 2 || hold->released.load(); }, 5000) && beats >= 2;
+    CHECK(heartbeatAdvanced);
+    QuitRetirementResult finalResult = result;
+    REQUIRE(eventually([&] { finalResult = retireEngine(engine); return finalResult.status != QuitRetirementStatus::Pending; }, 5000));
+    CHECK(hold->exited);
+    CHECK(finalResult.status == QuitRetirementStatus::Ready);
+    QFile checkpoint(dir.filePath("state/jobs.json"));
+    REQUIRE(checkpoint.open(QIODevice::ReadOnly));
+    const auto bytes = checkpoint.readAll();
+    const bool checkpointBytesMatch = bytes.contains(id.toUtf8()) && QJsonDocument::fromJson(bytes).isObject();
+    CHECK(checkpointBytesMatch);
+    const auto repeatedResult = retireEngine(engine);
+    CHECK(repeatedResult.status == finalResult.status);
+    CHECK(engine.shutdownChecked());
+    checkpoint.seek(0);
+    CHECK(checkpoint.readAll() == bytes);
+}
+
+TEST_CASE("Engine quit fence rejects cached mutations without invalidating readers", "[torrent-quit-engine]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    auto settings = isolated(dir.filePath("downloads"));
+    const auto metadata = fixture(dir.filePath("source"));
+    engine.configure(settings, {});
+    const auto id = engine.add(metadata, {}, {0}, true);
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    auto hold = std::make_shared<EngineExitHold>();
+    EngineHoldRelease release(hold);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [hold](auto &d) { return d.enqueue([hold] { hold->wait(); }); }));
+    REQUIRE(eventually([&] { return hold->entered.load(); }));
+    int invalidations = 0;
+    QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString) { ++invalidations; });
+    CHECK(hasEngineRetirement<TorrentEngine>());
+    REQUIRE(fenceEngine(engine));
+    const auto before = jobSnapshot(engine, id);
+    const auto epoch = engine.configurationGeneration();
+    const auto count = engine.jobs().size();
+    engine.setWantedFiles(id, {}, {{0, 7}});
+    engine.recheck(id);
+    engine.setDcShareExcluded(id, true);
+    engine.pause(id, false);
+    engine.stop(id);
+    engine.selectObservedJob(id);
+    engine.recheckFiles(id, {0}, before.revision);
+    engine.cancelFileRecheck(id, 1);
+    settings.listenPort = 49200;
+    CHECK(engine.configure(settings, {}) == 0);
+    CHECK(engine.add(metadata).isEmpty());
+    CHECK(engine.seedCreated(metadata, dir.filePath("source")).isEmpty());
+    engine.remove(id);
+    CHECK(engine.jobs().size() == count);
+    CHECK(engine.files(id).size() == before.files.size());
+    CHECK(engine.configurationGeneration() == epoch);
+    CHECK(engine.observedJob().isEmpty());
+    CHECK(invalidations == 0);
+    if (!engine.jobs().isEmpty()) {
+        const auto after = jobSnapshot(engine, id);
+        CHECK(after.revision == before.revision);
+        CHECK(after.paused == before.paused);
+        CHECK(after.stopped == before.stopped);
+        CHECK(after.dcShareExcluded == before.dcShareExcluded);
+    }
+    release.arm();
+    CHECK(engine.shutdownChecked());
+}
+
+TEST_CASE("Engine retirement refuses failed checkpoints and foreign callers without poisoning ownership", "[torrent-quit-engine]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    SECTION("foreign request leaves owner admission open") {
+        if constexpr (hasEngineRetirement<TorrentEngine>()) {
+            const auto foreign = std::async(std::launch::async, [&] {
+                return std::pair{fenceEngine(engine), retireEngine(engine).status};
+            }).get();
+            CHECK_FALSE(foreign.first);
+            CHECK(foreign.second == QuitRetirementStatus::Refused);
+        } else CHECK(hasEngineRetirement<TorrentEngine>());
+        CHECK(engine.configure(isolated(dir.filePath("downloads")), {}) != 0);
+        CHECK(engine.shutdownChecked());
+    }
+    SECTION("atomic destination failure stays refused") {
+        engine.configure(isolated(dir.filePath("downloads")), {});
+        const auto id = engine.add(fixture(dir.filePath("source")));
+        REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+        const auto path = dir.filePath("state/jobs.json");
+        REQUIRE(TorrentEngineTestAccess::call(engine, [path](auto &) { QFile::remove(path); return QDir().mkdir(path); }));
+        REQUIRE(fenceEngine(engine));
+        QuitRetirementResult result{QuitRetirementStatus::Pending, "engine"};
+        REQUIRE(eventually([&] { result = retireEngine(engine); return result.status != QuitRetirementStatus::Pending; }, 5000));
+        CHECK(result.status == QuitRetirementStatus::Refused);
+        CHECK(retireEngine(engine).status == QuitRetirementStatus::Refused);
+        CHECK_FALSE(engine.shutdownChecked());
+        CHECK(QFileInfo(path).isDir());
+    }
+}
+
+TEST_CASE("Unused engine checked retirement is idempotent without creating a checkpoint", "[torrent-quit-engine]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    CHECK(hasEngineRetirement<TorrentEngine>());
+    REQUIRE(fenceEngine(engine));
+    QuitRetirementResult result{QuitRetirementStatus::Pending, "engine"};
+    REQUIRE(eventually([&] { result = retireEngine(engine); return result.status != QuitRetirementStatus::Pending; }, 5000));
+    CHECK(result.status == QuitRetirementStatus::Ready);
+    CHECK(retireEngine(engine).status == result.status);
+    CHECK_FALSE(QDir(dir.filePath("state")).exists());
 }
 
 TEST_CASE("Unused torrent engine has no shutdown checkpoint to save", "[torrent][shutdown-persistence]") {
@@ -4919,5 +5129,37 @@ TEST_CASE("Selected cache invalidation carries validated boundary paths and pres
             CHECK(engine.shutdownChecked());
         }
     }
+}
+#endif
+
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+TEST_CASE("Engine checked retirement cancels selected verification without modifying payload", "[torrent-quit-engine]") {
+    application();
+    QTemporaryDir dir;
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    EngineDiskProbe disk(engine);
+    const auto id = engine.add(fixture(settings.downloadPath, lt::create_torrent::v1_only, true));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    const auto before = hashFile(dir.filePath("payload/bundle/a.bin"));
+    disk.hold();
+    engine.recheckFiles(id, {0}, jobSnapshot(engine, id).revision);
+    REQUIRE(eventually([&] { return disk.held(); }));
+    CHECK(hasEngineRetirement<TorrentEngine>());
+    REQUIRE(fenceEngine(engine));
+    std::jthread release([&] { std::this_thread::sleep_for(350ms); disk.release(); });
+    QElapsedTimer clock;
+    clock.start();
+    const auto first = retireEngine(engine);
+    const auto requestMs = clock.elapsed();
+    CHECK(requestMs < 100);
+    CHECK(first.status == QuitRetirementStatus::Pending);
+    QuitRetirementResult result = first;
+    REQUIRE(eventually([&] { result = retireEngine(engine); return result.status != QuitRetirementStatus::Pending; }, 5000));
+    CHECK(result.status == QuitRetirementStatus::Ready);
+    CHECK_FALSE(jobSnapshot(engine, id).fileCheck.active);
+    CHECK(hashFile(dir.filePath("payload/bundle/a.bin")) == before);
+    CHECK(disk.writes() == 0);
 }
 #endif

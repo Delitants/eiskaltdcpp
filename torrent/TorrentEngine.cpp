@@ -42,6 +42,7 @@
 #include <condition_variable>
 #include <deque>
 #include <functional>
+#include <future>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -390,9 +391,12 @@ struct TorrentEngine::Impl {
     QHash<QString, PendingActivity> pendingActivities;
     quint64 activitySerial = 0;
     quint64 configurationEpoch = 0;
-    bool stopped = false;
+    bool stopped = false, quitFenced = false;
     // Written by the worker, read by the owner only after join.
     bool shutdownSaved = false;
+    std::promise<bool> shutdownReceipt;
+    std::future<bool> workerCompletion;
+    std::optional<QuitRetirementResult> retirementResult;
     std::thread worker;
     // Everything below is confined to worker, including session destruction.
     Settings config;
@@ -420,8 +424,20 @@ struct TorrentEngine::Impl {
     Clock::time_point nextPeerSnapshot = Clock::now();
     Clock::time_point nextFileCheck = Clock::now();
 
-    Impl(TorrentEngine *owner, QString directory, CountryLookup lookup) : q(owner), stateDir(std::move(directory)), journal(stateDir), countryLookup(std::move(lookup)) {
-        worker = std::thread([this] { run(); });
+    Impl(TorrentEngine *owner, QString directory, CountryLookup lookup) : q(owner), stateDir(std::move(directory)), journal(stateDir), countryLookup(std::move(lookup)), workerCompletion(shutdownReceipt.get_future()) {
+        worker = std::thread([this] {
+            try { run(); }
+            catch (...) {
+                shutdownSaved = false;
+                try { report(tr("Torrent shutdown persistence failed.")); } catch (...) {}
+            }
+            // Readiness includes thread-local cleanup, not just the run() body.
+            try { shutdownReceipt.set_value_at_thread_exit(shutdownSaved); }
+            catch (...) {
+                try { shutdownReceipt.set_exception_at_thread_exit(std::current_exception()); }
+                catch (...) {} // Retain an unfinished owner rather than invent Ready.
+            }
+        });
     }
     ~Impl() { stop(); }
     void report(const QString &message) { emit q->error(message); }
@@ -465,7 +481,7 @@ struct TorrentEngine::Impl {
     bool enqueue(std::function<void()> command) {
         {
             std::lock_guard lock(mutex);
-            if (stopped || commands.size() >= 1024) return false;
+            if (stopped || quitFenced || commands.size() >= 1024) return false;
             commands.push_back(std::move(command));
         }
         wake.notify_one();
@@ -473,6 +489,7 @@ struct TorrentEngine::Impl {
     }
     quint64 invalidate(const QString &id, bool removing = false) {
         std::lock_guard lock(mutex);
+        if (stopped || quitFenced) return 0;
         const auto revision = ++revisions[id];
         for (auto &job : snapshots) if (job.id == id) {
             job.revision = revision;
@@ -491,17 +508,46 @@ struct TorrentEngine::Impl {
         }
         return revision;
     }
-    bool stop() {
+    bool admissionOpen() {
+        std::lock_guard lock(mutex);
+        return !stopped && !quitFenced;
+    }
+    void fence() {
+        std::lock_guard lock(mutex);
+        quitFenced = true;
+        observedJobId.clear();
+        peerSnapshots.clear();
+    }
+    void requestStop() {
         {
             std::lock_guard lock(mutex);
-            stopped = true;
+            if (stopped) return;
+            stopped = quitFenced = true;
             observedJobId.clear();
             peerSnapshots.clear();
             ++peerObservationEpoch;
         }
         wake.notify_one();
+    }
+    QuitRetirementResult collectRetirement() {
+        if (retirementResult) return *retirementResult;
+        bool saved = false;
+        try { saved = workerCompletion.get(); } catch (...) {}
+        retirementResult = QuitRetirementResult{saved ? QuitRetirementStatus::Ready : QuitRetirementStatus::Refused, "engine"};
+        return *retirementResult;
+    }
+    bool stop() {
+        requestStop();
         if (worker.joinable()) worker.join();
-        return shutdownSaved;
+        return collectRetirement().status == QuitRetirementStatus::Ready;
+    }
+    QuitRetirementResult retire() {
+        if (retirementResult) return *retirementResult;
+        requestStop();
+        if (workerCompletion.wait_for(0ms) != std::future_status::ready)
+            return {QuitRetirementStatus::Pending, "engine"};
+        if (worker.joinable()) worker.join();
+        return collectRetirement();
     }
     void run() {
         for (;;) {
@@ -1726,7 +1772,7 @@ quint64 TorrentEngine::configure(const Settings &settings, const ProxyConfig &pr
     QHash<QString, quint64> configureRevisions;
     {
         std::unique_lock lock(d->mutex);
-        if (d->stopped || d->commands.size() >= 1024) {
+        if (d->stopped || d->quitFenced || d->commands.size() >= 1024) {
             lock.unlock();
             emit error(tr("Torrent backend is shut down or its command queue is full."));
             return 0;
@@ -1736,7 +1782,7 @@ quint64 TorrentEngine::configure(const Settings &settings, const ProxyConfig &pr
         lock.unlock();
         emit storageInvalidating({});
         lock.lock();
-        if (d->stopped || d->commands.size() >= 1024) {
+        if (d->stopped || d->quitFenced || d->commands.size() >= 1024) {
             lock.unlock();
             emit error(tr("Torrent backend is shut down or its command queue is full."));
             return 0;
@@ -1780,7 +1826,7 @@ QString TorrentEngine::enqueueAdd(const QString &input, const QString &savePath,
     {
         std::lock_guard lock(d->mutex);
         reason = d->apiError;
-        if (d->stopped) reason = tr("Torrent backend is shut down.");
+        if (d->stopped || d->quitFenced) reason = tr("Torrent backend is shut down.");
         if (d->snapshots.size() >= maxJobs) reason = tr("Torrent job limit reached.");
     }
     if (reason.isEmpty() && (!savePath.isEmpty() && (!QDir::isAbsolutePath(savePath) || savePath.contains(QChar(0)))))
@@ -1822,6 +1868,7 @@ void TorrentEngine::selectObservedJob(const QString &id) {
     Q_ASSERT(QThread::currentThread() == thread());
     {
         std::lock_guard lock(d->mutex);
+        if (d->quitFenced) return;
         const bool exists = !d->stopped && std::any_of(d->snapshots.cbegin(), d->snapshots.cend(),
             [&](const Job &job) { return job.id == id; });
         const QString selected = exists ? id : QString{};
@@ -1845,7 +1892,7 @@ QList<FileEntry> TorrentEngine::files(const QString &id, quint64 revision) const
 }
 bool TorrentEngine::publicationValid(const QString &id, quint64 revision, quint64 epoch) const {
     std::lock_guard lock(d->mutex);
-    if (d->stopped || epoch == 0 || epoch != d->configurationEpoch ||
+    if (d->stopped || d->quitFenced || epoch == 0 || epoch != d->configurationEpoch ||
         revision != d->revisions.value(id) || !d->apiError.isEmpty()) return false;
     const auto job = std::find_if(d->snapshots.cbegin(), d->snapshots.cend(),
         [&](const Job &snapshot) { return snapshot.id == id; });
@@ -1861,7 +1908,7 @@ void TorrentEngine::setDcShareExcluded(const QString &id, bool excluded) {
     };
     auto job = findJob();
     if (job == d->snapshots.end() || job->dcShareExcluded == excluded) return;
-    if (d->stopped || d->commands.size() >= 1024) {
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024) {
         lock.unlock();
         emit error(tr("Torrent backend is shut down or its command queue is full."));
         return;
@@ -1872,7 +1919,7 @@ void TorrentEngine::setDcShareExcluded(const QString &id, bool excluded) {
     lock.lock();
     job = findJob();
     if (job == d->snapshots.end()) return;
-    if (d->stopped || d->commands.size() >= 1024) {
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024) {
         lock.unlock();
         emit error(tr("Torrent backend is shut down or its command queue is full."));
         return;
@@ -1899,9 +1946,11 @@ void TorrentEngine::setWantedFiles(const QString &id, const QList<int> &wanted) 
 }
 void TorrentEngine::setWantedFiles(const QString &id, const QList<int> &wanted, const QMap<int, int> &filePriorities) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if (!d->admissionOpen()) return;
     if (d->hasFileCheck(id)) { emit error(tr("File selection and priorities cannot change during selected-file verification.")); return; }
     emit storageInvalidating(id);
     const auto revision = d->invalidate(id);
+    if (!revision) return;
     d->enqueue([p = d.get(), id, wanted, filePriorities, revision] {
         auto it = p->records.find(id);
         if (it == p->records.end()) return;
@@ -1969,7 +2018,7 @@ void TorrentEngine::setPaused(const QString &id, bool paused, bool stopped) {
         emit error(tr("Recheck the original files before resuming; recovery downloads cannot modify read-only sources."));
         return;
     }
-    if (d->stopped || d->commands.size() >= 1024) {
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024) {
         lock.unlock();
         emit error(tr("Torrent backend is shut down or its command queue is full."));
         return;
@@ -2038,8 +2087,10 @@ void TorrentEngine::setPaused(const QString &id, bool paused, bool stopped) {
 }
 void TorrentEngine::remove(const QString &id, bool deleteFiles) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if (!d->admissionOpen()) return;
     emit storageInvalidating(id);
     const auto revision = d->invalidate(id, true);
+    if (!revision) return;
     emit peersChanged();
     d->enqueue([p = d.get(), id, deleteFiles, revision]() mutable {
         auto it = p->records.find(id);
@@ -2086,10 +2137,13 @@ void TorrentEngine::remove(const QString &id, bool deleteFiles) {
 }
 void TorrentEngine::recheck(const QString &id) {
     Q_ASSERT(QThread::currentThread() == thread());
+    if (!d->admissionOpen()) return;
     if (d->hasFileCheck(id)) { emit error(tr("Another recheck cannot start during selected-file verification.")); return; }
     emit storageInvalidating(id);
+    if (!d->admissionOpen()) return;
     emit hashRecheckRequested(id);
     const auto revision = d->invalidate(id);
+    if (!revision) return;
     d->enqueue([p = d.get(), id, revision] {
         auto it = p->records.find(id);
         if (it == p->records.end()) return;
@@ -2159,7 +2213,7 @@ void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, q
     const auto find = [&] { return std::find_if(d->snapshots.begin(), d->snapshots.end(), [&](const Job &job) { return job.id == id; }); };
     auto job = find();
     QString reason;
-    if (d->stopped || d->commands.size() >= 1024) reason = tr("Torrent backend is shut down or its command queue is full.");
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024) reason = tr("Torrent backend is shut down or its command queue is full.");
     else if (job == d->snapshots.end() || job->revision != expectedRevision) reason = tr("The Torrent selection changed; select the files again.");
     else if (job->fileCheck.active || d->checkAdmissions.contains(id) || d->mutationBusy.contains(id)) reason = tr("Selected-file verification conflicts with another operation.");
     else if (!job->error.isEmpty() && !job->fileCheck.recoveryRequired) reason = tr("Resolve Torrent recovery or storage errors before file verification.");
@@ -2185,7 +2239,7 @@ void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, q
     lock.lock();
     d->checkAdmissions.remove(id);
     job = find();
-    if (d->stopped || d->commands.size() >= 1024 || job == d->snapshots.end() || job->revision != expectedRevision) {
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024 || job == d->snapshots.end() || job->revision != expectedRevision) {
         lock.unlock(); emit error(tr("The Torrent selection changed before verification could start.")); return;
     }
     const auto revision = ++d->revisions[id];
@@ -2213,7 +2267,7 @@ void TorrentEngine::cancelFileRecheck(const QString &id, quint64 token) {
     std::unique_lock lock(d->mutex);
     const auto job = std::find_if(d->snapshots.begin(), d->snapshots.end(), [&](const Job &job) { return job.id == id; });
     if (!token || job == d->snapshots.end() || !job->fileCheck.active || job->fileCheck.token != token) return;
-    if (d->stopped || d->commands.size() >= 1024) { lock.unlock(); emit error(tr("Torrent backend cannot accept cancellation.")); return; }
+    if (d->stopped || d->quitFenced || d->commands.size() >= 1024) { lock.unlock(); emit error(tr("Torrent backend cannot accept cancellation.")); return; }
     job->fileCheck.canceling = true;
     d->commands.push_back([p = d.get(), id, token] {
         const auto it = p->records.find(id);
@@ -2224,6 +2278,15 @@ void TorrentEngine::cancelFileRecheck(const QString &id, quint64 token) {
 bool TorrentEngine::shutdownChecked() {
     Q_ASSERT(QThread::currentThread() == thread());
     return !d || d->stop();
+}
+bool TorrentEngine::fenceForQuitChecked() noexcept {
+    if (QThread::currentThread() != thread() || !d) return false;
+    try { d->fence(); return true; } catch (...) { return false; }
+}
+QuitRetirementResult TorrentEngine::retireForQuitChecked() noexcept {
+    if (QThread::currentThread() != thread() || !d) return {QuitRetirementStatus::Refused, "engine"};
+    try { d->fence(); return d->retire(); }
+    catch (...) { return {QuitRetirementStatus::Refused, "engine"}; }
 }
 
 } // namespace eiskalt::torrent
