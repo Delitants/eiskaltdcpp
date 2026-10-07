@@ -137,11 +137,31 @@ independent repair-range review remain open; no app installation or activation.
 
 **Interfaces:** Consumes Task 1 result. Produces publisher fence/retire methods, `bool ShareManager::removeManagedFilesChecked(const string& owner)`, and `using CheckedRetract = std::function<bool(const QString&)>`. Append optional `CheckedRetract checkedRetract = {}` after the existing constructor `QObject* parent = nullptr` parameter; preserve all existing calls and void `Retract`/invalidate APIs. Runtime will explicitly supply the checked callback in Task 4.
 
-- [ ] **Step 1: Add `TEST_CASE("Checked managed-share retraction distinguishes absence from closed admission", "[managedshare-checked-retract]")`.** Real isolated manager: `CHECK(removeChecked(owner))`, list/TTH lookup absent, `CHECK(removeChecked(owner))` again; after `stopForShutdown()`, `CHECK_FALSE(removeChecked(owner))`. Existing void removal stays compatible. Missing API uses an explicit test adapter, not compilation failure.
-- [ ] **Step 2: Add `TEST_CASE("Publisher checked retirement preserves cancellation and physical retraction", "[torrent-quit-publisher]")`.** Hold a real Publish callback, a checked retraction and worker TLS exit in separate controls. Set tokens cancelled before releasing publication. Require `requestMs < 100`, Pending, heartbeat, retraction thread not GUI, core admission still open, zero post-fence enqueue/late status, Ready only after physical exit and `retractions == 1`. Callback false/throw or missing checked callback with nonempty IDs must yield cached Refused, never infer success from void. Zero-ID retirement can succeed. Check foreign caller does not poison owner results.
-- [ ] **Step 3: Run exact RED for both components.** Core selector runs without interposer; publisher controls use release guards and 350ms/100ms limits. Preserve current `[managedshare]` and `[publisher]` positives. Match actual expected expression sets; reject arbitrary nonzero exit acceptance.
-- [ ] **Step 4: Implement checked removal and publisher receipt.** ShareManager adds the producer-guard/locked bool counterpart, preserving void behavior. GUI fence freezes IDs and cancels tokens without synchronous core retraction; existing publisher worker drains cancellation and checked retractions before its thread-exit promise. Reject new enqueue, suppress cancelled queued callbacks and aggregate failures. Missing/throwing callback marks failure but must not abandon worker lifetime. Legacy synchronous stop retains its void-callback behavior; shared terminal state prevents replay after checked retirement.
-- [ ] **Step 5: Verify and checkpoint.** Both-CPU focused selectors, complete core and Qt suites pass or report exact retained failures. Verify real retraction under retained core lifetime, original callback compatibility and physically held cleanup. Commit curated paths as `fix(sharing): check retained publisher retirement and retraction`.
+- [x] **Step 1: Add `TEST_CASE("Checked managed-share retraction distinguishes absence from closed admission", "[managedshare-checked-retract]")`.** Real isolated manager: `CHECK(removeChecked(owner))`, list/TTH lookup absent, `CHECK(removeChecked(owner))` again; after `stopForShutdown()`, `CHECK_FALSE(removeChecked(owner))`. Existing void removal stays compatible. Missing API uses an explicit test adapter, not compilation failure.
+- [x] **Step 2: Add `TEST_CASE("Publisher checked retirement preserves cancellation and physical retraction", "[torrent-quit-publisher]")`.** Hold a real Publish callback, a checked retraction and worker TLS exit in separate controls. Set tokens cancelled before releasing publication. Require `requestMs < 100`, Pending, heartbeat, retraction thread not GUI, core admission still open, zero post-fence enqueue/late status, Ready only after physical exit and `retractions == 1`. Callback false/throw or missing checked callback with nonempty IDs must yield cached Refused, never infer success from void. Zero-ID retirement can succeed. Check foreign caller does not poison owner results.
+- [x] **Step 3: Run exact RED for both components.** Core selector runs without interposer; publisher controls use release guards and 350ms/100ms limits. Preserve current `[managedshare]` and `[publisher]` positives. Match actual expected expression sets; reject arbitrary nonzero exit acceptance.
+- [x] **Step 4: Implement checked removal and publisher receipt.** ShareManager adds the producer-guard/locked bool counterpart, preserving void behavior. GUI fence freezes IDs and cancels tokens without synchronous core retraction; existing publisher worker drains cancellation and checked retractions before its thread-exit promise. Reject new enqueue, suppress cancelled queued callbacks and aggregate failures. Missing/throwing callback marks failure but must not abandon worker lifetime. Legacy synchronous stop retains its void-callback behavior; shared terminal state prevents replay after checked retirement.
+- [x] **Step 5: Verify and checkpoint.** Both-CPU focused selectors, complete core and Qt suites pass or report exact retained failures. Verify real retraction under retained core lifetime, original callback compatibility and physically held cleanup. Commit curated paths as `fix(sharing): check retained publisher retirement and retraction`.
+
+Task2 checkpoint `ff835364` (2026-10-07): checked managed removal distinguishes
+absence from closed admission. Publisher fencing cancels tokens and freezes IDs
+without GUI core retraction; its existing worker attempts all checked retractions
+and supplies the outcome only at physical thread exit. Failures remain Refused,
+and legacy callbacks are not replayed. A fresh component review found an early
+callback-copy exception could skip later retractions; exact six-failure RED and
+a retained-worker repair resolve it. Deterministic queued cancellation and
+separate legacy counters close both Minor review gaps. The independent focused
+followup has no remaining findings, but is not Task5 integrated-range review.
+
+Final focused selectors pass core40/504 and Qt12/166 on each CPU. Complete
+ordinary core/Qt suites pass 3,718 case instances / 368,874 assertions total,
+with matching case-name inventories and no failures/errors/skips. Completion
+reruns the focused selectors and validates unchanged nine source/four binary
+pins against the complete-suite receipts instead of repeating the twelve-minute
+matrix. Protected state and prior 74/14/105-file seals pass readback. The earlier
+mechanical formatting build failure is retained and excluded; acceptance uses
+fresh completed builds. No runtime/MainWindow checked-path integration, installed
+app/profile change, push or release activation. Tasks3-5 remain open.
 
 ### Task 3: Proxy Physical Receipts And Safe Reaping
 

@@ -1,6 +1,6 @@
 # Development Status
 
-Checkpoint: 2026-10-06. `v3.0.0-pre.1` remains this development checkpoint's release target.
+Checkpoint: 2026-10-07. `v3.0.0-pre.1` remains this development checkpoint's release target.
 
 ## Implemented In Development
 
@@ -396,3 +396,30 @@ A green macOS test suite is not proof for other platforms or a live deployment.
 Mixed DC/Torrent pieces, SQLite share storage, parallel TTH hashing, MCN1,
 HBRI/SUDP, temporary sharing, richer chat/retry policies and compressed/indexed
 lists are separate work, not promised features of the first prerelease.
+
+The next Native component checkpoint, `ff835364`, adds checked managed-share
+retraction and publisher retirement. GUI fencing cancels publication and freezes
+owner IDs without retracting through the core on the GUI. The existing worker
+attempts all checked removals while core admission remains open; Ready requires
+successful retraction and physical thread exit. Failed, throwing or missing
+checked callbacks refuse completion. Legacy stop/invalidate behavior remains,
+without replay after checked retirement.
+
+A fresh read-only component review identified a callback-copy exception that
+could end the worker before later cleanup. A real already-published-share
+regression reproduces exactly six failures; the repair retains the failed worker
+until owner retirement and rejects further work. Deterministic queued
+cancellation and separate legacy counters address the two Minor test gaps.
+The focused independent followup has no remaining findings; it is not the final
+integrated repair-range review.
+
+Both architectures pass focused core40/504 and Qt12/166 cases/assertions.
+Four complete ordinary core/Qt runs pass 3,718 case instances and 368,874
+assertions, with identical case-name inventories and zero errors/failures/skips.
+Completion reruns focused tests and verifies unchanged source/binary pins against
+those full-suite receipts. Historical bundle/signature, material/provider,
+protected live-file and prior failure-evidence readbacks pass. This is offline
+component QA on host/Rosetta, not native minimum-OS, deployed or installed-app
+acceptance. Proxy receipts, runtime/GUI integration and the final composed/no-
+Torrent/broken-control/review matrix remain pending, as do all previously named
+natural-failure, language-quality and release gates. Signed feeds remain last.
