@@ -321,6 +321,14 @@ TEST_CASE("Pending GUI settings closes core admission before timeout without ear
     if(withUpdate) { CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); }
     CHECK(fixture.core->isRunning());
     CHECK(store.getStr("qa/admission") == "frozen");
+    // Refusal stops session polling; cleanup must collect retained core receipts.
+    REQUIRE(waitFor([&] {
+        return fixture.core->prepareShutdownAsyncChecked(3000).status != dcpp::DCContext::ShutdownStatus::Pending;
+    }));
+    REQUIRE(fixture.core->prepareShutdownAsyncChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
+    QCoreApplication::processEvents();
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
 }
 #endif
 

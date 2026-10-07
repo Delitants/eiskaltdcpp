@@ -202,6 +202,25 @@ recommended but not implemented. The guard, deadlines, production sources and
 installed application remain unchanged; natural latency/recovery/Torrent
 failures and all release gates stay open.
 
+After approval, the isolated admission test's cleanup now collects retained
+core receipts on the owner and requires Ready before disposal, while proving
+the quit session stays Refused with no exit or update installation. Only eight
+test lines change; production ownership/guards, deadlines and the shared fixture
+destructor remain intact. Four controlled RED runs reproduce the guard abort
+after 128 original assertions; GREEN against the same delayed core objects
+passes 148 assertions. Five consumers are rebuilt privately for ARM,
+Intel/Rosetta and no-Torrent, preserving original binaries, objects and failure
+evidence. This corrects the demonstrated test cleanup gap, not the outstanding
+natural stalls, recovery/Torrent causes or release gates.
+
+The subsequent full serial readback matches 32 exact inventories / 4,287 case
+instances and 444,190 passing assertions, with two failures in one ARM sidebar
+checkpoint-recovery case. No fatal errors, expected failures or skips occur.
+Corrected admission passes in all three configurations; every other selection
+passes. Neither the current passes nor controlled proof waives the recovery
+failure or retained natural latency/Torrent failures. Protected state and old
+evidence remain intact; Task 3, installation and release gates stay open.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

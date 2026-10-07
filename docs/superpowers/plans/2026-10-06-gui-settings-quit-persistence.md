@@ -269,4 +269,42 @@ No public source, original binary/object/archive, guard, live profile, installed
 app, server, VM, signing key or feed is changed. Task 3 remains incomplete; the
 102/180/354ms stalls and other retained matrix failures remain unwaived.
 
+#### Approved Admission Cleanup After `d335cb88b`
+
+The maintainer approved the bounded test-only receipt collection. Eight lines
+are appended only to the admission test: after every original assertion, poll
+the checked core API on the startup owner, require Ready, pump queued events,
+and reassert Refused/no exit/no install. The session is never retried; the
+100ms request budget, 350ms watchdog hold, 5000ms helper, shared destructor and
+production ownership/guard remain unchanged. Failed/unsupported receipts are
+not accepted as Ready or swallowed to permit disposal.
+
+Fresh controlled RED independently verifies both phases and both quit branches:
+128 passing original assertions followed by exactly four guarded SIGABRTs.
+GREEN changes only the fixture object while reusing the same private delayed
+core objects, and passes 148 assertions. All four disposal traces are now
+Finished/Ready on the correct owner, without an outstanding receipt or worker.
+Five fixture consumers are compiled/relinked serially into new ARM,
+Intel/Rosetta and no-Torrent outputs. Exact source scope, CPU/deployment metadata,
+original target/object/archive hashes and current control pins pass. Historical
+fixture source pins resolve to retained exact-byte copies; no old manifest or
+failed output is rewritten. Private evidence is under
+`Work/qa/admission-receipt-cleanup-repair-20261006`. This corrects the demonstrated
+fixture cleanup contract gap, not the unresolved exact phase of the earlier
+natural abort, natural quit stalls, or final release acceptance.
+
+The complete serial matrix matches all 32 exact nonempty inventories: 4,287
+case instances, 444,190 passing assertions, two failures in one ARM sidebar run,
+and zero fatal errors, expected failures or skips. Both failures are the retained
+checkpoint recovery case (`prompt->isVisible()` and `recovered`, seed 2124193600).
+ARM/Intel admission pass 74 assertions each; no-Torrent admission passes 72.
+All core, Qt, Torrent, other GUI layouts and explicit retirement selections pass.
+Those passes do not waive the sidebar failure or earlier natural latency and
+Torrent failures. Before/after preservation checks pass for both historical
+bundle trees/signatures, five archive/notice pins, 58 providers, nine live files,
+17 prior audits and eleven negative outputs. An inline scope review finds no
+ownership/guard/deadline expansion; this is not a new independent final-candidate
+review. No installation, push, signing or publication occurs. Task 3 remains
+incomplete; the bounded admission cleanup correction is independently verified.
+
 This plan does not close retained natural recovery/Torrent/bootstrap/publication/bind/peer-counter causes, pending-owner/Ready-update coverage or per-file AntiSpam recovery, translation/native-language quality, provenance/reproducibility, whole-candidate independent review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final app/material rebuild, numeric production build allocation, signing/notarization/signed-v3 acceptance, guarded installation/readback or authenticated wiki/prerelease publication/readback. Signed feeds remain last; parent Tasks 7/8 stay open.

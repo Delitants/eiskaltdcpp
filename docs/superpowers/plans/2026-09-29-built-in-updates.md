@@ -2555,6 +2555,27 @@ assertions is recommended separately, not implemented. No update retry, consent,
 installation, signing, feed mutation or production ownership change occurs.
 Task 3, natural stalls/recovery and parent release gates remain open.
 
+Following approval, the admission test alone collects retained core receipts
+after its original assertions, requires Ready, and rechecks Refused/no exit/no
+install after queued events. Eight added lines do not retry the session, grant
+consent, alter the shared destructor, change production ownership/guards or
+extend deadlines. Fresh delayed-receipt RED passes 128 original assertions then
+produces four exact guard aborts; GREEN with the same delayed core objects passes
+148 assertions and records Ready with no outstanding receipt/worker before
+disposal. Five ARM, Intel/Rosetta and no-Torrent consumers are rebuilt privately
+with original targets and historical failure evidence preserved. The bounded
+fixture cleanup correction is not a fix or waiver for natural responsiveness,
+recovery, Torrent or final release acceptance issues.
+
+The fresh serial matrix matches all 32 exact inventories / 4,287 case instances,
+with 444,190 passing assertions and two failures in one ARM sidebar recovery
+case (`prompt->isVisible()` and `recovered`, seed 2124193600). There are no fatal
+errors, expected failures or skips. Corrected admission passes on ARM,
+Intel/Rosetta and no-Torrent; all other selections pass. This does not waive the
+recovery failure, retained 102/180/354ms stalls or earlier Torrent failures.
+Protected-state and retained input/failure readbacks pass. Task 3 and release
+gates remain open; no installation, push, signing or publication occurs.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,
