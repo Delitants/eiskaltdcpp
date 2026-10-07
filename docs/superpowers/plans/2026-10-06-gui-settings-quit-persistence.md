@@ -170,6 +170,40 @@ after the fresh request. Existing auxiliary-failure tests must still disarm it.
 
 The maintainer approved this plan and its Native/inline execution. Local source checkpoints are `e68f50545` (owned storage), `09b83854b` (composition/deadline admission) and `af796efbf` (final-review fixes). No push, installation or release activation occurred.
 
+### Torrent Checkpoint Blocking Boundary (2026-10-06)
+
+A subsequent isolated diagnosis at `e3dab31ac` appends one private fixture to
+the unchanged current settings tests and links unchanged production objects.
+The original write/flush interposer holds the final Torrent `jobs.json`
+checkpoint for 350ms against the original 100ms quit request budget. Ordinary
+and Ready-update paths execute on ARM and Intel/Rosetta. Across seven controlled
+runs, 28 held observations take 365-401ms with no GUI heartbeat; 14 matched
+unheld observations return in 6-25ms. Every held observation fails precisely
+the duration and heartbeat checks; worker writes remain off GUI, physical bytes
+finish, and timeout still refuses exit, consent and installation. A read-only
+join observer captures four matching GUI stacks through window retirement,
+Torrent runtime and `TorrentEngine::Impl::stop`, waiting on the held worker.
+
+Six current unchanged-selector runs pass; they do not waive retained
+102/180/354ms failures or establish their exact historical timing. Strict
+readback validates 13 runs / 19 case instances / 2,774 passing assertions and
+56 controlled failures, without errors, expected failures or skips. Two private
+fixture compile errors are retained separately and corrected before execution.
+Original source, consumers and 262 link objects per CPU remain unchanged.
+Protected-state readbacks pass. No production repair or fresh complete-matrix
+acceptance is claimed. The confirmed synchronous checkpoint join requires a
+separately reviewed owned, nonblocking Torrent-retirement design; publisher and
+proxy retirement boundaries must be considered too. Task 3 and parent Tasks
+7/8 stay open, with broader coverage, retained Torrent causes, localization,
+provenance, independent/native/live/soak acceptance and final build, signing,
+guarded installation and publication still pending. Signed feeds remain last.
+
+The maintainer approved preparing the focused follow-up written design.
+`docs/superpowers/specs/2026-10-06-nonblocking-torrent-quit-design.md` now proposes
+GUI-owned phase polling, physical worker receipts, checked share retraction and
+separate layout/producer milestones. Its written review and implementation plan
+remain pending; no production repair starts from design-preparation approval.
+
 ## Execution And Review Checkpoint (2026-10-06)
 
 Tasks 1/2 have fresh both-CPU post-commit checks. The single fresh-context review of `0f2487459..09b83854b` found two Important issues: settings Pending postponed core admission closure, and pre-transfer refusal retained queued Qt auto-sync. There were no Critical or Minor findings. Both issues were reproduced before the one fix pass; no second review or post-fix reviewer approval is claimed.

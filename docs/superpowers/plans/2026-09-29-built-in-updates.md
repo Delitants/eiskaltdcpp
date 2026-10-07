@@ -2647,3 +2647,20 @@ not overall Task 3 or release readiness. Earlier retained causes, broader
 coverage/localization/provenance, independent review, native/live/soak acceptance
 and final rebuild/signing/install/publication gates stay open. No app/profile,
 server/VM, credential/key, push or feed changes. Signed feeds last.
+
+The next isolated quit diagnosis confirms a synchronous Torrent checkpoint
+boundary, without changing production objects or existing tests. Original
+write/flush holds on `jobs.json` produce 28 ordinary/Ready-update observations
+at 365-401ms against the 100ms budget, with GUI heartbeat stalled; 14 matched
+unheld controls return in 6-25ms. Timeout still refuses exit and update handoff.
+Four observed stacks identify the GUI joining the Torrent worker through window
+retirement. ARM and Intel/Rosetta execute; strict readback validates 13 runs /
+19 cases / 2774 passing assertions / 56 precise controlled failures. Six current
+unchanged-selector runs pass but do not waive retained 102/180/354ms stalls or
+prove their original timing. This is a confirmed boundary, not a production
+repair, complete-matrix rerun or release acceptance. Original inputs and
+protected state remain unchanged. A focused owned nonblocking Torrent-retirement
+design is proposed separately. Broader coverage, retained causes, localization,
+provenance, independent review/native/live/soak, final rebuild/signing/install
+and authenticated publication remain pending. Task 3 and parent Tasks 7/8
+stay open; installed/profile/server/key/feed state is untouched. Signed feeds last.

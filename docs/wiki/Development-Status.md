@@ -284,6 +284,23 @@ Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent
 bootstrap, publication and bind causes are not waived by green reruns.
 
+A subsequent isolated quit diagnostic confirms that GUI retirement synchronously
+joins the Torrent worker while its final checkpoint is written. Original
+350ms write/flush holds on the checkpoint cause 28 requests to take 365-401ms
+against a 100ms budget, with no GUI heartbeat; 14 matched unheld controls take
+6-25ms. Timeout still refuses exit, update consent and installation, and saved
+bytes finish correctly. Four observed stacks identify the same join boundary.
+ARM and Intel/Rosetta execute 13 diagnostic runs / 19 cases / 2774 passing
+assertions and 56 exact controlled duration/heartbeat failures. Six unchanged
+current-selector runs pass but do not waive historical 102/180/354ms stalls or
+establish their original timing. No production code or existing test changes,
+complete-suite rerun, deployment or release acceptance are claimed here.
+Original consumers, production objects and protected state remain unchanged.
+A separately reviewed owned nonblocking Torrent-retirement design is the next
+repair step, including sharing and proxy worker boundaries. Broader coverage,
+retained causes, localization/provenance, independent review/native/live/soak
+and final build/sign/install/publication remain pending. Signed feeds last.
+
 Peer-policy test failures now include the policy variant, listener ports, proxy
 forwarding and available leech peer/alert state. A deliberately invalid loopback
 endpoint reproduces the counter failure without payload transfer and verifies
