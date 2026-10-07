@@ -17,11 +17,87 @@
 #include <sys/resource.h>
 #endif
 #include "dcpp/Socket.h"
+#include "dcpp/ScopedFunctor.h"
 #include <catch2/generators/catch_generators.hpp>
 #include <openssl/pem.h>
 #include <openssl/x509v3.h>
 #include <atomic>
 #include <thread>
+#include <future>
+#include "torrent/QuitRetirement.h"
+#ifdef __APPLE__
+#include <dlfcn.h>
+#endif
+
+// Compile the unmodified production implementation once, with private fixture access.
+#include "TorrentProxyAdapter.cpp"
+
+namespace {
+using ProxyRetirement = eiskalt::torrent::QuitRetirementStatus;
+template<class Adapter> constexpr bool hasCheckedAdapter() {
+    return requires(Adapter& a) { a.fenceForQuitChecked(); a.retireForQuitChecked(); };
+}
+template<class Adapter> bool fenceAdapter(Adapter& adapter) {
+    if constexpr(hasCheckedAdapter<Adapter>()) return adapter.fenceForQuitChecked();
+    return false;
+}
+template<class Adapter> ProxyRetirement retireAdapter(Adapter& adapter) {
+    if constexpr(hasCheckedAdapter<Adapter>()) return adapter.retireForQuitChecked().status;
+    adapter.stop();
+    return ProxyRetirement::Ready; // Expose the baseline's synchronous behavior.
+}
+struct ProxyHold {
+    std::atomic<bool> entered{false}, released{false}, exited{false};
+    void block() {
+        entered = true;
+        while(!released) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        exited = true;
+    }
+};
+struct ProxyRelease {
+    std::shared_ptr<ProxyHold> hold;
+    std::thread watchdog;
+    explicit ProxyRelease(std::shared_ptr<ProxyHold> h) : hold(std::move(h)),
+        watchdog([h = hold] { std::this_thread::sleep_for(std::chrono::milliseconds(350)); h->released = true; }) {}
+    ~ProxyRelease() { hold->released = true; watchdog.join(); }
+};
+struct ProxyExitHold {
+    std::shared_ptr<ProxyHold> hold;
+    ~ProxyExitHold() { hold->block(); }
+};
+}
+
+struct TorrentProxyAdapterTestAccess {
+    static size_t workers(const TorrentProxyAdapter& a) { return a.d->workers.size(); }
+    static size_t reservations(const TorrentProxyAdapter& a) { return a.d->limits.workers.load(); }
+    static bool stopping(const TorrentProxyAdapter& a) { return a.d->stopping.load(); }
+    static bool retainedRoute(const TorrentProxyAdapter& a) { return !a.d->local.password.isEmpty(); }
+    static void cancellation(TorrentProxyAdapter& a, std::function<bool()> callback) {
+        a.d->upstream.cancelled = std::move(callback);
+    }
+    template<class Worker> static void complete(Worker& worker) {
+        if constexpr(requires { worker.exitPromise; }) worker.exitPromise.set_value_at_thread_exit();
+        worker.done = true;
+    }
+    static void tailWorker(TorrentProxyAdapter& a, const std::shared_ptr<ProxyHold>& hold) {
+        auto worker = std::make_unique<TorrentProxyAdapter::Impl::Worker>();
+        auto* ptr = worker.get();
+        a.d->workers.push_back(std::move(worker));
+        ptr->thread = std::thread([ptr, hold] {
+            thread_local ProxyExitHold tail{hold};
+            complete(*ptr);
+        });
+    }
+    static void reap(TorrentProxyAdapter& a) { a.d->reap(); }
+    static bool resolutionCancelled(const TorrentProxyAdapter& a) {
+        const auto& r = a.d->workers.front()->resolution;
+        std::lock_guard<std::mutex> lock(r->mutex);
+        return r->cancelled && r->lookupId == -1 && !r->ready && r->address.empty();
+    }
+#ifndef _WIN32
+    static void accept(TorrentProxyAdapter& a, qintptr descriptor) { a.d->accept(descriptor); }
+#endif
+};
 
 namespace {
 template<typename Peer>
@@ -1033,3 +1109,181 @@ TEST_CASE("GOST UDP control EOF cancels setup without poisoning shared backoff",
     REQUIRE(timer.elapsed() < 900);
     adapter.stop();
 }
+
+TEST_CASE("Proxy retirement and reaper retain workers through physical exit", "[torrent-quit-proxy]") {
+    auto hold = std::make_shared<ProxyHold>();
+    TorrentProxyAdapter adapter;
+    auto unblockOnFailure = dcpp::makeScopedFunctor([&] { hold->released = true; });
+    eiskalt::torrent::ProxyConfig config;
+    config.type = eiskalt::torrent::ProxyType::Socks5;
+    config.host = "127.0.0.1";
+    config.port = 9;
+    REQUIRE(adapter.start(config));
+    const auto local = adapter.endpoint();
+    QTcpSocket control;
+    bool reaper = false;
+    SECTION("real accepted relay retains its connection and reservation") {
+        const auto owner = std::this_thread::get_id();
+        TorrentProxyAdapterTestAccess::cancellation(adapter, [hold, owner] {
+            if(std::this_thread::get_id() != owner) hold->block();
+            return false;
+        });
+        authenticate(control, local);
+        control.write(QByteArray::fromHex("050100017f00000101bb"));
+        control.flush();
+        REQUIRE(spinFor([&] { return hold->entered.load(); }, 5000));
+        REQUIRE(TorrentProxyAdapterTestAccess::reservations(adapter) == 1);
+    }
+    SECTION("ordinary reaper cannot join at body end during TLS exit") {
+        reaper = true;
+        TorrentProxyAdapterTestAccess::tailWorker(adapter, hold);
+        REQUIRE(spinFor([&] { return hold->entered.load(); }, 5000));
+    }
+    ProxyRelease release(hold);
+    CHECK(hasCheckedAdapter<TorrentProxyAdapter>());
+    REQUIRE(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    int beats = 0;
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, [&] { if(!hold->exited) ++beats; });
+    heartbeat.start(1);
+    QElapsedTimer timer;
+    timer.start();
+    if(reaper) TorrentProxyAdapterTestAccess::reap(adapter);
+    else {
+        CHECK(fenceAdapter(adapter));
+        CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+        CHECK(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    }
+    CHECK(timer.elapsed() < 100);
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    timer.restart();
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Pending);
+    CHECK(timer.elapsed() < 100);
+    CHECK_FALSE(hold->exited.load());
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    CHECK(adapter.endpoint().port == 0);
+    CHECK(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    CHECK(spinFor([&] { return beats >= 3; }, 100));
+    timer.restart();
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Pending);
+    CHECK(timer.elapsed() < 100);
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    if(!reaper) {
+        CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == 1);
+        CHECK(control.state() == QAbstractSocket::ConnectedState);
+    }
+    QTcpSocket rejected;
+    rejected.setProxy(QNetworkProxy::NoProxy);
+    rejected.connectToHost(local.host, local.port);
+    CHECK_FALSE(rejected.waitForConnected(100));
+    hold->released = true;
+    REQUIRE(spinFor([&] { return retireAdapter(adapter) == ProxyRetirement::Ready; }, 5000));
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 0);
+    CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == 0);
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
+    CHECK_FALSE(adapter.start(config));
+}
+
+TEST_CASE("Proxy terminal retirement rejects foreign calls without poisoning the owner", "[torrent-quit-proxy]") {
+    TorrentProxyAdapter adapter;
+    eiskalt::torrent::ProxyConfig config;
+    config.type = eiskalt::torrent::ProxyType::Socks5;
+    config.host = "127.0.0.1";
+    config.port = 9;
+    REQUIRE(adapter.start(config));
+    adapter.stop();
+    REQUIRE(adapter.start(config)); // Ordinary stop remains restartable.
+    const auto port = adapter.endpoint().port;
+    bool foreignFence = true;
+    ProxyRetirement foreignPoll = ProxyRetirement::Ready;
+    std::thread foreign([&] {
+        if constexpr(hasCheckedAdapter<TorrentProxyAdapter>()) {
+            // Dependent wrappers keep the original source executable for RED.
+            foreignFence = fenceAdapter(adapter);
+            foreignPoll = retireAdapter(adapter);
+        } else { foreignFence = false; foreignPoll = ProxyRetirement::Refused; }
+    });
+    foreign.join();
+    CHECK_FALSE(foreignFence);
+    CHECK(foreignPoll == ProxyRetirement::Refused);
+    CHECK(adapter.endpoint().port == port);
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+    CHECK(fenceAdapter(adapter));
+    CHECK(adapter.endpoint().port == 0);
+    QElapsedTimer timer;
+    timer.start();
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
+    CHECK(timer.elapsed() < 100);
+    CHECK_FALSE(adapter.start(config));
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
+}
+
+TEST_CASE("Proxy checked cancellation cannot resurrect queued DNS or a direct relay", "[torrent-quit-proxy]") {
+    proxy_test::GostServer server;
+    auto config = gostConfig(server);
+    config.host = "localhost";
+    TorrentProxyAdapter adapter;
+    REQUIRE(adapter.start(config));
+    QTcpSocket control;
+    authenticate(control, adapter.endpoint());
+    control.write(QByteArray::fromHex("05030001000000000000"));
+    control.flush();
+    QThread::msleep(100); // Deliberately leave the owner's DNS invocation queued.
+    REQUIRE(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    CHECK(fenceAdapter(adapter));
+    QElapsedTimer timer;
+    timer.start();
+    auto result = retireAdapter(adapter);
+    CHECK(timer.elapsed() < 100);
+    if(result == ProxyRetirement::Pending)
+        CHECK(TorrentProxyAdapterTestAccess::resolutionCancelled(adapter));
+    REQUIRE(spinFor([&] { return retireAdapter(adapter) == ProxyRetirement::Ready; }, 5000));
+    QCoreApplication::processEvents();
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 0);
+    CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == 0);
+    CHECK(adapter.endpoint().port == 0);
+    CHECK_FALSE(adapter.start(config));
+}
+
+#ifdef __APPLE__
+TEST_CASE("Proxy failed thread launch rolls back pre-owned admission and closes the accepted socket", "[.][torrent-quit-proxy-launch]") {
+    using Arm = void(*)(void(*)(void*), void*);
+    const auto arm = reinterpret_cast<Arm>(dlsym(RTLD_DEFAULT, "eiskalt_qa_proxy_launch_arm"));
+    const auto reset = reinterpret_cast<void(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_proxy_launch_reset"));
+    REQUIRE(arm);
+    REQUIRE(reset);
+    TorrentProxyAdapter adapter;
+    eiskalt::torrent::ProxyConfig config;
+    config.type = eiskalt::torrent::ProxyType::Socks5;
+    config.host = "127.0.0.1";
+    config.port = 9;
+    config.user = "must-not-log-user";
+    config.password = "must-not-log-password";
+    REQUIRE(adapter.start(config));
+    struct Observation { TorrentProxyAdapter* adapter; size_t workers = 0, reservations = 0; bool hit = false; } observed{&adapter};
+    int sockets[2]{};
+    REQUIRE(::socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) == 0);
+    auto cleanup = dcpp::makeScopedFunctor([&] { reset(); ::close(sockets[0]); });
+    arm([](void* opaque) {
+        auto& o = *static_cast<Observation*>(opaque);
+        o.hit = true;
+        o.workers = TorrentProxyAdapterTestAccess::workers(*o.adapter);
+        o.reservations = TorrentProxyAdapterTestAccess::reservations(*o.adapter);
+    }, &observed);
+    QElapsedTimer timer;
+    timer.start();
+    TorrentProxyAdapterTestAccess::accept(adapter, sockets[1]);
+    CHECK(timer.elapsed() < 100);
+    CHECK(observed.hit);
+    CHECK(observed.workers == 1);
+    CHECK(observed.reservations == 1);
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 0);
+    CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == 0);
+    char byte;
+    CHECK(::recv(sockets[0], &byte, 1, 0) == 0);
+    CHECK(adapter.endpoint().port != 0);
+    CHECK(fenceAdapter(adapter));
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
+}
+#endif

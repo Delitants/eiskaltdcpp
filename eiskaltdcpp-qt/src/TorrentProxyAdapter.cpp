@@ -10,6 +10,7 @@
 #include <QRandomGenerator>
 #include <QTcpServer>
 #include <QTimer>
+#include <QThread>
 #include <atomic>
 #include <array>
 #include <chrono>
@@ -18,6 +19,7 @@
 #include <thread>
 #include <vector>
 #include <mutex>
+#include <future>
 #ifndef _WIN32
 #include <poll.h>
 #include <pthread.h>
@@ -469,13 +471,18 @@ void relay(LocalConnection client, dcpp::Socket::StreamProxyConfig upstream,
 struct TorrentProxyAdapter::Impl {
     struct Worker {
         std::atomic<bool> done{false};
+        std::promise<void> exitPromise;
+        std::future<void> exitReceipt = exitPromise.get_future();
         std::thread thread;
         std::shared_ptr<Resolution> resolution = std::make_shared<Resolution>();
+        std::shared_ptr<Reservation> slot;
         ~Worker() { if(thread.joinable()) thread.join(); }
     };
     RelayServer server;
     QTimer reaper;
     std::atomic<bool> stopping{false};
+    bool quitFenced = false, quitRetiring = false, retirementFailed = false;
+    eiskalt::torrent::QuitRetirementStatus retirement = eiskalt::torrent::QuitRetirementStatus::Pending;
     std::vector<std::unique_ptr<Worker>> workers;
     AdapterLimits limits;
     eiskalt::torrent::ProxyConfig local;
@@ -484,8 +491,10 @@ struct TorrentProxyAdapter::Impl {
 
     void reap() {
         workers.erase(std::remove_if(workers.begin(), workers.end(),
-            [](const auto &worker) {
-                if(!worker->done) return false;
+            [this](const auto &worker) {
+                if(worker->exitReceipt.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready) return false;
+                try { worker->exitReceipt.get(); }
+                catch(...) { retirementFailed = true; }
                 cancelResolution(worker->resolution);
                 return true;
             }), workers.end());
@@ -494,30 +503,38 @@ struct TorrentProxyAdapter::Impl {
         try {
             LocalConnection client(descriptor);
             reap();
-            if(stopping || (upstream.cancelled && upstream.cancelled()) || workers.size() >= ConnectionLimit) return;
+            if(quitFenced || stopping || (upstream.cancelled && upstream.cancelled()) || workers.size() >= ConnectionLimit) return;
             auto worker = std::make_unique<Worker>();
-            auto slot = std::make_shared<Reservation>(limits.workers, ConnectionLimit);
-            if(!*slot) return;
+            worker->slot = std::make_shared<Reservation>(limits.workers, ConnectionLimit);
+            if(!*worker->slot) return;
             auto *ptr = worker.get();
             const auto config = upstream;
             const bool udpEnabled = local.udp;
             const auto user = local.user.toLatin1(), password = local.password.toLatin1();
-            worker->thread = std::thread([this, ptr, slot, client = std::move(client), config, user, password, udpEnabled]() mutable {
-                try {
-#ifndef _WIN32
-                    sigset_t blockedSignals;
-                    sigemptyset(&blockedSignals);
-                    sigaddset(&blockedSignals, SIGPIPE);
-                    // Do not restore: this is a dedicated thread, including SSL cleanup.
-                    if(pthread_sigmask(SIG_BLOCK, &blockedSignals, nullptr) != 0)
-                        throw dcpp::SocketException("Cannot protect proxy worker from SIGPIPE");
-#endif
-                    relay(std::move(client), config, user, password, stopping, server, ptr->resolution, limits, udpEnabled);
-                }
-                catch(...) { }
-                ptr->done = true;
-            });
+            // Establish container ownership before any running thread can escape.
             workers.push_back(std::move(worker));
+            try {
+                ptr->thread = std::thread([this, ptr, client = std::move(client), config, user, password, udpEnabled]() mutable {
+                    try {
+                        // Readiness includes capture destruction and actual thread-local exit.
+                        ptr->exitPromise.set_value_at_thread_exit();
+#ifndef _WIN32
+                        sigset_t blockedSignals;
+                        sigemptyset(&blockedSignals);
+                        sigaddset(&blockedSignals, SIGPIPE);
+                        // Do not restore: this is a dedicated thread, including SSL cleanup.
+                        if(pthread_sigmask(SIG_BLOCK, &blockedSignals, nullptr) != 0)
+                            throw dcpp::SocketException("Cannot protect proxy worker from SIGPIPE");
+#endif
+                        relay(std::move(client), config, user, password, stopping, server, ptr->resolution, limits, udpEnabled);
+                    }
+                    catch(...) { }
+                    ptr->done = true;
+                });
+            } catch(...) {
+                workers.pop_back(); // Constructor failure cannot leave a joinable thread.
+                throw;
+            }
         } catch(...) { }
     }
 };
@@ -533,6 +550,10 @@ TorrentProxyAdapter::TorrentProxyAdapter(QObject *parent) : QObject(parent), d(s
 TorrentProxyAdapter::~TorrentProxyAdapter() { stop(); }
 
 bool TorrentProxyAdapter::start(const eiskalt::torrent::ProxyConfig &proxy, QString *error) {
+    if(d->quitFenced) {
+        if(error) *error = tr("The proxy adapter is retiring for application quit.");
+        return false;
+    }
     stop();
     using eiskalt::torrent::ProxyType;
     if((proxy.type != ProxyType::Socks5 && proxy.type != ProxyType::Socks5Tls && proxy.type != ProxyType::Shadowsocks && proxy.type != ProxyType::Gost) ||
@@ -587,5 +608,38 @@ void TorrentProxyAdapter::stop() {
     d->local = {};
 }
 
-eiskalt::torrent::ProxyConfig TorrentProxyAdapter::endpoint() const { return d->local; }
+bool TorrentProxyAdapter::fenceForQuitChecked() noexcept {
+    if(QThread::currentThread() != thread()) return false;
+    if(!d->quitFenced) {
+        d->quitFenced = true;
+        d->server.close();
+        d->reaper.stop();
+    }
+    return true;
+}
+
+eiskalt::torrent::QuitRetirementResult TorrentProxyAdapter::retireForQuitChecked() noexcept {
+    using eiskalt::torrent::QuitRetirementStatus;
+    constexpr const char* component = "Torrent proxy workers";
+    if(QThread::currentThread() != thread()) return {QuitRetirementStatus::Refused, component};
+    if(!fenceForQuitChecked()) return {QuitRetirementStatus::Refused, component};
+    if(d->retirement != QuitRetirementStatus::Pending) return {d->retirement, component};
+    if(!d->quitRetiring) {
+        d->quitRetiring = true;
+        d->stopping = true;
+        d->limits.changed.notify_all();
+        for(const auto& worker : d->workers) cancelResolution(worker->resolution);
+    }
+    d->reap();
+    if(!d->workers.empty()) return {QuitRetirementStatus::Pending, component};
+    d->limits.finish(true, true);
+    d->local = {};
+    d->upstream = {};
+    d->retirement = d->retirementFailed ? QuitRetirementStatus::Refused : QuitRetirementStatus::Ready;
+    return {d->retirement, component};
+}
+
+eiskalt::torrent::ProxyConfig TorrentProxyAdapter::endpoint() const {
+    return d->server.isListening() ? d->local : eiskalt::torrent::ProxyConfig{};
+}
 #endif

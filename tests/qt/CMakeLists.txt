@@ -177,6 +177,9 @@ if (Qt6UiTools_FOUND)
     target_link_libraries(eiskalt-chat-format-preview PRIVATE Qt6::Widgets Qt6::Test Qt6::UiTools)
 endif ()
 if (USE_TORRENT)
+    if(APPLE)
+        add_library(eiskalt-proxy-launch-failure SHARED EXCLUDE_FROM_ALL ProxyLaunchFailure.cpp)
+    endif()
     qt6_add_resources(eiskaltdcpp-qt-tests torrent_icons
         PREFIX "/torrent"
         BASE "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons/torrent"
@@ -193,7 +196,6 @@ if (USE_TORRENT)
         test_torrentsharepublisher.cpp
         test_torrentruntime.cpp
         test_settingstorrent.cpp
-        ${QT_SRC_DIR}/TorrentProxyAdapter.cpp
         ${QT_SRC_DIR}/TorrentProxyAdapter.h
         ${QT_SRC_DIR}/GostUdpRelay.cpp
         ${QT_SRC_DIR}/GostUdpRelay.h
