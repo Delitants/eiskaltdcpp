@@ -641,3 +641,22 @@ candidate review and remaining lifecycle/timing, native/localization/provenance/
 reproducibility, real peer/selected-check/bootstrap, minimum-OS/live/benchmark/soak
 gates, then final build/signing/signed-v3/install/publication/readback. Nothing
 installed or published; signed feeds remain last.
+
+### Composite Torrent Quit Source Review (2026-10-07)
+
+One [fresh independent composite source review](../research/2026-10-07-quit-composite-candidate-review.md)
+of `dd088f2b1..db94c22e3` plus the existing local retirement repairs finds no
+Critical/Important issue. Parent snapshot/pin/evidence checks satisfy its
+conditional source verdict. One Minor is deferred: established TCP/UDP payload
+exchange across Fence before physical Proxy retirement. No relay interruption
+is demonstrated; this is explicit coverage debt.
+
+All 3,486 regular snapshot files, 101 earlier pins, 275 incremental inputs and
+historical evidence seals verify. Prior GUI/swarm receipts are revalidated,
+not rerun. Three post-GUI-matrix diagnostics deltas remain explicit; a fresh
+consistent current-source matrix is next. Source review closes only its scoped
+gate, not historical causes, overall Task5, GUI-settings Task3, updater Tasks7/8
+or final updater/prerelease whole-diff review. Native/live/language/provenance/
+reproducibility/peer/bootstrap/selected-check/benchmark/soak and final build/
+signing/install/publication/readback remain pending. No install or publication;
+signed feeds last.

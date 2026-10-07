@@ -267,7 +267,7 @@ are frozen before further mutable rebuilds. Task4 is complete; Task5 is next.
 - [ ] **Step 1: Rebuild final consistent test consumers.** Fresh both-CPU source/MOC/resource builds with pinned inputs; no old partial source-object substitution for acceptance. Build/run no-Torrent core, Qt and settings. Verify actual Qt, CPU/deployment metadata and complete test inventories.
 - [x] **Step 2: Create bounded broken-path controls privately.** One control restores engine blocking join; another treats proxy done as physical readiness; another accepts failed share retraction. Preserve all original bodies/timers and reject unknown source layout. Require each control's exact contract failures and unaffected positives; no public production edits create controls.
 - [ ] **Step 3: Run full serial matrix.** Core, Qt and Torrent `~[interop]`, ordinary settings, GUI singleline/multiline/sidebar with only the existing sidebar navigation exclusion, original hidden settings/storage/admission/core/auxiliary retirements, plus new composed selector. Add explicit new component selectors for inventories that complete suites omit. No-Torrent freeze/normal/hidden settings selectors remain. Do not claim new real-GOST interop or native/minOS proof from these offline runs.
-- [ ] **Step 4: One independent immutable-range review.** Review source range from plan BASE through Task4 for owner lifetime, receipt failure, affinity, retraction admission, callbacks, ordering and consent. If no fresh reviewer tool is available, record that gate as pending; do not manufacture independence or message another task. Fix Important/Critical findings in one focused RED/GREEN pass, rerun the affected and complete suites; retain Minor deferrals explicitly.
+- [x] **Step 4: One independent immutable-range review.** Review source range from plan BASE through Task4 for owner lifetime, receipt failure, affinity, retraction admission, callbacks, ordering and consent. If no fresh reviewer tool is available, record that gate as pending; do not manufacture independence or message another task. Fix Important/Critical findings in one focused RED/GREEN pass, rerun the affected and complete suites; retain Minor deferrals explicitly. Current composite follow-up is recorded below; this closes source review only, not the integrated acceptance gates.
 - [x] **Step 5: Protected-state and historical-failure readback.** Reuse the latest diagnostic preservation helper with fresh output names; require whole historical bundles/signatures, material/provider/live-file/audit/negative pins and previous evidence seals unchanged. Retain original 102/180/354ms reports and Torrent causes even if current selectors pass. Recheck final source/binary/control hashes after tests.
 - [ ] **Step 6: Record and checkpoint actual status.** Mark this repair accepted only if its exact regressions and required reviews are satisfied. Record every remaining gate in parent settings/updater plans and Development Status. Local curated docs checkpoint/readback only; do not close broader Task3 or parent7/8 merely from this bounded repair. No signed feeds, build allocation, final assets or installation.
 
@@ -338,6 +338,25 @@ The prior ARM Qt bind cause did not recur but remains unwaived; historical
 provenance and release gates remain open. The three runtime repairs remain local;
 no completion/release acceptance, signing, install, push or publication. Overall
 GUI-settings Task3 and updater Tasks7/8 remain open; signed feeds last.
+
+### Current Composite Source Review: 2026-10-07
+
+The [independent composite review](../../research/2026-10-07-quit-composite-candidate-review.md)
+freezes `dd088f2b1..db94c22e3` plus the existing seven-file local repair patch
+and allocation helper. One fresh reviewer finds no Critical/Important issue;
+the conditional source verdict is supported by parent snapshot/pin/receipt
+checks. A Minor established TCP/UDP relay-across-Fence regression is explicitly
+deferred, not a demonstrated source defect. All four set-aside categories have
+recorded dispositions and remain bounded acceptance gates where applicable.
+
+The 3,486-file snapshot, 101 earlier pins, 275 incremental link inputs and prior
+seals verify. The 47 GUI matrix receipts reparse as 6,729/621,195; swarm ordinary
+Qt receipts remain 1,520/68,566. No tests were rerun. Three post-GUI-matrix native
+diagnostic source deltas are explicit, so a consistent current-source full
+matrix remains required. Historical failures/timing causes are unwaived.
+Step4 source review is complete; Steps1/3/6 and overall Task5 remain open.
+No local runtime-repair completion commit, deployment, signing or publication;
+GUI-settings Task3 and updater Tasks7/8 stay open. Signed feeds last.
 
 ## Self-Review And Handoff
 
