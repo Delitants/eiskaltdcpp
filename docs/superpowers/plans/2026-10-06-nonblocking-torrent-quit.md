@@ -169,11 +169,39 @@ app/profile change, push or release activation. Tasks3-5 remain open.
 
 **Interfaces:** Consumes Task 1 result. Produces adapter fence/retire methods. `start()` and ordinary `stop()` stay restartable unless checked quit has established its terminal fence; `endpoint()` cannot advertise a newly closed listener.
 
-- [ ] **Step 1: Enable private test access without a product hook.** Add only a `friend struct TorrentProxyAdapterTestAccess` declaration. In the Qt test target, omit the separately compiled adapter `.cpp` and include that same production source from `test_torrentproxyadapter.cpp`, as the existing engine tests do. Other app/full-GUI targets still compile their normal adapter object. Keep one implementation/MOC definition per target; first run unchanged `[adapter]` tests to detect extraction/ODR regressions.
-- [ ] **Step 2: Add `TEST_CASE("Proxy retirement and reaper retain workers through physical exit", "[torrent-quit-proxy]")`.** A real accepted local connection uses its existing copied cancellation callback as a fixture gate on the actual adapter worker; hold it 350ms while GUI requests retirement. A separate private Worker control sets its original done flag and holds actual thread-local teardown, then calls the real reaper. Both require `requestMs < 100`, Pending, heartbeat and unchanged retained worker count while held. Release guards always finish the thread before destruction. Also assert listener rejects new accepts, no queued DNS resurrection, retained connection/resources until receipt, Ready after physical exit, zero-worker fast path and unchanged restartable ordinary stop.
-- [ ] **Step 3: Add launch/queued-resolution failure RED.** Reserve owner/container state before launch; inject thread-constructor failure only in the private test build. Check no joinable thread or reservation escapes, accepted socket closes and route credentials are not logged. Foreign fence/poll cannot mutate the valid owner. Cancellation of a queued resolver callback cannot create a new lookup or direct connection.
-- [ ] **Step 4: Implement per-worker receipts and checked aggregation.** Create each future before thread launch and place the Worker under container ownership before launch can succeed; rollback a failed launch without joining unfinished work. Publish at thread exit after relay/capture/TLS cleanup. Reaper erases only physically ready workers; never use `done` as its lifetime proof. GUI fence closes the server/reaper to new admission; retirement later sets stopping, wakes backoff, cancels resolvers and polls all retained workers. Only after collection reset limits and route data. Preserve existing ordinary stop/start and no-direct-fallback behavior.
-- [ ] **Step 5: Verify and checkpoint.** Both-CPU focused and complete Qt suites, plus existing ordinary proxy/socket routing tests. Audit cache/limit/resolver mutex scope and Qt abort calls; if actual GUI cancellation blocks, retain the failing evidence and revise the design rather than bypass it. Commit `fix(proxy): reap Torrent workers only after physical exit`.
+- [x] **Step 1: Enable private test access without a product hook.** Add only a `friend struct TorrentProxyAdapterTestAccess` declaration. In the Qt test target, omit the separately compiled adapter `.cpp` and include that same production source from `test_torrentproxyadapter.cpp`, as the existing engine tests do. Other app/full-GUI targets still compile their normal adapter object. Keep one implementation/MOC definition per target; first run unchanged `[adapter]` tests to detect extraction/ODR regressions.
+- [x] **Step 2: Add `TEST_CASE("Proxy retirement and reaper retain workers through physical exit", "[torrent-quit-proxy]")`.** A real accepted local connection uses its existing copied cancellation callback as a fixture gate on the actual adapter worker; hold it 350ms while GUI requests retirement. A separate private Worker control sets its original done flag and holds actual thread-local teardown, then calls the real reaper. Both require `requestMs < 100`, Pending, heartbeat and unchanged retained worker count while held. Release guards always finish the thread before destruction. Also assert listener rejects new accepts, no queued DNS resurrection, retained connection/resources until receipt, Ready after physical exit, zero-worker fast path and unchanged restartable ordinary stop.
+- [x] **Step 3: Add launch/queued-resolution failure RED.** Reserve owner/container state before launch; inject thread-constructor failure only in the private test build. Check no joinable thread or reservation escapes, accepted socket closes and route credentials are not logged. Foreign fence/poll cannot mutate the valid owner. Cancellation of a queued resolver callback cannot create a new lookup or direct connection.
+- [x] **Step 4: Implement per-worker receipts and checked aggregation.** Create each future before thread launch and place the Worker under container ownership before launch can succeed; rollback a failed launch without joining unfinished work. Publish at thread exit after relay/capture/TLS cleanup. Reaper erases only physically ready workers; never use `done` as its lifetime proof. GUI fence closes the server/reaper to new admission; retirement later sets stopping, wakes backoff, cancels resolvers and polls all retained workers. Only after collection reset limits and route data. Preserve existing ordinary stop/start and no-direct-fallback behavior.
+- [x] **Step 5: Verify and checkpoint.** Both-CPU focused and complete Qt suites, plus existing ordinary proxy/socket routing tests. Audit cache/limit/resolver mutex scope and Qt abort calls; if actual GUI cancellation blocks, retain the failing evidence and revise the design rather than bypass it. Commit `fix(proxy): reap Torrent workers only after physical exit`.
+
+Task3 checkpoint `1561ca2f9` (2026-10-07): adapter admission is terminally
+fenced for checked quit, while ordinary stop/start remains compatible. Workers
+and reservations enter container ownership before launch; failed construction
+closes the accepted descriptor and rolls back admission. Both ordinary reaping
+and checked retirement collect only thread-exit receipts, not the body-end
+flag. Route/limits reset only after all physical owners are collected; foreign
+calls cannot poison the owner attempt, and closed listeners are not advertised.
+
+Unchanged extraction tests pass 21 cases / 562 assertions. The finalized RED
+has exactly 31 behavioral failures, with no setup errors/skips. Both CPU focus
+and completion reruns pass six JUnit case nodes / 94 assertions; ordinary
+socket/proxy selectors pass 92 / 1,012 each. Complete Qt suites pass 753 nodes
+on each CPU, ARM 34,029 and Intel/Rosetta 33,970 assertions, with no failures,
+errors or skips and matching inventories. All 748 prior ordinary nodes remain;
+the hidden launch-failure control is selected explicitly on both architectures.
+Thirteen source/binary pins, retained RED inputs, protected candidate/material/
+provider/live/audit/negative readbacks and prior 74/133/14/105-file seals pass.
+Completion validates these unchanged full-suite receipts rather than repeating
+the eleven-minute matrix; Task5 still requires final integrated verification.
+
+The launch interposer is a separate test-only target, never linked into the app.
+The Qt implementation/MOC is linked once per test target. Ownership, resolver,
+cache/limit mutex and native abort audit is retained privately. This is isolated
+offscreen/loopback component QA, not native minimum-OS or installed-app quit
+acceptance. Runtime/MainWindow still call synchronous legacy APIs. Tasks4-5,
+independent integrated review and every earlier acceptance/release gate remain
+open. Installed app/profile, servers, keys, VM and feeds are unchanged.
 
 ### Task 4: Compose Runtime Phases And Quit Milestones
 
@@ -219,7 +247,7 @@ No current production behavior is changed by the clarification or this plan.
 This is one coupled retirement contract, not three independent feature projects.
 Each component has its own baseline/green cycle; runtime integration consumes
 their exact interfaces. Existing Native execution is preserved. The written
-plan is approved; continue from Task2 without asking for the execution method
+plan is approved; continue from Task4 without asking for the execution method
 again. Keep component verification distinct from integrated acceptance.
 
 Remaining beyond this plan: retained natural timing/Torrent causes, broader

@@ -5,7 +5,8 @@ Status: written design approved by the maintainer on 2026-10-06 after checkpoint
 `docs/superpowers/plans/2026-10-06-nonblocking-torrent-quit.md`; the maintainer
 approved that plan after `dd088f2b`. Native/inline implementation has begun with
 the checked engine receipt checkpoint `1ccb0131` and checked sharing/publisher
-checkpoint `ff835364`. Those components are verified separately; proxy retirement,
+checkpoint `ff835364`, followed by proxy physical-retirement checkpoint
+`1561ca2f9` on 2026-10-07. Those components are verified separately;
 runtime/GUI integration and final acceptance remain pending. This approval does
 not authorize installation, release or feed activation during isolated repair QA.
 

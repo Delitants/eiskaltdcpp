@@ -423,3 +423,30 @@ component QA on host/Rosetta, not native minimum-OS, deployed or installed-app
 acceptance. Proxy receipts, runtime/GUI integration and the final composed/no-
 Torrent/broken-control/review matrix remain pending, as do all previously named
 natural-failure, language-quality and release gates. Signed feeds remain last.
+
+The next Native proxy component checkpoint, `1561ca2f9` (2026-10-07), fences
+new admission for checked quit and retains workers until physical thread exit.
+Ordinary reaping no longer joins based on the body-end flag. Worker/container
+ownership precedes thread launch; a real constructor-failure control verifies
+rollback and accepted-descriptor closure. Route/limits remain retained while
+Pending, ordinary stop/start stays restartable, and closed listeners are not
+advertised. No product fault-injection hook or deployment change is added.
+
+An unchanged extraction run passes 21 cases / 562 assertions. New baseline
+controls reproduce exactly 31 expected failures. Focus and completion reruns
+pass six JUnit case nodes / 94 assertions on each architecture, including the
+separate explicitly selected test-only launch interposer. Ordinary socket/proxy
+tests pass 92 / 1,012 each. Full Qt suites pass 753 nodes each and 67,999 total
+assertions, with zero failures/errors/skips and matching inventories; all prior
+ordinary tests remain. Source/binary pins, protected-state readbacks and prior
+evidence seals pass. This is host/Rosetta offscreen QA, not native minimum-OS,
+live or installed-app acceptance.
+
+Next are runtime/MainWindow phase composition and cached GUI quit milestones,
+then composed/no-Torrent/broken-path controls and independent repair-range
+review. The actual app quit path still invokes synchronous legacy retirement.
+Earlier timing/Torrent causes, broader coverage, localization/native quality,
+provenance/reproducibility, independent whole-candidate/native/live/soak checks,
+final rebuild/sign/notarization/update/install and authenticated publication
+remain pending. Overall GUI-settings Task3 and parent Tasks7/8 stay open;
+signed feeds remain last.
