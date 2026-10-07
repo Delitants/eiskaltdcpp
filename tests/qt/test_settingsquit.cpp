@@ -307,6 +307,7 @@ TEST_CASE("Pending GUI settings closes core admission before timeout without ear
     probe.arm(QFile::encodeName(config).constData(), 1);
     auto watchdog = probe.watchdog(ticks, advanced);
     session.request(100);
+    REQUIRE(waitFor([&] { return fixture.gui->mainWindow()->quitProducersRetired(); }));
     CHECK(route->revoked->load());
     REQUIRE(waitFor([&] { return probe.entered(); }));
     CHECK(probe.writer() != probe.gui);
@@ -561,5 +562,216 @@ TEST_CASE("Explicit retry after settings timeout consumes successful receipts wi
         emit backend.installHandoffFinished(backend.handoffOperation, true);
         REQUIRE(waitFor([&] { return ready.count() == 1; }));
     }
+}
+#endif
+
+#if defined(__APPLE__) && defined(USE_TORRENT)
+#include "torrent/TorrentEngine.h"
+#include <catch2/generators/catch_generators.hpp>
+TEST_CASE("Settings freeze during held Torrent retirement without early core drain",
+          "[.torrent-settings-freeze-retirement]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->mainWindow()->showTorrents();
+    auto* runtime = TorrentRuntime::instance();
+    REQUIRE(runtime);
+    auto* engine = runtime->engine();
+    REQUIRE(engine);
+    QSignalSpy configured(engine, &eiskalt::torrent::TorrentEngine::configurationApplied);
+    engine->configure(eiskalt::torrent::loadSettings(TorrentRuntime::settingsPath()), {});
+    REQUIRE(waitFor([&] { return !configured.isEmpty(); }));
+    REQUIRE(runtime->lastError().isEmpty());
+    const auto withUpdate = GENERATE(false, true);
+    auto& store = *fixture.gui->settings();
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(store, backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    if(withUpdate) {
+        const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+            QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+        updater.checkNow(); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+        updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+        updater.installOnNextQuit();
+    }
+    REQUIRE(store.saveChecked());
+    store.setStr("qa/composed-freeze", "frozen-value");
+    const auto route = fixture.core->getProxyRoute()->snapshot();
+    REQUIRE_FALSE(route->revoked->load());
+    const auto checkpoint = fixture.home.filePath("torrent/state/jobs.json");
+    const auto config = fixture.home.filePath("EiskaltDC++_Qt.conf");
+    updates::ApplicationQuitSession session(*fixture.gui, withUpdate ? &updater : nullptr);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; }); heartbeat.start(1);
+    probe.arm(QFile::encodeName(checkpoint).constData(), 1);
+    auto watchdog = probe.watchdog(ticks, advanced);
+    QElapsedTimer elapsed; elapsed.start(); session.request(100);
+    CHECK(elapsed.elapsed() < 100);
+    REQUIRE(waitFor([&] { return probe.entered(); }));
+    CHECK(probe.writer() != probe.gui);
+    CHECK_FALSE(probe.released());
+    CHECK_FALSE(route->revoked->load());
+    CHECK_FALSE(fixture.gui->mainWindow()->quitProducersRetired());
+    store.setStr("qa/composed-freeze", "late-value");
+    CHECK(store.getStr("qa/composed-freeze") == "frozen-value");
+    QByteArray bytes;
+    REQUIRE(waitFor([&] {
+        QFile file(config);
+        if(file.open(QIODevice::ReadOnly)) bytes = file.readAll();
+        return bytes.contains("composed-freeze=frozen-value") || probe.released();
+    }));
+    CHECK_FALSE(probe.released());
+    CHECK(bytes.contains("composed-freeze=frozen-value"));
+    CHECK_FALSE(bytes.contains("late-value"));
+    CHECK_FALSE(route->revoked->load());
+    REQUIRE(waitFor([&] { return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready; }));
+    REQUIRE(watchdog.get()); CHECK(advanced.load());
+    CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+    CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    if(withUpdate) { CHECK(backend.fences == 1); CHECK(backend.routeWasRunning); }
+    REQUIRE(waitFor([&] {
+        fixture.gui->mainWindow()->stopWorkersForQuit(true);
+        return !fixture.gui->mainWindow()->quitWorkersPending();
+    }));
+    CHECK(fixture.gui->mainWindow()->quitProducersRetired());
+    CHECK_FALSE(route->revoked->load());
+    CHECK(quitSave(store) == SaveResult::Ready);
+    QFile file(config); REQUIRE(file.open(QIODevice::ReadOnly));
+    const auto frozen = file.readAll(); file.close();
+    CHECK(frozen.contains("composed-freeze=frozen-value"));
+    CHECK_FALSE(frozen.contains("late-value"));
+    const QByteArray marker("completed-settings-freeze-marker\n");
+    REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    REQUIRE(file.write(marker) == marker.size()); file.close();
+    session.request(3000);
+    REQUIRE(waitFor([&] { return route->revoked->load(); }));
+    if(withUpdate) {
+        REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff; }));
+        CHECK(backend.installs == 1); CHECK(backend.fences == 1);
+        REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
+        CHECK(ready.isEmpty());
+        emit backend.installHandoffFinished(backend.handoffOperation, true);
+    }
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    REQUIRE(file.open(QIODevice::ReadOnly)); CHECK(file.readAll() == marker);
+}
+
+TEST_CASE("Torrent checkpoint retirement must not block the checked quit budget",
+          "[.torrent-quit-retirement]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->mainWindow()->showTorrents();
+    auto* runtime = TorrentRuntime::instance();
+    REQUIRE(runtime);
+    auto* engine = runtime->engine();
+    REQUIRE(engine);
+    QSignalSpy configured(engine, &eiskalt::torrent::TorrentEngine::configurationApplied);
+    const auto settings = eiskalt::torrent::loadSettings(TorrentRuntime::settingsPath());
+    engine->configure(settings, eiskalt::torrent::ProxyConfig{});
+    REQUIRE(waitFor([&] { return !configured.isEmpty(); }));
+    REQUIRE(runtime->lastError().isEmpty());
+
+    const auto mode = GENERATE(0, 1, 3, 6);
+    const auto withUpdate = GENERATE(false, true);
+    QuitBackend backend(*fixture.core);
+    updates::UpdateController updater(*fixture.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    if(withUpdate) {
+        const updates::UpdateOffer offer{2, "3.0.0-pre.2", "fixture", "org.test.eiskalt", "arm64",
+            QVersionNumber(26, 0), updates::Channel::Preview, 100, QByteArray(32, 'a')};
+        updater.checkNow(); emit backend.available(backend.operation, offer);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Available; }));
+        updater.download(); emit backend.downloadReady(backend.operation, offer.build, offer.sha256);
+        REQUIRE(waitFor([&] { return updater.state() == updates::UpdateController::State::Ready; }));
+        updater.installOnNextQuit();
+    }
+    REQUIRE(fixture.core->prepareShutdownChecked(3000).status == dcpp::DCContext::ShutdownStatus::Ready);
+    REQUIRE(fixture.gui->settings()->saveChecked());
+    const auto checkpoint = fixture.home.filePath("torrent/state/jobs.json");
+    const auto config = fixture.home.filePath("EiskaltDC++_Qt.conf");
+    fixture.gui->settings()->setStr("qa/torrent-retirement", "frozen");
+    updates::ApplicationQuitSession session(*fixture.gui, withUpdate ? &updater : nullptr);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    CoreWriteProbe probe;
+    std::atomic_int ticks{0}; std::atomic_bool advanced{false};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; });
+    heartbeat.start(1);
+    std::future<bool> watchdog;
+    if(mode) {
+        probe.arm(QFile::encodeName(checkpoint).constData(), mode);
+        watchdog = probe.watchdog(ticks, advanced);
+    }
+    QElapsedTimer elapsed; elapsed.start(); session.request(100);
+    const auto duration = elapsed.elapsed();
+    CHECK(duration < 100);
+    if(mode) {
+        REQUIRE(waitFor([&] { return probe.entered(); }));
+        CHECK(probe.writer() != probe.gui);
+        CHECK(fixture.gui->mainWindow()->quitWorkersPending());
+        CHECK_FALSE(fixture.gui->mainWindow()->quitProducersRetired());
+        REQUIRE(waitFor([&] {
+            return watchdog.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready;
+        }));
+        REQUIRE(watchdog.get());
+        CHECK(advanced.load());
+        CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+        CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+        CHECK_FALSE((backend.handoffConsent && backend.handoffConsent()));
+        QTest::qWait(30);
+        CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+        CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+    } else {
+        REQUIRE(waitFor([&] { return session.state() != updates::ApplicationQuitSession::State::Preparing; }));
+        if(withUpdate) {
+            CHECK(session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff);
+            CHECK(backend.installs == 1);
+            REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
+            emit backend.installHandoffFinished(backend.handoffOperation, true);
+        }
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        CHECK(session.state() == updates::ApplicationQuitSession::State::ExitReady);
+    }
+    REQUIRE(waitFor([&] {
+        fixture.gui->mainWindow()->stopWorkersForQuit(true);
+        return !fixture.gui->mainWindow()->quitWorkersPending();
+    }));
+    REQUIRE(waitFor([&] { return quitSave(*fixture.gui->settings()) != SaveResult::Pending; }));
+    CHECK(quitSave(*fixture.gui->settings()) == SaveResult::Ready);
+    QFile physical(config); REQUIRE(physical.open(QIODevice::ReadOnly));
+    CHECK(physical.readAll().contains("torrent-retirement=frozen"));
+    QFile state(checkpoint); REQUIRE(state.open(QIODevice::ReadOnly));
+    CHECK(state.readAll().contains("\"jobs\":[]"));
+    CHECK(runtime->shutdownChecked());
+    if(mode) {
+        CHECK(session.state() == updates::ApplicationQuitSession::State::Refused);
+        CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+        const QByteArray marker("completed-torrent-checkpoint-marker\n");
+        QStringList cached{checkpoint, config, fixture.home.filePath("DCPlusPlus.xml"),
+            fixture.home.filePath("torrent/window.ini"), TorrentRuntime::settingsPath()};
+        for(const auto& filename : cached) {
+            QFile file(filename); REQUIRE(file.exists());
+            REQUIRE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
+            REQUIRE(file.write(marker) == marker.size());
+        }
+        session.request(3000);
+        if(withUpdate) {
+            REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::AwaitingHandoff; }));
+            CHECK(backend.installs == 1); CHECK(backend.fences == 1);
+            REQUIRE(backend.handoffConsent); CHECK(backend.handoffConsent());
+            CHECK(ready.isEmpty());
+            emit backend.installHandoffFinished(backend.handoffOperation, true);
+        }
+        REQUIRE(waitFor([&] { return ready.count() == 1; }));
+        for(const auto& filename : cached) {
+            QFile file(filename); REQUIRE(file.open(QIODevice::ReadOnly));
+            CHECK(file.readAll() == marker);
+        }
+    }
+    std::fprintf(stderr, "TORRENT_QUIT_CHECKPOINT mode=%d update=%d request_ms=%lld writer_on_gui=%d heartbeat=%d state=%d installs=%d exits=%d\n",
+        mode, int(withUpdate), static_cast<long long>(duration), mode ? probe.writer() == probe.gui : -1,
+        mode ? int(advanced.load()) : -1, int(session.state()), backend.installs, int(ready.count()));
 }
 #endif

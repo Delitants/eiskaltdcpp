@@ -6,8 +6,10 @@ Status: written design approved by the maintainer on 2026-10-06 after checkpoint
 approved that plan after `dd088f2b`. Native/inline implementation has begun with
 the checked engine receipt checkpoint `1ccb0131` and checked sharing/publisher
 checkpoint `ff835364`, followed by proxy physical-retirement checkpoint
-`1561ca2f9` on 2026-10-07. Those components are verified separately;
-runtime/GUI integration and final acceptance remain pending. This approval does
+`1561ca2f9` on 2026-10-07. Runtime/GUI composition and the approved settings-freeze
+compatibility revision now pass isolated both-CPU focused, original settings and
+complete Qt suites. Final integrated Task5 builds, controls and independent
+review remain pending. This approval does
 not authorize installation, release or feed activation during isolated repair QA.
 
 ## Intent And Evidence

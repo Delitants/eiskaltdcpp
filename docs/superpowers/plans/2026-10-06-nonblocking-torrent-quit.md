@@ -209,13 +209,49 @@ open. Installed app/profile, servers, keys, VM and feeds are unchanged.
 
 **Interfaces:** Consumes Tasks 1-3 fences/receipts and checked core callback. Produces runtime fence/retire methods and cached runtime terminal outcome. Existing `MainWindow::stopWorkersForQuit(bool)`, `quitWorkersPending()` and `quitProducersRetired()` signatures stay unchanged.
 
-- [ ] **Step 1: Promote the actual checkpoint diagnostic.** Append public composed tests under `#if defined(__APPLE__) && defined(USE_TORRENT)`, tagged `[.torrent-quit-retirement]`. Reuse the retained private case structure, original mode1/3 holds, 100ms request and 350ms watchdog. Add mode6 physical exit. Test ordinary/Ready update and explicit retry. Keep every pre-existing settings test body/assertion and helper unchanged.
-- [ ] **Step 2: Add `TEST_CASE("Runtime checked retirement preserves phase order and sticky failures", "[torrent-quit-runtime]")`.** Check all admission fences before first Pending; publisher -> engine -> proxy order; `CHECK_FALSE(route->revoked->load())` while publisher/engine work remains; one cached failure survives while later owners physically drain. Foreign calls and late reload/publication/DNS callbacks do not mutate the owner attempt. Final Refused requires physical retirement of all retained phases, not an abandoned later worker. `CHECK(savedBytes == marker)` and unchanged resume checkpoint generation pin repeated poll/retry.
-- [ ] **Step 3: Run strict RED.** Full-GUI hidden selector under matching original interposer; portable runtime tests under the ordinary runner. Confirm existing blocking-boundary failures without widening holds. Any earlier source changes may improve individual components, but baseline MainWindow composition still calls synchronous retirement and must remain sensitive.
-- [ ] **Step 4: Implement phased runtime composition.** On first fence set runtime stopped/disarm publication and fence all three child admissions. Configure the publisher's checked core callback. Retire each dependency in order; accumulate the first credential-free error but continue physically draining later phases. While any worker remains, report Pending with its actual component; terminal Refused only after all required retirement is collected. Retain all owners/context/route. Existing synchronous runtime shutdown uses the same outcomes and preserves legacy semantics.
-- [ ] **Step 5: Implement separate cached layout milestone.** Add `quitLayoutsComplete` and `quitLayoutsSaved` to MainWindow's private state. Save retained layouts/transfer view and detach observation once; poll runtime outside that one-shot block. Keep `quitSnapshotsComplete` false and `quitWorkersWaiting` true while Torrent is Pending. After terminal physical retirement cache the aggregate snapshot outcome and then continue the existing async settings/core/auxiliary path. Do not change updater-first fencing, session deadlines, auxiliary recovery/disarm or serialization formats.
-- [ ] **Step 6: Run composed GREEN and original hidden selectors.** Under holds check request<100ms, GUI heartbeat, off-GUI writer, correct final bytes, timeout Refused and zero late exit/installs. After physical completion alone retain Refused; explicit request3000 reuses markers and permits only the correctly revalidated fake handoff. Repeat all four original settings selectors and no-Torrent settings/freezing cases on both applicable configurations. Refused physical outcome remains cached on retry.
+- [x] **Step 1: Promote the actual checkpoint diagnostic.** Append public composed tests under `#if defined(__APPLE__) && defined(USE_TORRENT)`, tagged `[.torrent-quit-retirement]`. Reuse the retained private case structure, original mode1/3 holds, 100ms request and 350ms watchdog. Add mode6 physical exit. Test ordinary/Ready update and explicit retry. Keep every pre-existing settings test body/assertion and helper unchanged.
+- [x] **Step 2: Add `TEST_CASE("Runtime checked retirement preserves phase order and sticky failures", "[torrent-quit-runtime]")`.** Check all admission fences before first Pending; publisher -> engine -> proxy order; `CHECK_FALSE(route->revoked->load())` while publisher/engine work remains; one cached failure survives while later owners physically drain. Foreign calls and late reload/publication/DNS callbacks do not mutate the owner attempt. Final Refused requires physical retirement of all retained phases, not an abandoned later worker. `CHECK(savedBytes == marker)` and unchanged resume checkpoint generation pin repeated poll/retry.
+- [x] **Step 3: Run strict RED.** Full-GUI hidden selector under matching original interposer; portable runtime tests under the ordinary runner. Confirm existing blocking-boundary failures without widening holds. Any earlier source changes may improve individual components, but baseline MainWindow composition still calls synchronous retirement and must remain sensitive.
+- [x] **Step 4: Implement phased runtime composition.** On first fence set runtime stopped/disarm publication and fence all three child admissions. Configure the publisher's checked core callback. Retire each dependency in order; accumulate the first credential-free error but continue physically draining later phases. While any worker remains, report Pending with its actual component; terminal Refused only after all required retirement is collected. Retain all owners/context/route. Existing synchronous runtime shutdown uses the same outcomes and preserves legacy semantics.
+- [x] **Step 5: Implement separate cached layout milestone.** Add `quitLayoutsComplete` and `quitLayoutsSaved` to MainWindow's private state. Save retained layouts/transfer view and detach observation once; poll runtime outside that one-shot block. Keep `quitSnapshotsComplete` false and `quitWorkersWaiting` true while Torrent is Pending. After terminal physical retirement cache the aggregate snapshot outcome and then continue the existing async settings/core/auxiliary path. Do not change updater-first fencing, session deadlines, auxiliary recovery/disarm or serialization formats.
+- [x] **Step 6: Run composed GREEN and original hidden selectors.** Under holds check request<100ms, GUI heartbeat, off-GUI writer, correct final bytes, timeout Refused and zero late exit/installs. After physical completion alone retain Refused; explicit request3000 reuses markers and permits only the correctly revalidated fake handoff. Repeat all four original settings selectors and no-Torrent settings/freezing cases on both applicable configurations. Refused physical outcome remains cached on retry.
 - [ ] **Step 7: Curated checkpoint.** Commit `fix(quit): compose nonblocking Torrent retirement before core drain` after readback; no product installation or activation.
+
+**Task4 initial candidate status, 2026-10-07:** Runtime/MainWindow composition
+was implemented locally but was not accepted or committed. The final blocking
+baseline has exactly 22 portable and 18 composed failures, with no setup errors
+or skips. New focus passes 144 portable and 534 composed assertions on each
+CPU; the unchanged no-Torrent original suite passes 12 JUnit nodes / 654
+assertions. Its GUI/test translation units are compiled from current source,
+with unchanged retained accepted no-Torrent dependencies, not a final whole
+candidate rebuild.
+
+The original Torrent-enabled settings suite fails 23 assertions across held
+write, Ready-update, admission and retry cases. Settings freezing/persistence
+is deferred while Torrent is Pending, exposing GUI auto-sync and late writes.
+Two immediate route observations also conflict with asynchronous physical
+producer retirement. Both failed phase-detector runs are retained; the final
+detector follows actual proxy retirement start and the unchanged 350ms TLS
+hold. No original test/helper body or deadline has been changed.
+
+The approved narrow revision is
+`docs/superpowers/specs/2026-10-07-torrent-quit-settings-freeze-compatibility.md`.
+Maintainer approval on 2026-10-07 permits only the specified route-observation
+timing adjustment; all other original assertions/helpers/budgets remain.
+It supersedes Step5's deferred settings start: begin the existing owned writer
+after layouts, then poll settings and Torrent independently without advancing
+the producer milestone or core drain while Torrent remains Pending.
+The approved revision is now verified: both CPU runtime144, composed648 and
+original settings688 assertions pass; complete Qt754 cases each pass with
+ARM34,163/Intel34,138 assertions and matching unchanged legacy inventories.
+The applicable retained-dependency no-Torrent consumer passes12/656. Deferred
+freeze and premature core-drain controls each fail exactly6 intended assertions,
+with original RED23 and blocking RED22/18 preserved. Thirty-six input pins and
+protected/prior evidence readbacks pass. Original test bytes differ only by
+the authorized producer-readiness wait before the unchanged route assertion.
+Task4's local curated checkpoint follows these results. Task5's fresh complete
+integrated/no-Torrent matrix, remaining broken controls and independent review
+stay open; no installation, push or release is authorized by isolated QA.
 
 ### Task 5: Final Regression, Review And Acceptance Evidence
 

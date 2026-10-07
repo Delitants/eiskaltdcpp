@@ -16,6 +16,7 @@
 #include <QCryptographicHash>
 #include <QSet>
 #include <QTimer>
+#include <QThread>
 #include <mutex>
 
 using namespace eiskalt::torrent;
@@ -48,19 +49,25 @@ TorrentRuntime::TorrentRuntime(dcpp::DCContext &context, QObject *parent)
                   "torrent:" + id.toStdString(), root.toStdString(), paths, cancelled, hashingStarted);
           }, [&context](const QString &id) {
               context.getShareManager()->removeManagedFiles("torrent:" + id.toStdString());
-          }, this))
+          }, this, [&context](const QString &id) {
+              return context.getShareManager()->removeManagedFilesChecked("torrent:" + id.toStdString());
+          }))
 {
     Q_ASSERT(parent);
     Q_ASSERT(!current);
     current = this;
     connect(torrentEngine, &TorrentEngine::error, this, [this](const QString &message) {
+        if (stopped) return;
         latestError = message;
         emit error(message);
     });
-    connect(torrentEngine, &TorrentEngine::diagnostic, this, &TorrentRuntime::diagnostic);
+    connect(torrentEngine, &TorrentEngine::diagnostic, this, [this](const QString &message) {
+        if (!stopped) emit diagnostic(message);
+    });
     connect(sharePublisher, &TorrentSharePublisher::statusChanged,
             this, &TorrentRuntime::setShareStatus);
     connect(sharePublisher, &TorrentSharePublisher::finished, this, [this](const QString &id, bool published) {
+        if (stopped) return;
         if (published) {
             publicationFailures.remove(id);
             retryAfter.remove(id);
@@ -78,10 +85,12 @@ TorrentRuntime::TorrentRuntime(dcpp::DCContext &context, QObject *parent)
             this, &TorrentRuntime::invalidateShare, Qt::DirectConnection);
     connect(torrentEngine, &TorrentEngine::dcShareExclusionChanged,
             this, &TorrentRuntime::refreshPublication, Qt::DirectConnection);
-    connect(torrentEngine, &TorrentEngine::hashRecheckRequested, this, [&context](const QString &id) {
+    connect(torrentEngine, &TorrentEngine::hashRecheckRequested, this, [this, &context](const QString &id) {
+        if (stopped) return;
         context.getShareManager()->forgetManagedFileHashes("torrent:" + id.toStdString());
     }, Qt::DirectConnection);
-    connect(torrentEngine, &TorrentEngine::fileHashRecheckRequested, this, [&context](const QString &id, const QStringList &paths) {
+    connect(torrentEngine, &TorrentEngine::fileHashRecheckRequested, this, [this, &context](const QString &id, const QStringList &paths) {
+        if (stopped) return;
         dcpp::StringList affected;
         affected.reserve(paths.size());
         for (const auto &path : paths) affected.push_back(path.toStdString());
@@ -132,6 +141,7 @@ QString TorrentRuntime::shareStatus(const QString &id) const
 
 void TorrentRuntime::setShareStatus(const QString &id, const QString &status)
 {
+    if (stopped) return;
     if (sharingStatuses.value(id) == status)
         return;
     sharingStatuses.insert(id, status);
@@ -321,6 +331,7 @@ void TorrentRuntime::applySecurity(EncryptionMode encryption, const QStringList 
 
 void TorrentRuntime::invalidateShare(const QString &id)
 {
+    if (stopped) return;
     for (const auto &job : torrentEngine->jobs()) {
         if (id.isEmpty() || id == job.id)
             invalidatedRevisions.insert(job.id, job.revision);
@@ -346,13 +357,55 @@ void TorrentRuntime::shutdown()
 
 bool TorrentRuntime::shutdownChecked()
 {
-    if (stopped)
-        return shutdownSaved;
-    stopped = true;
-    sharePublisher->stop();
-    const bool checkpointSaved = torrentEngine->shutdownChecked();
-    proxyAdapter->stop();
-    shutdownSaved = checkpointSaved;
+    if (QThread::currentThread() != thread()) return false;
+    while (retireForQuitChecked().status == QuitRetirementStatus::Pending)
+        QThread::msleep(1);
     return shutdownSaved;
+}
+
+bool TorrentRuntime::fenceForQuitChecked() noexcept
+{
+    if (QThread::currentThread() != thread()) return false;
+    if (quitPhase != QuitPhase::Fence) return !quitFailure;
+    stopped = true;
+    publicationArmed = false;
+    // Fence every admission before polling any physical owner; do not revoke routes.
+    if (!sharePublisher->fenceForQuitChecked() && !quitFailure) quitFailure = "publisher";
+    if (!torrentEngine->fenceForQuitChecked() && !quitFailure) quitFailure = "engine";
+    if (!proxyAdapter->fenceForQuitChecked() && !quitFailure) quitFailure = "proxy";
+    quitPhase = QuitPhase::Publisher;
+    return !quitFailure;
+}
+
+QuitRetirementResult TorrentRuntime::retireForQuitChecked() noexcept
+{
+    if (QThread::currentThread() != thread()) return {QuitRetirementStatus::Refused, "runtime"};
+    if (quitPhase == QuitPhase::Complete) return quitResult;
+    (void)fenceForQuitChecked();
+    while (quitPhase != QuitPhase::Complete) {
+        QuitRetirementResult result{QuitRetirementStatus::Refused, "runtime"};
+        switch (quitPhase) {
+        case QuitPhase::Publisher: result = sharePublisher->retireForQuitChecked(); break;
+        case QuitPhase::Engine: result = torrentEngine->retireForQuitChecked(); break;
+        case QuitPhase::Proxy: result = proxyAdapter->retireForQuitChecked(); break;
+        case QuitPhase::Fence:
+        case QuitPhase::Complete: break;
+        }
+        if (result.status == QuitRetirementStatus::Pending) return result;
+        if (result.status == QuitRetirementStatus::Refused && !quitFailure)
+            quitFailure = result.component;
+        // A failed receipt is sticky, but later owners still require physical drain.
+        switch (quitPhase) {
+        case QuitPhase::Publisher: quitPhase = QuitPhase::Engine; break;
+        case QuitPhase::Engine: quitPhase = QuitPhase::Proxy; break;
+        case QuitPhase::Proxy: quitPhase = QuitPhase::Complete; break;
+        case QuitPhase::Fence:
+        case QuitPhase::Complete: break;
+        }
+    }
+    shutdownSaved = !quitFailure;
+    quitResult = {shutdownSaved ? QuitRetirementStatus::Ready : QuitRetirementStatus::Refused,
+                  quitFailure ? quitFailure : "runtime"};
+    return quitResult;
 }
 #endif

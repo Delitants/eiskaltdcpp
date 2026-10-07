@@ -442,11 +442,39 @@ ordinary tests remain. Source/binary pins, protected-state readbacks and prior
 evidence seals pass. This is host/Rosetta offscreen QA, not native minimum-OS,
 live or installed-app acceptance.
 
-Next are runtime/MainWindow phase composition and cached GUI quit milestones,
-then composed/no-Torrent/broken-path controls and independent repair-range
-review. The actual app quit path still invokes synchronous legacy retirement.
+Runtime/MainWindow phase composition and cached GUI quit milestones are now
+implemented and verified in isolated tests. Next are Task5's fresh integrated
+and no-Torrent builds, remaining broken-path controls and independent
+repair-range review. The checked quit path polls retained physical receipts;
+legacy synchronous shutdown remains available for existing callers.
 Earlier timing/Torrent causes, broader coverage, localization/native quality,
 provenance/reproducibility, independent whole-candidate/native/live/soak checks,
 final rebuild/sign/notarization/update/install and authenticated publication
 remain pending. Overall GUI-settings Task3 and parent Tasks7/8 stay open;
 signed feeds remain last.
+
+The local runtime/MainWindow composition (2026-10-07) now uses
+checked publisher -> engine -> proxy retirement and caches GUI layouts apart
+from physical producer completion. Task4's focused verification is complete;
+final integrated repair acceptance is still pending.
+Final blocking controls reproduce exactly 40 failures; focused runtime and
+composed selectors pass 144 and 534 assertions on each CPU. The unchanged
+no-Torrent original settings suite passes 12 nodes / 654 assertions, using
+current GUI/test translation units and retained accepted dependency objects.
+
+The initial Torrent-enabled settings suite reported 23 failures: settings were
+not frozen while Torrent is Pending, permitting GUI auto-sync and late writes;
+two immediate core-route observations conflict with physical producer gating.
+The approved settings-freeze/compatibility revision now passes. It starts the
+existing owned settings writer after
+layouts, independently of Torrent physical retirement. Only the original
+core-route observation is moved behind producer readiness; its assertion and
+all original helpers, holds and budgets remain. All failed runs
+remain retained. Both CPU focus runtime144/composed648/original settings688
+pass, with complete Qt754 cases each / 68,301 total assertions and matching
+inventories. The applicable current-GUI/test retained-dependency no-Torrent
+consumer passes12/656. Deferred-freeze and early-core controls fail exactly6
+intended assertions each. Thirty-six input pins and protected/prior-evidence
+readbacks pass. Task5, overall GUI-settings Task3, parent Tasks7/8,
+historical natural-failure, native/language/provenance/soak and release gates
+remain open. No installation, publication, key, server, VM or feed change occurs.

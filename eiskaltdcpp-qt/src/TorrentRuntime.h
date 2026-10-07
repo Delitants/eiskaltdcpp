@@ -8,6 +8,7 @@
 #include <QStringList>
 #include <memory>
 #include "torrent/TorrentTypes.h"
+#include "torrent/QuitRetirement.h"
 #include "TorrentSharing.h"
 
 namespace dcpp { class DCContext; }
@@ -30,6 +31,8 @@ public:
     QString lastError() const;
     QString shareStatus(const QString &id) const;
     QList<torrent_sharing::FileMagnet> dcMagnets(const QStringList &ids) const;
+    bool fenceForQuitChecked() noexcept;
+    eiskalt::torrent::QuitRetirementResult retireForQuitChecked() noexcept;
 
 public slots:
     void reloadSettings();
@@ -62,6 +65,11 @@ private:
     bool publicationArmed = false;
     bool stopped = false;
     bool shutdownSaved = false;
+    enum class QuitPhase { Fence, Publisher, Engine, Proxy, Complete };
+    QuitPhase quitPhase = QuitPhase::Fence;
+    const char *quitFailure = nullptr;
+    eiskalt::torrent::QuitRetirementResult quitResult{
+        eiskalt::torrent::QuitRetirementStatus::Pending, "runtime"};
     void refreshPublication();
     void setShareStatus(const QString &id, const QString &status);
 };

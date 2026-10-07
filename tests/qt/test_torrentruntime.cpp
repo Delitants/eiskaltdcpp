@@ -35,6 +35,19 @@
 #include <QTest>
 #include <QUdpSocket>
 #include <QUrlQuery>
+#include <QThread>
+#include <QTimer>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <future>
+#include <thread>
+#include <catch2/generators/catch_generators.hpp>
+#include "torrent/QuitRetirement.h"
+
+void retainRuntimeProxyExit(TorrentProxyAdapter&, std::function<bool()>&, std::function<void()>&);
+size_t retainedRuntimeProxyWorkers(const TorrentProxyAdapter&);
+bool retiringRuntimeProxy(const TorrentProxyAdapter&);
 
 using namespace eiskalt::torrent;
 
@@ -921,5 +934,121 @@ TEST_CASE("Runtime selected repair redownloads boundary data and restores sharin
         CHECK(status.at(1).toString() != "Preparing DC++ sharing");
     CHECK(f.job(id).fileCheck.token == 0);
     CHECK(seed.shutdownChecked());
+}
+#endif
+#ifdef USE_TORRENT
+namespace {
+template<class Runtime> bool fenceRuntime(Runtime& runtime) {
+    if constexpr(requires { runtime.fenceForQuitChecked(); }) return runtime.fenceForQuitChecked();
+    return false;
+}
+template<class Runtime> QuitRetirementResult retireRuntime(Runtime& runtime) {
+    if constexpr(requires { runtime.retireForQuitChecked(); }) return runtime.retireForQuitChecked();
+    return {runtime.shutdownChecked() ? QuitRetirementStatus::Ready : QuitRetirementStatus::Refused, "legacy"};
+}
+template<class Runtime> QuitRetirementResult foreignRuntime(Runtime& runtime) {
+    if constexpr(requires { runtime.retireForQuitChecked(); }) return runtime.retireForQuitChecked();
+    return {QuitRetirementStatus::Refused, "missing"};
+}
+}
+
+TEST_CASE("Runtime checked retirement preserves phase order and sticky failures", "[torrent-quit-runtime]") {
+    const bool refuseRetraction = GENERATE(false, true);
+    RuntimeFixture f;
+    const auto id = f.add();
+    f.awaitPublished(id);
+    auto* publisher = f.runtime->findChild<TorrentSharePublisher*>();
+    auto* proxy = f.runtime->findChild<TorrentProxyAdapter*>();
+    REQUIRE(publisher); REQUIRE(proxy);
+    const auto route = f.context.getProxyRoute()->snapshot();
+    CHECK_FALSE(route->revoked->load());
+    ProxyConfig adapterConfig;
+    adapterConfig.type = ProxyType::Shadowsocks;
+    adapterConfig.host = "127.0.0.1"; adapterConfig.port = 9;
+    adapterConfig.cipher = "aes-256-gcm"; adapterConfig.password = "disposable-runtime";
+    REQUIRE(proxy->start(adapterConfig));
+    std::function<bool()> proxyEntered;
+    std::function<void()> releaseProxy;
+    retainRuntimeProxyExit(*proxy, proxyEntered, releaseProxy);
+    CHECK(retainedRuntimeProxyWorkers(*proxy) == 1);
+    std::atomic_bool sharingEntered{false}, releaseSharing{false};
+    auto sharingHold = std::async(std::launch::async, [&] {
+        if(refuseRetraction) return;
+        dcpp::Lock lock(f.shares().cs);
+        sharingEntered = true;
+        while(!releaseSharing) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    });
+    if(!refuseRetraction) REQUIRE(waitFor([&] { return sharingEntered.load(); }));
+    else f.shares().shutdownRequested = true;
+    auto watchdog = std::async(std::launch::async, [&] {
+        std::this_thread::sleep_for(std::chrono::milliseconds(350));
+        releaseSharing = true;
+        QElapsedTimer timer; timer.start();
+        while(!proxyEntered() && timer.elapsed() < 3000)
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if(proxyEntered()) std::this_thread::sleep_for(std::chrono::milliseconds(350));
+        releaseProxy();
+    });
+    std::atomic_int ticks{0};
+    QTimer heartbeat;
+    QObject::connect(&heartbeat, &QTimer::timeout, &heartbeat, [&] { ++ticks; });
+    heartbeat.start(1);
+    const auto actualCheckpoint = QDir(QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG))).filePath("torrent/state/jobs.json");
+    const QByteArray marker("runtime-phase-checkpoint-marker\n");
+    RuntimeFixture::write(actualCheckpoint, marker);
+    CHECK(fenceRuntime(*f.runtime));
+    CHECK(proxy->endpoint().port == 0);
+    CHECK_FALSE(retiringRuntimeProxy(*proxy));
+    CHECK(f.engine().configure(f.settings, {}) == 0);
+    auto foreign = std::async(std::launch::async, [&] { return foreignRuntime(*f.runtime); });
+    CHECK(foreign.get().status == QuitRetirementStatus::Refused);
+    QElapsedTimer elapsed; elapsed.start();
+    auto result = retireRuntime(*f.runtime);
+    CHECK(elapsed.elapsed() < 100);
+    CHECK(result.status == QuitRetirementStatus::Pending);
+    CHECK_FALSE(route->revoked->load());
+    CHECK(proxy->endpoint().port == 0);
+    QSignalSpy reloaded(f.runtime.get(), &TorrentRuntime::settingsReloaded);
+    QSignalSpy status(f.runtime.get(), &TorrentRuntime::shareStatusChanged);
+    f.runtime->reloadSettings(); f.runtime->invalidateShare(id);
+    emit publisher->finished(id, false); emit publisher->statusChanged(id, "late");
+    QTest::qWait(10);
+    CHECK(reloaded.isEmpty()); CHECK(status.isEmpty());
+    CHECK(ticks.load() > 0);
+    if(!refuseRetraction && !releaseSharing.load()) {
+        CHECK(std::string(result.component) == "publisher");
+        QFile saved(actualCheckpoint); REQUIRE(saved.open(QIODevice::ReadOnly));
+        CHECK(saved.readAll() == marker);
+        CHECK_FALSE(route->revoked->load());
+        CHECK_FALSE(retiringRuntimeProxy(*proxy));
+    }
+    REQUIRE(waitFor([&] {
+        result = retireRuntime(*f.runtime);
+        return retiringRuntimeProxy(*proxy) || result.status != QuitRetirementStatus::Pending;
+    }));
+    CHECK(result.status == QuitRetirementStatus::Pending);
+    if(result.status == QuitRetirementStatus::Pending) {
+        CHECK(std::string(result.component) == "Torrent proxy workers");
+        CHECK_FALSE(route->revoked->load());
+        REQUIRE(waitFor(proxyEntered));
+    }
+    REQUIRE(waitFor([&] { return retireRuntime(*f.runtime).status != QuitRetirementStatus::Pending; }));
+    watchdog.get(); sharingHold.get();
+    const auto expected = refuseRetraction ? QuitRetirementStatus::Refused : QuitRetirementStatus::Ready;
+    CHECK(retireRuntime(*f.runtime).status == expected);
+    CHECK(retainedRuntimeProxyWorkers(*proxy) == 0);
+    QFile completed(actualCheckpoint); REQUIRE(completed.open(QIODevice::ReadOnly));
+    const auto durable = completed.readAll();
+    const auto jobs = QJsonDocument::fromJson(durable).object()["jobs"].toArray();
+    REQUIRE(jobs.size() == 1);
+    CHECK(jobs[0].toObject()["resumeGeneration"].toString() == "1");
+    for(int i = 0; i < 3; ++i) CHECK(retireRuntime(*f.runtime).status == expected);
+    QFile repeated(actualCheckpoint); REQUIRE(repeated.open(QIODevice::ReadOnly));
+    CHECK(repeated.readAll() == durable);
+    RuntimeFixture::write(actualCheckpoint, marker);
+    for(int i = 0; i < 3; ++i) CHECK(retireRuntime(*f.runtime).status == expected);
+    QFile saved(actualCheckpoint); REQUIRE(saved.open(QIODevice::ReadOnly));
+    const auto savedBytes = saved.readAll(); CHECK(savedBytes == marker);
+    CHECK(f.runtime->shutdownChecked() == !refuseRetraction);
 }
 #endif

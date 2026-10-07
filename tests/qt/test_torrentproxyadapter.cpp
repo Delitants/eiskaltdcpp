@@ -88,6 +88,16 @@ struct TorrentProxyAdapterTestAccess {
             complete(*ptr);
         });
     }
+    static void phaseTailWorker(TorrentProxyAdapter& a, const std::shared_ptr<ProxyHold>& hold) {
+        auto worker = std::make_unique<TorrentProxyAdapter::Impl::Worker>();
+        auto* ptr = worker.get();
+        a.d->workers.push_back(std::move(worker));
+        ptr->thread = std::thread([ptr, hold, &a] {
+            while(!a.d->stopping.load()) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            thread_local ProxyExitHold tail{hold};
+            complete(*ptr);
+        });
+    }
     static void reap(TorrentProxyAdapter& a) { a.d->reap(); }
     static bool resolutionCancelled(const TorrentProxyAdapter& a) {
         const auto& r = a.d->workers.front()->resolution;
@@ -98,6 +108,24 @@ struct TorrentProxyAdapterTestAccess {
     static void accept(TorrentProxyAdapter& a, qintptr descriptor) { a.d->accept(descriptor); }
 #endif
 };
+
+// Runtime composition uses the same real adapter worker/TLS receipt as component tests.
+void retainRuntimeProxyExit(TorrentProxyAdapter& adapter,
+                           std::function<bool()>& entered,
+                           std::function<void()>& release) {
+    auto hold = std::make_shared<ProxyHold>();
+    entered = [hold] { return hold->entered.load(); };
+    release = [hold] { hold->released = true; };
+    TorrentProxyAdapterTestAccess::phaseTailWorker(adapter, hold);
+}
+
+size_t retainedRuntimeProxyWorkers(const TorrentProxyAdapter& adapter) {
+    return TorrentProxyAdapterTestAccess::workers(adapter);
+}
+
+bool retiringRuntimeProxy(const TorrentProxyAdapter& adapter) {
+    return TorrentProxyAdapterTestAccess::stopping(adapter);
+}
 
 namespace {
 template<typename Peer>

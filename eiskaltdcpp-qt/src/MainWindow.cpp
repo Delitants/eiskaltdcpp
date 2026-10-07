@@ -170,6 +170,8 @@ public:
         bool quitDrainComplete = false;
         bool quitSnapshotsComplete = false;
         bool quitSnapshotsSaved = false;
+        bool quitLayoutsComplete = false;
+        bool quitLayoutsSaved = false;
         bool quitWorkersWaiting = false;
         bool quitIntentSaved = true;
         QList<QPointer<QThread>> quitThreads;
@@ -1045,7 +1047,7 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
     if (d->quitDrainComplete) return d->quitFenceSaved;
     auto* ctx = qtCtx();
     if (!ctx || !ctx->settings()) return false;
-    if (!d->quitSnapshotsComplete) {
+    if (!d->quitLayoutsComplete) {
         QList<ArenaWidget*> layouts;
         const auto retain = [&](ArenaWidget* arena) {
             if (arena && !layouts.contains(arena)) layouts.append(arena);
@@ -1103,6 +1105,9 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
                 for (auto* probe : root->findChildren<ProxyTestRunner*>()) probes.insert(probe);
                 for (auto* hasher : root->findChildren<FileHasher*>()) hashers.insert(hasher);
             }
+    #ifdef USE_TORRENT
+            if (torrentRuntime) saved = torrentRuntime->fenceForQuitChecked() && saved;
+    #endif
             d->quitIntentSaved = saved;
             for (auto* probe : probes) d->quitProbes.append(probe);
             for (auto* hasher : hashers) d->quitHashers.append(hasher);
@@ -1149,12 +1154,28 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
         }
     #ifdef USE_TORRENT
         if (ctx->transferView()) ctx->transferView()->setTorrentEngine(nullptr);
-        if (torrentRuntime) saved = torrentRuntime->shutdownChecked() && saved;
+    #endif
+        d->quitLayoutsSaved = saved;
+        d->quitLayoutsComplete = true;
+    }
+    // Freeze dirty Qt storage before yielding for Torrent retirement. Its owned
+    // writer can finish independently, but cannot authorize early core drain.
+    const auto settings = ctx->settings()->saveForQuitChecked(asynchronousPersistence);
+    if (!d->quitSnapshotsComplete) {
+        bool saved = d->quitLayoutsSaved;
+    #ifdef USE_TORRENT
+        if (torrentRuntime) {
+            const auto result = torrentRuntime->retireForQuitChecked();
+            if (result.status == eiskalt::torrent::QuitRetirementStatus::Pending) {
+                d->quitWorkersWaiting = true;
+                return false;
+            }
+            saved = result.status == eiskalt::torrent::QuitRetirementStatus::Ready && saved;
+        }
     #endif
         d->quitSnapshotsSaved = saved;
         d->quitSnapshotsComplete = true;
     }
-    const auto settings = ctx->settings()->saveForQuitChecked(asynchronousPersistence);
     d->quitWorkersWaiting = settings == WulforSettings::QuitSaveStatus::Pending;
     if (d->quitWorkersWaiting) return false;
     const bool saved = d->quitSnapshotsSaved && settings == WulforSettings::QuitSaveStatus::Ready;
