@@ -1,9 +1,10 @@
 # GUI Quit Pending Compatibility
 
-Status: draft for maintainer review, 2026-10-07. The maintainer approved
-preparing this focused design after the Task5 failed integrated checkpoint.
-This document is not yet approved for implementation. Native/inline execution
-remains the selected method; no new delegation or worktree is requested.
+Status: written specification approved by the maintainer on 2026-10-07 after
+documentation checkpoint `cb7da115`. Preparation of the implementation plan
+is authorized; the completed plan still needs review before implementation.
+Native/inline execution remains the selected method; no new delegation or
+worktree is requested.
 
 ## Intent And Boundaries
 
@@ -190,8 +191,9 @@ GUI-settings Task3 and updater Tasks7/8 remain open; signed feeds stay last.
 
 ## Handoff
 
-This written specification needs maintainer review. Once approved, write the
-focused implementation plan with an exact call-site migration inventory and
-verification commands, preserving Native execution. Review that plan before
-implementation. No fixture/product behavior has been changed in this design
-task, and no completion or release gate is closed by writing it.
+The maintainer approved this written specification. The implementation plan is
+`docs/superpowers/plans/2026-10-07-gui-quit-pending-compatibility.md`, with an exact
+call-site migration inventory and verification commands. Review that plan before
+implementation; Native execution is preserved. No fixture/product behavior has
+been changed during specification/planning, and neither closes a completion or
+release gate.
