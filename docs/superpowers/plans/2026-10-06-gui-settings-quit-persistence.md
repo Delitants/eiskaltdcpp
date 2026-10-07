@@ -308,3 +308,35 @@ review. No installation, push, signing or publication occurs. Task 3 remains
 incomplete; the bounded admission cleanup correction is independently verified.
 
 This plan does not close retained natural recovery/Torrent/bootstrap/publication/bind/peer-counter causes, pending-owner/Ready-update coverage or per-file AntiSpam recovery, translation/native-language quality, provenance/reproducibility, whole-candidate independent review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final app/material rebuild, numeric production build allocation, signing/notarization/signed-v3 acceptance, guarded installation/readback or authenticated wiki/prerelease publication/readback. Signed feeds remain last; parent Tasks 7/8 stay open.
+
+#### Sidebar Recovery Diagnostic After `fd605c919`
+
+Focused ARM sidebar diagnosis retains seed 2124193600 and all public code,
+guards, deadlines and assertions. Six unmodified runs reproduce the exact
+`prompt->isVisible()` / `recovered` failure once. Eighteen private trace runs
+reproduce it once without a forced delay. That trace observes the Anti-spam
+retry click at 36ms while the session remains Preparing and its prompt hidden;
+the failed auxiliary receipt is collected at 48ms, reopening the recovery
+prompt. The queued click was correctly ignored during Preparing. No Ready
+notification or installation follows. The test removes the filesystem blocker
+before the preceding blocked retry has a terminal receipt, relying on a 30ms
+wait instead of synchronizing on renewed refusal.
+
+Two private 250ms failed-receipt controls reproduce that exact ordering in
+both Search blacklist and Anti-spam branches. All three nonempty inventories
+match the single intended case. Across 26 runs, 2,210 assertions pass and twelve
+fail: two each in the two natural reproductions, four each in the two controlled
+runs. There are no fatal errors, expected failures or skips. Passing reruns do
+not waive either reproduction. This establishes the test scheduling gap, not
+the precise historical matrix timings or the other retained quit stalls.
+
+Recommended bounded correction, not implemented: keep the blocked path intact
+after the deliberately unsuccessful retry, then use the existing 5000ms helper
+to require the renewed visible recovery prompt before removing the blocker.
+Keep every original assertion, the later mouse click, frozen rule checks,
+single producer fence, no-install checks and 3000ms session budget unchanged.
+Validate against the same retained delayed-receipt objects before broader
+ARM/Intel/layout coverage. No production session change or queued retry consent
+is proposed. Private diagnostic evidence is retained under
+`Work/qa/sidebar-checkpoint-recovery-diagnosis-20261006`; Task 3, final review,
+native/live acceptance, installation and release gates remain open.

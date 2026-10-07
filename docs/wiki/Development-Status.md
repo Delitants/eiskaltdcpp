@@ -221,6 +221,19 @@ passes. Neither the current passes nor controlled proof waives the recovery
 failure or retained natural latency/Torrent failures. Protected state and old
 evidence remain intact; Task 3, installation and release gates stay open.
 
+Focused ARM sidebar diagnosis now reproduces that recovery failure both with
+the unmodified test and in a private natural trace. The test clicks at 36ms
+while the previous blocked save is still Preparing; its failed receipt is
+collected at 48ms and reopens the prompt. The test's 30ms wait is not a terminal
+save receipt. Private delayed-receipt controls reproduce the same sequence for
+Search blacklist and Anti-spam. Across 26 focused runs, 2,210 assertions pass
+and twelve narrowly validated failures remain retained; no fatal errors,
+expected failures or skips occur. A test-only wait for renewed refusal before
+repairing the path is recommended but not implemented. Production code,
+deadlines, assertions, installed app and live profile remain unchanged. This
+does not close other quit stalls, the historical exact timings, broader
+regression/native acceptance or release gates.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

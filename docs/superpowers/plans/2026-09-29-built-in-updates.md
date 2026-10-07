@@ -2584,3 +2584,18 @@ numeric build allocation, signing/notarization/signed-v3 acceptance, guarded
 installation/readback and authenticated wiki/prerelease publication remain open.
 Forced/crash teardown responsiveness is outside this bounded guarantee. Parent
 Tasks 7/8 stay open; signed feeds remain last.
+
+The next focused ARM sidebar diagnostic reproduces the retained recovery failure
+once in six unmodified runs and once in eighteen private natural trace runs,
+all at seed 2124193600. The traced retry click occurs at 36ms while a prior
+blocked checkpoint retry remains Preparing; its failed Anti-spam receipt is
+collected at 48ms and only then reopens the prompt. The test's fixed 30ms wait
+does not establish terminal refusal before repairing the path and clicking.
+Two private 250ms failed-receipt controls reproduce the same ignored click and
+renewed refusal for both auxiliary components. Twenty-six exact case instances
+produce 2,210 passing assertions and twelve narrowly validated failures, with
+no fatal errors, expected failures or skips. No production code or public test
+changes. A bounded test-only wait for renewed refusal before repairing the
+filesystem is recommended, pending approval; budgets, assertions, retention and
+update-consent guards remain intact. Other latency/Torrent causes and all final
+acceptance/release gates stay open; signed feeds remain last.
