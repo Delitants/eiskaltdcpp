@@ -377,3 +377,36 @@ provenance/reproducibility, independent whole-candidate review, native/live/
 lifecycle/benchmark/soak acceptance and all final rebuild/signing/installation/
 publication gates remain open. Signed feeds stay last; parent Tasks 7/8 stay
 open. No installation, push, production build allocation or feed change.
+
+#### Shadowsocks Completion Diagnostic After `50b88b0b3`
+
+Nine isolated unchanged-binary runs at retained seed 130004532 pass; this does
+not waive the earlier Intel/Rosetta 2022 disconnect completion failure. Across
+24 private no-forced-delay trace runs, one legacy-cipher disconnect run freezes
+the original completion load false immediately after peer EOF, with all 33312
+expected encrypted bytes received. Its Failed callback publishes completion
+about 0.35ms later, well inside the unchanged three-second deadline. The
+production fail path closes the socket before firing Failed; peer EOF is not a
+listener receipt. Trace timestamps/string copying can perturb scheduling; this
+identifies the observed gap, not the original historical 2022 timing. The Failed
+callback's default pending flag alone is not independent drain proof.
+
+Four private 150ms callback-publication controls reproduce the same gap for
+both ciphers on ARM and Intel/Rosetta. Six exact inventories / 37 case instances
+/ 296 sections validate 1674 passing assertions and nine failures: one traced
+and eight controlled. No exception, fatal error, expected failure or skip. All
+failed checks follow EOF/all received bytes and precede callback completion;
+completion is true after checked cleanup and publishes within the original
+deadline. Diagnostic contract PASS is not green suite acceptance or a fix.
+Only private test objects differ; production, originals, runner/policy and
+protected state remain unchanged. Evidence is retained under
+`Work/qa/shadowsocks-completion-diagnosis-20261006`.
+
+Recommended bounded test-only correction, pending approval: after the read
+loop, wait for listener completion using the same shared three-second deadline
+and one-millisecond yield pattern, then retain every original assertion and
+cancellation/byte bound. No socket behavior, callback order or timeout change.
+Validate against retained held-callback behavior before the full current matrix.
+Task 3, earlier latency/Torrent causes, coverage/review/native/live acceptance
+and final rebuild/signing/install/publication gates remain open. Signed feeds
+last; no app/profile, VM/Docker/server, credential/key or GitHub changes.

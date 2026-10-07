@@ -248,6 +248,21 @@ retained with cause unestablished. This verifies the bounded test scheduling
 correction, not other retained causes, native acceptance or release readiness.
 No installed app, profile, production routing or signed feed changes.
 
+A focused socket diagnostic subsequently observes a peer-EOF/listener-receipt
+gap. Nine unchanged-binary reruns pass, but one of 24 private no-forced-delay
+trace runs checks completion false after EOF/all expected ciphertext bytes;
+the callback publishes about 0.35ms later within the original deadline. The
+socket closes before Failed listeners run. Trace instrumentation can affect
+scheduling, so the original historical 2022 failure's precise timing is not
+claimed. Four private delayed-callback controls reproduce the gap for both
+ciphers on ARM and Intel/Rosetta. Six inventories / 37 cases / 296 sections
+validate 1674 passing assertions and nine exact failures, without exceptions,
+fatal errors, expected failures or skips. This is diagnostic evidence, not
+green-suite acceptance or a proxy fix. A test-only wait for completion using the
+same three-second deadline is recommended pending approval; no public code,
+installed state, live routing, credential/key or release-feed changes occur.
+Earlier causes and all final acceptance/publication gates remain open.
+
 Earlier regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

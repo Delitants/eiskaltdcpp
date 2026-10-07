@@ -2616,3 +2616,18 @@ failure remains retained with cause unestablished, alongside earlier unwaived
 latency/Torrent causes. The bounded test correction is verified, not overall
 Task 3, installation or release acceptance. Parent Tasks 7/8 remain open;
 signing, publication and signed feeds stay gated, with feeds last.
+
+The next focused socket diagnostic identifies an EOF/completion ordering gap
+in a private no-forced-delay trace: all ciphertext bytes arrive, the test freezes
+completion false after EOF, then the callback publishes about 0.35ms later,
+within the original three-second deadline. Nine unchanged-binary reruns pass;
+they do not waive the retained original 2022 failure or establish its precise
+historical timing. Trace instrumentation can perturb scheduling. Four private
+150ms callback controls reproduce the gap for both ciphers on ARM/Intel-Rosetta.
+Six inventories / 37 cases / 296 sections validate 1674 passing assertions and
+nine exact failures, with no fatal errors, exceptions, expected failures or
+skips. Diagnostic readback PASS is not a green matrix or production proxy fix.
+Public code, budgets, originals, profiles and protected release materials stay
+unchanged. A test-only completion wait sharing the original deadline is
+recommended, pending approval. Other retained causes, final review/native/live
+acceptance and all release gates remain open; signed feeds are still last.
