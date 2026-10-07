@@ -2599,3 +2599,20 @@ changes. A bounded test-only wait for renewed refusal before repairing the
 filesystem is recommended, pending approval; budgets, assertions, retention and
 update-consent guards remain intact. Other latency/Torrent causes and all final
 acceptance/release gates stay open; signed feeds remain last.
+
+After approval, the recovery-button test now waits for renewed refusal while
+the blocked path remains intact, before repairing it and clicking Retry. Five
+test lines preserve every original assertion, the 5000ms helper and 3000ms quit
+budget; production retry/consent/retention behavior is unchanged. Fresh RED
+validates eight exact failures after 124 passing assertions; GREEN against the
+same delayed-receipt session/coordinator objects passes 180 assertions. New
+ARM/Intel GUI consumer pins and CPU/minimum-OS metadata pass, not native Intel
+acceptance. The complete 32-selection serial matrix matches 4,287 case instances
+and 444,046 passing assertions. It remains FAIL on one Intel/Rosetta core
+assertion: final Shadowsocks disconnect send completion, seed 130004532,
+`tests/test_bufferedsocket.cpp:129`. All six GUI layouts and all other selections
+pass; no fatal errors, exceptions, expected failures or skips occur. The new
+failure remains retained with cause unestablished, alongside earlier unwaived
+latency/Torrent causes. The bounded test correction is verified, not overall
+Task 3, installation or release acceptance. Parent Tasks 7/8 remain open;
+signing, publication and signed feeds stay gated, with feeds last.

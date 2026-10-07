@@ -829,6 +829,11 @@ TEST_CASE("Checkpoint recovery button retains frozen rules and permanently disar
     REQUIRE(waitFor([&] { return backend.revocations > priorRevocations; }));
     QTest::qWait(30); CHECK(ready.isEmpty());
     CHECK_FALSE(window->close()); CHECK(ready.isEmpty()); CHECK(backend.installs == 0);
+    // Collect the blocked retry before repairing its path or clicking again.
+    REQUIRE(waitFor([] {
+        auto* prompt = checkpointRecoveryPrompt();
+        return prompt && prompt->isVisible();
+    }));
     REQUIRE(QDir(blocked).removeRecursively());
     QTest::qWait(30); CHECK(ready.isEmpty());
     QMessageBox* prompt = checkpointRecoveryPrompt();

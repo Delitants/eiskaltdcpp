@@ -234,7 +234,21 @@ deadlines, assertions, installed app and live profile remain unchanged. This
 does not close other quit stalls, the historical exact timings, broader
 regression/native acceptance or release gates.
 
-Regular core and Qt suites also passed on both; the Intel
+After approval, that test alone now waits for the renewed recovery prompt before
+repairing the blocked path. Five inserted lines preserve all original assertions
+and deadlines, without changing production retry or update consent. Fresh
+controlled RED retains eight exact failures after 124 passing assertions; GREEN
+against the same delayed-receipt objects passes 180 assertions. All six ARM and
+Intel/Rosetta GUI layouts pass in the complete serial matrix. Its 32 exact
+inventories cover 4,287 case instances and 444,046 passing assertions, but QA
+remains FAIL on one Intel/Rosetta core assertion: final Shadowsocks disconnect
+send completion (`tests/test_bufferedsocket.cpp:129`, seed 130004532). There are
+no fatal errors, exceptions, expected failures or skips. The new failure is
+retained with cause unestablished. This verifies the bounded test scheduling
+correction, not other retained causes, native acceptance or release readiness.
+No installed app, profile, production routing or signed feed changes.
+
+Earlier regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent
 bootstrap, publication and bind causes are not waived by green reruns.

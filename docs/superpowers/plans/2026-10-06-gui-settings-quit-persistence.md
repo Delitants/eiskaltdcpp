@@ -340,3 +340,40 @@ ARM/Intel/layout coverage. No production session change or queued retry consent
 is proposed. Private diagnostic evidence is retained under
 `Work/qa/sidebar-checkpoint-recovery-diagnosis-20261006`; Task 3, final review,
 native/live acceptance, installation and release gates remain open.
+
+#### Approved Recovery Test Synchronization After `702e529ce`
+
+Five lines are inserted only in the recovery-button test: while the filesystem
+blocker remains intact, require the renewed visible recovery prompt through
+the unchanged 5000ms helper. Only then remove the blocker and exercise the
+original click. All original assertions, 30ms waits, 3000ms session budget,
+frozen rule checks, producer fences and no-install checks remain unchanged.
+No production retry, consent, ownership or retention behavior changes.
+
+Fresh controlled RED uses the retained delayed-receipt binary: two exact case
+instances / 124 passing assertions / eight failures, only the invisible prompt
+and missing recovery in both branches. GREEN changes only the test object and
+reuses the identical session/coordinator control objects: two case instances /
+180 assertions / zero failures. Fresh ARM and Intel/Rosetta GUI consumers
+preserve original binaries and objects; exact edit scope, source pins and CPU/
+minimum-OS metadata pass. This is not native Intel/macOS14 acceptance.
+
+The complete serial matrix matches all 32 exact nonempty inventories: 4,287
+case instances, 444,046 passing assertions, one assertion failure, zero fatal
+errors, exceptions, expected failures or skips. All six GUI layouts and every
+other selection pass except Intel/Rosetta core. Seed 130004532 fails
+`BufferedSocket drains the final Shadowsocks frame before send completion`,
+`2022-blake3-aes-256-gcm / disconnect`, at `listener.completed.load()`
+(`tests/test_bufferedsocket.cpp:129`). The final pending-output and received-byte
+assertions do not fail. This original core target is unchanged; cause remains
+unestablished and is not waived by other passes. The matrix and its checker
+correctly return FAIL. Evidence is retained under
+`Work/qa/sidebar-checkpoint-recovery-repair-20261006`.
+
+The bounded test synchronization correction is verified; overall Task 3 is not
+accepted. Earlier exact historical timings, quit latency/Torrent causes,
+pending-owner/Ready-update and per-file recovery coverage, localization,
+provenance/reproducibility, independent whole-candidate review, native/live/
+lifecycle/benchmark/soak acceptance and all final rebuild/signing/installation/
+publication gates remain open. Signed feeds stay last; parent Tasks 7/8 stay
+open. No installation, push, production build allocation or feed change.
