@@ -2541,6 +2541,20 @@ settings and no-Torrent checks pass. Neither these passes nor the controlled
 GREEN waive natural failures; the 180/354ms stalls, Task 3 and parent release
 gates remain open.
 
+The following bounded checked-context diagnostic retains seed 1936105996 and
+all original deadlines, hold durations and assertions. Eleven natural admission
+runs pass 704 assertions; they do not reproduce or waive the retained abort.
+Private 250ms core-receipt delays reproduce the exact teardown guard in both
+SnapshotWriting and SettingsWriting, for ordinary quit and Ready update. All
+four controls pass their original assertions (128 total), then abort with
+Pending despite the correct owner and a physically ready, uncollected receipt.
+The fixture's unconditional disposal after refusal is an uncovered cleanup
+contract path; which phase caused the historical natural abort remains unknown.
+The guard is unchanged. A test-only owner-thread receipt drain after all original
+assertions is recommended separately, not implemented. No update retry, consent,
+installation, signing, feed mutation or production ownership change occurs.
+Task 3, natural stalls/recovery and parent release gates remain open.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,

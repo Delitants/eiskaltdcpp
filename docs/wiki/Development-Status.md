@@ -190,6 +190,18 @@ settings and no-Torrent checks pass; none waives a failed run. This does not fix
 natural quit-latency/recovery failures; production ownership, Task 3 acceptance
 and release gates remain unchanged.
 
+The next checked-context diagnostic runs the retained abort seed in eleven
+natural admission selections, all passing 704 assertions. Private receipt-delay
+controls reproduce the same teardown abort four times, after 128 ordinary
+assertions pass. Both snapshot and settings phases capture Pending on the
+correct owner, with a physically ready receipt that cleanup has not collected.
+This demonstrates a test fixture cleanup contract gap after quit refusal, not
+an established exact-phase cause for the historical natural abort or a
+production ownership failure. A test-only receipt drain before disposal is
+recommended but not implemented. The guard, deadlines, production sources and
+installed application remain unchanged; natural latency/recovery/Torrent
+failures and all release gates stay open.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

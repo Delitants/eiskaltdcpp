@@ -229,4 +229,44 @@ suite binaries are unchanged by this fixture correction. No passing rerun
 waives these failures or the retained 180/354ms stalls. Task 3 remains incomplete.
 No installation, signing, push or publication occurred.
 
+#### Checked-Context Teardown Diagnostic After `d16c183a9`
+
+The next approved bounded diagnostic preserves all test bodies, the four
+watchdog waits, 100ms request budget, 350ms hold, 5000ms wait helper, original
+interposer and loopback-only runner. Three unchanged-binary and eight private
+state-probe runs use the retained abort seed 1936105996. All eleven pass the
+exact admission inventory with 704 assertions; the eight probes observe both
+core persistence receipts collected and Finished/Ready before fixture disposal.
+This does not reproduce or waive the historical natural abort.
+
+Two private controls delay only a core thread-exit receipt by 250ms, separately
+at SnapshotWriting and SettingsWriting. Ordinary quit and Ready-update branches
+are run independently for each. All four reach their original final assertions
+(128 passing assertions total) then abort with the exact guarded logic_error.
+At disposal each captures Pending, the correct owner thread, a valid physically
+ready receipt and a still-joinable worker. Each worker returned Ready; no final
+receipt poll occurred after the delayed completion. The fixture unconditionally
+calls shutdown after a refused session stops polling. This proves an uncovered
+fixture cleanup contract path, not a failed write, wrong-owner disposal or an
+established attribution of the earlier natural abort to either exact phase.
+The production guard remains correct and unchanged.
+
+Recommended next bounded change: in this admission test only, after the existing
+refusal/heartbeat/byte/no-exit/no-install assertions, collect core receipts on
+the startup owner through the checked async API and require Ready before
+cleanup. Do not retry ApplicationQuitSession, grant update consent, weaken the
+guard or alter the request deadline. Validate the controlled RED/cleanup GREEN
+and natural ARM/Intel/no-Torrent consumers separately. This recommendation is
+not implemented; its design approval is requested separately.
+
+Private evidence is retained under
+`Work/qa/checked-context-teardown-diagnosis-20261006`. Exact inventories, child
+exit codes, fatal expression location, phase/owner/receipt fields and original
+input hashes are checked. An initial private control-build wrapper rejected an
+ambiguous path replacement before compilation; its script/error remain retained,
+and the corrected build uses new outputs. This is not an application failure.
+No public source, original binary/object/archive, guard, live profile, installed
+app, server, VM, signing key or feed is changed. Task 3 remains incomplete; the
+102/180/354ms stalls and other retained matrix failures remain unwaived.
+
 This plan does not close retained natural recovery/Torrent/bootstrap/publication/bind/peer-counter causes, pending-owner/Ready-update coverage or per-file AntiSpam recovery, translation/native-language quality, provenance/reproducibility, whole-candidate independent review, native minimum-OS/live/lifecycle/benchmark/soak acceptance, final app/material rebuild, numeric production build allocation, signing/notarization/signed-v3 acceptance, guarded installation/readback or authenticated wiki/prerelease publication/readback. Signed feeds remain last; parent Tasks 7/8 stay open.
