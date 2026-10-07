@@ -2668,5 +2668,13 @@ stay open; installed/profile/server/key/feed state is untouched. Signed feeds la
 The nonblocking Torrent-retirement written design is now approved for planning.
 A five-task implementation plan covers engine receipts, checked sharing
 retraction, proxy physical reaping, runtime/GUI composition and final verification.
-It awaits written review with Native execution preserved; no product changes,
-test execution, installation or activation occur in this planning checkpoint.
+It was subsequently approved with Native execution preserved. Engine checkpoint
+`1ccb0131` now provides checked nonblocking retirement, an admission fence and
+thread-exit/checkpoint receipts. Final focused tests pass eight instances / 90
+assertions on each CPU; full ordinary Torrent suites pass 241 instances / 18,520
+assertions on each CPU, with no failures/errors/skips. Baseline retains 24 exact
+failures across eight instances; protected state and earlier evidence seals pass
+readback. This is component verification only: sharing, proxy physical cleanup,
+runtime/GUI composition, integrated matrix and independent review remain open.
+The app quit path still uses synchronous wrappers. No install/activation or
+release acceptance; Task3 and parent Tasks7/8 remain open. Signed feeds last.

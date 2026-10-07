@@ -302,9 +302,18 @@ retained causes, localization/provenance, independent review/native/live/soak
 and final build/sign/install/publication remain pending. Signed feeds last.
 
 The focused nonblocking Torrent-retirement written design has been approved.
-Its implementation plan is prepared and awaits review; Native execution is
-preserved. This documentation-only step makes no product change and adds no
-runtime or release acceptance. The earlier failures and remaining gates stand.
+Its implementation plan is now approved; Native execution is preserved. The
+first source checkpoint, `1ccb0131`, adds a terminal engine admission fence and
+an owned thread-exit/checkpoint receipt while preserving synchronous legacy
+shutdown. Eight baseline case instances produce 24 exact failures; final
+focused tests pass 90 assertions on each CPU. Complete ordinary Torrent suites
+pass 241 instances / 18,520 assertions on both ARM and Intel/Rosetta, with no
+failures/errors/skips and matching inventories. Protected state and prior
+evidence seals pass readback. Sharing retraction, proxy physical reaping and
+runtime/GUI composition are still pending: the application quit path remains
+synchronous. Integrated matrix, broken-path controls and independent review
+remain required. No install/release/activation occurred; earlier failures and
+remaining gates stand.
 
 Peer-policy test failures now include the policy variant, listener ports, proxy
 forwarding and available leech peer/alert state. A deliberately invalid loopback

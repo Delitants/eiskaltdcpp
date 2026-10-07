@@ -8,7 +8,7 @@
 
 **Tech Stack:** C++20, Qt 6, owned `std::thread`/future receipts, existing libtorrent backend, Catch2/QtTest, disposable write/flush/TLS-exit holds.
 
-**Spec:** `docs/superpowers/specs/2026-10-06-nonblocking-torrent-quit-design.md`, approved for planning by the maintainer after `bdbd06c2bd4dc375130101306e0fba9533d6fd5a`. This implementation plan still requires review; no product implementation has started.
+**Spec:** `docs/superpowers/specs/2026-10-06-nonblocking-torrent-quit-design.md`, approved for planning by the maintainer after `bdbd06c2bd4dc375130101306e0fba9533d6fd5a`. The maintainer approved this implementation plan after checkpoint `dd088f2b`; Native/inline execution began on 2026-10-06.
 
 ## Global Constraints
 
@@ -96,7 +96,7 @@ composed timing comparisons. A sandbox setup failure is not a product failure.
 
 **Interfaces:** Produces the common contract and engine fence/retire methods above. Existing `shutdownChecked()` stays `bool`, synchronous and idempotent.
 
-- [ ] **Step 1: Add `TEST_CASE("Engine checked retirement retains the worker through checkpoint and thread exit", "[torrent-quit-engine]")`.** Reuse `TorrentEngineTestAccess` and real queued work to hold the worker for 350ms. Define a test-local API adapter that reports a missing checked API instead of a compile error and falls back to existing synchronous shutdown for the baseline. Capture original assertion values before diagnostics. Required checks:
+- [x] **Step 1: Add `TEST_CASE("Engine checked retirement retains the worker through checkpoint and thread exit", "[torrent-quit-engine]")`.** Reuse `TorrentEngineTestAccess` and real queued work to hold the worker for 350ms. Define a test-local API adapter that reports a missing checked API instead of a compile error and falls back to existing synchronous shutdown for the baseline. Capture original assertion values before diagnostics. Required checks:
 
 ```cpp
 CHECK(requestMs < 100);
@@ -113,10 +113,23 @@ worker, a foreign caller, all mutation paths after fence, cancelled selected
 verification and unchanged snapshot reads. Never let assertion failure strand
 a held thread: fixture guards release before any owner destructor.
 
-- [ ] **Step 2: Build and run strict RED.** Run `$RUN "$B/tests/torrent/eiskalt-torrent-tests" '[torrent-quit-engine]'` under ordinary isolated routing. Preserve missing-API and exact duration/Pending/heartbeat failures separately from setup errors. Keep current synchronous persistence cases as opposite-boundary positives.
-- [ ] **Step 3: Implement the contract and engine receipts.** Add a terminal admission flag checked by `enqueue` and every direct cached-mutating API, including configure, observation selection, file priority/pause/remove/recheck/cancel. Allocate the terminal promise/future before launching the existing worker; publish persistence outcome at thread exit, catch worker/receipt errors and keep Impl owned. Request stop/wake once. Cache the collected result only after readiness and join; do not read worker-written `shutdownSaved` concurrently. Keep the existing queue, local-check/session drain and atomic checkpoint policy.
-- [ ] **Step 4: Run GREEN and complete ordinary engine suite.** Require focused controls and `$RUN "$B/tests/torrent/eiskalt-torrent-tests" '~[interop]'` to pass on both CPUs. No unobserved assertion is waived; any unrelated regression stays named/open. Verify no extra checkpoint after collection.
-- [ ] **Step 5: Local curated checkpoint.** Diff/read back only header, engine and tests; commit `fix(torrent): poll owned engine retirement receipts`. No push/install.
+- [x] **Step 2: Build and run strict RED.** Run `$RUN "$B/tests/torrent/eiskalt-torrent-tests" '[torrent-quit-engine]'` under ordinary isolated routing. Preserve missing-API and exact duration/Pending/heartbeat failures separately from setup errors. Keep current synchronous persistence cases as opposite-boundary positives.
+- [x] **Step 3: Implement the contract and engine receipts.** Add a terminal admission flag checked by `enqueue` and every direct cached-mutating API, including configure, observation selection, file priority/pause/remove/recheck/cancel. Allocate the terminal promise/future before launching the existing worker; publish persistence outcome at thread exit, catch worker/receipt errors and keep Impl owned. Request stop/wake once. Cache the collected result only after readiness and join; do not read worker-written `shutdownSaved` concurrently. Keep the existing queue, local-check/session drain and atomic checkpoint policy.
+- [x] **Step 4: Run GREEN and complete ordinary engine suite.** Require focused controls and `$RUN "$B/tests/torrent/eiskalt-torrent-tests" '~[interop]'` to pass on both CPUs. No unobserved assertion is waived; any unrelated regression stays named/open. Verify no extra checkpoint after collection.
+- [x] **Step 5: Local curated checkpoint.** Diff/read back only header, engine and tests; commit `fix(torrent): poll owned engine retirement receipts`. No push/install.
+
+Task1 checkpoint `1ccb0131`: finalized baseline has eight case instances and 24
+exact assertion failures, not compiler/setup failures. Final focused GREEN has
+eight instances / 90 assertions on each CPU, including a poll during held TLS
+cleanup. Each full ordinary `~[interop]` suite has 241 instances / 18,520
+assertions and no failures/errors/skips, with identical case-name inventories.
+Task completion reruns the focused selectors and validates the unchanged
+source/binary hashes against those full-suite receipts; the final integrated
+matrix remains mandatory. Earlier partial/stale-binary runs are retained but
+excluded from acceptance. Historical bundles/signatures, materials/providers,
+protected live files and prior evidence seals pass readback. Engine only:
+runtime and MainWindow still call synchronous legacy wrappers. Tasks2-5 and
+independent repair-range review remain open; no app installation or activation.
 
 ### Task 2: Checked Share Retraction And Publisher Retirement
 
@@ -175,7 +188,7 @@ Spec coverage: intent/compatibility/engine -> Task1; checked retraction/publishe
 Task2; proxy physical lifetime/reaper -> Task3; dependency phases, GUI milestones,
 deadline/retry/consent -> Task4; verification/protected state/remaining gates ->
 Task5. The five Review Focus conditions each have an explicit owning test step.
-All consumers use the Task1 result and identical fence/retire signatures.
+All planned consumers use the Task1 result and identical fence/retire signatures.
 
 Planning clarification: a failed phase is sticky, but runtime keeps returning
 Pending while another required owner is unfinished; only physical aggregate
@@ -185,8 +198,9 @@ No current production behavior is changed by the clarification or this plan.
 
 This is one coupled retirement contract, not three independent feature projects.
 Each component has its own baseline/green cycle; runtime integration consumes
-their exact interfaces. Existing Native execution is preserved. Please review
-this written implementation plan before implementation begins.
+their exact interfaces. Existing Native execution is preserved. The written
+plan is approved; continue from Task2 without asking for the execution method
+again. Keep component verification distinct from integrated acceptance.
 
 Remaining beyond this plan: retained natural timing/Torrent causes, broader
 pending-owner/per-file AntiSpam coverage, localization/native-language quality,

@@ -484,3 +484,24 @@ whole-candidate review. Evidence is retained under
 verified; overall Task 3, broader coverage/review/native/live acceptance and all
 final rebuild/signing/install/publication gates remain open. Signed feeds last;
 no app/profile, VM/Docker/server, credential/key, push or feed change.
+
+### Approved Torrent Retirement: Engine Component
+
+The subsequent nonblocking Torrent-retirement implementation plan is approved
+for Native/inline execution. Task1 source checkpoint `1ccb0131` adds the shared
+retirement result, a terminal engine admission fence and an owned thread-exit
+receipt for final checkpoint success/refusal. Existing synchronous wrappers
+remain compatible. The finalized baseline produces 24 exact failures across
+eight case instances. Final focused GREEN passes eight instances / 90 assertions
+on each CPU, including a poll while TLS exit is held; each full ordinary Torrent
+suite passes 241 instances / 18,520 assertions without failures/errors/skips.
+Exact inventories, source/binary pins and protected-state/earlier-seal readbacks
+pass. Task completion repeats focused tests and validates the unchanged full
+receipts, rather than duplicating that eight-minute suite before any source
+change. The integrated full matrix is still mandatory after runtime integration.
+
+Sharing retraction, proxy physical cleanup, runtime phases and GUI milestones
+remain Tasks2-4. MainWindow still invokes synchronous runtime shutdown, so this
+component does not fix app-level quit yet. Task5 broken-path controls and
+independent review, overall Task3, retained causes, broader coverage/native/live/
+soak, final rebuild/sign/install/publication remain pending. Signed feeds last.
