@@ -126,6 +126,9 @@ TEST_CASE("BufferedSocket drains the final Shadowsocks frame before send complet
                     }
                     if(listener.completed && received == observed->wireBytes) break;
                 }
+                // Peer EOF can precede the disconnect completion callback.
+                while(!listener.completed && std::chrono::steady_clock::now() < deadline)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
                 CHECK(listener.completed.load());
                 CHECK_FALSE(listener.pendingAtCompletion.load());
                 CHECK(received == observed->wireBytes.load());

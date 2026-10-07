@@ -2631,3 +2631,19 @@ Public code, budgets, originals, profiles and protected release materials stay
 unchanged. A test-only completion wait sharing the original deadline is
 recommended, pending approval. Other retained causes, final review/native/live
 acceptance and all release gates remain open; signed feeds are still last.
+
+After approval, three test-only lines await disconnect listener completion
+using the original shared three-second deadline. All prior assertions and
+cancellation/byte bounds remain intact; production transport and callback order
+are unchanged. Fresh RED verifies eight exact completion failures after 173
+passing assertions; GREEN against the same delayed-callback behavior passes
+183 assertions. Twelve uninstrumented focused cases pass 555 assertions.
+The full serial offline matrix now passes 32 exact selections / 4,287 cases /
+444,190 assertions, with no failures, test exceptions, fatal errors, expected
+failures or skips. Original input/source/binary/CPU and protected-state readbacks
+pass, including prior evidence seals. Intel is Rosetta, not native acceptance;
+optional real-GOST interop is not included. The bounded test repair is verified,
+not overall Task 3 or release readiness. Earlier retained causes, broader
+coverage/localization/provenance, independent review, native/live/soak acceptance
+and final rebuild/signing/install/publication gates stay open. No app/profile,
+server/VM, credential/key, push or feed changes. Signed feeds last.

@@ -410,3 +410,37 @@ Validate against retained held-callback behavior before the full current matrix.
 Task 3, earlier latency/Torrent causes, coverage/review/native/live acceptance
 and final rebuild/signing/install/publication gates remain open. Signed feeds
 last; no app/profile, VM/Docker/server, credential/key or GitHub changes.
+
+#### Approved Shadowsocks Completion Synchronization After `541ddf322`
+
+Three test-only lines now wait for listener completion after the read loop,
+using the same shared three-second deadline and existing one-millisecond yield
+pattern. Every original assertion, byte/pending-output check and 750ms cancel
+bound remains unchanged; cancellation continues before the wait. No production
+transport, callback order, ownership, interface or timeout changes.
+
+Fresh controlled RED verifies four case instances / 173 passing assertions /
+eight failures only in disconnect completion for both ciphers/CPUs. GREEN
+reuses the same 150ms callback-publication behavior, changing only these three
+test lines: four case instances / 183 assertions / zero failures. Twelve fresh
+uninstrumented focused runs pass 555 assertions at seed 130004532. Four private
+consumers preserve 98 original input pins each; exact public/control/link scope,
+source/object/binary pins and CPU/minOS metadata pass. Intel remains Rosetta,
+not native macOS14 acceptance.
+
+The complete serial offline matrix passes all 32 selections / 4,287 exact case
+instances / 444,190 assertions, with no failures, test exceptions, fatal errors,
+expected failures or skips. All preceding case-name inventories are unchanged.
+Both core/Qt/Torrent suites, six GUI layouts, retirement checks and no-Torrent
+selections pass. Optional real-GOST interop is not included. Prior failures,
+including the original unobserved historical 2022 timing, remain retained;
+earlier latency/Torrent causes are not waived by this green matrix.
+
+Before/after protected-state and unchanged-source/input checks pass, including
+whole historical bundles/signatures, providers/live files and prior 188/318-file
+seals. Inline scope review finds no guard/budget expansion, not independent
+whole-candidate review. Evidence is retained under
+`Work/qa/shadowsocks-completion-repair-20261006`. The bounded test repair is
+verified; overall Task 3, broader coverage/review/native/live acceptance and all
+final rebuild/signing/install/publication gates remain open. Signed feeds last;
+no app/profile, VM/Docker/server, credential/key, push or feed change.

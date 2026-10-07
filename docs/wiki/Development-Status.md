@@ -263,6 +263,22 @@ same three-second deadline is recommended pending approval; no public code,
 installed state, live routing, credential/key or release-feed changes occur.
 Earlier causes and all final acceptance/publication gates remain open.
 
+The approved test-only repair now awaits the disconnect callback after the
+read loop within the same three-second deadline. Three inserted lines preserve
+every prior assertion, byte/drain check and cancellation bound; production
+callback order and transport behavior are unchanged. Fresh RED verifies eight
+completion failures after 173 passing assertions; GREEN with the same delayed
+callback behavior passes 183 assertions. Twelve uninstrumented focused runs
+pass 555 assertions. The complete serial offline matrix passes all 32 exact
+selections / 4,287 cases / 444,190 assertions, with zero failures, test errors,
+expected failures or skips. Six GUI layouts and no-Torrent checks are included;
+optional real-GOST interop is not. Input and protected-state readbacks pass.
+Intel runs through Rosetta, not native minimum-OS acceptance. Prior failures
+remain retained and earlier causes are not waived. This verifies the bounded
+test repair, not overall Task 3, independent candidate review, live/native/soak
+acceptance or release readiness. Installed/profile/server/key/feed state stays
+unchanged; signed feeds remain last.
+
 Earlier regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent
