@@ -613,3 +613,31 @@ its throwaway code as a repair. Task5, GUI-settings Task3 and updater Tasks7/8,
 independent/lifecycle/timing/native/localization/provenance/live/soak and final
 build/signing/install/publication gates remain open. Nothing deployed or
 published; signed feeds stay last.
+
+### Swarm Paired Reservation Repair (2026-10-07)
+
+The approved [fixture-only paired reservation repair](../research/2026-10-07-swarm-port-pair-repair.md)
+now owns TCP and exclusive UDP together through metadata setup, releasing each
+pair immediately before its session starts. Occupied UDP candidates release
+tentative TCP ownership. Native probes verify retained reservations; fresh
+sessions require both expected listener endpoints. Original transfer assertions,
+30s polling limits, direct/fixed-port settings and production routing/retry/
+fallback policy remain unchanged. The handoff race stays an explicit failure.
+
+Both CPU RED consumers fail exactly four missing-reservation checks. Focused
+GREEN passes 5 instances / 119 assertions per CPU, including original v1/hybrid
+transfers. Missing UDP, early caller release and omitted UDP close controls fail
+exactly 4/2/2 intended assertions per CPU. Complete serial ordinary Qt suites
+pass 760 instances each / 68,566 total assertions, no failures/errors/skips/fatal
+exits. Inventories retain all preceding cases plus four regressions. All 275
+actual link inputs, current GREEN snapshots and prior 84/194/73/519-file seals
+verify. Existing seven-file local retirement repairs remain unchanged/separate.
+
+These are private incremental ARM/macOS 27 and Intel/Rosetta consumers, not
+native minimum-OS, independent whole-candidate or final release acceptance.
+Neither historical bind failure is waived or retrospectively explained. Task5,
+GUI-settings Task3 and updater Tasks7/8 stay open. Next: independent immutable
+candidate review and remaining lifecycle/timing, native/localization/provenance/
+reproducibility, real peer/selected-check/bootstrap, minimum-OS/live/benchmark/soak
+gates, then final build/signing/signed-v3/install/publication/readback. Nothing
+installed or published; signed feeds remain last.

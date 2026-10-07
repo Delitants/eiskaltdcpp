@@ -20,12 +20,27 @@
 #include <QTest>
 #include <QTextEdit>
 #include <QTreeView>
+#include <QTimer>
+#include <QUdpSocket>
 #include <QUrlQuery>
 #include <functional>
+
+#if __has_include("LoopbackPortPair.h")
+#include "LoopbackPortPair.h"
+#else
+using LoopbackPortPair = QTcpServer;
+#endif
 
 using namespace eiskalt::torrent;
 
 namespace {
+template<class Reservation> bool reserve(Reservation &reservation, quint16 port = 0)
+{
+    // Keep the original TCP-only behavior executable as the RED control.
+    if constexpr (requires { reservation.reserve(port); }) return reservation.reserve(port);
+    else return reservation.listen(QHostAddress::LocalHost, port);
+}
+
 bool eventually(const std::function<bool()> &ready, int timeout = 30000)
 {
     QElapsedTimer elapsed;
@@ -35,6 +50,21 @@ bool eventually(const std::function<bool()> &ready, int timeout = 30000)
         if (ready()) return true;
     } while (elapsed.elapsed() < timeout);
     return ready();
+}
+
+void requireReservation(quint16 port)
+{
+    QTcpServer tcp;
+    QUdpSocket udp;
+    REQUIRE_FALSE(tcp.listen(QHostAddress::LocalHost, port));
+    REQUIRE_FALSE(udp.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress));
+}
+
+bool listening(const TorrentEngine &engine, quint16 port)
+{
+    const auto endpoints = engine.effectiveListeners();
+    const auto address = QString("127.0.0.1:%1").arg(port);
+    return endpoints.contains("TCP " + address) && endpoints.contains("UDP " + address);
 }
 
 Settings isolated(const QString &path, quint16 port)
@@ -82,14 +112,13 @@ TEST_CASE("Shared transfers show real local downloads and uploads while Torrent 
     INFO("Creator-generated hybrid metadata=" << createHybrid);
     QTemporaryDir dir;
     REQUIRE(dir.isValid());
-    QTcpServer tracker, seedReservation, downloadReservation;
+    QTcpServer tracker;
+    LoopbackPortPair seedReservation, downloadReservation;
     REQUIRE(tracker.listen(QHostAddress::LocalHost));
-    REQUIRE(seedReservation.listen(QHostAddress::LocalHost));
-    REQUIRE(downloadReservation.listen(QHostAddress::LocalHost));
+    REQUIRE(reserve(seedReservation));
+    REQUIRE(reserve(downloadReservation));
     const auto seedPort = seedReservation.serverPort();
     const auto downloadPort = downloadReservation.serverPort();
-    seedReservation.close();
-    downloadReservation.close();
     int announces = 0;
     QObject::connect(&tracker, &QTcpServer::newConnection, &tracker, [&] {
         while (tracker.hasPendingConnections()) {
@@ -178,10 +207,19 @@ TEST_CASE("Shared transfers show real local downloads and uploads while Torrent 
         {"USER", "DC++ fixture peer"}, {"ESIZE", payload.size()}, {"SPEED", 16384}, {"STAT", "Downloading"}};
     model.addConnection(dc);
     model.updateTransfer(dc);
+    requireReservation(seedPort);
+    requireReservation(downloadPort);
+    seedReservation.close();
     const auto seedId = createHybrid ? seed.seedCreated(torrent.fileName(), QDir(source).canonicalPath())
                                      : seed.add(torrent.fileName());
     REQUIRE_FALSE(seedId.isEmpty());
     REQUIRE(eventually([&] { return !seed.jobs().isEmpty() && seed.jobs().first().complete; }));
+    REQUIRE(eventually([&] { return listening(seed, seedPort) || !errors.isEmpty(); }));
+    INFO(errors.join("; ").toStdString());
+    REQUIRE(errors.isEmpty());
+    REQUIRE(listening(seed, seedPort));
+    requireReservation(downloadPort);
+    downloadReservation.close();
     const auto id = download.add(torrent.fileName());
     REQUIRE_FALSE(id.isEmpty());
     bool sawDownload = false;
@@ -190,6 +228,10 @@ TEST_CASE("Shared transfers show real local downloads and uploads while Torrent 
         sawDownload = sawDownload || row(model, id).isValid();
         if (!selected.isValid()) selected = row(model, id);
     });
+    REQUIRE(eventually([&] { return listening(download, downloadPort) || !errors.isEmpty(); }));
+    INFO(errors.join("; ").toStdString());
+    REQUIRE(errors.isEmpty());
+    REQUIRE(listening(download, downloadPort));
 
     QMainWindow window;
     auto *tabs = new QTabWidget(&window);
@@ -272,4 +314,91 @@ TEST_CASE("Shared transfers show real local downloads and uploads while Torrent 
     attach(model, nullptr);
     REQUIRE(model.rowCount() == 1);
     attach(uploads, nullptr);
+}
+
+TEST_CASE("Swarm port reservation rejects an occupied UDP candidate and releases TCP", "[qt][swarm-port-pair]")
+{
+    QUdpSocket owner;
+    REQUIRE(owner.bind(QHostAddress::LocalHost, quint16(0), QUdpSocket::DontShareAddress));
+    const auto port = owner.localPort();
+    QTcpServer available;
+    REQUIRE(available.listen(QHostAddress::LocalHost, port));
+    available.close();
+    LoopbackPortPair reservation;
+    CHECK_FALSE(reserve(reservation, port));
+    CHECK(available.listen(QHostAddress::LocalHost, port));
+}
+
+TEST_CASE("Swarm port reservation retains UDP during asynchronous fixture setup", "[qt][swarm-port-pair]")
+{
+    LoopbackPortPair reservation;
+    REQUIRE(reserve(reservation));
+    const auto port = reservation.serverPort();
+    QUdpSocket contender;
+    CHECK_FALSE(contender.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress));
+    contender.close();
+    QObject context;
+    bool observed = false, acquired = false;
+    QTimer::singleShot(0, &context, [&] {
+        acquired = contender.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress);
+        observed = true;
+    });
+    REQUIRE(eventually([&] { return observed; }));
+    CHECK_FALSE(acquired);
+}
+
+TEST_CASE("Swarm port reservation releases both transports at handoff or scope exit", "[qt][swarm-port-pair]")
+{
+    bool explicitHandoff = false;
+    SECTION("Explicit handoff") { explicitHandoff = true; }
+    SECTION("Scope exit") {}
+    quint16 port = 0;
+    {
+        LoopbackPortPair reservation;
+        REQUIRE(reserve(reservation));
+        port = reservation.serverPort();
+        if (explicitHandoff) reservation.close();
+        if (explicitHandoff) {
+            QTcpServer tcp;
+            QUdpSocket udp;
+            CHECK(tcp.listen(QHostAddress::LocalHost, port));
+            CHECK(udp.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress));
+        }
+    }
+    QTcpServer tcp;
+    QUdpSocket udp;
+    CHECK(tcp.listen(QHostAddress::LocalHost, port));
+    CHECK(udp.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress));
+}
+
+TEST_CASE("Swarm handoff collision remains an explicit native failure without port fallback", "[qt][swarm-port-pair]")
+{
+    LoopbackPortPair reservation;
+    REQUIRE(reserve(reservation));
+    const auto port = reservation.serverPort();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    QFile payload(dir.filePath("payload.bin"));
+    REQUIRE(payload.open(QIODevice::WriteOnly));
+    REQUIRE(payload.write("x") == 1);
+    payload.close();
+    const auto metadata = QByteArray("d4:infod6:lengthi1e4:name11:payload.bin12:piece lengthi16384e6:pieces20:") +
+        QCryptographicHash::hash("x", QCryptographicHash::Sha1) + "7:privatei1eee";
+    QFile torrent(dir.filePath("handoff.torrent"));
+    REQUIRE(torrent.open(QIODevice::WriteOnly));
+    REQUIRE(torrent.write(metadata) == metadata.size());
+    torrent.close();
+    TorrentEngine engine(dir.filePath("state"));
+    QStringList errors;
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](const QString &message) { errors << message; });
+    engine.configure(isolated(dir.path(), port), {});
+    reservation.close();
+    QUdpSocket owner;
+    REQUIRE(owner.bind(QHostAddress::LocalHost, port, QUdpSocket::DontShareAddress));
+    REQUIRE_FALSE(engine.add(torrent.fileName()).isEmpty());
+    REQUIRE(eventually([&] { return !errors.isEmpty(); }));
+    REQUIRE(errors.size() == 1);
+    CHECK(errors.front().contains("op=sock_bind transport=UDP local=127.0.0.1:" +
+                                  QString::number(port) + " error=system:"));
+    CHECK(engine.effectiveListeners().isEmpty());
 }
