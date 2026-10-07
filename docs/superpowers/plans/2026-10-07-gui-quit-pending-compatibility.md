@@ -1,6 +1,6 @@
 # GUI Quit Pending Compatibility Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Native/inline execution is already selected. This plan needs maintainer review before implementation.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. The maintainer approved Native/inline execution on 2026-10-07. Bounded implementation and verification are recorded below; broader acceptance remains open.
 
 **Goal:** Make GUI quit fixtures observe physical terminal outcomes explicitly without changing production shutdown behavior or weakening existing failure checks.
 
@@ -76,9 +76,9 @@ was observed, never that it was Ready. Both use default persistence behavior
 and the existing helper, preserve the actual result, and stop repolling after
 terminal observation. Admission tests do not use these observers.
 
-- [ ] **Step 1: Preserve and confirm unchanged RED.** Save current source/header/shared-helper hashes and verify `$OLD/evidence-partial.sha256`. Predeclare the exact chosen failure expressions from `$OLD/matrix-audit.json`, then run each named sample separately from the matching frozen Task5 consumer via `EISKALT_QA_BINARY`. Samples: queued notification boundary, real coordinator aggregation, Torrent checkpoint refusal and actual window-close handoff. Intel retained RED is respectively 1 callback failure + 1 error, 1 Ready failure, 2 GUI-value failures + 1 cached-shutdown failure, and 3 route-revocation failures. The ARM callback has 1 failure + SIGABRT error/exit134; its absent later cases are not passes. If fresh reruns differ or pass, retain/investigate instead of manufacturing matching RED. Setup failures and unrelated diagnostics are never accepted as behavioral evidence.
+- [x] **Step 1: Preserve and confirm unchanged RED.** Save current source/header/shared-helper hashes and verify `$OLD/evidence-partial.sha256`. Predeclare the exact chosen failure expressions from `$OLD/matrix-audit.json`, then run each named sample separately from the matching frozen Task5 consumer via `EISKALT_QA_BINARY`. Samples: queued notification boundary, real coordinator aggregation, Torrent checkpoint refusal and actual window-close handoff. Intel retained RED is respectively 1 callback failure + 1 error, 1 Ready failure, 2 GUI-value failures + 1 cached-shutdown failure, and 3 route-revocation failures. The ARM callback has 1 failure + SIGABRT error/exit134; its absent later cases are not passes. If fresh reruns differ or pass, retain/investigate instead of manufacturing matching RED. Setup failures and unrelated diagnostics are never accepted as behavioral evidence.
 
-- [ ] **Step 2: Add explicit observers and migrate only the table below.** Use the existing 5000ms helper, returning observation separately from saved/status. Capture GUI callback request/result/Pending in local values with no Catch assertions or nested event pumping in the callback. Make the smallest moved-observation changes; preserve case names, sections, fixtures and every terminal/byte/owner/consent assertion. Keep filesystem blockers until collection of the intended Refused receipt. Optional declaration comments clarify false/Pending/rejection and the coordinator's per-call core budget, without changing signatures/defaults.
+- [x] **Step 2: Add explicit observers and migrate only the table below.** Use the existing 5000ms helper, returning observation separately from saved/status. Capture GUI callback request/result/Pending in local values with no Catch assertions or nested event pumping in the callback. Make the smallest moved-observation changes; preserve case names, sections, fixtures and every terminal/byte/owner/consent assertion. Keep filesystem blockers until collection of the intended Refused receipt. Optional declaration comments clarify false/Pending/rejection and the coordinator's per-call core budget, without changing signatures/defaults.
 
 ### Authorized Observation Inventory
 
@@ -111,7 +111,7 @@ Unlisted correctly polling cases, foreign/modal rejection and repeated terminal
 checks remain unchanged. If source moved, resolve anchors by exact case name
 and expected expression; reject unknown layouts instead of broad replacement.
 
-- [ ] **Step 3: Pin observer semantics with the existing cases.** Add the following assertions to the checkpoint success/failure sections before blocker removal. Then keep the original cached GUI/runtime checks after repair. For coordinator cases require the observer true, then the original exact Ready/Refused/component assertions; terminal Refused must not become observation failure or an implicit retry. In callback tests require captured request, admissible success-or-Pending observation and immediate fenced window, followed by terminal success and original zero-delivery checks outside the callback. Unheld tests must not require initial Pending. Preserve direct admission rejection, browser empty-view and deferred-owner assertions. Compare the moved-expression inventory and shared-helper bytes against the baseline.
+- [x] **Step 3: Pin observer semantics with the existing cases.** Add the following assertions to the checkpoint success/failure sections before blocker removal. Then keep the original cached GUI/runtime checks after repair. For coordinator cases require the observer true, then the original exact Ready/Refused/component assertions; terminal Refused must not become observation failure or an implicit retry. In callback tests require captured request, admissible success-or-Pending observation and immediate fenced window, followed by terminal success and original zero-delivery checks outside the callback. Unheld tests must not require initial Pending. Preserve direct admission rejection, browser empty-view and deferred-owner assertions. Compare the moved-expression inventory and shared-helper bytes against the baseline.
 
 ```cpp
 REQUIRE(waitForGuiQuitTerminal(*window, saved));
@@ -120,7 +120,7 @@ CHECK_FALSE(window->quitWorkersPending());
 CHECK(runtime->shutdownChecked() == expected);
 ```
 
-- [ ] **Step 4: Rebuild and run focused GREEN.** Run the fresh three-configuration build recipe before timing runs. For each CPU execute the following selector in each GUI layout, with only the existing sidebar navigation exclusion where applicable. Require no failures/errors/skips or fatal exits; check original selected cases are retained. Then rerun the existing real-worker/foreign/modal cases through the same selector rather than changing their bodies.
+- [x] **Step 4: Rebuild and run focused GREEN.** Run the fresh three-configuration build recipe before timing runs. For each CPU execute the following selector in each GUI layout, with only the existing sidebar navigation exclusion where applicable. Require no failures/errors/skips or fatal exits; check original selected cases are retained. Then rerun the existing real-worker/foreign/modal cases through the same selector rather than changing their bodies.
 
 ```sh
 FOCUS='[update-ui-owner],[update-notification-delivery],[window-quit],[application-quit],[gui-quit-fence],[gui-layout-review]'
@@ -131,7 +131,7 @@ Set `EISKALT_TEST_TAB_LAYOUT` explicitly for every layout and use matching CPU
 labels/provider paths. Do not invoke all layouts concurrently. The subset
 includes existing correctly polling tests and their opposite-boundary positives.
 
-- [ ] **Step 5: Curated fixture checkpoint.** Review the exact diff against the observation table, shared-helper hash and untouched executable-source inventory. Commit only the migrated full-GUI fixture and optional comment-only headers as `test(quit): observe retained GUI retirement terminals explicitly`. This is an isolated fixture checkpoint, not Task5 acceptance; keep the local review fixes and status work separate and never push here.
+- [x] **Step 5: Curated fixture checkpoint.** Review the exact diff against the observation table, shared-helper hash and untouched executable-source inventory. Commit only the migrated full-GUI fixture and optional comment-only headers as `test(quit): observe retained GUI retirement terminals explicitly`. This is an isolated fixture checkpoint, not Task5 acceptance; keep the local review fixes and status work separate and never push here.
 
 ## Task 2: Integrated Verification And Remaining-Gate Readback
 
@@ -144,24 +144,24 @@ and unchanged component/settings/physical-hold contracts. Produces explicit
 complete-inventory results, immutable current pins and an acceptance or
 NOT_ACCEPTED remaining-failure report, never release readiness.
 
-- [ ] **Step 1: Rerun the current-source private broken controls.** Copy `$OLD/build-final-controls.cjs`, `run-final-controls.sh`, `check-red.py` and `final-control-contracts.json` to QA, replacing the output root only. Build against fresh consumers, then require the exact predeclared engine14/proxy9/retraction14 failures and unaffected positives, zero errors/skips. Rebuild the premature-core control using Task4's corrected `build-early-core-v2.cjs`: change only QA/build roots to current fresh ARM settings consumer, keep its production-header include correction and sole guarded mutation, and require exactly `{'!(route->revoked->load())': 6}` failures from `[.torrent-settings-freeze-retirement]`. Run it through the copied runner with `EISKALT_QA_BINARY` pointing to QA's `early-core-control-v2/eiskalt-settings-quit-tests` and the original ARM `io-hold-v2.dylib`. Use the same exact-multiset checker with a separately predeclared early-core contract. Never execute the sealed old control as evidence of a new current-source build.
+- [x] **Step 1: Rerun the current-source private broken controls.** Copy `$OLD/build-final-controls.cjs`, `run-final-controls.sh`, `check-red.py` and `final-control-contracts.json` to QA, replacing the output root only. Build against fresh consumers, then require the exact predeclared engine14/proxy9/retraction14 failures and unaffected positives, zero errors/skips. Rebuild the premature-core control using Task4's corrected `build-early-core-v2.cjs`: change only QA/build roots to current fresh ARM settings consumer, keep its production-header include correction and sole guarded mutation, and require exactly `{'!(route->revoked->load())': 6}` failures from `[.torrent-settings-freeze-retirement]`. Run it through the copied runner with `EISKALT_QA_BINARY` pointing to QA's `early-core-control-v2/eiskalt-settings-quit-tests` and the original ARM `io-hold-v2.dylib`. Use the same exact-multiset checker with a separately predeclared early-core contract. Never execute the sealed old control as evidence of a new current-source build.
 
 ```sh
 /opt/homebrew/opt/node@22/bin/node "$QA/build-final-controls.cjs"
 bash "$QA/run-final-controls.sh"
 ```
 
-- [ ] **Step 2: Run the complete serial matrix.** Run the copied `run-matrix.sh`: ordinary core/Qt/Torrent `~[interop]`, ordinary settings, explicit physical component/new-review selectors, all three GUI layouts, hidden allocation/launch/core/settings/auxiliary and composed cases, whole no-Torrent full/freeze/settings selectors. Existing original I/O interposers are enabled only for their original hidden cases. Keep held100/350, saved bytes, route-before-physical-readiness, deadline refusal, zero late install/exit and explicit retry assertions in the original composed tests unchanged.
+- [x] **Step 2: Run the complete serial matrix.** Run the copied `run-matrix.sh`: ordinary core/Qt/Torrent `~[interop]`, ordinary settings, explicit physical component/new-review selectors, all three GUI layouts, hidden allocation/launch/core/settings/auxiliary and composed cases, whole no-Torrent full/freeze/settings selectors. Existing original I/O interposers are enabled only for their original hidden cases. Keep held100/350, saved bytes, route-before-physical-readiness, deadline refusal, zero late install/exit and explicit retry assertions in the original composed tests unchanged.
 
 ```sh
 bash "$QA/run-matrix.sh"
 ```
 
-- [ ] **Step 3: Validate complete inventories and truthful failure status.** Build a QA checker from `$OLD/check-matrix.py` using current paths and matching executed labels; do not retain prerequisites for old Task5 setup scripts which were not run in this QA. Keep zero-error/skip/fatal-exit strict acceptance. Compare unchanged ordinary and complete GUI case-name multisets against the frozen Intel inventories, matching both CPUs with the original sidebar exclusion; no case/section disappears through the migration. Check assertion counts independently, documenting intentional added observations rather than requiring an identical count. Maintain a separate explicitly NOT_ACCEPTED audit for any failure/abort. The old ARM Qt bind failure remains unwaived even if this run passes; no new bind repair is authorized here.
+- [x] **Step 3: Validate complete inventories and truthful failure status.** Build a QA checker from `$OLD/check-matrix.py` using current paths and matching executed labels; do not retain prerequisites for old Task5 setup scripts which were not run in this QA. Keep zero-error/skip/fatal-exit strict acceptance. Compare unchanged ordinary and complete GUI case-name multisets against the frozen Intel inventories, matching both CPUs with the original sidebar exclusion; no case/section disappears through the migration. Check assertion counts independently, documenting intentional added observations rather than requiring an identical count. Maintain a separate explicitly NOT_ACCEPTED audit for any failure/abort. The old ARM Qt bind failure remains unwaived even if this run passes; no new bind repair is authorized here.
 
-- [ ] **Step 4: Freeze and read back final tested inputs and protected state.** Pin current migrated fixture/comments, all unchanged component/session/settings sources, actual binary CPU/minOS/Qt metadata, compile inventories and current private controls. Require all unchanged files to match old pins and all new copies to match current hashes. Use the Task5 protection helper with a fresh output name and the installed Python3.14.7, then verify earlier seals plus the519-file partial checkpoint and4-file design readback seal. Keep historical reports/artifacts/signatures/live state intact. Host/Rosetta is not native/live evidence.
+- [x] **Step 4: Freeze and read back final tested inputs and protected state.** Pin current migrated fixture/comments, all unchanged component/session/settings sources, actual binary CPU/minOS/Qt metadata, compile inventories and current private controls. Require all unchanged files to match old pins and all new copies to match current hashes. Use the Task5 protection helper with a fresh output name and the installed Python3.14.7, then verify earlier seals plus the519-file partial checkpoint and4-file design readback seal. Keep historical reports/artifacts/signatures/live state intact. Host/Rosetta is not native/live evidence.
 
-- [ ] **Step 5: Record actual outcome and hand off.** Inline-review the scoped migration/pin/inventory report against the spec; no additional reviewer delegation is authorized by this plan. Update parent status with exact focused/full results and remaining gates. If GUI passes, record that bounded result without accepting overall Task5 while the bind cause or another required gate remains. Checkpoint curated documentation only after readback. No install/sign/push/publication/feed action. If a real product failure appears, retain it and request its focused design instead of extending this fixture task.
+- [x] **Step 5: Record actual outcome and hand off.** Inline-review the scoped migration/pin/inventory report against the spec; no additional reviewer delegation is authorized by this plan. Update parent status with exact focused/full results and remaining gates. If GUI passes, record that bounded result without accepting overall Task5 while the bind cause or another required gate remains. Checkpoint curated documentation only after readback. No install/sign/push/publication/feed action. If a real product failure appears, retain it and request its focused design instead of extending this fixture task.
 
 ## Self-Review And Approval Handoff
 
@@ -172,8 +172,46 @@ Observers return terminal observation separately from success and keep the
 existing 5000ms helper. The19-row table names the authorized migrations;
 already-correct polls and rejection/cached-repeat checks are preserved.
 
-This plan needs maintainer review before implementation. Native execution is
-already selected and will not be asked again. Broader bind/lifecycle/native/
+The maintainer approved this plan and its Native execution. Broader bind/lifecycle/native/
 live/language/provenance/soak and final build/sign/install/GitHub/wiki/prerelease
 gates remain pending; overall GUI-settings Task3 and updater Tasks7/8 stay open.
 Signed feeds remain last.
+
+## Execution Checkpoint: 2026-10-07
+
+Both bounded tasks are complete. Fixture-only checkpoint `be8f21da` adds explicit
+terminal observers and migrates exactly the 19 authorized cases, preserving the
+97 statically named cases, 73 sections, shared 5000ms helper, original budgets,
+cached/rejection checks and production shutdown behavior. All eight separately
+run frozen-consumer samples reproduce the exact predeclared RED, including the
+ARM callback abort. All 93 original source/copy pins remain unchanged; the GUI
+fixture and declaration/shared-helper baselines are separately pinned.
+
+Fresh five-target ARM/Intel builds with both interposers and the whole ARM
+no-Torrent configuration pass. Six prescribed focus runs and six additional
+hub-case runs pass 312 case instances / 9,270 assertions, zero failures/errors/
+skips. The additional hub runs cover a table row absent from the prescribed
+selector. Current-source broken controls preserve exact 14/9/14 failures and
+the six premature-core route failures, with zero errors/skips.
+
+The complete 47-run matrix passes 6,729 case instances / 621,195 assertions with
+zero failures/errors/skips/fatal exits. All 37 inventory comparisons pass,
+including unchanged ordinary inventories and full GUI 126/126/124 cases on each
+CPU. Every original case/section path remains. The changed observations add
+assertions intentionally; no count equality is used to hide missing checks.
+
+QA: `Work/qa/gui-quit-pending-compatibility-20261007`. Its 101 current source/
+helper/binary/control pins verify. Actual 13-consumer CPU/minOS/Qt metadata,
+historical bundle/signature, archive/provider/protected-file and earlier-seal
+readbacks pass, including the 519-file partial, 4-file design and 6-file plan
+seals. This is host ARM/macOS 27 and Intel/Rosetta, not native minimum-OS/live
+or a final distributable build. An initial Catch2 assertion-parentheses build
+error and two QA inventory/pin selection errors are retained and corrected;
+none is accepted as behavioral evidence or changes expected failure contracts.
+
+The previous Task5 audit and its 94 failures/errors remain sealed. Its ARM bind
+failure did not recur here but remains unexplained and unwaived, as do historical
+102/180/354ms causes. Overall Task5, GUI-settings Task3 and updater Tasks7/8
+remain open. The three reviewed runtime repairs remain local and separate from
+the fixture checkpoint. No install/sign/push/publication/key/server/VM/feed
+changes; signed feeds remain last.

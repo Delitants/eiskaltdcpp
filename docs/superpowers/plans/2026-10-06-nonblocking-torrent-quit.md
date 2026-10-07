@@ -265,11 +265,79 @@ are frozen before further mutable rebuilds. Task4 is complete; Task5 is next.
 **Interfaces:** Consumes all final components and the unchanged checked-quit/update consent contract. Produces an evidence-backed acceptance or explicit remaining-failure report, not release readiness.
 
 - [ ] **Step 1: Rebuild final consistent test consumers.** Fresh both-CPU source/MOC/resource builds with pinned inputs; no old partial source-object substitution for acceptance. Build/run no-Torrent core, Qt and settings. Verify actual Qt, CPU/deployment metadata and complete test inventories.
-- [ ] **Step 2: Create bounded broken-path controls privately.** One control restores engine blocking join; another treats proxy done as physical readiness; another accepts failed share retraction. Preserve all original bodies/timers and reject unknown source layout. Require each control's exact contract failures and unaffected positives; no public production edits create controls.
+- [x] **Step 2: Create bounded broken-path controls privately.** One control restores engine blocking join; another treats proxy done as physical readiness; another accepts failed share retraction. Preserve all original bodies/timers and reject unknown source layout. Require each control's exact contract failures and unaffected positives; no public production edits create controls.
 - [ ] **Step 3: Run full serial matrix.** Core, Qt and Torrent `~[interop]`, ordinary settings, GUI singleline/multiline/sidebar with only the existing sidebar navigation exclusion, original hidden settings/storage/admission/core/auxiliary retirements, plus new composed selector. Add explicit new component selectors for inventories that complete suites omit. No-Torrent freeze/normal/hidden settings selectors remain. Do not claim new real-GOST interop or native/minOS proof from these offline runs.
 - [ ] **Step 4: One independent immutable-range review.** Review source range from plan BASE through Task4 for owner lifetime, receipt failure, affinity, retraction admission, callbacks, ordering and consent. If no fresh reviewer tool is available, record that gate as pending; do not manufacture independence or message another task. Fix Important/Critical findings in one focused RED/GREEN pass, rerun the affected and complete suites; retain Minor deferrals explicitly.
-- [ ] **Step 5: Protected-state and historical-failure readback.** Reuse the latest diagnostic preservation helper with fresh output names; require whole historical bundles/signatures, material/provider/live-file/audit/negative pins and previous evidence seals unchanged. Retain original 102/180/354ms reports and Torrent causes even if current selectors pass. Recheck final source/binary/control hashes after tests.
+- [x] **Step 5: Protected-state and historical-failure readback.** Reuse the latest diagnostic preservation helper with fresh output names; require whole historical bundles/signatures, material/provider/live-file/audit/negative pins and previous evidence seals unchanged. Retain original 102/180/354ms reports and Torrent causes even if current selectors pass. Recheck final source/binary/control hashes after tests.
 - [ ] **Step 6: Record and checkpoint actual status.** Mark this repair accepted only if its exact regressions and required reviews are satisfied. Record every remaining gate in parent settings/updater plans and Development Status. Local curated docs checkpoint/readback only; do not close broader Task3 or parent7/8 merely from this bounded repair. No signed feeds, build allocation, final assets or installation.
+
+### Task 5 Partial Checkpoint: 2026-10-07
+
+**Not accepted.** Fresh ARM/Intel five-target builds and a whole ARM no-Torrent
+build pass. Independent immutable-range review found three Important defects:
+allocating publisher fencing, retained engine sessions after exceptional worker
+exit, and proxy DNS/setup admission during the Fence-only interval. The single
+focused repair pass has exact baseline RED (3/1/2 failures) and both-CPU GREEN
+(6 case instances / 88 assertions). Final-source broken-path controls preserve
+their exact 14/9/14 failure sets over 18 instances / 433 assertions.
+
+The serial matrix audit records 6,392 case instances / 603,596 assertions and
+94 failures/errors, including three ARM GUI aborts. This is not a complete
+passing inventory: each ARM GUI layout stops at 11 cases / 284 assertions;
+Intel runs 126/126/124 cases and records 28 failures/errors in each layout.
+Original one-shot GUI/coordinator terminal expectations encounter Pending;
+an assertion thrown from a direct notification callback aborts the ARM test
+process. Production uses ApplicationQuitSession polling; this fixture diagnosis
+is not evidence of an installed-app crash or authorization to rewrite checks.
+The ARM Qt suite also retains one bind failure in the created-source-seed
+branch of the unchanged-settings runtime test. Its cause remains unresolved.
+All no-Torrent matrix selectors pass. Timing budgets and original bodies remain
+unchanged; neither green diagnostic repeats nor a separate audit waive failures.
+
+The strict gate fails. The separate audit explicitly says NOT_ACCEPTED and
+records fatal exits and missing inventories. Protected historical/live state and
+earlier seals pass readback. All 93 final source/helper/binary/control pins
+are frozen and match; original test bodies/helpers/timers are preserved.
+Twelve private bind-telemetry repetitions pass (24 cases / 5,118 assertions)
+with successful SDK listener alerts only. The original failure is not reproduced
+or waived, and the diagnostic consumer is not acceptance evidence. The initial
+protection-helper run used Apple's older Python without hashlib.file_digest;
+its failed setup log remains intact, and a fresh v2 receipt using the installed
+Python 3.14.7 passes without changing protected inputs. Step 1's inventory gate, integrated Steps
+3/4, and final acceptance remain open. The three repairs remain local; no
+completion commit, installation, publication, signing or feed activation.
+
+The maintainer subsequently approved preparing a focused GUI compatibility
+specification. Draft `docs/superpowers/specs/2026-10-07-gui-quit-pending-compatibility-design.md`
+documents explicit terminal observation, safe callback result capture, physical
+route ordering and retaining filesystem blockers through failed receipts.
+The maintainer approved that specification after `cb7da115`. The focused
+implementation plan `docs/superpowers/plans/2026-10-07-gui-quit-pending-compatibility.md`
+was subsequently approved and executed in Native mode. Its fixture-only
+checkpoint and bounded results follow; production shutdown behavior is unchanged.
+
+### Subsequent GUI Compatibility Verification: 2026-10-07
+
+Fixture checkpoint `be8f21da` migrates only the 19 approved observations to
+explicit terminal collection, captures callback results outside Qt delivery,
+retains blockers through Refused and observes route revocation after physical
+producer retirement. Original terminal/cached/rejection/ownership/consent checks,
+case/section inventories, shared helper and timing budgets remain intact.
+
+Fresh ARM/Intel five-target/interposer and whole ARM no-Torrent builds pass.
+Focused verification passes 312 case instances / 9,270 assertions; all 47 complete
+matrix runs pass 6,729 instances / 621,195 assertions, zero failures/errors/skips/
+fatal exits. Full GUI inventories are 126/126/124 on both CPUs; all 37 comparisons
+match. Current-source controls retain exact 14/9/14 and early-core six failures.
+The 101 tested pins, protected historical/live state and earlier seals verify,
+including the 519-file failed checkpoint and design/plan readback seals.
+
+This closes the bounded GUI observation compatibility work, not Task5 acceptance.
+The prior ARM Qt bind cause did not recur but remains unwaived; historical
+102/180/354ms causes, broader review/lifecycle/native/minOS/live/soak, language/
+provenance and release gates remain open. The three runtime repairs remain local;
+no completion/release acceptance, signing, install, push or publication. Overall
+GUI-settings Task3 and updater Tasks7/8 remain open; signed feeds last.
 
 ## Self-Review And Handoff
 

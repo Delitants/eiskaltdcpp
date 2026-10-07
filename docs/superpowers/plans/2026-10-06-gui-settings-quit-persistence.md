@@ -505,3 +505,43 @@ remain Tasks2-4. MainWindow still invokes synchronous runtime shutdown, so this
 component does not fix app-level quit yet. Task5 broken-path controls and
 independent review, overall Task3, retained causes, broader coverage/native/live/
 soak, final rebuild/sign/install/publication remain pending. Signed feeds last.
+
+### Task5 Integrated Readback: 2026-10-07
+
+The nonblocking Torrent repair reaches fresh both-CPU five-target and whole
+ARM no-Torrent builds, one immutable-range review, and a single focused fix
+pass for three Important findings. Both-CPU new regressions pass 6 instances /
+88 assertions; final-source broken controls retain exact 14/9/14 failures.
+Integrated acceptance remains refused: the serial audit records 6,392 instances /
+603,596 assertions with 94 failures/errors. All three ARM GUI layouts abort
+at a legacy direct-callback immediate-completion assertion; Intel layouts
+record Pending/terminal and route assertions plus a caught callback exception.
+ARM Qt additionally retains one runtime bind failure. GUI inventory omissions
+are explicitly reported; no-Torrent selectors pass. Protected historical/live
+state and earlier seals remain intact.
+
+No original assertion, helper, hold or deadline is weakened, no failed receipt
+is overwritten, and no green rerun waives the bind cause. The focused GUI
+compatibility design and plan were subsequently approved and executed below.
+Task5 and overall GUI-settings Task3 remain open, as do parent updater Tasks7/8,
+historical causes, broader native/live/language/provenance/soak and release gates.
+No installation, signing or publication; signed feeds remain last.
+
+### Subsequent GUI Compatibility Checkpoint: 2026-10-07
+
+Fixture-only checkpoint `be8f21da` adds terminal observers and the 19 approved
+call-site migrations without changing production shutdown, shared helper,
+timing budgets, original cases/sections or terminal/consent/refusal assertions.
+Blockers remain until Refused, callback assertions run outside Qt delivery,
+and route observations follow physical producer retirement. Both-CPU focus
+passes 312 instances / 9,270 assertions; the 47-run complete matrix passes 6,729
+instances / 621,195 assertions with zero failures/errors/skips/fatal exits and
+all 37 inventory comparisons matching. GUI inventories are 126/126/124 per CPU.
+All four private broken controls retain their exact failure sets. Fresh builds,
+101 tested-input pins, protected historical/live readbacks and earlier seals pass.
+
+The old bind failure remains unexplained/unwaived despite not recurring; earlier
+102/180/354ms causes remain separate. This bounded verification does not close
+Task5, overall settings Task3, updater7/8 or native/minOS/live/review/lifecycle/
+language/provenance/soak/release gates. No installed app/profile/server/key/VM,
+signing, push, publication or feed changes; signed feeds last.

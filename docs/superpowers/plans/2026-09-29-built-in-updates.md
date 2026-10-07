@@ -2678,3 +2678,45 @@ readback. This is component verification only: sharing, proxy physical cleanup,
 runtime/GUI composition, integrated matrix and independent review remain open.
 The app quit path still uses synchronous wrappers. No install/activation or
 release acceptance; Task3 and parent Tasks7/8 remain open. Signed feeds last.
+
+### Torrent Quit Task5 Partial Matrix: 2026-10-07
+
+Fresh both-CPU and whole no-Torrent builds pass. Independent review identifies
+three Important physical/admission defects; their single focused repair pass
+passes both-CPU regressions (6 instances / 88 assertions), with strict baseline
+RED and final-source negative controls retained. This does not accept the
+integrated repair: matrix audit is NOT_ACCEPTED, 6,392 instances / 603,596
+assertions and 94 failures/errors, including three ARM GUI aborts with incomplete
+inventories, Intel Pending/terminal and callback failures, and one ARM Qt bind
+failure. Existing GUI callers/fixtures assumed immediate completion; restoring
+blocking GUI waits or removing terminal checks is not an approved remedy.
+The actual quit session polls Pending, and all applicable no-Torrent selectors
+pass. Historical/live protected-state and earlier-seal readbacks pass.
+
+Task5 needs focused compatibility design/verification and bind investigation.
+Overall GUI-settings Task3 and updater Tasks7/8, historical/lifecycle/native/live/
+language/provenance/soak gates remain open. Final source/material builds, numeric
+production allocation, signing/notarization, signed-v3 acceptance, guarded
+closed-app installation and authenticated GitHub/wiki/prerelease publication
+remain pending. No installed app/profile/server/key/VM/feed changes. Signed
+feeds remain last.
+
+### Subsequent GUI Pending Compatibility: 2026-10-07
+
+Approved Native fixture-only checkpoint `be8f21da` migrates 19 observations to
+explicit terminal collection without changing production shutdown or consent.
+All original cases/sections, terminal/cached/rejection checks and timing limits
+remain; failure blockers persist until Refused and GUI callback assertions move
+outside Qt delivery. Fresh builds and focused 312 instances / 9,270 assertions pass.
+The complete 47-run matrix passes 6,729 instances / 621,195 assertions with zero
+failures/errors/skips/fatal exits, full GUI 126/126/124 inventories per CPU, and
+all 37 inventory comparisons matching. Four current-source broken controls retain
+their exact expected failures. All 101 current pins and protected-state/earlier
+seal readbacks pass. Host/Rosetta is not native minimum-OS/live acceptance.
+
+The prior 94-failure/error audit remains sealed; the bind cause and historical
+102/180/354ms causes are not waived by this green result. Task5 and overall
+GUI-settings Task3/updater7/8 remain open, together with broader review/lifecycle/
+native/live/language/provenance/soak and final build/sign/install/publication gates.
+No live app/profile/server/key/VM/feed changes or signing/install/push/publication;
+signed feeds remain last.

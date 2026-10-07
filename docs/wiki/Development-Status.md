@@ -491,3 +491,44 @@ reviewed app/material rebuild and numeric production build, signing/notarization
 signed-v3 acceptance, guarded closed-app install/readback, authenticated
 GitHub/wiki/screenshots/prerelease publication/readback remain pending. Overall
 GUI-settings Task3 and parent Tasks7/8 remain open. Signed feeds remain last.
+
+### Integrated Torrent Quit Checkpoint (2026-10-07)
+
+Task5 is **not accepted**. Fresh ARM/Intel and whole no-Torrent builds succeed;
+the three independent-review repairs pass focused tests on both CPUs. Private
+blocking/reap/retraction controls retain their exact expected failures. The
+complete serial run records 6,392 case instances / 603,596 assertions, with
+94 failures/errors. ARM GUI runs abort on legacy immediate-completion assertions
+in a notification callback; Intel records Pending-versus-terminal expectations
+and a caught callback exception. ARM Qt also reports one unwaived Torrent bind
+failure. Partial ARM GUI inventories are explicitly recorded, not treated as
+passes. No-Torrent selectors pass; historical/live protected-state readbacks pass.
+
+The focused [GUI Pending compatibility design](../superpowers/specs/2026-10-07-gui-quit-pending-compatibility-design.md)
+and [implementation plan](../superpowers/plans/2026-10-07-gui-quit-pending-compatibility.md)
+were approved and executed in Native mode. Fixture-only checkpoint `be8f21da`
+migrates the 19 authorized observations, preserves all cases/sections, original
+terminal/cached/rejection/consent checks, shared helper and timing limits, captures
+GUI callback results outside Qt delivery, and retains blockers until Refused.
+Production shutdown behavior is unchanged.
+
+Fresh ARM/Intel five-target/interposer and whole ARM no-Torrent builds pass.
+Focused verification passes 312 instances / 9,270 assertions. The subsequent
+complete 47-run matrix passes 6,729 instances / 621,195 assertions, zero failures/
+errors/skips/fatal exits. All 37 inventory comparisons match; complete GUI
+inventories are 126/126/124 per CPU. Four current-source broken controls retain
+their exact failures. All 101 current pins, historical bundles/signatures,
+archive/provider/protected-file and earlier seals verify, including the sealed
+519-file failed checkpoint and design/plan readbacks. These are host ARM/macOS 27
+and Intel/Rosetta checks, not native minimum-OS/live or final release acceptance.
+
+The earlier 94-failure/error audit remains intact. Its bind failure did not recur
+but remains unexplained and unwaived; Task5 is still not accepted. The three
+reviewed runtime repairs remain local and separate from the fixture checkpoint.
+Broader owner/lifecycle, historical 102/180/354ms causes, localization/native
+quality, provenance/reproducibility, real peer/selected-check/bootstrap coverage,
+minimum-OS/live/soak acceptance remain open. Final reviewed builds, production
+build allocation, signing/notarization, guarded install/readback, authenticated
+GitHub/wiki/screenshots/prerelease publication and signed-v3 acceptance remain
+pending. GUI-settings Task3 and updater Tasks7/8 stay open. No deployment or
+publication occurred; signed feeds remain last.
