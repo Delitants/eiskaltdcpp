@@ -2664,3 +2664,9 @@ design is proposed separately. Broader coverage, retained causes, localization,
 provenance, independent review/native/live/soak, final rebuild/signing/install
 and authenticated publication remain pending. Task 3 and parent Tasks 7/8
 stay open; installed/profile/server/key/feed state is untouched. Signed feeds last.
+
+The nonblocking Torrent-retirement written design is now approved for planning.
+A five-task implementation plan covers engine receipts, checked sharing
+retraction, proxy physical reaping, runtime/GUI composition and final verification.
+It awaits written review with Native execution preserved; no product changes,
+test execution, installation or activation occur in this planning checkpoint.

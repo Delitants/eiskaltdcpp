@@ -204,6 +204,12 @@ GUI-owned phase polling, physical worker receipts, checked share retraction and
 separate layout/producer milestones. Its written review and implementation plan
 remain pending; no production repair starts from design-preparation approval.
 
+The maintainer subsequently approved that written design for planning. The
+focused five-task implementation plan is now saved at
+`docs/superpowers/plans/2026-10-06-nonblocking-torrent-quit.md`, pending written
+review with the existing Native method preserved. No implementation or new test
+execution is claimed by this planning checkpoint; all remaining gates stand.
+
 ## Execution And Review Checkpoint (2026-10-06)
 
 Tasks 1/2 have fresh both-CPU post-commit checks. The single fresh-context review of `0f2487459..09b83854b` found two Important issues: settings Pending postponed core admission closure, and pre-transfer refusal retained queued Qt auto-sync. There were no Critical or Minor findings. Both issues were reproduced before the one fix pass; no second review or post-fix reviewer approval is claimed.

@@ -301,6 +301,11 @@ repair step, including sharing and proxy worker boundaries. Broader coverage,
 retained causes, localization/provenance, independent review/native/live/soak
 and final build/sign/install/publication remain pending. Signed feeds last.
 
+The focused nonblocking Torrent-retirement written design has been approved.
+Its implementation plan is prepared and awaits review; Native execution is
+preserved. This documentation-only step makes no product change and adds no
+runtime or release acceptance. The earlier failures and remaining gates stand.
+
 Peer-policy test failures now include the policy variant, listener ports, proxy
 forwarding and available leech peer/alert state. A deliberately invalid loopback
 endpoint reproduces the counter failure without payload transfer and verifies
