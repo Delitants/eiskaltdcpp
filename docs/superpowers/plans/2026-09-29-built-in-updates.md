@@ -2513,6 +2513,18 @@ case instances / 2,658 passing assertions / two failures, no expected failures
 or skips. Protected-state, source/object/binary and prior failure readbacks
 pass. No production repair is made; Task 3 remains incomplete.
 
+The next private wait trace at `d62ef62d2` validates joins before hold entry and
+retains one flush heartbeat failure across 12 original/passively observed runs /
+24 case instances / 2,279 passing assertions. The failed section returns in
+68ms and captures a 63ms Torrent GUI join before the settings hold, not proof of
+the later heartbeat failure's cause. A separate scheduling control isolates
+blocking watchdog result collection: exactly three original heartbeat checks
+fail despite earlier GUI progress; event-pumped physical readiness passes 117
+assertions. The controlled scheduling gate is not natural acceptance. Four
+refusal-path collectors are proposed for fixture-only correction, without
+changing deadlines, checks or production ownership. No correction is merged;
+natural latency/recovery failures remain open and unwaived.
+
 This implements the bounded local settings/quit repair, not final acceptance. Historical natural
 recovery/Torrent causes, broader pending-owner/Ready-update and per-file AntiSpam
 coverage, localization, provenance/reproducibility, whole-candidate review,

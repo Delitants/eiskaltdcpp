@@ -162,6 +162,18 @@ failure's cause. Original timings/assertions, source/object/binary pins, live
 state and failed evidence remain preserved. No production fix is claimed;
 both responsiveness and recovery acceptance remain open.
 
+A wider private wait trace then runs 12 original/passively observed selections /
+24 case instances, with 2,279 passing assertions and one heartbeat failure.
+That failed flush section returns in 68ms and captures a 63ms synchronous
+Torrent-engine join before the settings hold, not a proven cause of the later
+heartbeat failure. A separate late-watchdog control proves the fixture can
+report no heartbeat despite observed GUI progress when blocking result
+collection stops the event loop. RED fails exactly three heartbeat assertions;
+private event-pumped collection passes 117 assertions without changing the
+request budget or original checks. This is control evidence, not a waiver of
+natural stalls or a merged fix. Fixture-only collection correction is proposed;
+production ownership and Task 3 acceptance remain unchanged.
+
 Regular core and Qt suites also passed on both; the Intel
 Torrent suite passes. An ARM Torrent peer-policy rejection-counter failure is
 retained for investigation despite a passing focused rerun. Earlier intermittent

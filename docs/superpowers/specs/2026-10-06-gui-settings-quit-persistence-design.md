@@ -230,6 +230,19 @@ the cause of either natural responsiveness failure. All 262 public objects,
 the public target, instrumented public sources, protected state and retained
 failure pins remain unchanged. No production repair or acceptance is claimed.
 
+A further armed-wait trace validates pre-hold join sensitivity with two
+standalone controls. Twelve original/passively observed runs have one flush
+heartbeat failure (68ms request); a 63ms Torrent-engine GUI join is captured
+before settings hold entry, without proving the heartbeat failure's cause.
+A private late-snapshot control shows the fixture's blocking watchdog get can
+stop GUI events and falsely fail heartbeat observation. Exactly three original
+heartbeat checks fail in RED; event-pumped physical watchdog collection passes
+117 assertions. The control intentionally gates observation timing, not the
+application; it is not acceptance or a waiver of natural 180/354ms stalls.
+Fixture-only correction at the four refusal collectors is proposed, preserving
+all deadlines and original checks. Production ownership changes and Task 3
+acceptance remain unchanged/incomplete by this diagnostic.
+
 This is isolated source-level acceptance for the bounded repair, not native
 Windows/other-Qt/minimum-OS, real-GOST interop, forced/crash teardown or installed
 update acceptance. Historical intermittent failures remain open independently.
