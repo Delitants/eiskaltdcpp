@@ -608,3 +608,24 @@ Fixed-mode recipe design, historical raw-container/whole-app reproducibility and
 other source/resources/notices closure remain open, along with original Intel/
 bind causes, broader QA, integration, final review/build/signing/update/install/
 publication gates. Nothing installed or published; production signed feeds last.
+
+## c-ares Fixed-Copy-Mode Feasibility (2026-10-08)
+
+The [isolated follow-up](research/2026-10-08-cares-fixed-mode-archive-probe.md)
+produces identical archive bytes per CPU from differently timestamped/mode copies
+by setting only new object-copy modes to `0644` before native `libtool -D`.
+All 91 selected object payloads/order match; four controlled offline consumers
+pass, Intel via Rosetta. Sixteen report controls pass after two mode-policy REDs.
+Earlier native-D permission-mismatch cases still fail the same equality tests.
+
+Existing providers/recipes are not changed, and historical raw-archive/full-app
+gates are not waived. External output-file modes differ; fresh-source integration,
+repeat-build and packaging metadata policy remain pending. Six exact prior
+archiver warnings per case and two harness failures are retained. Enumerated
+source/input/profile custody and the preceding 1,012-artifact seal are checked,
+not broader untracked/profile/old-QA state.
+
+Other dependency/resource/preferred-source/notices and whole-app reproducibility,
+original Intel/bind causes, broader QA/integration, final review/build/signing/
+update/install/publication gates remain open. Nothing installed or published;
+production signed feeds last.

@@ -1268,3 +1268,28 @@ broader runtime/native/minimum-OS/language QA; Torrent/settings/updater integrat
 final whole review and complete builds; production numbering/signing/notarization/
 signed-v3 acceptance, guarded install and GitHub/wiki/screenshots/prerelease
 publication/readback. Production signed feeds last. Nothing installed or published.
+
+## c-ares Fixed-Copy-Mode Feasibility
+
+The [follow-up private probe](../research/2026-10-08-cares-fixed-mode-archive-probe.md)
+passes exact byte equality on both CPU pairs by setting only newly copied object
+modes to `0644` before native `libtool -D`. Incoming timestamps/modes and archiver
+umasks differ; all 91 selected object payloads/order are preserved. Four controlled
+offline consumers pass, with Intel under Rosetta. Sixteen member-report controls
+pass after exactly two mode-policy REDs. Native baseline tests still fail on exactly
+both earlier permission-mismatch cases; old evidence is unchanged.
+
+This is feasibility, not production integration or whole-app/native/minimum-OS
+acceptance. Output files still have different external permissions under the two
+umasks; package/tree metadata policy remains pending. The exact six prior archiver
+warning lines per case and two harness failures are retained. Custody covers 3,532
+source/repair paths, 391 input hash/stat pins, nine profile files and the preceding
+complete 1,012-artifact seal; extra untracked/profile/other-QA paths are not fully
+inventoried. No provider, production recipe, app/profile or release state changed.
+
+Remaining: fresh-source recipe integration/design and repeat builds, output-file
+metadata policy and whole-app reproducibility; other source/resources/notices
+closure; original Intel/bind causes and broader runtime/native/minimum-OS/language
+QA; overall Torrent/settings/updater integration; final review and complete builds;
+production numbering/signing/notarization/signed-v3 acceptance, guarded install
+and GitHub/wiki/screenshots/prerelease publication/readback. Signed feeds last.

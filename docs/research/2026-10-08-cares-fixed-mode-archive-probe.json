@@ -1,0 +1,94 @@
+{
+  "archive_bytes_rewritten": false,
+  "archive_filesystem_modes": {
+    "arm64": {
+      "first": "0o600",
+      "second": "0o644"
+    },
+    "x86_64": {
+      "first": "0o600",
+      "second": "0o644"
+    }
+  },
+  "archiver_umasks": {
+    "first": "077",
+    "second": "022"
+  },
+  "base_commit": "a001f57440af11078af56e682affd191aff892ed",
+  "controls": {
+    "initial_failures": [
+      "test_changed_symbol_table_mode",
+      "test_unfixed_object_mode"
+    ],
+    "passing": 16,
+    "scope": "Synthetic member reports"
+  },
+  "gate": {
+    "fixed_mode_exit": 0,
+    "fixed_mode_passes": 2,
+    "old_native_d_exit": 1,
+    "old_native_d_failures": 2
+  },
+  "installed_or_published": false,
+  "measurement": {
+    "cpus": {
+      "arm64": {
+        "comparison": {
+          "changed_header_fields": {},
+          "differing_bytes": 0,
+          "members_including_symbol_table": 92,
+          "metadata_only": false,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "first": {
+          "archive_sha256": "3b56114744fc0e8cef8915d09e444c5d4db2701143f35b3b594ff840e12662e3",
+          "consumer_sha256": "a5e2e3583cbb83e5ea128c0bd25c5ed4d56aeeac6e61609267b828b5802c7969"
+        },
+        "second": {
+          "archive_sha256": "3b56114744fc0e8cef8915d09e444c5d4db2701143f35b3b594ff840e12662e3",
+          "consumer_sha256": "a5e2e3583cbb83e5ea128c0bd25c5ed4d56aeeac6e61609267b828b5802c7969"
+        },
+        "whole_archives_equal": true
+      },
+      "x86_64": {
+        "comparison": {
+          "changed_header_fields": {},
+          "differing_bytes": 0,
+          "members_including_symbol_table": 92,
+          "metadata_only": false,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "first": {
+          "archive_sha256": "ae7e318746111731d64b5f7c9f4a55babf30edc0429ff17470e687c1330eb120",
+          "consumer_sha256": "024075570ceab7fec78cbf6aba08ead6c82a3f5563d2999f9d839c0bc8c088fc"
+        },
+        "second": {
+          "archive_sha256": "ae7e318746111731d64b5f7c9f4a55babf30edc0429ff17470e687c1330eb120",
+          "consumer_sha256": "024075570ceab7fec78cbf6aba08ead6c82a3f5563d2999f9d839c0bc8c088fc"
+        },
+        "whole_archives_equal": true
+      }
+    },
+    "historical_raw_archive_gate_waived": false,
+    "native_intel_minimum_os_acceptance": false,
+    "offline_consumers_passed": 4,
+    "production_recipe_integrated": false,
+    "six_archiver_warning_lines_per_case_match_previous": true,
+    "status": "PASS_ISOLATED_FEASIBILITY"
+  },
+  "normalized_object_copy_mode": "0644",
+  "preservation": {
+    "complete_broader_custody_claimed": false,
+    "input_hash_stat_pins": 391,
+    "previous_artifacts": 1012,
+    "protected_profile_files": 9,
+    "source_repair_paths": 3532
+  },
+  "private_parent_mode": "0700",
+  "production_signed_feeds": "last",
+  "scope": "Isolated fixed-copy-mode feasibility; no production recipe/provider integration",
+  "source_recompiled": false,
+  "x86_execution": "Rosetta"
+}
