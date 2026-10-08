@@ -1,8 +1,9 @@
 # AntiSpam Per-File Quit Recovery
 
-Status: conversational design approved on 2026-10-07; this written specification
-awaits maintainer review. No product implementation or execution plan is approved
-by this document. Source inspected at `9b88fab066fda1a1f19dc34bac199911ea3b0136`.
+Status: written specification approved on 2026-10-07 after design-only commit
+`6d066c82a`. The implementation plan awaits maintainer review; product code is
+not changed by this document. Source inspected at
+`9b88fab066fda1a1f19dc34bac199911ea3b0136`.
 The seven existing local Torrent retirement/test changes remain outside this
 repair's scope and must be preserved.
 
@@ -209,8 +210,8 @@ separate gates; production signed feeds remain last.
 
 ## Next Gate
 
-Review and approve this written specification before writing the implementation
-plan. Use the maintainer's existing native/inline execution preference when the
-plan is subsequently approved. This specification authorizes no installation,
+Review and approve `docs/superpowers/plans/2026-10-07-antispam-per-file-quit-recovery.md`
+before implementation. Preserve the maintainer's existing native/inline execution
+preference when the plan is approved. This specification authorizes no installation,
 profile mutation, production credentials, remote service changes, publication or
 feed activation.
