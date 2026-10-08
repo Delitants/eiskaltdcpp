@@ -485,3 +485,19 @@ Forty-one local controls and 30 release-profile fixtures pass. This is material
 packing/current-byte evidence, not whole-binary or historical compilation proof.
 Other dependency/resource/source/notice/attribution closure and release holds
 remain unchanged. See [the scoped report](research/2026-10-08-libtorrent-openssl-materials.md).
+
+## Legacy Bucket Repository Lineage
+
+The [440-path lineage index](research/2026-10-08-legacy-icon-lineage.json) and
+[scope report](research/2026-10-08-legacy-icon-lineage.md) separate eleven current
+Modern Classic replacements, five QRC declarations, one README and 423 images
+whose external artistic origins remain unresolved. Both historical CPU payloads
+and their Git tree match exactly; current source bytes and latest path-change
+commit/blob identities are verified separately. Existing effective copyright
+stanzas are retained without license changes or treating committers as artists.
+The eleven replacements require the final reviewed-source rebuild, not edits to
+historical apps. This narrows the earlier 440-file attribution bucket; it does
+not close external artwork provenance or dependency-resource/source/notice and
+reproducibility gates. Original Intel shutdown and wider QA/review/build/release/
+install/publication gates remain open. Nothing installed or published; signed
+production feeds last.

@@ -1027,3 +1027,20 @@ Other dependency/resource/source/notice/legacy-attribution closure, binary
 reproducibility, original Intel shutdown refusal, broader QA and final whole
 review/builds remain pending. Signing/notarization/update acceptance, guarded
 installation and publication remain held. Production signed feeds remain last.
+
+## Legacy Resource Lineage Checkpoint
+
+The [repository lineage audit](../research/2026-10-08-legacy-icon-lineage.md)
+verifies all 440 historical legacy-bucket paths against both split candidates
+and pinned Git trees, with current bytes, effective existing attribution stanzas
+and latest path-change identities. Eleven paths are approved Modern Classic
+replacements, five are QRC declarations, one is documentation, and 423 are
+unchanged images whose external origins remain open. Repository custody is not
+artistic authorship or license certification. No assets or declarations changed.
+
+Remaining: external artwork provenance and other dependency resources/source/
+notices/reproducibility; original Intel shutdown and broader runtime/native/
+translation QA; independent final review and complete reviewed builds; signing/
+notarization/update acceptance, guarded install, GitHub/wiki/screenshots and
+prerelease publication/readback. Production signed feeds last. No installation
+or publication occurred at this checkpoint.
