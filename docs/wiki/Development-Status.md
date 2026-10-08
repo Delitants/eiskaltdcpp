@@ -1044,3 +1044,20 @@ translation QA; independent final review and complete reviewed builds; signing/
 notarization/update acceptance, guarded install, GitHub/wiki/screenshots and
 prerelease publication/readback. Production signed feeds last. No installation
 or publication occurred at this checkpoint.
+
+## Intel Qt Metadata Linkage Checkpoint
+
+The [released-template reconstruction](../research/2026-10-08-intel-qt-plist-template.md)
+closes ten missing Intel Qt metadata generator-linkage witnesses without editing
+providers or historical apps. Twenty outputs from two CMake versions match the
+ten original plists exactly. The unchanged 33-file linkage gate and 17 controls
+pass; source-proof labels and failed prior evidence are preserved. Matching a
+released template does not identify the historical producer or certify complete
+framework/binary reproducibility.
+
+Original Intel shutdown remains unresolved, with no guessed repair or repeated
+passing fixture used as a waiver. Remaining: 423 artwork origins and other
+material/source/notice closure; broader runtime/native/translation QA; final whole
+review and complete builds; signing/notarization/update acceptance, guarded
+install and GitHub/wiki/screenshots/prerelease publication/readback. Production
+signed feeds last. Nothing installed or published.

@@ -501,3 +501,20 @@ not close external artwork provenance or dependency-resource/source/notice and
 reproducibility gates. Original Intel shutdown and wider QA/review/build/release/
 install/publication gates remain open. Nothing installed or published; signed
 production feeds last.
+
+## Intel Qt Metadata Template Linkage
+
+The ten retained Intel Qt framework plists now reconstruct byte-for-byte from
+an unmodified, checksum-pinned CMake 3.28.6 release-source template and verified
+Qt source properties/versions. Both actual 3.28.6 and 4.4.2 interpreters generate
+the same ten files. The unchanged 33-file linkage gate passes in a derived map;
+prior failed maps/outputs, inherited witnesses and source-proof labels remain
+unchanged. Seventeen input/output/provenance controls pass. See
+[the reconstruction scope](research/2026-10-08-intel-qt-plist-template.md).
+
+This establishes matching released-template linkage, not the original historical
+Qt toolchain or complete framework/source/license/reproducibility certification.
+The original CMake release notice is retained for final material curation. Other
+material/artwork/runtime/native/review/build/signing/install/publication gates
+remain open. No app/provider/asset mutation or installation/publication; signed
+production feeds last.
