@@ -319,3 +319,28 @@ notices rather than assuming this document, a package-manager license label or
 the top-level GPL text substitutes for them. Staged materials must survive the
 final archive/signature checks and be uploaded with the actual release; local
 preparation is not publication.
+
+## Retained Consumer Header-Isolation Audit (2026-10-07)
+
+A [fresh retained-consumer audit](research/2026-10-07-current-static-header-attribution.md)
+checks actual static link inputs rather than configuration alone. Eight retained
+both-CPU test executables name the controlled c-ares 1.34.8/libmaxminddb 1.13.3
+archives. All 186 archive object bytes match their retained compiler objects;
+dependency-listed upstream library inputs and packaged license/notice bytes
+match pinned source archives. This advances static consumption attribution only:
+these consumers predate the latest source/catalog changes, and the generated app
+link rules have no built app executable in those matrix trees.
+
+Controlled-header acceptance is **HELD**. Both CPUs' resolver dependency records
+name shared include paths whose current header readback identifies c-ares 1.34.4,
+despite linking 1.34.8 archives. Apple Silicon also names an uncontrolled generated
+MaxMind configuration header. Fresh
+preprocessing reproduces exactly seven header-byte mismatches and ten uncontrolled
+origins. A corrected disposable include-order control selects all six controlled
+headers per CPU; the insufficient first control and its failure remain retained.
+No CMake/product repair, installed-provider mutation or release acceptance occurs.
+
+Next is the bounded provider-header isolation repair and fresh both-CPU builds,
+not a waiver based on successful prior tests. Current-source dependency/resource/
+notice refresh, whole-build reproducibility, native minimum-OS, independent final
+review, signing/install/publication and signed-feed-last gates remain separate.

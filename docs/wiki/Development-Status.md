@@ -872,3 +872,25 @@ updater7/8, historical causes, broader lifecycle/native/minimum-OS/live/soak/
 unfinished/native-language quality and final review/build/allocation/signing/
 notarization/signed-v3/install/publication/readback remain pending. No installation
 or publication; production signed feeds remain last.
+
+### Retained Static Inputs And Header Isolation (2026-10-07)
+
+The [current static-input audit](../research/2026-10-07-current-static-header-attribution.md)
+traces four pinned c-ares/MaxMind archives through 186 matching object bytes and
+eight retained both-CPU test consumers, including upstream source/license/notice
+readback. However, both CPUs' resolver compiler records select shared headers
+currently identifying c-ares 1.34.4 while linking 1.34.8 archives; Apple Silicon
+also selected a differently generated uncontrolled MaxMind configuration header.
+Fresh preprocessing confirms the retained selections. The strict header gate has
+exactly seven byte mismatches and ten origin mismatches and remains HELD. Review
+strengthened the audit's missing-evidence checks and retry preservation; four
+new RED regressions precede the ten passing harness tests. They do not convert
+this failed build-input gate into release acceptance.
+
+Next: focused CMake/provider-header isolation repair and fresh both-CPU consumer
+builds, preserving the sealed failed evidence. This is not a proven crash/refusal
+cause. The original Intel shutdown refusal, overall Torrent5/GUI-settings3/
+updater7/8, broader lifecycle/native/minimum-OS/live/soak/translation-quality/
+provenance/reproducibility and final review/build/allocation/signing/notarization/
+signed-v3/install/publication/readback remain pending. Nothing installed or
+published; production signed feeds remain last.
