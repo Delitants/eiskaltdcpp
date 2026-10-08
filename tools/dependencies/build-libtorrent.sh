@@ -5,6 +5,8 @@ repo=$(cd "$(dirname "$0")/../.." && pwd -P)
 root="$repo/Work/dependencies/selected-recheck"
 prefix=
 archive=
+openssl_root=
+boost_root=
 arch=$(uname -m)
 floor=
 jobs=2
@@ -15,16 +17,19 @@ Build Eiskalt's checksum-pinned libtorrent into an isolated project prefix.
 Usage: build-libtorrent.sh --prefix PATH [--source-archive PATH]
        [--staging-root PATH] [--architecture arm64|x86_64]
        [--deployment-target VERSION] [--jobs 1|2]
+       [--openssl-root PATH] [--boost-root PATH]
 The staging root and prefix must be inside this checkout's Work directory.
 Requires CMake, jq, curl, patch, tar and a compatible Boost/OpenSSL toolchain.
+--boost-root is the include directory containing boost/, not a package prefix.
 HELP
             exit 0 ;;
-        --prefix|--source-archive|--staging-root|--architecture|--deployment-target|--jobs)
+        --prefix|--source-archive|--staging-root|--architecture|--deployment-target|--jobs|--openssl-root|--boost-root)
             (($# >= 2)) || { echo "Missing value for $1" >&2; exit 2; }
             case "$1" in
                 --prefix) prefix=$2 ;; --source-archive) archive=$2 ;;
                 --staging-root) root=$2 ;; --architecture) arch=$2 ;;
                 --deployment-target) floor=$2 ;; --jobs) jobs=$2 ;;
+                --openssl-root) openssl_root=$2 ;; --boost-root) boost_root=$2 ;;
             esac
             shift 2 ;;
         *) echo "Unknown argument: $1" >&2; exit 2 ;;
@@ -84,8 +89,19 @@ fi
 [[ $(cat "$source_root/patched") == "$patchexpected" ]] || { echo "Source stamp mismatch" >&2; exit 1; }
 args=(-DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$prefix"
     -Dbuild_tests=OFF -Dbuild_examples=OFF -Dpython-bindings=OFF)
+[[ -z "$openssl_root" ]] || args+=(-DOPENSSL_ROOT_DIR="$openssl_root" -DOPENSSL_INCLUDE_DIR="$openssl_root/include")
+[[ -z "$boost_root" ]] || args+=(-DBoost_NO_BOOST_CMAKE=ON -DBoost_NO_SYSTEM_PATHS=ON -DBoost_INCLUDE_DIR="$boost_root")
 if [[ $(uname -s) == Darwin ]]; then
-    args+=(-DCMAKE_OSX_ARCHITECTURES="$arch")
+    if [[ -n "$openssl_root" ]]; then
+        for library in libssl.dylib libcrypto.dylib; do
+            [[ -f "$openssl_root/lib/$library" ]] || { echo "Missing selected OpenSSL library: $library" >&2; exit 2; }
+        done
+        # Override successful cached find_library results when the selected
+        # provider changes; never pair the new headers with old libraries.
+        args+=(-DOPENSSL_SSL_LIBRARY:FILEPATH="$openssl_root/lib/libssl.dylib"
+            -DOPENSSL_CRYPTO_LIBRARY:FILEPATH="$openssl_root/lib/libcrypto.dylib")
+    fi
+    args+=(-DCMAKE_OSX_ARCHITECTURES="$arch" "-DCMAKE_PROJECT_libtorrent_INCLUDE=$repo/cmake/LibtorrentOpenSSLHeaders.cmake")
     [[ -z "$floor" ]] || args+=(-DCMAKE_OSX_DEPLOYMENT_TARGET="$floor")
 fi
 build="$root/build-$patchexpected-$arch"

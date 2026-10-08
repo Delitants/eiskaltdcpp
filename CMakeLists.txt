@@ -45,6 +45,10 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 find_package (BZip2 REQUIRED)
 find_package (ZLIB REQUIRED)
 find_package (OpenSSL REQUIRED)
+if(APPLE)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenSSLProviderHeaders.cmake")
+    eiskalt_isolate_openssl_headers("${OPENSSL_INCLUDE_DIR}")
+endif()
 find_package (Threads REQUIRED)
 find_package (Gettext REQUIRED)
 find_package (Iconv REQUIRED)
@@ -556,6 +560,10 @@ else ()
 endif ()
 
 include (CPack)
+
+if(APPLE)
+    eiskalt_attach_openssl_headers()
+endif()
 
 # Apple ld may receive duplicate libraries through transitive/interface dependencies.
 # Silence that warning permanently for the final executables.

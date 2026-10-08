@@ -970,3 +970,28 @@ updater7/8, native/live/lifecycle/soak/platform/translation quality, final whole
 review/application/material build/allocation/signing/notarization/signed-v3/
 install/GitHub/wiki/prerelease publication/readback remain pending. Nothing
 installed or published; production signed feeds remain last.
+
+### 2026-10-08: OpenSSL Header Isolation Build Gate Passed
+
+The [bounded repair](../research/2026-10-08-openssl-header-isolation.md) stages
+selected OpenSSL public/configuration headers before ambient compiler roots.
+Both fresh CPU providers have 285 built objects; five consumers have 950 per
+CPU. Their 77 provider/79 consumer OpenSSL header paths have zero wrong origins,
+and actual imports/version probes match selected 3.6.3 libraries. All 142 staged
+headers match the selected packages. No upstream patch/ABI or runtime behavior
+was changed, and original dirty candidate repairs remain intact.
+
+Twenty-one OpenSSL controls pass with CMake 3.28.6/4.4.2; 19 existing companion
+controls and both registered suites pass. Ten isolated SSL/certificate cases
+pass per CPU, 88 assertions each. Independent focused re-review has no remaining
+actionable findings. Original failed runs and sealed mismatch/material evidence
+are preserved, including failed alias/discovery attempts. The original Intel
+shutdown refusal was not rerun or waived.
+
+Next: generated-header and matching release-material closure. Other dependency/
+resource/source/notice closure, reproducibility/legacy attribution, original
+shutdown refusal, Torrent5/GUI-settings3/updater7/8, native/minimum-OS/live/
+lifecycle/soak/platform/translation acceptance and final whole review/application/
+material builds remain open. Numeric allocation, signing/notarization/signed-v3,
+guarded installation and GitHub/wiki/screenshots/prerelease publication/readback
+remain pending. Nothing installed or published; production signed feeds last.

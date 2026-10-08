@@ -428,3 +428,28 @@ both CPU providers/consumers in fresh roots and refresh matching materials.
 Other dependency/resource/source/notice closure, generated-header regeneration,
 binary reproducibility and release gates remain open. Nothing signed, installed
 or published; production signed feeds remain last.
+
+## 2026-10-08 OpenSSL Header Isolation Readback
+
+The [scoped macOS repair](research/2026-10-08-openssl-header-isolation.md) removes
+the current selected-library/ambient-header mismatch from fresh both-CPU builds.
+All 142 staged OpenSSL headers match their selected package bytes. Per CPU,
+285 provider and 950 consumer objects resolve 77/79 consumed OpenSSL header paths
+with zero wrong origins. Provider raw links, five actual consumer binaries and
+version probes select the retained OpenSSL 3.6.3 libraries; Boost probes report
+1.92.0. These are current post-build receipts, not binary reproducibility.
+
+Both current providers retain 697 identical source dependency inputs and 295
+installed source-matching headers. Their three static archives contain 106
+payloads matching actual linked object bytes, preserving ordinal duplicates.
+The selected-recheck source/archive/patch/ABI remain unchanged. Existing sealed
+materials describe their original builds, not these newly rebuilt binary bytes;
+they were preserved rather than silently replaced or accepted as matching.
+
+Twenty-one OpenSSL fixtures pass on CMake 3.28.6/4.4.2, alongside 19 existing
+provider fixtures, two registered suites, nine private audit controls and ten
+SSL/certificate cases per CPU. The complete application/material package and
+native minimum-OS testing are not included. Generated-header regeneration,
+matching release-material refresh, broader dependency/resource/notice closure,
+reproducibility, legacy attribution, unresolved runtime gates and final release/
+installation/publication acceptance remain open. Production signed feeds last.
