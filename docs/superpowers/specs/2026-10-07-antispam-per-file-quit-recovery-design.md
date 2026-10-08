@@ -1,8 +1,10 @@
 # AntiSpam Per-File Quit Recovery
 
 Status: written specification approved on 2026-10-07 after design-only commit
-`6d066c82a`. The implementation plan awaits maintainer review; product code is
-not changed by this document. Source inspected at
+`6d066c82a`. The implementation plan is approved; Task1 is verified and committed
+at `09a16b8f`, with Task2 bounded final acceptance verified. Details are in
+`docs/research/2026-10-07-antispam-per-file-recovery.md`. This document itself does
+not change product code. Original source inspected at
 `9b88fab066fda1a1f19dc34bac199911ea3b0136`.
 The seven existing local Torrent retirement/test changes remain outside this
 repair's scope and must be preserved.
@@ -14,13 +16,13 @@ only files without successful commit receipts. Already saved files must not be
 reopened, truncated or replaced. Quit remains refused until all required files
 have checked completion and the current quit request is within its deadline.
 
-Current `AntiSpam::quitSaveOperation()` captures four paths and byte arrays and
+Before this repair, `AntiSpam::quitSaveOperation()` captured four paths and byte arrays and
 returns one boolean for the entire batch. It attempts all four files, even after
 an earlier failure, but loses individual successes when the aggregate is false.
 A subsequent operation therefore physically writes the successful files again.
 This is confirmed by source inspection, not a new runtime reproduction.
 
-`ApplicationQuitCoordinator::AuxiliaryWrite` currently owns a thread and a future
+At the inspected baseline, `ApplicationQuitCoordinator::AuxiliaryWrite` owned a thread and a future
 with SearchBlacklist and AntiSpam owner-level booleans. Its future is published
 at thread exit. The GUI consumes it, validates retained owners and updates their
 cached completion. `ApplicationQuitSession` retains timed-out work and requires
@@ -210,8 +212,9 @@ separate gates; production signed feeds remain last.
 
 ## Next Gate
 
-Review and approve `docs/superpowers/plans/2026-10-07-antispam-per-file-quit-recovery.md`
-before implementation. Preserve the maintainer's existing native/inline execution
-preference when the plan is approved. This specification authorizes no installation,
+The scoped acceptance in `docs/superpowers/plans/2026-10-07-antispam-per-file-quit-recovery.md`
+is verified; continue the separate native/live/provenance and final release gates.
+Preserve the maintainer's existing native/inline execution preference.
+This specification authorizes no installation,
 profile mutation, production credentials, remote service changes, publication or
 feed activation.

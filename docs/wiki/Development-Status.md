@@ -88,10 +88,11 @@ Search-blacklist and anti-spam quit saves also use an owned background batch.
 Immutable paths and rule bytes are captured on the GUI owner; worker completion
 includes physical thread teardown. A pending-phase timeout retains the application
 until explicit retry. Auxiliary recovery preserves successful owner receipts and
-permanently cancels update-install consent. Anti-spam retains its existing single
-receipt for four files: a partial failure retries that batch, not only individual
-failed files. GUI settings sync and broader filesystem responsiveness remain
-separate acceptance work.
+permanently cancels update-install consent. Anti-spam now retains checked
+per-file commit receipts: a partial failure retries only the remaining files
+from the same frozen snapshot. Invalid receipts or owner loss refuse recovery.
+Bounded acceptance is described in the latest checkpoint below; broader
+filesystem responsiveness and release acceptance remain separate work.
 
 The next isolated diagnostic confirms that the primary GUI settings sync still
 blocks the event loop. Actual settings writes and flushes held for 350ms make a
@@ -704,3 +705,37 @@ notarization/signed-v3/install/publication/readback remain pending. This is
 incremental Qt evidence, not a new 47-run matrix or release acceptance. Prior
 repair hunks remain local/uncommitted. Nothing installed or published; signed
 feeds last.
+
+### AntiSpam Per-File Quit Recovery (2026-10-07)
+
+The approved [bounded per-file repair](../research/2026-10-07-antispam-per-file-recovery.md)
+is implemented at `09a16b8f`. One frozen snapshot and checked per-file masks
+prevent replay of completed writes. Pending, malformed/foreign/regressing
+receipts and lost/replaced owners cannot authorize exit or retry; valid partial
+receipts and proven unstarted launch failures permit explicit selective retry.
+Successful primary/search/settings receipts stay cached and recovery permanently
+disarms update-install consent. Exceptional future readiness retains its owned
+worker rather than joining on a GUI poll. Forced teardown may still join.
+
+Both CPU behavioral RED consumers reproduce exactly twelve marker failures
+apiece. Focused GREEN passes 62 instances/3,000 assertions. One independent source
+review's two Important findings have exact RED/GREEN fixes: bind owner identity
+at first freeze and include all four composed cases in normal CTest selection.
+Two new watchdog collectors are corrected only after traced test-side GUI
+blocking; original deadlines, checks and failing receipts remain preserved.
+
+Eight final scoped consumers pass on ARM/macOS27, Intel/Rosetta and ARM
+no-Torrent. All 44 serial selections pass 2,975 instances/137,048 assertions,
+zero failures/errors/skips/fatal exits; all 28 retained inventory comparisons
+match. Fresh final settings/GUI lifecycle confirmation adds 32/1,774. Protected
+state, 58 provider resources, 5,875 prior evidence entries and 37,114 new sealed
+file hashes verify. These are scoped consumers, not a new full core/Torrent
+matrix, whole-application build or native minimum-OS/live acceptance. Original
+seven-file local repairs remain separate; this bounded AntiSpam gate is closed.
+
+Overall Torrent Task5, GUI-settings Task3 and updater7/8 remain open. Historical
+bind/freeze/latency/recovery causes, broader lifecycle/real peer/bootstrap/
+selected-check/native/minimum-OS/live/benchmark/soak, localization/native quality,
+complete provenance/reproducibility and final whole review/build/allocation/
+signing/notarization/signed-v3/install/publication/readback remain pending.
+Nothing installed or published; production signed feeds remain last.

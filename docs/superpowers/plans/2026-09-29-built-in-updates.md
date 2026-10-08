@@ -2761,3 +2761,30 @@ reviewed app/material builds and production allocation, release signing,
 notarization, guarded install and authenticated publication/readback remain
 pending. No installed/profile/server/key/VM/feed mutation, install or publication;
 signed feeds last.
+
+### AntiSpam Per-File Quit Recovery: 2026-10-07
+
+The approved bounded repair at `09a16b8f` retains one frozen intent and four
+checked commit receipts, retries only missing files and rejects pending duplicate
+writers, malformed receipts and lost owners. Auxiliary recovery keeps primary /
+search/settings receipts and permanently disarms updater consent. Exceptional
+future readiness retains the owned worker; forced teardown joins remain allowed.
+
+Both CPU behavioral REDs have exactly12 marker failures per consumer. Focused
+GREEN passes 62 instances/3,000 assertions. The two Important independent-review
+findings have exact RED/GREEN fixes; two traced test-side watchdog collectors
+now pump events without changing deadlines or original assertions. Eight final
+scoped consumers pass 44 runs/2,975 instances/137,048 assertions, with all 28 prior
+inventory comparisons matching and zero failures/errors/skips/fatal exits.
+Fresh final confirmation adds 32/1,774; protected/provider/old-evidence readback
+and all 37,114 new evidence hashes verify. Details and limits:
+`docs/research/2026-10-07-antispam-per-file-recovery.md`.
+
+This closes only the bounded AntiSpam gate. Parent Tasks7/8, overall GUI-settings
+Task3 and Torrent Task5, historical bind/timing/recovery causes, broader lifecycle/
+real peer/bootstrap/selected-check/native/minimum-OS/live/benchmark/soak, language
+quality, full provenance/reproducibility and final whole review/application /
+materials/build-number/signing/notarization/signed-v3/install/publication/readback
+remain open. Source presence is not installed/release acceptance. Existing local
+repair hunks stay separate. No installation, push, publication or feed activation;
+production signed feeds remain last.
