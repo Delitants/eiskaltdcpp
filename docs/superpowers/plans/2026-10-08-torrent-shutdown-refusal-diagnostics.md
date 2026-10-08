@@ -152,3 +152,45 @@ final whole review and complete reviewed builds; production numbering/signing/
 notarization/update acceptance, guarded install and GitHub/wiki/screenshots/
 prerelease publication/readback. Production signed feeds last. Nothing installed
 or published.
+
+## Native Resume Rejection Coverage Checkpoint
+
+The native-producer gap recorded above is now covered by one controlled real
+libtorrent 2.1.1 removal fixture. A native session plugin retains only an opaque
+removed-object reference, counts actual `torrent_removed` failed-resume alerts,
+and releases the reference in the native abort callback before physical exit.
+The Engine's original save flags and all three three-second drain windows are
+unchanged. No alert, native object internals or production fault hook is fabricated.
+This is not an application-user race reproduction or historical Intel diagnosis.
+
+The appended case passes 28 assertions per CPU. It checks sticky Refused status,
+one sanitized cached `resume-checkpoint-rejected` summary, actual native producer
+activity, physical session/object release, and preservation of the previous
+encoded resume, generation and payload. No drain-deadline observation is invented.
+The corrected pre-diagnostic baseline fails exactly three missing-summary
+assertions per CPU. Removing only the native stage-observer call from a private
+candidate fails exactly one stage assertion per CPU; all other checks still pass.
+The initial fixture compile error is retained and excluded from acceptance.
+
+Fresh serial backend controls pass 186 assertions per CPU; unchanged, hash-pinned
+Qt consumers pass 240 per CPU: 852 assertions total, zero errors/failures/skips.
+The standalone native GREEN is not counted again in that total. Native callback
+and producer source pins, reused build inputs/link maps, the original test prefix,
+unchanged production bytes and the previous sealed checkpoint are read back.
+Independent fixture review found no actionable issues; the parent separately
+verified the GREEN receipts. x86_64 remains Rosetta, not native Intel/minimum-OS QA.
+There is no new Qt rebuild or complete current app build in this checkpoint.
+
+Task 1's controlled native-producer coverage gap is closed, but its final
+integration/completion commit remains held by the inherited NOT_ACCEPTED Task 5
+matrix. This turn changes only appended test coverage, not production code.
+Source remains local and uncommitted; only documentation may be checkpointed.
+Task 2 is unchanged: no new bounded causal scenario was agreed or executed, and
+the original Intel failure receipt is preserved without replay or waiver.
+
+Remaining: historical Intel causal capture and inherited broader GUI/runtime/
+native/minimum-OS/translation QA; provenance/source/notices/reproducibility;
+final whole review and complete reviewed builds; production numbering/signing/
+notarization/update acceptance, guarded install and GitHub/wiki/screenshots/
+prerelease publication/readback. Production signed feeds last. Nothing installed
+or published.

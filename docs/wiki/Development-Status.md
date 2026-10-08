@@ -1163,3 +1163,35 @@ minimum-OS/translation QA; provenance/source/notices/reproducibility; final whol
 review and complete reviewed builds; production numbering/signing/notarization/
 update acceptance, guarded installation and GitHub/wiki/screenshots/prerelease
 publication/readback. Production signed feeds last. Nothing installed or published.
+
+## Native Resume Rejection Coverage Checkpoint
+
+The [shutdown diagnostics plan](../superpowers/plans/2026-10-08-torrent-shutdown-refusal-diagnostics.md)
+now has controlled real libtorrent 2.1.1 failed-resume-alert producer coverage.
+A native test plugin keeps a removed torrent's opaque reference alive until its
+abort callback. The unchanged Engine save request receives actual `torrent_removed`
+alerts; the test checks sticky refusal, one sanitized cached rejection summary,
+physical object/session release, and unchanged prior resume/generation/payload.
+It is not an application-user race reproduction or the original Intel diagnosis.
+
+The new case passes 28 assertions per CPU. Its pre-diagnostic baseline fails
+exactly three missing-summary assertions per CPU; omitting just the native stage
+observer in a private candidate fails exactly one stage assertion per CPU.
+Fresh backend and unchanged hash-pinned Qt retirement controls pass 852 assertions
+total, with no errors, failures or skips. The standalone native GREEN is not
+double-counted. Independent fixture review found no actionable issues; final
+receipts, native source/build pins, original tests and prior sealed evidence were
+read back separately. No production changes or native deadline changes this turn.
+
+The native-producer gap in the earlier checkpoint is closed for this controlled
+branch. Source remains local and uncommitted pending inherited NOT_ACCEPTED Task 5
+integration; only documentation is checkpointed. These are affected-TU consumers,
+not complete current app builds. x86_64 runs under Rosetta, not native Intel/
+minimum-OS acceptance. No new causal scenario or original large-scope retry ran;
+the historical Intel refusal remains unresolved and its original XML is preserved.
+
+Remaining: historical Intel causal capture and broader GUI/runtime/native/
+minimum-OS/translation QA; provenance/source/notices/reproducibility; final whole
+review and complete reviewed builds; production numbering/signing/notarization/
+update acceptance, guarded installation and GitHub/wiki/screenshots/prerelease
+publication/readback. Production signed feeds last. Nothing installed or published.

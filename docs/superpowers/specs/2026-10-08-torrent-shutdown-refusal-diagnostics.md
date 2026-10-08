@@ -112,3 +112,30 @@ unchanged. This is private affected-TU/Rosetta QA, not a full app or native
 minimum-OS acceptance. Actual native failed-resume-alert producer coverage and
 historical Intel causal evidence remain missing. See the implementation plan's
 local checkpoint for exact counts, excluded exploratory receipts and open gates.
+
+## Native Producer Coverage Readback
+
+The native failed-resume-alert gap recorded above now has controlled real
+libtorrent 2.1.1 producer coverage. A test-only native session plugin retains an
+opaque removed torrent until its abort callback, allowing the unchanged Engine
+save flags to receive actual `torrent_removed` failed-resume alerts. The fixture
+does not inspect native object layout, fabricate alerts or modify product hooks.
+It proves this removed-object branch, not every rejection variant, an application
+user-path race or the cause of the historical Intel shutdown refusal.
+
+The appended case checks prior encoded resume/generation and payload preservation,
+physical native object/session release, sticky Refused status and exactly one
+sanitized cached rejection summary, without reporting drain deadlines. Both-CPU
+baseline and private stage-omission controls fail only their exact expected
+diagnostic assertions; current candidate GREEN passes. Fresh backend controls and
+unchanged hash-pinned Qt consumers pass 852 assertions total, zero errors/failures/
+skips. Independent fixture review found no actionable issues; GREEN readback was
+performed separately. Original tests, production bytes and prior sealed evidence
+are preserved. No budgets, checked outcomes or quit/update policies changed.
+
+This closes only controlled native-producer coverage. The affected-TU/Rosetta
+matrix is not a complete current app build or native/minimum-OS acceptance.
+Task 1 final integration remains held by inherited NOT_ACCEPTED Task 5 QA;
+source is uncommitted. Historical Intel causal capture and all broader provenance,
+translation, review/build/signing/update/install/publication gates remain open.
+See the plan's latest checkpoint for counts and scope. Nothing installed or published.
