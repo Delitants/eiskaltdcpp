@@ -401,3 +401,30 @@ application bundles. External Boost/OpenSSL/SDK readbacks, other dependencies,
 legacy attribution, whole-build reproducibility and final current-source
 application/material rebuilding remain separate gates. No production signing,
 installation or publication occurred; production signed feeds remain last.
+
+### Current Boost/OpenSSL Header Gate (2026-10-07)
+
+The [offline current-input audit](research/2026-10-07-current-boost-openssl.md)
+matches all 2,023 ARM/2,022 Intel selected Boost headers with the retained pinned
+1.92.0 archive. All 76 retained Boost notices match original upstream members.
+Five retained OpenSSL 3.6.3 notices and four package metadata records match
+their pins; four OpenSSL notices map directly to original members and the
+installed license matches upstream license bytes. These are subset/original-
+notice readbacks, not acceptance of a complete final-release material set.
+
+OpenSSL remains HELD: per CPU, 78 fresh-build and 77 provider old-origin headers
+come from the ambient 3.4.1 tree, while the actual selected/imported libraries
+are 3.6.3. Each CPU has 147 resolved OpenSSL header inputs across distinct
+origins: 55 exact 3.6.3 upstream matches, 61 direct-member byte mismatches and
+31 generated inputs with templates. Generated inputs are not independently
+regenerated here; template existence is not source equivalence. The ARM bottle
+and Intel source-build library identities are retained separately, not claimed
+as reproducible binaries or matching the old header selections.
+
+Eight audit controls pass after retained exact RED evidence. Original historical
+OpenSSL build/test failures, old sealed materials and dirty candidate repairs
+remain intact. Next: isolate OpenSSL headers across all affected targets, rebuild
+both CPU providers/consumers in fresh roots and refresh matching materials.
+Other dependency/resource/source/notice closure, generated-header regeneration,
+binary reproducibility and release gates remain open. Nothing signed, installed
+or published; production signed feeds remain last.

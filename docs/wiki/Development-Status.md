@@ -944,3 +944,29 @@ updater7/8, historical causes, broader lifecycle/native/minimum-OS/live/soak/
 platform and translation quality, final whole review/build/allocation/signing/
 notarization/signed-v3/install/GitHub/wiki/prerelease publication/readback remain
 pending. Nothing installed or published; production signed feeds remain last.
+
+### Current Boost/OpenSSL Provenance (2026-10-07)
+
+The [next dependency audit](../research/2026-10-07-current-boost-openssl.md)
+verifies 2,023 ARM/2,022 Intel selected Boost headers against pinned 1.92.0
+sources, with original-member readback for 76 Boost notices and five retained
+OpenSSL notices. Eight archive-validation controls pass after four exact RED
+failures. Five fresh consumer binary/link/library readbacks match per CPU.
+
+The OpenSSL header gate is HELD: both fresh builds and the current libtorrent
+providers consume ambient 3.4.1 headers while selecting 3.6.3 libraries. Per
+CPU, 360 fresh-build objects/78 headers and 96 provider objects/77 headers are
+affected. Retained dependency records and native preprocessing search order
+agree; CMake library-version selection alone does not isolate compiler headers.
+This does not invalidate the earlier scoped c-ares/MaxMind repair or rewrite
+libtorrent's recorded external inputs, and is not a proven historical crash,
+freeze, proxy-failure or shutdown-refusal cause.
+
+Next: focused OpenSSL header isolation across the core/Qt/Torrent/provider
+closure, fresh both-CPU builds/readbacks and matching material refresh. Generated
+header regeneration, other dependency/resource/material closure, reproducibility,
+legacy attribution, original Intel shutdown refusal, Torrent5/GUI-settings3/
+updater7/8, native/live/lifecycle/soak/platform/translation quality, final whole
+review/application/material build/allocation/signing/notarization/signed-v3/
+install/GitHub/wiki/prerelease publication/readback remain pending. Nothing
+installed or published; production signed feeds remain last.
