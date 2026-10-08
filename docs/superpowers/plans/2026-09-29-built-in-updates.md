@@ -2788,3 +2788,25 @@ materials/build-number/signing/notarization/signed-v3/install/publication/readba
 remain open. Source presence is not installed/release acceptance. Existing local
 repair hunks stay separate. No installation, push, publication or feed activation;
 production signed feeds remain last.
+
+### Current-Candidate GOST Interoperability: 2026-10-07
+
+Approved continuation runs the existing `[interop]` selection on the latest
+frozen ARM and Intel/Rosetta Qt consumers, without rebuilding or changing
+production/test bodies. Both pass 8/448 public assertions and 13 child receipts
+each (ARM 1,824 / Intel 1,752). Actual two-way TCP/uTP IPv4/IPv6 payloads,
+trackers/DHT/remote DNS, completed resume/restart, plain authenticated SOCKS5,
+global DC traffic and rejection/direct-denial checks pass. All 18 private fixtures
+stop; 1,058 source/input pins, original dirty repair, protected-state manifests
+and 605 new sealed files verify. See
+`docs/research/2026-10-07-current-gost-interop.md`.
+
+This bounded current-source loopback interoperability check is complete, not
+signed-v3 updater/native-install or live production-server acceptance. Partial
+piece crash recovery and selected-check while live peers transfer remain
+unproved. Historical causes, broader lifecycle/native/minimum-OS/benchmark/soak,
+localization/provenance/reproducibility, final whole review, application/material
+build/allocation, signing/notarization, signed-v3/install/publication/readback
+remain pending. Overall Torrent5, GUI-settings3 and updater7/8 stay open. No
+profile, key, VM, installed app, server, production feed or GitHub mutation;
+production signed feeds remain last.

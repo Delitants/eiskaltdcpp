@@ -739,3 +739,23 @@ selected-check/native/minimum-OS/live/benchmark/soak, localization/native qualit
 complete provenance/reproducibility and final whole review/build/allocation/
 signing/notarization/signed-v3/install/publication/readback remain pending.
 Nothing installed or published; production signed feeds remain last.
+
+### Current-Candidate GOST Interoperability (2026-10-07)
+
+The [latest-candidate real-GOST checkpoint](../research/2026-10-07-current-gost-interop.md)
+passes all eight existing public cases / 448 assertions on each CPU consumer,
+plus 13 child receipts each (ARM 1,824 and Intel/Rosetta 1,752 assertions).
+Generated two-way TCP/uTP IPv4/IPv6 transfers, tracker/DHT/DNS traffic,
+completed-job resume/restart, authenticated plain SOCKS5, global DC traffic and
+bad-auth/trust/direct-denial checks pass. All 18 disposable fixtures shut down.
+The current cold Qt binaries, 1,058 source/input pins, original local repair,
+historical/protected state and exact 605-file new evidence set verify unchanged.
+No production code/test-body change or new application build.
+
+This closes latest-candidate loopback GOST interoperability only. External/live
+server acceptance, partial-piece crash recovery, selected-check during live peer
+traffic, historical bind/timing/recovery causes, broader lifecycle/native/
+minimum-OS/benchmark/soak, localization, complete provenance/reproducibility and
+final review/build/allocation/signing/notarization/signed-v3/install/publication/
+readback remain pending. Overall Torrent Task5, GUI-settings Task3 and updater7/8
+remain open. Nothing installed or published; production signed feeds stay last.
