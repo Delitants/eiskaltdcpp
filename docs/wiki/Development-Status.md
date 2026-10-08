@@ -1195,3 +1195,27 @@ minimum-OS/translation QA; provenance/source/notices/reproducibility; final whol
 review and complete reviewed builds; production numbering/signing/notarization/
 update acceptance, guarded installation and GitHub/wiki/screenshots/prerelease
 publication/readback. Production signed feeds last. Nothing installed or published.
+
+## Haiku Export-Snapshot Checkpoint
+
+The [Haiku-theme snapshot audit](../research/2026-10-08-haiku-snapshot-witness.md)
+covers all 82 unchanged images against 2,217 PNGs in a commit-pinned external
+export pack. The complete 4,426-file/mode archive tree matches its recorded Git
+tree; original notices and the export-error warning are retained. The original
+Haiku source identity is README-declared only, not independently verified.
+
+There are zero exact encoded-byte or untransformed raw-RGBA matches. No resizing,
+recoloring, similarity threshold or vector rendering is used. Forty-eight audit
+controls pass after one review correction pass for positive-match coverage,
+notice-copy verification and duplicate JSON fields. This is a negative result
+for this snapshot, not a licensing or derivation verdict. Earlier Faenza/Oxygen
+counts remain 25 witnesses among 423 legacy images, with 398 lacking witnesses
+in these three audits. Source/assets/earlier evidence and inherited repairs remain
+unchanged; no product test replay or new app build.
+
+Remaining: original artistic/preferred-source and other dependency-resource/
+notice/material closure and reproducibility; historical Intel/bind causes and
+broader runtime/native/minimum-OS/language QA; final whole review and complete
+reviewed builds; production numbering/signing/notarization/update acceptance,
+guarded install and GitHub/wiki/screenshots/prerelease publication/readback.
+Production signed feeds last. Nothing installed or published.

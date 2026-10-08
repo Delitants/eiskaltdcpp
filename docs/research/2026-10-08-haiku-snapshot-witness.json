@@ -1,0 +1,1202 @@
+{
+  "archive_counts": {
+    "directories": 26,
+    "png_decoded_8bit": 2217,
+    "regular_files": 4426,
+    "regular_png": 2217,
+    "uncompressed_bytes": 13585810
+  },
+  "artist_or_license_certified": false,
+  "comparison": "Exact encoded bytes or untransformed 8-bit RGBA including hidden RGB; 16-bit encoded-only; no resize/recolor/similarity or SVG/HVIF rendering",
+  "counts": {
+    "covered": 82,
+    "unmatched": 82
+  },
+  "declared_original_source": {
+    "commit": "49f62bc1728ce870478ae4bdb82201f0ee0c204b",
+    "independently_verified": false,
+    "repository": "https://github.com/haiku/haiku"
+  },
+  "decoder": {
+    "image_module_sha256": "04af3f2db7ffdd61e829fa7aa8f5481d394a0a4129a8fd8aa5b13908928fcd6d",
+    "pillow": "12.3.0"
+  },
+  "export_warning": "Some SVG/PNG files may be exported incorrectly; retained README warning, not a claim about matched files.",
+  "files": [
+    {
+      "bit_depth": 8,
+      "current_sha256": "2edb04722e6faec53ec1f96d3e0a233f7ded64e534eb6cba2e4047e85b05ef75",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "4e5c28730dde0435d358a39b038688a4c9eb28e0554ce309841b828566e05e83",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/adls.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "3a0cf9f7fd5958ce688a3e83639d0b539cc15dd3037b8e74930d6514dba728f3",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "dfdf89bc7241acc73731a5b0db0c4e73a7d35eb85f2b06121f5594aa91d53549",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/application-exit.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "ffc726a7cbf989a447a99cc6ff99ca5e971489430007cc0a0c0ec4d28cf505cc",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "255fe46851fa8c58da93e97b955103e3bb92008d5a5e9de8c1a023849cecfc4e",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/application-x-archive.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "8c8ea5ea8f5bda2d1bb9b05584905b0beafddc745e47f7f4645aac5a175ceda0",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "7f62aa42377401d69fc687e90ca95d1b2a5255fd2e8bb10607c99ab888092015",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/application-x-executable.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "9215421fa74e3f19742bb82104097a2357d07b16a8c96f37fdcdd63309a55490",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "71e3e9c89c64e27d677f7dc1eb52c73a8d4f25084de16a97202447cf9657a092",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/audio-x-generic.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "7a7d7d5025546e770340fb0a10a87abb1aba8b42092ce806ec1c975645e5d086",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "dcb048b12e11abb46f80c8c5de4aea70b3a90b4af72234027d3505d7b70a66e4",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/ball_green.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "bb5bcb37cf15e2121ec2d2b444b24c6d8aeb13fb39929fa0ba6fa53c37d618db",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "fac7ac4057d47b1e7e224bb3684ccf8367bcc82ac733d265be53ddfe92dd62f3",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/bookmark-new.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "31f1e53d27eef7a8fd7882f2b33957aa2446c312b99e8e2358cb13053cb1100b",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "3a54a3d6858caf8addd2039d25233fd86e4b9bf0f5e5fefe930c62133edf83b8",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/chat.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "da6708308b9acdf313de6183bd818aa988881a154fe22ce30b65cee5b5ff635f",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "03354c6b2bc21b1fbbf73d9d1fb1cfd12b40bb2cbc7888d53eadae6009845a34",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/configure.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "bba1225dfb4b512b05c841c94ced986d720eaf4baebd7dea26f0cffe6f1766de",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "ca70863885cf2f0b6098606b7ff1b8c9d886940e493c03cb582532b3d28fdc23",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/console.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "6e7c6e310212080f72feb7ce4891b2d66c7dcdd7a7c282517cbc35b063f0c76e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "cd15b96dbdf51d96ed22586ebcec1841a6f585cf8bf42d9fd98cbca156af6a1e",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/dialog-close.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "dd2a5d7cd20d84b143383ba640c1bc8aa199145b00c3c858a84dbb486a65875c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "2c690dff3e1923a74441d1ede2115f9440d24004ad337edafbeb93587fd154a8",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/document-edit.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "752fda88895e9b8c946578d0471052a581efee74da40d0b20a812104da3fade9",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "09c2cfa2aae6debc935d9e1bcc6efb938860df3c067a3bad89bbaafaf873f17a",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/download.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "1016a20c38063612fec3270413b6ba67f1866b6c64bc7f274acffbfb236dbd11",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "ddcc79e968e0bb7f50f85aeed68be7000d8de8361ac59e4ea0605a36fd6d8c66",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/edit-clear-locationbar-rtl.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "4404e0f5e57bd8f2545373a89a5ddfdc5faa52b756cae3f08d0e9589d8bb3eb2",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "85df638d8d66a82be5929d6fe5e4bc1dc4d3a4c0d8c7a16aad683e1c36f99c24",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/edit-clear.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "fb67b8acf59bc01bfefd81b168c5d481ec1ef5dec3c9807b80be12debc8902db",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "dca881371002567e2549d367b911c53b3337a4d5baa4a207bcfdb9e4b6664b09",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/edit-copy.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "6e7c6e310212080f72feb7ce4891b2d66c7dcdd7a7c282517cbc35b063f0c76e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "cd15b96dbdf51d96ed22586ebcec1841a6f585cf8bf42d9fd98cbca156af6a1e",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/edit-delete.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "2bdf9f897850fee2fdbde259b9f8fd60ece57cd9e3b705d6dd5df920ba8bf220",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "777f88a6f92f6d4ac0624db2e47f1db9b78da8f9b7d2047eb89b6a9c7b65bd36",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/edit-find.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "02948a33a8c868c6073d001aa763a2f72d0d9ae6aa1d0174aaa748a2a3481434",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "c363c1908b47eda688c7d0bd2ea1b560fa33564ec3a342bc8f1d15b13de673f3",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/eraser.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "5a79e9e00918dc07109e767289cf825f3e9b458fd67875b145f291447e4c9171",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "8352c738847d2453c1956bc8448951ea4919119ba461eecff3b45fcefab87074",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/face-smile.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "1d1b0f2d5df539de3dff25c55bccdd54631b981734dafb149f9a842bced48870",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "22a1e78ad2844b54999f52d6e4cf4cc7c2631691c1719855381020b7e9d0a51f",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/fav.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "876a2dfc7a8c5c9186fd87d886d0ea95a8f9877492ac02e4ebc6543a434886db",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "a8f318dec6413bd52d7920fdf4b6735a7a42bdc15dfbbbe27f1e014e0bf1cd8b",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/favadd.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "99c89364c3c8645b137bffa94501aaffcbaad83267f0277d0d8d53c37e5dcee5",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "b9f2b1eb821ab7264f216af57b35c30cbe2bd6cd073ef8d439aa09e5579957dd",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/favrem.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "b06872afbef5c9ee6a68894ae807f948914379bdbe44ef8d5cdb76c0a1a9ea45",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "3386f975631b89d73f5c8a3c09a4ddefba6c08ff71cfc4ea442523ec75a1882d",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/favserver.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "141d91f9a60bca86156dc9970f90b17393ba1d1ddf86541e906bd3d464df9011",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "ebf9c1db70c66388070c357f16d7c1783ecba9473815ad20ae1001023e29dfea",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/favusers.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "b35889f0d0ed52070c52f78ec17c9b62ece3f9ad0cb53e176e14264c27b050bd",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "adc2a7c79e38a7b1778da598c53619f6a51acac7dd3241f07e1918705238d8b7",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/find.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "946f7840e9b813de29531e6f708a2bf6069fca3906a289ab946f4f271a399692",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "9d61cdbb8aa948c58abc81cf4cd79f55af543d570b72b4faac7c63699eea4128",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/folder-blue.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "e44a5ec3f018227f8ba336019fa41ab4009927f112fe13d13e246e96ba1b14a8",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "73cf7973e2d52b9d18570b9c788e0177d659dab06644e49967039ab0b7ffe429",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/freespace.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "0f6830918f090fe8b67cafec27f833d33db24a00ca80fd9d7d8a013ad9ac70d7",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "414f4184b7231dfdb91a7b54c30f80712ce0fd39b0613e3cdf86c97a773995fe",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-down-search.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "b6fe584ab5d14fcaa94e094c6442a867c15f0edc3c17b9f80954742576ad870c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "067625b50531780c136eeff356018c1d4d26372d45122921bce922cb26368416",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-down.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "161a8af90a098a26c753063d2971739f743c38c9d09d9434d03496463899e6af",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "04281a5c76f367b50684dc7e57403fbae947ffc93750d03997b6eac4b825fbd9",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-next.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "ccd13c2f64d8dfc7b9ae9f99c07c22bab5633af4622eb46b88acdc7b3eb88673",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "de53472c07f1218eba63f4170185b937aa9b9e59b1e0b0daf3b8f96229266526",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-previous.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "4819ea84abf1fe8eb7076af0a3a9091efbbb95b5e9cbd05a56431a1553e24d4e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "5c59bd3f68a4a3062cb51fd94ec04a3cd14b66b8ba5aeaccc0c321efc85577c2",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-top.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "8f4398802456cf328918f641cc2da58896a196fdc9343ebc040693c2f8c104cd",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "44e1a6ff029707e3852e431cc1e4cae95976d1b57e223f6ac451dcf764f99657",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-up-search.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "4e8c24e1f5fec50f592766f40e0835b049ec1d324f48b26b019e0c61f5ddbeea",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "8c4fa5793ddedf33377cc0361cacd0b2dc6ffdac3c13e518e681f5f0981b7a4b",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/go-up.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "49cb041ea779a181d3a368725d2b294518371ac36aedc30a173fad2c92a30d9b",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "32ccf242b43791e34a6c9858671ecf50e22c9e6b9983daea3dec72ddb6fedbe2",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/gui.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "363ddd5527bbfc09f832f478d4081b2182f6afbacb5a80259e7903e0e5f8a774",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "4b513215568bb65df62c72e80bb21d732663e0605fe0e93d7b30ac23f46de52f",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/hashing.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "a28b52c139294d1e7cef6e29e5384cf0946a1a38df9e4f818bac060a3f39a394",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "39505ef306f31ce6fa5982ac6fa4d94ddcee16954677797f36b695d1b9fd77b2",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/history.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "2d0b116159c62f22b6cd00e06375135dc35ca31836eb1dc08c369f833758a7eb",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "8f62809ef0eff96d7073a5beb7cb2a1bc9302012f23ca6e0c22a0885c19e6d3c",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/hubmsg.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "4bbc71bb69423bf1835f56cb9da8f2fafffa399a3a024d4be8bf3a9748618889",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "6e40a82759f0882de6de3d2ed939ef0554f891b36c3a87644cf33d6ca95a7b0d",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/icon_msg.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "eb9e4338a99750c64c3cdfd81bd732e385854616ac58bcfe09b8e62b14453c9a",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 128,
+        "rgba_sha256": "6a2c1cdf430db1dce4f07127e7d2d7be74583d5a389e0f873d908369f8de5e91",
+        "width": 128
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/icon_msg_big.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "81ab0c3598d35c6e92e23425bf5ef8902365f399a0057d12138ddf900f6c7290",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "9858a6d68324afe88646c4441d68f8fc33bdebcb6375a11c12c548716ad35f70",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/im-user-away.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "a49cebe38b667a74448819da41eaf35faaf7c775308dea3b99900b069d4b18dd",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "4ced664cc386564dea3e382cb325465c76e7802bb3303329306a2b6aafd911cc",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/image-x-generic.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "6d1028049de38efa3ba09a5d00828bfe1ff2417b035315b73c76a4ac46023427",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "24db9123b66047274106c47e1be30a62feb5d30fe5770fc2555e59907c52c37d",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/list-add.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "633b4f89c1c6fab4228763ef0649dc4dbb6deb64342cfbe829810ac3590a85a2",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "156566f9be40b6a2c05b6696d0ea7cab38c920518006047710fbb25c435a2117",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/log_file.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "894dc0eaf4296e75b7b5f213bd3d5a7aed2886a2674a1ead2de2f35671e4fc2e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "205603babcbd8457704704ffb241671735b81914bb707079c83b73235df54a2e",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/magnet.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "c68e4ce83b3534c4e792e53033924dceb8da618d9fbffa3795fc66280331d131",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "36040047487a7748630e9a3ffeab01da0c4d89eb6545813fc2b997602aed899b",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/message.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "64269039cdca1dccd4790b273330c0183d1a4535db009dad67d13b21a4472da7",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "5fbf385392cf40cb8a2227e4dd2eb92d1c8f4726dba045653268e70225f6af64",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/network-connect.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "59e49660a1044598c7c8e9c3a65f5a4f2697c71abace0d6e5738f4bc0a55832d",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "bb34a658a8edf6127f9ffe24234d63590c8c9e9ca3c6ea6a91de2532f19d4615",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/network-disconnect.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "63088a00711009abe8e7ed88c75a0474d46cbbb1d7233a603e9173c2c94a150c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "a7e4b460181e82e6c58c1b8455fe8923967d2ef7e283932de1c716b268de0cbd",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/openlist.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "b19653feaf3d5919f30f58c95ca3f6b08ed6e159bd9c78f38a5822baceadbeae",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "2f88a6faaecb6f1dbd00026228ca4f8d71daf7b57c524012d98985e9578c6bf6",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/own_filelist.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "5bd1d6c3ed53b1f2b3e138030b7c673712d00f987a5ce4ba7ec0e29040b65419",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "e078e1ec2d3521157b2b7787c3ae9615f4d714ce36dbd6bac40afeead46bd5bf",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/plugin.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "49f23f63aaee3c233af9b64d777a4c84b61eb867c582713e51db86f4ac47ad3e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "e99f5b2020abc0ca6c53d14485395447f5c758f5572cf85f20a9cceeefe96346",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/pmmsg.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "e0aa55f0bb554484089a3e998615c5aa2368ef67ad904241cd5598908b74f7b4",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 55,
+        "rgba_sha256": "151c70e9345a877347f07170c7f31614babaaa94c7444e5fa262918790a7eb9c",
+        "width": 46
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/qt-logo.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "d31014971e4167f004babaf97b01600a547288240e641ed5eec611984c69b3cb",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "ad7cae58b94193c34bc67a888b736a88cd50e29f08c7be8a7d2296ead9ea912c",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/queued-users-highlight.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "d31014971e4167f004babaf97b01600a547288240e641ed5eec611984c69b3cb",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "ad7cae58b94193c34bc67a888b736a88cd50e29f08c7be8a7d2296ead9ea912c",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/queued-users.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "d5ce80ceeb5f9d18305a362ddacdef5ac73dfa215f0315d3435101da0237493c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "eca65bc4723eed895fd6a05be5a99b2191bc69545dca20daf2de29b3b3632cf9",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/reconnect.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "84e00bf011dac2a65772a005bb0faf2a572b9b576cf50e3e56fe5ccfb5659fce",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "4b4e1291b9c02962e6dcba35ab1e160f970908a8a9e796d0f0b365ede088de94",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/refrlist.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "8527edea02febea55b66eec6e045e6eefa5de3495aab8126b245df4cdf9a9dee",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "8063e0f95c0a89b7115e8c632815149c9d3f343a6f1952f633bfa924e9bb8aec",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/reload.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "5a6a25a3bca160ee28515dcb4d1750a7b0708cef2c562629ddac1656281c0016",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "fd080ec610c0e5858f9cce09683b5cd3a0839c62117da3f31bbb284d4989bbb6",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/server.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "673eb3807148723299dc52efb2b46b4e0d44a23350384a3704b1ff808671ad04",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "180be0ea705731c394c03a3c73baa970036367053448c8852ba9d6ddd070e985",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/settings-connection.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "219fd42bab2bb92110db7cc693f6c7c62eade0e859fa369611a4a856f2c1ff74",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "e004255456449aa2571591c8364c7d852fd1d285f8c95841746822a5222076cb",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/settings-downloads.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "9e219003aa67c22f8e5121ef8abb7397f1649b62bf62f736c8f2aa5a3f8d02b2",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "88416b68b0ec4eaaa21a95bb4562a375ebc50da8cac04da944d92697ce5c3a98",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/settings-gui.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "9c92de262dd7b7ad023d92f85c6fb142da0cc419bde8ea8b09b786845275c62b",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "d772132f7ddb6c00e0ace3a20321e08781c13a8296fff531b58027a59fb4fdac",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/settings-main.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "8036858512e89214056430aec649d447b544086d8fbbe6f81f546a59da855e3c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 64,
+        "rgba_sha256": "84e4bba9a9b652eaee817a63ac76bf392dbc65e2dd3e61165e255b141a3348db",
+        "width": 64
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/settings-shortcuts.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "44ee08524a057fc38342d11fe8875f0663c637629963950d848253fe7594102f",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "233a03e6c66762b861f4dc0911c37b27898adb81b5ed547161132c2f907fd4c8",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/slow.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "ac672a95bf282a4ffa827a46936f4cc5bc41bf6faa545bb295714d1de06b3100",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "edf32445222cb560b3c90bc5bd44b4a3b3227affce9d095e7513db00f203a1e2",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/slow_off.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "17af05bbed72a3468eab1a2af26671aafd9abc5efd4f3f8d825699e93712c5e4",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "ae640deea41c630a8f7ed639c700cf54fbb03af08bb2b0df0d78673e32d9b7d0",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/spam.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "ee64304da41486e504c7f4e34778eda14da7e7f0219d492b9c968d6b0f05aac0",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "44f7df64b630e7c41dccadb083da5c0ebd2006a660d0a349078f07befab654f0",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/spy.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "4162a5dbe3046afd50fdbebb4846f6084eb4a4421e31645f227444507703aff3",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "02ff6f6f789f42d37f64376d35016bb8e1ee18e462096c9d75e34714249f5a6d",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/status.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "872fa57c527f5bba2318e178577a6cdb59e9601e6aafd902ec64e21061b72c4d",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "bcd4e75aac7f5b8e77bcd3f2a52f215e51bc49c7b3823bc9b5f7a95f7fb4e4a8",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/text-x-generic.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "ad58bfd336779eba7f436a40c652f1af9aea73123ef131e54f6c3774cc7a0b21",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "146994756bfef32f1c1fbc51fbc298a53a9a054e0f72a56a67ed700bcf4b391a",
+        "width": 550
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/toolbar20-highlight.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "0919088f128ab6c9a963a1e31c1be590371c6fb546d1b2b28f5349828486eabb",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "e07af8df4eee2b6af6237ef82d30604e5432b67368ae638875eb056034afb556",
+        "width": 550
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/toolbar20.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "8caba0aaab67f3727da9b95cdb48500c99c5705dd2e56a3edb6d87f3633f7a3c",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "0cc6610fa9c6f005d2210b85c56ec3db4d7fce8c8b8321dda922991d55348f59",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/transfer-highlight.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "0d40001437a68f11c1dac099ed8fac2cbe2d585941dede0d7e78789202d69316",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "5b0c1565d8f02605f86cb51dd4887fd0af059797a25ec4c9e36da1e5b943ec82",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/transfer.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "76da33fb6e1b385c69d9469cb16157c7754d01bd45f8f53c0bfb71d98a6012e0",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "a284df3c00a44a4d38bdf1e4a67a87dff83f0d8af16c95d28069723317b1f7b2",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/unknown.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "bf140090e8e8bd786ff982847481a5886314edbde6af04683fa4113a6180d62b",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "fc782d9af077e1cde10fc641a6b6f934c2c2a826759f13db03ecb0b5600c78de",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/users.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "cd3fc812f163f0d9abeb437c3959d5bdeb67ddd4f6c18f28ca18c62170c7bf69",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 16,
+        "rgba_sha256": "62192eb3ed2a8c11c24aebb900c22fc4d159efdaaf9f32ce07357816710a5f36",
+        "width": 16
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/video-x-generic.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "7e639c2f2dafd108225cf8f15f72bba706e5a08bb42fccd7e72da3eb4c944286",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "c89c4c520c8dbc887ac7abd50cc1b98478b0d56d887db6ca07032962099806ce",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/view-close.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "b5c270bc46006a2d9c2ba580419b83b5a90e839955a2f3931eb6d41820ffa39d",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "1457393a89e69b6f8f594acae0ed0573c29a7282d6da5e401da2cb53fc18258d",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/view-filter.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "e29954d10cfb21a5f6ccdff14ff469bd0299e496f93b6cb87692f7e6ab99cd7e",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "7c37488dd6896b72fe850b49e507d927b9228a135ed5076993dbddedb912e489",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/zoom-in.png"
+    },
+    {
+      "bit_depth": 8,
+      "current_sha256": "c7a8f9cee5c00ef8c50e8ee49e4b7e629e3ce87ae40a8d428b4e0cc21778fe00",
+      "external_artistic_origin": "not-established",
+      "pixel_decoding": "exact-8bit-rgba",
+      "preferred_source_regenerated": false,
+      "raw_rgba": {
+        "height": 22,
+        "rgba_sha256": "77f174152c9ccb3cf2118ca9f964f7a144a9acf6c64bbd3cbc03449b4330172e",
+        "width": 22
+      },
+      "snapshot_matches": [],
+      "source_path": "eiskaltdcpp-qt/icons/appl/haiku/zoom-out.png"
+    }
+  ],
+  "historical_import_release_identified": false,
+  "notices": [
+    {
+      "bytes": 1083,
+      "member": "haiku-icons-ccf434a0cf31aae47cc8aac91934651619c1b9b2/LICENSE",
+      "sha256": "7035378a070a0c2aa174eb5e5e9b739f4559a740ac208cbb640e5bbad5fe4528"
+    },
+    {
+      "bytes": 702,
+      "member": "haiku-icons-ccf434a0cf31aae47cc8aac91934651619c1b9b2/README.md",
+      "sha256": "010b3cd760a6cb2644b21197a1375905a654ef1d8905542905055510baf12b29"
+    }
+  ],
+  "schema": 1,
+  "scope": "82 unchanged Haiku theme images; exact export-snapshot witnesses only",
+  "snapshot": {
+    "archive": "haiku-icons-ccf434a0.tar.gz",
+    "commit": "ccf434a0cf31aae47cc8aac91934651619c1b9b2",
+    "git_tree": "46615009347fe362808db2de385ee1340e26cc73",
+    "metadata_sha256": "0839fbe6b857d30026c4b2ba3d80287283dac3160c43b88658d451d86c6a2c8f",
+    "recomputed_git_tree": "46615009347fe362808db2de385ee1340e26cc73",
+    "repository": "https://github.com/darealshinji/haiku-icons",
+    "sha256": "36869263c1791efee632cb9a7700f1fb6745bc9d91580a1385b2d7762a4a23db",
+    "url": "https://codeload.github.com/darealshinji/haiku-icons/tar.gz/ccf434a0cf31aae47cc8aac91934651619c1b9b2"
+  },
+  "source_commit": "1931fcccf0d3dec519ffdb6ab612fea005c3ef75",
+  "source_index_sha256": "91b97bdc8f8263a30aaa79c2c8a1941ff33a3ccf2185491564010350d6b8f1e6"
+}

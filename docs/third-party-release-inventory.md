@@ -549,3 +549,21 @@ import and preferred-source/notice closure are not certified. Other material/
 reproducibility, original Intel shutdown, broader QA, final review/build and
 signing/update/install/publication gates remain open. Signed production feeds
 remain last. No artwork/declarations/app/profile changed or publication occurred.
+
+## Haiku Export-Snapshot Witness (2026-10-08)
+
+The [negative snapshot audit](research/2026-10-08-haiku-snapshot-witness.md)
+compares all 82 unchanged Haiku images with 2,217 PNGs in the pinned external
+export pack: zero exact encoded-byte or untransformed raw-RGBA matches. The full
+4,426-file/mode Git tree matches commit metadata; original LICENSE/README bytes,
+the export warning and the declared-but-unverified original Haiku source commit
+are retained. No artistic/individual-license certification follows from the
+snapshot name or notices, and no image is resized or rendered to force a match.
+
+The 48 audit controls pass after one bounded review correction pass; earlier
+exact witness counts remain 25/423, with
+398 without witnesses in these three scans. All 423 broader artistic/preferred-
+source/notice questions remain open. Assets/declarations/inherited repairs and
+prior evidence are unchanged. Original Intel/bind causes, wider QA, material/
+reproducibility and final review/build/signing/update/install/publication gates
+remain pending. Nothing installed or published; production signed feeds last.
