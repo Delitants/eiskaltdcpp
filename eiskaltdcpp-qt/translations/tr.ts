@@ -5732,6 +5732,14 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>%2 vekil sunucusunda SOCKS5 %1 işlemi başarısız oldu: %3 [%4:%5]. Diğer bağlantılar devam edebilir. Doğrudan bağlantıya geri dönüş devre dışı kalır.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrent gelen bir bağlantıyı kabul edemedi.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrent yapılandırılmış bir dinleme uç noktasına bağlanamadı.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5744,6 +5752,10 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Yerel vekil sunucu bağdaştırıcısı başlatılamıyor.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Uygulamadan çıkmak için proxy bağdaştırıcısı kapatılıyor.</translation>
         </message>
     </context>
     <context>

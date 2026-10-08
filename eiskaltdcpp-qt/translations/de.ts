@@ -5728,6 +5728,14 @@ Zum schreibgeschützten Seeding hinzugefügt. Die Quelldateien werden anhand ihr
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent-SOCKS5-Vorgang %1 am Proxy %2 fehlgeschlagen: %3 [%4:%5]. Andere Verbindungen können weiterlaufen. Der Rückfall auf eine direkte Verbindung bleibt deaktiviert.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrent konnte eine eingehende Verbindung nicht annehmen.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrent konnte keinen Socket an einen konfigurierten Empfangsendpunkt binden.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5740,6 +5748,10 @@ Zum schreibgeschützten Seeding hinzugefügt. Die Quelldateien werden anhand ihr
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Der lokale Proxy-Adapter kann nicht gestartet werden.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Der Proxy-Adapter wird beim Beenden der Anwendung heruntergefahren.</translation>
         </message>
     </context>
     <context>

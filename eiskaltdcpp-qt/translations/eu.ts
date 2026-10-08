@@ -5623,6 +5623,14 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 huts egin du %2 proxyan: %3 [%4:%5]. Beste konexioek jarrai dezakete. Ordezko zuzeneko konexioak desgaituta jarraitzen du.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Ezin izan da torrenten sarrerako konexio bat onartu.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Ezin izan da torrenten konfiguratutako entzute-puntu bat lotu.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5635,6 +5643,10 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Ezin da tokiko proxy-egokigailua abiarazi.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Aplikaziotik irteteko, proxy-egokitzailea itzaltzen ari da.</translation>
         </message>
     </context>
     <context>

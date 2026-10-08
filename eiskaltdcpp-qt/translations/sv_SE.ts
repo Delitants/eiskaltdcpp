@@ -5732,6 +5732,14 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 misslyckades vid proxy %2: %3 [%4:%5]. Andra anslutningar kan fortsätta. Direkt reservanslutning förblir avstängd.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrenten kunde inte acceptera en inkommande anslutning.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrenten kunde inte binda till en konfigurerad lyssningspunkt.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5744,6 +5752,10 @@ Tillagd för skrivskyddad seeding. Källfilernas hashvärden kontrolleras; filer
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Det går inte att starta den lokala proxyadaptern.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Proxyadaptern stängs ned för att avsluta programmet.</translation>
         </message>
     </context>
     <context>

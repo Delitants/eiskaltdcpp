@@ -5731,6 +5731,14 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Falló la operación SOCKS5 %1 en el proxy %2: %3 [%4:%5]. Otras conexiones pueden continuar. El recurso a una conexión directa sigue desactivado.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>No se ha podido aceptar una conexión entrante de torrents.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>No se ha podido enlazar un punto de escucha configurado para torrents.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5743,6 +5751,10 @@ Añadido para siembra de solo lectura. Se verificarán los hashes de los archivo
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>No se puede iniciar el adaptador proxy local.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>El adaptador de proxy se está cerrando para salir de la aplicación.</translation>
         </message>
     </context>
     <context>

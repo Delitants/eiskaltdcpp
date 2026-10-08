@@ -62,3 +62,21 @@ no new completion claim or catalog edit is made. See
 `docs/research/2026-10-07-buffered-drain-and-catalog-audit.md`. The Intel shutdown
 refusal and wider native/lifecycle/provenance/signing/install/publication gates
 remain held; production signed feeds stay last.
+
+## Approved Context Repair: 2026-10-07
+
+- [x] Observe exactly 75 expected failures in the new compiled-QM regression.
+- [x] Reuse the 50 existing listener translations in `TorrentEngine` without
+  modifying or removing their prior-context entries.
+- [x] Add the proxy-retirement caption in all 25 catalogs.
+- [x] Verify the focused test and full 24-test translation suite without skips.
+- [x] Verify byte-for-byte preservation after removing only the added blocks,
+  all prior XML messages/TS attributes and the original seven-file local repairs.
+- [x] Extract 356 current source files / 2,066 keys: zero missing or ambiguous
+  runtime entries in all catalogs, with inherited unfinished counts unchanged.
+
+This closes only the three-message catalog gap, not native-language certification
+or the broader shutdown/release gates. The separate backlog remains 9,327
+unfinished runtime entries, including 9,159 empty ones. See
+`docs/research/2026-10-07-catalog-context-repair.md`. No application installation
+or publication occurred; production signed feeds remain last.

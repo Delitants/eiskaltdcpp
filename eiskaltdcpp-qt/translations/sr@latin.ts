@@ -5708,6 +5708,14 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 nije uspeo na proksiju %2: %3 [%4:%5]. Druge veze mogu da se nastave. Rezervna direktna veza ostaje isključena.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torent nije mogao da prihvati dolaznu vezu.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torent nije mogao da se veže za podešenu krajnju tačku za osluškivanje.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5720,6 +5728,10 @@ Dodato za sejanje samo za čitanje. Heš vrednosti izvornih datoteka biće prove
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Nije moguće pokrenuti lokalni proksi adapter.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Proksi adapter se isključuje radi izlaska iz aplikacije.</translation>
         </message>
     </context>
     <context>

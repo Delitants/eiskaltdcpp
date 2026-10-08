@@ -5724,6 +5724,14 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>A Torrent SOCKS5 %1 sikertelen a(z) %2 proxyn: %3 [%4:%5]. Más kapcsolatok folytatódhatnak. A közvetlen tartalékkapcsolat továbbra is tiltva marad.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Nem sikerült fogadni egy bejövő torrentkapcsolatot.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Nem sikerült kötni egy beállított torrentfigyelési végpontot.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5736,6 +5744,10 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Nem indítható el a helyi proxyadapter.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>A proxyadapter leáll az alkalmazás bezárásához.</translation>
         </message>
     </context>
     <context>

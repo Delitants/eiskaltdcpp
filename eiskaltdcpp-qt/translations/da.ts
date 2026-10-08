@@ -5615,6 +5615,14 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 fejlede på proxy %2: %3 [%4:%5]. Andre forbindelser kan fortsætte. Direkte reserveforbindelse forbliver deaktiveret.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrent kunne ikke acceptere en indgående forbindelse.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrent kunne ikke binde til et konfigureret lytteendepunkt.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5627,6 +5635,10 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Kan ikke starte den lokale proxyadapter.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Proxyadapteren lukkes ned, fordi programmet afsluttes.</translation>
         </message>
     </context>
     <context>

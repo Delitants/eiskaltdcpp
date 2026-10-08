@@ -5628,6 +5628,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 thất bại tại proxy %2: %3 [%4:%5]. Các kết nối khác có thể tiếp tục. Kết nối trực tiếp dự phòng vẫn bị tắt.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrent không thể chấp nhận kết nối đến.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrent không thể gắn vào điểm cuối lắng nghe đã cấu hình.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5640,6 +5648,10 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Không thể khởi động bộ điều hợp proxy cục bộ.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Bộ điều hợp proxy đang tắt để thoát ứng dụng.</translation>
         </message>
     </context>
     <context>

@@ -5725,6 +5725,14 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Грешка в Torrent SOCKS5 %1 на прокси %2: %3 [%4:%5]. Другите връзки могат да продължат. Резервната директна връзка остава изключена.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Торентът не можа да приеме входяща връзка.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Торентът не можа да се обвърже с настроена крайна точка за слушане.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5737,6 +5745,10 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Локалният прокси адаптер не може да бъде стартиран.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Прокси адаптерът се изключва за изход от приложението.</translation>
         </message>
     </context>
     <context>

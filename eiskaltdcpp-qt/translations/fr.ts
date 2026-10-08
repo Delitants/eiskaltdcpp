@@ -5712,6 +5712,14 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Échec de l'opération SOCKS5 %1 au proxy %2 : %3 [%4:%5]. Les autres connexions peuvent continuer. Le repli vers une connexion directe reste désactivé.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Impossible d'accepter une connexion entrante pour les torrents.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Impossible de lier un point d'écoute configuré pour les torrents.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5724,6 +5732,10 @@ Ajouté pour un partage en lecture seule. Les empreintes des fichiers source ser
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Impossible de démarrer l&#39;adaptateur proxy local.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>L'adaptateur proxy s'arrête pour quitter l'application.</translation>
         </message>
     </context>
     <context>

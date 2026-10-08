@@ -831,3 +831,22 @@ refusal, overall Torrent5/GUI-settings3/updater7/8, historical causes, broader
 lifecycle/native/minimum-OS/live/soak/translation-quality/provenance and final
 review/build/signing/notarization/signed-v3/install/publication/readback remain
 pending. Nothing installed or published; production signed feeds remain last.
+
+### Listener And Proxy-Retirement Catalog Repair (2026-10-07)
+
+The approved [three-message repair](../research/2026-10-07-catalog-context-repair.md)
+adds exactly 75 finished entries across 25 catalogs: 50 listener translations
+reused verbatim in their current runtime context and 25 new proxy-retirement
+captions. Existing catalog bytes/messages/TS attributes and the separate
+seven-file runtime/test repair set are preserved. The new compiled-QM regression
+first failed on exactly the 75 expected missing keys, then passed. The complete
+24-test translation suite passes without errors or skips. Fresh 356-file /
+2,066-key extraction has zero missing or ambiguous runtime entries in all locales.
+
+This closes the current context-key gap only. The unchanged inherited inventory
+is 9,327 unfinished runtime translations, including 9,159 empty ones; native
+language review remains separate. The original Intel shutdown refusal, overall
+Torrent5/GUI-settings3/updater7/8, historical causes, broader lifecycle/native/
+minimum-OS/live/soak/provenance/reproducibility and final review/build/allocation/
+signing/notarization/signed-v3/install/publication/readback remain pending.
+Nothing installed or published; production signed feeds remain last.

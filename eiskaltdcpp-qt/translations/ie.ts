@@ -5607,6 +5607,14 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 ha fallit che li proxy %2: %3 [%4:%5]. Altri conexiones posse continuar. Li conexion direct alternativ resta desactivat.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Ne successat accepter un conexion entrant de torrentes.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Ne successat ligar un configurat punctu de escuta de torrentes.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5619,6 +5627,10 @@ Adjuntet por distribution con sol letion. Li hashes del files de fonte va esser 
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Ne successat startar li adaptator proxy local.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Li adaptator de proxy es in termination por cluder li application.</translation>
         </message>
     </context>
     <context>

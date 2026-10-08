@@ -47,6 +47,31 @@ class CatalogRegressionTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_listener_and_proxy_retirement_messages_survive_compilation(self):
+        listeners = {
+            "Torrent could not accept an incoming connection.",
+            "Torrent could not bind a configured listening endpoint.",
+        }
+        self._assert_compiled_runtime_messages("TorrentEngine", listeners)
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            entries = {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                       for c in ET.parse(path).getroot().findall("context")
+                       for m in c.findall("message")}
+            for source in sorted(listeners):
+                current = entries.get(("TorrentEngine", source))
+                # Missing runtime keys are already reported by the compiled check.
+                if current is None:
+                    continue
+                with self.subTest(language=path.stem, reused_source=source):
+                    previous = entries.get(("eiskalt::torrent::TorrentEngine", source))
+                    self.assertIsNotNone(previous)
+                    self.assertEqual("".join(current.itertext()), "".join(previous.itertext()))
+        self._assert_compiled_runtime_messages("TorrentProxyAdapter", {
+            "The proxy adapter is retiring for application quit.",
+        })
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_mainwindow_magnet_and_recovery_runtime_messages(self):
         self._assert_compiled_runtime_messages("MainWindow", {
             "Quit preparation failed: %1. Application retained.", "Share magnets",

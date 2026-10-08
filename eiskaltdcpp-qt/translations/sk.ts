@@ -5693,6 +5693,14 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
             <source>Torrent SOCKS5 %1 failed at proxy %2: %3 [%4:%5]. Other connections may continue. Direct fallback remains disabled.</source>
             <translation>Torrent SOCKS5 %1 zlyhalo na proxy %2: %3 [%4:%5]. Ostatné pripojenia môžu pokračovať. Náhradné priame pripojenie zostáva vypnuté.</translation>
         </message>
+        <message>
+            <source>Torrent could not accept an incoming connection.</source>
+            <translation>Torrent nemohol prijať prichádzajúce spojenie.</translation>
+        </message>
+        <message>
+            <source>Torrent could not bind a configured listening endpoint.</source>
+            <translation>Torrent sa nemohol naviazať na nastavený koncový bod počúvania.</translation>
+        </message>
     </context>
     <context>
         <name>TorrentProxyAdapter</name>
@@ -5705,6 +5713,10 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
             <location filename="../src/TorrentProxyAdapter.cpp" line="411" />
             <source>Cannot start the local proxy adapter.</source>
             <translation>Miestny adaptér proxy sa nedá spustiť.</translation>
+        </message>
+        <message>
+            <source>The proxy adapter is retiring for application quit.</source>
+            <translation>Adaptér proxy sa ukončuje kvôli ukončeniu aplikácie.</translation>
         </message>
     </context>
     <context>
