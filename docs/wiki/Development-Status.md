@@ -894,3 +894,28 @@ updater7/8, broader lifecycle/native/minimum-OS/live/soak/translation-quality/
 provenance/reproducibility and final review/build/allocation/signing/notarization/
 signed-v3/install/publication/readback remain pending. Nothing installed or
 published; production signed feeds remain last.
+
+### Current Provider Header Repair (2026-10-07)
+
+The [bounded header-isolation repair](../research/2026-10-07-provider-header-isolation-repair.md)
+passes its current-source test-consumer gate. The dcpp-only build overlay follows
+selected provider wrappers, preserves SYSTEM/sibling/unrelated settings, refuses
+missing public companion headers, gates MaxMind on library availability, and
+declares staged outputs for Ninja incremental correctness. Nineteen fixtures
+and three additional generator/config/no-change checks pass after retained RED
+controls and bounded independent review.
+
+Five fresh consumers build per CPU; six actual compiler headers, eight overlay
+origins and four selected static archive pairs match per CPU. Version probes agree
+on c-ares 1.34.8 and MaxMind 1.13.3. Both CPUs pass 97 affected core cases/1,012
+assertions, the missing-country-db control, the pinned country fixture lookup,
+and two isolated registered CTest checks. The first ARM CTest wrong-library
+launcher refusal is retained; explicit controlled-provider routing passes.
+This is host/Rosetta QA, not native macOS 14/26, final-app or crash-cause proof.
+
+Next: complete current-source dependency/resource/material provenance and whole-
+build reproducibility. Original Intel shutdown refusal, Torrent5/GUI-settings3/
+updater7/8, historical causes, broader live/lifecycle/soak/native/translation
+quality, final review/build/allocation/signing/notarization/signed-v3/install/
+publication/readback remain pending. Nothing installed or published; signed
+production feeds remain last.

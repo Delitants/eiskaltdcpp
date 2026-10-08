@@ -344,3 +344,29 @@ Next is the bounded provider-header isolation repair and fresh both-CPU builds,
 not a waiver based on successful prior tests. Current-source dependency/resource/
 notice refresh, whole-build reproducibility, native minimum-OS, independent final
 review, signing/install/publication and signed-feed-last gates remain separate.
+
+## Current Provider Header Repair (2026-10-07)
+
+The [selected-provider repair](research/2026-10-07-provider-header-isolation-repair.md)
+closes the bounded current-source test-consumer header gate, not the historical
+failed inventory. Fresh builds use a dcpp-owned per-configuration header overlay
+with selected-provider origin/hash receipts and missing-companion refusal. The
+original imported/link metadata and sibling consumers are unchanged; MaxMind
+priority requires its library to be found. Declared staged outputs cover Ninja
+incremental builds. The regression fixture requires Ninja; Ninja Multi-Config
+needs CMake 3.20+ and older CMake/Xcode execution remains unverified.
+
+The frozen candidate covers 3,506 source files and 28 selected static-provider
+inputs. Five fresh executables per CPU have matching CPU/floor metadata; each
+CPU's six consumed compiler headers match eight controlled copied-header origins
+and four exact static archive pairs. c-ares header/library 1.34.8 and MaxMind
+1.13.3 agree at runtime. Nineteen behavioral fixtures, three additional generator
+checks, affected isolated runtime cases, pinned country lookups and registered
+CTest checks pass. All prior failed/control receipts and protected bundles,
+resources and material pins remain preserved.
+
+The macOS 27 host/Rosetta runs do not prove native minimum-OS or final-app
+acceptance. Whole current-source dependency/resource/notice/material refresh and
+whole-build reproducibility remain pending, as do the original shutdown refusal
+and broader final review/build/signing/install/publication gates. Production
+signed feeds remain last; nothing installed, signed, pushed or published here.

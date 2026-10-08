@@ -143,6 +143,9 @@ if (APPLE)
     add_test(NAME eiskalt-macos-release-profiles
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/release-profiles.py"
                 "${CMAKE_SOURCE_DIR}")
+    add_test(NAME eiskalt-macos-provider-headers
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/provider-headers.py"
+                "${CMAKE_SOURCE_DIR}")
     add_test(NAME eiskalt-macos-selected-recheck-bundle
         COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tests/macos/bundle/selected-recheck.py"
                 "${CMAKE_SOURCE_DIR}")
