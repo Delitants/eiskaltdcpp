@@ -2830,3 +2830,20 @@ final whole review/build/allocation/signing/notarization/signed-v3/install/
 publication/readback remain pending. Active-download/combined-GOST/partial-piece
 crash acceptance is not supplied by these probes. Nothing installed or published;
 production signed feeds remain last.
+
+### Selected-Check Boundary Diagnosis: 2026-10-07
+
+Private boundary telemetry and helper profiling pass six receipts, 84 instances /
+1,290 assertions, without reproducing the unchanged Intel large-scope checkpoint
+refusal. Focused Intel drains take 1,934-2,733ms. Repeated metadata/symlink
+validation accounts for about 73% of a separate 1,942ms successful profile;
+this is not the failed boundary's proven cause. Acceptance remains HELD, with
+original deadlines/assertions/local repairs and failed receipts retained.
+
+Source/44 retained inputs, historical/protected state and the new 64-file seal
+verify. No runtime repair or install readiness is claimed. See
+`docs/research/2026-10-07-selected-checkpoint-refusal.md`. Next is capturing the
+actual refused boundary with validation attribution. Overall Torrent5/GUI-settings3/
+updater7/8 and wider historical/native/minimum-OS/live/language/provenance/final
+review/build/signing/notarization/signed-v3/install/publication gates stay open.
+Nothing installed or published; production signed feeds remain last.

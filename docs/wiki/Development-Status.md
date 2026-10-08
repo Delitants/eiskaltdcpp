@@ -783,3 +783,25 @@ historical causes, broader lifecycle/soak/benchmark, language/provenance/
 reproducibility and final whole review/build/allocation/signing/notarization/
 signed-v3/install/publication/readback remain pending. Overall Torrent5,
 GUI-settings3 and updater7/8 remain open. Nothing installed or published; feeds last.
+
+### Selected-Check Refusal Diagnostics (2026-10-07)
+
+The [bounded boundary/profile diagnostics](../research/2026-10-07-selected-checkpoint-refusal.md)
+do not reproduce or waive the original Intel large-scope shutdown refusal.
+Six receipts pass 84 instances / 1,290 assertions, including the unchanged
+79-instance Intel lifecycle inventory. Focused Intel drains take 1,934-2,733ms;
+ARM takes 1,521ms. A separate successful Intel profile attributes 703+714ms
+(about 73% of its 1,942ms drain) to repeated metadata/symlink validation. This
+is a measured cost, not the earlier refusal's proven cause or a runtime repair.
+
+Original tests/deadlines/local repairs, 44 retained backend inputs, historical/
+protected state and prior evidence verify. The 64-file new seal includes six
+disposable homes and a retained profiling-generator compilation error, corrected
+only in a separately labelled private build. Acceptance remains HELD.
+
+Next: capture the actual failing boundary with validation attribution; do not
+extend deadlines or remove path-safety checks based on green traces. Overall
+Torrent5/GUI-settings3/updater7/8, historical causes, wider lifecycle/native/
+minimum-OS/live/soak/localization/provenance and final review/build/signing/
+notarization/signed-v3/install/publication/readback remain pending. Nothing
+installed or published; production signed feeds remain last.

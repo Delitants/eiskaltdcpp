@@ -240,3 +240,24 @@ Active-download/composed-GOST/partial-piece-crash/external/live/native/minimum-O
 acceptance, historical causes, localization/provenance/reproducibility, final
 whole review/build/signing/notarization/signed-v3/install/publication gates stay
 pending. No installed app/profile/server/VM/key/feed changes; signed feeds last.
+
+## Refusal Boundary Diagnostics: 2026-10-07
+
+Bounded private telemetry does not reproduce the original Intel large-scope
+refusal. Six receipts pass 84 instances / 1,290 assertions; the original Intel
+79-instance inventory remains exact. Focused Intel drains take 1,934-2,733ms,
+ARM 1,521ms; the Intel suite's large-case drain takes 2,139ms. A separately
+profiled pass takes 1,942ms, with 703+714ms (about 73%) in repeated
+`safeMetadata()` validation. This is a cost lead, not a causal reproduction.
+
+Acceptance stays HELD. All original assertions/helpers/three-second drains and
+local repair bytes remain intact. The failed profiling generator/compiler
+evidence remains separate from its corrected build. Source/44 retained inputs,
+protected state, prior seal and 64-file new evidence seal verify. See
+`docs/research/2026-10-07-selected-checkpoint-refusal.md`.
+
+Capture the actual refused boundary with validation attribution next; no green
+repetition, deadline relaxation or removal of path-safety checks may close it.
+A runtime repair still requires causal regression and focused repair design.
+Overall and wider historical/lifecycle/native/minimum-OS/live/language/provenance/
+release gates remain open. Nothing installed or published; signed feeds last.
