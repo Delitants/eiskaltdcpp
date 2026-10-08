@@ -1011,3 +1011,19 @@ Next is matching release-material refresh. Other material/attribution closure,
 original Intel shutdown refusal, broader runtime/native/translation QA, final
 whole review/builds, signing/notarization/update acceptance, guarded installation
 and publication remain pending. Production signed feeds remain last.
+
+## OpenSSL-Isolated Libtorrent Material Refresh (2026-10-08)
+
+A new private 2,002-file material set now matches the current isolated providers
+and built consumers: 285 objects, 697 source dependency inputs, 295 installed
+headers and 106 embedded static members per CPU. It retains the updated recipe,
+header-isolation rules, generated/staged headers, raw build/consumer link records
+and independent OpenSSL regeneration witness. Two material archives match every
+member and share the same hash. Forty-one local controls and 30 release-
+profile fixtures pass; previous materials and failed attempts remain preserved.
+See [the scoped report](../research/2026-10-08-libtorrent-openssl-materials.md).
+
+Other dependency/resource/source/notice/legacy-attribution closure, binary
+reproducibility, original Intel shutdown refusal, broader QA and final whole
+review/builds remain pending. Signing/notarization/update acceptance, guarded
+installation and publication remain held. Production signed feeds remain last.

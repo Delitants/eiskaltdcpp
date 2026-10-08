@@ -468,3 +468,20 @@ retained. No full OpenSSL/library/app rebuild or binary reproduction is claimed.
 Matching libtorrent material refresh and broader dependency/resource/source/
 notice/attribution closure remain; prior failures and release holds are unchanged.
 See [the scoped report](research/2026-10-08-openssl-generated-headers.md).
+
+## OpenSSL-Isolated Libtorrent Material Refresh (2026-10-08)
+
+The current selected providers now have a matching private 2,002-file material
+set, including all 1,653 patched source files, 12 unchanged original standalone
+notices, maintained recipe/header-isolation rules and both CPUs' current raw
+receipts and OpenSSL witnesses. Source/private permission inventories are
+explicitly paired; strict staged/installed/archive mode checks remain intact.
+
+Each CPU readback accounts for 285 objects, 697 source inputs, 295 installed
+headers, 106 embedded static members and four built provider-consuming binaries.
+Both complete tar readbacks match hash
+`66cf7ec2cfecb16dfe8d566798346b3ad32a86bced6b943d261d0d958d6c4495`.
+Forty-one local controls and 30 release-profile fixtures pass. This is material
+packing/current-byte evidence, not whole-binary or historical compilation proof.
+Other dependency/resource/source/notice/attribution closure and release holds
+remain unchanged. See [the scoped report](research/2026-10-08-libtorrent-openssl-materials.md).
