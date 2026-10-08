@@ -2810,3 +2810,23 @@ build/allocation, signing/notarization, signed-v3/install/publication/readback
 remain pending. Overall Torrent5, GUI-settings3 and updater7/8 stay open. No
 profile, key, VM, installed app, server, production feed or GitHub mutation;
 production signed feeds remain last.
+
+### Selected Active-Peer And Recovery Checkpoint: 2026-10-07
+
+Private active-upload quiescence/other-job continuity passes 1/24 on both CPUs.
+Unchanged selected lifecycle inventories preserve 79/1,255 per CPU; ARM passes,
+Intel/Rosetta fails shutdownChecked in the large-scope case (35ms admission
+passes 50ms). Current Qt selected UI/repair/sharing-restart passes 11 instances
+per CPU, ARM 464 / Intel 461 assertions. The gate is NOT_ACCEPTED: a separate
+worker-traced Intel pass 1/7, with a 2087ms drain and committed final receipt, does
+not explain or waive the refusal. Forty-four backend inputs, original local
+repair, protected state and 95 final sealed files verify. No production/test-body
+changes. See `docs/research/2026-10-07-selected-active-peer.md`.
+
+Next is capturing the actual refused checkpoint boundary with original deadlines
+and assertions intact. Overall Torrent5/GUI-settings3/updater7/8, historical
+causes, wider lifecycle/native/minimum-OS/live/soak/localization/provenance and
+final whole review/build/allocation/signing/notarization/signed-v3/install/
+publication/readback remain pending. Active-download/combined-GOST/partial-piece
+crash acceptance is not supplied by these probes. Nothing installed or published;
+production signed feeds remain last.

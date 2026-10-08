@@ -215,3 +215,28 @@ chosen method; do not ask them to select it again. After review, start Task 1,
 not UI changes, updater activation or installation. A failed feasibility gate
 requires reporting the constraint and revisiting design rather than inventing a
 successful selective-check result.
+
+## Current Active-Peer Verification: 2026-10-07
+
+Approved verification continuation adds private coverage, not a production/test
+change: a chosen seed has a real uploading peer before its held selected-file
+check, then both peer endpoints disconnect while another job transfers. Both
+CPU probes pass 1/24. Original selected planner/journal/engine cases preserve
+79 instances/1,255 assertions per CPU; ARM passes, Intel/Rosetta fails only the
+large-scope shutdown checkpoint (owner admission 35ms still passes the 50ms bound).
+Both current Qt selected UI and peer repair/sharing-restart checks pass 11
+instances, ARM 464 / Intel 461 assertions. Source/44 retained backend inputs,
+protected state and 95 final sealed files verify.
+
+This checkpoint is NOT_ACCEPTED. A separate traced Intel pass 1/7 (drain 2087ms,
+commit/final receipt true) is not diagnosis of the failed receipt and cannot
+waive it. Capture the actual failing drain/commit boundary next; do not extend
+deadlines, weaken assertions or change fail-closed retirement without a reviewed
+repair. See `docs/research/2026-10-07-selected-active-peer.md` for retained fixture
+failures, tooling corrections and precise source/probe limits. Historical local
+Task7 checkpoints above remain historical, not current overall acceptance.
+
+Active-download/composed-GOST/partial-piece-crash/external/live/native/minimum-OS
+acceptance, historical causes, localization/provenance/reproducibility, final
+whole review/build/signing/notarization/signed-v3/install/publication gates stay
+pending. No installed app/profile/server/VM/key/feed changes; signed feeds last.

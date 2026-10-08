@@ -759,3 +759,27 @@ minimum-OS/benchmark/soak, localization, complete provenance/reproducibility and
 final review/build/allocation/signing/notarization/signed-v3/install/publication/
 readback remain pending. Overall Torrent Task5, GUI-settings Task3 and updater7/8
 remain open. Nothing installed or published; production signed feeds stay last.
+
+### Selected Recheck With An Active Peer (2026-10-07)
+
+The [private active-upload checkpoint](../research/2026-10-07-selected-active-peer.md)
+proves peer quiescence during a held selected-file check and continued transfer
+by another job: 1 case / 24 assertions on each CPU. Original selected planner/
+journal/engine inventories retain 79 instances / 1,255 assertions per CPU. ARM
+passes; Intel/Rosetta fails only the 10,000-file / 500,000-piece case's shutdown
+checkpoint, while its 35ms admission passes the unchanged 50ms limit. Both current
+Qt UI/repair/sharing-restart selections pass 11 instances (ARM 464 / Intel 461).
+
+The gate is NOT_ACCEPTED. One separately traced Intel pass (1/7, drain 2087ms,
+commit/receipt true) does not explain or waive the original refusal. Two initial
+private peer-prerequisite failures and preparation errors remain retained.
+Corrected fixture-only peer-class throttling makes live upload observable;
+original product/test bodies, deadlines and seven-file local repairs stay intact.
+Forty-four retained backend inputs, protected state and 95 final sealed files verify.
+
+Next is diagnosing the actual refused checkpoint boundary. Active-download/
+combined-GOST/partial-piece-crash/external/live/native/minimum-OS acceptance,
+historical causes, broader lifecycle/soak/benchmark, language/provenance/
+reproducibility and final whole review/build/allocation/signing/notarization/
+signed-v3/install/publication/readback remain pending. Overall Torrent5,
+GUI-settings3 and updater7/8 remain open. Nothing installed or published; feeds last.
