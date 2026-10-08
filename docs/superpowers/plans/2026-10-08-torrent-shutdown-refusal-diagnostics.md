@@ -109,3 +109,46 @@ implementation occurred. This plan and spec require review/approval before the
 runtime ownership/diagnostic path changes. Original Intel cause, wider QA,
 provenance/reproducibility, final review/build/signing/update/install/publication
 gates remain open. Signed feeds last.
+
+## Approved Local Implementation Checkpoint
+
+The maintainer approved Task 1. Worker-owned fixed-size observations and
+post-join, cached, best-effort refusal summaries are now implemented locally.
+All three native three-second windows and their comparison/order remain intact.
+The owned runtime callback contains downstream direct exceptions and forwards
+the collected engine summary after fencing. A dispatched-phase check prevents
+summary-triggered reentry from advancing a still-Pending proxy owner.
+Aggregate sampling is bounded to once per distinct failure stage.
+
+Strict corrected baseline tests retain twelve missing-summary assertions per
+CPU, the isolated queued-exception negative outcome, one forwarding assertion
+per CPU, and three reentry assertions per CPU. Earlier incorrect new fixtures
+and a private build-harness error are preserved but excluded from acceptance.
+An independent focused review found the reentry and repeated-sampling issues;
+one bounded fix pass has exact RED/GREEN regressions for each.
+
+Final affected-TU consumers pass six engine diagnostic cases, three runtime
+diagnostic cases and the unchanged engine/runtime retirement controls on each
+CPU: 796 assertions total, no errors/failures/skips. Twenty-two scripted
+observation controls pass; deleting the deadline observation fails exactly four
+filtered controls without changing refusal. Duplicate-sampling controls fail
+exactly their repeated-stage assertion before the fix and pass afterward.
+x86_64 remains Rosetta execution on the ARM host, not native Intel/macOS-14 QA.
+These consumers reuse pinned build inputs; they are not complete current app
+builds. Original test bodies/helpers and inherited repair bytes are preserved.
+
+Task 1 is not complete: actual native failed-resume-alert producer coverage is
+still missing. A metadata-less magnet is a Ready control; a controlled pending
+record tests the real pre-final timeout but does not establish native rejection.
+Task 2 remains held: no new failure-capture scenario was agreed or executed, and
+the historical Intel refusal is unresolved. Its original XML is unchanged.
+Source remains local, uncommitted, because it depends on the inherited Task 5
+repair whose complete integration matrix is still NOT_ACCEPTED. Documentation
+may be checkpointed separately; no completion commit or causal repair is claimed.
+
+Remaining: native producer and causal capture; inherited broader GUI/runtime
+and native/minimum-OS/translation QA; provenance/source/notices/reproducibility;
+final whole review and complete reviewed builds; production numbering/signing/
+notarization/update acceptance, guarded install and GitHub/wiki/screenshots/
+prerelease publication/readback. Production signed feeds last. Nothing installed
+or published.

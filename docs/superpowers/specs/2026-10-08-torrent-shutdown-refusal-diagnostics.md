@@ -93,3 +93,22 @@ repeat collection, privacy and no-late-install behavior. Preserve all inherited
 repairs and prior evidence. The original Intel refusal remains held until an
 actual failed run has stage evidence and a causal regression/repair is approved;
 diagnostic success alone does not satisfy that gate.
+
+## Approved Implementation Readback
+
+The focused design was approved and implemented locally, without causal repair
+or release acceptance. The worker records fixed stage flags and samples counts
+and elapsed time once per distinct failure stage; duplicate alerts do not
+rescan the job table. The owner caches the checked receipt before one best-effort
+summary after physical join. Runtime delivery contains its owned callback's
+exceptions, forwards the engine collection after fencing, and checks that a
+reentrant callback has not changed the dispatched retirement phase before
+advancing it. Pending proxy ownership cannot be bypassed by the new summary.
+
+Both-CPU affected consumers pass the new diagnostics and unchanged retirement
+controls, with exact RED/GREEN evidence for the two independent review findings.
+Original tests, three native three-second windows and checked outcomes are
+unchanged. This is private affected-TU/Rosetta QA, not a full app or native
+minimum-OS acceptance. Actual native failed-resume-alert producer coverage and
+historical Intel causal evidence remain missing. See the implementation plan's
+local checkpoint for exact counts, excluded exploratory receipts and open gates.

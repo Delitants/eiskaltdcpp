@@ -1125,3 +1125,41 @@ runtime/native/translation QA, provenance/source/notice/reproducibility, final
 whole review/build/signing/update acceptance, guarded installation and GitHub/
 wiki/screenshots/prerelease publication/readback. Production signed feeds last.
 Nothing installed or published.
+
+## Local Shutdown Diagnostics Checkpoint
+
+The approved [diagnostic design](../superpowers/specs/2026-10-08-torrent-shutdown-refusal-diagnostics.md)
+and [plan](../superpowers/plans/2026-10-08-torrent-shutdown-refusal-diagnostics.md)
+are now implemented locally. Refused engine retirement emits one sanitized
+stage/count/timing summary only after physical worker exit, with the authoritative
+receipt cached first. Ordinary reconfiguration does not contaminate it; Pending
+calls do not read live worker observations. Owned runtime delivery contains
+downstream direct exceptions and forwards the post-fence engine summary.
+
+Independent review found two issues, repaired in one bounded RED/GREEN pass:
+summary-triggered runtime reentry could skip a pending proxy owner, and duplicate
+resume-rejection observations repeatedly scanned the job table. Collection now
+preserves its dispatched phase; aggregate sampling occurs once per distinct
+failure stage. All three native three-second windows retain their ordering and
+comparisons. No checked failure becomes success, and no quit/update policy changed.
+
+Final two-CPU affected consumers pass 796 assertions across the new diagnostic
+tests and unchanged engine/runtime retirement controls, with no errors, failures
+or skips. Twenty-two scripted observation controls pass; four exact deadline-
+observation mutations fail without changing refusal. The pinned reused build
+inputs and replacement Engine link maps are read back. Original tests/helpers,
+inherited repairs, prior sealed evidence and historical Intel failure XML remain
+preserved. x86_64 runs under Rosetta, not native Intel/minimum-OS acceptance.
+
+Task 1 remains incomplete: real native failed-resume-alert producer coverage is
+missing. The controlled pending-save timeout is not that producer. The original
+Intel shutdown cause is still unresolved; no successful large-scope setup was
+replayed or used as a waiver. Source stays local and uncommitted pending the
+inherited NOT_ACCEPTED Task 5 integration and required acceptance checks. These
+are private affected-TU consumers, not complete current app builds.
+
+Remaining: native producer/causal capture and broader GUI/runtime/native/
+minimum-OS/translation QA; provenance/source/notices/reproducibility; final whole
+review and complete reviewed builds; production numbering/signing/notarization/
+update acceptance, guarded installation and GitHub/wiki/screenshots/prerelease
+publication/readback. Production signed feeds last. Nothing installed or published.
