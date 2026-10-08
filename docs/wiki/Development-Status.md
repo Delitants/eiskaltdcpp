@@ -1244,3 +1244,27 @@ GUI/runtime/native/minimum-OS/language QA; final whole-branch review and complet
 reviewed builds; production numbering/signing/notarization/signed-v3 acceptance,
 guarded install and GitHub/wiki/screenshots/prerelease publication/readback.
 Production signed feeds last. Nothing installed or published.
+
+## c-ares Native Deterministic-Archive Probe
+
+The [isolated native probe](../research/2026-10-08-cares-deterministic-archive-probe.md)
+creates eight private archives without recompiling source. All 91 object payloads
+and their order match the selected providers on both CPUs. Native `libtool -D`
+zeroes date/UID/GID fields, but retains copied input modes: both candidate pairs
+differ in 91 member-mode fields (182 bytes). The required equality gate exits 1
+with exactly two failures, as does the no-D baseline. Archive acceptance is HELD;
+no normalization, provider replacement or production recipe change.
+
+Four corrected controlled-header offline consumers pass. The initial consumers
+used the wrong quoted configuration header and remain unaccepted evidence, with
+the failed validator retained. Fourteen report-level controls pass. x86_64 runs
+under Rosetta, not native Intel/minimum-OS acceptance. Custody checks cover 3,530
+source/repair paths, 382 input pins, nine profile files and the preceding complete
+3,390-artifact checkpoint, not all historical QA or extra untracked/profile paths.
+
+Remaining: fixed-member-mode recipe design and whole-app reproducibility; other
+source/resource/preferred-source/notices closure; original Intel/bind causes and
+broader runtime/native/minimum-OS/language QA; Torrent/settings/updater integration;
+final whole review and complete builds; production numbering/signing/notarization/
+signed-v3 acceptance, guarded install and GitHub/wiki/screenshots/prerelease
+publication/readback. Production signed feeds last. Nothing installed or published.

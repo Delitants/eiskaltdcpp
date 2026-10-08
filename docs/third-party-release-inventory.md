@@ -589,3 +589,22 @@ sealed 60-artifact checkpoint, not every old QA tree or extra untracked/profile
 path. Source repairs remain unchanged and local. Other material/source/notices,
 whole-binary reproducibility, original Intel/bind causes, broader QA and final
 review/build/signing/update/install/publication gates remain open. Signed feeds last.
+
+## c-ares Native Deterministic-Archive Probe (2026-10-08)
+
+The [isolated `libtool -D` feasibility result](research/2026-10-08-cares-deterministic-archive-probe.md)
+is HELD: all 91 selected object bytes/order match per CPU, but copied input modes
+`0600` versus `0644` remain in 91 member headers. Each candidate pair differs in
+182 bytes, entirely metadata; timestamps/UID/GID are zero. Both exact CPU equality
+checks fail, with no waiver, normalization or production recipe/provider change.
+
+Four corrected controlled-header offline consumers pass; initial wrong-header
+fixtures and their validator failure are retained as unaccepted evidence. Fourteen
+synthetic report controls pass. x86 runs under Rosetta, not native/minimum-OS
+acceptance. Enumerated source/input/profile custody and the preceding complete
+3,390-artifact seal are checked; broader historical/untracked custody is not claimed.
+
+Fixed-mode recipe design, historical raw-container/whole-app reproducibility and
+other source/resources/notices closure remain open, along with original Intel/
+bind causes, broader QA, integration, final review/build/signing/update/install/
+publication gates. Nothing installed or published; production signed feeds last.

@@ -1,0 +1,117 @@
+{
+  "base_commit": "c3226e8e5f3c9210e37a143d514371504e7069d7",
+  "consumers": {
+    "corrected_controlled_header": 4,
+    "initial_wrong_header_consumers_accepted": false,
+    "minimum_os_acceptance": false,
+    "network_queries": false,
+    "x86_execution": "Rosetta"
+  },
+  "controls": {
+    "passing": 14,
+    "scope": "Synthetic member reports, not raw container mutation"
+  },
+  "gate": {
+    "baseline_exit": 1,
+    "candidate_exit": 1,
+    "failures_per_run": [
+      "test_arm64_whole_archive_equal",
+      "test_x86_64_whole_archive_equal"
+    ]
+  },
+  "installed_or_published": false,
+  "measurement": {
+    "cpus": {
+      "arm64": {
+        "baseline": {
+          "archive_sha256": {
+            "first": "ff8ea92730dcfb6a4f9105b669c8d05270e2eec908c7f13db0d52d75e30d8cf5",
+            "second": "fa9d72eca30eeaad646653376519d59740db98890f3492dfe43e4440b982d21b"
+          },
+          "archives_equal": false,
+          "comparison": {
+            "changed_header_fields": {
+              "mode": 91,
+              "timestamp": 92
+            },
+            "differing_bytes": 274,
+            "members_including_symbol_table": 92,
+            "metadata_only": true,
+            "non_metadata_differing_bytes": 0,
+            "same_layout": true
+          }
+        },
+        "deterministic": {
+          "archive_sha256": {
+            "first": "739d5a94e372dc5bf99666e451db917281188eb2b6d8a0c9446550a665376d94",
+            "second": "3b56114744fc0e8cef8915d09e444c5d4db2701143f35b3b594ff840e12662e3"
+          },
+          "archives_equal": false,
+          "comparison": {
+            "changed_header_fields": {
+              "mode": 91
+            },
+            "differing_bytes": 182,
+            "members_including_symbol_table": 92,
+            "metadata_only": true,
+            "non_metadata_differing_bytes": 0,
+            "same_layout": true
+          }
+        }
+      },
+      "x86_64": {
+        "baseline": {
+          "archive_sha256": {
+            "first": "f2a11b5c894b993ba9bae1e647e4494d74e13d493fb77c2c6b320b9708ed52ac",
+            "second": "9742935e6a9904f134aa9950fb6fb1dfbe50643af056192cadd4089be2058b53"
+          },
+          "archives_equal": false,
+          "comparison": {
+            "changed_header_fields": {
+              "mode": 91,
+              "timestamp": 92
+            },
+            "differing_bytes": 274,
+            "members_including_symbol_table": 92,
+            "metadata_only": true,
+            "non_metadata_differing_bytes": 0,
+            "same_layout": true
+          }
+        },
+        "deterministic": {
+          "archive_sha256": {
+            "first": "ff2b71987727b6aadbbedb0e88b8fe6dcdbf5d7fd666454d3753a69e6addd280",
+            "second": "ae7e318746111731d64b5f7c9f4a55babf30edc0429ff17470e687c1330eb120"
+          },
+          "archives_equal": false,
+          "comparison": {
+            "changed_header_fields": {
+              "mode": 91
+            },
+            "differing_bytes": 182,
+            "members_including_symbol_table": 92,
+            "metadata_only": true,
+            "non_metadata_differing_bytes": 0,
+            "same_layout": true
+          }
+        }
+      }
+    },
+    "native_intel_minimum_os_acceptance": false,
+    "offline_consumers_passed": 4,
+    "reason": "Native -D preserves 91 input-object member modes; all other byte differences eliminated.",
+    "status": "HELD"
+  },
+  "preservation": {
+    "broader_custody_claimed": false,
+    "input_pins": 382,
+    "prior_checkpoint_artifacts": 3390,
+    "profile_files": 9,
+    "source_repair_paths": 3530
+  },
+  "production_recipe_changed": false,
+  "production_signed_feeds": "last",
+  "provider_promoted": false,
+  "scope": "Isolated native archive feasibility; no provider/recipe/app changes",
+  "tool_version": "Apple Inc. version cctools_ld-27037.1"
+}
