@@ -2720,3 +2720,24 @@ GUI-settings Task3/updater7/8 remain open, together with broader review/lifecycl
 native/live/language/provenance/soak and final build/sign/install/publication gates.
 No live app/profile/server/key/VM/feed changes or signing/install/push/publication;
 signed feeds remain last.
+
+### Current Consistent Quit Matrix: 2026-10-07
+
+The fresh current-source test-build and complete serial matrix gates pass:
+13 consumers across ARM, Intel/Rosetta and whole ARM no-Torrent; 47 runs /
+6,743 case instances / 621,713 assertions; zero failures/errors/skips/fatal exits
+and 37 matching retained-inventory comparisons. Four current-source broken
+controls retain exact 14/9/14/6 failure multisets. All 97 frozen pins, 2,867
+captured regular-file inputs, protected state and historical seals verify.
+Details: `docs/research/2026-10-07-current-quit-matrix.md`.
+
+Parent Tasks7/8, overall GUI-settings Task3 and Torrent Task5 remain open.
+Original bind/timing/recovery causes remain unwaived, along with established
+relay/lifecycle coverage, native/minimum-OS/live/peer/bootstrap/selected-check/
+benchmark/soak, localization/native quality, full dependency provenance and
+reproducibility. Scoped Torrent source review is not final whole updater/
+prerelease review. Final application/material rebuilds, numeric production
+allocation, signing/notarization, signed-v3 acceptance, guarded closed-app
+installation/readback and authenticated GitHub/wiki/screenshots/prerelease
+publication/readback remain pending. No live app/profile/server/key/VM/feed
+changes, install, signing, push or publication. Signed feeds remain last.

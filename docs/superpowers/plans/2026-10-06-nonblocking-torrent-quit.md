@@ -264,9 +264,9 @@ are frozen before further mutable rebuilds. Task4 is complete; Task5 is next.
 
 **Interfaces:** Consumes all final components and the unchanged checked-quit/update consent contract. Produces an evidence-backed acceptance or explicit remaining-failure report, not release readiness.
 
-- [ ] **Step 1: Rebuild final consistent test consumers.** Fresh both-CPU source/MOC/resource builds with pinned inputs; no old partial source-object substitution for acceptance. Build/run no-Torrent core, Qt and settings. Verify actual Qt, CPU/deployment metadata and complete test inventories.
+- [x] **Step 1: Rebuild final consistent test consumers.** Fresh both-CPU source/MOC/resource builds with pinned inputs; no old partial source-object substitution for acceptance. Build/run no-Torrent core, Qt and settings. Verify actual Qt, CPU/deployment metadata and complete test inventories. The current consistent checkpoint below passes this gate; it is not a final application/material rebuild.
 - [x] **Step 2: Create bounded broken-path controls privately.** One control restores engine blocking join; another treats proxy done as physical readiness; another accepts failed share retraction. Preserve all original bodies/timers and reject unknown source layout. Require each control's exact contract failures and unaffected positives; no public production edits create controls.
-- [ ] **Step 3: Run full serial matrix.** Core, Qt and Torrent `~[interop]`, ordinary settings, GUI singleline/multiline/sidebar with only the existing sidebar navigation exclusion, original hidden settings/storage/admission/core/auxiliary retirements, plus new composed selector. Add explicit new component selectors for inventories that complete suites omit. No-Torrent freeze/normal/hidden settings selectors remain. Do not claim new real-GOST interop or native/minOS proof from these offline runs.
+- [x] **Step 3: Run full serial matrix.** Core, Qt and Torrent `~[interop]`, ordinary settings, GUI singleline/multiline/sidebar with only the existing sidebar navigation exclusion, original hidden settings/storage/admission/core/auxiliary retirements, plus new composed selector. Add explicit new component selectors for inventories that complete suites omit. No-Torrent freeze/normal/hidden settings selectors remain. Do not claim new real-GOST interop or native/minOS proof from these offline runs. Current 47-run checkpoint passes; historical failures remain unwaived.
 - [x] **Step 4: One independent immutable-range review.** Review source range from plan BASE through Task4 for owner lifetime, receipt failure, affinity, retraction admission, callbacks, ordering and consent. If no fresh reviewer tool is available, record that gate as pending; do not manufacture independence or message another task. Fix Important/Critical findings in one focused RED/GREEN pass, rerun the affected and complete suites; retain Minor deferrals explicitly. Current composite follow-up is recorded below; this closes source review only, not the integrated acceptance gates.
 - [x] **Step 5: Protected-state and historical-failure readback.** Reuse the latest diagnostic preservation helper with fresh output names; require whole historical bundles/signatures, material/provider/live-file/audit/negative pins and previous evidence seals unchanged. Retain original 102/180/354ms reports and Torrent causes even if current selectors pass. Recheck final source/binary/control hashes after tests.
 - [ ] **Step 6: Record and checkpoint actual status.** Mark this repair accepted only if its exact regressions and required reviews are satisfied. Record every remaining gate in parent settings/updater plans and Development Status. Local curated docs checkpoint/readback only; do not close broader Task3 or parent7/8 merely from this bounded repair. No signed feeds, build allocation, final assets or installation.
@@ -357,6 +357,29 @@ matrix remains required. Historical failures/timing causes are unwaived.
 Step4 source review is complete; Steps1/3/6 and overall Task5 remain open.
 No local runtime-repair completion commit, deployment, signing or publication;
 GUI-settings Task3 and updater Tasks7/8 stay open. Signed feeds last.
+
+### Current Consistent Matrix Checkpoint: 2026-10-07
+
+The [current consistent rebuild/matrix](../../research/2026-10-07-current-quit-matrix.md)
+uses `b9338079f` plus unchanged local repairs. Fresh ARM/Intel five-target and
+whole ARM no-Torrent configurations pass: 13 consumers and both-CPU test-only
+interposers, without prior public-consumer object substitution. Exact current
+controls retain 14/9/14 plus six premature-core failures.
+
+All 47 matrix runs pass 6,743 instances / 621,713 assertions, zero failures/
+errors/skips/fatal exits. All 37 comparisons retain earlier inventories plus
+the declared diagnostic/paired-port cases; GUI remains 126/126/124 per CPU.
+Actual CPU/minOS/Qt, 1,896 direct object inventories, 2,867 captured input hashes,
+97 frozen pins, source/repair-patch and historical/protected-state readbacks
+pass. Host/Rosetta is not native/minimum-OS/live or release proof.
+
+Steps1/3 now pass; source review remains complete. Step6 overall acceptance
+stays open while historical bind/timing/recovery and broader lifecycle gates
+remain unwaived. Earlier 94 failures/errors and all seals remain intact.
+GUI-settings Task3/updater Tasks7/8, deferred established-relay coverage,
+native/language/provenance/reproducibility/peer/bootstrap/selected-check/soak and
+final review/build/sign/install/publication gates stay open. Local source repairs
+remain separate; no installation or publication. Signed feeds last.
 
 ## Self-Review And Handoff
 

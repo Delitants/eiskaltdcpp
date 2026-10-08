@@ -545,3 +545,21 @@ The old bind failure remains unexplained/unwaived despite not recurring; earlier
 Task5, overall settings Task3, updater7/8 or native/minOS/live/review/lifecycle/
 language/provenance/soak/release gates. No installed app/profile/server/key/VM,
 signing, push, publication or feed changes; signed feeds last.
+
+### Current Consistent Matrix Checkpoint: 2026-10-07
+
+The approved fresh current-source verification produces 13 consistent test
+consumers: both-CPU five-target builds plus whole ARM no-Torrent core/Qt/settings.
+All 47 serial runs pass, 6,743 case instances / 621,713 assertions, without
+failures/errors/skips/fatal exits; all 37 retained-inventory comparisons pass.
+Four fresh private broken controls reproduce exact 14/9/14/6 failure multisets.
+All 97 frozen pins, 2,867 captured regular-file inputs and protected/historical
+readbacks pass. See `docs/research/2026-10-07-current-quit-matrix.md`.
+
+This closes the current consistent build/matrix gates only. Overall Task3,
+Torrent Task5 and updater Tasks7/8 stay open. Historical bind/timing/recovery
+causes are not diagnosed by later GREEN; deferred established-relay coverage,
+broader lifecycle/native/minimum-OS/live/language/provenance/reproducibility/
+peer/bootstrap/selected-check/benchmark/soak and final review/build/signing/
+install/publication gates remain pending. Existing source repairs stay local
+and separate. No installation or publication; signed feeds last.

@@ -660,3 +660,25 @@ or final updater/prerelease whole-diff review. Native/live/language/provenance/
 reproducibility/peer/bootstrap/selected-check/benchmark/soak and final build/
 signing/install/publication/readback remain pending. No install or publication;
 signed feeds last.
+
+### Current Consistent Quit Matrix (2026-10-07)
+
+The [fresh consistent current-source rebuild and full matrix](../research/2026-10-07-current-quit-matrix.md)
+pass: 13 test consumers, both CPU configurations and whole ARM no-Torrent,
+47 serial runs / 6,743 case instances / 621,713 assertions, no failures/errors/
+skips/fatal exits, and all 37 retained-inventory comparisons. Four fresh broken
+controls reproduce exact 14/9/14/6 failure multisets. All 97 frozen pins, 2,867
+captured regular-file inputs, protected historical/live state and earlier seals
+verify. This is ARM/macOS 27 and Intel/Rosetta test evidence, not native minimum-OS
+or final release acceptance; no source repairs were changed in this checkpoint.
+
+Current consistent build/matrix gates are verified. Overall Torrent Task5,
+GUI-settings Task3 and updater Tasks7/8 stay open. Historical bind/timing/recovery
+causes and deferred established-relay coverage remain unwaived. Broader lifecycle,
+real peer/bootstrap/selected-check, native/minimum-OS/live/benchmark/soak,
+localization/native quality, complete provenance/reproducibility, final whole
+updater/prerelease review, application/material builds and numeric production
+allocation, signing/notarization/signed-v3 acceptance, guarded closed-app install
+and authenticated GitHub/wiki/screenshots/prerelease publication/readback remain
+pending. Existing seven-file local source repairs stay separate. Nothing installed
+or published; signed feeds remain last.
