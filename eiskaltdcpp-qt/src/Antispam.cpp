@@ -25,7 +25,6 @@
 #include "dcpp/User.h"
 #include "dcpp/CID.h"
 #include "dcpp/DCPlusPlus.h"
-#include <QSaveFile>
 #include <QThread>
 
 using namespace dcpp;
@@ -453,41 +452,65 @@ void AntiSpam::saveSettings() {
 
 bool AntiSpam::freezeForQuitChecked() {
     if (QThread::currentThread() != thread()) return false;
+    if (quitPrepared) return quitSaveRetryable();
     quitPrepared = true;
-    return true;
+    try {
+        const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
+        const auto lines = [](const QList<QString>& list) {
+            QString text;
+            for (const auto& item : list) text += item + '\n';
+            return text;
+        };
+        QString words;
+        for (const auto& key : keys) words += key.toUpper() + '|';
+        antispamquit::Snapshot snapshot{QUuid::createUuid(), {{
+            {root + "antispam", ("|ANTISPAM_PHRASE|" + phrase + "\n|ANTISPAM_KEY|" + words +
+                                "\n|ATTEMPTS|" + QString::number(try_count) + '\n').toUtf8()},
+            {root + "blacklist", lines(black_list).toUtf8()},
+            {root + "graylist", lines(gray_list).toUtf8()},
+            {root + "whitelist", lines(white_list).toUtf8()}}}};
+        if(snapshot.id.isNull()) { quitCaptureFailed = true; return false; }
+        quitCheckpoint.emplace(std::move(snapshot));
+        return true;
+    } catch(...) {
+        quitCaptureFailed = true;
+        return false;
+    }
 }
 
 bool AntiSpam::saveForQuitChecked() {
     if (!freezeForQuitChecked()) return false;
-    quitSaved = quitSaveOperation()();
-    return quitSaved;
+    if (quitSaved) return true;
+    try {
+        auto attempt = beginQuitSave();
+        if(!attempt) return false;
+        return finishQuitSave(attempt->token, antispamquit::execute(*attempt)) == antispamquit::Status::Ready;
+    } catch(...) { return false; }
 }
 
-std::function<bool()> AntiSpam::quitSaveOperation() const {
-    if (quitSaved) return [] { return true; };
-    const auto root = _q(Util::getPath(Util::PATH_USER_CONFIG));
-    const auto lines = [](const QList<QString>& list) {
-        QString text;
-        for (const auto& item : list) text += item + '\n';
-        return text;
-    };
-    QString words;
-    for (const auto& key : keys) words += key.toUpper() + '|';
-    const QList<QPair<QString, QByteArray>> files{
-        {root + "antispam", ("|ANTISPAM_PHRASE|" + phrase + "\n|ANTISPAM_KEY|" + words +
-                            "\n|ATTEMPTS|" + QString::number(try_count) + '\n').toUtf8()},
-        {root + "blacklist", lines(black_list).toUtf8()},
-        {root + "graylist", lines(gray_list).toUtf8()},
-        {root + "whitelist", lines(white_list).toUtf8()}};
-    return [files] {
-        bool saved = true;
-        for(const auto& entry : files) {
-            QSaveFile file(entry.first);
-            const auto& data = entry.second;
-            saved = (file.open(QIODevice::WriteOnly) && file.write(data) == data.size() && file.commit()) && saved;
-        }
-        return saved;
-    };
+std::optional<antispamquit::Attempt> AntiSpam::beginQuitSave() {
+    if(!freezeForQuitChecked() || !quitCheckpoint) return std::nullopt;
+    return quitCheckpoint->begin();
+}
+
+bool AntiSpam::cancelUnstartedQuitSave(const antispamquit::Token& token) noexcept {
+    if(QThread::currentThread() != thread() || !quitCheckpoint) return false;
+    const bool canceled = quitCheckpoint->cancelUnstarted(token);
+    quitSaved = quitCheckpoint->status() == antispamquit::Status::Ready;
+    return canceled;
+}
+
+antispamquit::Status AntiSpam::finishQuitSave(const antispamquit::Token& token,
+                                           const std::optional<antispamquit::Receipt>& receipt) noexcept {
+    if(QThread::currentThread() != thread() || !quitCheckpoint) return antispamquit::Status::TerminalFailure;
+    const auto status = quitCheckpoint->complete(token, receipt);
+    quitSaved = status == antispamquit::Status::Ready;
+    return status;
+}
+
+bool AntiSpam::quitSaveRetryable() const noexcept {
+    return QThread::currentThread() == thread() && !quitCaptureFailed && quitCheckpoint &&
+        quitCheckpoint->status() != antispamquit::Status::TerminalFailure;
 }
 
 void AntiSpam::setPhrase(const QString &phrase_) {

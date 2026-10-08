@@ -16,7 +16,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDateTime>
-#include <functional>
+#include "AntispamQuitPersistence.h"
 
 #include "dcpp/stdinc.h"
 #include "dcpp/User.h"
@@ -90,7 +90,11 @@ public slots:
 
 private:
     friend class updates::ApplicationQuitCoordinator;
-    std::function<bool()> quitSaveOperation() const;
+    std::optional<antispamquit::Attempt> beginQuitSave();
+    bool cancelUnstartedQuitSave(const antispamquit::Token&) noexcept;
+    antispamquit::Status finishQuitSave(const antispamquit::Token&,
+                                      const std::optional<antispamquit::Receipt>&) noexcept;
+    bool quitSaveRetryable() const noexcept;
 
     inline void addToList(QList<QString>&, const QList<QString>&);
     inline void remFromList(QList<QString>&, const QList<QString>&);
@@ -117,6 +121,8 @@ private:
 
     int try_count;
     bool quitPrepared = false, quitSaved = false;
+    bool quitCaptureFailed = false;
+    std::optional<antispamquit::Checkpoint> quitCheckpoint;
 
     AntiSpamObjectState state;//used only by operator<<
 

@@ -43,6 +43,7 @@ set(QT_MODEL_SOURCES
     ${QT_SRC_DIR}/ChatFormatBar.h
     ${QT_SRC_DIR}/SearchBlacklist.cpp
     ${QT_SRC_DIR}/Antispam.cpp
+    ${QT_SRC_DIR}/AntispamQuitPersistence.cpp
 )
 
 # --- Test sources ---
@@ -61,6 +62,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_tabnavigation.cpp
     test_searchblacklist.cpp
     test_antispam.cpp
+    test_antispamquit.cpp
     test_downloadtosettings.cpp
     test_settingsconnectionhelpers.cpp
     test_proxytestrunner.cpp

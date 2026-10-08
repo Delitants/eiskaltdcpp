@@ -429,6 +429,7 @@ if (BUILD_TESTS)
     add_executable(eiskalt-settings-quit-tests
         ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsquit.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_antispamquitrecovery.cpp
         ${M_SRCS} ${U_SRCS} ${_settings_quit_sources} ${HDRS} ${MOC_HDRS})
     target_link_libraries(eiskalt-settings-quit-tests PRIVATE
         ${LIBS} extra dcpp Catch2::Catch2 Qt6::Test)
@@ -445,7 +446,7 @@ if (BUILD_TESTS)
     endif ()
     eiskalt_add_icon_themes(eiskalt-settings-quit-tests)
     add_test(NAME eiskalt-settings-quit
-        COMMAND $<TARGET_FILE:eiskalt-settings-quit-tests> "[settings-quit]")
+        COMMAND $<TARGET_FILE:eiskalt-settings-quit-tests> "[settings-quit],[antispam-file-recovery]")
     set_tests_properties(eiskalt-settings-quit PROPERTIES
         ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_ACCESSIBILITY=0" TIMEOUT 90)
 endif ()
@@ -459,6 +460,7 @@ if (BUILD_TESTS AND USE_TORRENT)
         ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_mainwindowtoggle.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsquit.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_antispamquitrecovery.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/applicationquit_fixture_access.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_chatformatbar.cpp
         ${M_SRCS} ${U_SRCS} ${_toggle_gui_sources} ${HDRS} ${MOC_HDRS})

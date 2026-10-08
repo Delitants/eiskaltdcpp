@@ -15,9 +15,11 @@
 
 namespace updates {
 struct ApplicationQuitCoordinator::AuxiliaryWrite {
-    struct Receipt { bool search = true, spam = true; };
+    struct Receipt { bool search = true; std::optional<antispamquit::Receipt> spam; };
     std::thread worker;
     std::future<Receipt> receipt;
+    std::optional<antispamquit::Token> expectedSpam;
+    bool untrustedCompletion = false;
     ~AuxiliaryWrite() { if(worker.joinable()) worker.join(); }
 };
 
@@ -25,51 +27,89 @@ ApplicationQuitCoordinator::ApplicationQuitCoordinator(QtContext& ctx, UpdateCon
     : context(ctx), updater(update), hadUpdater(update != nullptr) {}
 ApplicationQuitCoordinator::~ApplicationQuitCoordinator() = default;
 
+void ApplicationQuitCoordinator::bindAuxiliaryOwners() {
+    if(auxiliaryOwnersBound) return;
+    QPointer<SearchBlacklist> search = context.searchBlacklist();
+    QPointer<AntiSpam> spam = context.antiSpam();
+    searchOwner = std::move(search); spamOwner = std::move(spam);
+    searchRequired = bool(searchOwner); spamRequired = bool(spamOwner);
+    auxiliaryOwnersBound = true;
+}
+
+bool ApplicationQuitCoordinator::auxiliaryOwnersMatch() const noexcept {
+    return auxiliaryOwnersBound && (!searchRequired || searchOwner) && context.searchBlacklist() == searchOwner &&
+        (!spamRequired || spamOwner) && context.antiSpam() == spamOwner;
+}
+
 ApplicationQuitCoordinator::AuxiliaryResult ApplicationQuitCoordinator::saveAuxiliary(bool asynchronous) noexcept {
     if(auxiliary) {
-        if(auxiliary->receipt.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
-            return {Status::Pending, searchRequired ? "Search blacklist" : "Anti-spam"};
-        AuxiliaryWrite::Receipt saved{false, false};
-        try { saved = auxiliary->receipt.get(); } catch(...) {}
+        if(auxiliary->untrustedCompletion) return {Status::Refused, "Auxiliary receipt"};
+        AuxiliaryWrite::Receipt saved;
+        const auto token = auxiliary->expectedSpam;
+        try {
+            if(auxiliary->receipt.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+                return {Status::Pending, searchRequired ? "Search blacklist" : "Anti-spam", true};
+            saved = auxiliary->receipt.get();
+        } catch(...) {
+            // An exceptional/broken future can be ready before physical exit.
+            // Retain the worker: joining here could block the GUI in TLS teardown.
+            auxiliary->untrustedCompletion = true;
+            if(auxiliaryOwnersMatch() && spamOwner && token) spamOwner->finishQuitSave(*token, std::nullopt);
+            return {Status::Refused, "Auxiliary receipt"};
+        }
         // Readiness is published at thread exit, including physical TLS teardown.
         auxiliary.reset();
-        if((searchRequired && !searchOwner) || context.searchBlacklist() != searchOwner ||
-           (spamRequired && !spamOwner) || context.antiSpam() != spamOwner)
+        if(!auxiliaryOwnersMatch())
             return {Status::Refused, "Retained checkpoint owners"};
         if(searchOwner) searchOwner->quitSaved = saved.search;
-        if(spamOwner) spamOwner->quitSaved = saved.spam;
-        if(!saved.search) return {Status::Refused, "Search blacklist"};
-        if(!saved.spam) return {Status::Refused, "Anti-spam"};
+        auto spam = antispamquit::Status::Ready;
+        if(token) spam = spamOwner->finishQuitSave(*token, saved.spam);
+        else if(saved.spam || (spamOwner && !spamOwner->quitSaved)) spam = antispamquit::Status::TerminalFailure;
+        if(spam == antispamquit::Status::TerminalFailure) return {Status::Refused, "Anti-spam receipt"};
+        if(!saved.search) return {Status::Refused, "Search blacklist", true};
+        if(spam != antispamquit::Status::Ready) return {Status::Refused, "Anti-spam", true};
         return {Status::Ready, "Ready"};
     }
+    if(!auxiliaryOwnersMatch()) return {Status::Refused, "Retained checkpoint owners"};
     if(!searchOwner && !spamOwner) return {Status::Ready, "Ready"};
     if(!asynchronous) {
         bool search = true, spam = true;
         try { if(searchOwner) search = searchOwner->saveForQuitChecked(); } catch(...) { search = false; }
         try { if(spamOwner) spam = spamOwner->saveForQuitChecked(); } catch(...) { spam = false; }
         return {!search || !spam ? Status::Refused : Status::Ready,
-                !search ? "Search blacklist" : !spam ? "Anti-spam" : "Ready"};
+                !search ? "Search blacklist" : !spam ? "Anti-spam" : "Ready",
+                (!search || !spam) && (!spamOwner || spamOwner->quitSaveRetryable())};
     }
+    std::optional<antispamquit::Token> admitted;
     try {
         if(searchOwner && !searchOwner->freezeForQuitChecked()) return {Status::Refused, "Search blacklist"};
         if(spamOwner && !spamOwner->freezeForQuitChecked()) return {Status::Refused, "Anti-spam"};
         auto search = searchOwner ? searchOwner->quitSaveOperation() : std::function<bool()>{};
-        auto spam = spamOwner ? spamOwner->quitSaveOperation() : std::function<bool()>{};
         auto write = std::make_unique<AuxiliaryWrite>();
         std::promise<AuxiliaryWrite::Receipt> receipt;
         write->receipt = receipt.get_future();
+        std::optional<antispamquit::Attempt> spam;
+        if(spamOwner && !spamOwner->quitSaved) {
+            spam = spamOwner->beginQuitSave();
+            if(!spam) return {Status::Refused, "Anti-spam admission"};
+            admitted = spam->token;
+            write->expectedSpam = admitted;
+        }
         // These closures own only immutable paths and bytes, never GUI/context owners.
         write->worker = std::thread([search = std::move(search), spam = std::move(spam),
                                      receipt = std::move(receipt)]() mutable {
             AuxiliaryWrite::Receipt saved;
             try { if(search) saved.search = search(); } catch(...) { saved.search = false; }
-            try { if(spam) saved.spam = spam(); } catch(...) { saved.spam = false; }
-            receipt.set_value_at_thread_exit(saved);
+            if(spam) saved.spam = antispamquit::execute(*spam);
+            try { receipt.set_value_at_thread_exit(saved); } catch(...) {}
         });
         auxiliary = std::move(write);
-        return {Status::Pending, searchRequired ? "Search blacklist" : "Anti-spam"};
+        return {Status::Pending, searchRequired ? "Search blacklist" : "Anti-spam", true};
     } catch(...) {
-        return {Status::Refused, searchRequired ? "Search blacklist" : "Anti-spam"};
+        // No worker was installed: only this matching admission may roll back.
+        const bool canceled = !admitted || (spamOwner && spamOwner->cancelUnstartedQuitSave(*admitted));
+        return {Status::Refused, searchRequired ? "Search blacklist" : "Anti-spam",
+                canceled && (!spamOwner || spamOwner->quitSaveRetryable())};
     }
 }
 
@@ -126,11 +166,12 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     const bool guiPending = !guiStopped && window->quitWorkersPending();
     // GUI retirement has fenced input even while settings or workers remain
     // pending. Freeze rules now, before yielding to the live event loop.
-    if(asynchronousPersistence && (guiStopped || guiPending)) {
-        if(context.searchBlacklist())
-            check("Search blacklist", [&] { return context.searchBlacklist()->freezeForQuitChecked(); });
-        if(context.antiSpam())
-            check("Anti-spam", [&] { return context.antiSpam()->freezeForQuitChecked(); });
+    if(asynchronousPersistence && !auxiliary && (guiStopped || guiPending)) {
+        // The first freeze owns the identity even across primary-worker waits.
+        if(check("Retained checkpoint owners", [&] { bindAuxiliaryOwners(); return auxiliaryOwnersMatch(); })) {
+            if(searchOwner) check("Search blacklist", [&] { return searchOwner->freezeForQuitChecked(); });
+            if(spamOwner) check("Anti-spam", [&] { return spamOwner->freezeForQuitChecked(); });
+        }
     }
     if (guiPending && !window->quitProducersRetired()) {
         result.status = Status::Pending;
@@ -161,12 +202,11 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
         result.core.status == dcpp::DCContext::ShutdownStatus::Ready;
     // A failed GUI receipt may leave hub callbacks live. Read auxiliary intent
     // only after either GUI listener retirement or a successful core drain.
+    bool auxiliaryRetryable = false;
     if (guiStopped || result.core.status == dcpp::DCContext::ShutdownStatus::Ready) {
-        if(!auxiliary) {
-            searchOwner = context.searchBlacklist(); searchRequired = bool(searchOwner);
-            spamOwner = context.antiSpam(); spamRequired = bool(spamOwner);
-        }
+        check("Retained checkpoint owners", [&] { bindAuxiliaryOwners(); return auxiliaryOwnersMatch(); });
         const auto saved = saveAuxiliary(asynchronousPersistence);
+        auxiliaryRetryable = saved.retryable;
         if(saved.status == Status::Pending) {
             result.status = Status::Pending;
             result.component = saved.component;
@@ -176,7 +216,7 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
         if(saved.status != Status::Ready && !failed) failed = saved.component;
     }
     const bool settingsSaved = check("GUI settings", [&] { return context.settings()->saveChecked(); });
-    checkpointRetryAllowed = ownersReady && settingsSaved && failed;
+    checkpointRetryAllowed = ownersReady && settingsSaved && failed && auxiliaryRetryable;
     if(checkpointRetryAllowed && hadUpdater) {
         bool disarmed = false;
         try { disarmed = updater && updater->disarmForCheckpointRecovery(); } catch(...) {}
@@ -217,7 +257,8 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::retryCheckpoint(b
     const auto saved = saveAuxiliary(asynchronousPersistence);
     result.status = saved.status;
     result.component = saved.component;
-    checkpointRetryAllowed = saved.status != Status::Ready;
+    checkpointRetryAllowed = saved.status == Status::Pending ||
+        (saved.status == Status::Refused && saved.retryable);
     preparing = false;
     return result;
 }

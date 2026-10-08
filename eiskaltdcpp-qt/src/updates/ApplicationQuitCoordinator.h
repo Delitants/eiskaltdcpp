@@ -32,8 +32,10 @@ public:
     [[nodiscard]] Result retryCheckpoint(bool asynchronousPersistence = false) noexcept;
 private:
     struct AuxiliaryWrite;
-    struct AuxiliaryResult { Status status; const char* component; };
+    struct AuxiliaryResult { Status status; const char* component; bool retryable = false; };
     AuxiliaryResult saveAuxiliary(bool asynchronousPersistence) noexcept;
+    void bindAuxiliaryOwners();
+    bool auxiliaryOwnersMatch() const noexcept;
     std::unique_ptr<AuxiliaryWrite> auxiliary;
     QtContext& context;
     QPointer<UpdateController> updater;
@@ -41,6 +43,7 @@ private:
     bool updaterFenced = false;
     const char* firstFailure = nullptr;
     bool checkpointRetryAllowed = false, searchRequired = false, spamRequired = false;
+    bool auxiliaryOwnersBound = false;
     QPointer<MainWindow> retainedWindow;
     QPointer<SearchBlacklist> searchOwner;
     QPointer<AntiSpam> spamOwner;
