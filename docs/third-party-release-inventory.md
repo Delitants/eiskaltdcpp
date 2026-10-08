@@ -453,3 +453,18 @@ native minimum-OS testing are not included. Generated-header regeneration,
 matching release-material refresh, broader dependency/resource/notice closure,
 reproducibility, legacy attribution, unresolved runtime gates and final release/
 installation/publication acceptance remain open. Production signed feeds last.
+
+## Independent Selected OpenSSL Header Generation (2026-10-08)
+
+Fresh checksum-pinned OpenSSL 3.6.3 source and all four recipe patches reproduce
+all 142 selected public headers for each CPU: 114 direct and 28 generated, with
+zero mismatches. Fresh configuration/generator input inventories and ten audit
+controls bind the result to the previous provider/consumer staged and consumed
+header digests and unchanged selected SSL/crypto library bytes.
+
+This closes public-header regeneration only. ARM historical bottle configuration
+is not recovered; Intel's dependency-tool detection difference is explicitly
+retained. No full OpenSSL/library/app rebuild or binary reproduction is claimed.
+Matching libtorrent material refresh and broader dependency/resource/source/
+notice/attribution closure remain; prior failures and release holds are unchanged.
+See [the scoped report](research/2026-10-08-openssl-generated-headers.md).

@@ -995,3 +995,19 @@ lifecycle/soak/platform/translation acceptance and final whole review/applicatio
 material builds remain open. Numeric allocation, signing/notarization/signed-v3,
 guarded installation and GitHub/wiki/screenshots/prerelease publication/readback
 remain pending. Nothing installed or published; production signed feeds last.
+
+## Independent OpenSSL Header Regeneration (2026-10-08)
+
+Both CPU providers' selected public headers now match independent source
+regeneration: 142 headers per CPU, comprising 114 direct source headers and 28
+fresh template-generated headers, with zero byte mismatches. The result binds
+to the previous successful staged/consumed-header readback; no library or full
+application was rebuilt. Ten audit controls pass, preserving the exact five
+initial negative-control failures. ARM bottle reconstruction is not proven;
+Intel's compiler-dependency detection difference is recorded rather than waived.
+See [the scoped report](../research/2026-10-08-openssl-generated-headers.md).
+
+Next is matching release-material refresh. Other material/attribution closure,
+original Intel shutdown refusal, broader runtime/native/translation QA, final
+whole review/builds, signing/notarization/update acceptance, guarded installation
+and publication remain pending. Production signed feeds remain last.
