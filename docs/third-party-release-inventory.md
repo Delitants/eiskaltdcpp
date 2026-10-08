@@ -518,3 +518,18 @@ The original CMake release notice is retained for final material curation. Other
 material/artwork/runtime/native/review/build/signing/install/publication gates
 remain open. No app/provider/asset mutation or installation/publication; signed
 production feeds last.
+
+## Faenza Archived Release Witness
+
+The [bounded upstream archive check](research/2026-10-08-faenza-release-witness.md)
+covers 82 unchanged Faenza PNGs. Original 0.9/1.3 packages and 1.3 editable
+sources match their project's archived download records; original release
+notices are retained. One app PNG matches the 0.9 release's raw RGBA pixels,
+with different encoded bytes. The other 81 have no exact match among inspected
+regular PNG payloads. No artwork, license declaration or historical app changed.
+
+This is a partial external release witness, not artistic-origin certification,
+historical import identification or preferred-source regeneration. Those broader
+questions remain open for the 423-image legacy group. Other material/source/
+notice/reproducibility, original Intel shutdown, wider QA and final review/build/
+signing/install/publication gates remain pending. Production signed feeds last.

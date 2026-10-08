@@ -1061,3 +1061,19 @@ material/source/notice closure; broader runtime/native/translation QA; final who
 review and complete builds; signing/notarization/update acceptance, guarded
 install and GitHub/wiki/screenshots/prerelease publication/readback. Production
 signed feeds last. Nothing installed or published.
+
+## Faenza Release-Witness Checkpoint
+
+The [original archive audit](../research/2026-10-08-faenza-release-witness.md)
+records all 82 unchanged Faenza images: one exact raw-RGBA match in the 0.9
+package and 81 unmatched images; none matches the 1.3 package. Original package/
+source archive hashes and release notices are retained. The result does not
+identify the historical import release or certify authorship/licenses/preferred
+editable source. Artwork, declarations, apps and inherited repairs are unchanged.
+
+Remaining: broader origins for the 423 legacy images, other dependency-resource/
+source/notice closure and reproducibility; original Intel shutdown and wider
+runtime/native/translation QA; independent final whole review and complete
+reviewed builds; production numbering/signing/notarization/update acceptance,
+guarded installation and GitHub/wiki/screenshots/prerelease publication/readback.
+Production signed feeds remain last. Nothing installed or published.
