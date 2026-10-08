@@ -850,3 +850,25 @@ Torrent5/GUI-settings3/updater7/8, historical causes, broader lifecycle/native/
 minimum-OS/live/soak/provenance/reproducibility and final review/build/allocation/
 signing/notarization/signed-v3/install/publication/readback remain pending.
 Nothing installed or published; production signed feeds remain last.
+
+### Refusal-Only Shutdown Observation (2026-10-07)
+
+The [single refusal-only/post-exit diagnostic](../research/2026-10-07-refusal-only-shutdown-observation.md)
+passes the exact original Intel 79-instance / 1,255-assertion selection without
+errors or skips. It does not reproduce or waive the original large-scope refusal.
+Markers only on already-selected failure branches avoid the previous per-poll
+timers. The large case ends with a collected successful worker receipt, released
+sessions, matching saved generations and no active check or pending journal.
+Its 4.92-second owner-call duration includes work outside the selected-check
+drain and must not be compared directly with that drain's three-second limit.
+The source can refuse after a late poll clears its final record; that possible
+path is not this historical failure's proven cause. No policy is weakened.
+
+The original test/assertion/helper/deadline inventory, seven local repair files,
+retained link inputs, protected state and prior evidence remain preserved.
+Acceptance stays HELD. Stop positive repetitions of this fixture; next independent
+work is dependency provenance/reproducibility. Overall Torrent5/GUI-settings3/
+updater7/8, historical causes, broader lifecycle/native/minimum-OS/live/soak/
+unfinished/native-language quality and final review/build/allocation/signing/
+notarization/signed-v3/install/publication/readback remain pending. No installation
+or publication; production signed feeds remain last.

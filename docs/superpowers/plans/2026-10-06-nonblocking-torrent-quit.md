@@ -427,3 +427,20 @@ Step6/overall Task5, GUI-settings Task3/updater7/8 and broader lifecycle/peer/
 bootstrap/selected-check/native/language/provenance/reproducibility/soak/release
 remain open. Only the appended regression is curated; prior repair hunks stay
 local/uncommitted. No installation or publication; signed feeds last.
+
+### Refusal-Only Diagnostic Checkpoint: 2026-10-07
+
+The [one-shot cold-refusal/post-exit observation](../../research/2026-10-07-refusal-only-shutdown-observation.md)
+passes the original Intel 79-instance / 1,255-assertion selected-check inventory,
+without errors/skips. It does not reproduce or waive the historical large-scope
+refusal. Original test/assertion/helper/deadline bodies are reconstructed exactly;
+only private copies gain observations, with no per-poll timing or validation edits.
+Collected state has no sessions, active checks or journal, and matching saved
+generations. Owner-call wall time is not the three-second drain measurement.
+
+The static post-poll deadline guard can refuse even after the final record is
+cleared, but this is not established as the historical cause. Preserve the guard,
+all failed evidence and Task5's acceptance hold; do not repeat positive receipts
+to close it. Proceed with independent dependency provenance/reproducibility while
+the causal refusal, wider lifecycle/native/live/language and final release gates
+remain open. No installation/publication; production signed feeds remain last.
