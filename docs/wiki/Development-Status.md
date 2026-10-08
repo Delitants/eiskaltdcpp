@@ -805,3 +805,29 @@ Torrent5/GUI-settings3/updater7/8, historical causes, wider lifecycle/native/
 minimum-OS/live/soak/localization/provenance and final review/build/signing/
 notarization/signed-v3/install/publication/readback remain pending. Nothing
 installed or published; production signed feeds remain last.
+
+### Buffered Drain And Catalog Audit (2026-10-07)
+
+The [buffered diagnosis and current catalog audit](../research/2026-10-07-buffered-drain-and-catalog-audit.md)
+retain the original Intel shutdown refusal as unresolved. Six buffered receipts
+pass 84 instances / 1,290 assertions, with unchanged original limits and inventory.
+Intel drains take 2.03-2.63 seconds; every large-scope summary ends with zero active
+checks/journal records and committed receipts. Repeated metadata validation remains
+the measured cost lead, not proof of the earlier failure's cause. Stop repeating
+this successful setup; do not waive the failure. New buffered evidence has a
+54-file exact seal, with original local repairs/protected state/prior seals intact.
+
+The independent 23-test catalog audit finds exactly 75 missing-key failures:
+three messages in every one of 25 catalogs. Two listener messages moved to the
+`TorrentEngine` runtime context and can reuse 50 existing translations; the new
+proxy-retirement caption needs 25 entries. A fresh 356-file extraction identifies
+2,066 runtime keys and preserves all source/catalog/tool pins. The separate
+inherited backlog is 9,327 unfinished runtime entries, including 9,159 empty ones.
+The catalog repair awaits bounded-design approval; its 20-file evidence seal
+retains the exact RED result. No catalog/runtime changes in this checkpoint.
+
+Next: approved three-key catalog repair with compiled-QM tests. The unresolved
+refusal, overall Torrent5/GUI-settings3/updater7/8, historical causes, broader
+lifecycle/native/minimum-OS/live/soak/translation-quality/provenance and final
+review/build/signing/notarization/signed-v3/install/publication/readback remain
+pending. Nothing installed or published; production signed feeds remain last.

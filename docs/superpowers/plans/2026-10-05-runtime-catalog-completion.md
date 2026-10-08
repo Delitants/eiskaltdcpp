@@ -45,3 +45,20 @@ independent whole-branch review, final application/material rebuilds, numeric
 production build allocation, signing/notarization, updater acceptance, guarded
 closed-app installation/readback and documentation/prerelease publication remain
 separate gates. Signed feeds remain last. No app installation or push occurred.
+
+## Current-Candidate Audit: 2026-10-07
+
+The earlier 575-entry checkpoint remains historical. A fresh unchanged 23-test
+audit now finds exactly 75 missing-key failures: two listener messages moved to
+the `TorrentEngine` runtime context and one new `TorrentProxyAdapter` retirement
+message, each missing in all 25 catalogs. Fifty existing listener translations
+are reusable verbatim; the retirement message needs 25 new entries. Fresh
+production-manifest extraction reads 356 files / 2,066 keys, with no source or
+catalog mutations. The inherited unfinished/native-language-quality backlog
+remains separate from these missing context keys.
+
+The bounded context/compiled-QM repair design is awaiting maintainer approval;
+no new completion claim or catalog edit is made. See
+`docs/research/2026-10-07-buffered-drain-and-catalog-audit.md`. The Intel shutdown
+refusal and wider native/lifecycle/provenance/signing/install/publication gates
+remain held; production signed feeds stay last.
