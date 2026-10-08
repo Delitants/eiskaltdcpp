@@ -1315,3 +1315,75 @@ TEST_CASE("Proxy failed thread launch rolls back pre-owned admission and closes 
     CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
 }
 #endif
+
+TEST_CASE("Proxy quit fence preserves established authenticated GOST payloads until retirement", "[torrent-quit-proxy-relay][gost][adapter]") {
+    const bool udp = GENERATE(false, true);
+    CAPTURE(udp);
+    proxy_test::GostOptions options;
+    options.sessionMs = 15000;
+    proxy_test::GostServer server(options);
+    server.start();
+    TorrentProxyAdapter adapter;
+    REQUIRE(adapter.start(gostConfig(server)));
+    const auto local = adapter.endpoint();
+    QTcpSocket control;
+    authenticate(control, local);
+    QUdpSocket sender;
+    quint16 port = 0;
+    if(udp) {
+        bindUdp(sender);
+        port = relayPort(associate(control, sender.localPort()));
+    } else {
+        control.write(QByteArray::fromHex("050100030f") + "example.invalid" + QByteArray::fromHex("01bb"));
+        const auto reply = readControl(control, 10);
+        REQUIRE(reply.size() == 10);
+        REQUIRE(reply.left(8) == QByteArray::fromHex("050000017f000001"));
+    }
+    auto exchange = [&](const QByteArray& payload) {
+        if(udp) {
+            // Literal SOCKS UDP frame: 198.51.100.7:443, no real target lookup.
+            const auto frame = QByteArray::fromHex("00000001c633640701bb") + payload;
+            return sender.writeDatagram(frame, QHostAddress::LocalHost, port) == frame.size() &&
+                   receiveUdp(sender) == frame;
+        }
+        return control.write(payload) == payload.size() && readControl(control, payload.size()) == payload;
+    };
+    REQUIRE(exchange(QByteArray::fromHex("6265666f72652d66656e63650031")));
+    REQUIRE(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    REQUIRE(TorrentProxyAdapterTestAccess::reservations(adapter) == (udp ? 2 : 1));
+    QElapsedTimer clock;
+    clock.start();
+    REQUIRE(fenceAdapter(adapter));
+    CHECK(clock.elapsed() < 100);
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+    CHECK(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    CHECK(adapter.endpoint().port == 0);
+    QTcpSocket rejected;
+    rejected.setProxy(QNetworkProxy::NoProxy);
+    rejected.connectToHost(local.host, local.port);
+    CHECK_FALSE(rejected.waitForConnected(100));
+    const auto afterFence = QByteArray::fromHex("61667465722d66656e63650032");
+    REQUIRE(exchange(afterFence));
+    REQUIRE(fenceAdapter(adapter));
+    REQUIRE(exchange(QByteArray::fromHex("72657065617465642d66656e63650033")));
+    CHECK(control.state() == QAbstractSocket::ConnectedState);
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == (udp ? 2 : 1));
+    clock.restart();
+    const auto first = retireAdapter(adapter);
+    CHECK(clock.elapsed() < 100);
+    CHECK((first == ProxyRetirement::Pending || first == ProxyRetirement::Ready));
+    REQUIRE(spinFor([&] { return retireAdapter(adapter) == ProxyRetirement::Ready; }, 5000));
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 0);
+    CHECK(TorrentProxyAdapterTestAccess::reservations(adapter) == 0);
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    CHECK(spinFor([&] { return control.state() == QAbstractSocket::UnconnectedState; }));
+    CHECK(retireAdapter(adapter) == ProxyRetirement::Ready);
+    CHECK_FALSE(adapter.start(gostConfig(server)));
+    server.requestStop();
+    server.join();
+    CHECK(server.command == (udp ? 0xf3 : 1));
+    CHECK(server.user == "fixture-user");
+    CHECK(server.password == "fixture-password");
+}

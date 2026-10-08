@@ -682,3 +682,25 @@ allocation, signing/notarization/signed-v3 acceptance, guarded closed-app instal
 and authenticated GitHub/wiki/screenshots/prerelease publication/readback remain
 pending. Existing seven-file local source repairs stay separate. Nothing installed
 or published; signed feeds remain last.
+
+### Established GOST Relay Fence Coverage (2026-10-07)
+
+The [approved test-only relay regression](../research/2026-10-07-established-relay-fence.md)
+now covers established authenticated TLS GOST TCP/UDP payloads across repeated
+quit fences, rejection of new connections and subsequent physical cleanup. Each
+CPU private control produces exactly two intended post-Fence payload failures.
+Focused checks pass 7 case nodes / 166 assertions per CPU. Complete ordinary Qt
+passes 761 cases per CPU / 69,095 total assertions, retaining all 760 original
+cases plus one generated case. Bounded independent source review finds no issues;
+291 current and 2,866 retained input hashes, protected state and historical seals
+verify. No production routing or deadline change.
+
+The established-relay coverage deferral is addressed. Historical bind/freeze/
+recovery causes remain unwaived; overall Torrent Task5, GUI-settings Task3 and
+updater7/8 stay open. Broader lifecycle/real peer/bootstrap/selected-check,
+native/minimum-OS/live/benchmark/soak, localization/native quality, complete
+provenance/reproducibility and final whole review/build/allocation/signing/
+notarization/signed-v3/install/publication/readback remain pending. This is
+incremental Qt evidence, not a new 47-run matrix or release acceptance. Prior
+repair hunks remain local/uncommitted. Nothing installed or published; signed
+feeds last.

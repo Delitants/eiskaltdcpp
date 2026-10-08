@@ -2741,3 +2741,23 @@ allocation, signing/notarization, signed-v3 acceptance, guarded closed-app
 installation/readback and authenticated GitHub/wiki/screenshots/prerelease
 publication/readback remain pending. No live app/profile/server/key/VM/feed
 changes, install, signing, push or publication. Signed feeds remain last.
+
+### Established GOST Relay Fence Coverage: 2026-10-07
+
+The approved bounded relay regression addresses the prior source-review Minor:
+authenticated TLS GOST TCP/UDP payloads survive repeated quit fences; new accepts
+fail and later retirement drains ownership. Both CPU private controls fail exactly
+two intended exchanges. Complete ordinary Qt passes 761 cases per CPU / 69,095
+assertions total, with all original inventories retained; focus passes 7/166 per
+CPU. Bounded independent source review and current/retained/protected/historical
+input readbacks pass. See `docs/research/2026-10-07-established-relay-fence.md`.
+
+No production routing/deadline change. Incremental Qt evidence is not a fresh
+full matrix, whole-app/minimum-OS/live/signed-v3 acceptance. Tasks7/8, GUI-settings
+Task3/Torrent Task5 and historical bind/timing/recovery, broader lifecycle/peer/
+bootstrap/selected-check/native/localization/provenance/reproducibility/soak gates
+remain open. Prior repair hunks remain local/uncommitted. Final whole review,
+reviewed app/material builds and production allocation, release signing,
+notarization, guarded install and authenticated publication/readback remain
+pending. No installed/profile/server/key/VM/feed mutation, install or publication;
+signed feeds last.

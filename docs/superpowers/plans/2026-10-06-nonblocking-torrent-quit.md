@@ -407,3 +407,23 @@ provenance/reproducibility, whole-candidate review, native/minOS/live/lifecycle/
 benchmark/soak, final reviewed app/material rebuild and numeric production build,
 signing/notarization/signed-v3 acceptance, guarded closed-app install/readback,
 authenticated wiki/screenshots/prerelease publication/readback. Signed feeds last.
+
+### Established GOST Relay Fence Coverage: 2026-10-07
+
+The subsequently approved [test-only relay regression](../../research/2026-10-07-established-relay-fence.md)
+addresses the independent review's deferred established TCP/UDP recommendation.
+Real authenticated TLS GOST loopback payloads survive Fence/repeated Fence while
+new accepts fail; later physical retirement drains ownership. Private omission
+of the setup-complete flag causes exactly two post-Fence payload failures on
+each CPU, with no unrelated failures/errors/skips. Both CPU focus passes 7
+JUnit nodes / 166 assertions; complete ordinary Qt passes 761 per CPU / 69,095
+total assertions, retaining all 760 earlier cases and adding one generated case.
+Fresh bounded independent source review finds no issues. All 291 current inputs,
+2,866 retained inputs, protected-state and historical seal readbacks pass.
+
+This is fresh one-TU incremental Qt verification, not a new full 47-run matrix,
+whole-app/native/minimum-OS/live acceptance or historical bind/timing diagnosis.
+Step6/overall Task5, GUI-settings Task3/updater7/8 and broader lifecycle/peer/
+bootstrap/selected-check/native/language/provenance/reproducibility/soak/release
+remain open. Only the appended regression is curated; prior repair hunks stay
+local/uncommitted. No installation or publication; signed feeds last.

@@ -563,3 +563,21 @@ broader lifecycle/native/minimum-OS/live/language/provenance/reproducibility/
 peer/bootstrap/selected-check/benchmark/soak and final review/build/signing/
 install/publication gates remain pending. Existing source repairs stay local
 and separate. No installation or publication; signed feeds last.
+
+### Established GOST Relay Fence Coverage: 2026-10-07
+
+Approved test-only established TCP/UDP coverage now verifies payload delivery
+through Fence and repeated Fence, closed new admission and later physical
+retirement. Both CPU controls fail exactly two intended post-Fence exchanges;
+focused GREEN passes 7 nodes / 166 assertions per CPU and complete ordinary Qt
+passes 761 per CPU / 69,095 total assertions with every original case retained.
+One bounded independent source review finds no issues; input/protected/historical
+readbacks pass. See `docs/research/2026-10-07-established-relay-fence.md`.
+
+The earlier established-relay coverage deferral is addressed, not original
+bind/timing/recovery causes. This is incremental Qt verification, not a repeated
+full matrix or native/minimum-OS/live/release acceptance. Overall Task3, Torrent
+Task5 and updater7/8, broader lifecycle/peer/bootstrap/selected-check/language/
+provenance/reproducibility/benchmark/soak and final review/build/signing/install/
+publication gates remain open. Prior repair hunks stay uncommitted; no deployment
+or publication. Signed feeds last.
