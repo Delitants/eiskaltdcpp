@@ -370,3 +370,34 @@ acceptance. Whole current-source dependency/resource/notice/material refresh and
 whole-build reproducibility remain pending, as do the original shutdown refusal
 and broader final review/build/signing/install/publication gates. Production
 signed feeds remain last; nothing installed, signed, pushed or published here.
+
+## Current Libtorrent Material Selection (2026-10-07)
+
+The [current-provider material checkpoint](research/2026-10-07-current-libtorrent-materials.md)
+replaces a stale ABI-1 material selection with a separate private ABI-2 set;
+older materials and bundles are not edited. The old selection fails exactly the
+ABI and patch checks. No-fuzz/offset reconstruction of the pinned 2.1.1 archive
+and current patch matches all 1,653 source files in the retained source tree
+shared by both selected provider builds.
+
+Each CPU has 295 source-matching installed headers, 697 dependency-listed source
+inputs, 285 accounted compiler objects and 106 byte-matching members in three
+embedded static libraries. Legitimate duplicate archive names remain distinct.
+Built/installed dylib hashes and thin CPUs agree; four sealed fresh consumers
+per CPU select the exact provider, while the fifth core-only consumer does not
+import libtorrent. This is link/import and post-build readback, not a new loader
+run, immutable historical compiler-input snapshot or reproducible binary build.
+
+The 1,699-file scoped source set retains the upstream archive, current lock/patch,
+complete modified sources, build instructions and both-CPU receipts, plus 12
+selected standalone notices with original upstream bytes. Two archives packed
+from those frozen inputs have identical hashes and complete member/content/mode
+readback. Refusal controls cover changed/missing/extra/escaping inputs, duplicate
+distribution members and overwrite retries; audit roots and optimized Python
+are guarded. All failed selection/harness/control evidence remains retained.
+
+This does not refresh the complete dependency/source/notice superset or the old
+application bundles. External Boost/OpenSSL/SDK readbacks, other dependencies,
+legacy attribution, whole-build reproducibility and final current-source
+application/material rebuilding remain separate gates. No production signing,
+installation or publication occurred; production signed feeds remain last.

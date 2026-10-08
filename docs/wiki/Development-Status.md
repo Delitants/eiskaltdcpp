@@ -919,3 +919,28 @@ updater7/8, historical causes, broader live/lifecycle/soak/native/translation
 quality, final review/build/allocation/signing/notarization/signed-v3/install/
 publication/readback remain pending. Nothing installed or published; signed
 production feeds remain last.
+
+### Current Libtorrent Source Materials (2026-10-07)
+
+The [offline material refresh](../research/2026-10-07-current-libtorrent-materials.md)
+finds the old staged libtorrent lock still selects ABI 1, while both fresh
+providers require ABI 2. Exactly the ABI and patch checks fail before a new,
+separate material set is prepared. All 1,653 reconstructed source files match
+the retained source tree shared by both builds; each CPU's 295 installed
+headers, 697 source dependency inputs, 285 link-accounted objects and 106
+embedded archive members match. Four sealed fresh consumers per CPU select
+the provider; the fifth core-only binary has no libtorrent import.
+
+The new 1,699-file source set retains the complete modified/upstream sources,
+current patch/lock, build records/instructions and original standalone notices.
+Two complete tar readbacks match byte-for-byte for those frozen inputs. This is
+repeatable material packing, not binary reproducibility, historical compiler
+proof or complete release source/notice acceptance. Earlier bundles/materials,
+dirty repairs, protected state and failed evidence remain unchanged.
+
+Next: finish other current dependency/resource/material and reproducibility
+gates. The original Intel shutdown refusal, overall Torrent5/GUI-settings3/
+updater7/8, historical causes, broader lifecycle/native/minimum-OS/live/soak/
+platform and translation quality, final whole review/build/allocation/signing/
+notarization/signed-v3/install/GitHub/wiki/prerelease publication/readback remain
+pending. Nothing installed or published; production signed feeds remain last.
