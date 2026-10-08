@@ -1219,3 +1219,28 @@ broader runtime/native/minimum-OS/language QA; final whole review and complete
 reviewed builds; production numbering/signing/notarization/update acceptance,
 guarded install and GitHub/wiki/screenshots/prerelease publication/readback.
 Production signed feeds last. Nothing installed or published.
+
+## Selected c-ares Reproduction Checkpoint
+
+The [c-ares audit](../research/2026-10-08-cares-object-reproduction.md) completes
+four fresh static builds: twice each for Apple Silicon and Intel. Every build's
+91 object payloads match the selected provider and repeat; generated headers and
+flags also match. Per-object command/dependency mapping and 130 upstream inputs
+per build are checked. Twenty-four audit controls pass after one review fix pass.
+
+Whole-archive bit reproducibility is still HELD. Repeats differ in timestamps;
+retained comparisons additionally differ in member modes from the private audit's
+deliberate `umask 077`. The independent acceptance command exits 1 with four archive
+mismatches. No byte normalization, provider replacement or app build. Compiler
+deployment targets are not native Intel/minimum-OS execution evidence.
+
+Custody is verified only for the enumerated 3,528 source/repair paths, 23 inputs,
+nine profile files and previous 60-artifact checkpoint, not all historical QA or
+extra untracked/profile paths. Source repairs stay unchanged and local.
+
+Remaining: deterministic static-container and whole-app reproducibility; other
+source/resource/notices/material closure; original Intel/bind causes and broader
+GUI/runtime/native/minimum-OS/language QA; final whole-branch review and complete
+reviewed builds; production numbering/signing/notarization/signed-v3 acceptance,
+guarded install and GitHub/wiki/screenshots/prerelease publication/readback.
+Production signed feeds last. Nothing installed or published.

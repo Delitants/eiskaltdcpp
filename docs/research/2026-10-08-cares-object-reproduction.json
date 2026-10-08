@@ -1,0 +1,137 @@
+{
+  "acceptance_exit_code": 1,
+  "audit_control_tests": 24,
+  "base": "ea14fa26340a4fbe54191150889b977443bd5884",
+  "cpu_results": {
+    "arm64": {
+      "archive_sha256": {
+        "first": "4ac8ac4546ee2fa00ebd2415b2acfab1bd37c22192714613333a5f2cd2d8382d",
+        "second": "d549d0750acf7f1fb726a9ecacd0161b382881ae58a08b2516b934f92cee8c87",
+        "selected": "c2f2e77d0cf4914473c5a210a0bbb5cc0bbd4971652768612c60007b9dda2543"
+      },
+      "container_comparisons": {
+        "first-vs-second": {
+          "changed_header_fields": {
+            "timestamp": 92
+          },
+          "differing_bytes": 167,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "selected-vs-first": {
+          "changed_header_fields": {
+            "mode": 91,
+            "timestamp": 92
+          },
+          "differing_bytes": 734,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "selected-vs-second": {
+          "changed_header_fields": {
+            "mode": 91,
+            "timestamp": 92
+          },
+          "differing_bytes": 733,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        }
+      },
+      "deployment_target": "26.0",
+      "flags_and_defines_equal": true,
+      "fresh_build_count": 2,
+      "generated_headers_equal": true,
+      "object_count_per_archive": 91,
+      "object_payloads_equal_to_selected_and_repeat": true,
+      "one_to_one_compile_records_per_build": 91,
+      "repeat_archives_equal": false,
+      "verified_upstream_inputs_per_build": 130
+    },
+    "x86_64": {
+      "archive_sha256": {
+        "first": "0e37369f131be3102468b495d58f1df8524086ea4b17804cf227ad2ae5634f05",
+        "second": "db18f429d7a8cc044ef9821573d8d29e793bf9211eb22fc0ee47c5703df83c17",
+        "selected": "bfa1363c5c96dd6ea3e2eeaa08594815fb7879ba7b0d07b86891532b46ec0d11"
+      },
+      "container_comparisons": {
+        "first-vs-second": {
+          "changed_header_fields": {
+            "timestamp": 92
+          },
+          "differing_bytes": 357,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "selected-vs-first": {
+          "changed_header_fields": {
+            "mode": 91,
+            "timestamp": 92
+          },
+          "differing_bytes": 807,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "selected-vs-second": {
+          "changed_header_fields": {
+            "mode": 91,
+            "timestamp": 92
+          },
+          "differing_bytes": 810,
+          "members_including_symbol_table": 92,
+          "metadata_only": true,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        }
+      },
+      "deployment_target": "14.0",
+      "flags_and_defines_equal": true,
+      "fresh_build_count": 2,
+      "generated_headers_equal": true,
+      "object_count_per_archive": 91,
+      "object_payloads_equal_to_selected_and_repeat": true,
+      "one_to_one_compile_records_per_build": 91,
+      "repeat_archives_equal": false,
+      "verified_upstream_inputs_per_build": 130
+    }
+  },
+  "limits": [
+    "Static dependency object reproduction only, not whole-app reproduction or functional QA.",
+    "Deployment targets are compiler inputs, not native minimum-OS acceptance.",
+    "No archive bytes, source or flags were normalized or repaired.",
+    "Fresh private umask 077 versus retained member mode 0644 explains the measured mode difference.",
+    "SDK dependency hashes are post-build readbacks, not immutable pre-compilation snapshots.",
+    "Retained per-object dependency files match earlier audit pins; their flags.make supplies the command-template comparison.",
+    "Custody covers 3528 tracked/repair paths, 23 enumerated inputs, nine profile files and the previous 60-artifact checkpoint, not all old QA or extra untracked/profile paths.",
+    "Original Intel shutdown and bind causes, broader QA and release gates remain unresolved.",
+    "No application installation, signing, feed update or publication."
+  ],
+  "package": "c-ares",
+  "schema": 1,
+  "source_archive_entries": 553,
+  "source_archive_sha256": "c222b6d681096f9444d2c4863d2c1174019e27cacca0a4a5c114d36dd7d7bf78",
+  "source_archive_uncompressed_bytes": 5169456,
+  "strict_differences": [
+    "arm64:archives:first:bytes",
+    "arm64:archives:second:bytes",
+    "x86_64:archives:first:bytes",
+    "x86_64:archives:second:bytes"
+  ],
+  "toolchain": {
+    "apple_clang": "21.0.0.21000334",
+    "cmake": "4.4.2",
+    "host_macos": "27.0",
+    "sdk": "27.0"
+  },
+  "version": "1.34.8",
+  "whole_archive_gate": "HELD"
+}

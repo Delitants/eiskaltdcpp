@@ -567,3 +567,25 @@ source/notice questions remain open. Assets/declarations/inherited repairs and
 prior evidence are unchanged. Original Intel/bind causes, wider QA, material/
 reproducibility and final review/build/signing/update/install/publication gates
 remain pending. Nothing installed or published; production signed feeds last.
+
+## Selected c-ares Object Reproduction (2026-10-08)
+
+The [c-ares reproduction audit](research/2026-10-08-cares-object-reproduction.md)
+builds pinned 1.34.8 source twice per CPU in fresh private trees. All 91 object
+payloads, two generated configuration headers and historical flags/defines match
+the selected provider on each CPU. Each build has 91 one-to-one compiler/object/
+dependency records and 130 checksum-matching upstream inputs. Twenty-four controls
+pass after exact duplicate-record/per-object-omission REDs and one review fix pass.
+
+Whole-archive reproduction remains HELD: every repeated archive differs, with
+all differing bytes accounted for by timestamps. Selected-versus-fresh containers
+also differ in 91 member modes because private `umask 077` produces `0600` rather
+than the retained `0644`. No normalization or provider replacement. The acceptance
+command exits 1 with four exact selected archive mismatches; successful builds do not waive
+it. This is static object reproduction, not complete-app/minimum-OS acceptance.
+
+Custody covers enumerated source/repair/input/profile files and the previous
+sealed 60-artifact checkpoint, not every old QA tree or extra untracked/profile
+path. Source repairs remain unchanged and local. Other material/source/notices,
+whole-binary reproducibility, original Intel/bind causes, broader QA and final
+review/build/signing/update/install/publication gates remain open. Signed feeds last.
