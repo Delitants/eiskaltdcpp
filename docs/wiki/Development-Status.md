@@ -1077,3 +1077,21 @@ runtime/native/translation QA; independent final whole review and complete
 reviewed builds; production numbering/signing/notarization/update acceptance,
 guarded installation and GitHub/wiki/screenshots/prerelease publication/readback.
 Production signed feeds remain last. Nothing installed or published.
+
+## Default Theme Oxygen Witness Checkpoint
+
+The [Oxygen release-witness audit](../research/2026-10-08-oxygen-release-witness.md)
+covers 82 PNG/four SVG default-theme images: 24 exact raw-RGBA matches, 58 unmatched
+PNGs and four unmatched unrendered SVGs. The original KDE archive/checksum and
+notices are pinned. Sixteen-bit images retain byte evidence without depth
+reduction; one preliminary lossy match was excluded. Combined with Faenza, 25
+legacy-image paths have release pixel witnesses, 398 do not in these two audits.
+Broader artistic-origin, historical-import and preferred-source questions remain
+open for all 423. Existing assets/declarations/apps/inherited repairs are intact.
+
+Remaining: other artwork/dependency-resource/source/notice closure and
+reproducibility; original Intel shutdown and wider runtime/native/translation QA;
+final whole review and complete reviewed builds; production numbering/signing/
+notarization/update acceptance, guarded install and GitHub/wiki/screenshots/
+prerelease publication/readback. Production signed feeds last. Nothing installed
+or published.

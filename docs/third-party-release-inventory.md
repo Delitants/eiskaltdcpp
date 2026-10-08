@@ -533,3 +533,19 @@ historical import identification or preferred-source regeneration. Those broader
 questions remain open for the 423-image legacy group. Other material/source/
 notice/reproducibility, original Intel shutdown, wider QA and final review/build/
 signing/install/publication gates remain pending. Production signed feeds last.
+
+## Default Theme Oxygen Release Witnesses
+
+The [original Oxygen release check](research/2026-10-08-oxygen-release-witness.md)
+covers 86 unchanged default-theme images: 24 exact raw-RGBA witnesses, 58 unmatched
+PNGs and four explicitly unmatched SVG arrows. KDE's original archive matches
+its release-announcement SHA-256; original notices and vector artwork are
+retained. Sixteen-bit PNGs receive encoded-byte checks only, not lossy eight-bit
+pixel comparisons. One preliminary match was excluded by this precision gate.
+
+Together with Faenza, 25 of 423 legacy-image paths have exact release pixel
+witnesses; 398 still lack them in these audits. Artistic origins, historical
+import and preferred-source/notice closure are not certified. Other material/
+reproducibility, original Intel shutdown, broader QA, final review/build and
+signing/update/install/publication gates remain open. Signed production feeds
+remain last. No artwork/declarations/app/profile changed or publication occurred.
