@@ -1095,3 +1095,33 @@ final whole review and complete reviewed builds; production numbering/signing/
 notarization/update acceptance, guarded install and GitHub/wiki/screenshots/
 prerelease publication/readback. Production signed feeds last. Nothing installed
 or published.
+
+## Shutdown Refusal Boundary And Diagnostic Planning
+
+The [focused diagnostic design](../superpowers/specs/2026-10-08-torrent-shutdown-refusal-diagnostics.md)
+and [implementation plan](../superpowers/plans/2026-10-08-torrent-shutdown-refusal-diagnostics.md)
+preserve checked-quit policy while proposing worker-owned failure-stage evidence
+collected only after the thread-exit receipt and physical join. Runtime changes
+remain proposed, not implemented or accepted.
+Bounded review identified two important design gaps, now corrected in the
+proposal: later queued exceptions require receiver-side containment, and
+exceptional worker exits before final shutdown need a distinct classification.
+Two planning-text controls fail before those corrections and pass after; they
+are not runtime exception-safety tests. Budget/filter wording refinements remain
+deferred; all native deadlines and the exact filtered mutation evidence stand.
+
+Ten private branch cases pass per CPU; removing the deadline check fails exactly
+two boundary controls per CPU. They extract the current selected-check drain
+body with scripted helper boundaries, not real disk/library/engine operations.
+x86_64 executes under Rosetta on the ARM host, not native Intel/minimum-OS QA.
+At/after-deadline terminal work still refuses; an inactive check with a retained
+journal record also refuses. No deadlines, original tests or production code
+changed. Earlier passing large-scope setups were not replayed.
+
+The historical Intel shutdown cause remains unresolved: its original failure
+contains no stage observation, and scripted control flow cannot supply one.
+Remaining: diagnostic design approval/implementation and causal capture, broader
+runtime/native/translation QA, provenance/source/notice/reproducibility, final
+whole review/build/signing/update acceptance, guarded installation and GitHub/
+wiki/screenshots/prerelease publication/readback. Production signed feeds last.
+Nothing installed or published.
