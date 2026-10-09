@@ -629,3 +629,26 @@ Other dependency/resource/preferred-source/notices and whole-app reproducibility
 original Intel/bind causes, broader QA/integration, final review/build/signing/
 update/install/publication gates remain open. Nothing installed or published;
 production signed feeds last.
+
+## Fresh-Source c-ares Deterministic Recipe (2026-10-08)
+
+The [fresh-source private result](research/2026-10-08-cares-fresh-fixed-mode.md)
+passes four clean builds: all 91 selected object bytes/order, generated headers,
+flags and per-object compile/dependency templates match. All 532 upstream source
+files are verified before/after build, with 130 listed upstream inputs per build.
+New object copies use fixed `0644` modes and native `libtool -D`; candidate pairs
+have identical bytes and consistent external `0644` modes. Four offline consumers
+pass, Intel through Rosetta. No existing provider/production recipe is replaced.
+
+Both fresh raw equality cases still fail exactly as required. Review's missing
+pre-normalization exact-RED guard is fixed in one pass, with retained failure
+controls. Thirty-three final member/record/preflight controls pass. Review was
+static and did not accept final runtime or broader custody/integration evidence.
+Enumerated source/input/profile facts and the preceding 542-artifact seal are
+checked; 3,304 processing facts cover new source/object/header/recipe inputs.
+
+Maintained recipe integration and package/tree metadata, other dependency/resource/
+preferred-source/notices and whole-app reproducibility remain open. Original
+Intel/bind causes, broader QA/integration, final review/build/signing/update/
+install/publication gates remain pending. Nothing installed or published;
+production signed feeds last.

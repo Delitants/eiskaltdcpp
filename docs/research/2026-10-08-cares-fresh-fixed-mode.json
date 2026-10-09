@@ -1,0 +1,164 @@
+{
+  "archive_filesystem_mode": "0644",
+  "base_commit": "2b61201088c511e896db624ca84d8397067ebe69",
+  "controls": {
+    "extra_error_header_red_failures": 1,
+    "member_record": 22,
+    "preflight": 11,
+    "preflight_initial_failures": 8,
+    "review_fix_passes": 1,
+    "total": 33
+  },
+  "fresh_source": {
+    "arm64": {
+      "first": {
+        "flags": {
+          "C_DEFINES": "-DCARES_BUILDING_LIBRARY -DHAVE_CONFIG_H=1 -D_DARWIN_C_SOURCE",
+          "C_FLAGS": "-Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual -Wconversion -Wdeclaration-after-statement -Wdouble-promotion -Wfloat-equal -Wformat-security -Winit-self -Wjump-misses-init -Wmissing-braces -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpacked -Wpedantic -Wpointer-arith -Wredundant-decls -Wshadow -Wsign-conversion -Wstrict-overflow -Wstrict-prototypes -Wundef -Wunreachable-code -Wunused -Wvariadic-macros -Wvla -Wwrite-strings -Werror=implicit-int -Werror=implicit-function-declaration -Werror=partial-availability -Qunused-arguments -Wno-long-long -O3 -DNDEBUG -std=gnu90 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=26.0"
+        },
+        "generated_headers": {
+          "ares_build.h": "87b02ffc93afcdbb033d03bafb367e648a5bce6843aca4dad279f9037a7f39a4",
+          "ares_config.h": "029509bfdd00bd20c16731efedf9d3be79a7bd89441db1ae72b690f41ce7d78c"
+        },
+        "object_count": 91,
+        "raw_archive_sha256": "525a4bca5cf4511e03417db887197632f1fb5549158267be951ed183dee3d79d",
+        "source_file_count": 532
+      },
+      "second": {
+        "flags": {
+          "C_DEFINES": "-DCARES_BUILDING_LIBRARY -DHAVE_CONFIG_H=1 -D_DARWIN_C_SOURCE",
+          "C_FLAGS": "-Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual -Wconversion -Wdeclaration-after-statement -Wdouble-promotion -Wfloat-equal -Wformat-security -Winit-self -Wjump-misses-init -Wmissing-braces -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpacked -Wpedantic -Wpointer-arith -Wredundant-decls -Wshadow -Wsign-conversion -Wstrict-overflow -Wstrict-prototypes -Wundef -Wunreachable-code -Wunused -Wvariadic-macros -Wvla -Wwrite-strings -Werror=implicit-int -Werror=implicit-function-declaration -Werror=partial-availability -Qunused-arguments -Wno-long-long -O3 -DNDEBUG -std=gnu90 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -mmacosx-version-min=26.0"
+        },
+        "generated_headers": {
+          "ares_build.h": "87b02ffc93afcdbb033d03bafb367e648a5bce6843aca4dad279f9037a7f39a4",
+          "ares_config.h": "029509bfdd00bd20c16731efedf9d3be79a7bd89441db1ae72b690f41ce7d78c"
+        },
+        "object_count": 91,
+        "raw_archive_sha256": "1f810a8f04c9d1fb405daffbd5f54a54b8e3016b89efeb9a0a789aa0fed4d1ba",
+        "source_file_count": 532
+      }
+    },
+    "x86_64": {
+      "first": {
+        "flags": {
+          "C_DEFINES": "-DCARES_BUILDING_LIBRARY -DHAVE_CONFIG_H=1 -D_DARWIN_C_SOURCE",
+          "C_FLAGS": "-arch x86_64 -mmacosx-version-min=14.0 -O2 -Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual -Wconversion -Wdeclaration-after-statement -Wdouble-promotion -Wfloat-equal -Wformat-security -Winit-self -Wjump-misses-init -Wmissing-braces -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpacked -Wpedantic -Wpointer-arith -Wredundant-decls -Wshadow -Wsign-conversion -Wstrict-overflow -Wstrict-prototypes -Wundef -Wunreachable-code -Wunused -Wvariadic-macros -Wvla -Wwrite-strings -Werror=implicit-int -Werror=implicit-function-declaration -Werror=partial-availability -Qunused-arguments -Wno-long-long -O3 -DNDEBUG -std=gnu90 -arch x86_64 -mmacosx-version-min=14.0"
+        },
+        "generated_headers": {
+          "ares_build.h": "87b02ffc93afcdbb033d03bafb367e648a5bce6843aca4dad279f9037a7f39a4",
+          "ares_config.h": "029509bfdd00bd20c16731efedf9d3be79a7bd89441db1ae72b690f41ce7d78c"
+        },
+        "object_count": 91,
+        "raw_archive_sha256": "9473c7842e5bbaf2fce5d8cb2935e3613aedf51f8314051c7d2c7502f519ea46",
+        "source_file_count": 532
+      },
+      "second": {
+        "flags": {
+          "C_DEFINES": "-DCARES_BUILDING_LIBRARY -DHAVE_CONFIG_H=1 -D_DARWIN_C_SOURCE",
+          "C_FLAGS": "-arch x86_64 -mmacosx-version-min=14.0 -O2 -Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual -Wconversion -Wdeclaration-after-statement -Wdouble-promotion -Wfloat-equal -Wformat-security -Winit-self -Wjump-misses-init -Wmissing-braces -Wmissing-declarations -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpacked -Wpedantic -Wpointer-arith -Wredundant-decls -Wshadow -Wsign-conversion -Wstrict-overflow -Wstrict-prototypes -Wundef -Wunreachable-code -Wunused -Wvariadic-macros -Wvla -Wwrite-strings -Werror=implicit-int -Werror=implicit-function-declaration -Werror=partial-availability -Qunused-arguments -Wno-long-long -O3 -DNDEBUG -std=gnu90 -arch x86_64 -mmacosx-version-min=14.0"
+        },
+        "generated_headers": {
+          "ares_build.h": "87b02ffc93afcdbb033d03bafb367e648a5bce6843aca4dad279f9037a7f39a4",
+          "ares_config.h": "029509bfdd00bd20c16731efedf9d3be79a7bd89441db1ae72b690f41ce7d78c"
+        },
+        "object_count": 91,
+        "raw_archive_sha256": "5e210c03d0f843083255d9eecc5d816a960ad7e36e84691f9b29fd40dba764ad",
+        "source_file_count": 532
+      }
+    }
+  },
+  "gate": {
+    "fixed_exit": 0,
+    "fixed_passes": 2,
+    "raw_exit": 1,
+    "raw_failures": 2
+  },
+  "installed_or_published": false,
+  "measurement": {
+    "cpus": {
+      "arm64": {
+        "comparison": {
+          "changed_header_fields": {},
+          "differing_bytes": 0,
+          "members_including_symbol_table": 92,
+          "metadata_only": false,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "first": {
+          "archive_sha256": "3b56114744fc0e8cef8915d09e444c5d4db2701143f35b3b594ff840e12662e3",
+          "consumer_sha256": "a5e2e3583cbb83e5ea128c0bd25c5ed4d56aeeac6e61609267b828b5802c7969"
+        },
+        "second": {
+          "archive_sha256": "3b56114744fc0e8cef8915d09e444c5d4db2701143f35b3b594ff840e12662e3",
+          "consumer_sha256": "a5e2e3583cbb83e5ea128c0bd25c5ed4d56aeeac6e61609267b828b5802c7969"
+        },
+        "whole_archives_equal": true
+      },
+      "x86_64": {
+        "comparison": {
+          "changed_header_fields": {},
+          "differing_bytes": 0,
+          "members_including_symbol_table": 92,
+          "metadata_only": false,
+          "non_metadata_differing_bytes": 0,
+          "same_layout": true
+        },
+        "first": {
+          "archive_sha256": "ae7e318746111731d64b5f7c9f4a55babf30edc0429ff17470e687c1330eb120",
+          "consumer_sha256": "024075570ceab7fec78cbf6aba08ead6c82a3f5563d2999f9d839c0bc8c088fc"
+        },
+        "second": {
+          "archive_sha256": "ae7e318746111731d64b5f7c9f4a55babf30edc0429ff17470e687c1330eb120",
+          "consumer_sha256": "024075570ceab7fec78cbf6aba08ead6c82a3f5563d2999f9d839c0bc8c088fc"
+        },
+        "whole_archives_equal": true
+      }
+    },
+    "historical_raw_archive_gate_waived": false,
+    "native_intel_minimum_os_acceptance": false,
+    "offline_consumers_passed": 4,
+    "production_recipe_integrated": false,
+    "six_archiver_warning_lines_per_case_match_previous": true,
+    "status": "PASS_ISOLATED_FEASIBILITY"
+  },
+  "preservation": {
+    "broader_custody_claimed": false,
+    "original_input_hash_stat_pins": 416,
+    "previous_sealed_artifacts": 542,
+    "processing_inputs": 3304,
+    "profile_hashes": 9,
+    "source_repair_paths": 3534
+  },
+  "production_recipe_changed": false,
+  "production_signed_feeds": "last",
+  "raw_container_differences": {
+    "arm64": {
+      "changed_header_fields": {
+        "mode": 91,
+        "timestamp": 92
+      },
+      "differing_bytes": 458,
+      "members_including_symbol_table": 92,
+      "metadata_only": true,
+      "non_metadata_differing_bytes": 0,
+      "same_layout": true
+    },
+    "x86_64": {
+      "changed_header_fields": {
+        "mode": 91,
+        "timestamp": 92
+      },
+      "differing_bytes": 440,
+      "members_including_symbol_table": 92,
+      "metadata_only": true,
+      "non_metadata_differing_bytes": 0,
+      "same_layout": true
+    }
+  },
+  "review": "Static prerequisite-gap review; final native results excluded from reviewer acceptance",
+  "scope": "Isolated source-to-archive feasibility; no production integration/provider replacement",
+  "source_archive_sha256": "c222b6d681096f9444d2c4863d2c1174019e27cacca0a4a5c114d36dd7d7bf78",
+  "source_recompiled": true,
+  "x86_execution": "Rosetta"
+}

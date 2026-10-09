@@ -1293,3 +1293,32 @@ closure; original Intel/bind causes and broader runtime/native/minimum-OS/langua
 QA; overall Torrent/settings/updater integration; final review and complete builds;
 production numbering/signing/notarization/signed-v3 acceptance, guarded install
 and GitHub/wiki/screenshots/prerelease publication/readback. Signed feeds last.
+
+## Fresh-Source c-ares Deterministic Recipe
+
+The [fresh-source probe](../research/2026-10-08-cares-fresh-fixed-mode.md) passes:
+four clean builds reproduce all 91 selected objects per CPU, both generated
+headers, historical flags and per-object compiler/dependency templates. All 532
+upstream files match before/after each build; each build has 130 pinned upstream
+dependency inputs. New fixed-copy/native-D archive pairs are byte-identical and
+have consistent external `0644` permissions. Four fresh-header offline consumers
+pass; Intel runs under Rosetta, not native Intel/minimum-OS acceptance.
+
+Fresh raw pairs still differ in 92 timestamps and 91 modes and fail exactly both
+equality tests before normalization. Static review identifies a prerequisite gap;
+one repair pass enforces exact RED at normalizer entry before candidate creation.
+Twenty-two member/record plus eleven preflight controls pass after retained REDs.
+The reviewer does not independently accept the final native/runtime result.
+
+Custody checks cover 3,534 source/repair paths, 416 original input hash/stat pins,
+nine profile hashes and the preceding complete 542-artifact seal. Fresh processing
+facts number 3,304; wider old-QA/untracked/profile custody is not claimed. No
+existing provider, production recipe or app/profile is changed. No installation
+or publication; this is an isolated source-to-archive result, not release readiness.
+
+Remaining: maintained recipe design/integration, complete package/tree metadata,
+other source/resources/notices and whole-app reproducibility; original Intel/bind
+causes and broader runtime/native/minimum-OS/language QA; Torrent/settings/updater
+integration; final whole review and complete builds; production numbering/signing/
+notarization/signed-v3 acceptance, guarded install and GitHub/wiki/screenshots/
+prerelease publication/readback. Production signed feeds last.
