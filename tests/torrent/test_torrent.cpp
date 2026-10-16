@@ -88,6 +88,11 @@ struct TorrentEngineTestAccess {
     static lt::torrent_status status(TorrentEngine &engine, const QString &id) {
         return call(engine, [=](auto &d) { return d.records.at(id).handle.status(); });
     }
+    static bool sessionsAfterExit(TorrentEngine &engine) {
+        if (engine.d->worker.joinable()) throw std::runtime_error("worker not collected");
+        return bool(engine.d->session) || std::any_of(engine.d->records.begin(), engine.d->records.end(),
+            [](const auto& entry) { return bool(entry.second.checkSession); });
+    }
     static std::size_t pendingCommands(TorrentEngine &engine) {
         std::lock_guard lock(engine.d->mutex);
         return engine.d->commands.size();
@@ -5237,3 +5242,311 @@ TEST_CASE("Engine checked retirement cancels selected verification without modif
     CHECK(disk.writes() == 0);
 }
 #endif
+
+#if EISKALT_SELECTED_RECHECK_AVAILABLE
+TEST_CASE("Engine exceptional verification drain destroys every session before its receipt", "[torrent-quit-engine-exception]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto settings = isolated(dir.filePath("payload"));
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(settings, {});
+    const auto id = engine.add(fixture(settings.downloadPath));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    const auto before = hashFile(dir.filePath("payload/payload.bin"));
+    std::atomic<bool> notificationFailed{false};
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](const QString& message) {
+        if (message.startsWith("Torrent metadata disappeared")) {
+            notificationFailed = true;
+            throw std::bad_alloc(); // Fail the real worker notification boundary.
+        }
+    }, Qt::DirectConnection);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto& d) {
+        auto& record = d.records.at(id);
+        // A verification handle can become invalid before forced quit polling.
+        // Retain real session owners, not a simulated exit receipt.
+        auto pack = sessionSettings(d.config, {});
+        pack.set_str(lt::settings_pack::listen_interfaces, "");
+        record.checkSession = std::make_unique<lt::session>(lt::session_params(pack));
+        record.handle = {};
+        record.fileCheck.active = true;
+        record.checkPlan.emplace();
+        d.nextFileCheck = Clock::time_point::max();
+        return bool(d.session) && bool(record.checkSession);
+    }));
+    REQUIRE(fenceEngine(engine));
+    QElapsedTimer clock;
+    clock.start();
+    auto result = retireEngine(engine);
+    CHECK(clock.elapsed() < 100);
+    REQUIRE(eventually([&] { result = retireEngine(engine); return result.status != QuitRetirementStatus::Pending; }, 5000));
+    CHECK(result.status == QuitRetirementStatus::Refused);
+    CHECK(notificationFailed.load());
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+    CHECK(hashFile(dir.filePath("payload/payload.bin")) == before);
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Refused);
+    CHECK_FALSE(engine.shutdownChecked());
+}
+#endif
+
+TEST_CASE("Shutdown diagnostic caches refusal before reentrant or throwing delivery", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")), {}, {0}, true);
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    const auto path = dir.filePath("state/jobs.json");
+    REQUIRE(TorrentEngineTestAccess::call(engine, [path](auto &) {
+        return QFile::remove(path) && QDir().mkdir(path);
+    }));
+    QStringList summaries;
+    QList<QuitRetirementStatus> reentrant;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine, [&](const QString &message) {
+        summaries.append(message);
+        reentrant.append(retireEngine(engine).status);
+        throw std::runtime_error("private receiver text must not appear in diagnostics");
+    }, Qt::DirectConnection);
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK(summaries.size() == 1);
+    CHECK(reentrant == QList<QuitRetirementStatus>{QuitRetirementStatus::Refused});
+    const auto summary = summaries.value(0);
+    CHECK(summary.contains("close-state-commit"));
+    CHECK(summary.contains("final-state-commit"));
+    CHECK_FALSE(summary.contains(dir.path()));
+    CHECK_FALSE(summary.contains("private receiver text"));
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Refused);
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK(summaries.size() == 1);
+    CHECK(QFileInfo(path).isDir());
+}
+
+TEST_CASE("Shutdown diagnostic stays silent while physical worker retirement is Pending", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")), {}, {0}, true);
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    const auto path = dir.filePath("state/jobs.json");
+    REQUIRE(TorrentEngineTestAccess::call(engine, [path](auto &) {
+        return QFile::remove(path) && QDir().mkdir(path);
+    }));
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    auto hold = std::make_shared<EngineExitHold>();
+    EngineHoldRelease release(hold);
+    REQUIRE(TorrentEngineTestAccess::call(engine, [hold](auto &d) {
+        return d.enqueue([hold] { hold->wait(); });
+    }));
+    REQUIRE(eventually([&] { return hold->entered.load(); }));
+    release.arm();
+    QElapsedTimer timer;
+    timer.start();
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Pending);
+    CHECK(timer.elapsed() < 100);
+    CHECK(summaries.isEmpty());
+    QuitRetirementResult result{QuitRetirementStatus::Pending, "engine"};
+    REQUIRE(eventually([&] { result = retireEngine(engine); return result.status != QuitRetirementStatus::Pending; }, 5000));
+    CHECK(result.status == QuitRetirementStatus::Refused);
+    CHECK(hold->exited.load());
+    CHECK(summaries.size() == 1);
+    CHECK(summaries.value(0).contains("close-state-commit"));
+}
+
+TEST_CASE("Ordinary session close failures do not contaminate later quit diagnostics", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")), {}, {0}, true);
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    const auto path = dir.filePath("state/jobs.json");
+    REQUIRE(TorrentEngineTestAccess::call(engine, [path](auto &d) {
+        if (!QFile::remove(path) || !QDir().mkdir(path)) return false;
+        const bool ordinaryRefused = !d.closeSession();
+        return QDir().rmdir(path) && ordinaryRefused;
+    }));
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    CHECK(engine.shutdownChecked());
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Ready);
+    CHECK(summaries.isEmpty());
+}
+
+TEST_CASE("Exceptional pre-final worker exits have distinct shutdown diagnostics", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add(fixture(dir.filePath("source")));
+    REQUIRE(eventually([&] { return !engine.files(id).isEmpty(); }));
+    REQUIRE(TorrentEngineTestAccess::active(engine));
+    std::atomic_bool escaped{false};
+    QObject::connect(&engine, &TorrentEngine::error, &engine, [&](const QString &message) {
+        if (message.startsWith("Torrent backend operation failed")) {
+            escaped = true;
+            throw std::bad_alloc();
+        }
+    }, Qt::DirectConnection);
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    REQUIRE(TorrentEngineTestAccess::call(engine, [](auto &d) {
+        return d.enqueue([] { throw std::runtime_error("private operation details"); });
+    }));
+    REQUIRE(eventually([&] { return escaped.load(); }));
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+    CHECK(summaries.size() == 1);
+    CHECK(summaries.value(0).contains("pre-final-worker-exit"));
+    CHECK_FALSE(summaries.value(0).contains("selected-check-deadline"));
+    CHECK_FALSE(summaries.value(0).contains("private operation details"));
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Refused);
+    CHECK(summaries.size() == 1);
+}
+
+TEST_CASE("Metadata-less magnet shutdown does not invent checkpoint rejection", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("downloads")), {});
+    const auto id = engine.add("magnet:?xt=urn:btih:1111111111111111111111111111111111111111");
+    REQUIRE(eventually([&] { return !engine.jobs().isEmpty(); }));
+    REQUIRE(TorrentEngineTestAccess::active(engine));
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    CHECK(engine.shutdownChecked());
+    CHECK(summaries.isEmpty());
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Ready);
+}
+
+TEST_CASE("Retained pending checkpoint state reports pre-final drain refusal", "[torrent-shutdown-diagnostic]") {
+    application();
+    QTemporaryDir dir;
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(dir.filePath("payload")), {});
+    const auto id = engine.add(fixture(dir.filePath("payload")));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    // Hold a worker-owned pending record after invalidating its handle. This
+    // exercises the real timeout policy, not a native failed-alert producer.
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        const auto deadline = Clock::now() + 2s;
+        auto &r = d.records.at(id);
+        while (r.savePending && Clock::now() < deadline) {
+            d.alerts(); d.session->wait_for_alert(lt::milliseconds(10));
+        }
+        if (r.savePending) return false;
+        r.handle = {};
+        r.savePending = true;
+        return true;
+    }));
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK(summaries.size() == 1);
+    CHECK(summaries.value(0).contains("pre-final-resume-drain"));
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+}
+
+#include <libtorrent/extensions.hpp>
+namespace {
+struct RemovedResumeProbe final : lt::plugin {
+    lt::torrent_handle target;
+    std::shared_ptr<lt::aux::torrent> retained;
+    std::weak_ptr<lt::aux::torrent> lifetime;
+    std::atomic_bool removed{false}, released{false};
+    std::atomic_int rejected{0}, unexpected{0};
+
+    explicit RemovedResumeProbe(lt::torrent_handle handle) : target(handle) {}
+    lt::feature_flags_t implemented_features() override { return alert_feature; }
+    void added(const lt::session_handle &session) override {
+        // Opaque lifetime retention is confined to native plugin callbacks.
+        // Removal is real; no native object internals or alerts are fabricated.
+        retained = target.native_handle();
+        lifetime = retained;
+        if (!retained) return;
+        auto handle = session;
+        handle.remove_torrent(target);
+        removed = true;
+    }
+    void on_alert(const lt::alert *alert) override {
+        if (const auto *a = lt::alert_cast<lt::save_resume_data_failed_alert>(alert);
+            a && a->handle == target) {
+            if (a->error == lt::errors::torrent_removed) ++rejected;
+            else ++unexpected;
+        }
+    }
+    void abort() override {
+        retained.reset();
+        target = {};
+        released = true;
+    }
+};
+}
+
+TEST_CASE("Native removed-torrent checkpoint rejection retains refusal detail and prior resume", "[torrent-shutdown-native-rejection]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto payload = dir.filePath("payload");
+    TorrentEngine engine(dir.filePath("state"));
+    engine.configure(isolated(payload), {});
+    const auto id = engine.add(fixture(payload));
+    REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+    const auto beforePayload = hashFile(QDir(payload).filePath("payload.bin"));
+    REQUIRE_FALSE(beforePayload.isEmpty());
+    REQUIRE(TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        const auto deadline = Clock::now() + 2s;
+        while (d.records.at(id).savePending && Clock::now() < deadline) {
+            d.alerts(); d.session->wait_for_alert(lt::milliseconds(10));
+        }
+        return !d.records.at(id).savePending && d.persist();
+    }));
+    const auto checkpoint = dir.filePath("state/jobs.json");
+    const auto readCheckpoint = [&] {
+        QFile file(checkpoint);
+        REQUIRE(file.open(QIODevice::ReadOnly));
+        const auto jobs = QJsonDocument::fromJson(file.readAll()).object().value("jobs").toArray();
+        REQUIRE(jobs.size() == 1);
+        return jobs.first().toObject();
+    };
+    const auto beforeResume = readCheckpoint();
+    REQUIRE_FALSE(beforeResume.value("resume").toString().isEmpty());
+    auto probe = TorrentEngineTestAccess::call(engine, [id](auto &d) {
+        auto observer = std::make_shared<RemovedResumeProbe>(d.records.at(id).handle);
+        d.session->add_extension(observer);
+        return observer;
+    });
+    REQUIRE(eventually([&] { return probe->removed.load(); }));
+    REQUIRE(probe->rejected.load() == 0);
+    QStringList summaries;
+    QObject::connect(&engine, &TorrentEngine::diagnostic, &engine,
+                     [&](const QString &message) { summaries.append(message); });
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK(probe->rejected.load() >= 1);
+    CHECK(probe->unexpected.load() == 0);
+    CHECK(probe->released.load());
+    CHECK(probe->lifetime.expired());
+    CHECK_FALSE(TorrentEngineTestAccess::sessionsAfterExit(engine));
+    CHECK(summaries.size() == 1);
+    const auto summary = summaries.value(0);
+    CHECK(summary.contains("resume-checkpoint-rejected"));
+    CHECK_FALSE(summary.contains("pre-final-resume-drain"));
+    CHECK_FALSE(summary.contains("final-resume-drain"));
+    CHECK_FALSE(summary.contains(dir.path()));
+    const auto afterResume = readCheckpoint();
+    CHECK(afterResume.value("resume") == beforeResume.value("resume"));
+    CHECK(afterResume.value("resumeGeneration") == beforeResume.value("resumeGeneration"));
+    CHECK(hashFile(QDir(payload).filePath("payload.bin")) == beforePayload);
+    CHECK(retireEngine(engine).status == QuitRetirementStatus::Refused);
+    CHECK_FALSE(engine.shutdownChecked());
+    CHECK(summaries.size() == 1);
+}

@@ -285,6 +285,7 @@ std::string resolveUpstream(QObject& owner, const std::string& host,
 
 void relay(LocalConnection client, dcpp::Socket::StreamProxyConfig upstream,
            QByteArray user, QByteArray password, const std::atomic<bool> &stopping,
+           const std::atomic<bool> &setupFenced,
            QObject& resolverOwner, const std::shared_ptr<Resolution>& resolution, AdapterLimits& limits, bool udpEnabled) {
     QElapsedTimer handshake;
     handshake.start();
@@ -353,9 +354,10 @@ void relay(LocalConnection client, dcpp::Socket::StreamProxyConfig upstream,
     Reservation udpWorker(limits.workers, udp ? ConnectionLimit : 0);
     if(udp && (!association || !udpWorker)) { reply(client, 1, stopping); return; }
     const auto routeCancelled = upstream.cancelled;
-    const std::function<bool()> cancelled = [&stopping, &client, udp, routeCancelled] {
+    const auto setupComplete = std::make_shared<std::atomic<bool>>(false);
+    const std::function<bool()> cancelled = [&stopping, &setupFenced, &client, udp, routeCancelled, setupComplete] {
         if (routeCancelled && routeCancelled()) return true;
-        return stopping.load() || (udp && client.controlClosed());
+        return stopping.load() || (!setupComplete->load() && setupFenced.load()) || (udp && client.controlClosed());
     };
     Establishment establishment(limits, cancelled, gost);
     if(!establishment.enter()) return;
@@ -363,7 +365,6 @@ void relay(LocalConnection client, dcpp::Socket::StreamProxyConfig upstream,
     QElapsedTimer budget;
     budget.start();
     const auto setupDeadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(SetupTimeout);
-    const auto setupComplete = std::make_shared<std::atomic<bool>>(false);
     dcpp::Socket remote;
     std::unique_ptr<GostUdpRelay> udpRelay;
     quint16 boundPort = 0;
@@ -379,6 +380,7 @@ void relay(LocalConnection client, dcpp::Socket::StreamProxyConfig upstream,
             boundPort = udpRelay->start(QHostAddress::LocalHost, sender, quint16(port), &error);
             if(!boundPort) throw dcpp::SocketException("GOST UDP establishment failed");
         } else remote.proxyConnect(target.toStdString(), std::to_string(port), upstream, SetupTimeout - budget.elapsed());
+        if(cancelled()) throw dcpp::SocketException("Proxy setup cancelled");
         establishment.finish(true);
     } catch(const dcpp::SocketException& error) {
         // A CONNECT target refusal proves the authenticated proxy is healthy.
@@ -481,6 +483,7 @@ struct TorrentProxyAdapter::Impl {
     RelayServer server;
     QTimer reaper;
     std::atomic<bool> stopping{false};
+    std::atomic<bool> setupFenced{false};
     bool quitFenced = false, quitRetiring = false, retirementFailed = false;
     eiskalt::torrent::QuitRetirementStatus retirement = eiskalt::torrent::QuitRetirementStatus::Pending;
     std::vector<std::unique_ptr<Worker>> workers;
@@ -526,7 +529,7 @@ struct TorrentProxyAdapter::Impl {
                         if(pthread_sigmask(SIG_BLOCK, &blockedSignals, nullptr) != 0)
                             throw dcpp::SocketException("Cannot protect proxy worker from SIGPIPE");
 #endif
-                        relay(std::move(client), config, user, password, stopping, server, ptr->resolution, limits, udpEnabled);
+                        relay(std::move(client), config, user, password, stopping, setupFenced, server, ptr->resolution, limits, udpEnabled);
                     }
                     catch(...) { }
                     ptr->done = true;
@@ -612,8 +615,13 @@ bool TorrentProxyAdapter::fenceForQuitChecked() noexcept {
     if(QThread::currentThread() != thread()) return false;
     if(!d->quitFenced) {
         d->quitFenced = true;
+        d->setupFenced = true;
         d->server.close();
         d->reaper.stop();
+        // Fence queued resolution/setup now, independently of established relay
+        // retirement in the later Proxy phase. Keep route and workers owned.
+        for(const auto& worker : d->workers) cancelResolution(worker->resolution);
+        d->limits.changed.notify_all();
     }
     return true;
 }

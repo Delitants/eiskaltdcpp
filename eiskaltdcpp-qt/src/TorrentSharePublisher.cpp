@@ -22,7 +22,7 @@ struct TorrentSharePublisher::Impl {
     Retract retract;
     CheckedRetract checkedRetract;
     QHash<QString, std::shared_ptr<std::atomic<bool>>> tokens;
-    QList<QString> quitIds;
+    QHash<QString, std::shared_ptr<std::atomic<bool>>> quitTokens;
     std::mutex mutex;
     std::condition_variable changed;
     std::deque<Work> queue;
@@ -89,7 +89,7 @@ TorrentSharePublisher::TorrentSharePublisher(Publish publish, Retract retract, Q
                 d->changed.wait(lock, [this] { return d->stopping; });
             } catch (...) {}
         }
-        // The stop request publishes quitIds under this mutex. Destroy cancelled
+        // The stop request publishes quitTokens under this mutex. Destroy cancelled
         // queued captures on the worker, never on the checked GUI request path.
         try {
             std::deque<Impl::Work> cancelledQueue;
@@ -101,7 +101,8 @@ TorrentSharePublisher::TorrentSharePublisher(Publish publish, Retract retract, Q
             }
             cancelledQueue.clear();
             if (checked) {
-                for (const auto &id : d->quitIds) {
+                for (auto it = d->quitTokens.cbegin(); it != d->quitTokens.cend(); ++it) {
+                    const auto &id = it.key();
                     try {
                         if (!d->checkedRetract || !d->checkedRetract(id)) succeeded = false;
                     } catch (...) { succeeded = false; }
@@ -193,13 +194,12 @@ bool TorrentSharePublisher::fenceForQuitChecked() noexcept
     if (QThread::currentThread() != thread()) return false;
     if (d->quitFenced) return true;
     if (d->stopped) return false; // A legacy void retraction has no checked receipt.
-    try {
-        auto ids = d->tokens.keys();
-        d->quitIds = std::move(ids);
-        for (const auto &token : d->tokens) token->store(true);
-        d->quitFenced = d->stopped = true;
-        return true;
-    } catch (...) { return false; }
+    // No allocating snapshot or implicit detach may precede cancellation.
+    // Transfer all cleanup identities to the worker even under allocation failure.
+    for (auto it = d->tokens.cbegin(); it != d->tokens.cend(); ++it) it.value()->store(true);
+    d->quitTokens.swap(d->tokens);
+    d->quitFenced = d->stopped = true;
+    return true;
 }
 
 eiskalt::torrent::QuitRetirementResult TorrentSharePublisher::retireForQuitChecked() noexcept

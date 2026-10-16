@@ -61,8 +61,11 @@ TorrentRuntime::TorrentRuntime(dcpp::DCContext &context, QObject *parent)
         latestError = message;
         emit error(message);
     });
-    connect(torrentEngine, &TorrentEngine::diagnostic, this, [this](const QString &message) {
-        if (!stopped) emit diagnostic(message);
+    connect(torrentEngine, &TorrentEngine::diagnostic, this, [this](const QString &message) noexcept {
+        // Auto delivery can be queued from the engine worker. Exceptions from
+        // direct downstream receivers must not escape this event callback.
+        // The engine's post-join refusal receipt is collected after fencing.
+        try { if (!stopped || quitPhase == QuitPhase::Engine) emit diagnostic(message); } catch (...) {}
     });
     connect(sharePublisher, &TorrentSharePublisher::statusChanged,
             this, &TorrentRuntime::setShareStatus);
@@ -383,6 +386,7 @@ QuitRetirementResult TorrentRuntime::retireForQuitChecked() noexcept
     if (quitPhase == QuitPhase::Complete) return quitResult;
     (void)fenceForQuitChecked();
     while (quitPhase != QuitPhase::Complete) {
+        const auto dispatchedPhase = quitPhase;
         QuitRetirementResult result{QuitRetirementStatus::Refused, "runtime"};
         switch (quitPhase) {
         case QuitPhase::Publisher: result = sharePublisher->retireForQuitChecked(); break;
@@ -391,6 +395,11 @@ QuitRetirementResult TorrentRuntime::retireForQuitChecked() noexcept
         case QuitPhase::Fence:
         case QuitPhase::Complete: break;
         }
+        // Diagnostic delivery may reenter and advance another physical owner.
+        // Never apply this receipt to the phase now owned by the nested call.
+        if (quitPhase != dispatchedPhase)
+            return quitPhase == QuitPhase::Complete ? quitResult :
+                QuitRetirementResult{QuitRetirementStatus::Pending, "runtime"};
         if (result.status == QuitRetirementStatus::Pending) return result;
         if (result.status == QuitRetirementStatus::Refused && !quitFailure)
             quitFailure = result.component;

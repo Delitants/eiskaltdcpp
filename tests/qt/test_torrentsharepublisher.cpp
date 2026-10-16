@@ -507,3 +507,62 @@ TEST_CASE("Publisher loop failure retains checked cleanup of already published s
     CHECK(legacyRetractions == 2);
     CHECK(checkedIds.size() == 2);
 }
+
+#ifdef __APPLE__
+#include <dlfcn.h>
+#include <QArrayData>
+TEST_CASE("Publisher quit fencing retains cleanup without owner allocation", "[.][torrent-quit-publisher-allocation]") {
+    const auto arm = reinterpret_cast<void(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_publisher_allocation_arm"));
+    const auto reset = reinterpret_cast<unsigned(*)()>(dlsym(RTLD_DEFAULT, "eiskalt_qa_publisher_allocation_reset"));
+    REQUIRE(arm);
+    REQUIRE(reset);
+    // Validate the allocator boundary before relying on injected failure.
+    QArrayData* data = nullptr;
+    arm();
+    void* memory = QArrayData::allocate(&data, sizeof(QString), alignof(QString), 1);
+    const auto probeFailures = reset();
+    REQUIRE(memory == nullptr);
+    REQUIRE(probeFailures > 0);
+    auto hold = std::make_shared<PublisherHold>();
+    std::atomic<bool> started{false};
+    std::atomic<int> retractions{0};
+    std::function<bool()> cancelled;
+    auto publisher = checkedPublisher(
+        [&](const auto&, const auto&, const auto&, const auto& cancel, const auto&) {
+            cancelled = cancel;
+            started = true;
+            hold->block();
+            return false;
+        }, [](const QString&) {}, [&](const QString& id) {
+            if (id != "allocation-job") return false;
+            ++retractions;
+            return true;
+        });
+    struct Cleanup {
+        std::shared_ptr<PublisherHold> hold;
+        unsigned (*reset)();
+        ~Cleanup() { reset(); hold->release = true; }
+    } cleanup{hold, reset};
+    publisher->enqueue("allocation-job", "Completed", {"/tmp/data"});
+    REQUIRE(publisherWait([&] { return started.load(); }));
+    PublisherRelease release(hold);
+    const auto begin = std::chrono::steady_clock::now();
+    arm();
+    const bool fenced = fencePublisher(*publisher);
+    const auto first = retirePublisher(*publisher);
+    reset();
+    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - begin).count();
+    CHECK(fenced);
+    CHECK(elapsed < 100);
+    CHECK(first == Retirement::Pending);
+    CHECK(cancelled());
+    CHECK_FALSE(hold->release.load());
+    Retirement final = Retirement::Pending;
+    REQUIRE(publisherWait([&] { final = retirePublisher(*publisher); return final != Retirement::Pending; }));
+    CHECK(hold->exited.load());
+    CHECK(final == Retirement::Ready);
+    CHECK(retractions == 1);
+    CHECK(retirePublisher(*publisher) == Retirement::Ready);
+    CHECK(retractions == 1);
+}
+#endif

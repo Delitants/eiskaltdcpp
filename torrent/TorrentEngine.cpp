@@ -431,6 +431,19 @@ struct TorrentEngine::Impl {
     bool stopped = false, quitFenced = false;
     // Written by the worker, read by the owner only after join.
     bool shutdownSaved = false;
+    enum class ShutdownStage {
+        None, SelectedDeadline, SelectedJournal, PreFinalResume, FinalResume,
+        ResumeRejected, CloseCommit, FinalCommit, WorkerException, PreFinalWorkerExit,
+        SelectedDrain, SessionPause, CheckpointRequest, SessionDestroy
+    };
+    struct ShutdownObservation {
+        bool finalBoundary = false;
+        unsigned failures = 0;
+        ShutdownStage attempted = ShutdownStage::None;
+        Clock::time_point begin{};
+        qint64 elapsedUs = 0;
+        std::size_t active = 0, journals = 0, saves = 0;
+    } shutdownObservation;
     std::promise<bool> shutdownReceipt;
     std::future<bool> workerCompletion;
     std::optional<QuitRetirementResult> retirementResult;
@@ -466,8 +479,16 @@ struct TorrentEngine::Impl {
             try { run(); }
             catch (...) {
                 shutdownSaved = false;
+                observeShutdownFailure(shutdownObservation.finalBoundary ? ShutdownStage::WorkerException : ShutdownStage::PreFinalWorkerExit);
                 try { report(tr("Torrent shutdown persistence failed.")); } catch (...) {}
             }
+            // Exceptional checkpoint/notification paths must not leave native
+            // sessions for later GUI-side member destruction. Failure stays sticky.
+            for (auto &[id, record] : records) {
+                record.handle = {};
+                record.checkSession.reset();
+            }
+            session.reset();
             // Readiness includes thread-local cleanup, not just the run() body.
             try { shutdownReceipt.set_value_at_thread_exit(shutdownSaved); }
             catch (...) {
@@ -571,7 +592,61 @@ struct TorrentEngine::Impl {
         bool saved = false;
         try { saved = workerCompletion.get(); } catch (...) {}
         retirementResult = QuitRetirementResult{saved ? QuitRetirementStatus::Ready : QuitRetirementStatus::Refused, "engine"};
-        return *retirementResult;
+        // Commit the outcome before invoking receivers, which may reenter or
+        // throw. Copy it so no member access is needed after signal delivery.
+        const auto result = *retirementResult;
+        if (!saved) {
+            try {
+                QStringList reasons;
+                for (unsigned i = 1; i <= unsigned(ShutdownStage::PreFinalWorkerExit); ++i)
+                    if (shutdownObservation.failures & (1u << i))
+                        reasons.append(QString::fromLatin1(shutdownStageName(ShutdownStage(i))));
+                if (reasons.isEmpty()) reasons.append(QStringLiteral("unclassified-receipt"));
+                const auto message = tr("Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.")
+                    .arg(reasons.join(QStringLiteral(", ")), QString::fromLatin1(shutdownStageName(shutdownObservation.attempted)))
+                    .arg(shutdownObservation.elapsedUs).arg(qulonglong(shutdownObservation.active))
+                    .arg(qulonglong(shutdownObservation.journals)).arg(qulonglong(shutdownObservation.saves));
+                emit q->diagnostic(message);
+            } catch (...) {} // Telemetry never replaces the checked receipt.
+        }
+        return result;
+    }
+    static const char *shutdownStageName(ShutdownStage stage) noexcept {
+        switch (stage) {
+        case ShutdownStage::SelectedDeadline: return "selected-check-deadline";
+        case ShutdownStage::SelectedJournal: return "selected-check-journal";
+        case ShutdownStage::PreFinalResume: return "pre-final-resume-drain";
+        case ShutdownStage::FinalResume: return "final-resume-drain";
+        case ShutdownStage::ResumeRejected: return "resume-checkpoint-rejected";
+        case ShutdownStage::CloseCommit: return "close-state-commit";
+        case ShutdownStage::FinalCommit: return "final-state-commit";
+        case ShutdownStage::WorkerException: return "worker-exception";
+        case ShutdownStage::PreFinalWorkerExit: return "pre-final-worker-exit";
+        case ShutdownStage::SelectedDrain: return "selected-check-drain";
+        case ShutdownStage::SessionPause: return "session-pause";
+        case ShutdownStage::CheckpointRequest: return "checkpoint-request";
+        case ShutdownStage::SessionDestroy: return "session-destroy";
+        case ShutdownStage::None: return "not-entered";
+        }
+        return "unknown";
+    }
+    void observeShutdownStage(ShutdownStage stage) noexcept {
+        if (shutdownObservation.finalBoundary) shutdownObservation.attempted = stage;
+    }
+    void observeShutdownFailure(ShutdownStage stage) noexcept {
+        if (!shutdownObservation.finalBoundary && stage != ShutdownStage::PreFinalWorkerExit) return;
+        const auto flag = 1u << unsigned(stage);
+        // Sample aggregates once per distinct stage, not once per failed alert.
+        if (shutdownObservation.failures & flag) return;
+        shutdownObservation.failures |= flag;
+        if (shutdownObservation.finalBoundary)
+            shutdownObservation.elapsedUs = std::chrono::duration_cast<std::chrono::microseconds>(Clock::now() - shutdownObservation.begin).count();
+        shutdownObservation.active = shutdownObservation.journals = shutdownObservation.saves = 0;
+        for (const auto &[id, r] : records) {
+            shutdownObservation.active += r.fileCheck.active;
+            shutdownObservation.journals += bool(r.checkRecord);
+            shutdownObservation.saves += r.savePending;
+        }
     }
     bool stop() {
         requestStop();
@@ -633,11 +708,20 @@ struct TorrentEngine::Impl {
                 report(tr("Torrent backend operation failed; details were withheld to protect credentials."));
             }
         }
+        shutdownObservation = {};
+        shutdownObservation.finalBoundary = true;
+        shutdownObservation.begin = Clock::now();
         try {
             shutdownSaved = closeSession();
-            if (loaded) shutdownSaved = persist() && shutdownSaved;
+            if (loaded) {
+                observeShutdownStage(ShutdownStage::FinalCommit);
+                const bool committed = persist();
+                if (!committed) observeShutdownFailure(ShutdownStage::FinalCommit);
+                shutdownSaved = committed && shutdownSaved;
+            }
         } catch (...) {
             shutdownSaved = false;
+            observeShutdownFailure(ShutdownStage::WorkerException);
             report(tr("Torrent shutdown persistence failed."));
         }
     }
@@ -974,15 +1058,18 @@ struct TorrentEngine::Impl {
 #endif
     }
     bool drainFileChecks() {
+        observeShutdownStage(ShutdownStage::SelectedDrain);
         for (auto &[id, r] : records) cancelCheck(r);
         const auto deadline = Clock::now() + 3s;
         while (std::any_of(records.begin(), records.end(), [](const auto &entry) { return entry.second.fileCheck.active; })) {
             if (session) alerts();
             pollFileChecks(true);
-            if (Clock::now() >= deadline) return false;
+            if (Clock::now() >= deadline) { observeShutdownFailure(ShutdownStage::SelectedDeadline); return false; }
             std::this_thread::sleep_for(20ms);
         }
-        return std::none_of(records.begin(), records.end(), [](const auto &entry) { return bool(entry.second.checkRecord); });
+        const bool cleared = std::none_of(records.begin(), records.end(), [](const auto &entry) { return bool(entry.second.checkRecord); });
+        if (!cleared) observeShutdownFailure(ShutdownStage::SelectedJournal);
+        return cleared;
     }
     bool closeSession() {
         pendingBootstrap.clear();
@@ -992,6 +1079,7 @@ struct TorrentEngine::Impl {
         if (!checksOk) for (auto &[id, r] : records) if (r.fileCheck.active)
             failFileCheck(r, tr("Verification drain timed out; the Torrent remains paused and requires recovery."));
         if (!session) {
+            observeShutdownStage(ShutdownStage::SessionDestroy);
             for (auto &[id, r] : records) if (r.checkSession) {
                 if (r.fileCheck.active)
                     failFileCheck(r, tr("Local verification drain timed out; the Torrent requires recovery."));
@@ -1003,26 +1091,32 @@ struct TorrentEngine::Impl {
                 r.notified = false;
             }
             closing = false;
+            observeShutdownStage(ShutdownStage::CloseCommit);
             const bool committed = persist();
+            if (!committed) observeShutdownFailure(ShutdownStage::CloseCommit);
             return checksOk && committed;
         }
+        observeShutdownStage(ShutdownStage::SessionPause);
         session->pause();
-        const auto drainSaves = [&] {
+        const auto drainSaves = [&](ShutdownStage stage) {
+            observeShutdownStage(stage);
             const auto deadline = Clock::now() + 3s;
             for (;;) {
                 alerts();
                 if (std::none_of(records.begin(), records.end(), [](const auto &entry) { return entry.second.savePending; })) return true;
-                if (Clock::now() >= deadline) return false;
+                if (Clock::now() >= deadline) { observeShutdownFailure(stage); return false; }
                 session->wait_for_alert(lt::milliseconds(20));
             }
         };
         // An older in-flight reply cannot stand in for the final paused checkpoint.
-        bool checkpointOk = drainSaves();
+        bool checkpointOk = drainSaves(ShutdownStage::PreFinalResume);
         if (checkpointOk) {
             closingCheckpointOk = true;
+            observeShutdownStage(ShutdownStage::CheckpointRequest);
             requestSaves();
-            checkpointOk = drainSaves() && closingCheckpointOk;
+            checkpointOk = drainSaves(ShutdownStage::FinalResume) && closingCheckpointOk;
         }
+        observeShutdownStage(ShutdownStage::SessionDestroy);
         for (auto &[id, r] : records) {
             if (r.savePending) report(tr("Torrent resume checkpoint timed out; the last atomic checkpoint was retained."));
             r.savePending = false;
@@ -1040,7 +1134,9 @@ struct TorrentEngine::Impl {
         for (const auto &removal : removals) releaseStorage(removal.id);
         removals.clear();
         closing = false;
+        observeShutdownStage(ShutdownStage::CloseCommit);
         const bool committed = persist();
+        if (!committed) observeShutdownFailure(ShutdownStage::CloseCommit);
         return checksOk && checkpointOk && committed;
     }
     bool persist() {
@@ -1536,7 +1632,10 @@ struct TorrentEngine::Impl {
                     r->requestedSaveGeneration = 0;
                     if (std::exchange(r->saveAgain, false)) requestSave(*r);
                 }
-                if (r && closing) closingCheckpointOk = false;
+                if (r && closing) {
+                    closingCheckpointOk = false;
+                    observeShutdownFailure(ShutdownStage::ResumeRejected);
+                }
                 report(tr("Torrent resume checkpoint failed; retaining the previous checkpoint."));
                 if (r && r->fileCheck.active && r->checkTerminal)
                     failFileCheck(*r, tr("Cannot persist selected-file verification; recovery remains required."));

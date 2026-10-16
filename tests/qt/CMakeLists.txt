@@ -181,6 +181,7 @@ endif ()
 if (USE_TORRENT)
     if(APPLE)
         add_library(eiskalt-proxy-launch-failure SHARED EXCLUDE_FROM_ALL ProxyLaunchFailure.cpp)
+        add_library(eiskalt-publisher-allocation-failure SHARED EXCLUDE_FROM_ALL PublisherAllocationFailure.cpp)
     endif()
     qt6_add_resources(eiskaltdcpp-qt-tests torrent_icons
         PREFIX "/torrent"

@@ -1083,3 +1083,86 @@ TEST_CASE("Runtime checked retirement preserves phase order and sticky failures"
     CHECK(f.runtime->shutdownChecked() == !refuseRetraction);
 }
 #endif
+
+#ifdef USE_TORRENT
+#include <thread>
+TEST_CASE("Runtime queued diagnostic delivery contains direct receiver exceptions", "[torrent-shutdown-diagnostic-queued]") {
+    RuntimeFixture f;
+    int deliveries = 0;
+    QObject::connect(f.runtime.get(), &TorrentRuntime::diagnostic, &f.parent, [&](const QString &) {
+        ++deliveries;
+        throw std::runtime_error("private queued receiver failure");
+    }, Qt::DirectConnection);
+    std::thread sender([&] { f.engine().diagnostic("private diagnostic fixture"); });
+    sender.join();
+    CHECK(deliveries == 0);
+    bool escaped = false;
+    try { QCoreApplication::sendPostedEvents(); QCoreApplication::processEvents(); }
+    catch (...) { escaped = true; }
+    CHECK_FALSE(escaped);
+    CHECK(deliveries == 1);
+    CHECK(f.runtime->shutdownChecked());
+}
+
+TEST_CASE("Fenced runtime forwards the physically collected engine refusal summary", "[torrent-shutdown-diagnostic-queued]") {
+    RuntimeFixture f;
+    const auto id = f.add();
+    f.awaitPublished(id);
+    const auto checkpoint = QDir(QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)))
+        .filePath("torrent/state/jobs.json");
+    REQUIRE(checkpoint.startsWith(f.profile.root));
+    REQUIRE(waitFor([&] { return QFileInfo(checkpoint).isFile(); }));
+    REQUIRE(QFile::remove(checkpoint));
+    REQUIRE(QDir().mkdir(checkpoint));
+    QSignalSpy summaries(f.runtime.get(), &TorrentRuntime::diagnostic);
+    CHECK_FALSE(f.runtime->shutdownChecked());
+    CHECK(summaries.size() == 1);
+    if (!summaries.isEmpty()) CHECK(summaries.first().first().toString().contains("close-state-commit"));
+    CHECK(QFileInfo(checkpoint).isDir());
+}
+
+TEST_CASE("Reentrant refusal delivery cannot skip a pending proxy owner", "[torrent-shutdown-diagnostic-queued]") {
+    RuntimeFixture f;
+    const auto id = f.add();
+    f.awaitPublished(id);
+    const auto checkpoint = QDir(QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)))
+        .filePath("torrent/state/jobs.json");
+    REQUIRE(checkpoint.startsWith(f.profile.root));
+    REQUIRE(QFile::remove(checkpoint));
+    REQUIRE(QDir().mkdir(checkpoint));
+    auto *proxy = f.runtime->findChild<TorrentProxyAdapter *>();
+    REQUIRE(proxy);
+    ProxyConfig config;
+    config.type = ProxyType::Shadowsocks;
+    config.host = "127.0.0.1"; config.port = 9;
+    config.cipher = "aes-256-gcm"; config.password = "disposable-reentry";
+    REQUIRE(proxy->start(config));
+    std::function<bool()> entered;
+    std::function<void()> release;
+    retainRuntimeProxyExit(*proxy, entered, release);
+    struct ReleaseOnExit {
+        std::function<void()> &release;
+        ~ReleaseOnExit() { release(); }
+    } cleanup{release};
+    QList<QuitRetirementStatus> nested;
+    QObject::connect(f.runtime.get(), &TorrentRuntime::diagnostic, &f.parent, [&](const QString &message) {
+        if (message.startsWith("Torrent shutdown refused."))
+            nested.append(retireRuntime(*f.runtime).status);
+    }, Qt::DirectConnection);
+    QuitRetirementResult outer{QuitRetirementStatus::Pending, "runtime"};
+    REQUIRE(waitFor([&] {
+        outer = retireRuntime(*f.runtime);
+        return !nested.isEmpty();
+    }));
+    CHECK(nested == QList<QuitRetirementStatus>{QuitRetirementStatus::Pending});
+    CHECK(outer.status == QuitRetirementStatus::Pending);
+    REQUIRE(waitFor(entered));
+    CHECK(retainedRuntimeProxyWorkers(*proxy) == 1);
+    CHECK(retireRuntime(*f.runtime).status == QuitRetirementStatus::Pending);
+    release();
+    REQUIRE(waitFor([&] { return retireRuntime(*f.runtime).status == QuitRetirementStatus::Refused; }));
+    CHECK(retainedRuntimeProxyWorkers(*proxy) == 0);
+    CHECK(nested.size() == 1);
+    CHECK_FALSE(f.runtime->shutdownChecked());
+}
+#endif

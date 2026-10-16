@@ -1316,6 +1316,35 @@ TEST_CASE("Proxy failed thread launch rolls back pre-owned admission and closes 
 }
 #endif
 
+TEST_CASE("Proxy fence alone cancels queued DNS before later owner retirement", "[torrent-quit-proxy-fence]") {
+    proxy_test::GostServer server;
+    auto config = gostConfig(server);
+    config.host = "localhost";
+    TorrentProxyAdapter adapter;
+    REQUIRE(adapter.start(config));
+    QTcpSocket control;
+    authenticate(control, adapter.endpoint());
+    control.write(QByteArray::fromHex("05030001000000000000"));
+    control.flush();
+    QThread::msleep(100); // Keep the real worker's resolver dispatch queued.
+    REQUIRE(TorrentProxyAdapterTestAccess::workers(adapter) == 1);
+    QElapsedTimer clock;
+    clock.start();
+    CHECK(fenceAdapter(adapter));
+    CHECK(clock.elapsed() < 100);
+    CHECK(TorrentProxyAdapterTestAccess::resolutionCancelled(adapter));
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+    CHECK(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    // Deliver late GUI input while Publisher/Engine would still be Pending.
+    QCoreApplication::processEvents();
+    CHECK(TorrentProxyAdapterTestAccess::resolutionCancelled(adapter));
+    CHECK_FALSE(server.commandReady.load());
+    CHECK_FALSE(TorrentProxyAdapterTestAccess::stopping(adapter));
+    CHECK(TorrentProxyAdapterTestAccess::retainedRoute(adapter));
+    REQUIRE(spinFor([&] { return retireAdapter(adapter) == ProxyRetirement::Ready; }, 5000));
+    CHECK(TorrentProxyAdapterTestAccess::workers(adapter) == 0);
+}
+
 TEST_CASE("Proxy quit fence preserves established authenticated GOST payloads until retirement", "[torrent-quit-proxy-relay][gost][adapter]") {
     const bool udp = GENERATE(false, true);
     CAPTURE(udp);
