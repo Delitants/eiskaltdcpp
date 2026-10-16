@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:eiskalt="https://eiskaltdcpp.org/xml-namespaces/updates/1" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0"><channel><title>EiskaltDC++ intel</title><item><title>EiskaltDC++ 3.0.0-pre.1</title><sparkle:version>30000001</sparkle:version><sparkle:shortVersionString>3.0.0-pre.1</sparkle:shortVersionString><sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion><sparkle:channel>preview</sparkle:channel><eiskalt:bundleIdentifier>com.github.eiskaltdcpp</eiskalt:bundleIdentifier><eiskalt:cpu>x86_64</eiskalt:cpu><description># EiskaltDC++ 3.0.0-pre.1
+
+Preview release of the integrated Direct Connect and BitTorrent client.
+
+## Highlights
+
+- Torrent management, per-file selection/priorities, selected-file rechecking,
+  peers, encryption controls and country blocklists.
+- Unified transfer monitoring and optional DC++ sharing of eligible completed
+  Torrent files, with per-Torrent exclusions.
+- Global and Torrent-only proxy routing, including authenticated GOST TLS/UDP.
+- GitHub-hosted authenticated updates with verified staging and installation
+  deferred until an explicitly committed normal application quit.
+- Refreshed chat formatting controls, file icons, tabs and certificate settings.
+
+## Downloads
+
+Choose exactly one package for your CPU:
+
+- Intel x86_64 only: macOS 14 or newer.
+- Apple Silicon arm64 only: macOS 26 or newer.
+
+The minimum-OS declarations are checked in every bundled Mach-O dependency.
+Native testing on each advertised minimum OS is not yet established. Intel
+execution on the development Mac uses Rosetta, not physical Intel hardware.
+
+## Before Updating
+
+These packages are **not notarized and not Developer ID signed**. App bundles
+use ad-hoc signatures; macOS may require manual approval before first launch.
+Sparkle update archives and feeds are separately authenticated with the
+application's pinned Ed25519 update key. This does not replace Apple notarization.
+
+This is a prerelease. Back up your profile and use care with valuable downloads.
+Package hashes, source archives and dependency notices accompany the release.
+Do not infer anonymity from proxy routing or country filters.
+
+Internal macOS build: **30000001** for both architectures.
+
+Regression suites passed 1,973 cases per architecture (211,163 assertions on
+Apple Silicon; 210,951 under Intel/Rosetta), including controlled shutdown and
+injected failure checks. Test host: macOS 27.0; the minimum OS versions above
+were checked statically, not tested on separate minimum-version machines.
+
+Real GOST interoperability passed all eight scenarios on each CPU. Disposable
+full-app updater tests passed normal installation, canceled quit, forced exit
+before commit, native macOS termination, and canceled native termination on
+both CPU builds. Test data remained unchanged and updates did not relaunch
+without consent. These are host-based tests, not VM/minimum-OS certification.
+
+Application source: `c40689d43`. Dependency sources, local patches and notices
+are supplied separately; complete bit-for-bit dependency reproducibility is
+not claimed. Experimental private OpenSSL QA tooling is not part of the app.
+</description><enclosure url="https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.1/EiskaltDCpp-3.0.0-pre.1-macOS14-plus-Intel-x86_64.zip" length="45183814" type="application/octet-stream" sparkle:os="macos" sparkle:edSignature="gWd2qhUVsaLRRMcGnLhwaepOFdELDkrCetMKV2sMDv5F85SpErSNOHlBfvRsgw2GfewbUlYGkbiFQvJ343MqDA==" eiskalt:sha256="e7a099bea9ecce6130c1d62ef0f94c05ac955e2cce384ef735930e45ad72668c" /></item></channel></rss><!-- sparkle-signatures:
+edSignature: cFa2+4ZCU8EnCXR8ct4uBxYTZzCQ/6GnHLP7GVwTEIUqkrzLdyQWw2AvFMMJb0VmoQ9FiDEG8EJnTv+6yFU2DQ==
+length: 3647
+-->

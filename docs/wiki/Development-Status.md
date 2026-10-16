@@ -1,6 +1,28 @@
 # Development Status
 
-Checkpoint: 2026-10-07. `v3.0.0-pre.1` remains this development checkpoint's release target.
+## Current Release Checkpoint
+
+2026-10-16: `v3.0.0-pre.1`, internal build `30000001`, integrates the pending
+Torrent retirement repairs. Both updater-enabled CPU builds pass 1,973
+regression cases each, eight real-GOST cases each and five disposable full-app
+update/quit scenarios each. Live Cloudflare/Google DoH routing through GOST and
+isolated bundled startup also pass.
+
+See [release qualification](../releases/3.0.0-pre.1-readiness.md) and the
+[prerelease downloads](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.1).
+The apps are ad-hoc signed, **not Developer ID signed or notarized**. Sparkle
+update authentication is independently verified. Intel tests ran under Rosetta
+on macOS 27; physical Intel and native minimum-OS tests remain unverified.
+
+Remaining development: native minimum-OS/hardware coverage, native-speaker
+translation review, broader Windows/Linux QA and dependency reproducibility
+tooling. None is represented as completed by local fake-I/O tests. No VM is
+required for the release workflow.
+
+## Historical Development Evidence
+
+The sections below retain earlier dated checkpoints and their then-pending
+items. They do not supersede the current release qualification above.
 
 ## Implemented In Development
 
