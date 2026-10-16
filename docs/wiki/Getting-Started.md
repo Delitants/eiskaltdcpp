@@ -28,3 +28,18 @@ Connection preferences separate **Enable DHT** from **Do not advertise DHT to
 hubs**. The latter is off by default. It omits the DHT capability on the next
 ADC/NMDC connection and does not change DHT enablement. Reconnect existing hubs
 to apply it. It is not an anonymity feature and does not hide other traffic.
+
+## Updates
+
+In updater-enabled macOS builds, open **Preferences > Updates** to configure
+automatic checks, notifications, the Stable/Preview channel and **Download and
+install on next normal quit**. Use **Check Now** for an immediate check.
+
+Updates come from the project's GitHub release assets and authenticated feeds.
+Downloaded updates are verified before staging. Installation is deferred until
+the application commits a normal quit; hiding the window, canceling quit or
+crashing before that commitment must not trigger installation. Keep backups of
+your profile and downloads, especially when using preview builds.
+
+The first v3 preview is ad-hoc signed and not notarized. Update authentication
+does not replace Apple Developer ID signing or notarization.
