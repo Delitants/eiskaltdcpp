@@ -16,6 +16,66 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_download_retention_and_sources(self):
+        expected = {"UISettingsDownloads": {
+            "Auto-drop slow sources for all queue items (except filelists)":
+                "Automaticky vyradiť pomalé zdroje pre všetky položky frontu (okrem zoznamov súborov)",
+            'This option removes the slow sources for all queue items (except file lists).\nTo enable autodrop, turn on either "Autodrop slow sources for all queue items"\nor "Remove slow file lists" (or both of them).':
+                'Táto možnosť odstráni pomalé zdroje pre všetky položky frontu (okrem zoznamov súborov).\nNa zapnutie automatického vyraďovania zapnite buď "Automaticky vyradiť pomalé zdroje pre všetky položky frontu"\nalebo "Odstrániť pomalé zoznamy súborov" (alebo obe možnosti).',
+            'With this option enabled, EiskaltDC++ will delete a file list whose speed\nwas recognized as too slow.\nTo enable autodrop, turn on either "Autodrop slow sources for all queue items"\nor "Remove slow file lists" (or both of them).':
+                'Ak je táto možnosť zapnutá, EiskaltDC++ odstráni zoznam súborov, ktorého rýchlosť\nbola vyhodnotená ako príliš nízka.\nNa zapnutie automatického vyraďovania zapnite buď "Automaticky vyradiť pomalé zdroje pre všetky položky frontu"\nalebo "Odstrániť pomalé zoznamy súborov" (alebo obe možnosti).',
+            "Don't remove the source when auto-dropping, only disconnect":
+                "Pri automatickom vyraďovaní zdroj neodstraňovať, iba odpojiť",
+            "With this option enabled, sources will only be disconnected\nbut not removed from the queue.":
+                "Ak je táto možnosť zapnutá, zdroje sa iba odpoja,\nale neodstránia sa z frontu.",
+            "Every few minutes, the client will search for files in your\nDownload Queue to find more download locations (more users/sources).\nThe autosearch will find exact matches by searching via hash.\nThe drawback is that it may won't find much more sources\nand will prevent manual searches on hubs where\na predefined search interval rule is in effect.":
+                "Každých pár minút klient vyhľadá súbory vo vašom\nfronte sťahovania, aby našiel ďalšie miesta na stiahnutie (používateľov/zdroje).\nAutomatické vyhľadávanie nájde presné zhody pomocou hašu.\nNevýhodou je, že nemusí nájsť veľa ďalších zdrojov\na zabráni ručnému vyhľadávaniu na huboch, kde\nplatí pravidlo predpísaného intervalu vyhľadávania.",
+            "Automatically match queue for auto search hits": "Automaticky porovnať výsledky automatického vyhľadávania s frontom",
+            "Enable to automatically download a user's list and match them\nas sources for files in your Download Queue when they've been\ndiscovered as a source for one of the files you're downloading.\nIf you download files in sets, that user is probably a source\nfor many more files you're downloading. Enable if unsure.\nThe drawbacks are that it might add slower sources, possibly\nincreasing the time needed to complete a download,\nand that you'll download a lot of file lists.":
+                "Zapnutím automaticky stiahnete zoznam používateľa a priradíte ho\nako zdroj pre súbory vo fronte sťahovania, keď bol\nnájdený ako zdroj jedného zo sťahovaných súborov.\nAk sťahujete súbory v súpravách, tento používateľ je pravdepodobne zdrojom\naj mnohých ďalších sťahovaných súborov. Ak si nie ste istí, zapnite túto možnosť.\nNevýhodou je možné pridanie pomalších zdrojov, čo môže\npredĺžiť čas potrebný na dokončenie sťahovania,\na sťahovanie veľkého množstva zoznamov súborov.",
+            "When this option is enabled, any zero byte files you\ntry to download will be silently skipped.\nSometimes empty files contain information through their naming.\nHowever every file, even an empty one, will consume some drive space.":
+                "Ak je táto možnosť zapnutá, všetky súbory s nulovou veľkosťou, ktoré\nsa pokúsite stiahnuť, sa bez upozornenia preskočia.\nPrázdne súbory niekedy obsahujú informácie vo svojich názvoch.\nKaždý súbor, aj prázdny, však zaberá určité miesto na disku.",
+            "This option will stop you from downloading files\nwhich already exist in one of your shared directories.":
+                "Táto možnosť zabráni sťahovaniu súborov,\nktoré už existujú v niektorom z vašich zdieľaných priečinkov.",
+            "This option will stop you from downloading files\nwhich already exist in your queue.":
+                "Táto možnosť zabráni sťahovaniu súborov,\nktoré už existujú vo vašom fronte.",
+            "Enable this option if you want to keep downloaded filelists\nin the download queue after they have been finished.\nAfter downloaded the queue items will have 'Finished' status\nand you can delete these finished entries anytime later.\nNote that if you physically move/delete your downloaded files from\ntheir target location, it won't result automatic deletion of\nthe corresponding finished entries from the queue.\nIf you disable this function, it won't remove existing finished items\nfrom the queue either, you must do that manually.":
+                "Zapnite túto možnosť, ak chcete ponechať stiahnuté zoznamy súborov\nvo fronte sťahovania aj po dokončení.\nPo stiahnutí budú mať položky frontu stav 'Dokončené'\na tieto dokončené záznamy môžete neskôr kedykoľvek odstrániť.\nAk fyzicky presuniete alebo odstránite stiahnuté súbory\nz cieľového umiestnenia, nespôsobí to automatické odstránenie\nzodpovedajúcich dokončených záznamov z frontu.\nAni vypnutie tejto funkcie neodstráni existujúce dokončené položky\nz frontu; musíte to urobiť ručne.",
+            "Keep downloaded files": "Ponechať stiahnuté súbory",
+            "Enable this option if you want to keep downloaded files and folders\nin the download queue after they have been finished.\nAfter downloaded the queue items will have 'Finished' status\nand you can delete these finished entries anytime later.\nUsing this function you can keep track of what files are already\ndownloaded right there in the download queue without the need\nof checking the Finished Downloads window.\nNote that if you physically move/delete your downloaded files from\ntheir target location, it won't result automatic deletion of\nthe corresponding finished entries from the queue.\nIf you disable this function, it won't remove existing finished items\nfrom the queue either, you must do that manually.":
+                "Zapnite túto možnosť, ak chcete ponechať stiahnuté súbory a priečinky\nvo fronte sťahovania aj po dokončení.\nPo stiahnutí budú mať položky frontu stav 'Dokončené'\na tieto dokončené záznamy môžete neskôr kedykoľvek odstrániť.\nPomocou tejto funkcie môžete sledovať, ktoré súbory sú už\nstiahnuté, priamo vo fronte sťahovania bez potreby\nkontrolovať okno dokončených sťahovaní.\nAk fyzicky presuniete alebo odstránite stiahnuté súbory\nz cieľového umiestnenia, nespôsobí to automatické odstránenie\nzodpovedajúcich dokončených záznamov z frontu.\nAni vypnutie tejto funkcie neodstráni existujúce dokončené položky\nz frontu; musíte to urobiť ručne.",
+            "Segment size (in MB, 0 = auto segment size)": "Veľkosť segmentu (v MB, 0 = automatická veľkosť segmentu)",
+            "Allow simultaneous uploads by one user from few NMDC hubs": "Povoliť súčasné odosielanie jednému používateľovi z viacerých hubov NMDC",
+            "Allow simultaneous uploads by one IP": "Povoliť súčasné odosielanie na jednu IP adresu",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsDownloads" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-retention-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(73, len(original))
+            self.assertEqual(17, len(expected["UISettingsDownloads"]))
+            self.assertTrue(expected["UISettingsDownloads"].keys() <= original.keys())
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in expected["UISettingsDownloads"]:
+                        self.assertEqual(expected["UISettingsDownloads"][source], text)
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertEqual(Counter(re.findall(r"\d+", source)), Counter(re.findall(r"\d+", text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_download_priority_and_drop_thresholds(self):
         expected = {"UISettingsDownloads": {
             "This HTTP proxy will only be used to request\nthe Public Hub List specified above.\nIt's not used for uploads, downloads, or connecting to a hub.":

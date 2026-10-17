@@ -8792,14 +8792,16 @@ Ak je vypnutá, súbory budú mať normálnu prioritu.</translation>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>Automaticky vyradiť pomalé zdroje pre všetky položky frontu (okrem zoznamov súborov)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Táto možnosť odstráni pomalé zdroje pre všetky položky frontu (okrem zoznamov súborov).
+Na zapnutie automatického vyraďovania zapnite buď "Automaticky vyradiť pomalé zdroje pre všetky položky frontu"
+alebo "Odstrániť pomalé zoznamy súborov" (alebo obe možnosti).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
@@ -8812,18 +8814,22 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Ak je táto možnosť zapnutá, EiskaltDC++ odstráni zoznam súborov, ktorého rýchlosť
+bola vyhodnotená ako príliš nízka.
+Na zapnutie automatického vyraďovania zapnite buď "Automaticky vyradiť pomalé zdroje pre všetky položky frontu"
+alebo "Odstrániť pomalé zoznamy súborov" (alebo obe možnosti).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>Pri automatickom vyraďovaní zdroj neodstraňovať, iba odpojiť</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>Ak je táto možnosť zapnutá, zdroje sa iba odpoja,
+ale neodstránia sa z frontu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
@@ -8838,12 +8844,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>Každých pár minút klient vyhľadá súbory vo vašom
+fronte sťahovania, aby našiel ďalšie miesta na stiahnutie (používateľov/zdroje).
+Automatické vyhľadávanie nájde presné zhody pomocou hašu.
+Nevýhodou je, že nemusí nájsť veľa ďalších zdrojov
+a zabráni ručnému vyhľadávaniu na huboch, kde
+platí pravidlo predpísaného intervalu vyhľadávania.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>Automaticky porovnať výsledky automatického vyhľadávania s frontom</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8855,7 +8866,14 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>Zapnutím automaticky stiahnete zoznam používateľa a priradíte ho
+ako zdroj pre súbory vo fronte sťahovania, keď bol
+nájdený ako zdroj jedného zo sťahovaných súborov.
+Ak sťahujete súbory v súpravách, tento používateľ je pravdepodobne zdrojom
+aj mnohých ďalších sťahovaných súborov. Ak si nie ste istí, zapnite túto možnosť.
+Nevýhodou je možné pridanie pomalších zdrojov, čo môže
+predĺžiť čas potrebný na dokončenie sťahovania,
+a sťahovanie veľkého množstva zoznamov súborov.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
@@ -8868,7 +8886,10 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>Ak je táto možnosť zapnutá, všetky súbory s nulovou veľkosťou, ktoré
+sa pokúsite stiahnuť, sa bez upozornenia preskočia.
+Prázdne súbory niekedy obsahujú informácie vo svojich názvoch.
+Každý súbor, aj prázdny, však zaberá určité miesto na disku.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
@@ -8879,7 +8900,8 @@ However every file, even an empty one, will consume some drive space.</source>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>Táto možnosť zabráni sťahovaniu súborov,
+ktoré už existujú v niektorom z vašich zdieľaných priečinkov.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
@@ -8890,7 +8912,8 @@ which already exist in one of your shared directories.</source>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>Táto možnosť zabráni sťahovaniu súborov,
+ktoré už existujú vo vašom fronte.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
@@ -8913,12 +8936,20 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Zapnite túto možnosť, ak chcete ponechať stiahnuté zoznamy súborov
+vo fronte sťahovania aj po dokončení.
+Po stiahnutí budú mať položky frontu stav 'Dokončené'
+a tieto dokončené záznamy môžete neskôr kedykoľvek odstrániť.
+Ak fyzicky presuniete alebo odstránite stiahnuté súbory
+z cieľového umiestnenia, nespôsobí to automatické odstránenie
+zodpovedajúcich dokončených záznamov z frontu.
+Ani vypnutie tejto funkcie neodstráni existujúce dokončené položky
+z frontu; musíte to urobiť ručne.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
             <source>Keep downloaded files</source>
-            <translation type="unfinished" />
+            <translation>Ponechať stiahnuté súbory</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="895" />
@@ -8934,7 +8965,18 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Zapnite túto možnosť, ak chcete ponechať stiahnuté súbory a priečinky
+vo fronte sťahovania aj po dokončení.
+Po stiahnutí budú mať položky frontu stav 'Dokončené'
+a tieto dokončené záznamy môžete neskôr kedykoľvek odstrániť.
+Pomocou tejto funkcie môžete sledovať, ktoré súbory sú už
+stiahnuté, priamo vo fronte sťahovania bez potreby
+kontrolovať okno dokončených sťahovaní.
+Ak fyzicky presuniete alebo odstránite stiahnuté súbory
+z cieľového umiestnenia, nespôsobí to automatické odstránenie
+zodpovedajúcich dokončených záznamov z frontu.
+Ani vypnutie tejto funkcie neodstráni existujúce dokončené položky
+z frontu; musíte to urobiť ručne.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
@@ -8959,17 +9001,17 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>Veľkosť segmentu (v MB, 0 = automatická veľkosť segmentu)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>Povoliť súčasné odosielanie jednému používateľovi z viacerých hubov NMDC</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>Povoliť súčasné odosielanie na jednu IP adresu</translation>
         </message>
     </context>
     <context>
