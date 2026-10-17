@@ -16,6 +16,61 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_hub_filter_and_shortcut_dialogs(self):
+        expected = {
+            "SearchBlackListModel": {"Set text...": "Zadať text..."},
+            "ShortcutGetter": {"Modify shortcut": "Upraviť klávesovú skratku",
+                               "Press the key combination you want to assign":
+                                   "Stlačte kombináciu klávesov, ktorú chcete priradiť",
+                               "Capture": "Zachytiť", "Capture keystrokes": "Zachytiť stlačenia klávesov"},
+            "UIFavoriteHubEditor": {
+                "This description will be shown in the list of favorite hubs.":
+                    "Tento popis sa zobrazí v zozname obľúbených hubov.",
+                "Mode": "Režim", "Active": "Aktívny", "Passive": "Pasívny", "Client ID": "ID klienta",
+                "Minimum search interval (seconds)": "Minimálny interval vyhľadávania (sekundy)",
+                "This description will be shown in the user list.":
+                    "Tento popis sa zobrazí v zozname používateľov."},
+            "UIIPFilter": {"IP Filter": "Filter IP", "IN": "Prichádzajúce",
+                           "OUT": "Odchádzajúce", "OK": "OK"},
+            "UIQuickConnect": {"IP address of DNS name of hub you want to connect.":
+                                   "IP adresa alebo DNS názov hubu, ku ktorému sa chcete pripojiť."},
+            "UIScriptManager": {"Ask user": "Opýtať sa používateľa", "Reload it": "Znova načítať",
+                                "When script changed": "Pri zmene skriptu"},
+            "UISearchBlacklistDialog": {"Blacklist": "Čierna listina", "OK": "OK"},
+        }
+        counts = {"SearchBlackListModel": 4, "ShortcutGetter": 5, "UIFavoriteHubEditor": 25,
+                  "UIIPFilter": 12, "UIQuickConnect": 2, "UIScriptManager": 4,
+                  "UISearchBlacklistDialog": 3}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-dialogs-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_file_queue_and_search_sections(self):
         expected = {
             "DownloadQueue": {"Magnet": "Magnet", "Copy web-magnet": "Kopírovať webový magnet",

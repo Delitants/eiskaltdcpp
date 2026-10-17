@@ -3249,7 +3249,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="284" />
             <source>Set text...</source>
-            <translation type="unfinished" />
+            <translation>Zadať text...</translation>
         </message>
     </context>
     <context>
@@ -5205,12 +5205,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="217" />
             <source>Modify shortcut</source>
-            <translation type="unfinished" />
+            <translation>Upraviť klávesovú skratku</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="225" />
             <source>Press the key combination you want to assign</source>
-            <translation type="unfinished" />
+            <translation>Stlačte kombináciu klávesov, ktorú chcete priradiť</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="240" />
@@ -5220,12 +5220,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="242" />
             <source>Capture</source>
-            <translation type="unfinished" />
+            <translation>Zachytiť</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="243" />
             <source>Capture keystrokes</source>
-            <translation type="unfinished" />
+            <translation>Zachytiť stlačenia klávesov</translation>
         </message>
     </context>
     <context>
@@ -7294,7 +7294,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>Tento popis sa zobrazí v zozname obľúbených hubov.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
@@ -7304,7 +7304,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="102" />
             <source>Mode</source>
-            <translation type="unfinished" />
+            <translation>Režim</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="110" />
@@ -7314,17 +7314,17 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="115" />
             <source>Active</source>
-            <translation type="unfinished" />
+            <translation>Aktívny</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="120" />
             <source>Passive</source>
-            <translation type="unfinished" />
+            <translation>Pasívny</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="128" />
             <source>Client ID</source>
-            <translation type="unfinished" />
+            <translation>ID klienta</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="142" />
@@ -7339,7 +7339,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="180" />
             <source>Minimum search interval (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Minimálny interval vyhľadávania (sekundy)</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="202" />
@@ -7359,7 +7359,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>Tento popis sa zobrazí v zozname používateľov.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7640,7 +7640,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="29" />
             <source>IP Filter</source>
-            <translation type="unfinished" />
+            <translation>Filter IP</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="47" />
@@ -7670,12 +7670,12 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="112" />
             <source>IN</source>
-            <translation type="unfinished" />
+            <translation>Prichádzajúce</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="119" />
             <source>OUT</source>
-            <translation type="unfinished" />
+            <translation>Odchádzajúce</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="132" />
@@ -7695,7 +7695,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="156" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
     </context>
     <context>
@@ -7935,7 +7935,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="44" />
             <source>IP address of DNS name of hub you want to connect.</source>
-            <translation type="unfinished" />
+            <translation>IP adresa alebo DNS názov hubu, ku ktorému sa chcete pripojiť.</translation>
         </message>
     </context>
     <context>
@@ -7948,17 +7948,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="26" />
             <source>Ask user</source>
-            <translation type="unfinished" />
+            <translation>Opýtať sa používateľa</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="31" />
             <source>Reload it</source>
-            <translation type="unfinished" />
+            <translation>Znova načítať</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="39" />
             <source>When script changed</source>
-            <translation type="unfinished" />
+            <translation>Pri zmene skriptu</translation>
         </message>
     </context>
     <context>
@@ -7966,7 +7966,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="29" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Čierna listina</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="93" />
@@ -7976,7 +7976,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="100" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
     </context>
     <context>
