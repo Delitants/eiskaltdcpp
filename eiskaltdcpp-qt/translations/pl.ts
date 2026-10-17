@@ -3099,23 +3099,28 @@ Pobrano: %3 Wysłano: %4</translation>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Wykryto stare lub niezgodne ustawienia interfejsu graficznego EiskaltDC++.
+
+Bezpieczne ustawienia, takie jak huby, dane konta, udostępnianie, pobieranie i historia, zostały zachowane. Motyw, kolor czatu, układ okien i stan kolumn tabel ze starszej konfiguracji zostały zresetowane, ponieważ mogą zakłócać przełączanie między trybem jasnym i ciemnym podczas pracy w bieżącej wersji macOS.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Kopia zapasowa poprzednich ustawień interfejsu została zapisana tutaj:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Nie udało się utworzyć kopii zapasowej poprzednich ustawień interfejsu, ale niezgodne ustawienia wyglądu zostały mimo to odrzucone.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>Ustawienia EiskaltDC++ zostały zaktualizowane</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3138,43 +3143,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Obrazy (%1);;Wszystkie pliki (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Przeciągnij, aby zmienić rozmiar obszaru wprowadzania</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Kliknij, aby rozwinąć lub zwinąć</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Spoiler: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Otwórz w zewnętrznym programie</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Zamknij</translation>
+            <translation>Zamknij</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Domyślne (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -4436,7 +4441,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Pomoc</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
@@ -9506,7 +9511,7 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Konsola debugowania</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
@@ -9525,7 +9530,11 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Pomoc&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
@@ -9535,17 +9544,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Diagnostyczny dziennik awarii</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Zachowuje trwały dziennik diagnostyczny o niewielkiej objętości z ostrzeżeniami Qt, okresowymi sygnałami działania oraz znacznikami zamykania i sygnałów krytycznych. Przydatne, gdy aplikacja kończy działanie po długim czasie pracy.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Zapisuje w powyższym katalogu dzienników. Zachowuje ostatni sygnał działania przed awarią lub wymuszonym zakończeniem.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />

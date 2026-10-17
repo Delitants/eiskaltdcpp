@@ -16,6 +16,64 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_migration_and_log_translations(self):
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        required = {
+            "QObject": ("Old or incompatible EiskaltDC++ GUI settings were detected.",
+                        "A backup of the previous GUI config was saved here:",
+                        "The previous GUI config could not be backed up,",
+                        "EiskaltDC++ settings updated", "Images (%1);;All files (*)",
+                        "Drag to resize input area", "%1 (%2)", "Click to expand or collapse",
+                        "Spoiler: %1", "Open Externally", "Close", "Default (EiskaltDC++)"),
+            "SettingsLog": ("Help",),
+            "UISettingsLog": ("Debug Console", "<!DOCTYPE HTML PUBLIC", "Diagnostic crash log",
+                              "Keeps a persistent low-volume diagnostic log",
+                              "Writes to the log directory above."),
+        }
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") in {"QObject", "SettingsLog", "UISettingsLog"}
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-migration-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, prefixes in required.items():
+                for prefix in prefixes:
+                    with self.subTest(required_context=context, required_source=prefix):
+                        self.assertEqual(1, sum(key[0] == context and key[1].startswith(prefix)
+                                                for key in original))
+            for key, value in original.items():
+                with self.subTest(context=key[0], source=key[1][:80]):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(key, compiled)
+                    self.assertEqual(text, "".join(compiled[key].itertext()))
+                    source = key[1]
+                    self.assertEqual(Counter(re.findall(r"%\d+|%n", source)), Counter(re.findall(r"%\d+|%n", text)))
+                    if source.startswith("Old or incompatible"):
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertIn("zostały zachowane", text)
+                        self.assertIn("zostały zresetowane", text)
+                    if source.startswith("A backup of the previous"):
+                        self.assertIn("zapisana tutaj:\n%1", text)
+                    if source.startswith("The previous GUI config could not"):
+                        self.assertIn("Nie udało się utworzyć kopii zapasowej", text)
+                        self.assertIn("mimo to odrzucone", text)
+                    if source.startswith("<!DOCTYPE"):
+                        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                    if source == "Images (%1);;All files (*)":
+                        self.assertEqual("Obrazy (%1);;Wszystkie pliki (*)", text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_download_and_sharing_settings(self):
         path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
         def entries(catalog):
