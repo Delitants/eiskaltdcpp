@@ -16,6 +16,74 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_hub_users_sidebar_and_commands(self):
+        expected = {
+            'HubFrame': {
+                'Comment': 'Σχόλιο',
+                'IPv6': 'IPv6',
+                'E-mail': 'Ηλεκτρονικό ταχυδρομείο',
+                'search': 'αναζήτηση',
+                'Filter': 'Φίλτρο',
+                '/rebuild - rebuild hash\n': '/rebuild - αναδόμηση της βάσης δεδομένων κατακερματισμών\n',
+                '/refresh - update own file list\n': '/refresh - ενημέρωση της δικής σας λίστας αρχείων\n',
+                '/ws param value - set gui option param in value (without value return current value of option)\n': '/ws param value - ορισμός της επιλογής γραφικού περιβάλλοντος param στην τιμή value (χωρίς value επιστρέφεται η τρέχουσα τιμή της επιλογής)\n',
+                '/dcpps param value - set core option param in value (without value return current value of option)\n': '/dcpps param value - ορισμός της επιλογής πυρήνα param στην τιμή value (χωρίς value επιστρέφεται η τρέχουσα τιμή της επιλογής)\n',
+            },
+            'SideBarModel': {
+                'Secretary': 'Σημειωματάριο',
+                'Debug Console': 'Κονσόλα αποσφαλμάτωσης',
+            },
+            'ToolBar': {
+                'Close': 'Κλείσιμο',
+            },
+            'UserListModel': {
+                '<b>Hub role</b>: Operator': '<b>Ρόλος στον κόμβο</b>: Διαχειριστής',
+                '<b>Hub role</b>: User': '<b>Ρόλος στον κόμβο</b>: Χρήστης',
+                '<br/><b>Favorite user</b>': '<br/><b>Αγαπημένος χρήστης</b>',
+                'Comment': 'Σχόλιο',
+                'E-mail': 'Ηλεκτρονικό ταχυδρομείο',
+                'Exact share size': 'Ακριβές μέγεθος κοινόχρηστων αρχείων',
+                'IPv6': 'IPv6',
+            },
+        }
+        counts = {"HubFrame": 116, "SideBarModel": 19, "ToolBar": 2, "UserListModel": 12}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-users-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%[1-9]\d*", source)),
+                                             Counter(re.findall(r"%[1-9]\d*", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+                            self.assertEqual(source.endswith(" "), text.endswith(" "))
+                            self.assertEqual(source.count("\n"), text.count("\n"))
+                            if source.startswith("/"):
+                                self.assertEqual(source.split(" - ", 1)[0], text.split(" - ", 1)[0])
+                                self.assertTrue(text.endswith("\n"))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_transfers_and_torrent_settings(self):
         expected = {
             'TransferView': {

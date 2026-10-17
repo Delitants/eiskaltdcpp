@@ -1074,7 +1074,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="726" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>Σχόλιο</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="727" />
@@ -1084,7 +1084,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1099,7 +1099,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="731" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>Ηλεκτρονικό ταχυδρομείο</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="733" />
@@ -1143,7 +1143,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>αναζήτηση</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
@@ -1158,7 +1158,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Φίλτρο</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1460,13 +1460,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - αναδόμηση της βάσης δεδομένων κατακερματισμών
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - ενημέρωση της δικής σας λίστας αρχείων
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1486,13 +1488,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - ορισμός της επιλογής γραφικού περιβάλλοντος param στην τιμή value (χωρίς value επιστρέφεται η τρέχουσα τιμή της επιλογής)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - ορισμός της επιλογής πυρήνα param στην τιμή value (χωρίς value επιστρέφεται η τρέχουσα τιμή της επιλογής)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
@@ -5348,7 +5352,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Σημειωματάριο</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
@@ -5364,7 +5368,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Κονσόλα αποσφαλμάτωσης</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
@@ -5501,7 +5505,7 @@ Do you want to stop it?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Κλείσιμο</translation>
         </message>
     </context>
     <context>
@@ -10076,17 +10080,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="147" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Ρόλος στον κόμβο&lt;/b&gt;: Διαχειριστής</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="149" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Ρόλος στον κόμβο&lt;/b&gt;: Χρήστης</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="152" />
             <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;br/&gt;&lt;b&gt;Αγαπημένος χρήστης&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="185" />
@@ -10096,7 +10100,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="186" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>Σχόλιο</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="187" />
@@ -10111,7 +10115,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="189" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>Ηλεκτρονικό ταχυδρομείο</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="190" />
@@ -10121,7 +10125,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Ακριβές μέγεθος κοινόχρηστων αρχείων</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10131,7 +10135,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
