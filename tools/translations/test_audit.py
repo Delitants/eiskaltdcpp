@@ -14,6 +14,14 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_serbian_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("sr")
+
+    def test_serbian_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("sr")
+
     def test_italian_tls_commands_and_time_help(self):
         entries = {(c.findtext("name"), m.findtext("source")): m.findtext("translation", "")
                    for c in ET.parse(ROOT / "eiskaltdcpp-qt/translations/it.ts").getroot().findall("context")
