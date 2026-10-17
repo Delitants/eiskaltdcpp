@@ -252,19 +252,19 @@ Opcje:
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Adresy URL do inicjalizacji DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>Adres URL do inicjalizacji DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished">URL</translation>
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -3730,22 +3730,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Włącz IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Zewnętrzny adres IPv6/WAN:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>np. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Lokalny adres IPv6 do powiązania</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -3776,27 +3776,27 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>Plik MMDB z danymi krajów</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>Ścieżka do pliku GeoLite2/MaxMind .mmdb z danymi krajów</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Skonfiguruj adresy URL do inicjalizacji DHT</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Adresy URL publicznych list hubów</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Skonfiguruj adresy URL publicznych list hubów</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="543" />
@@ -3858,13 +3858,13 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Nie znaleziono prawidłowego zewnętrznego adresu IPv6!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Nie znaleziono prawidłowego lokalnego adresu IPv6 do powiązania!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="699" />
@@ -4012,12 +4012,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Wybierz bazę krajów MaxMind</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Baza MaxMind (*.mmdb);;Wszystkie pliki (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -8485,42 +8485,42 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Adresy URL do inicjalizacji DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Oddziel wiele adresów URL średnikami</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>Ustawienia TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>Wyłącz TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>Zezwalaj na TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>Wymagaj TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>Zezwalaj na niezaufane certyfikaty hubów</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>Zezwalaj na niezaufane certyfikaty klientów</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
