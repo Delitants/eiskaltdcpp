@@ -1839,12 +1839,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Zabiť všetkých ľudí?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Potvrdenie akcie</translation>
         </message>
         <message>
             <source>Nick</source>
@@ -1919,7 +1919,7 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="1645" />
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Open magnet link</source>
-            <translation type="unfinished" />
+            <translation>Otvoriť magnetový odkaz</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1647" />
@@ -1950,7 +1950,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Porovnať všetky zoznamy</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
@@ -2023,7 +2023,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1689" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Používatelia vo fronte</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1691" />
@@ -2134,12 +2134,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Ladiaca konzola</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Zápisník</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2154,7 +2154,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1741" />
             <source>Speed limit On/Off</source>
-            <translation type="unfinished" />
+            <translation>Zapnúť/vypnúť obmedzenie rýchlosti</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1744" />
@@ -2274,27 +2274,27 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Súbory torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Otvoriť magnet alebo súbor torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Zadajte magnetový odkaz alebo cestu k miestnemu súboru .torrent:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Podpora torrentov nie je pripravená.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Ukončiť</translation>
+            <translation>Ukončiť</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2318,7 +2318,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Zdrojový kód (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2344,7 +2344,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | Uzly DHT: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2388,7 +2388,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2229" />
             <source>Delayed</source>
-            <translation type="unfinished" />
+            <translation>Odložené</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2244" />
@@ -2448,12 +2448,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Enter magnet link:</source>
-            <translation type="unfinished" />
+            <translation>Zadajte magnetový odkaz:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2865" />
             <source>Script Engine</source>
-            <translation type="unfinished" />
+            <translation>Skriptovací modul</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2668,22 +2668,22 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Nastaviť obmedzenia rýchlosti</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Vyžaduje sa prezývka</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Pred pripojením k hubom zadajte prezývku v nastaveniach.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2694,7 +2694,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Stiahnuť program</translation>
         </message>
         <message>
             <source>Please use &lt;a href="https://github.com/eiskaltdcpp/eiskaltdcpp/issues"&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
@@ -2769,7 +2769,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[Bez názvu]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />

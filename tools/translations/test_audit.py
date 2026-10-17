@@ -16,6 +16,52 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_main_window_actions_and_prompts(self):
+        expected = {"MainWindow": {
+            "Kill all humans?": "Zabiť všetkých ľudí?", "Action confirm": "Potvrdenie akcie",
+            "Open magnet link": "Otvoriť magnetový odkaz", "Match all listings": "Porovnať všetky zoznamy",
+            "Queued Users": "Používatelia vo fronte", "Debug Console": "Ladiaca konzola",
+            "Secretary": "Zápisník", "Speed limit On/Off": "Zapnúť/vypnúť obmedzenie rýchlosti",
+            "Torrent files": "Súbory torrent", "Open magnet or Torrent file": "Otvoriť magnet alebo súbor torrent",
+            "Enter a magnet link or local .torrent path:": "Zadajte magnetový odkaz alebo cestu k miestnemu súboru .torrent:",
+            "Torrent support is not ready.": "Podpora torrentov nie je pripravená.",
+            "Exit": "Ukončiť", "Source code (git)": "Zdrojový kód (git)",
+            " | DHT nodes: %1": " | Uzly DHT: %1", "Delayed": "Odložené",
+            "Enter magnet link:": "Zadajte magnetový odkaz:", "Script Engine": "Skriptovací modul",
+            "Setup speed limits": "Nastaviť obmedzenia rýchlosti", "Torrent: %1": "Torrent: %1",
+            "Nickname required": "Vyžaduje sa prezývka",
+            "Enter a nickname in Preferences before connecting to hubs.":
+                "Pred pripojením k hubom zadajte prezývku v nastaveniach.",
+            "Download program": "Stiahnuť program", "[No name]": "[Bez názvu]",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "MainWindow" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-main-actions-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(24, len(expected["MainWindow"]))
+            self.assertTrue(expected["MainWindow"].keys() <= original.keys())
+            for source, translation in expected["MainWindow"].items():
+                with self.subTest(source=source):
+                    value = original[source]
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertEqual(translation, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                     Counter(re.findall(r"%\d+", text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_migration_and_shared_ui_messages(self):
         expected = {"QObject": {
             "Old or incompatible EiskaltDC++ GUI settings were detected.\n\n"
