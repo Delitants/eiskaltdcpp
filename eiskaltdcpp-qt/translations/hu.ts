@@ -10306,6 +10306,10 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>A Torrent leállítása elutasítva. Szakaszok: %1; utolsó művelet: %2; eltelt idő: %3 us; aktív ellenőrzések: %4; naplók: %5; függőben lévő mentések: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>A torrentek útválasztása nincs beállítva.</translation>

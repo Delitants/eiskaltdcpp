@@ -10347,6 +10347,10 @@ EiskaltDC++ дазваляе зацягваць сьпісы файлаў і ф�
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Завяршэнне працы Torrent адхілена. Этапы: %1; апошняя аперацыя: %2; мінула: %3 us; актыўныя праверкі: %4; журналы: %5; захаванні ў чаканні: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Маршрутызацыя торэнтаў не наладжана.</translation>

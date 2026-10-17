@@ -10332,6 +10332,10 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Torrent kapatma reddedildi. Aşamalar: %1; son işlem: %2; geçen süre: %3 us; etkin denetimler: %4; günlükler: %5; bekleyen kayıtlar: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Torrent yönlendirmesi yapılandırılmamış.</translation>

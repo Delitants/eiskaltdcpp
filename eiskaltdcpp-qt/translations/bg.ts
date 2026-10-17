@@ -10333,6 +10333,10 @@ EiskaltDC++ поддържа качване на файлове и списъц�
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Изключването на Torrent е отказано. Етапи: %1; последна операция: %2; изминало време: %3 us; активни проверки: %4; журнали: %5; чакащи записвания: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Маршрутизирането на торенти не е настроено.</translation>

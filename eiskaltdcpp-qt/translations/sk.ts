@@ -10172,6 +10172,10 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Ukončenie Torrentu bolo odmietnuté. Fázy: %1; posledná operácia: %2; uplynulo: %3 us; aktívne kontroly: %4; žurnály: %5; čakajúce uloženia: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Smerovanie torrentov nie je nastavené.</translation>

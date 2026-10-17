@@ -14,6 +14,43 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_shutdown_refusal_diagnostic_survives_compilation(self):
+        self._assert_compiled_runtime_messages("eiskalt::torrent::TorrentEngine", {
+            "Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; "
+            "active checks: %4; journals: %5; pending saves: %6.",
+        })
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_italian_away_help_is_not_blank(self):
+        source = "/away <message> - set away-mode on/off\n"
+        path = ROOT / "eiskaltdcpp-qt/translations/it.ts"
+        entries = [m.find("translation")
+                   for c in ET.parse(path).getroot().findall("context")
+                   if c.findtext("name") == "HubFrame"
+                   for m in c.findall("message") if m.findtext("source") == source]
+        self.assertEqual(1, len(entries))
+        self.assertIsNotNone(entries[0])
+        text = "".join(entries[0].itertext())
+        self.assertTrue(text.strip())
+        self.assertNotIn(entries[0].get("type"), {"unfinished", "obsolete", "vanished"})
+        self.assertTrue(text.startswith("/away <"))
+        self.assertEqual(1, text.count("\n"))
+        self.assertTrue(text.endswith("\n"))
+        with tempfile.TemporaryDirectory(prefix="eiskalt-italian-away-") as work:
+            binary, output = Path(work) / "it.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            compiled = [m.findtext("translation")
+                        for c in ET.parse(output).getroot().findall("context")
+                        if c.findtext("name") == "HubFrame"
+                        for m in c.findall("message") if m.findtext("source") == source]
+            self.assertEqual([text], compiled)
+
     def _assert_compiled_runtime_messages(self, context_name, sources):
         with tempfile.TemporaryDirectory(prefix="eiskalt-runtime-catalogs-") as work:
             for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):

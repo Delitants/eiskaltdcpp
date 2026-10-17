@@ -10328,6 +10328,10 @@ stänga hans slott, men om användaren återkommer inom
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Avslutning av Torrent nekades. Steg: %1; senaste åtgärd: %2; förfluten tid: %3 us; aktiva kontroller: %4; journaler: %5; väntande sparningar: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Routning för torrenter har inte konfigurerats.</translation>

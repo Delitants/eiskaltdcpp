@@ -10220,6 +10220,10 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Odmówiono zamknięcia Torrent. Etapy: %1; ostatnia operacja: %2; upłynęło: %3 us; aktywne kontrole: %4; dzienniki: %5; oczekujące zapisy: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Trasowanie torrentów nie zostało skonfigurowane.</translation>

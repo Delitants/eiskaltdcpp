@@ -10278,6 +10278,10 @@ les dix minutes, EiskaltDC++ lui redonne automatiquement un slot.</translation>
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Arrêt de Torrent refusé. Étapes : %1 ; dernière opération : %2 ; temps écoulé : %3 us ; vérifications actives : %4 ; journaux : %5 ; enregistrements en attente : %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Le routage des torrents n&#39;a pas été configuré.</translation>

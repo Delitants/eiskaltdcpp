@@ -10369,6 +10369,10 @@ volverá a conceder un slot a dicho usuario.</translation>
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Se rechazó el cierre de Torrent. Etapas: %1; última operación: %2; tiempo transcurrido: %3 us; comprobaciones activas: %4; diarios: %5; guardados pendientes: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>El enrutamiento de torrents no se ha configurado.</translation>

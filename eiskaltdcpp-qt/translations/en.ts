@@ -10225,6 +10225,10 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</trans
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</translation>
+        </message>
+        <message>
             <source>DHT bootstrap through SOCKS5 failed. Check UDP support and the bootstrap nodes; no direct fallback was used.</source>
             <translation>DHT bootstrap through SOCKS5 failed. Check UDP support and the bootstrap nodes; no direct fallback was used.</translation>
         </message>

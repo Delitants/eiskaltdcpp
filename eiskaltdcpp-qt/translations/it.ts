@@ -1370,7 +1370,7 @@ Utente preferito</translation>
             <location filename="../src/HubFrame.cpp" line="2713" />
             <source>/away &lt;message&gt; - set away-mode on/off
 </source>
-            <translation>
+            <translation>/away &lt;messaggio&gt; - attiva/disattiva la modalità assente
 </translation>
         </message>
         <message>
@@ -10287,6 +10287,10 @@ se l'utente torna prima di 10 minuti EiskaltDC++ riassegna lo slot all'utente.</
     </context>
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
+        <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Arresto di Torrent rifiutato. Fasi: %1; ultima operazione: %2; tempo trascorso: %3 us; verifiche attive: %4; diari di verifica: %5; salvataggi in attesa: %6.</translation>
+        </message>
         <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>

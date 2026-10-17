@@ -10038,6 +10038,10 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
     <context>
         <name>eiskalt::torrent::TorrentEngine</name>
         <message>
+            <source>Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; active checks: %4; journals: %5; pending saves: %6.</source>
+            <translation>Từ chối tắt Torrent. Các giai đoạn: %1; thao tác cuối: %2; thời gian đã trôi qua: %3 us; kiểm tra đang hoạt động: %4; nhật ký: %5; lần lưu đang chờ: %6.</translation>
+        </message>
+        <message>
             <location filename="../../torrent/TorrentEngine.cpp" line="224" />
             <source>Torrent routing has not been configured.</source>
             <translation>Chưa cấu hình định tuyến torrent.</translation>
