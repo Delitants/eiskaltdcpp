@@ -16,13 +16,24 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_czech_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("cs")
+
+    def test_czech_rich_help_and_commands(self):
+        self._assert_rich_help_and_commands("cs", "nebo")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_hungarian_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("hu")
 
     def test_hungarian_rich_help_and_commands(self):
-        self._assert_rich_help_preserves_markup_and_links("hu")
+        self._assert_rich_help_and_commands("hu", "vagy")
+
+    def _assert_rich_help_and_commands(self, language, conjunction):
+        self._assert_rich_help_preserves_markup_and_links(language)
         commands = time_help = 0
-        for c in ET.parse(ROOT / "eiskaltdcpp-qt/translations/hu.ts").getroot().findall("context"):
+        for c in ET.parse(ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")).getroot().findall("context"):
             for m in c.findall("message"):
                 source = m.findtext("source", "")
                 value = m.find("translation")
@@ -37,7 +48,7 @@ class CatalogRegressionTests(unittest.TestCase):
                     self.assertNotEqual("unfinished", value.get("type"))
                     text = "".join(value.itertext())
                     self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
-                    for token in ("h", "hh", "H", "HH", "m", "mm", "s", "ss", "z", "zzz", "AP vagy A", "ap vagy a", "t"):
+                    for token in ("h", "hh", "H", "HH", "m", "mm", "s", "ss", "z", "zzz", "AP " + conjunction + " A", "ap " + conjunction + " a", "t"):
                         self.assertIn(">" + token + "<", text)
                     for token in ("A/AP", "a/ap", "&quot;AM&quot;", "&quot;PM&quot;", "&quot;am&quot;", "&quot;pm&quot;", "&quot;CEST&quot;"):
                         self.assertIn(token, text)
