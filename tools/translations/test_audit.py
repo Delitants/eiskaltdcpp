@@ -16,6 +16,75 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_file_browsing_and_hashing(self):
+        expected = {
+            'FileBrowserModel': {
+                '<b>Media Info:</b><br/>': '<b>Πληροφορίες πολυμέσων:</b><br/>',
+                '&nbsp;&nbsp;<b>Video:</b> %1<br/>': '&nbsp;&nbsp;<b>Βίντεο:</b> %1<br/>',
+                '&nbsp;&nbsp;<b>Audio:</b> %1<br/>': '&nbsp;&nbsp;<b>Ήχος:</b> %1<br/>',
+                '&nbsp;&nbsp;<b>Bitrate:</b> %1<br/>': '&nbsp;&nbsp;<b>Ρυθμός bit:</b> %1<br/>',
+                '&nbsp;&nbsp;<b>Resolution:</b> %1<br/><br/>': '&nbsp;&nbsp;<b>Ανάλυση:</b> %1<br/><br/>',
+                'Bitrate': 'Ρυθμός bit',
+                'Resolution': 'Ανάλυση',
+            },
+            'HashProgress': {
+                '%1% %2 left': '%1% απομένουν %2',
+            },
+            'ShareBrowser': {
+                'Share browser error: %1': 'Σφάλμα περιηγητή κοινόχρηστων αρχείων: %1',
+                'Selected %1 from %2 items; ': 'Επιλέχθηκαν %1 από %2 στοιχεία· ',
+                'Share browser': 'Περιηγητής κοινόχρηστων αρχείων',
+                'Matched %1 files': 'Βρέθηκαν %1 αρχεία που ταιριάζουν',
+            },
+            'ShareBrowserSearch': {
+                'Found %1 items': 'Βρέθηκαν %1 στοιχεία',
+            },
+            'UIFileHasher': {
+                'Copy magnet link to clipboard': 'Αντιγραφή συνδέσμου magnet στο πρόχειρο',
+                'Copy search link to clipboard': 'Αντιγραφή συνδέσμου αναζήτησης στο πρόχειρο',
+            },
+            'UIShareBrowserSearch': {
+                'Search only files': 'Αναζήτηση μόνο αρχείων',
+                'Search only directories': 'Αναζήτηση μόνο καταλόγων',
+                'Search all': 'Αναζήτηση όλων',
+            },
+        }
+        counts = {"FileBrowserModel": 18, "HashProgress": 12, "ShareBrowser": 26, "ShareBrowserSearch": 2, "UIFileHasher": 10, "UIShareBrowserSearch": 6}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-files-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%[1-9]\d*", source)),
+                                             Counter(re.findall(r"%[1-9]\d*", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+                            self.assertEqual(source.endswith(" "), text.endswith(" "))
+                            if source == "%1% %2 left":
+                                self.assertIn("%1%", text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_commands_favorites_and_ipfilter(self):
         expected = {
             'UCModel': {

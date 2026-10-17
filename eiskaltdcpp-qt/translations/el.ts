@@ -730,27 +730,27 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Πληροφορίες πολυμέσων:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Βίντεο:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Ήχος:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Ρυθμός bit:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Ανάλυση:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
@@ -775,12 +775,12 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>Ρυθμός bit</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Resolution</source>
-            <translation type="unfinished" />
+            <translation>Ανάλυση</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
@@ -939,7 +939,7 @@ Keys:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1% απομένουν %2</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
@@ -5162,7 +5162,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>Σφάλμα περιηγητή κοινόχρηστων αρχείων: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
@@ -5173,7 +5173,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>Επιλέχθηκαν %1 από %2 στοιχεία· </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
@@ -5193,12 +5193,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>Περιηγητής κοινόχρηστων αρχείων</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>Βρέθηκαν %1 αρχεία που ταιριάζουν</translation>
         </message>
     </context>
     <context>
@@ -5211,7 +5211,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>Βρέθηκαν %1 στοιχεία</translation>
         </message>
     </context>
     <context>
@@ -7444,12 +7444,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Αντιγραφή συνδέσμου magnet στο πρόχειρο</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Αντιγραφή συνδέσμου αναζήτησης στο πρόχειρο</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -9932,17 +9932,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Αναζήτηση μόνο αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Αναζήτηση μόνο καταλόγων</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>Αναζήτηση όλων</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />
