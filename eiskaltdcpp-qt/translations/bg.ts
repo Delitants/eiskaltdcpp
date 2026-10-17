@@ -252,19 +252,19 @@ EiskaltDC++ е мулти-платформена програма използв
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL адреси за първоначално свързване към DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>URL адрес за първоначално свързване към DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished">URL aдрес</translation>
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -3751,59 +3751,59 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Разрешаване на IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Външен/WAN IPv6 адрес:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>напр. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Локален IPv6 адрес за обвързване</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>MMDB файл с данни за държавите</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>Път до файла GeoLite2/MaxMind .mmdb с данни за държавите</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Настройване на URL адресите за първоначално свързване към DHT</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL адреси на публични списъци с хъбове</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Настройване на URL адресите на публичните списъци с хъбове</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Не е намерен валиден външен IPv6 адрес!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Не е намерен валиден локален IPv6 адрес за обвързване!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="711" />
@@ -3834,12 +3834,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Избор на база данни MaxMind за държавите</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>База данни MaxMind (*.mmdb);;Всички файлове (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -8521,42 +8521,42 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL адреси за първоначално свързване към DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Разделяйте URL адресите с точка и запетая</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>Настройки на TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>Забраняване на TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>Разрешаване на TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>Изискване на TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>Разрешаване на недоверен сертификат за хъбове</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>Разрешаване на недоверен сертификат за клиенти</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
