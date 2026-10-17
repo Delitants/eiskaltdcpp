@@ -16,6 +16,56 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_mainwindow_translations(self):
+        required = {
+            "Kill all humans?", "Action confirm", "Match all listings", "Debug Console", "Secretary",
+            "Torrent files", "Open magnet or Torrent file", "Enter a magnet link or local .torrent path:",
+            "Torrent support is not ready.", "Exit", "Source code (git)", " | DHT nodes: %1",
+            "DC++ core version: %1 (modified)", "Home page: ", "Ratio: <b>%1</b>",
+            'Please use <a href="https://github.com/Delitants/eiskaltdcpp/issues">https://github.com/Delitants/eiskaltdcpp/issues</a> to report bugs.<br/>',
+            "<b>Developers</b><br/>", '2026 <a href="mailto:admin@nlight.org.ua">Neolo</a><br/>',
+            "<b>Graphic files</b><br/>", "Setup speed limits", "Torrent: %1", "Nickname required",
+            "Enter a nickname in Preferences before connecting to hubs.", "Download program",
+            "lead developer", "release manager", "Arch Linux maintainer", "developer", "Debian/Ubuntu maintainer",
+            "translations coordinator", "macOS maintainer", "MS Windows maintainer", "creator of the logo of the project",
+            "tiny updates of the logo", "Participate in the translation. It is easy:", "[No name]",
+        }
+        required.update(language + " translation<br/>" for language in (
+            "Russian", "Belarusian", "Hungarian", "French", "Polish", "Ukrainian", "Serbian (Cyrillic)",
+            "Serbian (Latin)", "Spanish", "Basque", "Bulgarian", "Slovak", "Czech", "German", "Greek",
+            "Italian", "Portuguese (Brazil)", "Vietnamese", "Chinese (China)", "Swedish (Sweden)",
+            "Turkish", "Danish", "Georgian"))
+        self.assertEqual(59, len(required))
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "MainWindow" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-mainwindow-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(Counter(re.findall(r"%\d+|%n", source)), Counter(re.findall(r"%\d+|%n", text)))
+                    self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                    self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                    for token in (".torrent", "DHT", "DC++", "Arch Linux", "Debian/Ubuntu", "macOS", "MS Windows"):
+                        if token in source:
+                            self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_hubs_notes_and_magnets(self):
         required = {
             "CmdDebug": {"Debug Console"}, "HashProgress": {"%1% %2 left"},

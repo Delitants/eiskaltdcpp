@@ -1822,12 +1822,12 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Zabić wszystkich ludzi?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Potwierdzenie działania</translation>
         </message>
         <message>
             <source>Enter user nick</source>
@@ -1941,7 +1941,7 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Dopasuj wszystkie listy plików</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
@@ -2125,12 +2125,12 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Konsola debugowania</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Notatnik</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2265,27 +2265,27 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Pliki torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Otwórz link magnet lub plik torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Wprowadź link magnet lub ścieżkę do lokalnego pliku .torrent:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Obsługa torrentów nie jest gotowa.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Zakończ</translation>
+            <translation>Zakończ</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2309,7 +2309,7 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Kod źródłowy (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2335,7 +2335,7 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | Węzły DHT: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2484,12 +2484,12 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3275" />
             <source>DC++ core version: %1 (modified)</source>
-            <translation type="unfinished" />
+            <translation>Wersja rdzenia DC++: %1 (zmodyfikowana)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3278" />
             <source>Home page: </source>
-            <translation type="unfinished" />
+            <translation>Strona domowa: </translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3283" />
@@ -2504,142 +2504,142 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3287" />
             <source>Ratio: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Współczynnik: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Do zgłaszania błędów użyj &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt;.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
             <source>&lt;b&gt;Developers&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Programiści&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
             <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Pliki graficzne&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3373" />
             <source>Russian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na rosyjski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3379" />
             <source>Belarusian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na białoruski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3383" />
             <source>Hungarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na węgierski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3387" />
             <source>French translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na francuski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3390" />
             <source>Polish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na polski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3393" />
             <source>Ukrainian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na ukraiński&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na serbski (cyrylica)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
             <source>Serbian (Latin) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na serbski (alfabet łaciński)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3405" />
             <source>Spanish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na hiszpański&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
             <source>Basque translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na baskijski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
             <source>Bulgarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na bułgarski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3415" />
             <source>Slovak translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na słowacki&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3418" />
             <source>Czech translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na czeski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3421" />
             <source>German translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na niemiecki&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3426" />
             <source>Greek translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na grecki&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3429" />
             <source>Italian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na włoski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3433" />
             <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na portugalski (Brazylia)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3436" />
             <source>Vietnamese translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na wietnamski&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3439" />
             <source>Chinese (China) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na chiński (Chiny)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3442" />
             <source>Swedish (Sweden) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na szwedzki (Szwecja)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na turecki&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na duński&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tłumaczenie na gruziński&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
@@ -2659,22 +2659,22 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Ustaw limity prędkości</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Wymagany pseudonim</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Wprowadź pseudonim w ustawieniach przed połączeniem z hubami.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2685,7 +2685,7 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Pobierz program</translation>
         </message>
         <message>
             <source>Please use &lt;a href="https://github.com/eiskaltdcpp/eiskaltdcpp/issues"&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
@@ -2695,18 +2695,18 @@ Ulubiony użytkownik</translation>
             <location filename="../src/MainWindow.cpp" line="3302" />
             <location filename="../src/MainWindow.cpp" line="3330" />
             <source>lead developer</source>
-            <translation type="unfinished" />
+            <translation>główny programista</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>koordynator wydań</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>opiekun wersji dla Arch Linux</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2714,43 +2714,43 @@ Ulubiony użytkownik</translation>
             <location filename="../src/MainWindow.cpp" line="3344" />
             <location filename="../src/MainWindow.cpp" line="3349" />
             <source>developer</source>
-            <translation type="unfinished" />
+            <translation>programista</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>opiekun wersji dla Debian/Ubuntu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>koordynator tłumaczeń</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>opiekun wersji dla macOS</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>opiekun wersji dla MS Windows</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>autor logo projektu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>drobne poprawki logo</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
             <source>Participate in the translation. It is easy:</source>
-            <translation type="unfinished" />
+            <translation>Weź udział w tłumaczeniu. To proste:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3491" />
@@ -2760,7 +2760,7 @@ Ulubiony użytkownik</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[Bez nazwy]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
