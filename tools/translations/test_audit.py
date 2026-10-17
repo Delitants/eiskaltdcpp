@@ -16,6 +16,58 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_navigation_and_settings_messages(self):
+        expected = {
+            "FavoriteUsers": {"Browse Files": "Prehliadať súbory"},
+            "Notification": {"Setup speed limits": "Nastaviť obmedzenia rýchlosti"},
+            "QueuedUsers": {"Queued Users": "Používatelia vo fronte"},
+            "Settings": {"Torrent preferences": "Nastavenia torrentov",
+                         "Could not save Torrent settings: %1": "Nepodarilo sa uložiť nastavenia torrentov: %1",
+                         "History": "História"},
+            "SettingsLog": {"Help": "Pomocník"},
+            "SideBarModel": {"Share Browsers": "Prehliadače zdieľaných súborov",
+                             "Queued Users": "Používatelia vo fronte", "Secretary": "Zápisník",
+                             "Debug Console": "Ladiaca konzola", "Widgets": "Widgety"},
+            "ToolBar": {"Close": "Zavrieť"},
+            "UIUserCommands": {"PM": "Súkromná správa"},
+            "WulforSettings": {"GUI setting %1: %2": "Nastavenie rozhrania %1: %2",
+                               "Change GUI setting %1 to %2": "Zmeniť nastavenie rozhrania %1 na %2"},
+        }
+        counts = {"FavoriteUsers": 6, "Notification": 7, "QueuedUsers": 2, "Settings": 16,
+                  "SettingsLog": 2, "SideBarModel": 19, "ToolBar": 2, "UIUserCommands": 18,
+                  "WulforSettings": 2}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-navigation-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                             Counter(re.findall(r"%\d+", text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_chat_and_magnet_dialogs(self):
         expected = {
             "HubFrame": {

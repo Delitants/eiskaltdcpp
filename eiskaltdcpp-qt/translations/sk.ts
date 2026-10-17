@@ -686,7 +686,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="285" />
             <source>Browse Files</source>
-            <translation type="unfinished" />
+            <translation>Prehliadať súbory</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.h" line="48" />
@@ -2875,7 +2875,7 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="133" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Nastaviť obmedzenia rýchlosti</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="134" />
@@ -3184,7 +3184,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/QueuedUsers.h" line="104" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Používatelia vo fronte</translation>
         </message>
     </context>
     <context>
@@ -3631,12 +3631,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Nastavenia torrentov</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Nepodarilo sa uložiť nastavenia torrentov: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3686,7 +3686,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="767" />
             <source>History</source>
-            <translation type="unfinished" />
+            <translation>História</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="772" />
@@ -4429,7 +4429,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Pomocník</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
@@ -5273,7 +5273,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="80" />
             <location filename="../src/SideBar.cpp" line="442" />
             <source>Share Browsers</source>
-            <translation type="unfinished" />
+            <translation>Prehliadače zdieľaných súborov</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="81" />
@@ -5297,7 +5297,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="90" />
             <location filename="../src/SideBar.cpp" line="457" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Používatelia vo fronte</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="91" />
@@ -5334,7 +5334,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Zápisník</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
@@ -5350,7 +5350,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Ladiaca konzola</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
@@ -5361,7 +5361,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="170" />
             <source>Widgets</source>
-            <translation type="unfinished" />
+            <translation>Widgety</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="97" />
@@ -5488,7 +5488,7 @@ Prajete si hľadanie zastaviť?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Zavrieť</translation>
         </message>
     </context>
     <context>
@@ -10029,7 +10029,7 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../ui/UIUserCommands.ui" line="56" />
             <source>PM</source>
-            <translation type="unfinished" />
+            <translation>Súkromná správa</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="66" />
@@ -10160,12 +10160,12 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>Nastavenie rozhrania %1: %2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>Zmeniť nastavenie rozhrania %1 na %2</translation>
         </message>
     </context>
     <context>
