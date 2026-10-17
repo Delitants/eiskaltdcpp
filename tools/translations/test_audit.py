@@ -29,6 +29,9 @@ class CatalogRegressionTests(unittest.TestCase):
     def test_turkish_rich_help_preserves_markup_and_links(self):
         self._assert_rich_help_preserves_markup_and_links("tr")
 
+    def test_russian_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("ru")
+
     def _assert_rich_help_preserves_markup_and_links(self, language):
         checked = 0
         path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
@@ -111,6 +114,11 @@ class CatalogRegressionTests(unittest.TestCase):
                          "lrelease and lconvert are required")
     def test_turkish_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("tr")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_russian_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("ru")
 
     def _assert_active_catalog_is_complete_and_compiles(self, language):
         path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")

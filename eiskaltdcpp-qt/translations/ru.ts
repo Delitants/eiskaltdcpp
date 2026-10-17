@@ -182,12 +182,12 @@ EiskaltDC++ - кроссплатформенная программа для р�
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">Адрес</translation>
+            <translation>Адрес</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Выбрать изображение</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -252,19 +252,19 @@ EiskaltDC++ - кроссплатформенная программа для р�
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL-адреса начальной загрузки DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>URL-адрес начальной загрузки DHT</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished">URL</translation>
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -1091,7 +1091,7 @@ EiskaltDC++ - кроссплатформенная программа для р�
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1165,7 +1165,7 @@ EiskaltDC++ - кроссплатформенная программа для р�
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Фильтр</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -2225,7 +2225,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Выход</translation>
+            <translation>Выход</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2325,7 +2325,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | Узлы DHT: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2399,7 +2399,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Торрент-файлы</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2358" />
@@ -2434,12 +2434,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Открыть magnet-ссылку или торрент-файл</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Введите magnet-ссылку или путь к локальному файлу .torrent:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
@@ -2454,7 +2454,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Поддержка торрентов ещё не готова.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2519,7 +2519,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Сообщайте об ошибках на &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt;.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
@@ -2529,7 +2529,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
@@ -2674,17 +2674,17 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Торрент: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Требуется ник</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Перед подключением к хабам укажите ник в настройках.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -3035,7 +3035,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Обновление списка публичных хабов...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3090,7 +3090,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL-адреса списков публичных хабов</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3119,23 +3119,28 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Обнаружены старые или несовместимые настройки графического интерфейса EiskaltDC++.
+
+Безопасные настройки, включая хабы, данные учётной записи, общий доступ, загрузки и историю, сохранены. Тема, цвет чата, расположение окон и состояние столбцов таблиц из старой конфигурации сброшены, поскольку они могут нарушать переключение светлой и тёмной тем без перезапуска в современных версиях macOS.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Резервная копия предыдущей конфигурации графического интерфейса сохранена здесь:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Не удалось создать резервную копию предыдущей конфигурации графического интерфейса, однако несовместимые настройки внешнего вида всё равно были сброшены.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>Настройки EiskaltDC++ обновлены</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3158,43 +3163,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Изображения (%1);;Все файлы (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Перетащите, чтобы изменить размер поля ввода</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Нажмите, чтобы развернуть или свернуть</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Спойлер: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Открыть во внешней программе</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Закрыть</translation>
+            <translation>Закрыть</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>По умолчанию (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3654,12 +3659,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Настройки торрентов</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Не удалось сохранить настройки торрентов: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3759,59 +3764,59 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Включить IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Внешний IPv6-адрес (WAN):</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>например, 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Локальный IPv6-адрес для привязки</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>Файл MMDB стран</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>Путь к базе стран GeoLite2/MaxMind (.mmdb)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Настроить URL-адреса начальной загрузки DHT</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL-адреса списков публичных хабов</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Настроить URL-адреса списков публичных хабов</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Не найден корректный внешний IPv6-адрес!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Не найден корректный локальный IPv6-адрес для привязки!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="711" />
@@ -3842,12 +3847,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Выбрать базу стран MaxMind</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>База данных MaxMind (*.mmdb);;Все файлы (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -4336,54 +4341,54 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Тема значков панели инструментов</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished">Тема оформления</translation>
+            <translation>Тема</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished">По умолчанию</translation>
+            <translation>По умолчанию</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Монохромная</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Тема значков списка пользователей</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Оригинальная</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Изображения в чате</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Папка</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Автоматически удалять файлы старше</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> дн.</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
@@ -4453,7 +4458,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Выбрать папку изображений чата</translation>
         </message>
     </context>
     <context>
@@ -4461,7 +4466,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Справка</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
@@ -5520,7 +5525,7 @@ Do you want to stop it?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Закрыть</translation>
         </message>
     </context>
     <context>
@@ -6642,7 +6647,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Протокол</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6652,7 +6657,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Отменить загрузку</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6689,17 +6694,17 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Сведения о торренте</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Приостановить торрент</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Возобновить торрент</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6858,37 +6863,37 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Приостановлено</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Раздача</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Ожидание</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Загрузка (пиров: %1)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Отдача (пиров: %1)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Загружено %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Отдано %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -7620,7 +7625,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Нажмите Shift+Enter для многострочного ввода</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
@@ -7885,7 +7890,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Нажмите Shift+Enter для многострочного ввода</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
@@ -7931,7 +7936,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Обновить</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -8533,12 +8538,12 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL-адреса начальной загрузки DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Разделяйте несколько URL-адресов точками с запятой</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
@@ -9298,27 +9303,27 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Поведение окна</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Сворачивать в значок состояния при нажатии кнопки закрытия</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Значок состояния</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Использовать цветной значок состояния</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Использовать монохромный значок состояния</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
@@ -9567,7 +9572,11 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Справка&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
@@ -9577,17 +9586,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Диагностический журнал сбоев</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Сохраняет небольшой постоянный диагностический журнал с предупреждениями Qt, отметками активности, завершения работы и фатальных сигналов. Полезно, если приложение закрывается после длительной работы.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Записывает данные в указанную выше папку журналов. Сохраняет последнюю отметку активности перед сбоем или принудительным завершением.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
@@ -9797,12 +9806,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Этот список содержит типичные скорости отдачи (в Мбит/с),
+выберите наиболее близкую к вашей.
+Не указывайте скорость загрузки; этот параметр определяет,
+с какой скоростью другие пользователи смогут загружать от вас.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Мбит/с</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9873,12 +9885,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Добавить</translation>
+            <translation>Добавить</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">Удалить</translation>
+            <translation>Удалить</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -10310,7 +10322,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
