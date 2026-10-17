@@ -9470,23 +9470,23 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="24" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>Κείμενο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="30" />
             <source>Ask confirm before exit</source>
-            <translation type="unfinished" />
+            <translation>Ερώτηση επιβεβαίωσης πριν από την έξοδο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="40" />
             <source>Enable notifications</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση ειδοποιήσεων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="49" />
             <location filename="../ui/UISettingsNotification.ui" line="201" />
             <source>Your nick is mentioned in main chat</source>
-            <translation type="unfinished" />
+            <translation>Το ψευδώνυμό σας αναφέρεται στην κύρια συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="56" />
@@ -9498,57 +9498,57 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="63" />
             <location filename="../ui/UISettingsNotification.ui" line="290" />
             <source>Transfer done</source>
-            <translation type="unfinished" />
+            <translation>Η μεταφορά ολοκληρώθηκε</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>Σύνδεση/αποχώρηση αγαπημένου χρήστη</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
             <source>Allow other types of notifications</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπονται άλλοι τύποι ειδοποιήσεων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="91" />
             <source>Enable notifications with not active main window</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση ειδοποιήσεων όταν το κύριο παράθυρο δεν είναι ενεργό</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="98" />
             <source>Enable notifications with active main window</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση ειδοποιήσεων όταν το κύριο παράθυρο είναι ενεργό</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="105" />
             <source>Change icon when main window is visible</source>
-            <translation type="unfinished" />
+            <translation>Αλλαγή εικονιδίου όταν το κύριο παράθυρο είναι ορατό</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="133" />
             <source>Notification module</source>
-            <translation type="unfinished" />
+            <translation>Μονάδα ειδοποιήσεων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="153" />
             <source>Default (Qt)</source>
-            <translation type="unfinished" />
+            <translation>Προεπιλογή (Qt)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="158" />
             <source>D-Bus</source>
-            <translation type="unfinished" />
+            <translation>D-Bus</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="186" />
             <source>Sound</source>
-            <translation type="unfinished" />
+            <translation>Ήχος</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="192" />
             <source>Enable sounds</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση ήχων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="225" />
@@ -9556,29 +9556,31 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="314" />
             <location filename="../ui/UISettingsNotification.ui" line="355" />
             <source>Test</source>
-            <translation type="unfinished" />
+            <translation>Δοκιμή</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>Αναπαραγωγή ήχου όταν το παράθυρο ιδιωτικών μηνυμάτων είναι ενεργό</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
             <source>Favorite user event</source>
-            <translation type="unfinished" />
+            <translation>Συμβάν αγαπημένου χρήστη</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="388" />
             <source>Use external command</source>
-            <translation type="unfinished" />
+            <translation>Χρήση εξωτερικής εντολής</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="409" />
             <source>If your sound files' format is unsupported by Qt, you can define
 custom media player here to play them.
 For example: /usr/bin/mplayer</source>
-            <translation type="unfinished" />
+            <translation>Αν η μορφή των αρχείων ήχου σας δεν υποστηρίζεται από το Qt, μπορείτε να ορίσετε
+εδώ ένα προσαρμοσμένο πρόγραμμα αναπαραγωγής πολυμέσων για την αναπαραγωγή τους.
+Για παράδειγμα: /usr/bin/mplayer</translation>
         </message>
     </context>
     <context>

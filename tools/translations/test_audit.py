@@ -14,6 +14,51 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_greek_notification_and_sound_settings(self):
+        expected = {"UISettingsNotification": {
+            "Text": "Κείμενο", "Ask confirm before exit": "Ερώτηση επιβεβαίωσης πριν από την έξοδο",
+            "Enable notifications": "Ενεργοποίηση ειδοποιήσεων",
+            "Your nick is mentioned in main chat": "Το ψευδώνυμό σας αναφέρεται στην κύρια συνομιλία",
+            "Transfer done": "Η μεταφορά ολοκληρώθηκε",
+            "Favorite user join/part": "Σύνδεση/αποχώρηση αγαπημένου χρήστη",
+            "Allow other types of notifications": "Να επιτρέπονται άλλοι τύποι ειδοποιήσεων",
+            "Enable notifications with not active main window": "Ενεργοποίηση ειδοποιήσεων όταν το κύριο παράθυρο δεν είναι ενεργό",
+            "Enable notifications with active main window": "Ενεργοποίηση ειδοποιήσεων όταν το κύριο παράθυρο είναι ενεργό",
+            "Change icon when main window is visible": "Αλλαγή εικονιδίου όταν το κύριο παράθυρο είναι ορατό",
+            "Notification module": "Μονάδα ειδοποιήσεων", "Default (Qt)": "Προεπιλογή (Qt)", "D-Bus": "D-Bus",
+            "Sound": "Ήχος", "Enable sounds": "Ενεργοποίηση ήχων", "Test": "Δοκιμή",
+            "Play sound on active PM window": "Αναπαραγωγή ήχου όταν το παράθυρο ιδιωτικών μηνυμάτων είναι ενεργό",
+            "Favorite user event": "Συμβάν αγαπημένου χρήστη", "Use external command": "Χρήση εξωτερικής εντολής",
+            "If your sound files' format is unsupported by Qt, you can define\ncustom media player here to play them.\nFor example: /usr/bin/mplayer":
+                "Αν η μορφή των αρχείων ήχου σας δεν υποστηρίζεται από το Qt, μπορείτε να ορίσετε\nεδώ ένα προσαρμοσμένο πρόγραμμα αναπαραγωγής πολυμέσων για την αναπαραγωγή τους.\nΓια παράδειγμα: /usr/bin/mplayer",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsNotification" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-notifications-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(21, len(original))
+            self.assertEqual(20, len(expected["UISettingsNotification"]))
+            self.assertTrue(expected["UISettingsNotification"].keys() <= original.keys())
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in expected["UISettingsNotification"]:
+                        self.assertEqual(expected["UISettingsNotification"][source], text)
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+
     def test_slovak_final_html_help(self):
         replacements = {
             "UISettingsConnection": {
