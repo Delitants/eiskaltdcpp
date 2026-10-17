@@ -16,6 +16,53 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_browser_and_search_translations(self):
+        required = {
+            "ChatEdit": {"Address", "Select image"},
+            "FileBrowserModel": {"<b>Media Info:</b><br/>", "&nbsp;&nbsp;<b>Video:</b> %1<br/>",
+                                 "&nbsp;&nbsp;<b>Audio:</b> %1<br/>", "&nbsp;&nbsp;<b>Bitrate:</b> %1<br/>",
+                                 "&nbsp;&nbsp;<b>Resolution:</b> %1<br/><br/>", "Bitrate", "Resolution", "Video", "Audio"},
+            "SearchFrame": {"Searching for %1 ...", 'Search progress of "%1" is %2%'},
+            "ShareBrowser": {"Restrictions", "Add restriction", "Remove restriction", "Share browser error: %1",
+                             "Selected %1 from %2 items; ", "Enter restriction size (in GB)", "Share browser", "Matched %1 files"},
+            "ShareBrowserSearch": {"Found %1 items"},
+            "UIShareBrowserSearch": {"Search only files", "Search only directories", "Search all"},
+            "UserListModel": {"Exact share size", "IPv6"},
+            "WulforSettings": {"GUI setting %1: %2", "Change GUI setting %1 to %2"},
+        }
+        exact = {"Add restriction": "Dodaj ograniczenie", "Remove restriction": "Usuń ograniczenie",
+                 "Search only files": "Szukaj tylko plików", "Search only directories": "Szukaj tylko katalogów",
+                 "Search all": "Szukaj wszystkiego", "Enter restriction size (in GB)": "Podaj rozmiar ograniczenia (w GB)"}
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context") for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-browser-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)), Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                        self.assertEqual(source.count("&nbsp;"), text.count("&nbsp;"))
+                        self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_migration_and_log_translations(self):
         path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
         required = {

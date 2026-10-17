@@ -182,12 +182,12 @@ Opcje:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">Adres</translation>
+            <translation>Adres</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Wybierz obraz</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -737,27 +737,27 @@ Opcje:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Informacje o multimediach:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Wideo:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Dźwięk:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Przepływność:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Rozdzielczość:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
@@ -782,22 +782,22 @@ Opcje:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>Przepływność</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Resolution</source>
-            <translation type="unfinished" />
+            <translation>Rozdzielczość</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Video</source>
-            <translation type="unfinished" />
+            <translation>Wideo</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Audio</source>
-            <translation type="unfinished" />
+            <translation>Dźwięk</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="317" />
@@ -3491,12 +3491,12 @@ Bezpieczne ustawienia, takie jak huby, dane konta, udostępnianie, pobieranie i 
         <message>
             <location filename="../src/SearchFrame.cpp" line="1561" />
             <source>Searching for %1 ...</source>
-            <translation type="unfinished" />
+            <translation>Wyszukiwanie %1 ...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>Postęp wyszukiwania „%1”: %2%</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
@@ -5069,7 +5069,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="75" />
             <source>Restrictions</source>
-            <translation type="unfinished" />
+            <translation>Ograniczenia</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="76" />
@@ -5114,12 +5114,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="94" />
             <source>Add restriction</source>
-            <translation type="unfinished" />
+            <translation>Dodaj ograniczenie</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="95" />
             <source>Remove restriction</source>
-            <translation type="unfinished" />
+            <translation>Usuń ograniczenie</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="96" />
@@ -5160,7 +5160,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>Błąd przeglądarki udostępnionych plików: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
@@ -5171,7 +5171,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>Wybrano %1 z %2 elementów; </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
@@ -5186,17 +5186,17 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="992" />
             <source>Enter restriction size (in GB)</source>
-            <translation type="unfinished" />
+            <translation>Podaj rozmiar ograniczenia (w GB)</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>Przeglądarka udostępnionych plików</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>Liczba dopasowanych plików: %1</translation>
         </message>
     </context>
     <context>
@@ -5209,7 +5209,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>Liczba znalezionych elementów: %1</translation>
         </message>
     </context>
     <context>
@@ -10049,17 +10049,17 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Szukaj tylko plików</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Szukaj tylko katalogów</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>Szukaj wszystkiego</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />
@@ -10238,7 +10238,7 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Dokładny rozmiar udostępnionych danych</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10248,7 +10248,7 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
@@ -10256,12 +10256,12 @@ jeżeli użytkownik powróci na hub w ciągu 10 minut, EiskaltDC++ przyzna mu ex
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>Ustawienie interfejsu %1: %2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>Zmień ustawienie interfejsu %1 na %2</translation>
         </message>
     </context>
     <context>
