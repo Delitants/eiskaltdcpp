@@ -16,6 +16,82 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_personal_history_and_notifications(self):
+        required = {
+            "UISettingsHistory": {
+                "Clear search history on program exit",
+                "Clear download directories history on program exit",
+                "Number of search history elements to store:",
+                "Number of download directories history elements to store:",
+                "Memorize TTH search phrases",
+            },
+            "UISettingsNotification": {
+                "Your nick is mentioned in main chat", "Favorite user join/part",
+                "Allow other types of notifications",
+                "Enable notifications with not active main window",
+                "Enable notifications with active main window",
+                "Change icon when main window is visible", "Play sound on active PM window",
+                "If your sound files' format is unsupported by Qt, you can define\n"
+                "custom media player here to play them.\nFor example: /usr/bin/mplayer",
+            },
+            "UISettingsPersonal": {
+                "This description will show in the user list.\n"
+                "It can be overridden on a per-hub basis in the Favorite Hub Properties.",
+                "If you are in away mode, this message will be sent to everybody\n"
+                "who sends private message to you.",
+                "This nickname, or handle, will identify you when you join a hub.\n"
+                "It can be overridden on a per-hub basis in the Favorite Hub Properties.",
+                "Auto away interval (min)",
+                "This field is for sharing your email address, if you wish it.",
+                "This drop-down contains a number of common upload speeds (in Mbit/s),\n"
+                "please choose the one closest to your own.\n"
+                "Do not put in your download speed; this setting is a measure\n"
+                "of how fast a source you are likely to be for other users.",
+                "Mbit/s", "Default hub encoding",
+            },
+        }
+        exact = {
+            "Enable notifications with not active main window":
+                "შეტყობინებების ჩართვა, როცა მთავარი ფანჯარა არააქტიურია",
+            "Enable notifications with active main window":
+                "შეტყობინებების ჩართვა, როცა მთავარი ფანჯარა აქტიურია",
+            "Play sound on active PM window":
+                "ხმის დაკვრა აქტიური პირადი შეტყობინების ფანჯრის დროსაც",
+            "Mbit/s": "Mbit/s",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-personal-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source != "Mbit/s":
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        for token in ("TTH", "Qt", "/usr/bin/mplayer", "Mbit/s"):
+                            if token in source:
+                                self.assertIn(token, text)
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_sharing_translations(self):
         required = {
             "View share in simple mode", "Add", "Remove",

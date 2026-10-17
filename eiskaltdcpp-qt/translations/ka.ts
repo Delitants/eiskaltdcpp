@@ -9293,12 +9293,12 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>ძიების ისტორიის გასუფთავება პროგრამიდან გასვლისას</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთვის საქაღალდეების ისტორიის გასუფთავება პროგრამიდან გასვლისას</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
@@ -9309,17 +9309,17 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>შესანახი ძიების ისტორიის ჩანაწერების რაოდენობა:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>შესანახი ჩამოტვირთვის საქაღალდეების ისტორიის ჩანაწერების რაოდენობა:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>TTH ძიების ფრაზების დამახსოვრება</translation>
         </message>
     </context>
     <context>
@@ -9470,7 +9470,7 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="49" />
             <location filename="../ui/UISettingsNotification.ui" line="201" />
             <source>Your nick is mentioned in main chat</source>
-            <translation type="unfinished" />
+            <translation>თქვენი მეტსახელი ნახსენებია მთავარ ჩატში</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="56" />
@@ -9487,27 +9487,27 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>რჩეული მომხმარებლის შემოსვლა/გასვლა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
             <source>Allow other types of notifications</source>
-            <translation type="unfinished" />
+            <translation>სხვა ტიპის შეტყობინებების დაშვება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="91" />
             <source>Enable notifications with not active main window</source>
-            <translation type="unfinished" />
+            <translation>შეტყობინებების ჩართვა, როცა მთავარი ფანჯარა არააქტიურია</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="98" />
             <source>Enable notifications with active main window</source>
-            <translation type="unfinished" />
+            <translation>შეტყობინებების ჩართვა, როცა მთავარი ფანჯარა აქტიურია</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="105" />
             <source>Change icon when main window is visible</source>
-            <translation type="unfinished" />
+            <translation>ხატულის შეცვლა, როცა მთავარი ფანჯარა ხილულია</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="133" />
@@ -9545,7 +9545,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>ხმის დაკვრა აქტიური პირადი შეტყობინების ფანჯრის დროსაც</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
@@ -9562,7 +9562,9 @@ p, li { white-space: pre-wrap; }
             <source>If your sound files' format is unsupported by Qt, you can define
 custom media player here to play them.
 For example: /usr/bin/mplayer</source>
-            <translation type="unfinished" />
+            <translation>თუ თქვენი ხმის ფაილების ფორმატს Qt არ უჭერს მხარს, შეგიძლიათ აქ მიუთითოთ
+სხვა მედიადამკვრელი მათ დასაკრავად.
+მაგალითად: /usr/bin/mplayer</translation>
         </message>
     </context>
     <context>
@@ -9571,13 +9573,15 @@ For example: /usr/bin/mplayer</source>
             <location filename="../ui/UISettingsPersonal.ui" line="62" />
             <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>ეს აღწერა გამოჩნდება მომხმარებელთა სიაში.
+მისი შეცვლა შესაძლებელია თითოეული ჰაბისთვის ცალ-ცალკე, რჩეული ჰაბის თვისებებში.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="70" />
             <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
-            <translation type="unfinished" />
+            <translation>თუ არყოფნის რეჟიმში ხართ, ეს შეტყობინება გაეგზავნება ყველას,
+ვინც პირად შეტყობინებას გამოგიგზავნით.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="78" />
@@ -9588,7 +9592,8 @@ who sends private message to you.</source>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>ეს მეტსახელი თქვენს ვინაობას აღნიშნავს ჰაბში შესვლისას.
+მისი შეცვლა შესაძლებელია თითოეული ჰაბისთვის ცალ-ცალკე, რჩეული ჰაბის თვისებებში.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
@@ -9608,12 +9613,12 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="114" />
             <source>Auto away interval (min)</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური არყოფნის ინტერვალი (წთ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="134" />
             <source>This field is for sharing your email address, if you wish it.</source>
-            <translation type="unfinished" />
+            <translation>ეს ველი თქვენი ელფოსტის მისამართის გასაზიარებლადაა, თუ ეს გსურთ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="184" />
@@ -9626,12 +9631,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>ეს ჩამოსაშლელი სია შეიცავს გავრცელებულ ატვირთვის სიჩქარეებს (Mbit/s),
+აირჩიეთ თქვენს სიჩქარესთან ყველაზე ახლოს მყოფი მნიშვნელობა.
+არ მიუთითოთ ჩამოტვირთვის სიჩქარე; ეს პარამეტრი განსაზღვრავს,
+რამდენად სწრაფი წყარო იქნებით სხვა მომხმარებლებისთვის.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9650,7 +9658,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="264" />
             <source>Default hub encoding</source>
-            <translation type="unfinished" />
+            <translation>ჰაბის ნაგულისხმევი კოდირება</translation>
         </message>
     </context>
     <context>
