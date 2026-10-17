@@ -2035,7 +2035,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1697" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>ძიების მონიტორი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1699" />
@@ -2101,7 +2101,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1724" />
             <source>Away when not visible</source>
-            <translation type="unfinished" />
+            <translation>არყოფნის რეჟიმი, როცა ფანჯარა არ ჩანს</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1726" />
@@ -2206,7 +2206,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">გასვლა</translation>
+            <translation>გასვლა</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2306,7 +2306,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT კვანძები: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2380,7 +2380,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>ტორენტის ფაილები</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2358" />
@@ -2390,7 +2390,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2374" />
             <source>Unable to load file list: Invalid file list name</source>
-            <translation type="unfinished" />
+            <translation>ფაილების სიის ჩატვირთვა ვერ მოხერხდა: ფაილების სიის სახელი არასწორია</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2548" />
@@ -2400,12 +2400,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2585" />
             <source>Unable to open %1 port. Searching or file transfers will not work correctly until you change settings or turn off any application that might be using that port.</source>
-            <translation type="unfinished" />
+            <translation>%1 პორტის გახსნა ვერ მოხერხდა. ძიება ან ფაილების გადაცემა სწორად ვერ იმუშავებს, სანამ პარამეტრებს არ შეცვლით ან არ დახურავთ პროგრამას, რომელიც შესაძლოა ამ პორტს იყენებდეს.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2586" />
             <source>Connectivity Manager: Warning</source>
-            <translation type="unfinished" />
+            <translation>კავშირების მმართველი: გაფრთხილება</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2609" />
@@ -2415,12 +2415,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>მაგნიტური ბმულის ან ტორენტის ფაილის გახსნა</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>შეიყვანეთ მაგნიტური ბმული ან ლოკალური .torrent ფაილის გზა:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
@@ -2435,7 +2435,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>ტორენტის მხარდაჭერა მზად არ არის.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2470,7 +2470,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3272" />
             <source>EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ არის Direct Connect და ADC პროტოკოლების გრაფიკული კლიენტი.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3275" />
@@ -2500,7 +2500,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>შეცდომების შესატყობინებლად გამოიყენეთ &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt;.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
@@ -2510,7 +2510,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
@@ -2630,7 +2630,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>ქართული თარგმანი&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
@@ -2655,17 +2655,17 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>ტორენტი: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>მეტსახელი აუცილებელია</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>ჰაბებთან დაკავშირებამდე პარამეტრებში შეიყვანეთ მეტსახელი.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2693,7 +2693,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>Arch Linux-ის ვერსიის მხარდამჭერი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2706,7 +2706,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>Debian/Ubuntu-ს ვერსიის მხარდამჭერი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
@@ -2716,23 +2716,23 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>macOS-ის ვერსიის მხარდამჭერი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>MS Windows-ის ვერსიის მხარდამჭერი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>პროექტის ლოგოს შემქმნელი</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>ლოგოს მცირე განახლებები</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />

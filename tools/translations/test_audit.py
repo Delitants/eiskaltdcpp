@@ -16,6 +16,56 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_mainwindow_translations(self):
+        required = {
+            "Search Spy", "Away when not visible", "Exit", " | DHT nodes: %1",
+            "Torrent files", "Unable to load file list: Invalid file list name",
+            "Unable to open %1 port. Searching or file transfers will not work correctly until you change settings or turn off any application that might be using that port.",
+            "Connectivity Manager: Warning", "Open magnet or Torrent file",
+            "Enter a magnet link or local .torrent path:", "Torrent support is not ready.",
+            "EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.",
+            'Please use <a href="https://github.com/Delitants/eiskaltdcpp/issues">https://github.com/Delitants/eiskaltdcpp/issues</a> to report bugs.<br/>',
+            '2026 <a href="mailto:admin@nlight.org.ua">Neolo</a><br/>',
+            "Georgian translation<br/>", "Torrent: %1", "Nickname required",
+            "Enter a nickname in Preferences before connecting to hubs.",
+            "Arch Linux maintainer", "Debian/Ubuntu maintainer", "macOS maintainer",
+            "MS Windows maintainer", "creator of the logo of the project", "tiny updates of the logo",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "MainWindow" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-mainwindow-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    if not source.startswith('2026 <a href="mailto:'):
+                        self.assertNotEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                     Counter(re.findall(r"%\d+|%n", text)))
+                    self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                    self.assertEqual(source[:len(source)-len(source.lstrip())],
+                                     text[:len(text)-len(text.lstrip())])
+                    for token in ("DHT", ".torrent", "EiskaltDC++", "Direct Connect", "ADC",
+                                  "2026", "Neolo", "Arch Linux", "Debian/Ubuntu", "macOS", "MS Windows"):
+                        if token in source:
+                            self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_magnets_favorites_and_messages(self):
         required = {
             "Magnet": {"Run search alternatives manually.", "Download file via auto search alternatives",
