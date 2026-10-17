@@ -16,6 +16,54 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_antispam_and_logging_settings(self):
+        expected = {
+            "AntiSpam": {"%1: Moving user to GRAY.": "%1: Presúvam používateľa do sivého zoznamu.",
+                         "%1: Moving user to BLACK.": "%1: Presúvam používateľa do čierneho zoznamu."},
+            "UIAntiSpam": {"OK": "OK", "C": "C"},
+            "UISettingsLog": {
+                "Text": "Text", "Debug Console": "Ladiaca konzola",
+                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li { white-space: pre-wrap; }\n</style></head><body style=" font-size:9pt; font-weight:400; font-style:normal;">\n<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"><span style=" text-decoration: underline; color:#296fbe;">Help</span></a></p></body></html>':
+                    '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd">\n<html><head><meta name="qrichtext" content="1" /><style type="text/css">\np, li { white-space: pre-wrap; }\n</style></head><body style=" font-size:9pt; font-weight:400; font-style:normal;">\n<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"><span style=" text-decoration: underline; color:#296fbe;">Pomocník</span></a></p></body></html>',
+                "Diagnostic crash log": "Diagnostický protokol pádov",
+                "Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.":
+                    "Uchováva trvalý diagnostický protokol s malým objemom záznamov obsahujúci upozornenia Qt, pravidelné signály aktivity a značky ukončenia a fatálnych signálov. Užitočné pri ukončení aplikácie po dlhom čase behu.",
+                "Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.":
+                    "Zapisuje do vyššie uvedeného priečinka protokolov. Uchováva posledný signál aktivity pred pádom alebo vynúteným ukončením.",
+            },
+        }
+        counts = {"AntiSpam": 5, "UIAntiSpam": 17, "UISettingsLog": 19}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-logs-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(source.count("\n"), text.count("\n"))
+                            self.assertEqual(Counter(re.findall(r"%\d+", source)), Counter(re.findall(r"%\d+", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_appearance_and_chat_settings(self):
         expected = {"UISettingsGUI": {
             "Don't show icons in menus (need restart)": "Nezobrazovať ikony v ponukách (vyžaduje reštart)",

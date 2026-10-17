@@ -152,12 +152,12 @@ Kľúčové skratky:
         <message>
             <location filename="../src/Antispam.cpp" line="170" />
             <source>%1: Moving user to GRAY.</source>
-            <translation type="unfinished" />
+            <translation>%1: Presúvam používateľa do sivého zoznamu.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="180" />
             <source>%1: Moving user to BLACK.</source>
-            <translation type="unfinished" />
+            <translation>%1: Presúvam používateľa do čierneho zoznamu.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="188" />
@@ -7131,7 +7131,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="102" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="109" />
@@ -7148,7 +7148,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
             <location filename="../ui/UIAntiSpam.ui" line="223" />
             <location filename="../ui/UIAntiSpam.ui" line="289" />
             <source>C</source>
-            <translation type="unfinished" />
+            <translation>C</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="171" />
@@ -9460,7 +9460,7 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsLog.ui" line="281" />
             <location filename="../ui/UISettingsLog.ui" line="325" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>Text</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="64" />
@@ -9485,7 +9485,7 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Ladiaca konzola</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
@@ -9504,7 +9504,11 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Pomocník&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
@@ -9514,17 +9518,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Diagnostický protokol pádov</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Uchováva trvalý diagnostický protokol s malým objemom záznamov obsahujúci upozornenia Qt, pravidelné signály aktivity a značky ukončenia a fatálnych signálov. Užitočné pri ukončení aplikácie po dlhom čase behu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Zapisuje do vyššie uvedeného priečinka protokolov. Uchováva posledný signál aktivity pred pádom alebo vynúteným ukončením.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
