@@ -252,19 +252,19 @@ EiskaltDC++ პლატფორმათაშორისი პროგრ�
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT-ის საწყისი კვანძების URL-ები</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>DHT-ის საწყისი კვანძის URL</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished">ბმული</translation>
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -3715,59 +3715,59 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6-ის ჩართვა</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>გარე/WAN IPv6:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>მაგ., 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>მისაბმელი IPv6 მისამართი</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>ქვეყნების MMDB ფაილი</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>გზა GeoLite2/MaxMind-ის ქვეყნების .mmdb ფაილამდე</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT-ის საწყისი კვანძების URL-ების გამართვა</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის URL-ები</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის URL-ების გამართვა</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>სწორი გარე IPv6 მისამართი ვერ მოიძებნა!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>სწორი მისაბმელი IPv6 მისამართი ვერ მოიძებნა!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="711" />
@@ -3794,12 +3794,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ MaxMind-ის ქვეყნების მონაცემთა ბაზა</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>MaxMind DB (*.mmdb);;ყველა ფაილი (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -8441,12 +8441,12 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT-ის საწყისი კვანძების URL-ები</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>რამდენიმე URL გამოყავით წერტილ-მძიმით</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
@@ -8471,12 +8471,12 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>ჰაბებისთვის არასანდო სერტიფიკატის დაშვება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>კლიენტებისთვის არასანდო სერტიფიკატის დაშვება</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>

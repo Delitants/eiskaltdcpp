@@ -16,6 +16,23 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_connection_catalog_survives_compilation(self):
+        self._assert_connection_catalog_survives_compilation("ka")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_georgian_tls_choices_survive_compilation(self):
+        self._assert_tls_choices_survive_compilation("ka", {
+            "TLS settings": "TLS პარამეტრები",
+            "Disable TLS": "TLS-ის გამორთვა",
+            "Allow TLS": "TLS-ის დაშვება",
+            "Require TLS": "TLS-ის აუცილებლად მოთხოვნა",
+            "Allow untrusted certificate for hubs": "ჰაბებისთვის არასანდო სერტიფიკატის დაშვება",
+            "Allow untrusted certificate for clients": "კლიენტებისთვის არასანდო სერტიფიკატის დაშვება",
+        })
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("pl")
 
