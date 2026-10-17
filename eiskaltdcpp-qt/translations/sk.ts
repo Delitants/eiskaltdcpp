@@ -9080,7 +9080,7 @@ z frontu; musíte to urobiť ručne.</translation>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="124" />
             <source>Don't show icons in menus (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Nezobrazovať ikony v ponukách (vyžaduje reštart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="132" />
@@ -9135,7 +9135,7 @@ z frontu; musíte to urobiť ručne.</translation>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="215" />
             <source>Redirect new personal messages to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Presmerovať nové súkromné správy do hlavného chatu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="222" />
@@ -9145,7 +9145,7 @@ z frontu; musíte to urobiť ručne.</translation>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="232" />
             <source>Use separator for unread messages in the chat</source>
-            <translation type="unfinished" />
+            <translation>Použiť oddeľovač neprečítaných správ v chate</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="239" />
@@ -9216,7 +9216,7 @@ Ak nie je zaškrtnuté, tak neuvidíš smajlíkov ak nie je medzera medzi slovom
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="377" />
             <source>Application unit base</source>
-            <translation type="unfinished" />
+            <translation>Základ jednotiek aplikácie</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="421" />
@@ -9231,37 +9231,37 @@ Ak nie je zaškrtnuté, tak neuvidíš smajlíkov ak nie je medzera medzi slovom
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>Zobrazovať kibibajty (KiB) alebo kilobajty (KB) atď.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Správanie okna</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Po kliknutí na tlačidlo zatvorenia minimalizovať do stavovej ikony</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Stavová ikona</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Použiť farebnú stavovú ikonu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Použiť jednofarebnú stavovú ikonu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>Metrické</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
@@ -9271,7 +9271,7 @@ Ak nie je zaškrtnuté, tak neuvidíš smajlíkov ak nie je medzera medzi slovom
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
             <source>Default action with magnet</source>
-            <translation type="unfinished" />
+            <translation>Predvolená akcia pre magnetový odkaz</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="473" />
@@ -9328,7 +9328,7 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="617" />
             <source>Parse BBCode</source>
-            <translation type="unfinished" />
+            <translation>Spracovať BBCode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="638" />
@@ -9365,7 +9365,7 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="779" />
             <source>Transfer colors</source>
-            <translation type="unfinished" />
+            <translation>Farby prenosov</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="802" />
@@ -9375,12 +9375,12 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="829" />
             <source>Reset</source>
-            <translation type="unfinished" />
+            <translation>Obnoviť predvolené nastavenia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="841" />
             <source>Change background color in the chat</source>
-            <translation type="unfinished" />
+            <translation>Zmeniť farbu pozadia v chate</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="884" />

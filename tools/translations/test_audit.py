@@ -16,6 +16,45 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_appearance_and_chat_settings(self):
+        expected = {"UISettingsGUI": {
+            "Don't show icons in menus (need restart)": "Nezobrazovať ikony v ponukách (vyžaduje reštart)",
+            "Redirect new personal messages to the main chat": "Presmerovať nové súkromné správy do hlavného chatu",
+            "Use separator for unread messages in the chat": "Použiť oddeľovač neprečítaných správ v chate",
+            "Application unit base": "Základ jednotiek aplikácie",
+            "Show kibibyte (KiB) or kilobyte (KB), etc.": "Zobrazovať kibibajty (KiB) alebo kilobajty (KB) atď.",
+            "Window behavior": "Správanie okna",
+            "Minimize to status icon when clicking the close button": "Po kliknutí na tlačidlo zatvorenia minimalizovať do stavovej ikony",
+            "Status icon": "Stavová ikona", "Use colored status icon": "Použiť farebnú stavovú ikonu",
+            "Use monochrome status icon": "Použiť jednofarebnú stavovú ikonu", "Metric": "Metrické",
+            "Default action with magnet": "Predvolená akcia pre magnetový odkaz", "Parse BBCode": "Spracovať BBCode",
+            "Transfer colors": "Farby prenosov", "Reset": "Obnoviť predvolené nastavenia",
+            "Change background color in the chat": "Zmeniť farbu pozadia v chate",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsGUI" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-appearance-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(16, len(expected["UISettingsGUI"]))
+            self.assertTrue(expected["UISettingsGUI"].keys() <= original.keys())
+            for source, translation in expected["UISettingsGUI"].items():
+                with self.subTest(source=source):
+                    value = original[source]
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertEqual(translation, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_download_retention_and_sources(self):
         expected = {"UISettingsDownloads": {
             "Auto-drop slow sources for all queue items (except filelists)":
