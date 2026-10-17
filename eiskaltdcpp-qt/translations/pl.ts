@@ -8743,7 +8743,10 @@ pobierania przed usunięciem źródła. (domyślnie: 15 s)</translation>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>To maksymalny czas od odebrania ostatniego fragmentu danych
+pliku. Ma poprawić dokładność pomiaru prędkości
+i zapobiegać odrzucaniu źródeł, które zostałyby
+odłączone wyłącznie z powodu chwilowej bezczynności. (domyślnie: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
@@ -8831,7 +8834,10 @@ lub opcja "Usuń wolne listy pobierania plików" (lub obie opcje).</translation>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Po włączeniu tej opcji EiskaltDC++ usunie listę plików, której prędkość
+została uznana za zbyt niską.
+Aby włączyć automatyczne odrzucanie, włącz „Automatycznie odrzucaj wolne źródła dla wszystkich elementów kolejki”
+lub „Usuwaj wolne listy plików” (albo obie opcje).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
@@ -8878,7 +8884,14 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>Włącz, aby automatycznie pobierać listę użytkownika i dopasowywać go
+jako źródło plików w kolejce pobierania, gdy zostanie
+odkryty jako źródło jednego z pobieranych plików.
+Jeśli pobierasz zestawy plików, ten użytkownik prawdopodobnie jest źródłem
+wielu innych pobieranych plików. W razie wątpliwości włącz tę opcję.
+Wadą jest możliwość dodania wolniejszych źródeł, co może
+wydłużyć czas potrzebny na zakończenie pobierania,
+oraz pobieranie wielu list plików.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
@@ -8891,7 +8904,10 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>Po włączeniu tej opcji wszystkie pliki o zerowym rozmiarze, które
+spróbujesz pobrać, zostaną pominięte bez powiadomienia.
+Czasami puste pliki przekazują informacje poprzez swoje nazwy.
+Jednak każdy plik, nawet pusty, zajmuje pewną ilość miejsca na dysku.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
@@ -8902,7 +8918,8 @@ However every file, even an empty one, will consume some drive space.</source>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>Ta opcja uniemożliwi pobieranie plików,
+które już istnieją w jednym z udostępnianych katalogów.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
@@ -8913,7 +8930,8 @@ which already exist in one of your shared directories.</source>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>Ta opcja uniemożliwi pobieranie plików,
+które już znajdują się w kolejce.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
@@ -8936,7 +8954,15 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Włącz tę opcję, jeśli chcesz zachować pobrane listy plików
+w kolejce pobierania po ich ukończeniu.
+Po pobraniu elementy kolejki otrzymają stan „Ukończono”
+i będzie można usunąć te ukończone wpisy w dowolnym późniejszym momencie.
+Pamiętaj, że fizyczne przeniesienie lub usunięcie pobranych plików
+z ich lokalizacji docelowej nie spowoduje automatycznego usunięcia
+odpowiadających im ukończonych wpisów z kolejki.
+Wyłączenie tej funkcji również nie usunie istniejących ukończonych elementów
+z kolejki; należy zrobić to ręcznie.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
@@ -8957,7 +8983,18 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Włącz tę opcję, jeśli chcesz zachować pobrane pliki i foldery
+w kolejce pobierania po ich ukończeniu.
+Po pobraniu elementy kolejki otrzymają stan „Ukończono”
+i będzie można usunąć te ukończone wpisy w dowolnym późniejszym momencie.
+Ta funkcja pozwala śledzić już pobrane pliki
+bezpośrednio w kolejce pobierania, bez konieczności
+sprawdzania okna ukończonych pobrań.
+Pamiętaj, że fizyczne przeniesienie lub usunięcie pobranych plików
+z ich lokalizacji docelowej nie spowoduje automatycznego usunięcia
+odpowiadających im ukończonych wpisów z kolejki.
+Wyłączenie tej funkcji również nie usunie istniejących ukończonych elementów
+z kolejki; należy zrobić to ręcznie.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
@@ -8987,12 +9024,12 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>Zezwalaj na jednoczesne wysyłanie do jednego użytkownika z kilku hubów NMDC</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>Zezwalaj na jednoczesne wysyłanie na jeden adres IP</translation>
         </message>
     </context>
     <context>
@@ -9767,12 +9804,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Dodaj</translation>
+            <translation>Dodaj</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">Usuń</translation>
+            <translation>Usuń</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -9844,7 +9881,7 @@ i może spowodować zamrożenie sę klienta.</translation>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>Pomijaj pliki o zerowym rozmiarze</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
@@ -9889,7 +9926,7 @@ i może spowodować zamrożenie sę klienta.</translation>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>Używaj wyszukiwania ADL tylko we własnej liście plików</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
@@ -9903,12 +9940,16 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>Jeśli średnia prędkość wysyłania spadnie poniżej podanej wartości,
+zostanie przyznany dodatkowy slot wysyłania.
+Takie sloty są przyznawane najwyżej raz na 30 sekund.
+Jeśli prędkość pierwotnych wysyłań wzrośnie,
+przyznany slot nie zostanie zamknięty.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>Opóźnienie haszowania przy uruchamianiu (sekundy, -1 = nieskończoność)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
@@ -9924,7 +9965,7 @@ the granted slot will not be closed.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Maksymalna prędkość haszowania (MB/s) (0 = bez ograniczeń)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />

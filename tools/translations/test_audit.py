@@ -16,6 +16,50 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_download_and_sharing_settings(self):
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") in {"UISettingsDownloads", "UISettingsSharing"}
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-download-policy-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            self.assertTrue(original)
+            retention = 0
+            for key, value in original.items():
+                with self.subTest(source=key[1]):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(key, compiled)
+                    self.assertEqual(text, "".join(compiled[key].itertext()))
+                    source = key[1]
+                    if source.startswith("Enable this option if you want to keep downloaded"):
+                        retention += 1
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertIn("nie spowoduje automatycznego usunięcia", text)
+                        self.assertIn("należy zrobić to ręcznie", text)
+                    if source.startswith("If the average upload speed"):
+                        self.assertIn("30 sekund", text)
+                        self.assertIn("nie zostanie zamknięty", text)
+                    if source.startswith("This is the maximal time"):
+                        self.assertIn("10 s", text)
+                    if source.startswith("Hashing delay on startup"):
+                        self.assertIn("-1 =", text)
+                    if source.startswith("Max hash speed"):
+                        self.assertIn("MB/s", text)
+                        self.assertIn("0 =", text)
+            self.assertEqual(2, retention)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_transfer_and_command_translations(self):
         required = {
             "HubFrame": {"IPv6", "search", "Filter",
