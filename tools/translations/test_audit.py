@@ -16,6 +16,92 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_download_retention_and_search(self):
+        required = {
+            "Automatically search for alternative download locations",
+            "Every few minutes, the client will search for files in your\n"
+            "Download Queue to find more download locations (more users/sources).\n"
+            "The autosearch will find exact matches by searching via hash.\n"
+            "The drawback is that it may won't find much more sources\n"
+            "and will prevent manual searches on hubs where\n"
+            "a predefined search interval rule is in effect.",
+            "Automatically match queue for auto search hits",
+            "Enable to automatically download a user's list and match them\n"
+            "as sources for files in your Download Queue when they've been\n"
+            "discovered as a source for one of the files you're downloading.\n"
+            "If you download files in sets, that user is probably a source\n"
+            "for many more files you're downloading. Enable if unsure.\n"
+            "The drawbacks are that it might add slower sources, possibly\n"
+            "increasing the time needed to complete a download,\n"
+            "and that you'll download a lot of file lists.",
+            "Skip zero-byte files",
+            "When this option is enabled, any zero byte files you\n"
+            "try to download will be silently skipped.\n"
+            "Sometimes empty files contain information through their naming.\n"
+            "However every file, even an empty one, will consume some drive space.",
+            "Don't download files already in share",
+            "This option will stop you from downloading files\n"
+            "which already exist in one of your shared directories.",
+            "Don't download files already in the queue",
+            "This option will stop you from downloading files\nwhich already exist in your queue.",
+            "Keep downloaded filelists",
+            "Enable this option if you want to keep downloaded filelists\n"
+            "in the download queue after they have been finished.\n"
+            "After downloaded the queue items will have 'Finished' status\n"
+            "and you can delete these finished entries anytime later.\n"
+            "Note that if you physically move/delete your downloaded files from\n"
+            "their target location, it won't result automatic deletion of\n"
+            "the corresponding finished entries from the queue.\n"
+            "If you disable this function, it won't remove existing finished items\n"
+            "from the queue either, you must do that manually.",
+            "Enable this option if you want to keep downloaded files and folders\n"
+            "in the download queue after they have been finished.\n"
+            "After downloaded the queue items will have 'Finished' status\n"
+            "and you can delete these finished entries anytime later.\n"
+            "Using this function you can keep track of what files are already\n"
+            "downloaded right there in the download queue without the need\n"
+            "of checking the Finished Downloads window.\n"
+            "Note that if you physically move/delete your downloaded files from\n"
+            "their target location, it won't result automatic deletion of\n"
+            "the corresponding finished entries from the queue.\n"
+            "If you disable this function, it won't remove existing finished items\n"
+            "from the queue either, you must do that manually.",
+            "Interval for auto search alternates (minutes)",
+            "Segment size (in MB, 0 = auto segment size)",
+            "Allow simultaneous uploads by one user from few NMDC hubs",
+            "Allow simultaneous uploads by one IP",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsDownloads" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-retention-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertNotEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(Counter(re.findall(r"\d+", source)),
+                                     Counter(re.findall(r"\d+", text)))
+                    for token in ("MB", "NMDC", "IP"):
+                        if token in source:
+                            self.assertRegex(text, r"(?<![A-Za-z/])" + re.escape(token) + r"(?![A-Za-z/])")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_slow_source_translations(self):
         required = {
             "Auto-drop settings",

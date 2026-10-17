@@ -8790,7 +8790,7 @@ but not removed from the queue.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
             <source>Automatically search for alternative download locations</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთვის ალტერნატიული წყაროების ავტომატური ძიება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="778" />
@@ -8800,12 +8800,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>ყოველ რამდენიმე წუთში კლიენტი მოძებნის თქვენს ჩამოტვირთვის
+რიგში არსებულ ფაილებს დამატებითი წყაროების (მომხმარებლების) საპოვნელად.
+ავტომატური ძიება ზუსტ დამთხვევებს ჰეშის მიხედვით იპოვის.
+ნაკლია ის, რომ შეიძლება ბევრი ახალი წყარო ვერ მოიძებნოს
+და ხელით ძიება შეფერხდეს იმ ჰაბებზე, სადაც
+ძიებებს შორის განსაზღვრული ინტერვალის წესი მოქმედებს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური ძიების შედეგების რიგთან ავტომატური შედარება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8817,12 +8822,19 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>ჩართეთ მომხმარებლის ფაილების სიის ავტომატურად ჩამოსატვირთად და მისი
+ჩამოტვირთვის რიგში არსებული ფაილების წყაროდ შესამოწმებლად, როდესაც ის
+ერთ-ერთი ჩამოსატვირთი ფაილის წყაროდ აღმოჩნდება.
+თუ ფაილებს ჯგუფებად ჩამოტვირთავთ, ეს მომხმარებელი შესაძლოა წყარო იყოს
+ბევრი სხვა ჩამოსატვირთი ფაილისთვისაც. თუ არ ხართ დარწმუნებული, ჩართეთ.
+ნაკლია ის, რომ შეიძლება დაემატოს უფრო ნელი წყაროები, რაც შესაძლოა
+ჩამოტვირთვის დასრულებისთვის საჭირო დროს გაზრდის,
+და ასევე ბევრი ფაილების სიის ჩამოტვირთვა მოგიწევთ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
             <source>Skip zero-byte files</source>
-            <translation type="unfinished" />
+            <translation>ნულოვანი ზომის ფაილების გამოტოვება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="818" />
@@ -8830,29 +8842,34 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>თუ ეს ჩართულია, ნებისმიერი ნულოვანი ზომის ფაილი, რომლის
+ჩამოტვირთვასაც სცდით, შეტყობინების გარეშე გამოტოვებული იქნება.
+ზოგჯერ ცარიელი ფაილების სახელები ინფორმაციას შეიცავს.
+თუმცა ყველა ფაილი, ცარიელიც კი, დისკზე გარკვეულ ადგილს იკავებს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
             <source>Don't download files already in share</source>
-            <translation type="unfinished" />
+            <translation>უკვე გაზიარებული ფაილები არ ჩამოიტვირთოს</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>ეს პარამეტრი ხელს შეუშლის იმ ფაილების ჩამოტვირთვას,
+რომლებიც უკვე არსებობს თქვენს ერთ-ერთ გაზიარებულ საქაღალდეში.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
             <source>Don't download files already in the queue</source>
-            <translation type="unfinished" />
+            <translation>რიგში უკვე არსებული ფაილები არ ჩამოიტვირთოს</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>ეს პარამეტრი ხელს შეუშლის იმ ფაილების ჩამოტვირთვას,
+რომლებიც უკვე არსებობს თქვენს რიგში.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
@@ -8862,7 +8879,7 @@ which already exist in your queue.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="873" />
             <source>Keep downloaded filelists</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთული ფაილების სიების შენარჩუნება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="876" />
@@ -8875,7 +8892,15 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>ჩართეთ ეს პარამეტრი, თუ გსურთ ჩამოტვირთული ფაილების სიების
+ჩამოტვირთვის რიგში შენარჩუნება მათი დასრულების შემდეგ.
+ჩამოტვირთვის შემდეგ რიგის ელემენტებს ექნება სტატუსი „დასრულებულია“
+და ამ დასრულებული ჩანაწერების წაშლას მოგვიანებით ნებისმიერ დროს შეძლებთ.
+გაითვალისწინეთ: თუ ჩამოტვირთულ ფაილებს ფიზიკურად გადაიტანთ ან წაშლით
+მათი დანიშნულების ადგილიდან, ეს ავტომატურად არ წაშლის
+რიგიდან შესაბამის დასრულებულ ჩანაწერებს.
+ამ ფუნქციის გამორთვაც არ წაშლის არსებულ დასრულებულ ელემენტებს
+რიგიდან; ეს ხელით უნდა გააკეთოთ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
@@ -8896,7 +8921,18 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>ჩართეთ ეს პარამეტრი, თუ გსურთ ჩამოტვირთული ფაილებისა და საქაღალდეების
+ჩამოტვირთვის რიგში შენარჩუნება მათი დასრულების შემდეგ.
+ჩამოტვირთვის შემდეგ რიგის ელემენტებს ექნება სტატუსი „დასრულებულია“
+და ამ დასრულებული ჩანაწერების წაშლას მოგვიანებით ნებისმიერ დროს შეძლებთ.
+ამ ფუნქციით შეძლებთ თვალყური ადევნოთ, რომელი ფაილებია უკვე
+ჩამოტვირთული, უშუალოდ ჩამოტვირთვის რიგში, ისე რომ არ დაგჭირდეთ
+დასრულებული ჩამოტვირთვების ფანჯრის შემოწმება.
+გაითვალისწინეთ: თუ ჩამოტვირთულ ფაილებს ფიზიკურად გადაიტანთ ან წაშლით
+მათი დანიშნულების ადგილიდან, ეს ავტომატურად არ წაშლის
+რიგიდან შესაბამის დასრულებულ ჩანაწერებს.
+ამ ფუნქციის გამორთვაც არ წაშლის არსებულ დასრულებულ ელემენტებს
+რიგიდან; ეს ხელით უნდა გააკეთოთ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
@@ -8916,22 +8952,22 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="961" />
             <source>Interval for auto search alternates (minutes)</source>
-            <translation type="unfinished" />
+            <translation>ალტერნატიული წყაროების ავტომატური ძიების ინტერვალი (წუთები)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>სეგმენტის ზომა (MB, 0 = სეგმენტის ავტომატური ზომა)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>ერთი მომხმარებლისთვის რამდენიმე NMDC ჰაბიდან ერთდროული ატვირთვების დაშვება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>ერთ IP მისამართზე ერთდროული ატვირთვების დაშვება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="319" />
