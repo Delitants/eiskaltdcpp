@@ -126,11 +126,11 @@ msgstr "Σφάλμα συνδεσιμότητας: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Αποκλείστηκε σύνδεση C-C προς κόμβο ('%1%:%2%'; αίτημα από '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Αποκλεισμός '%1%', εντοπίστηκε πιθανή επίθεση DDoS (κόμβος προέλευσης '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -218,7 +218,7 @@ msgstr "Αποτυχία φόρτωσης αρχείου ιδιωτικού κλ
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Τα αποσυμπιεσμένα δεδομένα υπερβαίνουν το όριο μεγέθους"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -238,7 +238,7 @@ msgstr "Χρήστες"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Μη έγκυρη επέκταση λίστας αρχείων (πρέπει να είναι .xml ή .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -286,7 +286,7 @@ msgstr "Αυτόματη σύνδεση ομάδας (μετατράπηκε)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Μη έγκυρη διεύθυνση URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -333,7 +333,7 @@ msgstr "Σφάλμα αποτύπωσης %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Σφάλμα κωδικοποίησης μεταφοράς (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -341,7 +341,7 @@ msgstr "Ατελείωτος βρόγχος προώθησης (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Υπερβολικά πολλά δεδομένα στο σώμα απόκρισης (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -380,7 +380,7 @@ msgstr " Θύρα DHT (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Δημιουργήθηκαν επιτυχώς αντιστοιχίσεις θυρών (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), μέσω της διεπαφής %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
@@ -400,15 +400,15 @@ msgstr "Αδυναμία δημιουργίας νήματος"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Οι αντιστοιχίσεις θυρών ανανεώθηκαν"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Οι αντιστοιχίσεις θυρών αποκαταστάθηκαν"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Αποτυχία ανανέωσης αντιστοιχίσεων θυρών· νέα προσπάθεια σε 60 δευτερόλεπτα"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -432,7 +432,7 @@ msgstr "Θέμα κόμβου:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Πολύ μικρό μέγεθος κοινόχρηστων για λήψη από "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -440,7 +440,7 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Δεν επιτρέπεται η αποστολή αρχείου"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
@@ -532,7 +532,7 @@ msgstr[1] "%1%: Βρέθηκαν %2% αρχεία που ταιριάζουν"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "Η διαδρομή προορισμού για αυτό το στοιχείο δεν είναι διαθέσιμη: %1%· θέστε αυτό το στοιχείο ουράς σε παύση."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
@@ -540,12 +540,12 @@ msgstr "Ασυνέπεια CRC32 (Έλεγχος SFV)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1% : Βρέθηκαν %2% αρχεία που ταιριάζουν"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "Σφάλμα SSL: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -617,7 +617,7 @@ msgstr "Σφάλμα: η ρύθμιση δεν βρέθηκε! "
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "Ρύθμιση πυρήνα "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
@@ -643,11 +643,11 @@ msgstr ""
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Παράλειψη κοινόχρηστου αρχείου: %1% (Μέγεθος: %2%)"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Παράλειψη προσωρινού κοινόχρηστου αρχείου: %1% (Μέγεθος: %2%)"
 
 #: ../ShareManager.cpp:1147
 msgid ""
@@ -679,7 +679,7 @@ msgstr "Ολοκληρώθηκε η ανανέωση της λίστας αρχ�
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Η ανανέωση λίστας αρχείων απορρίφθηκε επειδή άλλαξαν οι κοινόχρηστοι κατάλογοι"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -693,23 +693,23 @@ msgstr "Άγνωστο λάθος: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Μη υποστηριζόμενος αλγόριθμος κρυπτογράφησης Shadowsocks"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Αποτυχία αρχικοποίησης παραγωγής κλειδιού Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Αποτυχία παραγωγής υποκλειδιού Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Αποτυχία αρχικοποίησης κρυπτογράφησης Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Αποτυχία κρυπτογράφησης Shadowsocks"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -719,15 +719,15 @@ msgstr "Απέτυχε η σύνδεση του εξυπηρετητή socks"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Ο διακομιστής Shadowsocks απέτυχε να δημιουργήσει σύνδεση"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Δεν έχει οριστεί κωδικός πρόσβασης Shadowsocks"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Η διεύθυνση προορισμού Shadowsocks δεν είναι έγκυρη"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -745,83 +745,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Αποτυχία αρχικοποίησης περιβάλλοντος TLS SOCKS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Αποτυχία αρχικοποίησης συνεδρίας TLS SOCKS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Αποτυχία σύνδεσης συνεδρίας TLS SOCKS με την υποδοχή"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Έληξε το χρονικό όριο χειραψίας TLS SOCKS"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Αποτυχία χειραψίας TLS SOCKS: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Αποτυχία ανάγνωσης TLS SOCKS: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Αποτυχία εγγραφής TLS SOCKS: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Μη έγκυρη απόκριση αναμετάδοσης UDP Shadowsocks"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Μη έγκυρη διεύθυνση απόκρισης αναμετάδοσης UDP Shadowsocks"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Αποτυχία αποκρυπτογράφησης απόκρισης αναμετάδοσης UDP Shadowsocks"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Αποτυχία δημιουργίας salt Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Αποτυχία δημιουργίας συμπλήρωσης Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Αποτυχία αποκρυπτογράφησης Shadowsocks"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Μη έγκυρο μέγεθος ωφέλιμου φορτίου Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Η ροή Shadowsocks τελείωσε με ελλιπές πλαίσιο"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Αποτυχία δημιουργίας συνεδρίας UDP Shadowsocks"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Η αναμετάδοση UDP Shadowsocks είναι απενεργοποιημένη"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Η αναμετάδοση UDP Shadowsocks δεν έχει ρυθμιστεί"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Αποτυχία δημιουργίας nonce UDP Shadowsocks"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Εξαντλήθηκε ο μετρητής πακέτων UDP Shadowsocks"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -833,7 +833,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Η διεύθυνση προορισμού UDP SOCKS5 δεν είναι έγκυρη"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -874,7 +874,7 @@ msgstr "%.02f KiB"
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
@@ -884,7 +884,7 @@ msgstr "%.02f MiB"
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
@@ -894,7 +894,7 @@ msgstr "%.02f GiB"
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
@@ -904,7 +904,7 @@ msgstr "%.02f TiB"
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
@@ -914,7 +914,7 @@ msgstr "%.02f PiB"
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
@@ -936,40 +936,40 @@ msgstr "Γράφηκαν περισσότερα bytes απ' ότι αιτήθη�
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Η αρχική σύνδεση DHT ξεκίνησε"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Σφάλμα αρχικής σύνδεσης DHT: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Η αρχική σύνδεση DHT ολοκληρώθηκε επιτυχώς."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Δημοσιεύτηκε αρχείο: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Δημοσιεύτηκε μερικό αρχείο: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: Ορίστηκε κατάσταση UDP πίσω από τείχος προστασίας (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Η θύρα UDP μας φαίνεται ανοιχτή (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "Το DHT ενεργοποιήθηκε ξανά"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "Το DHT απενεργοποιήθηκε: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "Σφάλμα SSL: %1% (%2%, %3%)"

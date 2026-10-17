@@ -110,7 +110,14 @@ EiskaltDC++ is a cross-platform program that uses the Direct Connect and ADC pro
 Keys:
   -h, --help	 Show this message
   -V, --version	 Show version string</source>
-            <translation type="unfinished" />
+            <translation>Χρήση:
+  eiskaltdcpp-qt &lt;magnet link&gt; &lt;dchub://link&gt; &lt;adc(s)://link&gt;
+  eiskaltdcpp-qt &lt;Key&gt;
+Το EiskaltDC++ είναι πρόγραμμα πολλαπλών πλατφορμών που χρησιμοποιεί τα πρωτόκολλα Direct Connect και ADC.
+
+Επιλογές:
+  -h, --help	 Εμφάνιση αυτού του μηνύματος
+  -V, --version	 Εμφάνιση έκδοσης</translation>
         </message>
     </context>
     <context>
@@ -1833,12 +1840,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Εξόντωση όλων των ανθρώπων;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Επιβεβαίωση ενέργειας</translation>
         </message>
         <message>
             <source>Enter user nick</source>
@@ -1952,7 +1959,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Αντιστοίχιση όλων των λιστών</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
@@ -2136,12 +2143,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Κονσόλα αποσφαλμάτωσης</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Σημειωματάριο</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2276,27 +2283,27 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Αρχεία torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Άνοιγμα magnet ή αρχείου torrent</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Εισάγετε σύνδεσμο magnet ή τοπική διαδρομή .torrent:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Η υποστήριξη torrent δεν είναι έτοιμη.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Έξοδος</translation>
+            <translation>Έξοδος</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2320,7 +2327,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Πηγαίος κώδικας (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2346,7 +2353,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | Κόμβοι DHT: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2490,167 +2497,167 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3272" />
             <source>EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.</source>
-            <translation type="unfinished" />
+            <translation>Το EiskaltDC++ είναι γραφικός πελάτης για τα πρωτόκολλα Direct Connect και ADC.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3275" />
             <source>DC++ core version: %1 (modified)</source>
-            <translation type="unfinished" />
+            <translation>Έκδοση πυρήνα DC++: %1 (τροποποιημένη)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3278" />
             <source>Home page: </source>
-            <translation type="unfinished" />
+            <translation>Αρχική σελίδα: </translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3283" />
             <source>Total up: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Συνολική αποστολή: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3285" />
             <source>Total down: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Συνολική λήψη: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3287" />
             <source>Ratio: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Αναλογία: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Χρησιμοποιήστε το &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; για αναφορά σφαλμάτων.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
             <source>&lt;b&gt;Developers&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Προγραμματιστές&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
             <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Αρχεία γραφικών&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3373" />
             <source>Russian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ρωσική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3379" />
             <source>Belarusian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Λευκορωσική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3383" />
             <source>Hungarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ουγγρική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3387" />
             <source>French translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Γαλλική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3390" />
             <source>Polish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Πολωνική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3393" />
             <source>Ukrainian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ουκρανική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Σερβική (Κυριλλικά) μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
             <source>Serbian (Latin) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Σερβική (Λατινικά) μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3405" />
             <source>Spanish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ισπανική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
             <source>Basque translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Βασκική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
             <source>Bulgarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Βουλγαρική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3415" />
             <source>Slovak translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Σλοβακική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3418" />
             <source>Czech translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Τσεχική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3421" />
             <source>German translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Γερμανική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3426" />
             <source>Greek translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ελληνική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3429" />
             <source>Italian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ιταλική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3433" />
             <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Πορτογαλική (Βραζιλία) μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3436" />
             <source>Vietnamese translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Βιετναμική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3439" />
             <source>Chinese (China) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Κινεζική (Κίνα) μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3442" />
             <source>Swedish (Sweden) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Σουηδική (Σουηδία) μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Τουρκική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Δανική μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Γεωργιανή μετάφραση&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
@@ -2670,22 +2677,22 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Ρύθμιση ορίων ταχύτητας</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Απαιτείται ψευδώνυμο</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Εισάγετε ψευδώνυμο στις Προτιμήσεις πριν συνδεθείτε σε κόμβους.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2696,7 +2703,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Λήψη προγράμματος</translation>
         </message>
         <message>
             <source>Please use &lt;a href="https://github.com/eiskaltdcpp/eiskaltdcpp/issues"&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
@@ -2706,18 +2713,18 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3302" />
             <location filename="../src/MainWindow.cpp" line="3330" />
             <source>lead developer</source>
-            <translation type="unfinished" />
+            <translation>επικεφαλής προγραμματιστής</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>υπεύθυνος εκδόσεων</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>υπεύθυνος συντήρησης Arch Linux</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2725,43 +2732,43 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3344" />
             <location filename="../src/MainWindow.cpp" line="3349" />
             <source>developer</source>
-            <translation type="unfinished" />
+            <translation>προγραμματιστής</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>υπεύθυνος συντήρησης Debian/Ubuntu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>συντονιστής μεταφράσεων</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>υπεύθυνος συντήρησης macOS</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>υπεύθυνος συντήρησης MS Windows</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>δημιουργός του λογότυπου του έργου</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>μικρές ενημερώσεις του λογότυπου</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
             <source>Participate in the translation. It is easy:</source>
-            <translation type="unfinished" />
+            <translation>Συμμετέχετε στη μετάφραση. Είναι εύκολο:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3491" />
@@ -2771,7 +2778,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[Χωρίς όνομα]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
@@ -3110,23 +3117,28 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Εντοπίστηκαν παλιές ή ασύμβατες ρυθμίσεις γραφικού περιβάλλοντος του EiskaltDC++.
+
+Διατηρήθηκαν ασφαλείς ρυθμίσεις όπως κόμβοι, στοιχεία λογαριασμού, κοινή χρήση, λήψεις και ιστορικό. Το θέμα, τα χρώματα συνομιλίας, η διάταξη παραθύρων και η κατάσταση στηλών πινάκων από την παλιά διαμόρφωση επαναφέρθηκαν, επειδή μπορούν να διαταράξουν τη ζωντανή εναλλαγή φωτεινού/σκοτεινού θέματος στο τρέχον macOS.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Ένα αντίγραφο ασφαλείας της προηγούμενης διαμόρφωσης γραφικού περιβάλλοντος αποθηκεύτηκε εδώ:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Δεν ήταν δυνατή η δημιουργία αντιγράφου ασφαλείας της προηγούμενης διαμόρφωσης γραφικού περιβάλλοντος, αλλά οι ασύμβατες οπτικές ρυθμίσεις απορρίφθηκαν.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>Οι ρυθμίσεις EiskaltDC++ ενημερώθηκαν</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3149,43 +3161,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Εικόνες (%1);;Όλα τα αρχεία (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Σύρετε για αλλαγή μεγέθους της περιοχής εισαγωγής</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Κάντε κλικ για ανάπτυξη ή σύμπτυξη</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Κρυφό περιεχόμενο: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Άνοιγμα σε εξωτερική εφαρμογή</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Κλείσιμο</translation>
+            <translation>Κλείσιμο</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Προεπιλογή (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3745,22 +3757,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Εξωτερική/WAN IPv6:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>π.χ. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Διεύθυνση δέσμευσης IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -3791,27 +3803,27 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>Αρχείο χωρών MMDB</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>Διαδρομή προς αρχείο χωρών GeoLite2/MaxMind .mmdb</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Ρύθμιση διευθύνσεων URL αρχικής σύνδεσης DHT</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Διευθύνσεις URL λιστών δημόσιων κόμβων</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Ρύθμιση διευθύνσεων URL λιστών δημόσιων κόμβων</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="543" />
@@ -3873,13 +3885,13 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Δεν βρέθηκε έγκυρη εξωτερική διεύθυνση IPv6!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Δεν βρέθηκε έγκυρη διεύθυνση δέσμευσης IPv6!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="699" />
@@ -4027,12 +4039,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Επιλογή βάσης δεδομένων χωρών MaxMind</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Βάση MaxMind (*.mmdb);;Όλα τα αρχεία (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -7160,7 +7172,7 @@ Sorted by downloading peers, then uploading peers.</source>
             <location filename="../ui/UIAntiSpam.ui" line="223" />
             <location filename="../ui/UIAntiSpam.ui" line="289" />
             <source>C</source>
-            <translation type="unfinished" />
+            <translation>C</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="171" />
@@ -8240,7 +8252,7 @@ and obtain your external IP address as well.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>Να μην επιτρέπεται αντικατάσταση από Hub/UPnP/DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
@@ -8459,7 +8471,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Minimal cost&amp;quot;&lt;/span&gt; should be used for &amp;quot;filler data&amp;quot; where slow transmission doesn't matter&lt;/p&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;At most one of these TOS values can be specified. Linux sends &lt;span style=" font-weight:600;"&gt;&amp;quot;Low delay&amp;quot;&lt;/span&gt; datagrams first by default, but the exact behaviour depends on the configured queueing discipline.&lt;span style=" font-weight:600;"&gt; Warning! This option needs superuser privileges!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Ορισμός του πεδίου Type-Of-Service (TOS) που αποστέλλεται με κάθε &lt;a href="https://en.wikipedia.org/wiki/IP_packet"&gt;&lt;span style=" text-decoration: underline; color:#0057ae;"&gt;πακέτο IP&lt;/span&gt;&lt;/a&gt; που προέρχεται από αυτή την υποδοχή. Χρησιμοποιείται για προτεραιοποίηση πακέτων στο δίκτυο. Το TOS είναι ένα byte. Έχουν οριστεί ορισμένες τυπικές σημαίες TOS: &lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Χαμηλή καθυστέρηση&amp;quot;&lt;/span&gt; για ελαχιστοποίηση καθυστερήσεων στη διαδραστική κίνηση&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Ρυθμαπόδοση&amp;quot;&lt;/span&gt; για βελτιστοποίηση της ρυθμαπόδοσης&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Αξιοπιστία&amp;quot;&lt;/span&gt; για βελτιστοποίηση της αξιοπιστίας&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Ελάχιστο κόστος&amp;quot;&lt;/span&gt; πρέπει να χρησιμοποιείται για &amp;quot;δεδομένα συμπλήρωσης&amp;quot; όπου δεν έχει σημασία η αργή μετάδοση&lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Μπορεί να οριστεί το πολύ μία από αυτές τις τιμές TOS. Το Linux αποστέλλει πρώτα &lt;span style=" font-weight:600;"&gt;&amp;quot;Χαμηλή καθυστέρηση&amp;quot;&lt;/span&gt; τα αυτοδύναμα πακέτα από προεπιλογή, αλλά η ακριβής συμπεριφορά εξαρτάται από τη ρυθμισμένη πολιτική ουράς.&lt;span style=" font-weight:600;"&gt; Προειδοποίηση! Αυτή η επιλογή απαιτεί δικαιώματα υπερχρήστη!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="941" />
@@ -8499,42 +8522,42 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Διευθύνσεις URL αρχικής σύνδεσης DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Διαχωρίστε πολλαπλές διευθύνσεις URL με ερωτηματικά (;)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>Ρυθμίσεις TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>Απενεργοποίηση TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπεται TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>Να απαιτείται TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπονται μη έμπιστα πιστοποιητικά κόμβων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπονται μη έμπιστα πιστοποιητικά πελατών</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
@@ -8674,19 +8697,22 @@ will be set to Highest as priority. (default: 64 KiB)</source>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Αρχεία με μέγεθος ίσο ή μικρότερο από το καθορισμένο, αλλά πάνω από το μέγιστο
+μέγεθος της μέγιστης προτεραιότητας, θα λαμβάνουν υψηλή προτεραιότητα. (προεπιλογή: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Αρχεία με μέγεθος ίσο ή μικρότερο από το καθορισμένο, αλλά πάνω από το μέγιστο μέγεθος
+της μέγιστης και υψηλής προτεραιότητας, θα λαμβάνουν κανονική προτεραιότητα. (προεπιλογή: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Αρχεία με μέγεθος ίσο ή μικρότερο από το καθορισμένο, αλλά πάνω από το μέγιστο μέγεθος της μέγιστης, υψηλής
+και κανονικής προτεραιότητας, θα λαμβάνουν χαμηλή προτεραιότητα. (προεπιλογή: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
@@ -8717,7 +8743,8 @@ and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</sour
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>Αν η ταχύτητα λήψης ενός αρχείου είναι κάτω από την καθορισμένη τιμή,
+η πηγή θα απορρίπτεται. (προεπιλογή: 1024 B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
@@ -8728,7 +8755,8 @@ the source will be dropped. (default: 1024 B/s)</source>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>Χρόνος (σε δευτερόλεπτα) που πρέπει να περάσει από την έναρξη της λήψης
+πριν μπορεί να απορριφθεί μια πηγή. (προεπιλογή: 15 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8736,82 +8764,90 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Μέγιστος χρόνος από τη λήψη του τελευταίου τμήματος δεδομένων
+του αρχείου. Σκοπός είναι η βελτίωση της ακρίβειας μέτρησης
+ταχύτητας και η αποφυγή απόρριψης πηγών που πρόκειται να
+αποσυνδεθούν μόνο λόγω της τρέχουσας αδράνειάς τους. (προεπιλογή: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>Ελάχιστος αριθμός πηγών πριν επιτραπεί η απόρριψη
+οποιασδήποτε πηγής. (προεπιλογή: 1)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Ελάχιστο μέγεθος αρχείου πριν απορριφθούν πηγές (σε KiB). (προεπιλογή: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>Απόρριψη πηγών κάτω από (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
             <source>Check every (s)</source>
-            <translation type="unfinished" />
+            <translation>Έλεγχος κάθε (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>Ελάχιστος χρόνος που παρήλθε (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
             <source>Max inactivity (s)</source>
-            <translation type="unfinished" />
+            <translation>Μέγιστη αδράνεια (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>Ελάχιστες συνδεδεμένες πηγές</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
             <source>Min filesize (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Ελάχιστο μέγεθος αρχείου (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="686" />
             <source>Other options</source>
-            <translation type="unfinished" />
+            <translation>Άλλες επιλογές</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="711" />
             <source>Set lowest priority for newly added files larger than low priority size</source>
-            <translation type="unfinished" />
+            <translation>Ορισμός ελάχιστης προτεραιότητας για νέα αρχεία μεγαλύτερα από το μέγεθος χαμηλής προτεραιότητας</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="714" />
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>Όταν είναι ενεργό, αρχεία μεγαλύτερα από το μέγιστο μέγεθος χαμηλής προτεραιότητας
+λαμβάνουν ελάχιστη προτεραιότητα.
+Αν είναι ανενεργό, τα αρχεία λαμβάνουν κανονική προτεραιότητα.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματη απόρριψη αργών πηγών για όλα τα στοιχεία ουράς (εκτός λιστών αρχείων)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η επιλογή αφαιρεί τις αργές πηγές για όλα τα στοιχεία ουράς (εκτός λιστών αρχείων).
+Για ενεργοποίηση της αυτόματης απόρριψης, ενεργοποιήστε την «Αυτόματη απόρριψη αργών πηγών για όλα τα στοιχεία ουράς»
+ή την «Αφαίρεση αργών λιστών αρχείων» (ή και τις δύο).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
             <source>Remove slow filelists</source>
-            <translation type="unfinished" />
+            <translation>Αφαίρεση αργών λιστών αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="746" />
@@ -8819,23 +8855,27 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Με αυτή την επιλογή ενεργή, το EiskaltDC++ θα διαγράφει λίστες αρχείων των οποίων η ταχύτητα
+αναγνωρίστηκε ως πολύ αργή.
+Για ενεργοποίηση της αυτόματης απόρριψης, ενεργοποιήστε την «Αυτόματη απόρριψη αργών πηγών για όλα τα στοιχεία ουράς»
+ή την «Αφαίρεση αργών λιστών αρχείων» (ή και τις δύο).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>Να μην αφαιρείται η πηγή κατά την αυτόματη απόρριψη, μόνο αποσύνδεση</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>Με αυτή την επιλογή ενεργή, οι πηγές θα αποσυνδέονται μόνο
+χωρίς να αφαιρούνται από την ουρά.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
             <source>Automatically search for alternative download locations</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματη αναζήτηση εναλλακτικών τοποθεσιών λήψης</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="778" />
@@ -8845,12 +8885,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>Κάθε λίγα λεπτά, ο πελάτης θα αναζητά αρχεία στην
+ουρά λήψεών σας για περισσότερες τοποθεσίες λήψης (χρήστες/πηγές).
+Η αυτόματη αναζήτηση βρίσκει ακριβείς αντιστοιχίες μέσω κατακερματισμού.
+Το μειονέκτημα είναι ότι ίσως δεν βρει πολλές επιπλέον πηγές
+και θα εμποδίζει τις χειροκίνητες αναζητήσεις σε κόμβους όπου
+ισχύει προκαθορισμένο ελάχιστο διάστημα αναζήτησης.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματη αντιστοίχιση ουράς για αποτελέσματα αυτόματης αναζήτησης</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8862,12 +8907,19 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποιήστε για αυτόματη λήψη της λίστας ενός χρήστη και αντιστοίχισή της
+ως πηγής για αρχεία στην ουρά λήψεών σας όταν αυτός έχει
+εντοπιστεί ως πηγή για ένα από τα αρχεία που λαμβάνετε.
+Αν λαμβάνετε σύνολα αρχείων, αυτός ο χρήστης πιθανώς είναι πηγή
+για πολλά περισσότερα αρχεία που λαμβάνετε. Ενεργοποιήστε αν δεν είστε βέβαιοι.
+Τα μειονεκτήματα είναι ότι μπορεί να προστεθούν πιο αργές πηγές, αυξάνοντας
+πιθανώς τον χρόνο ολοκλήρωσης της λήψης,
+και ότι θα λαμβάνετε πολλές λίστες αρχείων.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
             <source>Skip zero-byte files</source>
-            <translation type="unfinished" />
+            <translation>Παράλειψη αρχείων μηδενικού μεγέθους</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="818" />
@@ -8875,39 +8927,44 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>Όταν είναι ενεργή αυτή η επιλογή, αρχεία μηδενικού μεγέθους που
+προσπαθείτε να λάβετε θα παραλείπονται σιωπηρά.
+Μερικές φορές τα κενά αρχεία περιέχουν πληροφορίες μέσω του ονόματός τους.
+Ωστόσο κάθε αρχείο, ακόμη και κενό, καταλαμβάνει κάποιο χώρο στον δίσκο.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
             <source>Don't download files already in share</source>
-            <translation type="unfinished" />
+            <translation>Να μη λαμβάνονται αρχεία που είναι ήδη κοινόχρηστα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η επιλογή εμποδίζει τη λήψη αρχείων
+που υπάρχουν ήδη σε έναν από τους κοινόχρηστους καταλόγους σας.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
             <source>Don't download files already in the queue</source>
-            <translation type="unfinished" />
+            <translation>Να μη λαμβάνονται αρχεία που είναι ήδη στην ουρά</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η επιλογή εμποδίζει τη λήψη αρχείων
+που υπάρχουν ήδη στην ουρά σας.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
             <source>SFV Check</source>
-            <translation type="unfinished" />
+            <translation>Έλεγχος SFV</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="873" />
             <source>Keep downloaded filelists</source>
-            <translation type="unfinished" />
+            <translation>Διατήρηση ληφθεισών λιστών αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="876" />
@@ -8920,12 +8977,20 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποιήστε αν θέλετε να διατηρούνται οι ληφθείσες λίστες αρχείων
+στην ουρά λήψεων μετά την ολοκλήρωσή τους.
+Μετά τη λήψη, τα στοιχεία ουράς θα έχουν κατάσταση «Ολοκληρώθηκε»
+και μπορείτε να διαγράψετε αυτές τις εγγραφές οποιαδήποτε στιγμή αργότερα.
+Αν μετακινήσετε ή διαγράψετε τα ληφθέντα αρχεία από
+τη θέση προορισμού τους, δεν διαγράφονται αυτόματα
+οι αντίστοιχες ολοκληρωμένες εγγραφές από την ουρά.
+Αν απενεργοποιήσετε αυτή τη λειτουργία, δεν αφαιρούνται ούτε τα ήδη ολοκληρωμένα στοιχεία
+από την ουρά· πρέπει να το κάνετε χειροκίνητα.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
             <source>Keep downloaded files</source>
-            <translation type="unfinished" />
+            <translation>Διατήρηση ληφθέντων αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="895" />
@@ -8941,17 +9006,28 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποιήστε αν θέλετε να διατηρούνται τα ληφθέντα αρχεία και οι φάκελοι
+στην ουρά λήψεων μετά την ολοκλήρωσή τους.
+Μετά τη λήψη, τα στοιχεία ουράς θα έχουν κατάσταση «Ολοκληρώθηκε»
+και μπορείτε να διαγράψετε αυτές τις εγγραφές οποιαδήποτε στιγμή αργότερα.
+Με αυτή τη λειτουργία μπορείτε να βλέπετε ποια αρχεία έχουν ήδη
+ληφθεί απευθείας στην ουρά λήψεων, χωρίς να χρειάζεται
+να ελέγχετε το παράθυρο ολοκληρωμένων λήψεων.
+Αν μετακινήσετε ή διαγράψετε τα ληφθέντα αρχεία από
+τη θέση προορισμού τους, δεν διαγράφονται αυτόματα
+οι αντίστοιχες ολοκληρωμένες εγγραφές από την ουρά.
+Αν απενεργοποιήσετε αυτή τη λειτουργία, δεν αφαιρούνται ούτε τα ήδη ολοκληρωμένα στοιχεία
+από την ουρά· πρέπει να το κάνετε χειροκίνητα.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
             <source>Compressed transfers</source>
-            <translation type="unfinished" />
+            <translation>Συμπιεσμένες μεταφορές</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="925" />
             <source>Segmented downloads</source>
-            <translation type="unfinished" />
+            <translation>Τμηματικές λήψεις</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="940" />
@@ -8961,22 +9037,22 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="961" />
             <source>Interval for auto search alternates (minutes)</source>
-            <translation type="unfinished" />
+            <translation>Διάστημα αυτόματης αναζήτησης εναλλακτικών πηγών (λεπτά)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>Μέγεθος τμήματος (σε MB, 0 = αυτόματο μέγεθος τμήματος)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπονται ταυτόχρονες αποστολές προς τον ίδιο χρήστη μέσω πολλών κόμβων NMDC</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>Να επιτρέπονται ταυτόχρονες αποστολές προς την ίδια IP</translation>
         </message>
     </context>
     <context>
@@ -8984,12 +9060,12 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="24" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Βασικά</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="30" />
             <source>Language file</source>
-            <translation type="unfinished" />
+            <translation>Αρχείο γλώσσας</translation>
         </message>
         <message>
             <source>Change</source>
@@ -8998,146 +9074,148 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="61" />
             <source>Remember window position on exit</source>
-            <translation type="unfinished" />
+            <translation>Απομνημόνευση θέσης παραθύρου κατά την έξοδο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="71" />
             <source>Always hide window to system tray at startup</source>
-            <translation type="unfinished" />
+            <translation>Πάντα απόκρυψη παραθύρου στην περιοχή ειδοποιήσεων κατά την εκκίνηση</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="78" />
             <source>Always show window at startup</source>
-            <translation type="unfinished" />
+            <translation>Πάντα εμφάνιση παραθύρου κατά την εκκίνηση</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="124" />
             <source>Don't show icons in menus (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Να μην εμφανίζονται εικονίδια στα μενού (απαιτεί επανεκκίνηση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="132" />
             <source>Use default ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Χρήση προεπιλεγμένης γραμμής εργαλείων (απαιτεί επανεκκίνηση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="137" />
             <source>Use multi-line ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Χρήση γραμμής εργαλείων πολλών γραμμών (απαιτεί επανεκκίνηση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="142" />
             <source>Use SideBar instead of ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Χρήση πλευρικής μπάρας αντί γραμμής εργαλείων (απαιτεί επανεκκίνηση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="164" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>Συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="170" />
             <source>Show joins</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση συνδέσεων χρηστών</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="180" />
             <source>Show joins only for favorite users</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση συνδέσεων μόνο αγαπημένων χρηστών</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="187" />
             <source>Show hidden users</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση κρυφών χρηστών</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="194" />
             <source>Ignore private messages from Hub</source>
-            <translation type="unfinished" />
+            <translation>Παράβλεψη προσωπικών μηνυμάτων από τον κόμβο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="201" />
             <source>Ignore private messages from Bot</source>
-            <translation type="unfinished" />
+            <translation>Παράβλεψη προσωπικών μηνυμάτων από ρομπότ</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="208" />
             <source>Redirect messages from Bot to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Ανακατεύθυνση μηνυμάτων ρομπότ στην κύρια συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="215" />
             <source>Redirect new personal messages to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Ανακατεύθυνση νέων προσωπικών μηνυμάτων στην κύρια συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="222" />
             <source>Do not change focus on new incoming private messages</source>
-            <translation type="unfinished" />
+            <translation>Να μην αλλάζει η εστίαση με νέα εισερχόμενα προσωπικά μηνύματα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="232" />
             <source>Use separator for unread messages in the chat</source>
-            <translation type="unfinished" />
+            <translation>Χρήση διαχωριστικού για μη αναγνωσμένα μηνύματα στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="239" />
             <source>Filter kick-messages from the chat</source>
-            <translation type="unfinished" />
+            <translation>Φιλτράρισμα μηνυμάτων αποβολής από τη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="246" />
             <source>Use Ctrl+Enter to send messages</source>
-            <translation type="unfinished" />
+            <translation>Χρήση Ctrl+Enter για αποστολή μηνυμάτων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="256" />
             <source>Enable emoticons</source>
-            <translation type="unfinished" />
+            <translation>Ενεργοποίηση εικονιδίων συναισθημάτων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="263" />
             <source>If checked, you'll see emoticons even in the middle of words.
 If unchecked, you'll see emoticons only if they are isolated
 from other words by spaces.</source>
-            <translation type="unfinished" />
+            <translation>Αν είναι επιλεγμένο, θα βλέπετε εικονίδια συναισθημάτων ακόμη και μέσα σε λέξεις.
+Αν δεν είναι επιλεγμένο, θα τα βλέπετε μόνο όταν χωρίζονται
+από άλλες λέξεις με κενά.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="268" />
             <source>Force emoticon parsing</source>
-            <translation type="unfinished" />
+            <translation>Υποχρεωτική ανάλυση εικονιδίων συναισθημάτων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="275" />
             <source>Use emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Χρήση πλαισίου εικονιδίων συναισθημάτων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="282" />
             <source>Autohide emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματη απόκρυψη πλαισίου εικονιδίων συναισθημάτων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="303" />
             <source>Chat (extended)</source>
-            <translation type="unfinished" />
+            <translation>Συνομιλία (εκτεταμένη)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="317" />
             <source>Double click action</source>
-            <translation type="unfinished" />
+            <translation>Ενέργεια διπλού κλικ</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="331" />
             <location filename="../ui/UISettingsGUI.ui" line="350" />
             <source>Insert nick into input widget</source>
-            <translation type="unfinished" />
+            <translation>Εισαγωγή ψευδωνύμου στο πεδίο εισαγωγής</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="336" />
             <location filename="../ui/UISettingsGUI.ui" line="355" />
             <source>Get file list</source>
-            <translation type="unfinished" />
+            <translation>Λήψη λίστας αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="341" />
@@ -9148,7 +9226,7 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="377" />
             <source>Application unit base</source>
-            <translation type="unfinished" />
+            <translation>Βάση μονάδων εφαρμογής</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="421" />
@@ -9158,57 +9236,57 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="440" />
             <source>Middle click action</source>
-            <translation type="unfinished" />
+            <translation>Ενέργεια μεσαίου κλικ</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση kibibyte (KiB) ή kilobyte (KB), κ.λπ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Συμπεριφορά παραθύρου</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Ελαχιστοποίηση στο εικονίδιο κατάστασης με το κουμπί κλεισίματος</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Εικονίδιο κατάστασης</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Χρήση έγχρωμου εικονιδίου κατάστασης</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Χρήση μονόχρωμου εικονιδίου κατάστασης</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>Μετρικό</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
             <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use AM/PM display. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use am/pm display. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Οι παρακάτω εκφράσεις μπορούν να χρησιμοποιηθούν για την ώρα:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Έκφραση&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Αποτέλεσμα&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;η ώρα χωρίς αρχικό μηδενικό (0 έως 23 ή 1 έως 12 με εμφάνιση AM/PM)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;η ώρα με αρχικό μηδενικό (00 έως 23 ή 01 έως 12 με εμφάνιση AM/PM)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;η ώρα χωρίς αρχικό μηδενικό (0 έως 23, ακόμη και με εμφάνιση AM/PM)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;η ώρα με αρχικό μηδενικό (00 έως 23, ακόμη και με εμφάνιση AM/PM)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα λεπτά χωρίς αρχικό μηδενικό (0 έως 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα λεπτά με αρχικό μηδενικό (00 έως 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα δευτερόλεπτα χωρίς αρχικό μηδενικό (0 έως 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα δευτερόλεπτα με αρχικό μηδενικό (00 έως 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα χιλιοστά δευτερολέπτου χωρίς αρχικά μηδενικά (0 έως 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;τα χιλιοστά δευτερολέπτου με αρχικά μηδενικά (000 έως 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;χρήση εμφάνισης AM/PM. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; θα αντικατασταθεί με &amp;quot;AM&amp;quot; ή &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;χρήση εμφάνισης am/pm. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; θα αντικατασταθεί με &amp;quot;am&amp;quot; ή &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;η ζώνη ώρας (για παράδειγμα &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
             <source>Default action with magnet</source>
-            <translation type="unfinished" />
+            <translation>Προεπιλεγμένη ενέργεια για magnet</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="473" />
             <source>Ask</source>
-            <translation type="unfinished" />
+            <translation>Ερώτηση</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="478" />
@@ -9224,80 +9302,81 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="508" />
             <source>Remember outgoing messages (0 = don't remember)</source>
-            <translation type="unfinished" />
+            <translation>Απομνημόνευση εξερχόμενων μηνυμάτων (0 = χωρίς απομνημόνευση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="537" />
             <source>Maximum paragraphs</source>
-            <translation type="unfinished" />
+            <translation>Μέγιστος αριθμός παραγράφων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="563" />
             <source>Separator in chat</source>
-            <translation type="unfinished" />
+            <translation>Διαχωριστικό στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="592" />
             <source>Highlight favorite users in user list</source>
-            <translation type="unfinished" />
+            <translation>Επισήμανση αγαπημένων χρηστών στη λίστα χρηστών</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="599" />
             <source>Depending on hub configuration: information about
 them is usually available only to operators</source>
-            <translation type="unfinished" />
+            <translation>Ανάλογα με τη διαμόρφωση του κόμβου: πληροφορίες για
+αυτούς συνήθως είναι διαθέσιμες μόνο στους διαχειριστές</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="603" />
             <source>Show ip-addresses of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση διευθύνσεων IP χρηστών στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="610" />
             <source>Show country of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση χώρας χρηστών στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="617" />
             <source>Parse BBCode</source>
-            <translation type="unfinished" />
+            <translation>Ανάλυση BBCode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="638" />
             <source>Colors</source>
-            <translation type="unfinished" />
+            <translation>Χρώματα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="644" />
             <source>Text colors in chat</source>
-            <translation type="unfinished" />
+            <translation>Χρώματα κειμένου στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="666" />
             <source>Highlighting of search results in the chat</source>
-            <translation type="unfinished" />
+            <translation>Επισήμανση αποτελεσμάτων αναζήτησης στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="675" />
             <location filename="../ui/UISettingsGUI.ui" line="733" />
             <source>Color</source>
-            <translation type="unfinished" />
+            <translation>Χρώμα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="695" />
             <location filename="../ui/UISettingsGUI.ui" line="750" />
             <source>Transparency</source>
-            <translation type="unfinished" />
+            <translation>Διαφάνεια</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="724" />
             <source>Highlighting of already shared files</source>
-            <translation type="unfinished" />
+            <translation>Επισήμανση ήδη κοινόχρηστων αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="779" />
             <source>Transfer colors</source>
-            <translation type="unfinished" />
+            <translation>Χρώματα μεταφορών</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="802" />
@@ -9307,17 +9386,17 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="829" />
             <source>Reset</source>
-            <translation type="unfinished" />
+            <translation>Επαναφορά</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="841" />
             <source>Change background color in the chat</source>
-            <translation type="unfinished" />
+            <translation>Αλλαγή χρώματος φόντου στη συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
-            <translation type="unfinished" />
+            <translation>Γραμματοσειρές</translation>
         </message>
     </context>
     <context>
@@ -9686,12 +9765,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="27" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Βασικά</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="33" />
             <source>View share in simple mode</source>
-            <translation type="unfinished" />
+            <translation>Προβολή κοινόχρηστων σε απλή λειτουργία</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="65" />
@@ -9716,27 +9795,27 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Προσθήκη</translation>
+            <translation>Προσθήκη</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Αφαίρεση</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
             <source>Exceptions</source>
-            <translation type="unfinished" />
+            <translation>Εξαιρέσεις</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="149" />
             <source>Don't share files and folders containing:</source>
-            <translation type="unfinished" />
+            <translation>Να μη διαμοιράζονται αρχεία και φάκελοι που περιέχουν:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="156" />
             <source>Here you can specify templates for files you don't want to share. </source>
-            <translation type="unfinished" />
+            <translation>Εδώ μπορείτε να ορίσετε πρότυπα για αρχεία που δεν θέλετε να διαμοιράζεστε. </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="165" />
@@ -9746,7 +9825,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="175" />
             <source>Select and add the directory</source>
-            <translation type="unfinished" />
+            <translation>Επιλογή και προσθήκη καταλόγου</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="185" />
@@ -9766,7 +9845,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="233" />
             <source>Follow symlinks</source>
-            <translation type="unfinished" />
+            <translation>Ακολούθηση συμβολικών συνδέσμων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="246" />
@@ -9775,72 +9854,76 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>Διαμοιρασμός αρχείων με το γνώρισμα Hidden και αρχείων μέσα σε κατάλογο με
+το γνώρισμα Hidden.
+Όταν είναι ανενεργό, αρχεία που αρχίζουν με . (τελεία) δεν διαμοιράζονται.
+Σημείωση: απαιτείται ανανέωση της λίστας αρχείων,
+και ο πελάτης μπορεί να φαίνεται προσωρινά παγωμένος.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
             <source>Share hidden files</source>
-            <translation type="unfinished" />
+            <translation>Διαμοιρασμός κρυφών αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="266" />
             <source>Share temporary files</source>
-            <translation type="unfinished" />
+            <translation>Διαμοιρασμός προσωρινών αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>Παράλειψη αρχείων μηδενικού μεγέθους</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
             <source>Auto remove non-existing directories</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματη αφαίρεση ανύπαρκτων καταλόγων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="289" />
             <source>Use fast hash</source>
-            <translation type="unfinished" />
+            <translation>Χρήση γρήγορου κατακερματισμού</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="302" />
             <source>Buffer size (MiB)</source>
-            <translation type="unfinished" />
+            <translation>Μέγεθος προσωρινής μνήμης (MiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="315" />
             <source>8</source>
-            <translation type="unfinished" />
+            <translation>8</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
             <source>FastHash options (restart needed)</source>
-            <translation type="unfinished" />
+            <translation>Επιλογές FastHash (απαιτείται επανεκκίνηση)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="376" />
             <source>Private page mapping</source>
-            <translation type="unfinished" />
+            <translation>Ιδιωτική αντιστοίχιση σελίδων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="383" />
             <source>No reserve</source>
-            <translation type="unfinished" />
+            <translation>Χωρίς δέσμευση χώρου</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="397" />
             <source>Proactive read from disk</source>
-            <translation type="unfinished" />
+            <translation>Προληπτική ανάγνωση από δίσκο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>Χρήση αναζήτησης ADL μόνο στη δική σας λίστα αρχείων</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
             <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Αυτόματο άνοιγμα επιπλέον υποδοχής αν η ταχύτητα είναι κάτω από (KiB/s, 0 = απεριόριστο)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="440" />
@@ -9849,39 +9932,44 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>Αν η μέση ταχύτητα αποστολής πέσει κάτω από την καθορισμένη τιμή,
+θα χορηγείται μια επιπλέον υποδοχή αποστολής.
+Αυτές οι υποδοχές χορηγούνται το πολύ μία φορά κάθε 30 δευτερόλεπτα.
+Αν αυξηθεί η ταχύτητα των αρχικών αποστολών,
+η χορηγηθείσα υποδοχή δεν θα κλείσει.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>Καθυστέρηση κατακερματισμού στην εκκίνηση (δευτερόλεπτα, -1 = απεριόριστο)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
             <location filename="../ui/UISettingsSharing.ui" line="511" />
             <source>Here you can set time interval of auto refreshing your share.</source>
-            <translation type="unfinished" />
+            <translation>Εδώ μπορείτε να ορίσετε το διάστημα αυτόματης ανανέωσης των κοινόχρηστων αρχείων σας.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="495" />
             <source>Auto refresh time (minutes, 0 = off)</source>
-            <translation type="unfinished" />
+            <translation>Χρόνος αυτόματης ανανέωσης (λεπτά, 0 = ανενεργό)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Μέγιστη ταχύτητα κατακερματισμού (MB/s) (0 = απεριόριστο)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />
             <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
-            <translation type="unfinished" />
+            <translation>Μπορείτε να περιορίσετε τη μέγιστη ταχύτητα κατακερματισμού εδώ
+αν το σύστημά σας επιβραδύνεται κατά τον κατακερματισμό αρχείων.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="554" />
             <source>Upload slots</source>
-            <translation type="unfinished" />
+            <translation>Υποδοχές αποστολής</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="564" />
@@ -9894,7 +9982,15 @@ There's a max of 3 connections in addition to normal slots,
 these are called mini slots.
 Note: If a user leaves the hub, EiskaltDC++ will close his slots;
 if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</source>
-            <translation type="unfinished" />
+            <translation>Ρυθμίστε τον αριθμό υποδοχών που μπορούν να καταλαμβάνουν άλλοι χρήστες
+για να λαμβάνουν αρχεία από εσάς. Ένας απομακρυσμένος χρήστης μπορεί να χρησιμοποιεί μόνο
+μία υποδοχή για κάθε κοινό σας κόμβο.
+Το EiskaltDC++ υποστηρίζει αποστολή λιστών αρχείων και αρχείων κάτω από 64 KiB
+σε άλλους χρήστες DC++ χωρίς να απαιτείται υποδοχή.
+Εκτός των κανονικών υποδοχών επιτρέπονται το πολύ 3 επιπλέον συνδέσεις,
+που ονομάζονται μίνι υποδοχές.
+Σημείωση: Αν ένας χρήστης αποχωρήσει από τον κόμβο, το EiskaltDC++ κλείνει τις υποδοχές του·
+αν επιστρέψει μέσα σε 10 λεπτά, το EiskaltDC++ θα του χορηγήσει υποδοχή.</translation>
         </message>
     </context>
     <context>
@@ -10143,12 +10239,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>Ρύθμιση γραφικού περιβάλλοντος %1: %2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>Αλλαγή ρύθμισης γραφικού περιβάλλοντος %1 σε %2</translation>
         </message>
     </context>
     <context>
@@ -10166,7 +10262,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforUtil.cpp" line="1746" />
             <source>User commands</source>
-            <translation type="unfinished" />
+            <translation>Εντολές χρήστη</translation>
         </message>
     </context>
     <context>

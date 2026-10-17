@@ -127,11 +127,11 @@ msgstr "Verbindungsfähigkeitsfehler: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Eine C-C-Verbindung zu einem Hub wurde blockiert ('%1%:%2%'; Anfrage von '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "'%1%' wird blockiert, möglicher DDoS-Angriff erkannt (auslösender Hub '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -220,7 +220,7 @@ msgstr "Laden des privaten Schlüssels fehlgeschlagen"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Dekomprimierte Daten überschreiten die Größenbegrenzung"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -240,7 +240,7 @@ msgstr "Anwender"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Ungültige Dateilistenendung (muss .xml oder .bz2 sein)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -288,7 +288,7 @@ msgstr "Gruppe automatisch verbinden (umgewandelt)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Ungültige URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -335,7 +335,7 @@ msgstr "Fehler beim Hashing %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Fehler bei der Transferkodierung (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -343,7 +343,7 @@ msgstr "Endlose Weiterleitungsschleife (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Zu viele Daten im Antworttext (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -404,15 +404,15 @@ msgstr "Portzuordnungen konnten nicht erstellt werden."
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Portzuordnungen erneuert"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Portzuordnungen wiederhergestellt"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Erneuerung der Portzuordnung fehlgeschlagen; neuer Versuch in 60 Sekunden"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -437,7 +437,7 @@ msgstr "Thema des Hubs:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Freigabe zu klein für Downloads von "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -445,7 +445,7 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Senden der Datei verweigert"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
@@ -562,7 +562,7 @@ msgstr "%1%: Passt zu Datei %2%"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL-Fehler: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -696,7 +696,7 @@ msgstr "Erneuern der Dateiliste abgeschlossen"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Aktualisierung der Dateiliste verworfen, da sich die freigegebenen Verzeichnisse geändert haben"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -710,23 +710,23 @@ msgstr "unbekannter Fehler: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Nicht unterstütztes Shadowsocks-Verschlüsselungsverfahren"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Initialisierung der Shadowsocks-Schlüsselableitung fehlgeschlagen"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Ableitung des Shadowsocks-Unterschlüssels fehlgeschlagen"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Initialisierung der Shadowsocks-Verschlüsselung fehlgeschlagen"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks-Verschlüsselung fehlgeschlagen"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -736,15 +736,15 @@ msgstr "Der Aufbau der Verbindung durch den SOCKS-Server ist gescheitert."
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Der Shadowsocks-Server konnte keine Verbindung herstellen"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Kein Shadowsocks-Passwort konfiguriert"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Die Shadowsocks-Zieladresse ist ungültig"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -764,83 +764,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Initialisierung des SOCKS-TLS-Kontexts fehlgeschlagen"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Initialisierung der SOCKS-TLS-Sitzung fehlgeschlagen"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Zuordnung der SOCKS-TLS-Sitzung zum Socket fehlgeschlagen"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Zeitüberschreitung beim SOCKS-TLS-Handshake"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS-TLS-Handshake fehlgeschlagen: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS-TLS-Lesen fehlgeschlagen: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS-TLS-Schreiben fehlgeschlagen: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Die Antwort des Shadowsocks-UDP-Relays ist ungültig"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Die Antwortadresse des Shadowsocks-UDP-Relays ist ungültig"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Entschlüsselung der Antwort des Shadowsocks-UDP-Relays fehlgeschlagen"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Erstellen des Shadowsocks-Salts fehlgeschlagen"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Erstellen der Shadowsocks-Fülldaten fehlgeschlagen"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks-Entschlüsselung fehlgeschlagen"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Ungültige Shadowsocks-Nutzdatengröße"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Der Shadowsocks-Datenstrom endete mit einem unvollständigen Rahmen"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Erstellen der Shadowsocks-UDP-Sitzung fehlgeschlagen"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Das Shadowsocks-UDP-Relay ist deaktiviert"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Das Shadowsocks-UDP-Relay ist nicht konfiguriert"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Erstellen der Shadowsocks-UDP-Nonce fehlgeschlagen"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Der Shadowsocks-UDP-Paketzähler ist ausgeschöpft"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -852,7 +852,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Die SOCKS5-UDP-Zieladresse ist ungültig"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -955,40 +955,40 @@ msgstr "mehr Byte geschrieben als angefragt"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "DHT-Initialisierung gestartet"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "DHT-Initialisierungsfehler: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "DHT-Initialisierung erfolgreich abgeschlossen."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Datei veröffentlicht: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Teildatei veröffentlicht: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: UDP-Status auf durch Firewall blockiert gesetzt (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Unser UDP-Port scheint offen zu sein (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT wieder aktiviert"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT deaktiviert: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "SSL-Fehler: %1% (%2%, %3%)"

@@ -83,7 +83,7 @@ msgstr " maradt"
 
 #: ../src/downloadqueue.cc:1312
 msgid " of "
-msgstr ""
+msgstr " / "
 
 #: ../src/hub.cc:2907
 msgid " removed from favorites list"
@@ -640,7 +640,7 @@ msgstr ""
 msgid ""
 "Add rule 192.168.1.0/23 where direction incoming and action is allow and "
 "192.168.6.0/24 where direction is incoming or outcoming and action is drop"
-msgstr ""
+msgstr "192.168.1.0/23 szabály hozzáadása bejövő iránnyal és engedélyezés művelettel, valamint 192.168.6.0/24 bejövő vagy kimenő iránnyal és eldobás művelettel"
 
 #: ../ui/mainwindow.ui:288
 msgid "Add this file to your download queue"
@@ -669,7 +669,7 @@ msgstr "Hozzáadva"
 
 #: ../ui/settingsdialog.ui:6284
 msgid "Adding string or TTH to the top"
-msgstr ""
+msgstr "Szöveg vagy TTH hozzáadása a ranglistához"
 
 #: ../src/favoritehubs.cc:53 ../src/favoritehubs.cc:140
 #: ../src/favoritehubs.cc:154 ../src/favoritehubs.cc:233
@@ -722,11 +722,11 @@ msgstr "Több kapcsolat engedélyezése egy IP címnek"
 
 #: ../src/settingsdialog.cc:1729
 msgid "Allow only TLS connections to clients"
-msgstr ""
+msgstr "Csak TLS-kapcsolatok engedélyezése a kliensekhez"
 
 #: ../src/settingsdialog.cc:1661
 msgid "Allow overlap chunks"
-msgstr ""
+msgstr "Átfedő blokkok engedélyezése"
 
 #: ../src/settingsdialog.cc:1663
 msgid "Allow some connections for one user"
@@ -872,11 +872,11 @@ msgstr "Betű háttérszín"
 
 #: ../src/settingsdialog.cc:1078
 msgid "Basque"
-msgstr ""
+msgstr "Baszk"
 
 #: ../src/mainwindow.cc:257
 msgid "Basque translation\n"
-msgstr ""
+msgstr "Baszk fordítás\n"
 
 #: ../src/settingsdialog.cc:1060
 msgid "Belarusian"
@@ -908,11 +908,11 @@ msgstr "Mindkettő"
 
 #: ../ui/settingsdialog.ui:8952
 msgid "Both horizontal"
-msgstr ""
+msgstr "Mindkettő vízszintesen"
 
 #: ../ui/settingsdialog.ui:8932
 msgid "Bottom"
-msgstr ""
+msgstr "Alul"
 
 #: ../ui/uploadqueue.ui:87
 msgid "Browse FileList"
@@ -945,7 +945,7 @@ msgstr "Bolgár fordítás\n"
 
 #: ../src/settingsdialog.cc:1419
 msgid "Button smile"
-msgstr ""
+msgstr "Hangulatjelgomb"
 
 #: ../src/favoriteusers.cc:51 ../src/favoriteusers.cc:114
 #: ../src/favoriteusers.cc:225 ../src/favoriteusers.cc:255
@@ -1011,11 +1011,11 @@ msgstr "Fájl TTH kiszámítása"
 #: ../src/wulfor.cc:108
 #, c-format
 msgid "Cannot handle SIGPIPE\n"
-msgstr ""
+msgstr "A SIGPIPE nem kezelhető\n"
 
 #: ../src/wulfor.cc:79
 msgid "Catching signal "
-msgstr ""
+msgstr "Jelzés elfogása: "
 
 #: ../ui/settingsdialog.ui:8172
 msgid "Certificate file"
@@ -1241,7 +1241,7 @@ msgid ""
 "\n"
 "EiskaltDC++ version: %s\n"
 "DC++ core version: %s"
-msgstr ""
+msgstr "A FreeDC++ és a LinuxDC++ forráskódján alapuló DC++ kliens\n\nEiskaltDC++ verzió: %s\nDC++ mag verziója: %s"
 
 #: ../ui/cmddebug.ui:99
 msgid "DETECTION"
@@ -1428,7 +1428,7 @@ msgstr "Letöltés elkezdve: "
 
 #: ../src/hub.cc:2124
 msgid "Download limit image: 0 - disable, n < 0 - unlimit, empty - info"
-msgstr ""
+msgstr "Képletöltési korlát: 0 - tiltás, n < 0 - korlátlan, üres - információ"
 
 #: ../src/transfers.cc:1105
 msgid "Download removed"
@@ -1827,7 +1827,7 @@ msgstr "Találat"
 
 #: ../src/search.cc:686
 msgid "Found: "
-msgstr ""
+msgstr "Találatok: "
 
 #: ../src/search.cc:572
 msgid "Found: 0"
@@ -1841,7 +1841,7 @@ msgstr "Képkocka (méret)"
 msgid ""
 "Frame size determines the width of the review, higher values affect "
 "performance"
-msgstr ""
+msgstr "Az ablak mérete határozza meg az áttekintés terjedelmét; a nagyobb értékek hatással vannak a teljesítményre"
 
 #: ../ui/searchspy.ui:313
 msgid "Frame:"
@@ -2306,7 +2306,7 @@ msgstr "Egyeztetés a letöltésekkel"
 
 #: ../ui/mainwindow.ui:1063
 msgid "Match all listings"
-msgstr ""
+msgstr "Összes fájllista egyeztetése"
 
 #: ../src/sharebrowser.cc:1140
 msgid "Matched "
@@ -2412,7 +2412,7 @@ msgstr "Minimum keresési időköz (másodpercben):"
 
 #: ../ui/settingsdialog.ui:8313
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Egyéb"
 
 #: ../ui/settingsdialog.ui:8376
 msgid "Modify"
@@ -2606,7 +2606,7 @@ msgstr "Figyelmeztetés"
 
 #: ../ui/searchspy.ui:267 ../ui/settingsdialog.ui:6572
 msgid "Number of matches for the top"
-msgstr ""
+msgstr "A ranglistára kerüléshez szükséges találatok száma"
 
 #: ../src/WulforUtil.cc:158
 msgid "Offline"
@@ -2688,7 +2688,7 @@ msgstr "Panelek"
 
 #: ../src/sharebrowser.cc:186
 msgid "Parse and build tree..."
-msgstr ""
+msgstr "Feldolgozás és fa felépítése..."
 
 #: ../ui/favoritehubs.ui:558
 msgid "Passive"
@@ -3111,11 +3111,11 @@ msgstr "Elválasztók"
 
 #: ../src/settingsdialog.cc:1070
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "Szerb (cirill)"
 
 #: ../src/mainwindow.cc:245
 msgid "Serbian (Cyrillic) translation\n"
-msgstr ""
+msgstr "Szerb (cirill betűs) fordítás\n"
 
 #: ../src/settingsdialog.cc:1072
 msgid "Serbian (Latin)"
@@ -3128,12 +3128,12 @@ msgstr "Szerb (latin) fordítás\n"
 #: ../src/hub.cc:2134
 msgid ""
 "Set Core option param in value (without value return current value of option)"
-msgstr ""
+msgstr "A mag param beállításának value értékre állítása (value nélkül a beállítás aktuális értékét adja vissza)"
 
 #: ../src/hub.cc:2133
 msgid ""
 "Set GUI option param in value (without value return current value of option)"
-msgstr ""
+msgstr "A grafikus felület param beállításának value értékre állítása (value nélkül a beállítás aktuális értékét adja vissza)"
 
 #: ../ui/downloadqueue.ui:81 ../ui/downloadqueue.ui:215
 msgid "Set Priorit_y"
@@ -3141,11 +3141,11 @@ msgstr "Prioritá_s beállítása"
 
 #: ../ui/hub.ui:84
 msgid "Set download limit image"
-msgstr ""
+msgstr "Képletöltési korlát beállítása"
 
 #: ../src/hub.cc:2061
 msgid "Set download limit image: "
-msgstr ""
+msgstr "Képletöltési korlát beállítása: "
 
 #: ../src/settingsdialog.cc:982
 msgid "Set lowest priority for newly added files larger than low priority size"
@@ -3254,7 +3254,7 @@ msgstr "Libdcpp leállítása..."
 #: ../src/wulfor.cc:118
 #, c-format
 msgid "Signal handlers installed.\n"
-msgstr ""
+msgstr "Jelzéskezelők telepítve.\n"
 
 #: ../src/downloadqueue.cc:73 ../src/downloadqueue.cc:92
 #: ../src/downloadqueue.cc:284 ../src/downloadqueue.cc:391 ../src/search.cc:103
@@ -3456,7 +3456,7 @@ msgstr "Szövegstílus"
 msgid ""
 "The increase in waiting time increases the likelihood of adding to top, but "
 "reduces the dynamics (updating) frame"
-msgstr ""
+msgstr "A várakozási idő növelése növeli a ranglistára kerülés valószínűségét, de lassítja az ablak frissítését"
 
 #: ../src/favoritehubs.cc:425
 msgid "The name and address fields are required"
@@ -3502,7 +3502,7 @@ msgstr "Cím"
 
 #: ../ui/settingsdialog.ui:888
 msgid "To (empty for selected user)"
-msgstr ""
+msgstr "Címzett (üresen a kijelölt felhasználó)"
 
 #: ../ui/mainwindow.ui:293
 msgid ""
@@ -3526,7 +3526,7 @@ msgstr "Fent"
 
 #: ../ui/settingsdialog.ui:6587
 msgid "Top (number of matches, more than)"
-msgstr ""
+msgstr "Ranglista (ennél több találat)"
 
 #: ../ui/mainwindow.ui:1495
 msgid "Top position"
@@ -3534,7 +3534,7 @@ msgstr "Felül"
 
 #: ../ui/searchspy.ui:255
 msgid "Top: >"
-msgstr ""
+msgstr "Ranglista: >"
 
 #: ../ui/mainwindow.ui:1864
 msgid "Total received"
@@ -3574,11 +3574,11 @@ msgstr "Megbízható tanúsítványok helye"
 
 #: ../src/settingsdialog.cc:1098
 msgid "Turkish"
-msgstr ""
+msgstr "Török"
 
 #: ../src/mainwindow.cc:291
 msgid "Turkish translation\n"
-msgstr ""
+msgstr "Török fordítás\n"
 
 #: ../src/search.cc:102 ../src/search.cc:666 ../src/search.cc:770
 #: ../src/search.cc:899 ../src/search.cc:933 ../src/sharebrowser.cc:85
@@ -3656,7 +3656,7 @@ msgstr "Saját fájl-lista frissítése"
 
 #: ../ui/settingsdialog.ui:6401
 msgid "Updating string or TTH"
-msgstr ""
+msgstr "Szöveg vagy TTH frissítése"
 
 #: ../src/settingsdialog.cc:1421
 msgid "Upload"
@@ -3789,7 +3789,7 @@ msgstr "Másodlagos átviteli sebesség korlátozás használata"
 
 #: ../ui/settingsdialog.ui:79
 msgid "Use separator extensions (doc;xls;ppt;docx;xlsx;pptx)"
-msgstr ""
+msgstr "Kiterjesztések elválasztása (doc;xls;ppt;docx;xlsx;pptx)"
 
 #: ../src/transfers.cc:56 ../src/transfers.cc:87 ../src/transfers.cc:89
 #: ../src/transfers.cc:502 ../src/transfers.cc:567 ../src/transfers.cc:598
@@ -4198,7 +4198,7 @@ msgstr "_Ablakok"
 
 #: ../src/hub.cc:3259
 msgid "bad image"
-msgstr ""
+msgstr "hibás kép"
 
 #: ../ui/settingsdialog.ui:8990
 msgid "default"
@@ -4227,7 +4227,7 @@ msgstr "fájl lista ettől: "
 
 #: ../ui/settingsdialog.ui:2092
 msgid "from"
-msgstr ""
+msgstr "feladó"
 
 #: ../ui/settingsdialog.ui:5129
 msgid "in program"
@@ -4261,7 +4261,7 @@ msgstr "ADLkeresés"
 
 #: ../src/settingsdialog.cc:3182 ../src/settingsdialog.cc:3309
 msgid "selected style failed"
-msgstr ""
+msgstr "a kiválasztott stílus hibás"
 
 #: ../ui/settingsdialog.ui:6006
 msgid "theme"
@@ -4273,11 +4273,11 @@ msgstr "-"
 
 #: ../src/searchspy.cc:359
 msgid "top..."
-msgstr ""
+msgstr "Ranglista..."
 
 #: ../src/searchspy.cc:413
 msgid "top/waiting/frame: "
-msgstr ""
+msgstr "ranglista/várakozás/ablak: "
 
 #: ../src/searchspy.cc:296 ../src/searchspy.cc:364
 msgid "waiting..."

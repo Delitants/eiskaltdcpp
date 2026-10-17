@@ -126,11 +126,11 @@ msgstr "Greška pri povezivanju: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Blokirana je C-C veza ka čvorištu ('%1%:%2%'; zahtev od '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Blokiranje '%1%', otkriven je mogući DDoS napad (izvorno čvorište '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -216,7 +216,7 @@ msgstr "Ne mogu da učitam privatni ključ"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Raspakovani podaci premašuju ograničenje veličine"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -236,7 +236,7 @@ msgstr "Korisnici"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Neispravna ekstenzija spiska datoteka (mora biti .xml ili .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -284,7 +284,7 @@ msgstr "Auto-povezana grupa (konvertovan)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Neispravan URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -330,7 +330,7 @@ msgstr "Greška pri hashovanju %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Greška kodiranja prenosa (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -338,7 +338,7 @@ msgstr "Beskrajna preusmerenja (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Previše podataka u telu odgovora (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -399,15 +399,15 @@ msgstr "Ne mogu kreirati nit"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Mapiranja portova su obnovljena"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Mapiranja portova su vraćena"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Obnova mapiranja portova nije uspela; ponovni pokušaj za 60 sekundi"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -431,7 +431,7 @@ msgstr "Hab tema:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Premalo deljenje za preuzimanje od "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -439,7 +439,7 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Slanje datoteke je odbijeno"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
@@ -545,7 +545,7 @@ msgstr "%1% je uparen: %2%"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL greška: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -675,7 +675,7 @@ msgstr "Osvežavanje liste deljenih datoteka završeno"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Osvežavanje spiska datoteka je odbačeno jer su deljeni direktorijumi promenjeni"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -689,23 +689,23 @@ msgstr "Nepoznata greška: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Nepodržana Shadowsocks šifra"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Nije uspelo pokretanje izvođenja Shadowsocks ključa"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Nije uspelo izvođenje Shadowsocks potključa"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Nije uspelo pokretanje Shadowsocks šifrovanja"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks šifrovanje nije uspelo"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -715,15 +715,15 @@ msgstr "Socks server nije uspeo uspostaviti vezu"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks server nije uspeo da uspostavi vezu"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Shadowsocks lozinka nije podešena"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks odredišna adresa je neispravna"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -739,83 +739,83 @@ msgstr "Socks server provera nije uspela (loše korisničko ime / lozinka?)"
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Nije uspelo pokretanje SOCKS TLS konteksta"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Nije uspelo pokretanje SOCKS TLS sesije"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Nije uspelo povezivanje SOCKS TLS sesije sa soketom"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Isteklo je vreme za SOCKS TLS rukovanje"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS rukovanje nije uspelo: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS čitanje nije uspelo: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS pisanje nije uspelo: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Odgovor Shadowsocks UDP releja je neispravan"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Adresa u odgovoru Shadowsocks UDP releja je neispravna"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Dešifrovanje odgovora Shadowsocks UDP releja nije uspelo"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Nije uspelo stvaranje Shadowsocks soli"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Nije uspelo stvaranje Shadowsocks dopune"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks dešifrovanje nije uspelo"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Neispravna veličina Shadowsocks korisnih podataka"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks tok je završen nepotpunim okvirom"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Nije uspelo stvaranje Shadowsocks UDP sesije"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP relej je isključen"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Shadowsocks UDP relej nije podešen"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Nije uspelo stvaranje Shadowsocks UDP jednokratne vrednosti"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Brojač Shadowsocks UDP paketa je iscrpljen"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -827,7 +827,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP odredišna adresa je neispravna"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -930,40 +930,40 @@ msgstr "Više bajtova zapisano nego što je traženo"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Počelo je početno povezivanje DHT-a"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Greška početnog povezivanja DHT-a: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Početno povezivanje DHT-a je uspešno završeno."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Objavljena datoteka: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Objavljena delimična datoteka: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: Postavljen je status UDP-a iza zaštitnog zida (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Izgleda da je naš UDP port otvoren (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT je ponovo uključen"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT je isključen: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "SSL Greška: %1% (%2%, %3%)"

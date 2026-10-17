@@ -218,7 +218,7 @@ msgstr "Kunde inte ladda privat nyckel"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Dekomprimerade data överskrider storleksgränsen"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -403,15 +403,15 @@ msgstr "Kunde inte skapa portmappningar"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Portmappningarna har förnyats"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Portmappningarna har återställts"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Förnyelse av portmappningarna misslyckades; nytt försök om 60 sekunder"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -547,7 +547,7 @@ msgstr "%1% : Matchade %2% filer"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL-fel: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -679,7 +679,7 @@ msgstr "Fillistan har uppdaterats"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Uppdateringen av fillistan förkastades eftersom de delade katalogerna ändrades"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -693,23 +693,23 @@ msgstr "Okänt fel: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Shadowsocks-chiffret stöds inte"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Kunde inte initiera Shadowsocks-nyckelhärledning"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Kunde inte härleda Shadowsocks-undernyckel"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Kunde inte initiera Shadowsocks-kryptering"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks-krypteringen misslyckades"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -719,15 +719,15 @@ msgstr "Socks-servern har misslyckats med att upprätta en anslutning"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks-servern kunde inte upprätta en anslutning"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Inget Shadowsocks-lösenord har konfigurerats"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks-måladressen är ogiltig"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -744,83 +744,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Kunde inte initiera SOCKS TLS-kontext"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Kunde inte initiera SOCKS TLS-session"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Kunde inte koppla SOCKS TLS-sessionen till socketen"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Tidsgränsen för SOCKS TLS-handskakning överskreds"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-handskakning misslyckades: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-läsning misslyckades: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-skrivning misslyckades: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Svaret från Shadowsocks UDP-reläet är ogiltigt"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Adressen i svaret från Shadowsocks UDP-reläet är ogiltig"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Dekryptering av svaret från Shadowsocks UDP-reläet misslyckades"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Kunde inte skapa Shadowsocks-salt"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Kunde inte skapa Shadowsocks-utfyllnad"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks-dekrypteringen misslyckades"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Ogiltig storlek på Shadowsocks-nyttolast"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks-strömmen avslutades med en ofullständig ram"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Kunde inte skapa Shadowsocks UDP-session"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP-relä är inaktiverat"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Shadowsocks UDP-relä är inte konfigurerat"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Kunde inte skapa Shadowsocks UDP-engångsvärde"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Shadowsocks UDP-paketräknaren är förbrukad"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -832,7 +832,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP-måladressen är ogiltig"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."

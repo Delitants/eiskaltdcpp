@@ -24,78 +24,78 @@ msgstr ""
 
 #: ../ADLSearch.cpp:42
 msgid "<Enter string>"
-msgstr ""
+msgstr "<输入字符串>"
 
 #: ../ADLSearch.cpp:467
 msgid "Discard"
-msgstr ""
+msgstr "丢弃"
 
 #: ../AdcHub.cpp:159
 msgid "%1% (%2%) has same CID {%3%} as %4% (%5%), ignoring"
-msgstr ""
+msgstr "%1% (%2%) 与 %4% (%5%) 具有相同的 CID {%3%}，已忽略"
 
 #: ../AdcHub.cpp:196 ../FinishedManager.cpp:163 ../QueueManager.cpp:2209
 #: ../Transfer.cpp:93
 msgid "%1%/s"
-msgstr ""
+msgstr "%1%/s"
 
 #: ../AdcHub.cpp:231
 msgid "Failed to negotiate base protocol"
-msgstr ""
+msgstr "基础协议协商失败"
 
 #: ../AdcHub.cpp:237
 msgid ""
 "Hub probably uses an old version of ADC, please encourage the owner to "
 "upgrade"
-msgstr ""
+msgstr "集线器可能使用了旧版 ADC，请建议所有者升级"
 
 #: ../AdcHub.cpp:308
 msgid "%1% was kicked by %2%: %3%"
-msgstr ""
+msgstr "%1% 被 %2% 踢出：%3%"
 
 #: ../AdcHub.cpp:311
 msgid "%1% was kicked: %2%"
-msgstr ""
+msgstr "%1% 被踢出：%2%"
 
 #: ../AdcHub.cpp:728
 msgid "Not listening for connections - please restart %1%"
-msgstr ""
+msgstr "未监听连接，请重新启动 %1%"
 
 #: ../BZUtils.cpp:34 ../BZUtils.cpp:55 ../BZUtils.cpp:63
 #: ../ZUtils.cpp:36 ../ZUtils.cpp:65 ../ZUtils.cpp:92 ../ZUtils.cpp:102
 msgid "Error during compression"
-msgstr ""
+msgstr "压缩时出错"
 
 #: ../BZUtils.cpp:75 ../BZUtils.cpp:97 ../BZUtils.cpp:100
 #: ../CryptoManager.cpp:538 ../CryptoManager.cpp:560
 #: ../CryptoManager.cpp:578 ../ZUtils.cpp:116 ../ZUtils.cpp:138
 #: ../ZUtils.cpp:152
 msgid "Error during decompression"
-msgstr ""
+msgstr "解压缩时出错"
 
 #: ../BufferedSocket.cpp:180 ../BufferedSocket.cpp:196
 #: ../ConnectionManager.cpp:227 ../Socket.cpp:434 ../Socket.cpp:1476
 #: ../Socket.cpp:1485 ../Socket.cpp:1501 ../Socket.cpp:1510
 #: ../Socket.cpp:1633
 msgid "Connection timeout"
-msgstr ""
+msgstr "连接超时"
 
 #: ../BufferedSocket.cpp:211 ../SSLSocket.cpp:334 ../SSLSocket.cpp:371
 #: ../SSLSocket.cpp:380
 msgid "Connection closed"
-msgstr ""
+msgstr "连接已关闭"
 
 #: ../BufferedSocket.cpp:309
 msgid "Maximum command length exceeded"
-msgstr ""
+msgstr "超出命令长度上限"
 
 #: ../BufferedSocket.cpp:495
 msgid "Disconnected"
-msgstr ""
+msgstr "已断开连接"
 
 #: ../ChatMessage.cpp:35
 msgid "Sent "
-msgstr ""
+msgstr "已发送 "
 
 #: ../ClientManager.cpp:198 ../FinishedManager.cpp:134
 #: ../FinishedManager.cpp:140 ../FinishedManager.cpp:146
@@ -104,7 +104,7 @@ msgstr ""
 #: ../SearchManager.cpp:391 ../SearchManager.cpp:393 ../Transfer.cpp:83
 #: ../Transfer.cpp:87
 msgid "Offline"
-msgstr ""
+msgstr "离线"
 
 #: ../ConnectionManager.cpp:185 ../QueueManager.cpp:888
 msgid "Cannot download from passive user while you are in passive mode"
@@ -112,111 +112,111 @@ msgstr "处于被动模式时，无法从被动用户下载"
 
 #: ../ConnectionManager.cpp:219
 msgid "All download slots taken"
-msgstr ""
+msgstr "所有下载槽位均已占用"
 
 #: ../ConnectionManager.cpp:304
 msgid "Connectivity restored"
-msgstr ""
+msgstr "连接已恢复"
 
 #: ../ConnectionManager.cpp:312
 msgid "Connectivity error: %1%"
-msgstr ""
+msgstr "连接错误：%1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "已阻止到集线器的客户端间连接（'%1%:%2%'；请求来自 '%3%'）"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "正在阻止 '%1%'，检测到潜在 DDoS 攻击（源集线器 '%2%'）"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
-msgstr ""
+msgstr "正在确定最佳连接设置…"
 
 #: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
-msgstr ""
+msgstr "无法打开 %1% 端口；必须手动配置连接设置"
 
 #: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
-msgstr ""
+msgstr "检测到公网 IP 地址，选择直接连接的主动模式"
 
 #: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
-msgstr ""
+msgstr "检测到可能使用 NAT 的本地网络，正在尝试使用 UPnP 映射端口…"
 
 #: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
-msgstr ""
+msgstr "主动模式自动设置失败。您可以手动设置连接以获得更好的连通性"
 
 #: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
-msgstr ""
+msgstr "传输 (TCP)"
 
 #: ../ConnectivityManager.cpp:190
 msgid "Search (UDP)"
-msgstr ""
+msgstr "搜索 (UDP)"
 
 #: ../ConnectivityManager.cpp:215
 msgid "DHT (UDP)"
-msgstr ""
+msgstr "DHT (UDP)"
 
 #: ../ConnectivityManager.cpp:230
 msgid "Connectivity: "
-msgstr ""
+msgstr "连接状态： "
 
 #: ../CryptoManager.cpp:294
 msgid "No private key file chosen"
-msgstr ""
+msgstr "未选择私钥文件"
 
 #: ../CryptoManager.cpp:297
 msgid "No certificate file chosen"
-msgstr ""
+msgstr "未选择证书文件"
 
 #: ../CryptoManager.cpp:309
 msgid "Error generating certificate"
-msgstr ""
+msgstr "生成证书时出错"
 
 #: ../CryptoManager.cpp:393
 msgid "TLS disabled, no certificate file set"
-msgstr ""
+msgstr "TLS 已禁用，未设置证书文件"
 
 #: ../CryptoManager.cpp:401
 msgid "Generated new TLS certificate"
-msgstr ""
+msgstr "已生成新的 TLS 证书"
 
 #: ../CryptoManager.cpp:403
 msgid "TLS disabled, failed to generate certificate: %1%"
-msgstr ""
+msgstr "TLS 已禁用，无法生成证书：%1%"
 
 #: ../CryptoManager.cpp:408 ../CryptoManager.cpp:412
 #: ../CryptoManager.cpp:417 ../CryptoManager.cpp:421
 msgid "Failed to load certificate file"
-msgstr ""
+msgstr "无法加载证书文件"
 
 #: ../CryptoManager.cpp:426 ../CryptoManager.cpp:430
 #: ../CryptoManager.cpp:435 ../CryptoManager.cpp:439
 msgid "Failed to load private key"
-msgstr ""
+msgstr "无法加载私钥"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "解压后的数据超出大小限制"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
-msgstr ""
+msgstr "哈希数据库"
 
 #: ../DCContext.cpp:182
 msgid "Shared Files"
-msgstr ""
+msgstr "共享文件"
 
 #: ../DCContext.cpp:193
 msgid "Download Queue"
@@ -228,27 +228,27 @@ msgstr "用户"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "无效的文件列表扩展名（必须为 .xml 或 .bz2）"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
-msgstr ""
+msgstr "目录缺少 name 属性"
 
 #: ../DownloadManager.cpp:135
 msgid "IPFilter: Blocked outgoing connection to "
-msgstr ""
+msgstr "IP 筛选器：已阻止出站连接，目标为 "
 
 #: ../DownloadManager.cpp:235
 msgid "Invalid size"
-msgstr ""
+msgstr "无效大小"
 
 #: ../DownloadManager.cpp:240
 msgid "Response does not match request"
-msgstr ""
+msgstr "响应与请求不匹配"
 
 #: ../DownloadManager.cpp:247
 msgid "Could not open target file: %1%"
-msgstr ""
+msgstr "无法打开目标文件：%1%"
 
 #: ../DownloadManager.cpp:326
 msgid "Full tree does not match TTH root"
@@ -256,169 +256,169 @@ msgstr "完整的树与 TTH 根不符"
 
 #: ../DownloadManager.cpp:390
 msgid "No slots available"
-msgstr ""
+msgstr "无可用槽位"
 
 #: ../DownloadManager.cpp:501
 msgid "%1%: File not available"
-msgstr ""
+msgstr "%1%：文件不可用"
 
 #: ../FavoriteManager.cpp:414
 msgid "Kick user(s)"
-msgstr ""
+msgstr "踢出用户"
 
 #: ../FavoriteManager.cpp:418
 msgid "Redirect user(s)"
-msgstr ""
+msgstr "重定向用户"
 
 #: ../FavoriteManager.cpp:474
 msgid "Auto-connect group (converted)"
-msgstr ""
+msgstr "自动连接组（已转换）"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "无效的 URL：%1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
-msgstr ""
+msgstr "哈希计算失败：%1%"
 
 #: ../HashManager.cpp:239
 msgid "Finished hashing: %1% (%2% at %3%/s)"
-msgstr ""
+msgstr "哈希计算完成：%1%（%2%，速度 %3%/s）"
 
 #: ../HashManager.cpp:242
 msgid "Finished hashing: %1% (%2%)"
-msgstr ""
+msgstr "哈希计算完成：%1% (%2%)"
 
 #: ../HashManager.cpp:245
 msgid "Finished hashing: %1%"
-msgstr ""
+msgstr "哈希计算完成：%1%"
 
 #: ../HashManager.cpp:273 ../HashManager.cpp:485
 msgid "Error saving hash data: %1%"
-msgstr ""
+msgstr "保存哈希数据时出错：%1%"
 
 #: ../HashManager.cpp:286
 msgid "Unable to read hash data file"
-msgstr ""
+msgstr "无法读取哈希数据文件"
 
 #: ../HashManager.cpp:618
 msgid "Error creating hash data file: %1%"
-msgstr ""
+msgstr "创建哈希数据文件时出错：%1%"
 
 #: ../HashManager.cpp:969
 msgid "Hash database rebuilt"
-msgstr ""
+msgstr "哈希数据库已重建"
 
 #: ../HashManager.cpp:1063
 msgid ""
 "%1% not shared; calculated CRC32 does not match the one found in SFV file."
-msgstr ""
+msgstr "未共享 %1%；计算的 CRC32 与 SFV 文件中的值不匹配。"
 
 #: ../HashManager.cpp:1068
 msgid "Error hashing %1%: %2%"
-msgstr ""
+msgstr "计算 %1% 的哈希时出错：%2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "传输编码错误 (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
-msgstr ""
+msgstr "无限重定向循环 (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "响应正文中的数据过多 (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
-msgstr ""
+msgstr "没有可用的 UPnP 实现"
 
 #: ../MappingManager.cpp:57
 msgid "Another UPnP port mapping attempt is in progress..."
-msgstr ""
+msgstr "另一次 UPnP 端口映射尝试正在进行中…"
 
 #: ../MappingManager.cpp:108
 msgid "Failed to initialize the %1% interface"
-msgstr ""
+msgstr "无法初始化 %1% 接口"
 
 #: ../MappingManager.cpp:114
 msgid " Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " 传输端口 (%1% TCP)"
 
 #: ../MappingManager.cpp:115 ../MappingManager.cpp:123
 #: ../MappingManager.cpp:131 ../MappingManager.cpp:139
 msgid "The %1% interface has failed to map the %2% %3% port"
-msgstr ""
+msgstr "%1% 接口无法映射 %2% %3% 端口"
 
 #: ../MappingManager.cpp:122
 msgid " Encrypted Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " 加密传输端口 (%1% TCP)"
 
 #: ../MappingManager.cpp:130
 msgid " Search Port (%1% UDP)"
-msgstr ""
+msgstr " 搜索端口 (%1% UDP)"
 
 #: ../MappingManager.cpp:138
 msgid " DHT Port (%1% UDP)"
-msgstr ""
+msgstr " DHT 端口 (%1% UDP)"
 
 #: ../MappingManager.cpp:151
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "已成功创建端口映射（TCP：%1%，UDP：%2%，TLS：%3%，DHT：%4%），使用 %5% 接口进行映射"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
-msgstr ""
+msgstr "已成功创建端口映射（TCP：%1%，UDP：%2%，TLS：%3%），使用 %4% 接口进行映射"
 
 #: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
-msgstr ""
+msgstr "无法获取外部 IP"
 
 #: ../MappingManager.cpp:181
 msgid "Failed to create port mappings"
-msgstr ""
+msgstr "无法创建端口映射"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "端口映射已续期"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "端口映射已恢复"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "端口映射续期失败；将在 60 秒后重试"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
-msgstr ""
+msgstr "已通过 %1% 接口成功移除端口映射"
 
 #: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
-msgstr ""
+msgstr "无法通过 %1% 接口移除端口映射"
 
 #: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
-msgstr ""
+msgstr "UPnP：%1%"
 
 #: ../NmdcHub.cpp:439
 msgid "%1% (Nick unknown)"
-msgstr ""
+msgstr "%1%（昵称未知）"
 
 #: ../NmdcHub.cpp:839
 msgid "Hub topic:"
-msgstr ""
+msgstr "集线器主题："
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "共享量不足，无法从此目录下载： "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -426,85 +426,85 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "拒绝发送文件"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
-msgstr ""
+msgstr " 到 "
 
 #: ../QueueManager.cpp:234
 msgid "No needed part"
-msgstr ""
+msgstr "没有所需的部分"
 
 #: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
-msgstr ""
+msgstr "正在搜索以下文件的 TTH 备用来源：%1%"
 
 #: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
-msgstr ""
+msgstr "您的共享中已存在具有相同哈希值的文件"
 
 #: ../QueueManager.cpp:705 ../QueueManager.cpp:782
 msgid "This file is already queued"
-msgstr ""
+msgstr "此文件已在队列中"
 
 #: ../QueueManager.cpp:718 ../QueueManager.cpp:794
 msgid "A file with a different size already exists in the queue"
-msgstr ""
+msgstr "队列中已存在大小不同的同名文件"
 
 #: ../QueueManager.cpp:722
 msgid "A file with different tth root already exists in the queue"
-msgstr ""
+msgstr "队列中已存在 TTH 根哈希不同的同名文件"
 
 #: ../QueueManager.cpp:735
 msgid "You're trying to download from yourself!"
-msgstr ""
+msgstr "您正在尝试从自己这里下载！"
 
 #: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
-msgstr ""
+msgstr "队列中已存在 TTH 根哈希不同的同名文件"
 
 #: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
-msgstr ""
+msgstr "此文件已下载完成"
 
 #: ../QueueManager.cpp:843 ../QueueManager.cpp:852
 msgid "Target filename too long"
-msgstr ""
+msgstr "目标文件名过长"
 
 #: ../QueueManager.cpp:848 ../QueueManager.cpp:856
 msgid ""
 "Invalid target file (missing directory, check default download directory "
 "setting)"
-msgstr ""
+msgstr "无效的目标文件（缺少目录，请检查默认下载目录设置）"
 
 #: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
-msgstr ""
+msgstr "目标位置已存在该文件"
 
 #: ../QueueManager.cpp:877 ../QueueManager.cpp:881
 msgid "Duplicate source: %1%"
-msgstr ""
+msgstr "重复的来源：%1%"
 
 #: ../QueueManager.cpp:1162
 msgid "Target removed"
-msgstr ""
+msgstr "目标已移除"
 
 #: ../QueueManager.cpp:1170
 msgid "Target file is missing or wrong size"
-msgstr ""
+msgstr "目标文件缺失或大小不正确"
 
 #: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
-msgstr ""
+msgstr "无法将 %1% 移动到 %2% (%3%)；已重命名为 %4%"
 
 #: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
-msgstr ""
+msgstr "无法将 %1% 移动到 %2% (%3%)，也无法重命名为 %4% (%5%)"
 
 #: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
-msgstr ""
+msgstr "无法打开文件列表：%1%"
 
 #: ../QueueManager.cpp:1442
 msgid "%1%: Matched %2% file"
@@ -513,40 +513,40 @@ msgstr[0] "%1%: 匹配了 %2% 个文件"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "此条目的目标路径不可用：%1%；请暂停此队列项。"
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
-msgstr ""
+msgstr "CRC32 不一致（SFV 校验）"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1%：已匹配 %2% 个文件"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL 错误：SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
-msgstr ""
+msgstr "任意"
 
 #: ../SearchManager.cpp:56
 msgid "Audio"
-msgstr ""
+msgstr "音频"
 
 #: ../SearchManager.cpp:57
 msgid "Compressed"
-msgstr ""
+msgstr "压缩文件"
 
 #: ../SearchManager.cpp:58
 msgid "Document"
-msgstr ""
+msgstr "文档"
 
 #: ../SearchManager.cpp:59
 msgid "Executable"
-msgstr ""
+msgstr "可执行文件"
 
 #: ../SearchManager.cpp:60
 msgid "Picture"
@@ -554,7 +554,7 @@ msgstr "图片"
 
 #: ../SearchManager.cpp:61
 msgid "Video"
-msgstr ""
+msgstr "视频"
 
 #: ../SearchManager.cpp:62
 msgid "Directory"
@@ -566,381 +566,381 @@ msgstr "TTH"
 
 #: ../SearchManager.cpp:64
 msgid "CD Image"
-msgstr ""
+msgstr "光盘镜像"
 
 #: ../SearchManager.cpp:173
 msgid "Search enabled again"
-msgstr ""
+msgstr "搜索已重新启用"
 
 #: ../SearchManager.cpp:181
 msgid "Search disabled: %1%"
-msgstr ""
+msgstr "搜索已禁用：%1%"
 
 #: ../SettingsManager.cpp:260
 msgid "downloaded from"
-msgstr ""
+msgstr "下载来源"
 
 #: ../SettingsManager.cpp:635
 msgid "Invalid search type name"
-msgstr ""
+msgstr "无效的搜索类型名称"
 
 #: ../SettingsManager.cpp:639 ../SettingsManager.cpp:661
 msgid "This search type already exists"
-msgstr ""
+msgstr "此搜索类型已存在"
 
 #: ../SettingsManager.cpp:693
 msgid "No such search type"
-msgstr ""
+msgstr "没有此搜索类型"
 
 #: ../SettingsManager.cpp:721 ../SettingsManager.cpp:726
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "错误：未找到设置！"
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "核心设置 "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
-msgstr ""
+msgstr "更改核心设置 "
 
 #: ../ShareManager.cpp:803
 msgid "No directory specified"
-msgstr ""
+msgstr "未指定目录"
 
 #: ../ShareManager.cpp:815
 msgid "Directory is hidden"
-msgstr ""
+msgstr "目录已隐藏"
 
 #: ../ShareManager.cpp:819
 msgid "The temporary download directory cannot be shared"
-msgstr ""
+msgstr "不能共享临时下载目录"
 
 #: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
-msgstr ""
+msgstr "计算文件夹 %1% 的哈希时发现无效文件名"
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "跳过共享文件：%1%（大小：%2%）"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "跳过共享临时文件：%1%（大小：%2%）"
 
 #: ../ShareManager.cpp:1147
 msgid ""
 "Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: "
 "%3%"
-msgstr ""
+msgstr "不共享重复文件：%1%（大小：%2% B）匹配到的重复文件：%3%"
 
 #: ../ShareManager.cpp:1169
 msgid ""
 "File list refresh in progress, please wait for it to finish before trying to "
 "refresh again"
-msgstr ""
+msgstr "文件列表正在刷新，请等待完成后再尝试刷新"
 
 #: ../ShareManager.cpp:1190
 msgid "File list refresh failed: %1%"
-msgstr ""
+msgstr "文件列表刷新失败：%1%"
 
 #: ../ShareManager.cpp:1217
 msgid "File list refresh initiated"
-msgstr ""
+msgstr "文件列表刷新已开始"
 
 #: ../ShareManager.cpp:1245
 msgid "File list refresh finished"
-msgstr ""
+msgstr "文件列表刷新已完成"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "由于共享目录已更改，已丢弃本次文件列表刷新"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
-msgstr ""
+msgstr "文件列表 %1% 已生成"
 
 #: ../Socket.cpp:164
 #, c-format
 msgid "Unknown error: 0x%1$x"
-msgstr ""
+msgstr "未知错误：0x%1$x"
 
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "不支持的 Shadowsocks 加密算法"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "无法初始化 Shadowsocks 密钥派生"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "无法派生 Shadowsocks 子密钥"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "无法初始化 Shadowsocks 加密"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks 加密失败"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
 #: ../Socket.cpp:860 ../Socket.cpp:930 ../Socket.cpp:945
 msgid "The socks server failed establish a connection"
-msgstr ""
+msgstr "SOCKS 服务器无法建立连接"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks 服务器无法建立连接"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "未配置 Shadowsocks 密码"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks 目标地址无效"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
-msgstr ""
+msgstr "SOCKS 服务器要求身份验证"
 
 #: ../Socket.cpp:948
 msgid "The socks server doesn't support login / password authentication"
-msgstr ""
+msgstr "SOCKS 服务器不支持用户名/密码身份验证"
 
 #: ../Socket.cpp:962 ../Socket.cpp:966
 msgid "Socks server authentication failed (bad login / password?)"
-msgstr ""
+msgstr "SOCKS 服务器身份验证失败（用户名/密码错误？）"
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "无法初始化 SOCKS TLS 上下文"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "无法初始化 SOCKS TLS 会话"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "无法将 SOCKS TLS 会话附加到套接字"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "SOCKS TLS 握手超时"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS 握手失败：%1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS 读取失败：%1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS 写入失败：%1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP 中继响应无效"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP 中继响应地址无效"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Shadowsocks UDP 中继响应解密失败"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "无法创建 Shadowsocks 盐值"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "无法创建 Shadowsocks 填充数据"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks 解密失败"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "无效的 Shadowsocks 载荷大小"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks 数据流以不完整的帧结束"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "无法创建 Shadowsocks UDP 会话"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP 中继已禁用"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "未配置 Shadowsocks UDP 中继"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "无法创建 Shadowsocks UDP nonce"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Shadowsocks UDP 数据包计数器已耗尽"
 
 #: ../Socket.cpp:2043
 msgid ""
 "Failed to set up the socks server for UDP relay (check socks address and "
 "port)"
-msgstr ""
+msgstr "无法设置 SOCKS 服务器以进行 UDP 中继（请检查 SOCKS 地址和端口）"
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP 目标地址无效"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
-msgstr ""
+msgstr "连接已存在。"
 
 #: ../UploadManager.cpp:271 ../UploadManager.cpp:275
 #: ../UploadManager.cpp:347
 msgid "Unable to send file %1%: %2%"
-msgstr ""
+msgstr "无法发送文件 %1%：%2%"
 
 #: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
-msgstr ""
+msgstr "IP 筛选器：已阻止入站连接，目标为 "
 
 #: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
-msgstr ""
+msgstr "已断开离开集线器的用户：%1%"
 
 #: ../UserConnection.cpp:58 ../UserConnection.cpp:73
 #: ../UserConnection.cpp:147
 msgid "Invalid data"
-msgstr ""
+msgstr "无效数据"
 
 #: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
-msgstr ""
+msgstr "ADC 连接中包含非 UTF-8 数据"
 
 #: ../Util.cpp:862
 #, c-format
 msgid "%d B"
-msgstr ""
+msgstr "%d B"
 
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KiB"
-msgstr ""
+msgstr "%.02f KiB"
 
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MiB"
-msgstr ""
+msgstr "%.02f MiB"
 
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GiB"
-msgstr ""
+msgstr "%.02f GiB"
 
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TiB"
-msgstr ""
+msgstr "%.02f TiB"
 
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PiB"
-msgstr ""
+msgstr "%.02f PiB"
 
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
 msgid "%s B"
-msgstr ""
+msgstr "%s B"
 
 #: ../Util.cpp:910
 #, c-format
 msgid "%'lld B"
-msgstr ""
+msgstr "%'lld B"
 
 #: ../MerkleCheckOutputStream.h:50 ../MerkleCheckOutputStream.h:110
 msgid "TTH inconsistency"
-msgstr ""
+msgstr "TTH 不一致"
 
 #: ../Streams.h:159
 msgid "More bytes written than requested"
-msgstr ""
+msgstr "写入的字节数超出请求的字节数"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "DHT 引导已开始"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "DHT 引导错误： "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "DHT 引导已成功完成。"
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%)：文件已发布：%2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%)：部分文件已发布：%2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT：已设置 UDP 处于防火墙后方的状态（IP：%1%）"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT：我们的 UDP 端口似乎已开放（IP：%1%）"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT 已重新启用"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT 已禁用： "
 
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."

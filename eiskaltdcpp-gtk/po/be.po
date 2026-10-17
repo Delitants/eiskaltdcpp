@@ -1241,7 +1241,7 @@ msgid ""
 "\n"
 "EiskaltDC++ version: %s\n"
 "DC++ core version: %s"
-msgstr ""
+msgstr "Кліент DC++ на аснове зыходнага кода FreeDC++ і LinuxDC++\n\nВерсія EiskaltDC++: %s\nВерсія ядра DC++: %s"
 
 #: ../ui/cmddebug.ui:99
 msgid "DETECTION"
@@ -3127,12 +3127,12 @@ msgstr "Сэрбская мова (лацінка)\n"
 #: ../src/hub.cc:2134
 msgid ""
 "Set Core option param in value (without value return current value of option)"
-msgstr ""
+msgstr "Задаць параметры ядра param значэннем value (без value вяртаецца бягучае значэнне параметра)"
 
 #: ../src/hub.cc:2133
 msgid ""
 "Set GUI option param in value (without value return current value of option)"
-msgstr ""
+msgstr "Задаць параметры інтэрфейсу param значэннем value (без value вяртаецца бягучае значэнне параметра)"
 
 #: ../ui/downloadqueue.ui:81 ../ui/downloadqueue.ui:215
 msgid "Set Priorit_y"

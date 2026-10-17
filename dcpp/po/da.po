@@ -65,38 +65,38 @@ msgstr "Lytter ikke efter forbindelser - genstart venligst %1%"
 #: ../BZUtils.cpp:34 ../BZUtils.cpp:55 ../BZUtils.cpp:63
 #: ../ZUtils.cpp:36 ../ZUtils.cpp:65 ../ZUtils.cpp:92 ../ZUtils.cpp:102
 msgid "Error during compression"
-msgstr ""
+msgstr "Fejl under komprimering"
 
 #: ../BZUtils.cpp:75 ../BZUtils.cpp:97 ../BZUtils.cpp:100
 #: ../CryptoManager.cpp:538 ../CryptoManager.cpp:560
 #: ../CryptoManager.cpp:578 ../ZUtils.cpp:116 ../ZUtils.cpp:138
 #: ../ZUtils.cpp:152
 msgid "Error during decompression"
-msgstr ""
+msgstr "Fejl under dekomprimering"
 
 #: ../BufferedSocket.cpp:180 ../BufferedSocket.cpp:196
 #: ../ConnectionManager.cpp:227 ../Socket.cpp:434 ../Socket.cpp:1476
 #: ../Socket.cpp:1485 ../Socket.cpp:1501 ../Socket.cpp:1510
 #: ../Socket.cpp:1633
 msgid "Connection timeout"
-msgstr ""
+msgstr "Forbindelsen fik timeout"
 
 #: ../BufferedSocket.cpp:211 ../SSLSocket.cpp:334 ../SSLSocket.cpp:371
 #: ../SSLSocket.cpp:380
 msgid "Connection closed"
-msgstr ""
+msgstr "Forbindelsen er lukket"
 
 #: ../BufferedSocket.cpp:309
 msgid "Maximum command length exceeded"
-msgstr ""
+msgstr "Maksimal kommandolængde overskredet"
 
 #: ../BufferedSocket.cpp:495
 msgid "Disconnected"
-msgstr ""
+msgstr "Afbrudt"
 
 #: ../ChatMessage.cpp:35
 msgid "Sent "
-msgstr ""
+msgstr "Sendt "
 
 #: ../ClientManager.cpp:198 ../FinishedManager.cpp:134
 #: ../FinishedManager.cpp:140 ../FinishedManager.cpp:146
@@ -105,7 +105,7 @@ msgstr ""
 #: ../SearchManager.cpp:391 ../SearchManager.cpp:393 ../Transfer.cpp:83
 #: ../Transfer.cpp:87
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 #: ../ConnectionManager.cpp:185 ../QueueManager.cpp:888
 msgid "Cannot download from passive user while you are in passive mode"
@@ -113,313 +113,313 @@ msgstr "Kan ikke downloade fra en passiv bruger, mens du er i passiv tilstand"
 
 #: ../ConnectionManager.cpp:219
 msgid "All download slots taken"
-msgstr ""
+msgstr "Alle hentepladser er optaget"
 
 #: ../ConnectionManager.cpp:304
 msgid "Connectivity restored"
-msgstr ""
+msgstr "Forbindelsen er genoprettet"
 
 #: ../ConnectionManager.cpp:312
 msgid "Connectivity error: %1%"
-msgstr ""
+msgstr "Forbindelsesfejl: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Blokerede en C-C-forbindelse til en hub ('%1%:%2%'; anmodning fra '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Blokerer '%1%', muligt DDoS-angreb registreret (fra hub '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
-msgstr ""
+msgstr "Finder de bedste forbindelsesindstillinger..."
 
 #: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
-msgstr ""
+msgstr "Kan ikke åbne port(e) %1%; forbindelsesindstillingerne skal konfigureres manuelt"
 
 #: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
-msgstr ""
+msgstr "Offentlig IP-adresse fundet, vælger aktiv tilstand med direkte forbindelse"
 
 #: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
-msgstr ""
+msgstr "Lokalt netværk med mulig NAT fundet, forsøger at videresende porte med UPnP..."
 
 #: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
-msgstr ""
+msgstr "Automatisk opsætning af aktiv tilstand mislykkedes. Du kan konfigurere forbindelsen manuelt for at forbedre tilgængeligheden"
 
 #: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
-msgstr ""
+msgstr "Overførsel (TCP)"
 
 #: ../ConnectivityManager.cpp:190
 msgid "Search (UDP)"
-msgstr ""
+msgstr "Søgning (UDP)"
 
 #: ../ConnectivityManager.cpp:215
 msgid "DHT (UDP)"
-msgstr ""
+msgstr "DHT (UDP)"
 
 #: ../ConnectivityManager.cpp:230
 msgid "Connectivity: "
-msgstr ""
+msgstr "Forbindelse: "
 
 #: ../CryptoManager.cpp:294
 msgid "No private key file chosen"
-msgstr ""
+msgstr "Ingen privat nøglefil valgt"
 
 #: ../CryptoManager.cpp:297
 msgid "No certificate file chosen"
-msgstr ""
+msgstr "Ingen certifikatfil valgt"
 
 #: ../CryptoManager.cpp:309
 msgid "Error generating certificate"
-msgstr ""
+msgstr "Fejl ved oprettelse af certifikat"
 
 #: ../CryptoManager.cpp:393
 msgid "TLS disabled, no certificate file set"
-msgstr ""
+msgstr "TLS deaktiveret, ingen certifikatfil angivet"
 
 #: ../CryptoManager.cpp:401
 msgid "Generated new TLS certificate"
-msgstr ""
+msgstr "Nyt TLS-certifikat oprettet"
 
 #: ../CryptoManager.cpp:403
 msgid "TLS disabled, failed to generate certificate: %1%"
-msgstr ""
+msgstr "TLS deaktiveret, kunne ikke oprette certifikat: %1%"
 
 #: ../CryptoManager.cpp:408 ../CryptoManager.cpp:412
 #: ../CryptoManager.cpp:417 ../CryptoManager.cpp:421
 msgid "Failed to load certificate file"
-msgstr ""
+msgstr "Kunne ikke indlæse certifikatfil"
 
 #: ../CryptoManager.cpp:426 ../CryptoManager.cpp:430
 #: ../CryptoManager.cpp:435 ../CryptoManager.cpp:439
 msgid "Failed to load private key"
-msgstr ""
+msgstr "Kunne ikke indlæse privat nøgle"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Dekomprimerede data overstiger størrelsesgrænsen"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
-msgstr ""
+msgstr "Hashdatabase"
 
 #: ../DCContext.cpp:182
 msgid "Shared Files"
-msgstr ""
+msgstr "Delte filer"
 
 #: ../DCContext.cpp:193
 msgid "Download Queue"
-msgstr ""
+msgstr "Overførselskø"
 
 #: ../DCContext.cpp:196
 msgid "Users"
-msgstr ""
+msgstr "Brugere"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Ugyldig fillisteendelse (skal være .xml eller .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
-msgstr ""
+msgstr "Mappe mangler navneattribut"
 
 #: ../DownloadManager.cpp:135
 msgid "IPFilter: Blocked outgoing connection to "
-msgstr ""
+msgstr "IP-filter: Blokerede udgående forbindelse til "
 
 #: ../DownloadManager.cpp:235
 msgid "Invalid size"
-msgstr ""
+msgstr "Ugyldig størrelse"
 
 #: ../DownloadManager.cpp:240
 msgid "Response does not match request"
-msgstr ""
+msgstr "Svaret svarer ikke til anmodningen"
 
 #: ../DownloadManager.cpp:247
 msgid "Could not open target file: %1%"
-msgstr ""
+msgstr "Kunne ikke åbne målfil: %1%"
 
 #: ../DownloadManager.cpp:326
 msgid "Full tree does not match TTH root"
-msgstr ""
+msgstr "Hele træet stemmer ikke overens med TTH-roden"
 
 #: ../DownloadManager.cpp:390
 msgid "No slots available"
-msgstr ""
+msgstr "Ingen ledige pladser"
 
 #: ../DownloadManager.cpp:501
 msgid "%1%: File not available"
-msgstr ""
+msgstr "%1%: Filen er ikke tilgængelig"
 
 #: ../FavoriteManager.cpp:414
 msgid "Kick user(s)"
-msgstr ""
+msgstr "Udeluk bruger(e)"
 
 #: ../FavoriteManager.cpp:418
 msgid "Redirect user(s)"
-msgstr ""
+msgstr "Omdirigér bruger(e)"
 
 #: ../FavoriteManager.cpp:474
 msgid "Auto-connect group (converted)"
-msgstr ""
+msgstr "Gruppe med automatisk forbindelse (konverteret)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Ugyldig URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
-msgstr ""
+msgstr "Hashberegning mislykkedes: %1%"
 
 #: ../HashManager.cpp:239
 msgid "Finished hashing: %1% (%2% at %3%/s)"
-msgstr ""
+msgstr "Hashberegning færdig: %1% (%2% ved %3%/s)"
 
 #: ../HashManager.cpp:242
 msgid "Finished hashing: %1% (%2%)"
-msgstr ""
+msgstr "Hashberegning færdig: %1% (%2%)"
 
 #: ../HashManager.cpp:245
 msgid "Finished hashing: %1%"
-msgstr ""
+msgstr "Hashberegning færdig: %1%"
 
 #: ../HashManager.cpp:273 ../HashManager.cpp:485
 msgid "Error saving hash data: %1%"
-msgstr ""
+msgstr "Fejl ved lagring af hashdata: %1%"
 
 #: ../HashManager.cpp:286
 msgid "Unable to read hash data file"
-msgstr ""
+msgstr "Kan ikke læse hashdatafil"
 
 #: ../HashManager.cpp:618
 msgid "Error creating hash data file: %1%"
-msgstr ""
+msgstr "Fejl ved oprettelse af hashdatafil: %1%"
 
 #: ../HashManager.cpp:969
 msgid "Hash database rebuilt"
-msgstr ""
+msgstr "Hashdatabase genopbygget"
 
 #: ../HashManager.cpp:1063
 msgid ""
 "%1% not shared; calculated CRC32 does not match the one found in SFV file."
-msgstr ""
+msgstr "%1% deles ikke; den beregnede CRC32 stemmer ikke overens med værdien i SFV-filen."
 
 #: ../HashManager.cpp:1068
 msgid "Error hashing %1%: %2%"
-msgstr ""
+msgstr "Fejl ved hashberegning af %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Fejl i overførselskodning (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
-msgstr ""
+msgstr "Uendelig omdirigeringsløkke (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "For mange data i svarets indhold (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
-msgstr ""
+msgstr "Ingen UPnP-implementering tilgængelig"
 
 #: ../MappingManager.cpp:57
 msgid "Another UPnP port mapping attempt is in progress..."
-msgstr ""
+msgstr "Et andet forsøg på UPnP-portvideresendelse er i gang..."
 
 #: ../MappingManager.cpp:108
 msgid "Failed to initialize the %1% interface"
-msgstr ""
+msgstr "Kunne ikke initialisere grænsefladen %1%"
 
 #: ../MappingManager.cpp:114
 msgid " Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " Overførselsport (%1% TCP)"
 
 #: ../MappingManager.cpp:115 ../MappingManager.cpp:123
 #: ../MappingManager.cpp:131 ../MappingManager.cpp:139
 msgid "The %1% interface has failed to map the %2% %3% port"
-msgstr ""
+msgstr "Grænsefladen %1% kunne ikke videresende porten %2% %3%"
 
 #: ../MappingManager.cpp:122
 msgid " Encrypted Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " Krypteret overførselsport (%1% TCP)"
 
 #: ../MappingManager.cpp:130
 msgid " Search Port (%1% UDP)"
-msgstr ""
+msgstr " Søgeport (%1% UDP)"
 
 #: ../MappingManager.cpp:138
 msgid " DHT Port (%1% UDP)"
-msgstr ""
+msgstr " DHT-port (%1% UDP)"
 
 #: ../MappingManager.cpp:151
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Portvideresendelser oprettet (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%) via grænsefladen %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
-msgstr ""
+msgstr "Portvideresendelser oprettet (TCP: %1%, UDP: %2%, TLS: %3%) via grænsefladen %4%"
 
 #: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
-msgstr ""
+msgstr "Kunne ikke finde ekstern IP"
 
 #: ../MappingManager.cpp:181
 msgid "Failed to create port mappings"
-msgstr ""
+msgstr "Kunne ikke oprette portvideresendelser"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Portvideresendelser fornyet"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Portvideresendelser genoprettet"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Fornyelse af portvideresendelser mislykkedes; prøver igen om 60 sekunder"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
-msgstr ""
+msgstr "Portvideresendelser fjernet via grænsefladen %1%"
 
 #: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
-msgstr ""
+msgstr "Kunne ikke fjerne portvideresendelser via grænsefladen %1%"
 
 #: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
-msgstr ""
+msgstr "UPnP: %1%"
 
 #: ../NmdcHub.cpp:439
 msgid "%1% (Nick unknown)"
-msgstr ""
+msgstr "%1% (ukendt kaldenavn)"
 
 #: ../NmdcHub.cpp:839
 msgid "Hub topic:"
-msgstr ""
+msgstr "Hubemne:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "For lille deling til at hente fra "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -427,85 +427,85 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Afsendelse af fil afvist"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
-msgstr ""
+msgstr " Til "
 
 #: ../QueueManager.cpp:234
 msgid "No needed part"
-msgstr ""
+msgstr "Ingen nødvendig del"
 
 #: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
-msgstr ""
+msgstr "Søger efter alternative TTH-kilder til: %1%"
 
 #: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
-msgstr ""
+msgstr "En fil med samme hash findes allerede i din deling"
 
 #: ../QueueManager.cpp:705 ../QueueManager.cpp:782
 msgid "This file is already queued"
-msgstr ""
+msgstr "Denne fil er allerede i køen"
 
 #: ../QueueManager.cpp:718 ../QueueManager.cpp:794
 msgid "A file with a different size already exists in the queue"
-msgstr ""
+msgstr "En fil med en anden størrelse findes allerede i køen"
 
 #: ../QueueManager.cpp:722
 msgid "A file with different tth root already exists in the queue"
-msgstr ""
+msgstr "En fil med en anden TTH-rod findes allerede i køen"
 
 #: ../QueueManager.cpp:735
 msgid "You're trying to download from yourself!"
-msgstr ""
+msgstr "Du forsøger at hente fra dig selv!"
 
 #: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
-msgstr ""
+msgstr "En fil med en anden TTH-rod findes allerede i køen"
 
 #: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
-msgstr ""
+msgstr "Denne fil er allerede færdighentet"
 
 #: ../QueueManager.cpp:843 ../QueueManager.cpp:852
 msgid "Target filename too long"
-msgstr ""
+msgstr "Målfilnavnet er for langt"
 
 #: ../QueueManager.cpp:848 ../QueueManager.cpp:856
 msgid ""
 "Invalid target file (missing directory, check default download directory "
 "setting)"
-msgstr ""
+msgstr "Ugyldig målfil (mappe mangler, kontrollér standardhentemappen)"
 
 #: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
-msgstr ""
+msgstr "Filen findes allerede på målplaceringen"
 
 #: ../QueueManager.cpp:877 ../QueueManager.cpp:881
 msgid "Duplicate source: %1%"
-msgstr ""
+msgstr "Dubletkilde: %1%"
 
 #: ../QueueManager.cpp:1162
 msgid "Target removed"
-msgstr ""
+msgstr "Mål fjernet"
 
 #: ../QueueManager.cpp:1170
 msgid "Target file is missing or wrong size"
-msgstr ""
+msgstr "Målfilen mangler eller har forkert størrelse"
 
 #: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
-msgstr ""
+msgstr "Kan ikke flytte %1% til %2% (%3%); omdøbt til %4%"
 
 #: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
-msgstr ""
+msgstr "Kan hverken flytte %1% til %2% (%3%) eller omdøbe til %4% (%5%)"
 
 #: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
-msgstr ""
+msgstr "Kan ikke åbne filliste: %1%"
 
 #: ../QueueManager.cpp:1442
 msgid "%1%: Matched %2% file"
@@ -515,40 +515,40 @@ msgstr[1] "%1%: %2% matchende filer fundet"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "Målstien for dette element er utilgængelig: %1%; sæt køelementet på pause."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
-msgstr ""
+msgstr "CRC32 stemmer ikke (SFV-kontrol)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1% : %2% filer matchede"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL-fejl: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
-msgstr ""
+msgstr "Alle"
 
 #: ../SearchManager.cpp:56
 msgid "Audio"
-msgstr ""
+msgstr "Lyd"
 
 #: ../SearchManager.cpp:57
 msgid "Compressed"
-msgstr ""
+msgstr "Komprimeret"
 
 #: ../SearchManager.cpp:58
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: ../SearchManager.cpp:59
 msgid "Executable"
-msgstr ""
+msgstr "Programfil"
 
 #: ../SearchManager.cpp:60
 msgid "Picture"
@@ -556,7 +556,7 @@ msgstr "Billede"
 
 #: ../SearchManager.cpp:61
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: ../SearchManager.cpp:62
 msgid "Directory"
@@ -564,385 +564,385 @@ msgstr "Mappe"
 
 #: ../SearchManager.cpp:63
 msgid "TTH"
-msgstr ""
+msgstr "TTH"
 
 #: ../SearchManager.cpp:64
 msgid "CD Image"
-msgstr ""
+msgstr "CD-aftryk"
 
 #: ../SearchManager.cpp:173
 msgid "Search enabled again"
-msgstr ""
+msgstr "Søgning aktiveret igen"
 
 #: ../SearchManager.cpp:181
 msgid "Search disabled: %1%"
-msgstr ""
+msgstr "Søgning deaktiveret: %1%"
 
 #: ../SettingsManager.cpp:260
 msgid "downloaded from"
-msgstr ""
+msgstr "hentet fra"
 
 #: ../SettingsManager.cpp:635
 msgid "Invalid search type name"
-msgstr ""
+msgstr "Ugyldigt navn på søgetype"
 
 #: ../SettingsManager.cpp:639 ../SettingsManager.cpp:661
 msgid "This search type already exists"
-msgstr ""
+msgstr "Denne søgetype findes allerede"
 
 #: ../SettingsManager.cpp:693
 msgid "No such search type"
-msgstr ""
+msgstr "Søgetypen findes ikke"
 
 #: ../SettingsManager.cpp:721 ../SettingsManager.cpp:726
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "Fejl: Indstillingen blev ikke fundet!"
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "Kerneindstilling "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
-msgstr ""
+msgstr "Skift kerneindstilling "
 
 #: ../ShareManager.cpp:803
 msgid "No directory specified"
-msgstr ""
+msgstr "Ingen mappe angivet"
 
 #: ../ShareManager.cpp:815
 msgid "Directory is hidden"
-msgstr ""
+msgstr "Mappen er skjult"
 
 #: ../ShareManager.cpp:819
 msgid "The temporary download directory cannot be shared"
-msgstr ""
+msgstr "Den midlertidige hentemappe kan ikke deles"
 
 #: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
-msgstr ""
+msgstr "Ugyldigt filnavn fundet under hashberegning af mappen %1%"
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Spring delt fil over: %1% (størrelse: %2%)"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Spring midlertidig delt fil over: %1% (størrelse: %2%)"
 
 #: ../ShareManager.cpp:1147
 msgid ""
 "Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: "
 "%3%"
-msgstr ""
+msgstr "Dubletfil deles ikke: %1% (størrelse: %2% B) Matcher: %3%"
 
 #: ../ShareManager.cpp:1169
 msgid ""
 "File list refresh in progress, please wait for it to finish before trying to "
 "refresh again"
-msgstr ""
+msgstr "Fillisten opdateres; vent på afslutning, før du opdaterer igen"
 
 #: ../ShareManager.cpp:1190
 msgid "File list refresh failed: %1%"
-msgstr ""
+msgstr "Opdatering af filliste mislykkedes: %1%"
 
 #: ../ShareManager.cpp:1217
 msgid "File list refresh initiated"
-msgstr ""
+msgstr "Opdatering af filliste startet"
 
 #: ../ShareManager.cpp:1245
 msgid "File list refresh finished"
-msgstr ""
+msgstr "Opdatering af filliste afsluttet"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Opdatering af filliste kasseret, fordi delte mapper blev ændret"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
-msgstr ""
+msgstr "Fillisten %1% oprettet"
 
 #: ../Socket.cpp:164
 #, c-format
 msgid "Unknown error: 0x%1$x"
-msgstr ""
+msgstr "Ukendt fejl: 0x%1$x"
 
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Ikke-understøttet Shadowsocks-krypteringsalgoritme"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Kunne ikke initialisere Shadowsocks-nøgleafledning"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Kunne ikke aflede Shadowsocks-undernøgle"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Kunne ikke initialisere Shadowsocks-kryptering"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks-kryptering mislykkedes"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
 #: ../Socket.cpp:860 ../Socket.cpp:930 ../Socket.cpp:945
 msgid "The socks server failed establish a connection"
-msgstr ""
+msgstr "SOCKS-serveren kunne ikke oprette forbindelse"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks-serveren kunne ikke oprette forbindelse"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Ingen Shadowsocks-adgangskode konfigureret."
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks-måladressen er ugyldig"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
-msgstr ""
+msgstr "SOCKS-serveren kræver godkendelse"
 
 #: ../Socket.cpp:948
 msgid "The socks server doesn't support login / password authentication"
-msgstr ""
+msgstr "SOCKS-serveren understøtter ikke godkendelse med brugernavn/adgangskode"
 
 #: ../Socket.cpp:962 ../Socket.cpp:966
 msgid "Socks server authentication failed (bad login / password?)"
-msgstr ""
+msgstr "Godkendelse på SOCKS-server mislykkedes (forkert brugernavn/adgangskode?)"
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Kunne ikke initialisere SOCKS TLS-kontekst"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Kunne ikke initialisere SOCKS TLS-session"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Kunne ikke knytte SOCKS TLS-session til sokkel"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "SOCKS TLS-håndtrykket fik timeout"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-håndtryk mislykkedes: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-læsning mislykkedes: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS-skrivning mislykkedes: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Svaret fra Shadowsocks UDP-relæet er ugyldigt"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Svaradressen fra Shadowsocks UDP-relæet er ugyldig"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Dekryptering af svar fra Shadowsocks UDP-relæ mislykkedes"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Kunne ikke oprette Shadowsocks-salt"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Kunne ikke oprette Shadowsocks-udfyldning"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks-dekryptering mislykkedes"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Ugyldig størrelse på Shadowsocks-nyttelast"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks-strømmen sluttede med en ufuldstændig ramme"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Kunne ikke oprette Shadowsocks UDP-session"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP-relæ er deaktiveret"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Shadowsocks UDP-relæ er ikke konfigureret"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Kunne ikke oprette Shadowsocks UDP-engangsværdi"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Shadowsocks UDP-pakketæller opbrugt"
 
 #: ../Socket.cpp:2043
 msgid ""
 "Failed to set up the socks server for UDP relay (check socks address and "
 "port)"
-msgstr ""
+msgstr "Kunne ikke konfigurere SOCKS-serveren til UDP-relæ (kontrollér SOCKS-adresse og port)"
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP-måladressen er ugyldig"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
-msgstr ""
+msgstr "Forbindelsen findes allerede."
 
 #: ../UploadManager.cpp:271 ../UploadManager.cpp:275
 #: ../UploadManager.cpp:347
 msgid "Unable to send file %1%: %2%"
-msgstr ""
+msgstr "Kan ikke sende filen %1%: %2%"
 
 #: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
-msgstr ""
+msgstr "IP-filter: Blokerede indgående forbindelse til "
 
 #: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
-msgstr ""
+msgstr "Afbrød bruger, der forlader hubben: %1%"
 
 #: ../UserConnection.cpp:58 ../UserConnection.cpp:73
 #: ../UserConnection.cpp:147
 msgid "Invalid data"
-msgstr ""
+msgstr "Ugyldige data"
 
 #: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
-msgstr ""
+msgstr "Ikke-UTF-8-data i en ADC-forbindelse"
 
 #: ../Util.cpp:862
 #, c-format
 msgid "%d B"
-msgstr ""
+msgstr "%d B"
 
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KiB"
-msgstr ""
+msgstr "%.02f KiB"
 
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MiB"
-msgstr ""
+msgstr "%.02f MiB"
 
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GiB"
-msgstr ""
+msgstr "%.02f GiB"
 
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TiB"
-msgstr ""
+msgstr "%.02f TiB"
 
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PiB"
-msgstr ""
+msgstr "%.02f PiB"
 
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
 msgid "%s B"
-msgstr ""
+msgstr "%s B"
 
 #: ../Util.cpp:910
 #, c-format
 msgid "%'lld B"
-msgstr ""
+msgstr "%'lld B"
 
 #: ../MerkleCheckOutputStream.h:50 ../MerkleCheckOutputStream.h:110
 msgid "TTH inconsistency"
-msgstr ""
+msgstr "TTH stemmer ikke"
 
 #: ../Streams.h:159
 msgid "More bytes written than requested"
-msgstr ""
+msgstr "Flere byte skrevet end anmodet"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "DHT-opstart startet"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "DHT-opstartsfejl: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "DHT-opstart afsluttet korrekt."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Fil offentliggjort: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Delvis fil offentliggjort: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: UDP-status sat til bag firewall (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Vores UDP-port ser ud til at være åben (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT aktiveret igen"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT deaktiveret: "
 
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."

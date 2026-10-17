@@ -22,87 +22,87 @@ msgstr ""
 #: ../src/hub.cc:1087 ../src/hub.cc:1166 ../src/privatemessage.cc:571
 #: ../src/privatemessage.cc:650
 msgid " *** Emoticons limit"
-msgstr ""
+msgstr " *** Giới hạn biểu tượng cảm xúc"
 
 #: ../src/hub.cc:1082 ../src/privatemessage.cc:566
 msgid " *** Emoticons mode off"
-msgstr ""
+msgstr " *** Chế độ biểu tượng cảm xúc đã tắt"
 
 #: ../src/hub.cc:1077 ../src/privatemessage.cc:561
 msgid " *** Emoticons not loaded"
-msgstr ""
+msgstr " *** Chưa nạp biểu tượng cảm xúc"
 
 #: ../src/settingsdialog.cc:2533
 msgid " + system icons"
-msgstr ""
+msgstr " + biểu tượng hệ thống"
 
 #: ../src/hub.cc:471 ../src/hub.cc:490
 msgid " Users"
-msgstr ""
+msgstr " Người dùng"
 
 #: ../src/hub.cc:2880
 msgid " added to favorites list"
-msgstr ""
+msgstr " đã được thêm vào danh sách yêu thích"
 
 #: ../src/hub.cc:2008
 msgid " empty..."
-msgstr ""
+msgstr " trống..."
 
 #: ../src/finishedtransfers.cc:264 ../src/sharebrowser.cc:1140
 msgid " files"
-msgstr ""
+msgstr " Các tập tin"
 
 #: ../src/hub.cc:454 ../src/hub.cc:465
 msgid " has joined"
-msgstr ""
+msgstr " đã tham gia"
 
 #: ../src/hub.cc:455 ../src/hub.cc:464
 msgid " has joined hub "
-msgstr ""
+msgstr " đã tham gia hub "
 
 #: ../src/hub.cc:497 ../src/hub.cc:507
 msgid " has quit"
-msgstr ""
+msgstr " đã rời đi"
 
 #: ../src/hub.cc:496 ../src/hub.cc:506
 msgid " has quit hub "
-msgstr ""
+msgstr " đã rời hub "
 
 #: ../src/hub.cc:1981 ../src/hub.cc:2810 ../src/privatemessage.cc:1425
 msgid " is favorite user"
-msgstr ""
+msgstr " là người dùng yêu thích"
 
 #: ../src/hub.cc:1999 ../src/hub.cc:2851 ../src/privatemessage.cc:1446
 msgid " is not favorite user"
-msgstr ""
+msgstr " không phải người dùng yêu thích"
 
 #: ../src/hashdialog.cc:63 ../src/hashdialog.cc:72 ../src/hashdialog.cc:81
 msgid " left"
-msgstr ""
+msgstr " còn lại"
 
 #: ../src/downloadqueue.cc:1312
 msgid " of "
-msgstr ""
+msgstr " trên "
 
 #: ../src/hub.cc:2907
 msgid " removed from favorites list"
-msgstr ""
+msgstr " đã bị xóa khỏi danh sách yêu thích"
 
 #: ../src/settingsmanager.cc:525
 msgid " to "
-msgstr ""
+msgstr " đến "
 
 #: ../src/search.cc:726
 msgid " user(s)"
-msgstr ""
+msgstr " người dùng"
 
 #: ../src/downloadqueue.cc:1312
 msgid " user(s) online"
-msgstr ""
+msgstr " người dùng trực tuyến"
 
 #: ../src/finishedtransfers.cc:273
 msgid " users"
-msgstr ""
+msgstr " Người dùng"
 
 #: ../ui/settingsdialog.ui:4768
 msgid ""
@@ -114,537 +114,537 @@ msgid ""
 "%% a literal '%' character.\n"
 "\n"
 "see man strftime for details."
-msgstr ""
+msgstr "%a tên viết tắt của thứ trong tuần.\n%b tên viết tắt của tháng.\n%H giờ dạng số thập phân theo đồng hồ 24 giờ.\n%M phút dạng số thập phân (từ 00 đến 59).\n%S giây dạng số thập phân (từ 00 đến 59).\n%% ký tự '%' nguyên dạng.\n\nXem man strftime để biết chi tiết."
 
 #: ../src/hub.cc:2437
 msgid "': type /help for a list of available commands"
-msgstr ""
+msgstr "': gõ /help để xem danh sách lệnh khả dụng"
 
 #: ../src/hub.cc:2106 ../src/privatemessage.cc:1034
 msgid "*** Available commands:"
-msgstr ""
+msgstr "*** Các lệnh khả dụng:"
 
 #: ../src/settingsdialog.cc:2296
 msgid "*** T E S T ***"
-msgstr ""
+msgstr "*** K I Ể M  T R A ***"
 
 #: ../src/settingsdialog.cc:1468 ../ui/mainwindow.ui:251
 #: ../ui/mainwindow.ui:2375 ../ui/mainwindow.ui:2393
 msgid "+/-"
-msgstr ""
+msgstr "+/-"
 
 #: ../src/hashdialog.cc:64 ../src/hashdialog.cc:76
 msgid "-:--:-- left"
-msgstr ""
+msgstr "-:--:-- còn lại"
 
 #: ../src/settingsdialog.cc:2482 ../src/settingsdialog.cc:2507
 msgid "...must be *.theme"
-msgstr ""
+msgstr "...phải là *.theme"
 
 #: ../src/settingsdialog.cc:2382 ../src/settingsdialog.cc:2412
 #: ../src/settingsdialog.cc:2450
 msgid "...must not be empty"
-msgstr ""
+msgstr "...không được để trống"
 
 #: ../src/downloadqueue.cc:1338
 msgid "0 B (0.00%)"
-msgstr ""
+msgstr "0 B (0.00%)"
 
 #: ../src/hub.cc:535
 msgid "0 Users"
-msgstr ""
+msgstr "0 người dùng"
 
 #: ../ui/settingsdialog.ui:8781 ../ui/settingsdialog.ui:8861
 msgid "10AM"
-msgstr ""
+msgstr "10 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8817 ../ui/settingsdialog.ui:8897
 msgid "10PM"
-msgstr ""
+msgstr "10 giờ tối"
 
 #: ../ui/settingsdialog.ui:8784 ../ui/settingsdialog.ui:8864
 msgid "11AM"
-msgstr ""
+msgstr "11 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8820 ../ui/settingsdialog.ui:8900
 msgid "11PM"
-msgstr ""
+msgstr "11 giờ tối"
 
 #: ../ui/settingsdialog.ui:8969
 msgid "16x16"
-msgstr ""
+msgstr "16x16"
 
 #: ../ui/settingsdialog.ui:8754 ../ui/settingsdialog.ui:8834
 msgid "1AM"
-msgstr ""
+msgstr "1 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8790 ../ui/settingsdialog.ui:8870
 msgid "1PM"
-msgstr ""
+msgstr "1 giờ chiều"
 
 #: ../ui/settingsdialog.ui:8972
 msgid "22x22"
-msgstr ""
+msgstr "22x22"
 
 #: ../ui/settingsdialog.ui:8975
 msgid "24x24"
-msgstr ""
+msgstr "24x24"
 
 #: ../ui/settingsdialog.ui:8757 ../ui/settingsdialog.ui:8837
 msgid "2AM"
-msgstr ""
+msgstr "2 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8793 ../ui/settingsdialog.ui:8873
 msgid "2PM"
-msgstr ""
+msgstr "2 giờ chiều"
 
 #: ../ui/settingsdialog.ui:8978
 msgid "32x32"
-msgstr ""
+msgstr "32x32"
 
 #: ../ui/settingsdialog.ui:8981
 msgid "36x36"
-msgstr ""
+msgstr "36x36"
 
 #: ../ui/settingsdialog.ui:8760 ../ui/settingsdialog.ui:8840
 msgid "3AM"
-msgstr ""
+msgstr "3 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8796 ../ui/settingsdialog.ui:8876
 msgid "3PM"
-msgstr ""
+msgstr "3 giờ chiều"
 
 #: ../ui/settingsdialog.ui:8984
 msgid "48x48"
-msgstr ""
+msgstr "48x48"
 
 #: ../ui/settingsdialog.ui:8763 ../ui/settingsdialog.ui:8843
 msgid "4AM"
-msgstr ""
+msgstr "4 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8799 ../ui/settingsdialog.ui:8879
 msgid "4PM"
-msgstr ""
+msgstr "4 giờ chiều"
 
 #: ../ui/settingsdialog.ui:8766 ../ui/settingsdialog.ui:8846
 msgid "5AM"
-msgstr ""
+msgstr "5 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8802 ../ui/settingsdialog.ui:8882
 msgid "5PM"
-msgstr ""
+msgstr "5 giờ chiều"
 
 #: ../ui/settingsdialog.ui:8987
 msgid "64x64"
-msgstr ""
+msgstr "64x64"
 
 #: ../ui/settingsdialog.ui:8769 ../ui/settingsdialog.ui:8849
 msgid "6AM"
-msgstr ""
+msgstr "6 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8805 ../ui/settingsdialog.ui:8885
 msgid "6PM"
-msgstr ""
+msgstr "6 giờ tối"
 
 #: ../ui/settingsdialog.ui:8772 ../ui/settingsdialog.ui:8852
 msgid "7AM"
-msgstr ""
+msgstr "7 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8808 ../ui/settingsdialog.ui:8888
 msgid "7PM"
-msgstr ""
+msgstr "7 giờ tối"
 
 #: ../ui/settingsdialog.ui:8775 ../ui/settingsdialog.ui:8855
 msgid "8AM"
-msgstr ""
+msgstr "8 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8811 ../ui/settingsdialog.ui:8891
 msgid "8PM"
-msgstr ""
+msgstr "8 giờ tối"
 
 #: ../ui/settingsdialog.ui:8778 ../ui/settingsdialog.ui:8858
 msgid "9AM"
-msgstr ""
+msgstr "9 giờ sáng"
 
 #: ../ui/settingsdialog.ui:8814 ../ui/settingsdialog.ui:8894
 msgid "9PM"
-msgstr ""
+msgstr "9 giờ tối"
 
 #: ../src/privatemessage.cc:1050
 msgid ": type /help for a list of available commands"
-msgstr ""
+msgstr ": gõ /help để xem danh sách lệnh khả dụng"
 
 #: ../ui/settingsdialog.ui:7259
 msgid ""
 "<a href=\"https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"
 "\">Help</a>"
-msgstr ""
+msgstr "<a href=\"https://dcplusplus.sourceforge.io/webhelp/settings_logs.html\">Trợ giúp</a>"
 
 #: ../ui/settingsdialog.ui:3855
 msgid "<b>Add player</b>"
-msgstr ""
+msgstr "<b>Thêm trình phát</b>"
 
 #: ../ui/settingsdialog.ui:3651
 msgid "<b>Auto-drop settings</b>"
-msgstr ""
+msgstr "<b>Cài đặt tự động ngắt nguồn</b>"
 
 #: ../ui/settingsdialog.ui:4947
 msgid "<b>Auto-open on startup</b>"
-msgstr ""
+msgstr "<b>Tự động mở khi khởi động</b>"
 
 #: ../ui/settingsdialog.ui:3341
 msgid "<b>Auto-priority settings</b>"
-msgstr ""
+msgstr "<b>Cài đặt ưu tiên tự động</b>"
 
 #: ../ui/settingsdialog.ui:5306
 msgid "<b>Available styles</b>"
-msgstr ""
+msgstr "<b>Kiểu khả dụng</b>"
 
 #: ../ui/settingsdialog.ui:8204
 msgid "<b>Certificate Paths</b>"
-msgstr ""
+msgstr "<b>Đường dẫn chứng chỉ</b>"
 
 #: ../ui/settingsdialog.ui:6462
 msgid "<b>Colors</b>"
-msgstr ""
+msgstr "<b>Màu sắc</b>"
 
 #: ../ui/settingsdialog.ui:646
 msgid "<b>Command Type</b>"
-msgstr ""
+msgstr "<b>Loại lệnh</b>"
 
 #: ../ui/settingsdialog.ui:5035
 msgid "<b>Confirmation Dialog Options</b>"
-msgstr ""
+msgstr "<b>Tùy chọn hộp thoại xác nhận</b>"
 
 #: ../ui/mainwindow.ui:714
 msgid "<b>Connect to address:</b>"
-msgstr ""
+msgstr "<b>Kết nối tới địa chỉ:</b>"
 
 #: ../ui/settingsdialog.ui:743
 msgid "<b>Context</b>"
-msgstr ""
+msgstr "<b>Ngữ cảnh</b>"
 
 #: ../ui/settingsdialog.ui:5993
 msgid "<b>Current theme name:</b>"
-msgstr ""
+msgstr "<b>Tên chủ đề hiện tại:</b>"
 
 #: ../ui/settingsdialog.ui:4743
 msgid "<b>Default away message</b>"
-msgstr ""
+msgstr "<b>Tin nhắn vắng mặt mặc định</b>"
 
 #: ../ui/favoriteusers.ui:96
 msgid "<b>Description</b>"
-msgstr ""
+msgstr "<b>Mô tả</b>"
 
 #: ../ui/adlsearch.ui:295
 msgid "<b>Destination Directory</b>"
-msgstr ""
+msgstr "<b>Thư mục đích</b>"
 
 #: ../ui/settingsdialog.ui:2743
 msgid "<b>Directories</b>"
-msgstr ""
+msgstr "<b>Thư mục</b>"
 
 #: ../ui/settingsdialog.ui:4396
 msgid "<b>Do not share files and folders containing:</b>"
-msgstr ""
+msgstr "<b>Không chia sẻ tập tin và thư mục chứa:</b>"
 
 #: ../src/hub.cc:615
 msgid "<b>Enter your password</b>"
-msgstr ""
+msgstr "<b>Nhập mật khẩu của bạn</b>"
 
 #: ../src/settingsdialog.cc:2209
 msgid "<b>Extension</b>"
-msgstr ""
+msgstr "<b>Phần mở rộng</b>"
 
 #: ../ui/settingsdialog.ui:3106
 msgid "<b>Favorite download to directories</b>"
-msgstr ""
+msgstr "<b>Thư mục tải xuống yêu thích</b>"
 
 #: ../ui/publichubs.ui:236
 msgid "<b>Filter</b>"
-msgstr ""
+msgstr "<b>Bộ lọc</b>"
 
 #: ../ui/settingsdialog.ui:6648
 msgid "<b>Frame</b>"
-msgstr ""
+msgstr "<b>Khung</b>"
 
 #: ../ui/publichubs.ui:292
 msgid "<b>Hub List</b>"
-msgstr ""
+msgstr "<b>Danh sách hub</b>"
 
 #: ../ui/favoritehubs.ui:81
 msgid "<b>Hub</b>"
-msgstr ""
+msgstr "<b>Kết nối chung</b>"
 
 #: ../ui/settingsdialog.ui:5621
 msgid "<b>Icon size</b>"
-msgstr ""
+msgstr "<b>Kích thước biểu tượng</b>"
 
 #: ../ui/settingsdialog.ui:5929
 msgid "<b>Icons</b>"
-msgstr ""
+msgstr "<b>Biểu tượng</b>"
 
 #: ../ui/favoritehubs.ui:328
 msgid "<b>Identification</b>"
-msgstr ""
+msgstr "<b>Nhận dạng</b>"
 
 #: ../ui/settingsdialog.ui:1604
 msgid "<b>Incoming connection settings</b>"
-msgstr ""
+msgstr "<b>Cài đặt kết nối đến</b>"
 
 #: ../ui/settingsdialog.ui:4538
 msgid "<b>Language</b>"
-msgstr ""
+msgstr "<b>Ngôn ngữ</b>"
 
 #: ../ui/settingsdialog.ui:2859
 msgid "<b>Limits</b>"
-msgstr ""
+msgstr "<b>Giới hạn</b>"
 
 #: ../ui/settingsdialog.ui:7275
 msgid "<b>Logging</b>"
-msgstr ""
+msgstr "<b>Ghi nhật ký</b>"
 
 #: ../ui/mainwindow.ui:260
 msgid "<b>Magnet properties</b>"
-msgstr ""
+msgstr "<b>Thuộc tính magnet</b>"
 
 #: ../ui/settingsdialog.ui:4692
 msgid "<b>Main Toolbar Style</b>"
-msgstr ""
+msgstr "<b>Kiểu thanh công cụ chính</b>"
 
 #: ../ui/adlsearch.ui:211
 msgid "<b>Max FileSize</b>"
-msgstr ""
+msgstr "<b>Kích thước tập tin tối đa</b>"
 
 #: ../ui/adlsearch.ui:178
 msgid "<b>Min FileSize</b>"
-msgstr ""
+msgstr "<b>Kích thước tập tin tối thiểu</b>"
 
 #: ../src/settingsdialog.cc:1853
 msgid "<b>Name of the new search type</b>"
-msgstr ""
+msgstr "<b>Tên loại tìm kiếm mới</b>"
 
 #: ../src/settingsdialog.cc:3118
 msgid "<b>Name under which the others see the directory</b>"
-msgstr ""
+msgstr "<b>Tên thư mục hiển thị với người khác</b>"
 
 #: ../src/settingsdialog.cc:3754
 msgid "<b>Name, under which you see the directory</b>"
-msgstr ""
+msgstr "<b>Tên thư mục hiển thị với bạn</b>"
 
 #: ../src/settingsdialog.cc:2108
 msgid "<b>New name</b>"
-msgstr ""
+msgstr "<b>Tên mới</b>"
 
 #: ../ui/publichubs.ui:151 ../ui/settingsdialog.ui:9258
 msgid "<b>Note:</b> Edit urls in the list by clicking them once when selected"
-msgstr ""
+msgstr "<b>Lưu ý:</b> Sửa URL trong danh sách bằng cách nhấp một lần khi đã chọn"
 
 #: ../ui/settingsdialog.ui:5545
 msgid "<b>Notify</b>"
-msgstr ""
+msgstr "<b>Thông báo</b>"
 
 #: ../ui/settingsdialog.ui:4582
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>Tùy chọn</b>"
 
 #: ../ui/settingsdialog.ui:8247
 msgid "<b>Other Security Options</b>"
-msgstr ""
+msgstr "<b>Tùy chọn bảo mật khác</b>"
 
 #: ../ui/settingsdialog.ui:3690
 msgid "<b>Other queue options</b>"
-msgstr ""
+msgstr "<b>Tùy chọn hàng đợi khác</b>"
 
 #: ../ui/settingsdialog.ui:1863
 msgid "<b>Outgoing connection settings</b>"
-msgstr ""
+msgstr "<b>Cài đặt kết nối đi</b>"
 
 #: ../ui/settingsdialog.ui:940
 msgid "<b>Parameters</b>"
-msgstr ""
+msgstr "<b>Tham số</b>"
 
 #: ../ui/settingsdialog.ui:1250
 msgid "<b>Personal Information</b>"
-msgstr ""
+msgstr "<b>Thông tin cá nhân</b>"
 
 #: ../ui/settingsdialog.ui:3748
 msgid "<b>Players list</b>"
-msgstr ""
+msgstr "<b>Danh sách trình phát</b>"
 
 #: ../ui/settingsdialog.ui:5342
 msgid "<b>Preview styles</b>"
-msgstr ""
+msgstr "<b>Xem trước kiểu</b>"
 
 #: ../ui/settingsdialog.ui:5235
 msgid "<b>Private message sound</b>"
-msgstr ""
+msgstr "<b>Âm thanh tin nhắn riêng</b>"
 
 #: ../ui/settingsdialog.ui:5840
 msgid "<b>Private message</b>"
-msgstr ""
+msgstr "<b>Tin nhắn riêng</b>"
 
 #: ../ui/hash.ui:55
 msgid "<b>Processing file:</b>"
-msgstr ""
+msgstr "<b>Đang xử lý tập tin:</b>"
 
 #: ../ui/settingsdialog.ui:2978
 msgid "<b>Public Hubs list</b>"
-msgstr ""
+msgstr "<b>Danh sách hub công cộng</b>"
 
 #: ../ui/adlsearch.ui:94
 msgid "<b>Search String</b>"
-msgstr ""
+msgstr "<b>Tìm kiếm chuỗi</b>"
 
 #: ../ui/settingsdialog.ui:8474
 msgid "<b>Search types</b>"
-msgstr ""
+msgstr "<b>Loại tìm kiếm</b>"
 
 #: ../ui/settingsdialog.ui:2154
 msgid "<b>Secondary Transfer Rate Limiting</b>"
-msgstr ""
+msgstr "<b>Giới hạn tốc độ truyền phụ</b>"
 
 #: ../ui/settingsdialog.ui:2340
 msgid "<b>Secondary Transfer Rate Settings</b>"
-msgstr ""
+msgstr "<b>Cài đặt tốc độ truyền phụ</b>"
 
 #: ../ui/settingsdialog.ui:4140
 msgid "<b>Shared directories</b>"
-msgstr ""
+msgstr "<b>Thư mục chia sẻ</b>"
 
 #: ../ui/adlsearch.ui:252
 msgid "<b>Size Type</b>"
-msgstr ""
+msgstr "<b>Đơn vị kích thước</b>"
 
 #: ../ui/settingsdialog.ui:5094
 msgid "<b>Sounds</b>"
-msgstr ""
+msgstr "<b>Âm thanh</b>"
 
 #: ../ui/adlsearch.ui:128
 msgid "<b>Source Type</b>"
-msgstr ""
+msgstr "<b>Loại nguồn</b>"
 
 #: ../ui/hash.ui:124
 msgid "<b>Statistics</b>"
-msgstr ""
+msgstr "<b>Thống kê</b>"
 
 #: ../ui/settingsdialog.ui:4640
 msgid "<b>Tab Position</b>"
-msgstr ""
+msgstr "<b>Vị trí thẻ</b>"
 
 #: ../ui/settingsdialog.ui:4868
 msgid "<b>Tab bolding on content change</b>"
-msgstr ""
+msgstr "<b>In đậm thẻ khi nội dung thay đổi</b>"
 
 #: ../ui/settingsdialog.ui:981
 msgid "<b>Text sent to hub</b>"
-msgstr ""
+msgstr "<b>Văn bản gửi tới hub</b>"
 
 #: ../ui/settingsdialog.ui:5965
 msgid "<b>Text styles</b>"
-msgstr ""
+msgstr "<b>Kiểu văn bản</b>"
 
 #: ../ui/settingsdialog.ui:4791
 msgid "<b>Timestamps</b>"
-msgstr ""
+msgstr "<b>Dấu thời gian</b>"
 
 #: ../ui/settingsdialog.ui:5588
 msgid "<b>Title</b>"
-msgstr ""
+msgstr "<b>Tiêu đề</b>"
 
 #: ../ui/settingsdialog.ui:6173
 msgid "<b>Toolbar buttons</b>"
-msgstr ""
+msgstr "<b>Nút thanh công cụ</b>"
 
 #: ../ui/settingsdialog.ui:2034
 msgid "<b>Transfer Rate Limiting</b>"
-msgstr ""
+msgstr "<b>Giới hạn tốc độ truyền</b>"
 
 #: ../ui/mainwindow.ui:429
 msgid "<b>What would you like to do?</b>"
-msgstr ""
+msgstr "<b>Bạn muốn làm gì?</b>"
 
 #: ../ui/settingsdialog.ui:4991
 msgid "<b>Window Options</b>"
-msgstr ""
+msgstr "<b>Tùy chọn cửa sổ</b>"
 
 #: ../src/mainwindow.cc:2423
 msgid "<b>file:</b> "
-msgstr ""
+msgstr "<b>Tập tin:</b> "
 
 #: ../ui/favoritehubs.ui:444
 msgid "<small>Note: Leave unchecked for default values</small>"
-msgstr ""
+msgstr "<small>Lưu ý: Bỏ chọn để dùng giá trị mặc định</small>"
 
 #: ../src/sharebrowser.hh:151 ../src/sharebrowser.hh:154
 msgid "?"
-msgstr ""
+msgstr "?"
 
 #: ../ui/mainwindow.ui:2306 ../ui/mainwindow.ui:2489
 msgid "ADL"
-msgstr ""
+msgstr "ADL"
 
 #: ../src/adlsearch.cc:29 ../ui/mainwindow.ui:2304
 msgid "ADL Search"
-msgstr ""
+msgstr "Tìm kiếm ADL"
 
 #: ../ui/adlsearch.ui:8
 msgid "ADLSearch Properties"
-msgstr ""
+msgstr "Thuộc tính tìm kiếm ADL"
 
 #: ../ui/mainwindow.ui:1628
 msgid "About EiskaltDC++"
-msgstr ""
+msgstr "Giới thiệu EiskaltDC++"
 
 #: ../src/settingsdialog.cc:1652
 msgid "Accept custom user commands from hub"
-msgstr ""
+msgstr "Chấp nhận lệnh tùy chỉnh của người dùng từ hub"
 
 #: ../ui/favoritehubs.ui:555 ../ui/settingsdialog.ui:1456
 msgid "Active"
-msgstr ""
+msgstr "Chủ động"
 
 #: ../ui/settingsdialog.ui:4326 ../ui/settingsdialog.ui:8361
 msgid "Add"
-msgstr ""
+msgstr "Thêm"
 
 #: ../ui/mainwindow.ui:2373
 msgid "Add / Remove"
-msgstr ""
+msgstr "Thêm / Xóa"
 
 #: ../src/hub.cc:2111 ../ui/hub.ui:39
 msgid "Add a hub to favorites"
-msgstr ""
+msgstr "Thêm hub vào danh sách yêu thích"
 
 #: ../src/settingsdialog.cc:1654
 msgid "Add finished files to share instantly (if shared)"
-msgstr ""
+msgstr "Thêm ngay tập tin đã tải xong vào nội dung chia sẻ (nếu được chia sẻ)"
 
 #: ../src/hub.cc:2143
 msgid ""
 "Add rule 192.168.1.0/23 where direction incoming and action is allow and "
 "192.168.6.0/24 where direction is incoming or outcoming and action is drop"
-msgstr ""
+msgstr "Thêm quy tắc 192.168.1.0/23 cho chiều đến với hành động cho phép và 192.168.6.0/24 cho chiều đến hoặc đi với hành động loại bỏ"
 
 #: ../ui/mainwindow.ui:288
 msgid "Add this file to your download queue"
-msgstr ""
+msgstr "Thêm tập tin này vào hàng đợi tải xuống"
 
 #: ../ui/uploadqueue.ui:60
 msgid "Add to Favorite Users"
-msgstr ""
+msgstr "Thêm vào người dùng yêu thích"
 
 #: ../ui/publichubs.ui:415
 msgid "Add to favorites"
-msgstr ""
+msgstr "Thêm vào phần yêu thích"
 
 #: ../src/hub.cc:2112 ../src/privatemessage.cc:1039 ../ui/privatemessage.ui:48
 msgid "Add user to favorites list"
-msgstr ""
+msgstr "Thêm người dùng vào danh sách yêu thích"
 
 #: ../ui/adlsearch.ui:452 ../ui/adlsearch.ui:535
 msgid "Add..."
-msgstr ""
+msgstr "Thêm..."
 
 #: ../src/downloadqueue.cc:80 ../src/downloadqueue.cc:292
 #: ../src/downloadqueue.cc:399
@@ -653,7 +653,7 @@ msgstr "Đã thêm vào"
 
 #: ../ui/settingsdialog.ui:6284
 msgid "Adding string or TTH to the top"
-msgstr ""
+msgstr "Thêm chuỗi hoặc TTH vào danh sách hàng đầu"
 
 #: ../src/favoritehubs.cc:53 ../src/favoritehubs.cc:140
 #: ../src/favoritehubs.cc:154 ../src/favoritehubs.cc:233
@@ -668,23 +668,23 @@ msgstr "Địa chỉ"
 #: ../ui/settingsdialog.ui:2569 ../ui/settingsdialog.ui:4470
 #: ../ui/settingsdialog.ui:7341
 msgid "Advanced"
-msgstr ""
+msgstr "Nâng cao"
 
 #: ../src/hub.cc:2138
 msgid "Alias A executing"
-msgstr ""
+msgstr "Đang thực thi bí danh A"
 
 #: ../src/hub.cc:2135
 msgid "Alias List"
-msgstr ""
+msgstr "Danh sách bí danh"
 
 #: ../src/hub.cc:2136
 msgid "Alias Remove A"
-msgstr ""
+msgstr "Xóa bí danh A"
 
 #: ../src/hub.cc:2137
 msgid "Alias add uname -a as A"
-msgstr ""
+msgstr "Thêm uname -a làm bí danh A"
 
 #: ../src/hub.cc:2337
 msgid "Aliases not found."
@@ -692,35 +692,35 @@ msgstr "Không tìm thấy các tên đại diện."
 
 #: ../src/settingsdialog.cc:1728
 msgid "Allow TLS connections to clients without trusted certificate"
-msgstr ""
+msgstr "Cho phép kết nối TLS tới ứng dụng khách không có chứng chỉ đáng tin cậy"
 
 #: ../src/settingsdialog.cc:1727
 msgid "Allow TLS connections to hubs without trusted certificate"
-msgstr ""
+msgstr "Cho phép kết nối TLS tới hub không có chứng chỉ đáng tin cậy"
 
 #: ../src/settingsdialog.cc:1662
 msgid "Allow few connections from one IP"
-msgstr ""
+msgstr "Cho phép nhiều kết nối từ một IP"
 
 #: ../src/settingsdialog.cc:1729
 msgid "Allow only TLS connections to clients"
-msgstr ""
+msgstr "Chỉ cho phép kết nối TLS tới ứng dụng khách"
 
 #: ../src/settingsdialog.cc:1661
 msgid "Allow overlap chunks"
-msgstr ""
+msgstr "Cho phép các khối chồng lấn"
 
 #: ../src/settingsdialog.cc:1663
 msgid "Allow some connections for one user"
-msgstr ""
+msgstr "Cho phép nhiều kết nối cho một người dùng"
 
 #: ../src/settingsdialog.cc:950
 msgid "Amarok player"
-msgstr ""
+msgstr "Trình phát Amarok"
 
 #: ../ui/settingsdialog.ui:4829 ../ui/settingsdialog.ui:6691
 msgid "Appearance"
-msgstr ""
+msgstr "Giao diện"
 
 #: ../src/settingsdialog.cc:923 ../src/settingsdialog.cc:958
 #: ../src/settingsdialog.cc:3005 ../src/settingsdialog.cc:3039
@@ -730,97 +730,97 @@ msgstr "Ứng dụng"
 
 #: ../ui/settingsdialog.ui:3802
 msgid "Application:"
-msgstr ""
+msgstr "Ứng dụng:"
 
 #: ../ui/searchspy.ui:241
 msgid "Apply settings"
-msgstr ""
+msgstr "Áp dụng cài đặt"
 
 #: ../ui/settingsdialog.ui:3828
 msgid "Apply to Extensions: (avi;mov;divx)"
-msgstr ""
+msgstr "Áp dụng cho phần mở rộng: (avi;mov;divx)"
 
 #: ../src/favoritehubs.cc:461
 #, c-format
 msgid "Are you sure you want to delete favorite hub \"%s\"?"
-msgstr ""
+msgstr "Bạn có chắc muốn xóa hub yêu thích \"%s\" không?"
 
 #: ../src/favoriteusers.cc:458
 msgid "Are you sure you want to delete favorite user(s)?"
-msgstr ""
+msgstr "Bạn có chắc muốn xóa người dùng yêu thích không?"
 
 #: ../ui/search.ui:89
 msgid "At least"
-msgstr ""
+msgstr "Ít nhất"
 
 #: ../ui/search.ui:92
 msgid "At most"
-msgstr ""
+msgstr "Nhiều nhất"
 
 #: ../src/sharebrowser.cc:91 ../src/sharebrowser.cc:362
 msgid "Audio"
-msgstr ""
+msgstr "Âm thanh"
 
 #: ../src/favoritehubs.cc:50 ../src/favoritehubs.cc:70
 #: ../src/favoritehubs.cc:129 ../src/favoritehubs.cc:319
 #: ../src/favoritehubs.cc:504 ../src/favoritehubs.cc:506
 msgid "Auto Connect"
-msgstr ""
+msgstr "Tự động kết nối"
 
 #: ../ui/favoritehubs.ui:457
 msgid "Auto connect on _startup"
-msgstr ""
+msgstr "Tự động kết nối khi _khởi động"
 
 #: ../src/favoriteusers.cc:46 ../src/favoriteusers.cc:67
 #: ../src/favoriteusers.cc:109 ../src/favoriteusers.cc:491
 #: ../src/favoriteusers.cc:493
 msgid "Auto grant slot"
-msgstr ""
+msgstr "Tự động cấp khe truyền"
 
 #: ../ui/settingsdialog.ui:7811
 msgid "Auto refresh time"
-msgstr ""
+msgstr "Thời gian tự động làm mới"
 
 #: ../ui/favoritehubs.ui:510
 msgid "Auto update IP from internet"
-msgstr ""
+msgstr "Tự động cập nhật IP từ Internet"
 
 #: ../src/settingsdialog.cc:1643
 msgid "Auto-away on minimize (and back on restore)"
-msgstr ""
+msgstr "Tự động vắng mặt khi thu nhỏ (và trở lại khi khôi phục)"
 
 #: ../src/settingsdialog.cc:983
 msgid "Auto-drop slow sources for all queue items (except filelists)"
-msgstr ""
+msgstr "Tự động ngắt nguồn chậm cho mọi mục hàng đợi (trừ danh sách tập tin)"
 
 #: ../src/settingsdialog.cc:1648
 msgid "Automatically disconnect users who leave the hub"
-msgstr ""
+msgstr "Tự động ngắt kết nối người dùng rời hub"
 
 #: ../src/settingsdialog.cc:1644
 msgid "Automatically follow redirects"
-msgstr ""
+msgstr "Tự động theo chuyển hướng"
 
 #: ../src/settingsdialog.cc:987
 msgid "Automatically match queue for auto search hits"
-msgstr ""
+msgstr "Tự động đối chiếu hàng đợi với kết quả tìm kiếm tự động"
 
 #: ../ui/settingsdialog.ui:4167
 msgid "Automatically open extra slot if speed is below (0 = disable)"
-msgstr ""
+msgstr "Tự động mở thêm khe truyền nếu tốc độ dưới (0 = tắt)"
 
 #: ../src/settingsdialog.cc:986
 msgid "Automatically search for alternative download locations"
-msgstr ""
+msgstr "Tự động tìm vị trí tải xuống thay thế"
 
 #: ../ui/settingsdialog.ui:2408
 msgid "Automatically update external IP (restart required)"
-msgstr ""
+msgstr "Tự động cập nhật IP bên ngoài (cần khởi động lại)"
 
 #: ../src/hub.cc:2107 ../src/privatemessage.cc:1035 ../ui/hub.ui:12
 #: ../ui/privatemessage.ui:12
 msgid "Away mode message on/off"
-msgstr ""
+msgstr "Bật/tắt tin nhắn chế độ vắng mặt"
 
 #: ../src/hub.cc:1924 ../src/hub.cc:1937 ../src/hub.cc:2108
 #: ../src/privatemessage.cc:917 ../src/privatemessage.cc:931
@@ -839,67 +839,67 @@ msgstr "B"
 
 #: ../src/hashdialog.cc:63 ../ui/settingsdialog.ui:3552
 msgid "B/s"
-msgstr ""
+msgstr "B/s"
 
 #: ../ui/settingsdialog.ui:5383
 msgid "Back color"
-msgstr ""
+msgstr "Màu nền"
 
 #: ../src/settingsdialog.cc:1078
 msgid "Basque"
-msgstr ""
+msgstr "Tiếng Basque"
 
 #: ../src/mainwindow.cc:257
 msgid "Basque translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Basque\n"
 
 #: ../src/settingsdialog.cc:1060
 msgid "Belarusian"
-msgstr ""
+msgstr "Tiếng Belarus"
 
 #: ../src/mainwindow.cc:227
 msgid "Belarusian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Belarus\n"
 
 #: ../ui/settingsdialog.ui:7772
 msgid "Bind address"
-msgstr ""
+msgstr "Địa chỉ gắn kết"
 
 #: ../src/sharebrowser.cc:88 ../src/sharebrowser.cc:359
 msgid "Bitrate"
-msgstr ""
+msgstr "Tốc độ bit"
 
 #: ../ui/settingsdialog.ui:5451
 msgid "Black/White"
-msgstr ""
+msgstr "Chặn/Cho phép"
 
 #: ../ui/settingsdialog.ui:5362
 msgid "Bold Authors of message in chat"
-msgstr ""
+msgstr "In đậm tác giả tin nhắn trong trò chuyện"
 
 #: ../ui/settingsdialog.ui:8949
 msgid "Both"
-msgstr ""
+msgstr "CẢ HAI"
 
 #: ../ui/settingsdialog.ui:8952
 msgid "Both horizontal"
-msgstr ""
+msgstr "Cả hai theo chiều ngang"
 
 #: ../ui/settingsdialog.ui:8932
 msgid "Bottom"
-msgstr ""
+msgstr "Dưới cùng"
 
 #: ../ui/uploadqueue.ui:87
 msgid "Browse FileList"
-msgstr ""
+msgstr "Duyệt danh sách tập tin"
 
 #: ../ui/settingsdialog.ui:5167
 msgid "Browse file..."
-msgstr ""
+msgstr "Duyệt tập tin..."
 
 #: ../ui/mainwindow.ui:2218
 msgid "Browse the list of public hubs"
-msgstr ""
+msgstr "Duyệt danh sách hub công cộng"
 
 #: ../src/search.cc:349 ../src/search.cc:419 ../src/sharebrowser.cc:531
 #: ../src/sharebrowser.cc:603 ../ui/hub.ui:231 ../ui/mainwindow.ui:319
@@ -908,19 +908,19 @@ msgstr ""
 #: ../ui/settingsdialog.ui:8062 ../ui/settingsdialog.ui:8080
 #: ../ui/settingsdialog.ui:8098
 msgid "Browse..."
-msgstr ""
+msgstr "Duyệt..."
 
 #: ../src/settingsdialog.cc:1080
 msgid "Bulgarian"
-msgstr ""
+msgstr "Tiếng Bulgaria"
 
 #: ../src/mainwindow.cc:260
 msgid "Bulgarian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Bulgaria\n"
 
 #: ../src/settingsdialog.cc:1419
 msgid "Button smile"
-msgstr ""
+msgstr "Nút biểu tượng cảm xúc"
 
 #: ../src/favoriteusers.cc:51 ../src/favoriteusers.cc:114
 #: ../src/favoriteusers.cc:225 ../src/favoriteusers.cc:255
@@ -929,126 +929,126 @@ msgstr ""
 #: ../src/favoriteusers.cc:445 ../src/favoriteusers.cc:490
 #: ../src/favoriteusers.cc:608
 msgid "CID"
-msgstr ""
+msgstr "CID"
 
 #: ../ui/cmddebug.ui:69
 msgid "CLIENT IN"
-msgstr ""
+msgstr "ỨNG DỤNG KHÁCH VÀO"
 
 #: ../ui/cmddebug.ui:84
 msgid "CLIENT OUT"
-msgstr ""
+msgstr "ỨNG DỤNG KHÁCH RA"
 
 #: ../src/cmddebug.cc:31
 msgid "CMD"
-msgstr ""
+msgstr "CMD"
 
 #: ../ui/mainwindow.ui:1256
 msgid "CMD Debug"
-msgstr ""
+msgstr "Gỡ lỗi CMD"
 
 #: ../src/WulforUtil.cc:212
 msgid "CP1250"
-msgstr ""
+msgstr "CP1250"
 
 #: ../src/WulforUtil.cc:221
 msgid "CP1251"
-msgstr ""
+msgstr "CP1251"
 
 #: ../src/WulforUtil.cc:211
 msgid "CP1252"
-msgstr ""
+msgstr "CP1252"
 
 #: ../src/WulforUtil.cc:222
 msgid "CP1256"
-msgstr ""
+msgstr "CP1256"
 
 #: ../src/WulforUtil.cc:223
 msgid "CP1257"
-msgstr ""
+msgstr "CP1257"
 
 #: ../src/WulforUtil.cc:219
 msgid "CP949"
-msgstr ""
+msgstr "CP949"
 
 #: ../src/finishedtransfers.cc:67 ../src/finishedtransfers.cc:241
 msgid "CRC Checked"
-msgstr ""
+msgstr "Đã kiểm tra CRC"
 
 #: ../src/downloadqueue.cc:1382
 msgid "CRC32 inconsistency (SFV-Check)"
-msgstr ""
+msgstr "CRC32 không nhất quán (kiểm tra SFV)"
 
 #: ../ui/mainwindow.ui:1112
 msgid "Calculate file TTH"
-msgstr ""
+msgstr "Tính TTH của tập tin"
 
 #: ../src/wulfor.cc:108
 #, c-format
 msgid "Cannot handle SIGPIPE\n"
-msgstr ""
+msgstr "Không thể xử lý SIGPIPE\n"
 
 #: ../src/wulfor.cc:79
 msgid "Catching signal "
-msgstr ""
+msgstr "Đang bắt tín hiệu "
 
 #: ../ui/settingsdialog.ui:8172
 msgid "Certificate file"
-msgstr ""
+msgstr "Tập tin chứng chỉ"
 
 #: ../src/settingsmanager.cc:525
 msgid "Change gui setting "
-msgstr ""
+msgstr "Đổi cài đặt giao diện "
 
 #: ../ui/mainwindow.ui:1611
 msgid "Changelog (git)"
-msgstr ""
+msgstr "Nhật ký thay đổi (git)"
 
 #: ../ui/settingsdialog.ui:609
 msgid "Chat"
-msgstr ""
+msgstr "Trò chuyện"
 
 #: ../ui/hub.ui:332 ../ui/privatemessage.ui:260
 msgid "Chat Commands"
-msgstr ""
+msgstr "Lệnh trò chuyện"
 
 #: ../ui/settingsdialog.ui:688
 msgid "Chat Menu"
-msgstr ""
+msgstr "Trình đơn trò chuyện"
 
 #: ../src/hub.cc:1951
 msgid "Chat disabled"
-msgstr ""
+msgstr "Đã tắt trò chuyện"
 
 #: ../src/hub.cc:1956
 msgid "Chat enabled"
-msgstr ""
+msgstr "Đã bật trò chuyện"
 
 #: ../ui/settingsdialog.ui:3492
 msgid "Check every"
-msgstr ""
+msgstr "Kiểm tra mỗi"
 
 #: ../src/settingsdialog.cc:1094
 msgid "Chinese (China)"
-msgstr ""
+msgstr "Tiếng Trung (Trung Quốc)"
 
 #: ../src/mainwindow.cc:285
 msgid "Chinese (China) translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Trung (Trung Quốc)\n"
 
 #: ../ui/settingsdialog.ui:8582
 msgid "Choose a File"
-msgstr ""
+msgstr "Chọn tập tin"
 
 #: ../src/hub.cc:2735 ../src/mainwindow.cc:1336 ../src/mainwindow.cc:1408
 #: ../src/privatemessage.cc:1328 ../ui/search.ui:7 ../ui/settingsdialog.ui:8510
 #: ../ui/sharebrowser.ui:7
 msgid "Choose a directory"
-msgstr ""
+msgstr "Chọn thư mục"
 
 #: ../ui/mainwindow.ui:512
 msgid "Chose A File"
-msgstr ""
+msgstr "Chọn tập tin"
 
 #: ../ui/search.ui:242 ../ui/searchspy.ui:124 ../ui/searchspy.ui:340
 msgid "Clear"
@@ -1056,7 +1056,7 @@ msgstr "Dọn dẹp"
 
 #: ../src/privatemessage.cc:1037 ../ui/privatemessage.ui:30
 msgid "Clear PM"
-msgstr ""
+msgstr "Xóa nội dung tin nhắn riêng"
 
 #: ../src/hub.cc:2109 ../ui/hub.ui:30
 msgid "Clear chat"
@@ -1064,77 +1064,77 @@ msgstr "Làm rỗng nội dung tán gẫu"
 
 #: ../src/searchspy.cc:501 ../ui/searchspy.ui:344
 msgid "Clear frame search"
-msgstr ""
+msgstr "Xóa nội dung khung tìm kiếm"
 
 #: ../src/settingsdialog.cc:1645
 msgid "Clear search box after each search"
-msgstr ""
+msgstr "Xóa ô tìm kiếm sau mỗi lần tìm"
 
 #: ../src/privatemessage.cc:1038 ../ui/privatemessage.ui:39
 msgid "Close PM"
-msgstr ""
+msgstr "Đóng tin nhắn riêng"
 
 #: ../ui/mainwindow.ui:1428
 msgid "Close all PM"
-msgstr ""
+msgstr "Đóng tất cả tin nhắn riêng"
 
 #: ../ui/mainwindow.ui:1419
 msgid "Close all hubs"
-msgstr ""
+msgstr "Đóng tất cả hub"
 
 #: ../ui/mainwindow.ui:1437
 msgid "Close all search"
-msgstr ""
+msgstr "Đóng tất cả tìm kiếm"
 
 #: ../src/hub.cc:2110
 msgid "Close chat"
-msgstr ""
+msgstr "Đóng trò chuyện"
 
 #: ../ui/mainwindow.ui:1446
 msgid "Close offline PM"
-msgstr ""
+msgstr "Đóng tin nhắn riêng ngoại tuyến"
 
 #: ../src/bookentry.cc:74
 msgid "Close tab"
-msgstr ""
+msgstr "Đóng thẻ"
 
 #: ../src/transfers.cc:410
 msgid "Closing connection..."
-msgstr ""
+msgstr "Đang đóng kết nối..."
 
 #: ../ui/settingsdialog.ui:401
 msgid "Color select"
-msgstr ""
+msgstr "Chọn màu"
 
 #: ../ui/settingsdialog.ui:5505
 msgid "Colors & Fonts"
-msgstr ""
+msgstr "Màu sắc & Phông chữ"
 
 #: ../src/settingsdialog.cc:1675 ../src/settingsdialog.cc:1683
 #: ../src/settingsdialog.cc:3364 ../src/settingsdialog.cc:3438
 #: ../ui/settingsdialog.ui:812
 msgid "Command"
-msgstr ""
+msgstr "Lệnh"
 
 #: ../src/settingsdialog.cc:3482 ../src/settingsdialog.cc:3488
 msgid "Command name already exists"
-msgstr ""
+msgstr "Tên lệnh đã tồn tại"
 
 #: ../ui/settingsdialog.ui:2904
 msgid "Configure Public Hub Lists"
-msgstr ""
+msgstr "Cấu hình danh sách hub công cộng"
 
 #: ../ui/publichubs.ui:10 ../ui/settingsdialog.ui:9103
 msgid "Configure hub lists"
-msgstr ""
+msgstr "Cấu hình danh sách hub"
 
 #: ../src/settingsdialog.cc:1575
 msgid "Confirm application exit"
-msgstr ""
+msgstr "Xác nhận thoát ứng dụng"
 
 #: ../src/settingsdialog.cc:1576
 msgid "Confirm favorite hub removal"
-msgstr ""
+msgstr "Xác nhận xóa hub yêu thích"
 
 #: ../src/settingsdialog.cc:1435 ../src/settingsdialog.cc:1474
 #: ../ui/mainwindow.ui:2144 ../ui/mainwindow.ui:2417
@@ -1143,71 +1143,71 @@ msgstr "Kết nối"
 
 #: ../src/hub.cc:3597
 msgid "Connect failed: "
-msgstr ""
+msgstr "Kết nối thất bại: "
 
 #: ../ui/mainwindow.ui:620
 msgid "Connect to a hub"
-msgstr ""
+msgstr "Kết nối tới hub"
 
 #: ../ui/favoriteusers.ui:203
 msgid "Connect to hub"
-msgstr ""
+msgstr "Kết nối tới hub"
 
 #: ../src/hub.cc:2118 ../ui/hub.ui:57
 msgid "Connect to the hub"
-msgstr ""
+msgstr "Kết nối tới hub"
 
 #: ../src/hub.cc:3541 ../src/transfers.cc:1032
 msgid "Connected"
-msgstr ""
+msgstr "Đã kết nối"
 
 #: ../src/transfers.cc:1068
 msgid "Connecting"
-msgstr ""
+msgstr "Đang kết nối"
 
 #: ../src/transfers.cc:377
 msgid "Connecting (forced)..."
-msgstr ""
+msgstr "Đang kết nối (bắt buộc)..."
 
 #: ../src/hub.cc:3534
 msgid "Connecting to "
-msgstr ""
+msgstr "Đang kết nối tới "
 
 #: ../src/transfers.cc:1021
 msgid "Connecting..."
-msgstr ""
+msgstr "Đang kết nối..."
 
 #: ../src/hub.cc:100 ../src/hub.cc:419 ../src/hub.cc:439 ../src/search.cc:106
 #: ../src/search.cc:667 ../src/search.cc:752 ../src/search.cc:887
 #: ../ui/search.ui:141 ../ui/settingsdialog.ui:1883
 #: ../ui/settingsdialog.ui:2585
 msgid "Connection"
-msgstr ""
+msgstr "Kết nối"
 
 #: ../src/mainwindow.cc:2366
 msgid "Connectivity Manager: Warning"
-msgstr ""
+msgstr "Trình quản lý kết nối: Cảnh báo"
 
 #: ../src/mainwindow.cc:213
 msgid "Contributors"
-msgstr ""
+msgstr "Người đóng góp"
 
 #: ../src/searchspy.cc:56 ../src/searchspy.cc:155 ../src/searchspy.cc:269
 #: ../src/searchspy.cc:294 ../src/searchspy.cc:310 ../src/searchspy.cc:432
 msgid "Count"
-msgstr ""
+msgstr "Số lượng"
 
 #: ../src/publichubs.cc:50 ../src/publichubs.cc:162
 msgid "Country"
-msgstr ""
+msgstr "Quốc gia"
 
 #: ../src/settingsdialog.cc:1084
 msgid "Czech"
-msgstr ""
+msgstr "Tiếng Séc"
 
 #: ../src/mainwindow.cc:266
 msgid "Czech translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Séc\n"
 
 #: ../src/mainwindow.cc:186
 #, c-format
@@ -1216,42 +1216,42 @@ msgid ""
 "\n"
 "EiskaltDC++ version: %s\n"
 "DC++ core version: %s"
-msgstr ""
+msgstr "Ứng dụng khách DC++ dựa trên mã nguồn FreeDC++ và LinuxDC++\n\nPhiên bản EiskaltDC++: %s\nPhiên bản lõi DC++: %s"
 
 #: ../ui/cmddebug.ui:99
 msgid "DETECTION"
-msgstr ""
+msgstr "PHÁT HIỆN"
 
 #: ../ui/settingsdialog.ui:2508
 msgid "DHT Port"
-msgstr ""
+msgstr "Cổng DHT"
 
 #: ../src/emoticonsdialog.cc:99 ../src/previewmenu.cc:86
 #: ../ui/favoritehubs.ui:552 ../ui/settingsdialog.ui:5721
 #: ../ui/settingsdialog.ui:6436 ../ui/settingsdialog.ui:6622
 #: ../ui/settingsdialog.ui:8421
 msgid "Default"
-msgstr ""
+msgstr "Mặc định"
 
 #: ../ui/settingsdialog.ui:2618
 msgid "Default download directory"
-msgstr ""
+msgstr "Thư mục tải xuống mặc định"
 
 #: ../ui/settingsdialog.ui:1211
 msgid "Default hub encoding"
-msgstr ""
+msgstr "Bảng mã hub mặc định"
 
 #: ../ui/settingsdialog.ui:6074
 msgid "Default icons"
-msgstr ""
+msgstr "Biểu tượng mặc định"
 
 #: ../ui/settingsdialog.ui:5434
 msgid "Default styles"
-msgstr ""
+msgstr "Kiểu mặc định"
 
 #: ../ui/searchspy.ui:112
 msgid "Delete item"
-msgstr ""
+msgstr "Xóa mục"
 
 #: ../src/favoritehubs.cc:52 ../src/favoritehubs.cc:131
 #: ../src/favoritehubs.cc:314 ../src/favoriteusers.cc:50
@@ -1266,21 +1266,21 @@ msgstr "Mô tả"
 #: ../src/adlsearch.cc:40 ../src/adlsearch.cc:60 ../src/adlsearch.cc:110
 #: ../src/adlsearch.cc:208 ../src/adlsearch.cc:233
 msgid "Destination Directory"
-msgstr ""
+msgstr "Thư mục đích"
 
 #: ../src/mainwindow.cc:209
 msgid "Developers"
-msgstr ""
+msgstr "Nhà phát triển"
 
 #: ../src/sharebrowser.cc:115 ../src/sharebrowser.cc:261
 #: ../src/sharebrowser.cc:278 ../src/sharebrowser.cc:619
 #: ../src/sharebrowser.cc:674
 msgid "Dir"
-msgstr ""
+msgstr "Thư mục"
 
 #: ../ui/settingsdialog.ui:1803
 msgid "Direct connection"
-msgstr ""
+msgstr "Kết nối trực tiếp"
 
 #: ../src/UserCommandMenu.cc:66 ../src/search.cc:933 ../src/search.cc:1773
 #: ../src/settingsdialog.cc:902 ../src/settingsdialog.cc:915
@@ -1294,47 +1294,47 @@ msgstr "Thư mục"
 
 #: ../src/settingsdialog.cc:3775
 msgid "Directory or favorite name already exists"
-msgstr ""
+msgstr "Thư mục hoặc tên yêu thích đã tồn tại"
 
 #: ../ui/favoritehubs.ui:91 ../ui/hub.ui:344
 msgid "Disable chat"
-msgstr ""
+msgstr "Tắt trò chuyện"
 
 #: ../src/settingsdialog.cc:1125
 msgid "Do not close the program, hide in the system tray"
-msgstr ""
+msgstr "Không đóng chương trình, ẩn vào khay hệ thống"
 
 #: ../ui/settingsdialog.ui:2669
 msgid "Do not use unfinished downloads directory"
-msgstr ""
+msgstr "Không dùng thư mục cho lượt tải chưa hoàn tất"
 
 #: ../ui/mainwindow.ui:792
 msgid "Do you really want to exit?"
-msgstr ""
+msgstr "Bạn có thực sự muốn thoát không?"
 
 #: ../ui/settingsdialog.ui:1508
 msgid "Don't allow Hub/UPnP/DHT to override"
-msgstr ""
+msgstr "Không cho phép Hub/UPnP/DHT ghi đè"
 
 #: ../src/settingsdialog.cc:989
 msgid "Don't download files already in share"
-msgstr ""
+msgstr "Không tải tập tin đã có trong nội dung chia sẻ"
 
 #: ../src/settingsdialog.cc:990
 msgid "Don't download files already in the queue"
-msgstr ""
+msgstr "Không tải tập tin đã có trong hàng đợi"
 
 #: ../ui/search.ui:549
 msgid "Don't hide side panel on search"
-msgstr ""
+msgstr "Không ẩn bảng bên khi tìm kiếm"
 
 #: ../src/settingsdialog.cc:985
 msgid "Don't remove the source when auto-dropping, only disconnect"
-msgstr ""
+msgstr "Không xóa nguồn khi tự động ngắt, chỉ ngắt kết nối"
 
 #: ../src/settingsdialog.cc:1655
 msgid "Don't send the away message to bots"
-msgstr ""
+msgstr "Không gửi tin nhắn vắng mặt cho bot"
 
 #: ../src/hashdialog.cc:101 ../src/sharebrowser.cc:188
 msgid "Done"
@@ -1343,11 +1343,11 @@ msgstr "Đã hoàn tất"
 #: ../src/settingsdialog.cc:1420 ../ui/sharebrowser.ui:80
 #: ../ui/sharebrowser.ui:126
 msgid "Download"
-msgstr ""
+msgstr "Tải xuống"
 
 #: ../ui/adlsearch.ui:327
 msgid "Download Matches"
-msgstr ""
+msgstr "Tải các tập tin khớp"
 
 #: ../src/downloadqueue.cc:32 ../src/settingsdialog.cc:1144
 #: ../src/settingsdialog.cc:1554 ../ui/mainwindow.ui:1268
@@ -1356,85 +1356,85 @@ msgstr "Hàng đợi tải xuống"
 
 #: ../ui/hub.ui:221 ../ui/privatemessage.ui:178 ../ui/search.ui:664
 msgid "Download _to..."
-msgstr ""
+msgstr "_Tải xuống vào..."
 
 #: ../ui/search.ui:678
 msgid "Download _whole directory"
-msgstr ""
+msgstr "_Tải toàn bộ thư mục"
 
 #: ../src/transfers.cc:970
 msgid "Download complete..."
-msgstr ""
+msgstr "Tải xuống hoàn tất..."
 
 #: ../src/publichubs.cc:459
 msgid "Download failed: "
-msgstr ""
+msgstr "Tải xuống thất bại: "
 
 #: ../src/settingsdialog.cc:1174 ../src/settingsdialog.cc:1356
 #: ../src/settingsmanager.cc:235 ../src/transfers.cc:1096
 msgid "Download finished"
-msgstr ""
+msgstr "Tải xuống hoàn tất"
 
 #: ../src/settingsdialog.cc:1175 ../src/settingsdialog.cc:1360
 #: ../src/settingsmanager.cc:237
 msgid "Download finished file list"
-msgstr ""
+msgstr "Tải danh sách tập tin hoàn tất"
 
 #: ../src/publichubs.cc:467
 msgid "Download finished: "
-msgstr ""
+msgstr "Tải xuống hoàn tất: "
 
 #: ../ui/hub.ui:149
 msgid "Download image"
-msgstr ""
+msgstr "Tải hình ảnh"
 
 #: ../src/hub.cc:2051
 msgid "Download image: disable"
-msgstr ""
+msgstr "Tải hình ảnh: tắt"
 
 #: ../src/hub.cc:2053
 msgid "Download image: unlimit"
-msgstr ""
+msgstr "Tải hình ảnh: không giới hạn"
 
 #: ../src/hub.cc:2055
 msgid "Download limit image: "
-msgstr ""
+msgstr "Giới hạn tải hình ảnh: "
 
 #: ../src/hub.cc:2124
 msgid "Download limit image: 0 - disable, n < 0 - unlimit, empty - info"
-msgstr ""
+msgstr "Giới hạn tải hình ảnh: 0 - tắt, n < 0 - không giới hạn, trống - thông tin"
 
 #: ../src/transfers.cc:1105
 msgid "Download removed"
-msgstr ""
+msgstr "Đã xóa lượt tải xuống"
 
 #: ../ui/mainwindow.ui:1813
 msgid "Download speed"
-msgstr ""
+msgstr "Tốc độ tải xuống"
 
 #: ../src/transfers.cc:921
 msgid "Download starting..."
-msgstr ""
+msgstr "Bắt đầu tải xuống..."
 
 #: ../src/publichubs.cc:451
 msgid "Download starting: "
-msgstr ""
+msgstr "Bắt đầu tải xuống: "
 
 #: ../ui/settingsdialog.ui:3119
 msgid "Download to"
-msgstr ""
+msgstr "Tải xuống vào"
 
 #: ../ui/sharebrowser.ui:89 ../ui/sharebrowser.ui:135
 msgid "Download to..."
-msgstr ""
+msgstr "Tải xuống vào..."
 
 #: ../ui/search.ui:687
 msgid "Download whole director_y to..."
-msgstr ""
+msgstr "_Tải toàn bộ thư mục vào..."
 
 #: ../src/mainwindow.cc:773
 msgid "Download: "
-msgstr ""
+msgstr "Tải xuống: "
 
 #: ../src/downloadqueue.cc:74 ../src/downloadqueue.cc:94
 #: ../src/downloadqueue.cc:287 ../src/downloadqueue.cc:394
@@ -1444,112 +1444,112 @@ msgstr "Đã tải xuống"
 
 #: ../src/publichubs.cc:493
 msgid "Downloaded hub list is corrupted or unsupported "
-msgstr ""
+msgstr "Danh sách hub đã tải bị hỏng hoặc không được hỗ trợ "
 
 #: ../src/transfers.cc:584 ../src/transfers.cc:957
 msgid "Downloading"
-msgstr ""
+msgstr "Đang tải xuống"
 
 #: ../ui/settingsdialog.ui:2995 ../ui/settingsdialog.ui:3966
 msgid "Downloads"
-msgstr ""
+msgstr "Tải xuống"
 
 #: ../ui/settingsdialog.ui:3626
 msgid "Drop sources below"
-msgstr ""
+msgstr "Ngắt nguồn có tốc độ dưới"
 
 #: ../src/search.cc:2014
 msgid "Dropped: "
-msgstr ""
+msgstr "Bị loại: "
 
 #: ../ui/settingsdialog.ui:2440
 msgid "DynDNS Address"
-msgstr ""
+msgstr "Địa chỉ DynDNS"
 
 #: ../ui/settingsdialog.ui:1185
 msgid "E-Mail"
-msgstr ""
+msgstr "E-mail"
 
 #: ../ui/mainwindow.ui:2039
 msgid "Edit the preferences"
-msgstr ""
+msgstr "Sửa tùy chỉnh"
 
 #: ../ui/hub.ui:376 ../ui/privatemessage.ui:290
 msgid "Emoticons"
-msgstr ""
+msgstr "Biểu tượng cảm xúc"
 
 #: ../src/hub.cc:2035 ../src/privatemessage.cc:973
 msgid "Emoticons mode off"
-msgstr ""
+msgstr "Chế độ biểu tượng cảm xúc đã tắt"
 
 #: ../src/hub.cc:2040 ../src/privatemessage.cc:978
 msgid "Emoticons mode on"
-msgstr ""
+msgstr "Chế độ biểu tượng cảm xúc đã bật"
 
 #: ../src/hub.cc:2127 ../src/privatemessage.cc:1043
 msgid "Emoticons on/off"
-msgstr ""
+msgstr "Bật/tắt biểu tượng cảm xúc"
 
 #: ../src/emoticonsdialog.cc:62
 msgid "Emotion packs"
-msgstr ""
+msgstr "Gói biểu tượng cảm xúc"
 
 #: ../src/settingsdialog.cc:1650
 msgid "Enable automatic SFV checking"
-msgstr ""
+msgstr "Bật kiểm tra SFV tự động"
 
 #: ../src/settingsdialog.cc:1651
 msgid "Enable safe and compressed transfers"
-msgstr ""
+msgstr "Bật truyền an toàn và có nén"
 
 #: ../src/settingsdialog.cc:1649
 msgid "Enable segmented downloads"
-msgstr ""
+msgstr "Bật tải xuống phân đoạn"
 
 #: ../src/adlsearch.cc:37 ../src/adlsearch.cc:57 ../src/adlsearch.cc:65
 #: ../src/adlsearch.cc:107 ../src/adlsearch.cc:205 ../src/adlsearch.cc:238
 #: ../src/adlsearch.cc:383 ../src/adlsearch.cc:385 ../ui/adlsearch.ui:312
 msgid "Enabled"
-msgstr ""
+msgstr "Đã bật"
 
 #: ../src/favoritehubs.cc:57 ../src/favoritehubs.cc:142
 #: ../src/favoritehubs.cc:234 ../src/favoritehubs.cc:256
 #: ../src/favoritehubs.cc:318 ../src/favoritehubs.cc:492
 msgid "Encoding"
-msgstr ""
+msgstr "Bảng mã"
 
 #: ../src/transfers.cc:69
 msgid "Encryption"
-msgstr ""
+msgstr "Mã hóa"
 
 #: ../src/settingsdialog.cc:1056
 msgid "English"
-msgstr ""
+msgstr "Tiếng Anh"
 
 #: ../ui/mainwindow.ui:2535
 msgid "Enter line for user command"
-msgstr ""
+msgstr "Nhập dòng cho lệnh người dùng"
 
 #: ../ui/sharebrowser.ui:278
 msgid "Enter text to search for"
-msgstr ""
+msgstr "Nhập văn bản cần tìm"
 
 #: ../src/mainwindow.cc:1270
 msgid "Enter value for "
-msgstr ""
+msgstr "Nhập giá trị cho "
 
 #: ../src/settingsdialog.cc:1914 ../src/settingsdialog.cc:1958
 #: ../src/settingsdialog.cc:2995
 msgid "Error"
-msgstr ""
+msgstr "Lỗi"
 
 #: ../src/settingsmanager.cc:527
 msgid "Error: segv parser :D"
-msgstr ""
+msgstr "Lỗi: bộ phân tích segv :D"
 
 #: ../src/settingsmanager.cc:522
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "Lỗi: Không tìm thấy cài đặt!"
 
 #: ../src/downloadqueue.cc:79 ../src/downloadqueue.cc:291
 #: ../src/downloadqueue.cc:398
@@ -1558,7 +1558,7 @@ msgstr "Lỗi"
 
 #: ../ui/settingsdialog.ui:5199
 msgid "Every time a private message is received"
-msgstr ""
+msgstr "Mỗi khi nhận tin nhắn riêng"
 
 #: ../src/downloadqueue.cc:78 ../src/downloadqueue.cc:93
 #: ../src/downloadqueue.cc:285 ../src/downloadqueue.cc:392 ../src/search.cc:108
@@ -1566,7 +1566,7 @@ msgstr ""
 #: ../src/search.cc:755 ../src/sharebrowser.cc:87 ../src/sharebrowser.cc:110
 #: ../src/sharebrowser.cc:324 ../src/sharebrowser.cc:355
 msgid "Exact Size"
-msgstr ""
+msgstr "Kích thước chính xác"
 
 #: ../ui/mainwindow.ui:218
 msgid "Exact size"
@@ -1574,35 +1574,35 @@ msgstr "Kích thước chính xác"
 
 #: ../ui/settingsdialog.ui:4409
 msgid "Exceptions"
-msgstr ""
+msgstr "Ngoại lệ"
 
 #: ../src/hub.cc:2130
 msgid "Execute Lua Chunk"
-msgstr ""
+msgstr "Thực thi đoạn mã Lua"
 
 #: ../src/hub.cc:2132
 msgid "Execute code (bash)"
-msgstr ""
+msgstr "Thực thi mã (bash)"
 
 #: ../ui/mainwindow.ui:2021
 msgid "Exit"
-msgstr ""
+msgstr "Thoát"
 
 #: ../ui/mainwindow.ui:734
 msgid "Exit EiskaltDC++ Gtk?"
-msgstr ""
+msgstr "Thoát EiskaltDC++ Gtk?"
 
 #: ../ui/settingsdialog.ui:8033
 msgid "Experts Only"
-msgstr ""
+msgstr "Chỉ dành cho chuyên gia"
 
 #: ../ui/settingsdialog.ui:6029
 msgid "Export..."
-msgstr ""
+msgstr "Xuất..."
 
 #: ../src/settingsdialog.cc:2208
 msgid "Extension edition"
-msgstr ""
+msgstr "Sửa phần mở rộng"
 
 #: ../src/settingsdialog.cc:924 ../src/settingsdialog.cc:959
 #: ../src/settingsdialog.cc:1741 ../src/settingsdialog.cc:1881
@@ -1610,62 +1610,62 @@ msgstr ""
 #: ../src/settingsdialog.cc:3006 ../src/settingsdialog.cc:3040
 #: ../src/settingsdialog.cc:3058 ../src/settingsdialog.cc:3089
 msgid "Extensions"
-msgstr ""
+msgstr "Phần mở rộng"
 
 #: ../ui/settingsdialog.ui:1495
 msgid "External / WAN IP"
-msgstr ""
+msgstr "IP bên ngoài / WAN"
 
 #: ../ui/favoritehubs.ui:478
 msgid "External IP"
-msgstr ""
+msgstr "IP bên ngoài"
 
 #: ../ui/favoritehubs.ui:15
 msgid "Favorite Hub Properties"
-msgstr ""
+msgstr "Thuộc tính hub yêu thích"
 
 #: ../src/favoritehubs.cc:30 ../src/settingsdialog.cc:1422
 #: ../src/settingsdialog.cc:1476 ../src/settingsdialog.cc:1553
 #: ../ui/mainwindow.ui:1174 ../ui/mainwindow.ui:2168
 msgid "Favorite Hubs"
-msgstr ""
+msgstr "Kết nối chung yêu thích"
 
 #: ../src/settingsdialog.cc:901 ../src/settingsdialog.cc:914
 #: ../src/settingsdialog.cc:3769
 msgid "Favorite Name"
-msgstr ""
+msgstr "Tên yêu thích"
 
 #: ../src/settingsdialog.cc:1245
 msgid "Favorite User"
-msgstr ""
+msgstr "Người dùng yêu thích"
 
 #: ../src/favoriteusers.cc:32 ../src/settingsdialog.cc:1423
 #: ../src/settingsdialog.cc:1478 ../src/settingsdialog.cc:1557
 #: ../ui/mainwindow.ui:1204 ../ui/mainwindow.ui:2184
 msgid "Favorite Users"
-msgstr ""
+msgstr "Người dùng yêu thích"
 
 #: ../src/hub.cc:3130
 msgid "Favorite hub added"
-msgstr ""
+msgstr "Đã thêm hub yêu thích"
 
 #: ../src/hub.cc:3135
 msgid "Favorite hub already exists"
-msgstr ""
+msgstr "Hub yêu thích đã tồn tại"
 
 #: ../src/settingsdialog.cc:3752 ../ui/settingsdialog.ui:8996
 msgid "Favorite name"
-msgstr ""
+msgstr "Tên yêu thích"
 
 #: ../src/settingsdialog.cc:1180 ../src/settingsdialog.cc:1376
 #: ../src/settingsmanager.cc:245
 msgid "Favorite user joined"
-msgstr ""
+msgstr "Người dùng yêu thích đã tham gia"
 
 #: ../src/settingsdialog.cc:1181 ../src/settingsdialog.cc:1380
 #: ../src/settingsmanager.cc:247
 msgid "Favorite user quit"
-msgstr ""
+msgstr "Người dùng yêu thích đã rời đi"
 
 #: ../src/UserCommandMenu.cc:68 ../src/settingsdialog.cc:363
 #: ../src/settingsdialog.cc:1158 ../src/settingsdialog.cc:1437
@@ -1674,19 +1674,19 @@ msgstr ""
 #: ../ui/settingsdialog.ui:6994 ../ui/settingsdialog.ui:7078
 #: ../ui/settingsdialog.ui:7159
 msgid "File"
-msgstr ""
+msgstr "Tập tin"
 
 #: ../src/transfers.cc:676 ../src/transfers.cc:878
 msgid "File list"
-msgstr ""
+msgstr "Danh sách tập tin"
 
 #: ../src/sharebrowser.cc:180
 msgid "File list loaded"
-msgstr ""
+msgstr "Đã nạp danh sách tập tin"
 
 #: ../ui/mainwindow.ui:104
 msgid "File name"
-msgstr ""
+msgstr "Tên tập tin"
 
 #: ../src/downloadqueue.cc:1378
 msgid "File not available"
@@ -1694,11 +1694,11 @@ msgstr "Tập tin hiện không có"
 
 #: ../ui/search.ui:153
 msgid "File type"
-msgstr ""
+msgstr "Loại tập tin"
 
 #: ../ui/settingsdialog.ui:705
 msgid "Filelist Menu"
-msgstr ""
+msgstr "Trình đơn danh sách tập tin"
 
 #: ../src/downloadqueue.cc:71 ../src/downloadqueue.cc:95
 #: ../src/downloadqueue.cc:96 ../src/downloadqueue.cc:281
@@ -1725,113 +1725,113 @@ msgstr "Các tập tin"
 
 #: ../src/downloadqueue.cc:244 ../src/sharebrowser.cc:381
 msgid "Files: "
-msgstr ""
+msgstr "Các tập tin: "
 
 #: ../ui/cmddebug.ui:113
 msgid "Filter by IP"
-msgstr ""
+msgstr "Lọc theo IP"
 
 #: ../ui/search.ui:478
 msgid "Filter files already in share"
-msgstr ""
+msgstr "Lọc tập tin đã có trong nội dung chia sẻ"
 
 #: ../src/settingsdialog.cc:1114
 msgid "Filter kick and NMDC debug messages"
-msgstr ""
+msgstr "Lọc thông báo đuổi người dùng và gỡ lỗi NMDC"
 
 #: ../src/search.cc:2001
 msgid "Filtered: "
-msgstr ""
+msgstr "Đã lọc: "
 
 #: ../src/search.cc:573
 msgid "Filtered: 0"
-msgstr ""
+msgstr "Đã lọc: 0"
 
 #: ../ui/sharebrowser.ui:433
 msgid "Find"
-msgstr ""
+msgstr "Tìm:"
 
 #: ../ui/sharebrowser.ui:196
 msgid "Find files"
-msgstr ""
+msgstr "Tìm tập tin"
 
 #: ../src/finishedtransfers.cc:34 ../src/settingsdialog.cc:1142
 #: ../src/settingsdialog.cc:1424 ../src/settingsdialog.cc:1498
 #: ../src/settingsdialog.cc:1555 ../ui/mainwindow.ui:1280
 #: ../ui/mainwindow.ui:2263 ../ui/mainwindow.ui:2513
 msgid "Finished Downloads"
-msgstr ""
+msgstr "Đã hoàn tất việc tải xuống"
 
 #: ../src/finishedtransfers.cc:39 ../src/settingsdialog.cc:1143
 #: ../src/settingsdialog.cc:1425 ../src/settingsdialog.cc:1500
 #: ../src/settingsdialog.cc:1556 ../ui/mainwindow.ui:1291
 #: ../ui/mainwindow.ui:2280 ../ui/mainwindow.ui:2521
 msgid "Finished Uploads"
-msgstr ""
+msgstr "Đã hoàn tất việc tải lên"
 
 #: ../ui/settingsdialog.ui:1473
 msgid "Firewall (passive, last resort)"
-msgstr ""
+msgstr "Tường lửa (thụ động, lựa chọn cuối cùng)"
 
 #: ../ui/settingsdialog.ui:1528
 msgid "Firewall with manual port forward"
-msgstr ""
+msgstr "Tường lửa có chuyển tiếp cổng thủ công"
 
 #: ../src/transfers.cc:63
 msgid "Flags"
-msgstr ""
+msgstr "Cờ"
 
 #: ../ui/settingsdialog.ui:4072
 msgid "Follow Links"
-msgstr ""
+msgstr "Theo liên kết"
 
 #: ../ui/settingsdialog.ui:8653
 msgid "Font select"
-msgstr ""
+msgstr "Chọn phông chữ"
 
 #: ../ui/settingsdialog.ui:6798 ../ui/settingsdialog.ui:6882
 #: ../ui/settingsdialog.ui:6966 ../ui/settingsdialog.ui:7050
 #: ../ui/settingsdialog.ui:7132
 msgid "Format"
-msgstr ""
+msgstr "Định dạng"
 
 #: ../src/sharebrowser.cc:686 ../src/sharebrowser.cc:729
 msgid "Found a match"
-msgstr ""
+msgstr "Tìm thấy một kết quả khớp"
 
 #: ../src/search.cc:686
 msgid "Found: "
-msgstr ""
+msgstr "Tìm thấy: "
 
 #: ../src/search.cc:572
 msgid "Found: 0"
-msgstr ""
+msgstr "Tìm thấy: 0"
 
 #: ../ui/settingsdialog.ui:6509
 msgid "Frame (size)"
-msgstr ""
+msgstr "Khung (kích thước)"
 
 #: ../ui/searchspy.ui:325 ../ui/settingsdialog.ui:6494
 msgid ""
 "Frame size determines the width of the review, higher values affect "
 "performance"
-msgstr ""
+msgstr "Kích thước khung xác định độ rộng phần tổng quan; giá trị cao hơn ảnh hưởng đến hiệu năng"
 
 #: ../ui/searchspy.ui:313
 msgid "Frame:"
-msgstr ""
+msgstr "Khung:"
 
 #: ../src/mainwindow.cc:2482
 msgid "Free "
-msgstr ""
+msgstr "Trống "
 
 #: ../src/settingsdialog.cc:1064
 msgid "French"
-msgstr ""
+msgstr "Tiếng Pháp"
 
 #: ../src/mainwindow.cc:235
 msgid "French translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Pháp\n"
 
 #: ../ui/adlsearch.ui:395
 msgid "Full Path"
@@ -1843,27 +1843,27 @@ msgstr "Cây dạng đầy đủ không khớp với TTH root"
 
 #: ../src/WulforUtil.cc:224
 msgid "GB18030"
-msgstr ""
+msgstr "GB18030"
 
 #: ../src/settingsdialog.cc:1221
 msgid "General text"
-msgstr ""
+msgstr "Văn bản thông thường"
 
 #: ../ui/settingsdialog.ui:8264
 msgid "Generate certificates"
-msgstr ""
+msgstr "Tạo chứng chỉ"
 
 #: ../src/settingsdialog.cc:1086
 msgid "German"
-msgstr ""
+msgstr "Tiếng Đức"
 
 #: ../src/mainwindow.cc:269
 msgid "German translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Đức\n"
 
 #: ../src/hub.cc:2115 ../src/privatemessage.cc:1041 ../ui/privatemessage.ui:66
 msgid "Get file list"
-msgstr ""
+msgstr "Lấy danh sách tập tin"
 
 #: ../ui/adlsearch.ui:415 ../ui/search.ui:112
 msgid "GiB"
@@ -1871,72 +1871,72 @@ msgstr "GiB"
 
 #: ../src/favoritehubs.cc:368 ../src/hub.cc:2947
 msgid "Global hub default"
-msgstr ""
+msgstr "Mặc định chung cho hub"
 
 #: ../ui/uploadqueue.ui:51
 msgid "Grant Slot"
-msgstr ""
+msgstr "Cấp khe truyền"
 
 #: ../src/hub.cc:2116 ../src/privatemessage.cc:1042 ../ui/privatemessage.ui:75
 msgid "Grant extra slot"
-msgstr ""
+msgstr "Cấp thêm khe truyền"
 
 #: ../src/settingsdialog.cc:1088
 msgid "Greek"
-msgstr ""
+msgstr "Tiếng Hy Lạp"
 
 #: ../src/mainwindow.cc:275
 msgid "Greek translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Hy Lạp\n"
 
 #: ../ui/search.ui:382
 msgid "Group by"
-msgstr ""
+msgstr "Nhóm theo"
 
 #: ../ui/finishedtransfers.ui:34
 msgid "Grouped by Files"
-msgstr ""
+msgstr "Nhóm theo tập tin"
 
 #: ../ui/finishedtransfers.ui:62
 msgid "Grouped by Users"
-msgstr ""
+msgstr "Nhóm theo người dùng"
 
 #: ../src/settingsmanager.cc:524
 msgid "Gui setting "
-msgstr ""
+msgstr "Cài đặt giao diện "
 
 #: ../ui/settingsdialog.ui:2944
 msgid "HTTP Proxy (for hublist only)"
-msgstr ""
+msgstr "Proxy HTTP (chỉ cho danh sách hub)"
 
 #: ../ui/cmddebug.ui:39
 msgid "HUB IN"
-msgstr ""
+msgstr "HUB VÀO"
 
 #: ../ui/cmddebug.ui:54
 msgid "HUB OUT"
-msgstr ""
+msgstr "HUB RA"
 
 #: ../ui/downloadqueue.ui:127 ../ui/downloadqueue.ui:261
 msgid "H_igh"
-msgstr ""
+msgstr "_Cao"
 
 #: ../src/settingsdialog.cc:1428 ../src/settingsdialog.cc:1488
 #: ../ui/mainwindow.ui:2101 ../ui/mainwindow.ui:2473
 msgid "Hash"
-msgstr ""
+msgstr "Mã băm"
 
 #: ../ui/settingsdialog.ui:8955
 msgid "Hidden"
-msgstr ""
+msgstr "Ẩn"
 
 #: ../ui/search.ui:256
 msgid "Hide side panel"
-msgstr ""
+msgstr "Ẩn bảng bên"
 
 #: ../ui/mainwindow.ui:1541
 msgid "Hide tools panel"
-msgstr ""
+msgstr "Ẩn bảng công cụ"
 
 #: ../src/downloadqueue.cc:1354
 msgid "High"
@@ -1944,7 +1944,7 @@ msgstr "Cao"
 
 #: ../ui/settingsdialog.ui:3200
 msgid "High priority max size"
-msgstr ""
+msgstr "Kích thước tối đa cho ưu tiên Cao"
 
 #: ../src/downloadqueue.cc:1357
 msgid "Highest"
@@ -1952,11 +1952,11 @@ msgstr "Cao nhất"
 
 #: ../ui/settingsdialog.ui:3322
 msgid "Highest priority max size"
-msgstr ""
+msgstr "Kích thước tối đa cho ưu tiên Cao nhất"
 
 #: ../ui/mainwindow.ui:1561
 msgid "Homepage"
-msgstr ""
+msgstr "Trang chủ"
 
 #: ../src/finishedtransfers.cc:84 ../src/finishedtransfers.cc:193
 #: ../src/search.cc:107 ../src/search.cc:668 ../src/search.cc:765
@@ -1970,16 +1970,16 @@ msgstr "Kết nối chung"
 
 #: ../src/settingsdialog.cc:1145
 msgid "Hub (also sets urgency hint)"
-msgstr ""
+msgstr "Hub (cũng đặt cờ khẩn cấp)"
 
 #: ../src/favoriteusers.cc:48 ../src/favoriteusers.cc:111
 #: ../src/favoriteusers.cc:605
 msgid "Hub (last seen in, if offline)"
-msgstr ""
+msgstr "Hub (nơi xuất hiện lần cuối nếu ngoại tuyến)"
 
 #: ../ui/settingsdialog.ui:850
 msgid "Hub IP / DNS (empty = All, 'op' = where operator)"
-msgstr ""
+msgstr "IP / DNS của hub (trống = Tất cả, 'op' = nơi là điều hành viên)"
 
 #: ../ui/settingsdialog.ui:724
 msgid "Hub Menu"
@@ -1988,37 +1988,37 @@ msgstr "Menu Kết Nối Chung"
 #: ../src/transfers.cc:57 ../src/transfers.cc:503 ../src/transfers.cc:568
 #: ../src/transfers.cc:599
 msgid "Hub Name"
-msgstr ""
+msgstr "Tên hub"
 
 #: ../src/settingsdialog.cc:1178 ../src/settingsdialog.cc:1368
 #: ../src/settingsmanager.cc:243
 msgid "Hub connected"
-msgstr ""
+msgstr "Đã kết nối hub"
 
 #: ../src/settingsdialog.cc:1179 ../src/settingsdialog.cc:1372
 #: ../src/settingsmanager.cc:241
 msgid "Hub disconnected"
-msgstr ""
+msgstr "Đã ngắt kết nối hub"
 
 #: ../ui/mainwindow.ui:2170 ../ui/mainwindow.ui:2425 ../ui/search.ui:510
 msgid "Hubs"
-msgstr ""
+msgstr "Hub"
 
 #: ../ui/mainwindow.ui:1762
 msgid "Hubs (normal / registered / op)"
-msgstr ""
+msgstr "Hub (thường / đã đăng ký / điều hành)"
 
 #: ../src/publichubs.cc:178
 msgid "Hubs: "
-msgstr ""
+msgstr "Hub: "
 
 #: ../src/settingsdialog.cc:1062
 msgid "Hungarian"
-msgstr ""
+msgstr "Tiếng Hungary"
 
 #: ../src/mainwindow.cc:231
 msgid "Hungarian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Hungary\n"
 
 #: ../src/search.cc:109 ../src/search.cc:670 ../src/transfers.cc:68
 msgid "IP"
@@ -2026,135 +2026,135 @@ msgstr "IP"
 
 #: ../src/WulforUtil.cc:217
 msgid "ISO-2022-JP"
-msgstr ""
+msgstr "ISO-2022-JP"
 
 #: ../src/WulforUtil.cc:213
 msgid "ISO-8859-2"
-msgstr ""
+msgstr "ISO-8859-2"
 
 #: ../src/WulforUtil.cc:214
 msgid "ISO-8859-7"
-msgstr ""
+msgstr "ISO-8859-7"
 
 #: ../src/WulforUtil.cc:215
 msgid "ISO-8859-8"
-msgstr ""
+msgstr "ISO-8859-8"
 
 #: ../src/WulforUtil.cc:216
 msgid "ISO-8859-9"
-msgstr ""
+msgstr "ISO-8859-9"
 
 #: ../src/settingsdialog.cc:402 ../src/settingsdialog.cc:1339
 #: ../src/settingsdialog.cc:2294 ../src/settingsdialog.cc:2329
 #: ../src/settingsdialog.cc:2410 ../src/settingsdialog.cc:2447
 msgid "Icon"
-msgstr ""
+msgstr "Biểu tượng"
 
 #: ../src/emoticonsdialog.cc:67
 msgid "Icon size"
-msgstr ""
+msgstr "Kích thước biểu tượng"
 
 #: ../ui/settingsdialog.ui:5677
 msgid "Icon..."
-msgstr ""
+msgstr "Biểu tượng..."
 
 #: ../ui/settingsdialog.ui:8943
 msgid "Icons"
-msgstr ""
+msgstr "Biểu tượng"
 
 #: ../ui/searchspy.ui:209
 msgid "Ignore TTH"
-msgstr ""
+msgstr "Bỏ qua TTH"
 
 #: ../ui/searchspy.ui:213
 msgid "Ignore TTH search"
-msgstr ""
+msgstr "Bỏ qua tìm kiếm TTH"
 
 #: ../src/settingsdialog.cc:1568
 msgid "Ignore private messages from bots"
-msgstr ""
+msgstr "Bỏ qua tin nhắn riêng từ bot"
 
 #: ../src/settingsdialog.cc:1567
 msgid "Ignore private messages from the hub"
-msgstr ""
+msgstr "Bỏ qua tin nhắn riêng từ hub"
 
 #: ../src/hub.cc:3667
 msgid "Ignored private message from bot "
-msgstr ""
+msgstr "Đã bỏ qua tin nhắn riêng từ bot "
 
 #: ../src/hub.cc:3660
 msgid "Ignored private message from hub"
-msgstr ""
+msgstr "Đã bỏ qua tin nhắn riêng từ hub"
 
 #: ../ui/settingsdialog.ui:6044
 msgid "Import..."
-msgstr ""
+msgstr "Nhập..."
 
 #: ../ui/mainwindow.ui:1081
 msgid "Indexing Progress"
-msgstr ""
+msgstr "Tiến trình lập chỉ mục"
 
 #: ../src/hashdialog.cc:136 ../ui/hash.ui:7
 msgid "Indexing files..."
-msgstr ""
+msgstr "Đang lập chỉ mục tập tin..."
 
 #: ../src/wulfor.cc:95
 msgid "Installing handler for"
-msgstr ""
+msgstr "Đang cài bộ xử lý cho"
 
 #: ../src/settingsdialog.cc:2036 ../src/settingsdialog.cc:2224
 msgid "Invalid extension: "
-msgstr ""
+msgstr "Phần mở rộng không hợp lệ: "
 
 #: ../src/hub.cc:2281
 msgid "Ipfilter is disable"
-msgstr ""
+msgstr "Bộ lọc IP đã tắt"
 
 #: ../src/hub.cc:2274
 msgid "Ipfilter is enable"
-msgstr ""
+msgstr "Bộ lọc IP đã bật"
 
 #: ../src/hub.cc:2139
 msgid "Ipfilter on/off"
-msgstr ""
+msgstr "Bật/tắt bộ lọc IP"
 
 #: ../src/settingsdialog.cc:1090
 msgid "Italian"
-msgstr ""
+msgstr "Tiếng Ý"
 
 #: ../src/mainwindow.cc:278
 msgid "Italian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Ý\n"
 
 #: ../src/downloadqueue.cc:242 ../src/sharebrowser.cc:386
 msgid "Items: "
-msgstr ""
+msgstr "Số mục: "
 
 #: ../src/sharebrowser.cc:391
 msgid "Items: 0"
-msgstr ""
+msgstr "Số mục: 0"
 
 #: ../src/WulforUtil.cc:220
 msgid "KOI8-R"
-msgstr ""
+msgstr "KOI8-R"
 
 #: ../src/settingsdialog.cc:948
 msgid "Kaffeine player"
-msgstr ""
+msgstr "Trình phát Kaffeine"
 
 #: ../src/settingsdialog.cc:1665
 msgid "Keep downloaded files and dirs in queue"
-msgstr ""
+msgstr "Giữ tập tin và thư mục đã tải trong hàng đợi"
 
 #: ../src/settingsdialog.cc:1646
 msgid ""
 "Keep duplicate files in your file list (duplicates never count towards your "
 "share size)"
-msgstr ""
+msgstr "Giữ tập tin trùng lặp trong danh sách tập tin (bản trùng không được tính vào dung lượng chia sẻ)"
 
 #: ../src/settingsdialog.cc:1647
 msgid "Keep filelists when exiting"
-msgstr ""
+msgstr "Giữ danh sách tập tin khi thoát"
 
 #: ../ui/adlsearch.ui:409 ../ui/search.ui:106 ../ui/settingsdialog.ui:3230
 #: ../ui/settingsdialog.ui:3246 ../ui/settingsdialog.ui:3278
@@ -2165,19 +2165,19 @@ msgstr "KiB"
 
 #: ../ui/downloadqueue.ui:109 ../ui/downloadqueue.ui:243
 msgid "L_ow"
-msgstr ""
+msgstr "_Thấp"
 
 #: ../ui/settingsdialog.ui:8926
 msgid "Left"
-msgstr ""
+msgstr "Bên trái"
 
 #: ../ui/mainwindow.ui:1505
 msgid "Left position"
-msgstr ""
+msgstr "Vị trí bên trái"
 
 #: ../ui/settingsdialog.ui:2375
 msgid "Limits"
-msgstr ""
+msgstr "Giới hạn"
 
 #: ../src/publichubs.cc:68 ../src/publichubs.cc:347 ../src/publichubs.cc:372
 #: ../src/publichubs.cc:422 ../src/settingsdialog.cc:328
@@ -2186,67 +2186,67 @@ msgstr ""
 #: ../src/settingsdialog.cc:3663 ../src/settingsdialog.cc:3680
 #: ../src/settingsdialog.cc:4357 ../src/settingsdialog.cc:4393
 msgid "List"
-msgstr ""
+msgstr "Danh sách"
 
 #: ../src/sharebrowser.cc:37 ../src/sharebrowser.cc:65
 msgid "List: "
-msgstr ""
+msgstr "Danh sách: "
 
 #: ../src/hub.cc:2129
 msgid "Load Lua file"
-msgstr ""
+msgstr "Nạp tập tin Lua"
 
 #: ../src/publichubs.cc:480
 msgid "Loaded from cache: "
-msgstr ""
+msgstr "Đã nạp từ bộ nhớ đệm: "
 
 #: ../src/mainwindow.cc:2122
 msgid "Loading file list"
-msgstr ""
+msgstr "Đang nạp danh sách tập tin"
 
 #: ../src/wulfor.cc:75
 msgid "Loading: "
-msgstr ""
+msgstr "Đang nạp: "
 
 #: ../ui/settingsdialog.ui:6940
 msgid "Log downloads"
-msgstr ""
+msgstr "Ghi nhật ký tải xuống"
 
 #: ../ui/settingsdialog.ui:7223
 msgid "Log filelist transfers"
-msgstr ""
+msgstr "Ghi nhật ký truyền danh sách tập tin"
 
 #: ../ui/settingsdialog.ui:7108
 msgid "Log finished downloads"
-msgstr ""
+msgstr "Ghi nhật ký tải xuống hoàn tất"
 
 #: ../ui/settingsdialog.ui:6772
 msgid "Log main chat"
-msgstr ""
+msgstr "Ghi nhật ký trò chuyện chính"
 
 #: ../ui/settingsdialog.ui:6856
 msgid "Log private chat"
-msgstr ""
+msgstr "Ghi nhật ký trò chuyện riêng"
 
 #: ../ui/settingsdialog.ui:7240
 msgid "Log search alternate"
-msgstr ""
+msgstr "Ghi nhật ký tìm nguồn thay thế"
 
 #: ../ui/settingsdialog.ui:7206
 msgid "Log status messages"
-msgstr ""
+msgstr "Ghi nhật ký thông báo trạng thái"
 
 #: ../ui/settingsdialog.ui:7189
 msgid "Log system messages"
-msgstr ""
+msgstr "Ghi nhật ký thông báo hệ thống"
 
 #: ../ui/settingsdialog.ui:7024
 msgid "Log uploads"
-msgstr ""
+msgstr "Ghi nhật ký tải lên"
 
 #: ../ui/settingsdialog.ui:7295
 msgid "Logs"
-msgstr ""
+msgstr "Nhật ký"
 
 #: ../src/downloadqueue.cc:1351
 msgid "Low"
@@ -2254,7 +2254,7 @@ msgstr "Thấp"
 
 #: ../ui/settingsdialog.ui:3214
 msgid "Low priority size"
-msgstr ""
+msgstr "Kích thước cho ưu tiên Thấp"
 
 #: ../src/downloadqueue.cc:1348
 msgid "Lowest"
@@ -2266,11 +2266,11 @@ msgstr "Magnet"
 
 #: ../src/mainwindow.cc:1401
 msgid "Magnet Choice"
-msgstr ""
+msgstr "Lựa chọn magnet"
 
 #: ../src/mainwindow.cc:1327
 msgid "Magnet Properties / Choice"
-msgstr ""
+msgstr "Thuộc tính / Lựa chọn magnet"
 
 #: ../ui/sharebrowser.ui:418
 msgid "Match Queue"
@@ -2278,60 +2278,60 @@ msgstr "Khớp với hàng đợi"
 
 #: ../ui/mainwindow.ui:1063
 msgid "Match all listings"
-msgstr ""
+msgstr "Đối chiếu tất cả danh sách tập tin"
 
 #: ../src/sharebrowser.cc:1140
 msgid "Matched "
-msgstr ""
+msgstr "Đã đối chiếu được "
 
 #: ../ui/settingsdialog.ui:6362
 msgid "Matches"
-msgstr ""
+msgstr "Kết quả khớp"
 
 #: ../src/publichubs.cc:54 ../src/publichubs.cc:166
 msgid "Max Hubs"
-msgstr ""
+msgstr "Số hub tối đa"
 
 #: ../src/adlsearch.cc:42 ../src/adlsearch.cc:62 ../src/adlsearch.cc:112
 #: ../src/adlsearch.cc:210
 msgid "Max Size"
-msgstr ""
+msgstr "Kích thước tối đa"
 
 #: ../src/publichubs.cc:55 ../src/publichubs.cc:167
 msgid "Max Users"
-msgstr ""
+msgstr "Số người dùng tối đa"
 
 #: ../ui/settingsdialog.ui:7543
 msgid "Max filelist size"
-msgstr ""
+msgstr "Kích thước danh sách tập tin tối đa"
 
 #: ../ui/settingsdialog.ui:7504
 msgid "Max hash speed"
-msgstr ""
+msgstr "Tốc độ băm tối đa"
 
 #: ../ui/settingsdialog.ui:3476
 msgid "Max inactivity"
-msgstr ""
+msgstr "Thời gian không hoạt động tối đa"
 
 #: ../ui/settingsdialog.ui:1157
 msgid "Max upload speed (MiB/s)"
-msgstr ""
+msgstr "Tốc độ tải lên tối đa (MiB/s)"
 
 #: ../ui/settingsdialog.ui:1999 ../ui/settingsdialog.ui:2253
 msgid "Maximum Download Rate (KiB/s) (0 = infinite)"
-msgstr ""
+msgstr "Tốc độ tải xuống tối đa (KiB/s) (0 = vô hạn)"
 
 #: ../ui/settingsdialog.ui:1947 ../ui/settingsdialog.ui:2201
 msgid "Maximum Upload Rate (KiB/s) (0 = infinite)"
-msgstr ""
+msgstr "Tốc độ tải lên tối đa (KiB/s) (0 = vô hạn)"
 
 #: ../ui/settingsdialog.ui:5792
 msgid "Maximum message length (0 = infinite)"
-msgstr ""
+msgstr "Độ dài tin nhắn tối đa (0 = vô hạn)"
 
 #: ../ui/settingsdialog.ui:2794
 msgid "Maximum simultaneous downloads (0 = infinite)"
-msgstr ""
+msgstr "Số lượt tải xuống đồng thời tối đa (0 = vô hạn)"
 
 #: ../ui/adlsearch.ui:412 ../ui/search.ui:109 ../ui/settingsdialog.ui:7709
 msgid "MiB"
@@ -2339,96 +2339,96 @@ msgstr "MiB"
 
 #: ../ui/settingsdialog.ui:7672
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 #: ../ui/settingsdialog.ui:8751 ../ui/settingsdialog.ui:8831
 msgid "Midnight"
-msgstr ""
+msgstr "Nửa đêm"
 
 #: ../src/publichubs.cc:52 ../src/publichubs.cc:164
 msgid "Min Share"
-msgstr ""
+msgstr "Dung lượng chia sẻ tối thiểu"
 
 #: ../src/adlsearch.cc:41 ../src/adlsearch.cc:61 ../src/adlsearch.cc:111
 #: ../src/adlsearch.cc:209
 msgid "Min Size"
-msgstr ""
+msgstr "Kích thước tối thiểu"
 
 #: ../src/publichubs.cc:53 ../src/publichubs.cc:165
 msgid "Min Slots"
-msgstr ""
+msgstr "Số khe truyền tối thiểu"
 
 #: ../ui/settingsdialog.ui:3612
 msgid "Min elapsed"
-msgstr ""
+msgstr "Thời gian đã qua tối thiểu"
 
 #: ../ui/settingsdialog.ui:3460
 msgid "Min filesize"
-msgstr ""
+msgstr "Kích thước tập tin tối thiểu"
 
 #: ../ui/settingsdialog.ui:3598
 msgid "Min sources online"
-msgstr ""
+msgstr "Số nguồn trực tuyến tối thiểu"
 
 #: ../ui/settingsdialog.ui:7530
 msgid "Mini slot size"
-msgstr ""
+msgstr "Kích thước khe nhỏ"
 
 #: ../src/settingsdialog.cc:1129
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "Thu nhỏ vào khay hệ thống khi khởi động"
 
 #: ../ui/favoritehubs.ui:291
 msgid "Minimum search interval (seconds):"
-msgstr ""
+msgstr "Khoảng thời gian tìm kiếm tối thiểu (giây):"
 
 #: ../ui/settingsdialog.ui:8313
 msgid "Miscellaneous"
-msgstr ""
+msgstr "Khác"
 
 #: ../ui/settingsdialog.ui:8376
 msgid "Modify"
-msgstr ""
+msgstr "Sửa đổi"
 
 #: ../ui/settingsdialog.ui:492
 msgid "Modify User Command"
-msgstr ""
+msgstr "Sửa lệnh người dùng"
 
 #: ../ui/adlsearch.ui:494
 msgid "Move Down"
-msgstr ""
+msgstr "Di chuyển xuống"
 
 #: ../ui/adlsearch.ui:480
 msgid "Move Up"
-msgstr ""
+msgstr "Di chuyển lên"
 
 #: ../src/hub.cc:2141
 msgid "Move rule up/down"
-msgstr ""
+msgstr "Di chuyển quy tắc lên/xuống"
 
 #: ../ui/downloadqueue.ui:7
 msgid "Move to..."
-msgstr ""
+msgstr "Di chuyển tới..."
 
 #: ../src/settingsdialog.cc:949
 msgid "Mplayer player"
-msgstr ""
+msgstr "Trình phát Mplayer"
 
 #: ../src/settingsdialog.cc:2987 ../src/settingsdialog.cc:3073
 msgid "Must not be empty..."
-msgstr ""
+msgstr "Không được để trống..."
 
 #: ../src/settingsdialog.cc:1224
 msgid "My nick"
-msgstr ""
+msgstr "Biệt danh của tôi"
 
 #: ../src/settingsdialog.cc:1227
 msgid "My own message"
-msgstr ""
+msgstr "Tin nhắn của tôi"
 
 #: ../ui/favoritehubs.ui:340
 msgid "N_ick:"
-msgstr ""
+msgstr "_Nick:"
 
 #: ../src/favoritehubs.cc:51 ../src/favoritehubs.cc:75
 #: ../src/favoritehubs.cc:76 ../src/favoritehubs.cc:130
@@ -2453,31 +2453,31 @@ msgstr "Tên"
 
 #: ../src/settingsdialog.cc:3476
 msgid "Name and command must not be empty"
-msgstr ""
+msgstr "Tên và lệnh không được để trống"
 
 #: ../ui/settingsdialog.ui:3776
 msgid "Name:"
-msgstr ""
+msgstr "Tên:"
 
 #: ../src/settingsdialog.cc:4357
 msgid "New exception"
-msgstr ""
+msgstr "Ngoại lệ mới"
 
 #: ../src/publichubs.cc:372 ../src/settingsdialog.cc:3680
 msgid "New list"
-msgstr ""
+msgstr "Danh sách mới"
 
 #: ../src/settingsdialog.cc:1852
 msgid "New search type"
-msgstr ""
+msgstr "Loại tìm kiếm mới"
 
 #: ../ui/settingsdialog.ui:6245
 msgid "New string or TTH"
-msgstr ""
+msgstr "Chuỗi hoặc TTH mới"
 
 #: ../ui/sharebrowser.ui:448
 msgid "Next"
-msgstr ""
+msgstr "Tiếp"
 
 #: ../src/favoritehubs.cc:54 ../src/favoritehubs.cc:132
 #: ../src/favoritehubs.cc:315 ../src/favoriteusers.cc:47
@@ -2496,15 +2496,15 @@ msgstr "Nick"
 
 #: ../src/hub.cc:3764
 msgid "Nick already taken"
-msgstr ""
+msgstr "Biệt danh đã được sử dụng"
 
 #: ../src/finishedtransfers.cc:64 ../src/finishedtransfers.cc:238
 msgid "Nicks"
-msgstr ""
+msgstr "Biệt danh"
 
 #: ../src/finishedtransfers.cc:683
 msgid "No"
-msgstr ""
+msgstr "Không"
 
 #: ../src/downloadqueue.cc:1394
 msgid "No errors"
@@ -2512,31 +2512,31 @@ msgstr "Không có lỗi"
 
 #: ../ui/search.ui:129
 msgid "No grouping"
-msgstr ""
+msgstr "Không nhóm"
 
 #: ../src/sharebrowser.cc:698 ../src/sharebrowser.cc:903
 msgid "No matches"
-msgstr ""
+msgstr "Không có kết quả khớp"
 
 #: ../ui/settingsdialog.ui:2778
 msgid "No new downloads if speed exceeds (KiB/s, 0 = disable)"
-msgstr ""
+msgstr "Không bắt đầu lượt tải mới nếu tốc độ vượt quá (KiB/s, 0 = tắt)"
 
 #: ../src/sharebrowser.cc:916
 msgid "No search text entered"
-msgstr ""
+msgstr "Chưa nhập văn bản tìm kiếm"
 
 #: ../src/downloadqueue.cc:1307
 msgid "No users"
-msgstr ""
+msgstr "Không có người dùng nào"
 
 #: ../ui/settingsdialog.ui:5706
 msgid "None icon"
-msgstr ""
+msgstr "Không có biểu tượng"
 
 #: ../ui/settingsdialog.ui:8787 ../ui/settingsdialog.ui:8867
 msgid "Noon"
-msgstr ""
+msgstr "Buổi trưa"
 
 #: ../src/downloadqueue.cc:1360 ../ui/search.ui:86
 msgid "Normal"
@@ -2544,39 +2544,39 @@ msgstr "Bình thường"
 
 #: ../ui/settingsdialog.ui:3308
 msgid "Normal priority max size"
-msgstr ""
+msgstr "Kích thước tối đa cho ưu tiên Bình thường"
 
 #: ../src/hub.cc:1983 ../src/hub.cc:2018 ../src/hub.cc:2028 ../src/hub.cc:2180
 msgid "Not found user: "
-msgstr ""
+msgstr "Không tìm thấy người dùng: "
 
 #: ../ui/settingsdialog.ui:8460
 msgid "Note: Custom search types will only be applied to ADC hubs!"
-msgstr ""
+msgstr "Lưu ý: Loại tìm kiếm tùy chỉnh chỉ áp dụng cho hub ADC!"
 
 #: ../ui/settingsdialog.ui:4815 ../ui/settingsdialog.ui:4885
 msgid "Note: Most of these options require that you restart the application"
-msgstr ""
+msgstr "Lưu ý: Hầu hết các tùy chọn này yêu cầu khởi động lại ứng dụng"
 
 #: ../ui/settingsdialog.ui:4022
 msgid "Note: New files are added to the share only once they've been hashed!"
-msgstr ""
+msgstr "Lưu ý: Tập tin mới chỉ được thêm vào nội dung chia sẻ sau khi băm xong!"
 
 #: ../ui/settingsdialog.ui:2845
 msgid "Note; because of changing download speeds, this is not 100% accurate..."
-msgstr ""
+msgstr "Lưu ý: Vì tốc độ tải xuống thay đổi, thiết lập này không chính xác 100%..."
 
 #: ../src/settingsdialog.cc:1337 ../ui/settingsdialog.ui:5883
 msgid "Notify"
-msgstr ""
+msgstr "Thông báo"
 
 #: ../ui/searchspy.ui:267 ../ui/settingsdialog.ui:6572
 msgid "Number of matches for the top"
-msgstr ""
+msgstr "Số kết quả khớp để lọt vào danh sách hàng đầu"
 
 #: ../src/WulforUtil.cc:158
 msgid "Offline"
-msgstr ""
+msgstr "Ngoại tuyến"
 
 #: ../src/favoriteusers.cc:104 ../src/favoriteusers.cc:643
 #: ../src/favoriteusers.cc:662
@@ -2585,23 +2585,23 @@ msgstr "Trực tuyến"
 
 #: ../src/settingsdialog.cc:1119
 msgid "Only show joins / parts for favorite users"
-msgstr ""
+msgstr "Chỉ hiện thông báo tham gia / rời đi của người dùng yêu thích"
 
 #: ../ui/search.ui:455
 msgid "Only users with free slots"
-msgstr ""
+msgstr "Chỉ người dùng có khe truyền trống"
 
 #: ../ui/mainwindow.ui:1037
 msgid "Open _file list..."
-msgstr ""
+msgstr "Mở _danh sách tập tin..."
 
 #: ../ui/mainwindow.ui:1048
 msgid "Open _own file list"
-msgstr ""
+msgstr "Mở danh sách tập tin của _mình"
 
 #: ../ui/finishedtransfers.ui:164
 msgid "Open containing _folder"
-msgstr ""
+msgstr "Mở thư _mục chứa"
 
 #: ../src/notify.cc:157 ../ui/finishedtransfers.ui:153
 msgid "Open file"
@@ -2609,56 +2609,56 @@ msgstr "Mở tập tin"
 
 #: ../src/settingsdialog.cc:1564
 msgid "Open file list window in the background"
-msgstr ""
+msgstr "Mở cửa sổ danh sách tập tin ở nền"
 
 #: ../src/notify.cc:160
 msgid "Open folder"
-msgstr ""
+msgstr "Mở thư mục"
 
 #: ../ui/hub.ui:157
 msgid "Open image"
-msgstr ""
+msgstr "Mở hình ảnh"
 
 #: ../src/settingsdialog.cc:1565
 msgid "Open new private messages from other users in the background"
-msgstr ""
+msgstr "Mở tin nhắn riêng mới từ người dùng khác ở nền"
 
 #: ../src/settingsdialog.cc:1566
 msgid "Open new window when using /join"
-msgstr ""
+msgstr "Mở cửa sổ mới khi dùng /join"
 
 #: ../ui/mainwindow.ui:2065
 msgid "Open own file list"
-msgstr ""
+msgstr "Mở danh sách tập tin của mình"
 
 #: ../src/settingsdialog.cc:1248
 msgid "Operator"
-msgstr ""
+msgstr "Điều hành viên"
 
 #: ../src/settingsdialog.cc:1426 ../src/settingsdialog.cc:1484
 #: ../ui/mainwindow.ui:2067 ../ui/mainwindow.ui:2457
 msgid "Own file list"
-msgstr ""
+msgstr "Danh sách tập tin của mình"
 
 #: ../ui/settingsdialog.ui:589 ../ui/settingsdialog.ui:5860
 msgid "PM"
-msgstr ""
+msgstr "Tin nhắn riêng"
 
 #: ../ui/settingsdialog.ui:7517
 msgid "PM history"
-msgstr ""
+msgstr "Lịch sử tin nhắn riêng"
 
 #: ../ui/mainwindow.ui:1475
 msgid "Panels"
-msgstr ""
+msgstr "Bảng công cụ"
 
 #: ../src/sharebrowser.cc:186
 msgid "Parse and build tree..."
-msgstr ""
+msgstr "Đang phân tích và tạo cây..."
 
 #: ../ui/favoritehubs.ui:558
 msgid "Passive"
-msgstr ""
+msgstr "Thụ động"
 
 #: ../src/downloadqueue.cc:1380
 msgid "Passive user"
@@ -2690,62 +2690,62 @@ msgstr "Tạm dừng"
 
 #: ../src/hashdialog.cc:136
 msgid "Paused..."
-msgstr ""
+msgstr "Tạm dừng..."
 
 #: ../ui/settingsdialog.ui:1267
 msgid "Personal"
-msgstr ""
+msgstr "Cá nhân"
 
 #: ../ui/settingsdialog.ui:4243
 msgid "Pictures"
-msgstr ""
+msgstr "Hình ảnh"
 
 #: ../src/transfers.cc:896
 msgid "Plain"
-msgstr ""
+msgstr "Văn bản thuần"
 
 #: ../ui/settingsdialog.ui:5112
 msgid "Play"
-msgstr ""
+msgstr "Phát"
 
 #: ../src/settingsdialog.cc:1066
 msgid "Polish"
-msgstr ""
+msgstr "Tiếng Ba Lan"
 
 #: ../src/mainwindow.cc:238
 msgid "Polish translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Ba Lan\n"
 
 #: ../src/settingsdialog.cc:1569
 msgid "Popup box to input password for hubs"
-msgstr ""
+msgstr "Hộp thoại bật lên để nhập mật khẩu hub"
 
 #: ../ui/settingsdialog.ui:1755
 msgid "Port"
-msgstr ""
+msgstr "Cổng"
 
 #: ../ui/settingsdialog.ui:1445
 msgid "Ports"
-msgstr ""
+msgstr "Cổng"
 
 #: ../src/settingsdialog.cc:1068
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Tiếng Bồ Đào Nha (Brazil)"
 
 #: ../src/settingsdialog.cc:1740 ../src/settingsdialog.cc:1840
 #: ../src/settingsdialog.cc:1931
 msgid "Predefined"
-msgstr ""
+msgstr "Định sẵn"
 
 #: ../src/settingsdialog.cc:1429 ../src/settingsdialog.cc:1482
 #: ../ui/mainwindow.ui:2041 ../ui/mainwindow.ui:2449
 #: ../ui/settingsdialog.ui:1011
 msgid "Preferences"
-msgstr ""
+msgstr "Tùy chỉnh"
 
 #: ../ui/settingsdialog.ui:3950 ../ui/transfers.ui:110
 msgid "Preview"
-msgstr ""
+msgstr "Xem trước"
 
 #: ../src/downloadqueue.cc:75 ../src/downloadqueue.cc:289
 #: ../src/downloadqueue.cc:396
@@ -2754,78 +2754,78 @@ msgstr "Mức độ ưu tiên"
 
 #: ../src/settingsdialog.cc:1146
 msgid "Private Message (also sets urgency hint)"
-msgstr ""
+msgstr "Tin nhắn riêng (cũng đặt cờ khẩn cấp)"
 
 #: ../ui/settingsdialog.ui:8187
 msgid "Private key file"
-msgstr ""
+msgstr "Tập tin khóa riêng"
 
 #: ../src/hub.cc:2120 ../src/settingsdialog.cc:1177
 #: ../src/settingsdialog.cc:1230 ../src/settingsdialog.cc:1364
 #: ../src/settingsmanager.cc:239
 msgid "Private message"
-msgstr ""
+msgstr "Tin nhắn riêng"
 
 #: ../src/transfers.cc:58 ../src/transfers.cc:603
 msgid "Progress"
-msgstr ""
+msgstr "Tiến độ"
 
 #: ../ui/adlsearch.ui:466 ../ui/adlsearch.ui:544
 msgid "Properties"
-msgstr ""
+msgstr "Thuộc tính"
 
 #: ../src/publichubs.cc:28 ../src/settingsdialog.cc:1430
 #: ../src/settingsdialog.cc:1480 ../src/settingsdialog.cc:1552
 #: ../ui/mainwindow.ui:1186 ../ui/mainwindow.ui:2220 ../ui/mainwindow.ui:2441
 msgid "Public Hubs"
-msgstr ""
+msgstr "Hub công cộng"
 
 #: ../ui/settingsdialog.ui:2890
 msgid "Public Hubs list URL"
-msgstr ""
+msgstr "URL danh sách hub công cộng"
 
 #: ../src/settingsdialog.cc:1431 ../src/settingsdialog.cc:1496
 #: ../ui/mainwindow.ui:2246 ../ui/mainwindow.ui:2505
 #: ../ui/settingsdialog.ui:3710
 msgid "Queue"
-msgstr ""
+msgstr "Hàng đợi"
 
 #: ../ui/mainwindow.ui:2142
 msgid "Quick connect to the hub"
-msgstr ""
+msgstr "Kết nối nhanh tới hub"
 
 #: ../src/settingsdialog.cc:1434 ../src/settingsdialog.cc:1502
 #: ../ui/mainwindow.ui:2349 ../ui/mainwindow.ui:2529
 msgid "Quit"
-msgstr ""
+msgstr "Thoát"
 
 #: ../ui/mainwindow.ui:2347
 msgid "Quit the program"
-msgstr ""
+msgstr "Thoát chương trình"
 
 #: ../src/wulfor.cc:194
 msgid "Quit..."
-msgstr ""
+msgstr "Thoát..."
 
 #: ../src/publichubs.cc:56 ../src/publichubs.cc:168
 msgid "Rating"
-msgstr ""
+msgstr "Xếp hạng"
 
 #: ../ui/settingsdialog.ui:571
 msgid "Raw"
-msgstr ""
+msgstr "Thô"
 
 #: ../ui/downloadqueue.ui:311
 msgid "Re-_add source"
-msgstr ""
+msgstr "_Thêm lại nguồn"
 
 #: ../ui/mainwindow.ui:1162
 msgid "Re_connect"
-msgstr ""
+msgstr "_Kết nối lại"
 
 #: ../src/hub.cc:2121 ../ui/hub.ui:75
 msgid "Rebuild hash"
-msgstr ""
+msgstr "Tạo lại mã băm"
 
 #: ../src/settingsdialog.cc:1436 ../src/settingsdialog.cc:1472
 #: ../ui/mainwindow.ui:2127 ../ui/mainwindow.ui:2409
@@ -2834,32 +2834,32 @@ msgstr "Kết nối lại"
 
 #: ../ui/mainwindow.ui:1455
 msgid "Reconnect all hubs"
-msgstr ""
+msgstr "Kết nối lại tất cả hub"
 
 #: ../ui/mainwindow.ui:2125
 msgid "Reconnect to the hub"
-msgstr ""
+msgstr "Kết nối lại tới hub"
 
 #: ../src/settingsdialog.cc:1427 ../src/settingsdialog.cc:1486
 #: ../ui/mainwindow.ui:2084 ../ui/mainwindow.ui:2465
 msgid "Refresh"
-msgstr ""
+msgstr "Làm mới"
 
 #: ../ui/mainwindow.ui:2082
 msgid "Refresh file list"
-msgstr ""
+msgstr "Làm mới danh sách tập tin"
 
 #: ../src/settingsdialog.cc:1657
 msgid "Register with the OS to handle dchub:// and adc:// URL links"
-msgstr ""
+msgstr "Đăng ký với hệ điều hành để xử lý liên kết URL dchub:// và adc://"
 
 #: ../src/settingsdialog.cc:1658
 msgid "Register with the OS to handle magnet: URL links"
-msgstr ""
+msgstr "Đăng ký với hệ điều hành để xử lý liên kết URL magnet:"
 
 #: ../ui/mainwindow.ui:389
 msgid "Remember choice"
-msgstr ""
+msgstr "Ghi nhớ lựa chọn"
 
 #: ../src/downloadqueue.cc:1388
 msgid "Remote client does not fully support TTH - cannot download"
@@ -2873,63 +2873,63 @@ msgstr "Loại bỏ"
 
 #: ../ui/finishedtransfers.ui:188
 msgid "Remove All"
-msgstr ""
+msgstr "Xóa tất cả"
 
 #: ../ui/downloadqueue.ui:331
 msgid "Remove So_urce"
-msgstr ""
+msgstr "_Loại bỏ nguồn"
 
 #: ../ui/hub.ui:171
 msgid "Remove image"
-msgstr ""
+msgstr "Xóa hình ảnh"
 
 #: ../src/hub.cc:2142
 msgid "Remove rules from list"
-msgstr ""
+msgstr "Xóa quy tắc khỏi danh sách"
 
 #: ../src/settingsdialog.cc:984
 msgid "Remove slow filelists"
-msgstr ""
+msgstr "Xóa danh sách tập tin tải chậm"
 
 #: ../src/hub.cc:2113 ../src/privatemessage.cc:1040 ../ui/privatemessage.ui:57
 msgid "Remove user favorite"
-msgstr ""
+msgstr "Xóa người dùng khỏi danh sách yêu thích"
 
 #: ../ui/downloadqueue.ui:345 ../ui/search.ui:785
 msgid "Remove user from _queue"
-msgstr ""
+msgstr "Xóa người dùng khỏi _hàng đợi"
 
 #: ../ui/settingsdialog.ui:8391
 msgid "Rename"
-msgstr ""
+msgstr "Đổi tên"
 
 #: ../src/settingsdialog.cc:2107
 msgid "Rename a search type"
-msgstr ""
+msgstr "Đổi tên loại tìm kiếm"
 
 #: ../ui/mainwindow.ui:1583
 msgid "Report a Bug"
-msgstr ""
+msgstr "Báo lỗi"
 
 #: ../src/transfers.cc:908
 msgid "Requesting"
-msgstr ""
+msgstr "Đang yêu cầu"
 
 #: ../ui/settingsdialog.ui:4356
 msgid "Reset changes"
-msgstr ""
+msgstr "Đặt lại thay đổi"
 
 #: ../src/sharebrowser.cc:89 ../src/sharebrowser.cc:360
 msgid "Resolution"
-msgstr ""
+msgstr "Độ phân giải"
 
 #: ../ui/settingsdialog.ui:8929
 msgid "Right"
-msgstr ""
+msgstr "Bên phải"
 
 #: ../ui/hash.ui:21
 msgid "Run in background"
-msgstr ""
+msgstr "Chạy ở nền"
 
 #: ../src/downloadqueue.cc:1314
 msgid "Running..."
@@ -2937,19 +2937,19 @@ msgstr "Đang chạy..."
 
 #: ../src/settingsdialog.cc:1058
 msgid "Russian"
-msgstr ""
+msgstr "Tiếng Nga"
 
 #: ../src/mainwindow.cc:223
 msgid "Russian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Nga\n"
 
 #: ../src/WulforUtil.cc:218
 msgid "SJIS"
-msgstr ""
+msgstr "SJIS"
 
 #: ../src/hub.cc:2119 ../ui/hub.ui:66
 msgid "Say a third person"
-msgstr ""
+msgstr "Nói ở ngôi thứ ba"
 
 #: ../src/search.cc:40 ../src/search.cc:86 ../src/search.cc:93
 #: ../src/search.cc:251 ../src/search.cc:453 ../src/search.cc:467
@@ -2959,22 +2959,22 @@ msgstr ""
 #: ../ui/mainwindow.ui:2203 ../ui/mainwindow.ui:2481 ../ui/search.ui:227
 #: ../ui/searchspy.ui:94 ../ui/searchspy.ui:401 ../ui/settingsdialog.ui:8487
 msgid "Search"
-msgstr ""
+msgstr "tìm kiếm"
 
 #: ../src/settingsdialog.cc:1439 ../ui/mainwindow.ui:1242
 msgid "Search ADL"
-msgstr ""
+msgstr "Tìm kiếm ADL"
 
 #: ../ui/settingsdialog.ui:671
 msgid "Search Menu"
-msgstr ""
+msgstr "Trình đơn tìm kiếm"
 
 #: ../src/searchspy.cc:34 ../src/settingsdialog.cc:1148
 #: ../src/settingsdialog.cc:1433 ../src/settingsdialog.cc:1494
 #: ../src/settingsdialog.cc:1558 ../ui/mainwindow.ui:1317
 #: ../ui/mainwindow.ui:2321 ../ui/settingsdialog.ui:6675
 msgid "Search Spy"
-msgstr ""
+msgstr "Theo dõi tìm kiếm"
 
 #: ../src/adlsearch.cc:38 ../src/adlsearch.cc:58 ../src/adlsearch.cc:108
 #: ../src/adlsearch.cc:206 ../src/adlsearch.cc:232 ../src/searchspy.cc:55
@@ -2987,236 +2987,236 @@ msgstr "Tìm kiếm chuỗi"
 
 #: ../ui/search.ui:174
 msgid "Search for"
-msgstr ""
+msgstr "Tìm kiếm"
 
 #: ../ui/mainwindow.ui:2201
 msgid "Search for files to download"
-msgstr ""
+msgstr "Tìm tập tin để tải xuống"
 
 #: ../ui/settingsdialog.ui:7759
 msgid "Search history"
-msgstr ""
+msgstr "Lịch sử tìm kiếm"
 
 #: ../ui/search.ui:424
 msgid "Search options"
-msgstr ""
+msgstr "Tùy chọn tìm kiếm"
 
 #: ../src/hub.cc:3771
 msgid "Search spam detected from "
-msgstr ""
+msgstr "Phát hiện tìm kiếm rác từ "
 
 #: ../src/settingsdialog.cc:1739 ../src/settingsdialog.cc:1930
 #: ../src/settingsdialog.cc:1963 ../src/settingsdialog.cc:2051
 #: ../src/settingsdialog.cc:2100 ../src/settingsdialog.cc:2148
 msgid "Search type"
-msgstr ""
+msgstr "Loại tìm kiếm"
 
 #: ../ui/search.ui:434
 msgid "Search within local results"
-msgstr ""
+msgstr "Tìm trong kết quả cục bộ"
 
 #: ../src/search.cc:1972
 msgid "Searching for "
-msgstr ""
+msgstr "Đang tìm "
 
 #: ../ui/settingsdialog.ui:8297
 msgid "Security Certificates"
-msgstr ""
+msgstr "Chứng chỉ bảo mật"
 
 #: ../src/settingsdialog.cc:3190
 msgid "Select Color"
-msgstr ""
+msgstr "Chọn màu"
 
 #: ../src/settingsdialog.cc:3313
 msgid "Select Font"
-msgstr ""
+msgstr "Chọn phông chữ"
 
 #: ../src/mainwindow.cc:2510
 msgid "Select file to Get TTH"
-msgstr ""
+msgstr "Chọn tập tin để lấy TTH"
 
 #: ../src/mainwindow.cc:2085 ../ui/mainwindow.ui:809
 msgid "Select filelist to browse"
-msgstr ""
+msgstr "Chọn danh sách tập tin để duyệt"
 
 #: ../src/settingsdialog.cc:1126
 msgid "Send PM when double clicked in the user list"
-msgstr ""
+msgstr "Gửi tin nhắn riêng khi nhấp đúp trong danh sách người dùng"
 
 #: ../ui/uploadqueue.ui:78
 msgid "Send Private Message"
-msgstr ""
+msgstr "Gửi tin nhắn riêng tư"
 
 #: ../ui/downloadqueue.ui:297 ../ui/search.ui:758
 msgid "Send _private message"
-msgstr ""
+msgstr "_Gửi tin nhắn riêng tư"
 
 #: ../ui/settingsdialog.ui:919
 msgid "Send once per nick"
-msgstr ""
+msgstr "Gửi một lần cho mỗi biệt danh"
 
 #: ../src/settingsdialog.cc:1653
 msgid "Send unknown /commands to the hub"
-msgstr ""
+msgstr "Gửi /commands không xác định tới hub"
 
 #: ../src/search.cc:579
 #, c-format
 msgid "Sent ADC extensions : %s\n"
-msgstr ""
+msgstr "Đã gửi phần mở rộng ADC : %s\n"
 
 #: ../src/settingsdialog.cc:3388 ../src/settingsdialog.cc:3486
 #: ../ui/settingsdialog.ui:627
 msgid "Separator"
-msgstr ""
+msgstr "Dấu phân cách"
 
 #: ../src/settingsdialog.cc:1470 ../ui/mainwindow.ui:2401
 msgid "Separators"
-msgstr ""
+msgstr "Dấu phân cách"
 
 #: ../src/settingsdialog.cc:1070
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "Tiếng Serbia (chữ Kirin)"
 
 #: ../src/mainwindow.cc:245
 msgid "Serbian (Cyrillic) translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Serbia (chữ Kirin)\n"
 
 #: ../src/settingsdialog.cc:1072
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "Tiếng Serbia (chữ Latinh)"
 
 #: ../src/mainwindow.cc:249
 msgid "Serbian (Latin) translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Serbia (chữ Latinh)\n"
 
 #: ../src/hub.cc:2134
 msgid ""
 "Set Core option param in value (without value return current value of option)"
-msgstr ""
+msgstr "Đặt tùy chọn lõi param thành value (không có value thì trả về giá trị hiện tại)"
 
 #: ../src/hub.cc:2133
 msgid ""
 "Set GUI option param in value (without value return current value of option)"
-msgstr ""
+msgstr "Đặt tùy chọn giao diện param thành value (không có value thì trả về giá trị hiện tại)"
 
 #: ../ui/downloadqueue.ui:81 ../ui/downloadqueue.ui:215
 msgid "Set Priorit_y"
-msgstr ""
+msgstr "_Đặt thứ tự ưu tiên"
 
 #: ../ui/hub.ui:84
 msgid "Set download limit image"
-msgstr ""
+msgstr "Đặt giới hạn tải hình ảnh"
 
 #: ../src/hub.cc:2061
 msgid "Set download limit image: "
-msgstr ""
+msgstr "Đặt giới hạn tải hình ảnh: "
 
 #: ../src/settingsdialog.cc:982
 msgid "Set lowest priority for newly added files larger than low priority size"
-msgstr ""
+msgstr "Đặt ưu tiên thấp nhất cho tập tin mới thêm lớn hơn ngưỡng ưu tiên thấp"
 
 #: ../ui/settingsdialog.ui:4054
 msgid "Share hidden files"
-msgstr ""
+msgstr "Chia sẻ tập tin ẩn"
 
 #: ../src/hub.cc:97 ../src/hub.cc:399 ../src/hub.cc:416 ../src/hub.cc:436
 #: ../src/hub.cc:485 ../src/publichubs.cc:51 ../src/publichubs.cc:163
 #: ../src/sharebrowser.cc:93 ../src/sharebrowser.cc:111
 #: ../src/sharebrowser.cc:364
 msgid "Shared"
-msgstr ""
+msgstr "Đã chia sẻ"
 
 #: ../ui/settingsdialog.ui:4279 ../ui/settingsdialog.ui:4486
 msgid "Sharing"
-msgstr ""
+msgstr "Chia sẻ"
 
 #: ../src/settingsdialog.cc:1659
 msgid "Show IP's' in chats"
-msgstr ""
+msgstr "Hiện IP trong trò chuyện"
 
 #: ../ui/mainwindow.ui:1994
 msgid "Show Interface"
-msgstr ""
+msgstr "Hiện giao diện"
 
 #: ../src/hub.cc:2114 ../ui/hub.ui:48
 msgid "Show favorites list"
-msgstr ""
+msgstr "Hiện danh sách yêu thích"
 
 #: ../ui/mainwindow.ui:1338
 msgid "Show free space bar"
-msgstr ""
+msgstr "Hiện thanh dung lượng trống"
 
 #: ../src/hub.cc:2117 ../src/privatemessage.cc:1046 ../ui/hub.ui:111
 #: ../ui/privatemessage.ui:102
 msgid "Show help"
-msgstr ""
+msgstr "Hiện trợ giúp"
 
 #: ../src/hub.cc:2140
 msgid "Show ipfilter rules list"
-msgstr ""
+msgstr "Hiện danh sách quy tắc lọc IP"
 
 #: ../src/settingsdialog.cc:1118
 msgid "Show joins / parts in chat by default"
-msgstr ""
+msgstr "Mặc định hiện thông báo tham gia / rời đi trong trò chuyện"
 
 #: ../ui/mainwindow.ui:358
 msgid "Show magnet dialog"
-msgstr ""
+msgstr "Hiện hộp thoại magnet"
 
 #: ../src/settingsdialog.cc:1570
 msgid "Show nicklist in hub frame on the left side"
-msgstr ""
+msgstr "Hiện danh sách biệt danh ở bên trái khung hub"
 
 #: ../ui/finishedtransfers.ui:125
 msgid "Show only completely finished downloads"
-msgstr ""
+msgstr "Chỉ hiện lượt tải xuống đã hoàn tất toàn bộ"
 
 #: ../ui/settingsdialog.ui:5813
 msgid "Show only when the application is not active."
-msgstr ""
+msgstr "Chỉ hiện khi ứng dụng không hoạt động."
 
 #: ../src/hub.cc:2126 ../src/privatemessage.cc:1045 ../ui/hub.ui:102
 #: ../ui/privatemessage.ui:93
 msgid "Show ratio [send in chat]"
-msgstr ""
+msgstr "Hiện tỷ lệ [gửi vào trò chuyện]"
 
 #: ../src/settingsdialog.cc:1115
 msgid "Show status icon in the system tray"
-msgstr ""
+msgstr "Hiện biểu tượng trạng thái trong khay hệ thống"
 
 #: ../src/settingsdialog.cc:1116
 msgid "Show timestamps in chat by default"
-msgstr ""
+msgstr "Mặc định hiện dấu thời gian trong trò chuyện"
 
 #: ../ui/searchspy.ui:376
 msgid "Show top search"
-msgstr ""
+msgstr "Hiện tìm kiếm hàng đầu"
 
 #: ../src/settingsdialog.cc:1660
 msgid "Show user country in chat"
-msgstr ""
+msgstr "Hiện quốc gia người dùng trong trò chuyện"
 
 #: ../src/hub.cc:2125 ../src/privatemessage.cc:1044 ../ui/hub.ui:93
 #: ../ui/privatemessage.ui:84
 msgid "Show version"
-msgstr ""
+msgstr "Hiện phiên bản"
 
 #: ../ui/mainwindow.ui:1723
 msgid "Show/Hide transfers panel"
-msgstr ""
+msgstr "Hiện/Ẩn bảng truyền tập tin"
 
 #: ../ui/hub.ui:513
 msgid "Show/Hide user list"
-msgstr ""
+msgstr "Hiện/Ẩn danh sách người dùng"
 
 #: ../src/wulfor.cc:192
 msgid "Shutting down libeiskaltdcpp..."
-msgstr ""
+msgstr "Đang tắt libeiskaltdcpp..."
 
 #: ../src/wulfor.cc:118
 #, c-format
 msgid "Signal handlers installed.\n"
-msgstr ""
+msgstr "Đã cài bộ xử lý tín hiệu.\n"
 
 #: ../src/downloadqueue.cc:73 ../src/downloadqueue.cc:92
 #: ../src/downloadqueue.cc:284 ../src/downloadqueue.cc:391 ../src/search.cc:103
@@ -3234,72 +3234,72 @@ msgstr "Kích thước"
 #: ../src/downloadqueue.cc:243 ../src/downloadqueue.cc:245
 #: ../src/sharebrowser.cc:387
 msgid "Size: "
-msgstr ""
+msgstr "Kích thước: "
 
 #: ../src/sharebrowser.cc:392
 msgid "Size: 0 B"
-msgstr ""
+msgstr "Kích thước: 0 B"
 
 #: ../ui/settingsdialog.ui:4430
 msgid "Skip zero sized files"
-msgstr ""
+msgstr "Bỏ qua tập tin có kích thước bằng 0"
 
 #: ../src/settingsdialog.cc:988
 msgid "Skip zero-byte files"
-msgstr ""
+msgstr "Bỏ qua tập tin 0 byte"
 
 #: ../src/privatemessage.cc:1478
 msgid "Slot granted"
-msgstr ""
+msgstr "Đã cấp khe truyền"
 
 #: ../src/favoriteusers.cc:531 ../src/hub.cc:3051
 msgid "Slot granted to "
-msgstr ""
+msgstr "Đã cấp khe truyền cho "
 
 #: ../src/search.cc:105 ../src/search.cc:132 ../src/search.cc:663
 msgid "Slots"
-msgstr ""
+msgstr "Khe truyền"
 
 #: ../src/settingsdialog.cc:1082
 msgid "Slovak"
-msgstr ""
+msgstr "Tiếng Slovakia"
 
 #: ../src/mainwindow.cc:263
 msgid "Slovak translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Slovakia\n"
 
 #: ../ui/mainwindow.ui:1522
 msgid "Small icons"
-msgstr ""
+msgstr "Biểu tượng nhỏ"
 
 #: ../ui/settingsdialog.ui:7785
 msgid "Socket read buffer"
-msgstr ""
+msgstr "Bộ đệm đọc socket"
 
 #: ../ui/settingsdialog.ui:7798
 msgid "Socket write buffer"
-msgstr ""
+msgstr "Bộ đệm ghi socket"
 
 #: ../ui/settingsdialog.ui:1771
 msgid "Socks IP"
-msgstr ""
+msgstr "IP SOCKS"
 
 #: ../src/settingsdialog.cc:1120
 msgid "Sort favorite users first"
-msgstr ""
+msgstr "Sắp xếp người dùng yêu thích lên đầu"
 
 #: ../src/settingsdialog.cc:1157 ../ui/settingsdialog.ui:5255
 msgid "Sounds"
-msgstr ""
+msgstr "Âm thanh"
 
 #: ../ui/mainwindow.ui:1572
 msgid "Source (git)"
-msgstr ""
+msgstr "Mã nguồn (git)"
 
 #: ../src/adlsearch.cc:39 ../src/adlsearch.cc:59 ../src/adlsearch.cc:109
 #: ../src/adlsearch.cc:207
 msgid "Source Type"
-msgstr ""
+msgstr "Loại nguồn"
 
 #: ../src/downloadqueue.cc:1386
 msgid "Source too slow"
@@ -3307,11 +3307,11 @@ msgstr "Nguồn quá chậm"
 
 #: ../src/settingsdialog.cc:1076
 msgid "Spanish"
-msgstr ""
+msgstr "Tiếng Tây Ban Nha"
 
 #: ../src/mainwindow.cc:253
 msgid "Spanish translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Tây Ban Nha\n"
 
 #: ../src/finishedtransfers.cc:66 ../src/finishedtransfers.cc:87
 #: ../src/finishedtransfers.cc:196 ../src/finishedtransfers.cc:240
@@ -3322,15 +3322,15 @@ msgstr "Tốc độ"
 
 #: ../ui/mainwindow.ui:2323 ../ui/mainwindow.ui:2497
 msgid "Spy"
-msgstr ""
+msgstr "Theo dõi"
 
 #: ../ui/mainwindow.ui:342
 msgid "Start a search for this file"
-msgstr ""
+msgstr "Bắt đầu tìm tập tin này"
 
 #: ../ui/settingsdialog.ui:6323
 msgid "State of preparedness"
-msgstr ""
+msgstr "Trạng thái sẵn sàng"
 
 #: ../src/downloadqueue.cc:72 ../src/downloadqueue.cc:283
 #: ../src/downloadqueue.cc:390 ../src/searchspy.cc:58 ../src/searchspy.cc:296
@@ -3342,7 +3342,7 @@ msgstr "Trạng thái"
 
 #: ../src/settingsdialog.cc:1236
 msgid "Status message"
-msgstr ""
+msgstr "Thông báo trạng thái"
 
 #: ../src/search.cc:595
 msgid "Stop"
@@ -3350,11 +3350,11 @@ msgstr "Dừng lại"
 
 #: ../src/settingsdialog.cc:1096
 msgid "Swedish (Sweden)"
-msgstr ""
+msgstr "Tiếng Thụy Điển (Thụy Điển)"
 
 #: ../src/mainwindow.cc:288
 msgid "Swedish (Sweden) translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Thụy Điển (Thụy Điển)\n"
 
 #: ../src/WulforUtil.cc:41 ../src/settingsdialog.cc:1054
 #: ../ui/settingsdialog.ui:8958
@@ -3363,15 +3363,15 @@ msgstr "Mặc định theo hệ thống"
 
 #: ../ui/settingsdialog.ui:6089
 msgid "System icons"
-msgstr ""
+msgstr "Biểu tượng hệ thống"
 
 #: ../src/settingsdialog.cc:1233
 msgid "System message"
-msgstr ""
+msgstr "Thông báo hệ thống"
 
 #: ../src/WulforUtil.cc:225
 msgid "TIS-620"
-msgstr ""
+msgstr "TIS-620"
 
 #: ../src/downloadqueue.cc:81 ../src/downloadqueue.cc:293
 #: ../src/downloadqueue.cc:400 ../src/downloadqueue.cc:751
@@ -3388,11 +3388,11 @@ msgstr "TTH"
 
 #: ../src/transfers.cc:713 ../src/transfers.cc:714 ../src/transfers.cc:880
 msgid "TTH: "
-msgstr ""
+msgstr "TTH: "
 
 #: ../ui/settingsdialog.ui:4902
 msgid "Tabs"
-msgstr ""
+msgstr "Thẻ"
 
 #: ../src/hub.cc:99 ../src/hub.cc:418 ../src/hub.cc:438
 msgid "Tag"
@@ -3400,37 +3400,37 @@ msgstr "Thẻ đánh dấu"
 
 #: ../ui/settingsdialog.ui:5646
 msgid "Test"
-msgstr ""
+msgstr "Kiểm tra"
 
 #: ../ui/settingsdialog.ui:8946
 msgid "Text"
-msgstr ""
+msgstr "Văn bản"
 
 #: ../ui/settingsdialog.ui:5400
 msgid "Text color"
-msgstr ""
+msgstr "Màu văn bản"
 
 #: ../ui/settingsdialog.ui:5417
 msgid "Text style"
-msgstr ""
+msgstr "Kiểu văn bản"
 
 #: ../ui/searchspy.ui:296 ../ui/settingsdialog.ui:6533
 msgid ""
 "The increase in waiting time increases the likelihood of adding to top, but "
 "reduces the dynamics (updating) frame"
-msgstr ""
+msgstr "Tăng thời gian chờ giúp tăng khả năng lọt vào danh sách hàng đầu, nhưng giảm mức độ cập nhật của khung"
 
 #: ../src/favoritehubs.cc:425
 msgid "The name and address fields are required"
-msgstr ""
+msgstr "Phải nhập tên và địa chỉ"
 
 #: ../ui/settingsdialog.ui:6104
 msgid "Theme default"
-msgstr ""
+msgstr "Chủ đề mặc định"
 
 #: ../ui/settingsdialog.ui:6133
 msgid "Themes"
-msgstr ""
+msgstr "Chủ đề"
 
 #: ../src/finishedtransfers.cc:61 ../src/finishedtransfers.cc:75
 #: ../src/finishedtransfers.cc:76 ../src/finishedtransfers.cc:82
@@ -3443,78 +3443,78 @@ msgstr "Thời gian"
 
 #: ../src/transfers.cc:61 ../src/transfers.cc:602
 msgid "Time Left"
-msgstr ""
+msgstr "Thời gian còn lại"
 
 #: ../src/favoriteusers.cc:49 ../src/favoriteusers.cc:112
 #: ../src/favoriteusers.cc:598 ../src/favoriteusers.cc:606
 msgid "Time last seen"
-msgstr ""
+msgstr "Lần xuất hiện cuối"
 
 #: ../src/settingsdialog.cc:1239 ../src/settingsdialog.cc:1269
 #: ../src/settingsdialog.cc:1274
 msgid "Timestamp"
-msgstr ""
+msgstr "Dấu thời gian"
 
 #: ../src/settingsdialog.cc:401 ../src/settingsdialog.cc:1338
 #: ../src/settingsdialog.cc:2293 ../src/settingsdialog.cc:2351
 #: ../src/settingsdialog.cc:2368 ../src/settingsdialog.cc:2391
 #: ../src/settingsdialog.cc:2395 ../src/settingsdialog.cc:2447
 msgid "Title"
-msgstr ""
+msgstr "Tiêu đề"
 
 #: ../ui/settingsdialog.ui:888
 msgid "To (empty for selected user)"
-msgstr ""
+msgstr "Tới (để trống cho người dùng đã chọn)"
 
 #: ../ui/mainwindow.ui:293
 msgid ""
 "To start downloading file you need turn on auto search alternatives "
 "(Settings/Downloads/Queue)"
-msgstr ""
+msgstr "Để bắt đầu tải tập tin, bạn cần bật tự động tìm nguồn thay thế (Cài đặt/Tải xuống/Hàng đợi)"
 
 #: ../ui/settingsdialog.ui:6193
 msgid "Toolbar"
-msgstr ""
+msgstr "Thanh công cụ"
 
 #: ../ui/mainwindow.ui:1485
 msgid "Tools panel"
-msgstr ""
+msgstr "Bảng công cụ"
 
 #: ../ui/searchspy.ui:10 ../ui/searchspy.ui:372 ../ui/settingsdialog.ui:8923
 msgid "Top"
-msgstr ""
+msgstr "Trên cùng"
 
 #: ../ui/settingsdialog.ui:6587
 msgid "Top (number of matches, more than)"
-msgstr ""
+msgstr "Hàng đầu (số kết quả khớp, lớn hơn)"
 
 #: ../ui/mainwindow.ui:1495
 msgid "Top position"
-msgstr ""
+msgstr "Vị trí trên cùng"
 
 #: ../ui/searchspy.ui:255
 msgid "Top: >"
-msgstr ""
+msgstr "Hàng đầu: >"
 
 #: ../ui/mainwindow.ui:1864
 msgid "Total received"
-msgstr ""
+msgstr "Tổng đã nhận"
 
 #: ../ui/mainwindow.ui:1941
 msgid "Total sent"
-msgstr ""
+msgstr "Tổng đã gửi"
 
 #: ../src/settingsdialog.cc:3893
 msgid "Total size: "
-msgstr ""
+msgstr "Tổng kích thước: "
 
 #: ../ui/settingsdialog.ui:4039
 msgid "Total size: 0 B"
-msgstr ""
+msgstr "Tổng kích thước: 0 B"
 
 #: ../src/sharebrowser.cc:382
 msgid "Total: "
-msgstr ""
+msgstr "Tổng: "
 
 #: ../src/finishedtransfers.cc:65 ../src/finishedtransfers.cc:86
 #: ../src/finishedtransfers.cc:186 ../src/finishedtransfers.cc:195
@@ -3526,134 +3526,134 @@ msgstr "Đã truyền dẫn"
 #: ../src/transfers.cc:617
 #, c-format
 msgid "Transfers::updateTransfer, CID not found %s\n"
-msgstr ""
+msgstr "Transfers::updateTransfer, không tìm thấy CID %s\n"
 
 #: ../ui/settingsdialog.ui:8157
 msgid "Trusted certificates path"
-msgstr ""
+msgstr "Đường dẫn chứng chỉ đáng tin cậy"
 
 #: ../src/settingsdialog.cc:1098
 msgid "Turkish"
-msgstr ""
+msgstr "Tiếng Thổ Nhĩ Kỳ"
 
 #: ../src/mainwindow.cc:291
 msgid "Turkish translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Thổ Nhĩ Kỳ\n"
 
 #: ../src/search.cc:102 ../src/search.cc:666 ../src/search.cc:770
 #: ../src/search.cc:899 ../src/search.cc:933 ../src/sharebrowser.cc:85
 #: ../src/sharebrowser.cc:326 ../src/sharebrowser.cc:347
 msgid "Type"
-msgstr ""
+msgstr "Loại"
 
 #: ../src/settingsdialog.cc:1242
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ../src/WulforUtil.cc:210
 msgid "UTF-8"
-msgstr ""
+msgstr "UTF-8"
 
 #: ../src/settingsdialog.cc:1074
 msgid "Ukrainian"
-msgstr ""
+msgstr "Tiếng Ukraina"
 
 #: ../src/mainwindow.cc:241
 msgid "Ukrainian translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Ukraina\n"
 
 #: ../src/hub.cc:3076
 msgid "Unable to connect: already connected to the requested hub"
-msgstr ""
+msgstr "Không thể kết nối: đã kết nối tới hub yêu cầu"
 
 #: ../src/sharebrowser.cc:215
 msgid "Unable to load file list: "
-msgstr ""
+msgstr "Không thể nạp danh sách tập tin: "
 
 #: ../src/mainwindow.cc:2109
 msgid "Unable to load file list: Invalid file list name"
-msgstr ""
+msgstr "Không thể nạp danh sách tập tin: Tên danh sách tập tin không hợp lệ"
 
 #: ../src/mainwindow.cc:2364
 msgid ""
 "Unable to open %1% port. Searching or file transfers will not work correctly "
 "until you change settings or turn off any application that might be using "
 "that port."
-msgstr ""
+msgstr "Không thể mở cổng %1%. Tìm kiếm hoặc truyền tập tin sẽ không hoạt động đúng cho đến khi bạn thay đổi cài đặt hoặc tắt ứng dụng có thể đang sử dụng cổng đó."
 
 #: ../ui/settingsdialog.ui:2688
 msgid "Unfinished downloads directory"
-msgstr ""
+msgstr "Thư mục tải xuống chưa hoàn tất"
 
 #: ../src/WulforUtil.cc:331 ../src/downloadqueue.cc:1320
 #: ../src/downloadqueue.cc:1321 ../src/mainwindow.cc:1096
 #: ../src/mainwindow.cc:1490
 msgid "Unknown"
-msgstr ""
+msgstr "Không xác định"
 
 #: ../src/privatemessage.cc:1050
 msgid "Unknown command "
-msgstr ""
+msgstr "Lệnh không xác định "
 
 #: ../src/hub.cc:2437
 msgid "Unknown command '"
-msgstr ""
+msgstr "Lệnh không xác định '"
 
 #: ../ui/searchspy.ui:356
 msgid "Update"
-msgstr ""
+msgstr "Cập nhật"
 
 #: ../src/searchspy.cc:390 ../ui/searchspy.ui:360
 msgid "Update frame search"
-msgstr ""
+msgstr "Cập nhật khung tìm kiếm"
 
 #: ../src/hub.cc:2122
 msgid "Update own file list"
-msgstr ""
+msgstr "Cập nhật danh sách tập tin của mình"
 
 #: ../ui/settingsdialog.ui:6401
 msgid "Updating string or TTH"
-msgstr ""
+msgstr "Đang cập nhật chuỗi hoặc TTH"
 
 #: ../src/settingsdialog.cc:1421
 msgid "Upload"
-msgstr ""
+msgstr "Tải lên"
 
 #: ../src/uploadqueue.cc:34 ../ui/mainwindow.ui:1305
 msgid "Upload Queue"
-msgstr ""
+msgstr "Hàng đợi tải lên"
 
 #: ../ui/settingsdialog.ui:2305
 msgid "Upload Slots"
-msgstr ""
+msgstr "Khe tải lên"
 
 #: ../src/transfers.cc:1161
 msgid "Upload complete..."
-msgstr ""
+msgstr "Tải lên hoàn tất..."
 
 #: ../src/settingsdialog.cc:1176
 msgid "Upload finished"
-msgstr ""
+msgstr "Tải lên hoàn tất"
 
 #: ../ui/settingsdialog.ui:4207
 msgid "Upload slots"
-msgstr ""
+msgstr "Khe tải lên"
 
 #: ../ui/mainwindow.ui:1890
 msgid "Upload speed"
-msgstr ""
+msgstr "Tốc độ tải lên"
 
 #: ../src/transfers.cc:1114
 msgid "Upload starting..."
-msgstr ""
+msgstr "Bắt đầu tải lên..."
 
 #: ../src/mainwindow.cc:773
 msgid "Upload: "
-msgstr ""
+msgstr "Tải lên: "
 
 #: ../src/transfers.cc:1148
 msgid "Uploading"
-msgstr ""
+msgstr "Đang tải lên"
 
 #: ../src/wulfor.cc:45
 #, c-format
@@ -3667,7 +3667,7 @@ msgid ""
 "Keys:\n"
 "  -h, --help\t Show this message\n"
 "  -V, --version\t Show version string\n"
-msgstr ""
+msgstr "Cách dùng:\n  eiskaltdcpp-gtk <magnet link> <dchub://link> <adc(s)://link>\n  eiskaltdcpp-gtk <Key>\nEiskaltDC++ là chương trình đa nền tảng sử dụng các giao thức Direct Connect và ADC.\n\nTùy chọn:\n  -h, --help\t Hiển thị thông báo này\n  -V, --version\t Hiển thị chuỗi phiên bản\n"
 
 #: ../src/settingsdialog.cc:362 ../src/settingsdialog.cc:400
 #: ../src/settingsdialog.cc:434 ../src/settingsdialog.cc:688
@@ -3676,67 +3676,67 @@ msgstr ""
 #: ../src/settingsdialog.cc:1336 ../src/settingsdialog.cc:1351
 #: ../src/settingsdialog.cc:1452 ../src/settingsdialog.cc:1462
 msgid "Use"
-msgstr ""
+msgstr "Dùng"
 
 #: ../src/settingsdialog.cc:1664
 msgid "Use ADL search only in own file list"
-msgstr ""
+msgstr "Chỉ dùng tìm kiếm ADL trong danh sách tập tin của mình"
 
 #: ../ui/mainwindow.ui:2009
 msgid "Use Blinking Icon"
-msgstr ""
+msgstr "Dùng biểu tượng nhấp nháy"
 
 #: ../ui/settingsdialog.ui:2476
 msgid "Use DHT"
-msgstr ""
+msgstr "Dùng DHT"
 
 #: ../src/hub.cc:1827 ../src/privatemessage.cc:1239
 msgid "Use Emoticons"
-msgstr ""
+msgstr "Dùng biểu tượng cảm xúc"
 
 #: ../src/settingsdialog.cc:1121
 msgid "Use OEM monospaced font for chat windows"
-msgstr ""
+msgstr "Dùng phông chữ đơn cách OEM cho cửa sổ trò chuyện"
 
 #: ../ui/settingsdialog.ui:1684
 msgid "Use SOCKS5 server to resolve hostnames"
-msgstr ""
+msgstr "Dùng máy chủ SOCKS5 để phân giải tên máy chủ"
 
 #: ../src/settingsdialog.cc:1726
 msgid "Use TLS when remote client supports it"
-msgstr ""
+msgstr "Dùng TLS khi ứng dụng khách từ xa hỗ trợ"
 
 #: ../ui/settingsdialog.ui:1299
 msgid "Use UPnP to let client configure my router"
-msgstr ""
+msgstr "Dùng UPnP để ứng dụng cấu hình bộ định tuyến"
 
 #: ../ui/settingsdialog.ui:1897
 msgid "Use bandwidth limits"
-msgstr ""
+msgstr "Dùng giới hạn băng thông"
 
 #: ../src/settingsdialog.cc:1123
 msgid "Use blinking status icon"
-msgstr ""
+msgstr "Dùng biểu tượng trạng thái nhấp nháy"
 
 #: ../src/settingsdialog.cc:1124
 msgid "Use emoticons"
-msgstr ""
+msgstr "Dùng biểu tượng cảm xúc"
 
 #: ../src/settingsdialog.cc:1656
 msgid "Use fast hashing method (disable if you have problems with hashing)"
-msgstr ""
+msgstr "Dùng phương pháp băm nhanh (tắt nếu gặp vấn đề khi băm)"
 
 #: ../src/settingsdialog.cc:1122
 msgid "Use magnet split"
-msgstr ""
+msgstr "Dùng chia tách magnet"
 
 #: ../ui/settingsdialog.ui:2060
 msgid "Use second set of bandwidth limits"
-msgstr ""
+msgstr "Dùng bộ giới hạn băng thông thứ hai"
 
 #: ../ui/settingsdialog.ui:79
 msgid "Use separator extensions (doc;xls;ppt;docx;xlsx;pptx)"
-msgstr ""
+msgstr "Phân cách các phần mở rộng bằng dấu chấm phẩy (doc;xls;ppt;docx;xlsx;pptx)"
 
 #: ../src/transfers.cc:56 ../src/transfers.cc:87 ../src/transfers.cc:89
 #: ../src/transfers.cc:502 ../src/transfers.cc:567 ../src/transfers.cc:598
@@ -3745,173 +3745,173 @@ msgstr "Người dùng"
 
 #: ../src/settingsdialog.cc:1411
 msgid "User (dc)"
-msgstr ""
+msgstr "Người dùng (dc)"
 
 #: ../src/settingsdialog.cc:1415
 msgid "User (normal)"
-msgstr ""
+msgstr "Người dùng (thường)"
 
 #: ../ui/settingsdialog.ui:7475
 msgid "User Commands"
-msgstr ""
+msgstr "Lệnh người dùng"
 
 #: ../src/favoritehubs.cc:56 ../src/favoritehubs.cc:141
 #: ../src/favoritehubs.cc:317
 msgid "User Description"
-msgstr ""
+msgstr "Mô tả về người dùng"
 
 #: ../ui/sharebrowser.ui:109 ../ui/sharebrowser.ui:182 ../ui/transfers.ui:90
 msgid "User commands"
-msgstr ""
+msgstr "Lệnh người dùng"
 
 #: ../src/hub.cc:2008
 msgid "User favorite list:"
-msgstr ""
+msgstr "Danh sách người dùng yêu thích:"
 
 #: ../src/settingsdialog.cc:1412
 msgid "User firewall (dc)"
-msgstr ""
+msgstr "Người dùng có tường lửa (dc)"
 
 #: ../src/settingsdialog.cc:1416
 msgid "User firewall (normal)"
-msgstr ""
+msgstr "Người dùng có tường lửa (thường)"
 
 #: ../src/hub.cc:2123
 msgid "User list show/hide"
-msgstr ""
+msgstr "Hiện/ẩn danh sách người dùng"
 
 #: ../src/hub.cc:3022 ../src/hub.cc:3042
 msgid "User not found"
-msgstr ""
+msgstr "Không tìm thấy người dùng"
 
 #: ../src/settingsdialog.cc:1414
 msgid "User operator (dc)"
-msgstr ""
+msgstr "Điều hành viên (dc)"
 
 #: ../src/settingsdialog.cc:1418
 msgid "User operator (normal)"
-msgstr ""
+msgstr "Điều hành viên (thường)"
 
 #: ../src/settingsdialog.cc:1413
 msgid "User operator firewall (dc)"
-msgstr ""
+msgstr "Điều hành viên có tường lửa (dc)"
 
 #: ../src/settingsdialog.cc:1417
 msgid "User operator firewall (normal)"
-msgstr ""
+msgstr "Điều hành viên có tường lửa (thường)"
 
 #: ../src/privatemessage.cc:1413
 msgid "User went offline"
-msgstr ""
+msgstr "Người dùng đã ngoại tuyến"
 
 #: ../ui/settingsdialog.ui:1671
 msgid "Username"
-msgstr ""
+msgstr "Tên người dùng"
 
 #: ../src/downloadqueue.cc:76 ../src/downloadqueue.cc:282
 #: ../src/downloadqueue.cc:389 ../src/publichubs.cc:48 ../src/publichubs.cc:62
 #: ../src/publichubs.cc:63 ../src/publichubs.cc:160 ../ui/mainwindow.ui:2186
 #: ../ui/mainwindow.ui:2433
 msgid "Users"
-msgstr ""
+msgstr "Người dùng"
 
 #: ../src/publichubs.cc:179
 msgid "Users: "
-msgstr ""
+msgstr "Người dùng: "
 
 #: ../src/sharebrowser.cc:90 ../src/sharebrowser.cc:361
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: ../src/settingsdialog.cc:1092
 msgid "Vietnamese"
-msgstr ""
+msgstr "Tiếng Việt"
 
 #: ../src/mainwindow.cc:282
 msgid "Vietnamese translation\n"
-msgstr ""
+msgstr "Bản dịch tiếng Việt\n"
 
 #: ../src/settingsdialog.cc:1117
 msgid "View status messages in main chat"
-msgstr ""
+msgstr "Xem thông báo trạng thái trong trò chuyện chính"
 
 #: ../ui/mainwindow.ui:2244
 msgid "View the files to be downloaded"
-msgstr ""
+msgstr "Xem tập tin sẽ được tải xuống"
 
 #: ../ui/mainwindow.ui:2099
 msgid "View the hashing progress"
-msgstr ""
+msgstr "Xem tiến trình băm"
 
 #: ../ui/mainwindow.ui:2261
 msgid "View the list of finished downloads"
-msgstr ""
+msgstr "Xem danh sách tải xuống hoàn tất"
 
 #: ../ui/mainwindow.ui:2278
 msgid "View the list of finished uploads"
-msgstr ""
+msgstr "Xem danh sách tải lên hoàn tất"
 
 #: ../src/settingsdialog.cc:1028 ../src/settingsdialog.cc:3818
 #: ../src/settingsdialog.cc:3886
 msgid "Virtual Name"
-msgstr ""
+msgstr "Tên ảo"
 
 #: ../src/settingsdialog.cc:3115
 msgid "Virtual name"
-msgstr ""
+msgstr "Tên ảo"
 
 #: ../ui/settingsdialog.ui:6548
 msgid "Waiting (seconds)"
-msgstr ""
+msgstr "Thời gian chờ (giây)"
 
 #: ../src/hub.cc:573
 msgid ""
 "Waiting for input password (don't remove /password before your password)"
-msgstr ""
+msgstr "Đang chờ nhập mật khẩu (không xóa /password trước mật khẩu của bạn)"
 
 #: ../src/transfers.cc:586
 msgid "Waiting for slot"
-msgstr ""
+msgstr "Đang chờ khe truyền"
 
 #: ../src/transfers.cc:1070
 msgid "Waiting to retry"
-msgstr ""
+msgstr "Đang chờ thử lại"
 
 #: ../ui/searchspy.ui:284
 msgid "Waiting:"
-msgstr ""
+msgstr "Đang chờ:"
 
 #: ../src/mainwindow.cc:412
 msgid "Welcome to "
-msgstr ""
+msgstr "Chào mừng đến với "
 
 #: ../ui/settingsdialog.ui:5215
 msgid "When a private message window is opened"
-msgstr ""
+msgstr "Khi mở cửa sổ tin nhắn riêng"
 
 #: ../ui/mainwindow.ui:1594
 msgid "Wiki of project"
-msgstr ""
+msgstr "Wiki của dự án"
 
 #: ../ui/settingsdialog.ui:5055
 msgid "Windows"
-msgstr ""
+msgstr "Cửa sổ"
 
 #: ../ui/settingsdialog.ui:7746
 msgid "Write buffer size"
-msgstr ""
+msgstr "Kích thước bộ đệm ghi"
 
 #: ../src/settingsdialog.cc:947
 msgid "Xine player"
-msgstr ""
+msgstr "Trình phát Xine"
 
 #: ../src/finishedtransfers.cc:683
 msgid "Yes"
-msgstr ""
+msgstr "Có"
 
 #: ../src/settingsdialog.cc:3879
 msgid "[HIDDEN SHARE] "
-msgstr ""
+msgstr "[CHIA SẺ ẨN] "
 
 #: ../src/transfers.cc:944 ../src/transfers.cc:1137
 msgid "[S]"
@@ -3931,300 +3931,300 @@ msgstr "[Z]"
 
 #: ../ui/hub.ui:598 ../ui/search.ui:767 ../ui/transfers.ui:63
 msgid "_Add to favorites"
-msgstr ""
+msgstr "_Thêm vào phần yêu thích"
 
 #: ../ui/favoritehubs.ui:144
 msgid "_Address:"
-msgstr ""
+msgstr "_Địa chỉ:"
 
 #: ../ui/downloadqueue.ui:283 ../ui/favoriteusers.ui:158 ../ui/hub.ui:556
 #: ../ui/search.ui:731 ../ui/transfers.ui:36
 msgid "_Browse file list"
-msgstr ""
+msgstr "_Duyệt danh sách tập tin"
 
 #: ../ui/transfers.ui:145
 msgid "_Close connection"
-msgstr ""
+msgstr "_Đóng kết nối"
 
 #: ../ui/mainwindow.ui:1399
 msgid "_Close widget"
-msgstr ""
+msgstr "_Đóng tiện ích"
 
 #: ../ui/hub.ui:127 ../ui/hub.ui:182 ../ui/privatemessage.ui:118
 #: ../ui/privatemessage.ui:139
 msgid "_Copy link"
-msgstr ""
+msgstr "_Sao chép liên kết"
 
 #: ../ui/downloadqueue.ui:191 ../ui/hub.ui:244 ../ui/privatemessage.ui:201
 #: ../ui/search.ui:716 ../ui/sharebrowser.ui:164
 msgid "_Copy magnet"
-msgstr ""
+msgstr "_Sao chép magnet"
 
 #: ../ui/hub.ui:538
 msgid "_Copy nick"
-msgstr ""
+msgstr "_Sao chép nick"
 
 #: ../ui/sharebrowser.ui:173
 msgid "_Copy picture"
-msgstr ""
+msgstr "_Sao chép hình ảnh"
 
 #: ../ui/favoritehubs.ui:176
 msgid "_Description:"
-msgstr ""
+msgstr "_Mô tả:"
 
 #: ../ui/hub.ui:212 ../ui/privatemessage.ui:169 ../ui/search.ui:655
 msgid "_Download"
-msgstr ""
+msgstr "_Tải xuống"
 
 #: ../ui/favoritehubs.ui:205
 msgid "_Encoding:"
-msgstr ""
+msgstr "_Bảng mã:"
 
 #: ../ui/mainwindow.ui:1124
 msgid "_Exit"
-msgstr ""
+msgstr "_Thoát"
 
 #: ../ui/mainwindow.ui:1030
 msgid "_File"
-msgstr ""
+msgstr "_Tập tin"
 
 #: ../ui/transfers.ui:130
 msgid "_Force attempt"
-msgstr ""
+msgstr "_Buộc thử kết nối"
 
 #: ../ui/search.ui:776 ../ui/transfers.ui:72
 msgid "_Grant extra slot"
-msgstr ""
+msgstr "_Cấp thêm khe truyền"
 
 #: ../ui/favoriteusers.ui:185 ../ui/hub.ui:622
 msgid "_Grant slot"
-msgstr ""
+msgstr "_Cấp khe truyền"
 
 #: ../ui/mainwindow.ui:1554
 msgid "_Help"
-msgstr ""
+msgstr "_Trợ giúp"
 
 #: ../ui/downloadqueue.ui:136 ../ui/downloadqueue.ui:270
 msgid "_Highest"
-msgstr ""
+msgstr "_Cao nhất"
 
 #: ../ui/mainwindow.ui:1143
 msgid "_Hubs"
-msgstr ""
+msgstr "_Hub"
 
 #: ../ui/downloadqueue.ui:100 ../ui/downloadqueue.ui:234
 msgid "_Lowest"
-msgstr ""
+msgstr "_Thấp nhất"
 
 #: ../ui/mainwindow.ui:1098
 msgid "_Magnet Choice"
-msgstr ""
+msgstr "_Lựa chọn magnet"
 
 #: ../ui/search.ui:749
 msgid "_Match Queue"
-msgstr ""
+msgstr "_Khớp với hàng đợi"
 
 #: ../ui/favoriteusers.ui:167 ../ui/hub.ui:574 ../ui/transfers.ui:45
 msgid "_Match queue"
-msgstr ""
+msgstr "_Khớp với hàng đợi"
 
 #: ../ui/favoritehubs.ui:251
 msgid "_Mode:"
-msgstr ""
+msgstr "_Chế độ:"
 
 #: ../ui/downloadqueue.ui:155
 msgid "_Move"
-msgstr ""
+msgstr "_Di chuyển"
 
 #: ../ui/downloadqueue.ui:200
 msgid "_Move/Rename"
-msgstr ""
+msgstr "_Di chuyển/Đổi tên"
 
 #: ../ui/favoritehubs.ui:111
 msgid "_Name:"
-msgstr ""
+msgstr "_Tên:"
 
 #: ../ui/mainwindow.ui:1392
 msgid "_Next widget"
-msgstr ""
+msgstr "_Tiện ích kế tiếp"
 
 #: ../ui/downloadqueue.ui:118 ../ui/downloadqueue.ui:252
 msgid "_Normal"
-msgstr ""
+msgstr "_Bình thường"
 
 #: ../ui/hub.ui:136 ../ui/privatemessage.ui:127
 msgid "_Open hub"
-msgstr ""
+msgstr "_Mở hub"
 
 #: ../ui/hub.ui:191 ../ui/privatemessage.ui:148
 msgid "_Open link in default application"
-msgstr ""
+msgstr "_Mở liên kết bằng ứng dụng mặc định"
 
 #: ../ui/hub.ui:565 ../ui/search.ui:740
 msgid "_Open partial file list"
-msgstr ""
+msgstr "_Mở danh sách tập tin một phần"
 
 #: ../ui/favoritehubs.ui:377
 msgid "_Password:"
-msgstr ""
+msgstr "_Mật khẩu:"
 
 #: ../ui/downloadqueue.ui:91 ../ui/downloadqueue.ui:225
 msgid "_Paused"
-msgstr ""
+msgstr "_Tạm dừng"
 
 #: ../ui/mainwindow.ui:1351
 msgid "_Preferences"
-msgstr ""
+msgstr "_Tùy chỉnh"
 
 #: ../ui/mainwindow.ui:1381
 msgid "_Previous widget"
-msgstr ""
+msgstr "_Tiện ích trước"
 
 #: ../ui/favoriteusers.ui:176 ../ui/hub.ui:583
 msgid "_Private message"
-msgstr ""
+msgstr "_Tin nhắn riêng"
 
 #: ../ui/hub.ui:259 ../ui/privatemessage.ui:216
 msgid "_Properties/Choice"
-msgstr ""
+msgstr "_Thuộc tính/Lựa chọn"
 
 #: ../ui/mainwindow.ui:1150
 msgid "_Quick connect"
-msgstr ""
+msgstr "_Kết nối nhanh"
 
 #: ../ui/mainwindow.ui:1069
 msgid "_Refresh file list"
-msgstr ""
+msgstr "_Làm mới danh sách tập tin"
 
 #: ../ui/adlsearch.ui:553 ../ui/downloadqueue.ui:170 ../ui/downloadqueue.ui:359
 #: ../ui/favoriteusers.ui:227 ../ui/search.ui:814 ../ui/searchspy.ui:108
 #: ../ui/searchspy.ui:416
 msgid "_Remove"
-msgstr ""
+msgstr "_Loại bỏ"
 
 #: ../ui/hub.ui:607
 msgid "_Remove from favorites"
-msgstr ""
+msgstr "_Loại bỏ khỏi phần yêu thích"
 
 #: ../ui/favoriteusers.ui:194 ../ui/hub.ui:631 ../ui/transfers.ui:81
 msgid "_Remove user from queue"
-msgstr ""
+msgstr "_Xóa người dùng khỏi hàng đợi"
 
 #: ../ui/downloadqueue.ui:182 ../ui/search.ui:707 ../ui/sharebrowser.ui:155
 msgid "_Search for alternates"
-msgstr ""
+msgstr "_Tìm kiếm phần thay thế"
 
 #: ../ui/hub.ui:203 ../ui/privatemessage.ui:160
 msgid "_Search magnet"
-msgstr ""
+msgstr "_Tìm magnet"
 
 #: ../ui/transfers.ui:54
 msgid "_Send private message"
-msgstr ""
+msgstr "_Gửi tin nhắn riêng tư"
 
 #: ../ui/hub.ui:547
 msgid "_Send public message"
-msgstr ""
+msgstr "_Gửi tin nhắn công cộng"
 
 #: ../ui/mainwindow.ui:1223
 msgid "_Tools"
-msgstr ""
+msgstr "_Công cụ"
 
 #: ../ui/favoritehubs.ui:407
 msgid "_User Description:"
-msgstr ""
+msgstr "_Mô tả về người dùng:"
 
 #: ../ui/hub.ui:640 ../ui/search.ui:794
 msgid "_User commands"
-msgstr ""
+msgstr "_Lệnh người dùng"
 
 #: ../ui/mainwindow.ui:1370
 msgid "_Widgets"
-msgstr ""
+msgstr "_Tiện ích"
 
 #: ../src/hub.cc:3259
 msgid "bad image"
-msgstr ""
+msgstr "ảnh lỗi"
 
 #: ../ui/settingsdialog.ui:8990
 msgid "default"
-msgstr ""
+msgstr "Mặc định"
 
 #: ../src/settingsdialog.cc:2523
 msgid "default icons"
-msgstr ""
+msgstr "biểu tượng mặc định"
 
 #: ../src/settingsdialog.cc:2557
 msgid "default theme"
-msgstr ""
+msgstr "chủ đề mặc định"
 
 #: ../src/hub.cc:102 ../src/hub.cc:421 ../src/hub.cc:441
 msgid "eMail"
-msgstr ""
+msgstr "email"
 
 #: ../src/settingsdialog.cc:2794
 #, c-format
 msgid "eiskaltdcpp-gtk: load theme %s...\n"
-msgstr ""
+msgstr "eiskaltdcpp-gtk: nạp chủ đề %s...\n"
 
 #: ../src/mainwindow.cc:2413
 msgid "file list from "
-msgstr ""
+msgstr "danh sách tập tin từ "
 
 #: ../ui/settingsdialog.ui:2092
 msgid "from"
-msgstr ""
+msgstr "từ"
 
 #: ../ui/settingsdialog.ui:5129
 msgid "in program"
-msgstr ""
+msgstr "trong chương trình"
 
 #: ../src/hub.cc:3250
 msgid "loading error"
-msgstr ""
+msgstr "lỗi nạp"
 
 #: ../src/transfers.cc:1117
 msgid "none"
-msgstr ""
+msgstr "Không có"
 
 #: ../src/hub.cc:2068 ../src/privatemessage.cc:985
 msgid "project home: "
-msgstr ""
+msgstr "trang chủ dự án: "
 
 #: ../src/hub.cc:2089 ../src/privatemessage.cc:1006
 msgid "ratio: %1% (uploads: %2%, downloads: %3% )"
-msgstr ""
+msgstr "tỷ lệ: %1% (tải lên: %2%, tải xuống: %3% )"
 
 #: ../src/hashdialog.cc:72 ../src/mainwindow.cc:2447 ../src/mainwindow.cc:2449
 #: ../src/treeview.cc:219 ../ui/settingsdialog.ui:3522
 #: ../ui/settingsdialog.ui:3538 ../ui/settingsdialog.ui:3582
 msgid "s"
-msgstr ""
+msgstr "s"
 
 #: ../src/settingsdialog.cc:1492
 msgid "searchADL"
-msgstr ""
+msgstr "tìm kiếm ADL"
 
 #: ../src/settingsdialog.cc:3182 ../src/settingsdialog.cc:3309
 msgid "selected style failed"
-msgstr ""
+msgstr "kiểu đã chọn không hoạt động"
 
 #: ../ui/settingsdialog.ui:6006
 msgid "theme"
-msgstr ""
+msgstr "Chủ đề"
 
 #: ../ui/settingsdialog.ui:2122
 msgid "to"
-msgstr ""
+msgstr "đến"
 
 #: ../src/searchspy.cc:359
 msgid "top..."
-msgstr ""
+msgstr "hàng đầu..."
 
 #: ../src/searchspy.cc:413
 msgid "top/waiting/frame: "
-msgstr ""
+msgstr "hàng đầu/chờ/khung: "
 
 #: ../src/searchspy.cc:296 ../src/searchspy.cc:364
 msgid "waiting..."
-msgstr ""
+msgstr "Đang chờ..."

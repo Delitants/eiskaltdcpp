@@ -97,7 +97,7 @@ msgstr "Odpojený"
 
 #: ../ChatMessage.cpp:35
 msgid "Sent "
-msgstr ""
+msgstr "Odoslané "
 
 #: ../ClientManager.cpp:198 ../FinishedManager.cpp:134
 #: ../FinishedManager.cpp:140 ../FinishedManager.cpp:146
@@ -126,53 +126,53 @@ msgstr "Chyba konektivity: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Zablokované spojenie C-C s hubom ('%1%:%2%'; požiadavka z '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Blokuje sa '%1%', zistený možný útok DDoS (zdrojový hub '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
-msgstr ""
+msgstr "Zisťujú sa najlepšie nastavenia pripojenia..."
 
 #: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
-msgstr ""
+msgstr "Nepodarilo sa otvoriť porty %1%; nastavenia pripojenia je nutné upraviť ručne"
 
 #: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
-msgstr ""
+msgstr "Zistená verejná IP adresa, vyberá sa aktívny režim s priamym pripojením"
 
 #: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
-msgstr ""
+msgstr "Zistená lokálna sieť s možným NAT, pokus o mapovanie portov pomocou UPnP..."
 
 #: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
-msgstr ""
+msgstr "Automatické nastavenie aktívneho režimu zlyhalo. Pre lepšie pripojenie môžete nastaviť spojenie ručne"
 
 #: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
-msgstr ""
+msgstr "Prenos (TCP)"
 
 #: ../ConnectivityManager.cpp:190
 msgid "Search (UDP)"
-msgstr ""
+msgstr "Hľadanie (UDP)"
 
 #: ../ConnectivityManager.cpp:215
 msgid "DHT (UDP)"
-msgstr ""
+msgstr "DHT (UDP)"
 
 #: ../ConnectivityManager.cpp:230
 msgid "Connectivity: "
-msgstr ""
+msgstr "Pripojenie: "
 
 #: ../CryptoManager.cpp:294
 msgid "No private key file chosen"
@@ -210,7 +210,7 @@ msgstr "Nepodarilo sa načítať privátny kľúč"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Dekomprimované údaje prekračujú limit veľkosti"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -230,7 +230,7 @@ msgstr "Užívatelia"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Neplatná prípona zoznamu súborov (musí byť .xml alebo .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -238,7 +238,7 @@ msgstr "Adresáru chýba atribút názov"
 
 #: ../DownloadManager.cpp:135
 msgid "IPFilter: Blocked outgoing connection to "
-msgstr ""
+msgstr "IPFilter: zablokované odchádzajúce spojenie na "
 
 #: ../DownloadManager.cpp:235
 msgid "Invalid size"
@@ -274,11 +274,11 @@ msgstr "Presmerovať používateľov"
 
 #: ../FavoriteManager.cpp:474
 msgid "Auto-connect group (converted)"
-msgstr ""
+msgstr "Skupina automatického pripájania (prevedená)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Neplatná URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -286,11 +286,11 @@ msgstr "Nepodarilo sa hašovanie: %1%"
 
 #: ../HashManager.cpp:239
 msgid "Finished hashing: %1% (%2% at %3%/s)"
-msgstr ""
+msgstr "Dokončené hašovanie: %1% (%2% rýchlosťou %3%/s)"
 
 #: ../HashManager.cpp:242
 msgid "Finished hashing: %1% (%2%)"
-msgstr ""
+msgstr "Dokončené hašovanie: %1% (%2%)"
 
 #: ../HashManager.cpp:245
 msgid "Finished hashing: %1%"
@@ -324,92 +324,92 @@ msgstr "Chyba pri vytváraní hašu %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Chyba kódovania prenosu (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
-msgstr ""
+msgstr "Nekonečná slučka presmerovaní (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Príliš veľa údajov v tele odpovede (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
-msgstr ""
+msgstr "Nie je dostupná implementácia UPnP"
 
 #: ../MappingManager.cpp:57
 msgid "Another UPnP port mapping attempt is in progress..."
-msgstr ""
+msgstr "Prebieha iný pokus o mapovanie portov UPnP..."
 
 #: ../MappingManager.cpp:108
 msgid "Failed to initialize the %1% interface"
-msgstr ""
+msgstr "Nepodarilo sa inicializovať rozhranie %1%"
 
 #: ../MappingManager.cpp:114
 msgid " Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " Port prenosu (%1% TCP)"
 
 #: ../MappingManager.cpp:115 ../MappingManager.cpp:123
 #: ../MappingManager.cpp:131 ../MappingManager.cpp:139
 msgid "The %1% interface has failed to map the %2% %3% port"
-msgstr ""
+msgstr "Rozhraniu %1% sa nepodarilo mapovať port %2% %3%"
 
 #: ../MappingManager.cpp:122
 msgid " Encrypted Transfer Port (%1% TCP)"
-msgstr ""
+msgstr " Port šifrovaného prenosu (%1% TCP)"
 
 #: ../MappingManager.cpp:130
 msgid " Search Port (%1% UDP)"
-msgstr ""
+msgstr " Port hľadania (%1% UDP)"
 
 #: ../MappingManager.cpp:138
 msgid " DHT Port (%1% UDP)"
-msgstr ""
+msgstr " Port DHT (%1% UDP)"
 
 #: ../MappingManager.cpp:151
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Úspešne vytvorené mapovania portov (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%) pomocou rozhrania %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
-msgstr ""
+msgstr "Úspešne vytvorené mapovania portov (TCP: %1%, UDP: %2%, TLS: %3%) pomocou rozhrania %4%"
 
 #: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
-msgstr ""
+msgstr "Nepodarilo sa získať externú IP adresu"
 
 #: ../MappingManager.cpp:181
 msgid "Failed to create port mappings"
-msgstr ""
+msgstr "Nepodarilo sa vytvoriť mapovania portov"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Mapovania portov boli obnovené"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Mapovania portov boli navrátené"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Obnovenie mapovaní portov zlyhalo; ďalší pokus o 60 sekúnd"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
-msgstr ""
+msgstr "Mapovania portov boli úspešne odstránené pomocou rozhrania %1%"
 
 #: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
-msgstr ""
+msgstr "Nepodarilo sa odstrániť mapovania portov pomocou rozhrania %1%"
 
 #: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
-msgstr ""
+msgstr "UPnP: %1%"
 
 #: ../NmdcHub.cpp:439
 msgid "%1% (Nick unknown)"
@@ -417,11 +417,11 @@ msgstr "%1% (neznáma prezývka)"
 
 #: ../NmdcHub.cpp:839
 msgid "Hub topic:"
-msgstr ""
+msgstr "Téma hubu:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Príliš malý objem zdieľaných údajov na sťahovanie od "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -429,19 +429,19 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Odoslanie súboru zamietnuté"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
-msgstr ""
+msgstr " do "
 
 #: ../QueueManager.cpp:234
 msgid "No needed part"
-msgstr ""
+msgstr "Chýba potrebná časť"
 
 #: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
-msgstr ""
+msgstr "Hľadajú sa alternatívne zdroje TTH pre: %1%"
 
 #: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
@@ -457,7 +457,7 @@ msgstr "Súbor s inou veľkosťou sa už nachádza vo fronte"
 
 #: ../QueueManager.cpp:722
 msgid "A file with different tth root already exists in the queue"
-msgstr ""
+msgstr "Súbor s iným koreňom TTH už existuje vo fronte"
 
 #: ../QueueManager.cpp:735
 msgid "You're trying to download from yourself!"
@@ -465,11 +465,11 @@ msgstr "Pokúšate sa sťahovať sám od seba!"
 
 #: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
-msgstr ""
+msgstr "Súbor s iným koreňom TTH už existuje vo fronte"
 
 #: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
-msgstr ""
+msgstr "Sťahovanie tohto súboru sa už dokončilo"
 
 #: ../QueueManager.cpp:843 ../QueueManager.cpp:852
 msgid "Target filename too long"
@@ -485,7 +485,7 @@ msgstr ""
 
 #: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
-msgstr ""
+msgstr "Súbor už existuje v cieľovom umiestnení"
 
 #: ../QueueManager.cpp:877 ../QueueManager.cpp:881
 msgid "Duplicate source: %1%"
@@ -501,11 +501,11 @@ msgstr "Cieľový súbor chýba alebo má chybnú veľkosť"
 
 #: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
-msgstr ""
+msgstr "Nemožno presunúť %1% do %2% (%3%); premenované na %4%"
 
 #: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
-msgstr ""
+msgstr "Nemožno presunúť %1% do %2% (%3%) ani premenovať na %4% (%5%)"
 
 #: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
@@ -521,7 +521,7 @@ msgstr[3] "%1%: Zhody: %2% súborov"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "Cieľová cesta pre túto položku nie je dostupná: %1%; pozastavte túto položku frontu."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
@@ -529,32 +529,32 @@ msgstr "nekonzistentný CRC32 (kontrola v SFV)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1% : počet zhodných súborov: %2%"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "Chyba SSL: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
-msgstr ""
+msgstr "Ľubovoľný"
 
 #: ../SearchManager.cpp:56
 msgid "Audio"
-msgstr ""
+msgstr "Zvuk"
 
 #: ../SearchManager.cpp:57
 msgid "Compressed"
-msgstr ""
+msgstr "Archív"
 
 #: ../SearchManager.cpp:58
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: ../SearchManager.cpp:59
 msgid "Executable"
-msgstr ""
+msgstr "Spustiteľný súbor"
 
 #: ../SearchManager.cpp:60
 msgid "Picture"
@@ -562,7 +562,7 @@ msgstr "Obrázok"
 
 #: ../SearchManager.cpp:61
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: ../SearchManager.cpp:62
 msgid "Directory"
@@ -574,7 +574,7 @@ msgstr "TTH"
 
 #: ../SearchManager.cpp:64
 msgid "CD Image"
-msgstr ""
+msgstr "Obraz CD"
 
 #: ../SearchManager.cpp:173
 msgid "Search enabled again"
@@ -586,31 +586,31 @@ msgstr "Hľadanie vypnuté: %1%"
 
 #: ../SettingsManager.cpp:260
 msgid "downloaded from"
-msgstr ""
+msgstr "stiahnuté od"
 
 #: ../SettingsManager.cpp:635
 msgid "Invalid search type name"
-msgstr ""
+msgstr "Neplatný názov typu hľadania"
 
 #: ../SettingsManager.cpp:639 ../SettingsManager.cpp:661
 msgid "This search type already exists"
-msgstr ""
+msgstr "Tento typ hľadania už existuje"
 
 #: ../SettingsManager.cpp:693
 msgid "No such search type"
-msgstr ""
+msgstr "Takýto typ hľadania neexistuje"
 
 #: ../SettingsManager.cpp:721 ../SettingsManager.cpp:726
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "Chyba: nastavenie sa nenašlo!"
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "Nastavenie jadra "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
-msgstr ""
+msgstr "Zmeniť nastavenie jadra "
 
 #: ../ShareManager.cpp:803
 msgid "No directory specified"
@@ -618,7 +618,7 @@ msgstr "Nebol zadaný adresár"
 
 #: ../ShareManager.cpp:815
 msgid "Directory is hidden"
-msgstr ""
+msgstr "Adresár je skrytý"
 
 #: ../ShareManager.cpp:819
 msgid "The temporary download directory cannot be shared"
@@ -626,15 +626,15 @@ msgstr "Dočasný adresár sťahovaní nemožno zdieľať"
 
 #: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
-msgstr ""
+msgstr "Pri hašovaní priečinka %1% sa našiel neplatný názov súboru"
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Vynechaný zdieľaný súbor: %1% (veľkosť: %2%)"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Vynechaný zdieľaný dočasný súbor: %1% (veľkosť: %2%)"
 
 #: ../ShareManager.cpp:1147
 msgid ""
@@ -665,11 +665,11 @@ msgstr "Obnovenie zoznamu súborov bolo dokončené"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Obnovenie zoznamu súborov bolo zrušené, pretože sa zmenili zdieľané adresáre"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
-msgstr ""
+msgstr "Zoznam súborov %1% bol vygenerovaný"
 
 #: ../Socket.cpp:164
 #, c-format
@@ -679,23 +679,23 @@ msgstr "Neznáma chyba: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Nepodporovaná šifra Shadowsocks"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Nepodarilo sa inicializovať odvodenie kľúča Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Nepodarilo sa odvodiť podkľúč Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Nepodarilo sa inicializovať šifrovanie Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Šifrovanie Shadowsocks zlyhalo"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -705,15 +705,15 @@ msgstr "SOCKS serveru sa nepodarilo nadviazať spojenie"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Serveru Shadowsocks sa nepodarilo nadviazať spojenie"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Nie je nastavené heslo Shadowsocks"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Neplatná cieľová adresa Shadowsocks"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -730,83 +730,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Nepodarilo sa inicializovať kontext SOCKS TLS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Nepodarilo sa inicializovať reláciu SOCKS TLS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Nepodarilo sa pripojiť reláciu SOCKS TLS k soketu"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Vypršal časový limit nadväzovania SOCKS TLS"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Nadväzovanie SOCKS TLS zlyhalo: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Čítanie SOCKS TLS zlyhalo: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Zápis SOCKS TLS zlyhal: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Neplatná odpoveď prenosového servera Shadowsocks UDP"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Neplatná adresa v odpovedi prenosového servera Shadowsocks UDP"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Dešifrovanie odpovede prenosového servera Shadowsocks UDP zlyhalo"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Nepodarilo sa vytvoriť soľ Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Nepodarilo sa vytvoriť výplň Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Dešifrovanie Shadowsocks zlyhalo"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Neplatná veľkosť dátového obsahu Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Prúd Shadowsocks sa skončil neúplným rámcom"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Nepodarilo sa vytvoriť reláciu Shadowsocks UDP"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Prenos Shadowsocks UDP je zakázaný"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Prenos Shadowsocks UDP nie je nastavený"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Nepodarilo sa vytvoriť jednorazovú hodnotu Shadowsocks UDP"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Počítadlo paketov Shadowsocks UDP je vyčerpané"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -818,11 +818,11 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Neplatná cieľová adresa SOCKS5 UDP"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
-msgstr ""
+msgstr "Spojenie už existuje."
 
 #: ../UploadManager.cpp:271 ../UploadManager.cpp:275
 #: ../UploadManager.cpp:347
@@ -831,7 +831,7 @@ msgstr "Nepodarilo sa poslať súbor %1%: %2%"
 
 #: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
-msgstr ""
+msgstr "IPFilter: zablokované prichádzajúce spojenie na "
 
 #: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
@@ -840,11 +840,11 @@ msgstr "Používateľ, ktorý opustil hub, bol odpojený: %1%"
 #: ../UserConnection.cpp:58 ../UserConnection.cpp:73
 #: ../UserConnection.cpp:147
 msgid "Invalid data"
-msgstr ""
+msgstr "Neplatné údaje"
 
 #: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
-msgstr ""
+msgstr "Údaje v spojení ADC nie sú v UTF-8"
 
 #: ../Util.cpp:862
 #, c-format
@@ -859,7 +859,7 @@ msgstr "%.02f KiB"
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
@@ -869,7 +869,7 @@ msgstr "%.02f MiB"
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
@@ -879,7 +879,7 @@ msgstr "%.02f GiB"
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
@@ -889,7 +889,7 @@ msgstr "%.02f TiB"
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
@@ -899,7 +899,7 @@ msgstr "%.02f PiB"
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
@@ -921,40 +921,40 @@ msgstr "Bolo zapísaných viac bajtov ako bolo vyžiadaných"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Spustené zavádzanie DHT"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Chyba zavádzania DHT: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Zavádzanie DHT sa úspešne dokončilo."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): súbor bol zverejnený: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): čiastočný súbor bol zverejnený: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: nastavený stav UDP za firewallom (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: náš port UDP sa zdá byť otvorený (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT bolo znovu povolené"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT zakázané: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "Chyba SSL: %1% (%2%, %3%)"

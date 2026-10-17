@@ -219,7 +219,7 @@ msgstr "Falha ao carregar chave privada"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Os dados descomprimidos excedem o limite de tamanho"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -403,15 +403,15 @@ msgstr "Falha ao mapear portas"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Mapeamentos de portas renovados"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Mapeamentos de portas restaurados"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Falha na renovação do mapeamento de portas; nova tentativa em 60 segundos"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -547,7 +547,7 @@ msgstr "%1% : possui %2% arquivos"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "Erro SSL: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -676,7 +676,7 @@ msgstr "Atualização da lista de arquivos finalizada"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Atualização da lista de arquivos descartada porque as pastas compartilhadas foram alteradas"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -690,23 +690,23 @@ msgstr "Erro desconhecido: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Cifra Shadowsocks não suportada"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Falha ao inicializar a derivação de chaves do Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Falha ao derivar a subchave do Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Falha ao inicializar a criptografia do Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Falha na criptografia do Shadowsocks"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -716,15 +716,15 @@ msgstr "O servidor falhou ao estabelecer uma conexão"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "O servidor Shadowsocks não conseguiu estabelecer uma conexão"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Nenhuma senha do Shadowsocks configurada"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "O endereço de destino do Shadowsocks é inválido"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -740,83 +740,83 @@ msgstr "Falha na autenticação (login/senha errados?)"
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Falha ao inicializar o contexto TLS do SOCKS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Falha ao inicializar a sessão TLS do SOCKS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Falha ao associar a sessão TLS do SOCKS ao socket"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "O tempo limite da negociação TLS do SOCKS foi excedido"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Falha na negociação TLS do SOCKS: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Falha na leitura TLS do SOCKS: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Falha na gravação TLS do SOCKS: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "A resposta do retransmissor UDP do Shadowsocks é inválida"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "O endereço de resposta do retransmissor UDP do Shadowsocks é inválido"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Falha na descriptografia da resposta do retransmissor UDP do Shadowsocks"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Falha ao criar o salt do Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Falha ao criar o preenchimento do Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Falha na descriptografia do Shadowsocks"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Tamanho inválido da carga útil do Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "O fluxo do Shadowsocks terminou com um quadro incompleto"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Falha ao criar a sessão UDP do Shadowsocks"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "O retransmissor UDP do Shadowsocks está desativado"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "O retransmissor UDP do Shadowsocks não está configurado"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Falha ao criar o nonce UDP do Shadowsocks"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "O contador de pacotes UDP do Shadowsocks se esgotou"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -828,7 +828,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "O endereço de destino UDP do SOCKS5 é inválido"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."

@@ -127,11 +127,11 @@ msgstr "Грешка във връзката: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Блокирана е C-C връзка към хъб ('%1%:%2%'; заявка от '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Блокиране на '%1%', открита е възможна DDoS атака (изходен хъб '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -218,7 +218,7 @@ msgstr "Неуспешно зареждане на личния ключ"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Разкомпресираните данни надвишават ограничението за размер"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -238,7 +238,7 @@ msgstr "Потребители"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Невалидно разширение на файловия списък (трябва да е .xml или .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -286,7 +286,7 @@ msgstr "Групирано авто-свързване (конвертирано
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Невалиден URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -333,7 +333,7 @@ msgstr "Грешка при хеширане %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Грешка в кодирането на прехвърлянето (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -341,7 +341,7 @@ msgstr "Безкрайно циклично пренасочване (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Твърде много данни в тялото на отговора (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -380,7 +380,7 @@ msgstr "DHT порт (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Успешно пренасочване на портове (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%) чрез интерфейса %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
@@ -400,15 +400,15 @@ msgstr "Не може да създаде нишка"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Пренасочванията на портове са подновени"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Пренасочванията на портове са възстановени"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Неуспешно подновяване на пренасочванията; нов опит след 60 секунди"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -432,7 +432,7 @@ msgstr "Тема на хъба:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Твърде малък споделен обем за изтегляне от "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -440,7 +440,7 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Изпращането на файла е отказано"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
@@ -531,7 +531,7 @@ msgstr[1] "%1%: Намерени са %2% съвпадащи файла"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "Целевият път за този елемент е недостъпен: %1%; поставете елемента на пауза."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
@@ -539,12 +539,12 @@ msgstr "CRC32 несъвпадение (SFV-проверка)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1% : Намерени са %2% съвпадащи файла"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL грешка: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -616,7 +616,7 @@ msgstr "Грешка: настройката не е намерена!"
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "Настройка на ядрото "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
@@ -640,11 +640,11 @@ msgstr "Намерено е неправилно име на файл, дока�
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Пропускане на споделен файл: %1% (размер: %2%)"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Пропускане на временен споделен файл: %1% (размер: %2%)"
 
 #: ../ShareManager.cpp:1147
 msgid ""
@@ -676,7 +676,7 @@ msgstr "Опресняването на списъка с файлове зав�
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Обновяването на файловия списък е отменено поради промяна на споделените папки"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -690,23 +690,23 @@ msgstr "Неизвестна грешка: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Неподдържан шифър на Shadowsocks"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Неуспешно инициализиране на извеждането на ключ за Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Неуспешно извеждане на подключ за Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Неуспешно инициализиране на шифроването на Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Неуспешно шифроване на Shadowsocks"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -716,15 +716,15 @@ msgstr "Socks сървъра не можа да установи връзка"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Сървърът Shadowsocks не успя да установи връзка"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Не е зададена парола за Shadowsocks."
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Невалиден целеви адрес на Shadowsocks"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -740,83 +740,83 @@ msgstr "Грешка при свързването със Socks сървъра (
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Неуспешно инициализиране на контекст на SOCKS TLS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Неуспешно инициализиране на сесия на SOCKS TLS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Неуспешно свързване на сесия на SOCKS TLS към сокет"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Времето за изчакване на договарянето на SOCKS TLS изтече"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Неуспешно договаряне на SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Неуспешно четене от SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Неуспешен запис в SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Невалиден отговор от UDP препредавателя на Shadowsocks"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Невалиден адрес в отговора на UDP препредавателя на Shadowsocks"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Неуспешно дешифриране на отговора от UDP препредавателя на Shadowsocks"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Неуспешно създаване на сол за Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Неуспешно създаване на запълване за Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Неуспешно дешифриране на Shadowsocks"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Невалиден размер на полезните данни на Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Потокът на Shadowsocks завърши с непълен кадър"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Неуспешно създаване на UDP сесия на Shadowsocks"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "UDP препредавателят на Shadowsocks е изключен"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "UDP препредавателят на Shadowsocks не е настроен"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Неуспешно създаване на еднократна стойност за Shadowsocks UDP"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Броячът на UDP пакети на Shadowsocks е изчерпан"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -828,7 +828,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Невалиден целеви адрес на SOCKS5 UDP"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -869,7 +869,7 @@ msgstr "%.02f KiB"
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
@@ -879,7 +879,7 @@ msgstr "%.02f MiB"
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
@@ -889,7 +889,7 @@ msgstr "%.02f GiB"
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
@@ -899,7 +899,7 @@ msgstr "%.02f TiB"
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
@@ -909,7 +909,7 @@ msgstr "%.02f PiB"
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
@@ -931,40 +931,40 @@ msgstr "Записани са повече байтове от заявения 
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Началното свързване към DHT е започнато"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Грешка при начално свързване към DHT: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Началното свързване към DHT завърши успешно."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Публикуван файл: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Публикуван частичен файл: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: Зададено е състояние UDP зад защитна стена (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Нашият UDP порт изглежда е отворен (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT е включен отново"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT е изключен: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "SSL грешка: %1% (%2%, %3%)"

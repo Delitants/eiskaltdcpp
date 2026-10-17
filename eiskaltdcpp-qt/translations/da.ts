@@ -110,7 +110,14 @@ EiskaltDC++ is a cross-platform program that uses the Direct Connect and ADC pro
 Keys:
   -h, --help	 Show this message
   -V, --version	 Show version string</source>
-            <translation type="unfinished" />
+            <translation>Brug:
+  eiskaltdcpp-qt &lt;magnet link&gt; &lt;dchub://link&gt; &lt;adc(s)://link&gt;
+  eiskaltdcpp-qt &lt;Key&gt;
+EiskaltDC++ er et program til flere platforme, som bruger protokollerne Direct Connect og ADC.
+
+Parametre:
+  -h, --help	 Vis denne meddelelse
+  -V, --version	 Vis versionsstreng</translation>
         </message>
     </context>
     <context>
@@ -146,12 +153,12 @@ Keys:
         <message>
             <location filename="../src/Antispam.cpp" line="170" />
             <source>%1: Moving user to GRAY.</source>
-            <translation type="unfinished" />
+            <translation>%1: Flytter bruger til GRÅ.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="180" />
             <source>%1: Moving user to BLACK.</source>
-            <translation type="unfinished" />
+            <translation>%1: Flytter bruger til SORT.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="188" />
@@ -175,12 +182,12 @@ Keys:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished" />
+            <translation>Adresse</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Vælg billede</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -203,7 +210,7 @@ Keys:
         <message>
             <location filename="../src/CmdDebug.cpp" line="74" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Fejlfindingskonsol</translation>
         </message>
     </context>
     <context>
@@ -227,17 +234,17 @@ Keys:
         <message>
             <location filename="../src/CustomFontModel.cpp" line="39" />
             <source>Public Chat: Chat</source>
-            <translation type="unfinished" />
+            <translation>Offentlig chat: Chat</translation>
         </message>
         <message>
             <location filename="../src/CustomFontModel.cpp" line="40" />
             <source>Public Chat: Userlist</source>
-            <translation type="unfinished" />
+            <translation>Offentlig chat: Brugerliste</translation>
         </message>
         <message>
             <location filename="../src/CustomFontModel.cpp" line="41" />
             <source>Private Chat</source>
-            <translation type="unfinished" />
+            <translation>Privat chat</translation>
         </message>
     </context>
     <context>
@@ -245,19 +252,19 @@ Keys:
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL'er til DHT-opstart</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>URL til DHT-opstart</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -265,7 +272,7 @@ Keys:
         <message>
             <location filename="../ui/UIDialogScriptConsole.ui" line="30" />
             <source>Output</source>
-            <translation type="unfinished" />
+            <translation>Uddata</translation>
         </message>
         <message>
             <location filename="../ui/UIDialogScriptConsole.ui" line="65" />
@@ -298,157 +305,157 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="68" />
             <source>Search for alternates</source>
-            <translation type="unfinished" />
+            <translation>Søg efter alternative kilder</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="70" />
             <source>Copy magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér magnetlink</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="71" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér web-magnetlink</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="72" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Egenskaber for magnetlink</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="73" />
             <source>Rename/Move</source>
-            <translation type="unfinished" />
+            <translation>Omdøb/flyt</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="78" />
             <source>Set priority</source>
-            <translation type="unfinished" />
+            <translation>Angiv prioritet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="81" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Sat på pause</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="84" />
             <source>Lowest</source>
-            <translation type="unfinished" />
+            <translation>Laveste</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="87" />
             <source>Low</source>
-            <translation type="unfinished" />
+            <translation>Lav</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="90" />
             <source>Normal</source>
-            <translation type="unfinished" />
+            <translation>Normal</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="93" />
             <source>High</source>
-            <translation type="unfinished" />
+            <translation>Høj</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="96" />
             <source>Highest</source>
-            <translation type="unfinished" />
+            <translation>Højeste</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="102" />
             <source>Browse files</source>
-            <translation type="unfinished" />
+            <translation>Gennemse filer</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="104" />
             <source>Send private message</source>
-            <translation type="unfinished" />
+            <translation>Send privat besked</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="110" />
             <source>Remove source</source>
-            <translation type="unfinished" />
+            <translation>Fjern kilde</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="112" />
             <source>Remove user</source>
-            <translation type="unfinished" />
+            <translation>Fjern bruger</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="115" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="375" />
             <source>No users...</source>
-            <translation type="unfinished" />
+            <translation>Ingen brugere...</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="382" />
             <source>%1 of %2 user(s) online</source>
-            <translation type="unfinished" />
+            <translation>%1 af %2 bruger(e) online</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="384" />
             <source>Running...</source>
-            <translation type="unfinished" />
+            <translation>Kører...</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="408" />
             <source>File not available</source>
-            <translation type="unfinished" />
+            <translation>Filen er ikke tilgængelig</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="410" />
             <source>Passive user</source>
-            <translation type="unfinished" />
+            <translation>Passiv bruger</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="412" />
             <source>Checksum mismatch</source>
-            <translation type="unfinished" />
+            <translation>Kontrolsummen stemmer ikke</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="414" />
             <source>Full tree does not match TTH root</source>
-            <translation type="unfinished" />
+            <translation>Hele træet stemmer ikke overens med TTH-roden</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="416" />
             <source>Source too slow</source>
-            <translation type="unfinished" />
+            <translation>Kilden er for langsom</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="418" />
             <source>Remote client does not fully support TTH - cannot download</source>
-            <translation type="unfinished" />
+            <translation>Fjernklienten understøtter ikke TTH fuldt ud - kan ikke hente</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="425" />
             <source>No errors</source>
-            <translation type="unfinished" />
+            <translation>Ingen fejl</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="661" />
             <source>Choose filename</source>
-            <translation type="unfinished" />
+            <translation>Vælg filnavn</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="661" />
             <source>All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Alle filer (*.*)</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="801" />
             <source>Total files: &lt;b&gt;%1&lt;/b&gt; Total size: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Filer i alt: &lt;b&gt;%1&lt;/b&gt; Samlet størrelse: &lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.h" line="90" />
             <source>Download Queue</source>
-            <translation type="unfinished" />
+            <translation>Overførselskø</translation>
         </message>
     </context>
     <context>
@@ -457,97 +464,97 @@ Keys:
             <location filename="../src/DownloadQueueModel.cpp" line="80" />
             <location filename="../src/DownloadQueueModel.cpp" line="283" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="80" />
             <location filename="../src/DownloadQueueModel.cpp" line="283" />
             <source>Status</source>
-            <translation type="unfinished" />
+            <translation>Status</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="80" />
             <location filename="../src/DownloadQueueModel.cpp" line="283" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="80" />
             <location filename="../src/DownloadQueueModel.cpp" line="283" />
             <source>Downloaded</source>
-            <translation type="unfinished" />
+            <translation>Hentet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="81" />
             <location filename="../src/DownloadQueueModel.cpp" line="284" />
             <source>Priority</source>
-            <translation type="unfinished" />
+            <translation>Prioritet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="81" />
             <location filename="../src/DownloadQueueModel.cpp" line="284" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="81" />
             <location filename="../src/DownloadQueueModel.cpp" line="284" />
             <source>Path</source>
-            <translation type="unfinished" />
+            <translation>Sti</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="81" />
             <location filename="../src/DownloadQueueModel.cpp" line="284" />
             <source>Exact size</source>
-            <translation type="unfinished" />
+            <translation>Nøjagtig størrelse</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="82" />
             <location filename="../src/DownloadQueueModel.cpp" line="285" />
             <source>Errors</source>
-            <translation type="unfinished" />
+            <translation>Fejl</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="82" />
             <location filename="../src/DownloadQueueModel.cpp" line="285" />
             <source>Added</source>
-            <translation type="unfinished" />
+            <translation>Tilføjet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="139" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Sat på pause</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="142" />
             <source>Lowest</source>
-            <translation type="unfinished" />
+            <translation>Laveste</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="145" />
             <source>Low</source>
-            <translation type="unfinished" />
+            <translation>Lav</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="148" />
             <source>High</source>
-            <translation type="unfinished" />
+            <translation>Høj</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="151" />
             <source>Highest</source>
-            <translation type="unfinished" />
+            <translation>Højeste</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="154" />
             <source>Normal</source>
-            <translation type="unfinished" />
+            <translation>Normal</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="175" />
             <location filename="../src/DownloadQueueModel.cpp" line="192" />
             <source>No errors</source>
-            <translation type="unfinished" />
+            <translation>Ingen fejl</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueueModel.cpp" line="194" />
@@ -555,7 +562,10 @@ Keys:
 &lt;b&gt;Path: &lt;/b&gt; %2
 &lt;b&gt;Errors: &lt;/b&gt; %3
 </source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Tilføjet: &lt;/b&gt; %1
+&lt;b&gt;Sti: &lt;/b&gt; %2
+&lt;b&gt;Fejl: &lt;/b&gt; %3
+</translation>
         </message>
     </context>
     <context>
@@ -563,7 +573,7 @@ Keys:
         <message>
             <location filename="../src/EmoticonDialog.cpp" line="35" />
             <source>Select emoticon</source>
-            <translation type="unfinished" />
+            <translation>Vælg humørikon</translation>
         </message>
     </context>
     <context>
@@ -571,12 +581,12 @@ Keys:
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="22" />
             <source>Autoconnect</source>
-            <translation type="unfinished" />
+            <translation>Opret automatisk forbindelse</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="22" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="22" />
@@ -586,27 +596,27 @@ Keys:
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="23" />
             <source>Address</source>
-            <translation type="unfinished" />
+            <translation>Adresse</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="23" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="23" />
             <source>Password</source>
-            <translation type="unfinished" />
+            <translation>Adgangskode</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="23" />
             <source>User description</source>
-            <translation type="unfinished" />
+            <translation>Brugerbeskrivelse</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="24" />
             <source>Remote encoding</source>
-            <translation type="unfinished" />
+            <translation>Fjerntegnkodning</translation>
         </message>
     </context>
     <context>
@@ -614,14 +624,14 @@ Keys:
         <message>
             <location filename="../src/FavoriteHubs.cpp" line="67" />
             <source>Favorite hubs</source>
-            <translation type="unfinished" />
+            <translation>Favorithubber</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubs.cpp" line="153" />
             <location filename="../src/FavoriteHubs.cpp" line="189" />
             <location filename="../src/FavoriteHubs.cpp" line="303" />
             <source>System default</source>
-            <translation type="unfinished" />
+            <translation>Systemstandard</translation>
         </message>
         <message>
             <location filename="../src/FavoriteHubs.cpp" line="157" />
@@ -647,7 +657,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteHubs.cpp" line="396" />
             <source>Connect</source>
-            <translation type="unfinished" />
+            <translation>Forbind</translation>
         </message>
     </context>
     <context>
@@ -656,7 +666,7 @@ Keys:
             <location filename="../src/FavoriteUsers.cpp" line="126" />
             <location filename="../src/FavoriteUsers.cpp" line="339" />
             <source>Online</source>
-            <translation type="unfinished" />
+            <translation>Online</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="203" />
@@ -667,22 +677,22 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="276" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="282" />
             <source>Grant/Remove slot</source>
-            <translation type="unfinished" />
+            <translation>Tildel/fjern plads</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="285" />
             <source>Browse Files</source>
-            <translation type="unfinished" />
+            <translation>Gennemse filer</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.h" line="48" />
             <source>Favourite users</source>
-            <translation type="unfinished" />
+            <translation>Favoritbrugere</translation>
         </message>
     </context>
     <context>
@@ -690,17 +700,17 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
             <source>Last seen</source>
-            <translation type="unfinished" />
+            <translation>Sidst set</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
@@ -717,87 +727,87 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="115" />
             <source>%1 [%2 Gb]</source>
-            <translation type="unfinished" />
+            <translation>%1 [%2 Gb]</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="179" />
             <source>File marked as a duplicate of another file: %1</source>
-            <translation type="unfinished" />
+            <translation>Filen er markeret som en dublet af en anden fil: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Medieoplysninger:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Lyd:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Opløsning:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Filen findes allerede: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="315" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="315" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="315" />
             <source>Exact size</source>
-            <translation type="unfinished" />
+            <translation>Nøjagtig størrelse</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>Bitrate</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Resolution</source>
-            <translation type="unfinished" />
+            <translation>Opløsning</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Video</source>
-            <translation type="unfinished" />
+            <translation>Video</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Audio</source>
-            <translation type="unfinished" />
+            <translation>Lyd</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="317" />
             <source>Downloaded</source>
-            <translation type="unfinished" />
+            <translation>Hentet</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="317" />
             <source>Shared</source>
-            <translation type="unfinished" />
+            <translation>Delt</translation>
         </message>
     </context>
     <context>
@@ -805,12 +815,12 @@ Keys:
         <message>
             <location filename="../src/FileHasher.cpp" line="171" />
             <source>Select file</source>
-            <translation type="unfinished" />
+            <translation>Vælg fil</translation>
         </message>
         <message>
             <location filename="../src/FileHasher.cpp" line="171" />
             <source>All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Alle filer (*.*)</translation>
         </message>
     </context>
     <context>
@@ -818,12 +828,12 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfers.cpp" line="12" />
             <source>Finished uploads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede afsendelser</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfers.cpp" line="13" />
             <source>Finished downloads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede downloads</translation>
         </message>
     </context>
     <context>
@@ -831,12 +841,12 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfers.h" line="488" />
             <source>Open file</source>
-            <translation type="unfinished" />
+            <translation>Åbn fil</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfers.h" line="489" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Åbn mappe</translation>
         </message>
     </context>
     <context>
@@ -845,42 +855,42 @@ Keys:
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
             <source>Files</source>
-            <translation type="unfinished" />
+            <translation>Filer</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
             <source>Time</source>
-            <translation type="unfinished" />
+            <translation>Tid</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
             <location filename="../src/FinishedTransfersModel.cpp" line="53" />
             <source>Transferred</source>
-            <translation type="unfinished" />
+            <translation>Overført</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
             <location filename="../src/FinishedTransfersModel.cpp" line="53" />
             <source>Speed</source>
-            <translation type="unfinished" />
+            <translation>Hastighed</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
             <source>Elapsed time</source>
-            <translation type="unfinished" />
+            <translation>Forløbet tid</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
             <source>Full</source>
-            <translation type="unfinished" />
+            <translation>Fuldstændig</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
@@ -890,23 +900,23 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
             <source>Path</source>
-            <translation type="unfinished" />
+            <translation>Sti</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="53" />
             <source>Check sum</source>
-            <translation type="unfinished" />
+            <translation>Kontrolsum</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
             <source>Target</source>
-            <translation type="unfinished" />
+            <translation>Mål</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="117" />
             <location filename="../src/FinishedTransfersModel.cpp" line="127" />
             <source>%1/s</source>
-            <translation type="unfinished" />
+            <translation>%1/s</translation>
         </message>
     </context>
     <context>
@@ -914,49 +924,49 @@ Keys:
         <message>
             <location filename="../src/HashProgress.cpp" line="118" />
             <source>Refreshing file list</source>
-            <translation type="unfinished" />
+            <translation>Opdaterer filliste</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="150" />
             <source>-.-- files/h, %1 files left</source>
-            <translation type="unfinished" />
+            <translation>-.-- filer/h, %1 filer tilbage</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="151" />
             <source>-.-- B/s, %1 left</source>
-            <translation type="unfinished" />
+            <translation>-.-- B/s, %1 tilbage</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="152" />
             <location filename="../src/HashProgress.cpp" line="170" />
             <source>-:--:--</source>
-            <translation type="unfinished" />
+            <translation>-:--:--</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1% %2 tilbage</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
             <source>%1 files/h, %2 files left</source>
-            <translation type="unfinished" />
+            <translation>%1 filer/h, %2 filer tilbage</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="165" />
             <source>%1/s, %2 left, %3 shared</source>
-            <translation type="unfinished" />
+            <translation>%1/s, %2 tilbage, %3 delt</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="179" />
             <source>%p% %1 left</source>
-            <translation type="unfinished" />
+            <translation>%p% %1 tilbage</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="189" />
             <source>Done</source>
-            <translation type="unfinished" />
+            <translation>Færdig</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="260" />
@@ -966,12 +976,12 @@ Keys:
         <message>
             <location filename="../src/HashProgress.cpp" line="264" />
             <source>Pause</source>
-            <translation type="unfinished" />
+            <translation>Pause</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="268" />
             <source>Resume</source>
-            <translation type="unfinished" />
+            <translation>Genoptag</translation>
         </message>
     </context>
     <context>
@@ -980,182 +990,182 @@ Keys:
             <location filename="../src/HubFrame.cpp" line="701" />
             <location filename="../src/HubFrame.cpp" line="2085" />
             <source>Copy</source>
-            <translation type="unfinished" />
+            <translation>Kopiér</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="702" />
             <source>Search text</source>
-            <translation type="unfinished" />
+            <translation>Søg i tekst</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="703" />
             <source>Copy nick</source>
-            <translation type="unfinished" />
+            <translation>Kopiér kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="704" />
             <source>Show in list</source>
-            <translation type="unfinished" />
+            <translation>Vis på liste</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="705" />
             <source>Browse files</source>
-            <translation type="unfinished" />
+            <translation>Gennemse filer</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="706" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Sammenhold med kø</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="707" />
             <source>Private Message</source>
-            <translation type="unfinished" />
+            <translation>Privat besked</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="708" />
             <location filename="../src/HubFrame.cpp" line="2084" />
             <source>Add to Favorites</source>
-            <translation type="unfinished" />
+            <translation>Føj til favoritter</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="709" />
             <source>Remove from Favorites</source>
-            <translation type="unfinished" />
+            <translation>Fjern fra favoritter</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="710" />
             <source>Grant slot</source>
-            <translation type="unfinished" />
+            <translation>Tildel plads</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="711" />
             <source>Remove from Queue</source>
-            <translation type="unfinished" />
+            <translation>Fjern fra kø</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="715" />
             <source>Clear chat</source>
-            <translation type="unfinished" />
+            <translation>Ryd chat</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="716" />
             <source>Find in chat</source>
-            <translation type="unfinished" />
+            <translation>Find i chat</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="717" />
             <source>Disable/Enable chat</source>
-            <translation type="unfinished" />
+            <translation>Deaktivér/aktivér chat</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="719" />
             <source>Select all</source>
-            <translation type="unfinished" />
+            <translation>Vælg alt</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="721" />
             <source>Zoom In</source>
-            <translation type="unfinished" />
+            <translation>Zoom ind</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="722" />
             <source>Zoom Out</source>
-            <translation type="unfinished" />
+            <translation>Zoom ud</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="725" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="726" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>Kommentar</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="727" />
             <source>IP</source>
-            <translation type="unfinished" />
+            <translation>IP</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
             <source>Share</source>
-            <translation type="unfinished" />
+            <translation>Deling</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="730" />
             <source>Tag</source>
-            <translation type="unfinished" />
+            <translation>Tag</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="731" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="733" />
             <source>All</source>
-            <translation type="unfinished" />
+            <translation>Alle</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="738" />
             <source>Copy data</source>
-            <translation type="unfinished" />
+            <translation>Kopiér data</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="858" />
             <location filename="../src/HubFrame.cpp" line="945" />
             <source>[User went offline]</source>
-            <translation type="unfinished" />
+            <translation>[Brugeren gik offline]</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="877" />
             <location filename="../src/HubFrame.cpp" line="971" />
             <source>AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Antispam</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="882" />
             <location filename="../src/HubFrame.cpp" line="976" />
             <source>Add to Black</source>
-            <translation type="unfinished" />
+            <translation>Føj til sortliste</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="885" />
             <location filename="../src/HubFrame.cpp" line="979" />
             <source>Add to White</source>
-            <translation type="unfinished" />
+            <translation>Føj til hvidliste</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1094" />
             <source>Invalid keywords</source>
-            <translation type="unfinished" />
+            <translation>Ugyldige nøgleord</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1348" />
             <source>not shared</source>
-            <translation type="unfinished" />
+            <translation>ikke delt</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Filter</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1170,79 +1180,80 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="2080" />
             <source>Hub menu</source>
-            <translation type="unfinished" />
+            <translation>Hubmenu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2082" />
             <source>Reconnect</source>
-            <translation type="unfinished" />
+            <translation>Forbind igen</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2083" />
             <source>Show widget</source>
-            <translation type="unfinished" />
+            <translation>Vis panel</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2086" />
             <source>Hub IP</source>
-            <translation type="unfinished" />
+            <translation>Hubbens IP</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2087" />
             <source>Hub URL</source>
-            <translation type="unfinished" />
+            <translation>Hubbens URL</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2088" />
             <source>Hub Title</source>
-            <translation type="unfinished" />
+            <translation>Hubbens titel</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2092" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2106" />
             <source>Hub Menu</source>
-            <translation type="unfinished" />
+            <translation>Hubmenu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2233" />
             <location filename="../src/HubFrame.cpp" line="2258" />
             <source>Not connected</source>
-            <translation type="unfinished" />
+            <translation>Ikke forbundet</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2292" />
             <source>Chat cleared.</source>
-            <translation type="unfinished" />
+            <translation>Chatten er ryddet.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2301" />
             <source>Chat disabled.</source>
-            <translation type="unfinished" />
+            <translation>Chatten er deaktiveret.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2308" />
             <source>Chat enabled.</source>
-            <translation type="unfinished" />
+            <translation>Chatten er aktiveret.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2345" />
             <source>Hub role: Operator</source>
-            <translation type="unfinished" />
+            <translation>Hubrolle: Operatør</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2347" />
             <source>Hub role: User</source>
-            <translation type="unfinished" />
+            <translation>Hubrolle: Bruger</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2350" />
             <source>
 Favorite user</source>
-            <translation type="unfinished" />
+            <translation>
+Favoritbruger</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2425" />
@@ -1250,25 +1261,25 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2648" />
             <location filename="../src/HubFrame.cpp" line="2650" />
             <source>Away mode off</source>
-            <translation type="unfinished" />
+            <translation>Fraværstilstand slået fra</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2439" />
             <location filename="../src/HubFrame.cpp" line="2441" />
             <source>Away mode on: </source>
-            <translation type="unfinished" />
+            <translation>Fraværstilstand slået til: </translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2459" />
             <location filename="../src/HubFrame.cpp" line="2461" />
             <source>Aliases not found.</source>
-            <translation type="unfinished" />
+            <translation>Ingen aliaser fundet.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2481" />
             <location filename="../src/HubFrame.cpp" line="2483" />
             <source>Alias removed.</source>
-            <translation type="unfinished" />
+            <translation>Alias fjernet.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2494" />
@@ -1276,13 +1287,13 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2503" />
             <location filename="../src/HubFrame.cpp" line="2505" />
             <source>Invalid alias syntax.</source>
-            <translation type="unfinished" />
+            <translation>Ugyldig aliassyntaks.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2513" />
             <location filename="../src/HubFrame.cpp" line="2515" />
             <source>Alias %1 =&gt; %2 has been added</source>
-            <translation type="unfinished" />
+            <translation>Aliaset %1 =&gt; %2 er tilføjet</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2537" />
@@ -1290,326 +1301,353 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2546" />
             <location filename="../src/HubFrame.cpp" line="2548" />
             <source>Invalid command syntax.</source>
-            <translation type="unfinished" />
+            <translation>Ugyldig kommandosyntaks.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2558" />
             <source>List of keywords:
 </source>
-            <translation type="unfinished" />
+            <translation>Liste over nøgleord:
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2605" />
             <source>ratio: %1 (uploads: %2, downloads: %3)</source>
-            <translation type="unfinished" />
+            <translation>forhold: %1 (sendt: %2, hentet: %3)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>Aspell switched %1</source>
-            <translation type="unfinished" />
+            <translation>Aspell er slået %1</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>on</source>
-            <translation type="unfinished" />
+            <translation>til</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>off</source>
-            <translation type="unfinished" />
+            <translation>fra</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2656" />
             <location filename="../src/HubFrame.cpp" line="2658" />
             <source>Chat has been cleared</source>
-            <translation type="unfinished" />
+            <translation>Chatten er blevet ryddet</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2708" />
             <source>/aspell on/off - enable/disable spell checking
 </source>
-            <translation type="unfinished" />
+            <translation>/aspell on/off - aktivér/deaktivér stavekontrol
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2710" />
             <source>/alias &lt;ALIAS_NAME&gt;::&lt;COMMAND&gt; - make alias /ALIAS_NAME to /COMMAND
 </source>
-            <translation type="unfinished" />
+            <translation>/alias &lt;ALIAS_NAME&gt;::&lt;COMMAND&gt; - opret aliaset /ALIAS_NAME for /COMMAND
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2711" />
             <source>/alias purge &lt;ALIAS_NAME&gt; - remove alias
 </source>
-            <translation type="unfinished" />
+            <translation>/alias purge &lt;ALIAS_NAME&gt; - fjern alias
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2712" />
             <source>/alias list - list all aliases
 </source>
-            <translation type="unfinished" />
+            <translation>/alias list - vis alle aliaser
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2713" />
             <source>/away &lt;message&gt; - set away-mode on/off
 </source>
-            <translation type="unfinished" />
+            <translation>/away &lt;message&gt; - slå fraværstilstand til/fra
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2714" />
             <source>/back - set away-mode off
 </source>
-            <translation type="unfinished" />
+            <translation>/back - slå fraværstilstand fra
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2715" />
             <source>/browse &lt;nick&gt; - browse user files
 </source>
-            <translation type="unfinished" />
+            <translation>/browse &lt;nick&gt; - gennemse brugerens filer
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2716" />
             <source>/clear - clear chat window
 </source>
-            <translation type="unfinished" />
+            <translation>/clear - ryd chatvinduet
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2717" />
             <source>/kword add &lt;keyword&gt; - add user-defined keyword which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword add &lt;keyword&gt; - tilføj et brugerdefineret nøgleord, som fremhæves i chatten
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2718" />
             <source>/kword purge &lt;keyword&gt; - remove user-defined keyword
 </source>
-            <translation type="unfinished" />
+            <translation>/kword purge &lt;keyword&gt; - fjern brugerdefineret nøgleord
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2719" />
             <source>/kword list - full list of keywords which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword list - vis alle nøgleord, som fremhæves i chatten
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2720" />
             <source>/magnet - default action with magnet (0-ask, 1-search, 2-download)
 </source>
-            <translation type="unfinished" />
+            <translation>/magnet - standardhandling for magnetlink (0-spørg, 1-søg, 2-hent)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2721" />
             <source>/close - close this hub
 </source>
-            <translation type="unfinished" />
+            <translation>/close - luk denne hub
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2722" />
             <source>/fav - add this hub to favorites
 </source>
-            <translation type="unfinished" />
+            <translation>/fav - føj denne hub til favoritter
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2723" />
             <source>/grant &lt;nick&gt; - grant extra slot to user
 </source>
-            <translation type="unfinished" />
+            <translation>/grant &lt;nick&gt; - tildel ekstra plads til bruger
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2724" />
             <source>/help, /?, /h - show this help
 </source>
-            <translation type="unfinished" />
+            <translation>/help, /?, /h - vis denne hjælp
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2725" />
             <source>/info &lt;nick&gt; - show info about user
 </source>
-            <translation type="unfinished" />
+            <translation>/info &lt;nick&gt; - vis oplysninger om bruger
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2726" />
             <source>/ratio [show] - show ratio [send in chat]
 </source>
-            <translation type="unfinished" />
+            <translation>/ratio [show] - vis forhold [send i chat]
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - genopbyg hash
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - opdatér egen filliste
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
             <source>/me - say a third person
 </source>
-            <translation type="unfinished" />
+            <translation>/me - skriv i tredje person
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2730" />
             <source>/pm &lt;nick&gt; - begin private chat with user
 </source>
-            <translation type="unfinished" />
+            <translation>/pm &lt;nick&gt; - start privat chat med bruger
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - sæt grænsefladeindstillingen param til value (uden value returneres indstillingens aktuelle værdi)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - sæt kerneindstillingen param til value (uden value returneres indstillingens aktuelle værdi)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
             <source>/luafile &lt;file&gt; - load Lua file
 </source>
-            <translation type="unfinished" />
+            <translation>/luafile &lt;file&gt; - indlæs Lua-fil
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2735" />
             <source>/lua &lt;chunk&gt; - execute Lua chunk
 </source>
-            <translation type="unfinished" />
+            <translation>/lua &lt;chunk&gt; - udfør Lua-kodeblok
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3015" />
             <source> joins the chat</source>
-            <translation type="unfinished" />
+            <translation> deltager i chatten</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3020" />
             <location filename="../src/HubFrame.cpp" line="3078" />
             <source>Favorites</source>
-            <translation type="unfinished" />
+            <translation>Favoritter</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3020" />
             <source>%1 is now online</source>
-            <translation type="unfinished" />
+            <translation>%1 er nu online</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3033" />
             <source>User online.</source>
-            <translation type="unfinished" />
+            <translation>Brugeren er online.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3073" />
             <source> left the chat</source>
-            <translation type="unfinished" />
+            <translation> forlod chatten</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3078" />
             <source>%1 is now offline</source>
-            <translation type="unfinished" />
+            <translation>%1 er nu offline</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3117" />
             <location filename="../src/HubFrame.cpp" line="3131" />
             <source>User not found</source>
-            <translation type="unfinished" />
+            <translation>Brugeren blev ikke fundet</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3138" />
             <source>Slot granted to </source>
-            <translation type="unfinished" />
+            <translation>Plads tildelt til </translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3197" />
             <source> has been added to favorites.</source>
-            <translation type="unfinished" />
+            <translation> er føjet til favoritter.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3197" />
             <source> has been removed from favorites.</source>
-            <translation type="unfinished" />
+            <translation> er fjernet fra favoritter.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3229" />
             <source>Favorite hub added.</source>
-            <translation type="unfinished" />
+            <translation>Favorithub tilføjet.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3232" />
             <source>Favorite hub already exists.</source>
-            <translation type="unfinished" />
+            <translation>Favorithubben findes allerede.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3470" />
             <source>User offline.</source>
-            <translation type="unfinished" />
+            <translation>Brugeren er offline.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3512" />
             <source>Stored password sent...</source>
-            <translation type="unfinished" />
+            <translation>Gemt adgangskode sendt...</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3515" />
             <source>Password</source>
-            <translation type="unfinished" />
+            <translation>Adgangskode</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3529" />
             <location filename="../src/HubFrame.cpp" line="4590" />
             <source>Redirect request received to a hub that's already connected</source>
-            <translation type="unfinished" />
+            <translation>Omdirigering modtaget til en hub, som allerede er forbundet</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3607" />
             <source>Users count: %3/%1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>Antal brugere: %3/%1 | Samlet deling: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3613" />
             <source>Users count: %1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>Antal brugere: %1 | Samlet deling: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4430" />
             <source>Add to dictionary</source>
-            <translation type="unfinished" />
+            <translation>Føj til ordbog</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4436" />
             <source>Suggestions</source>
-            <translation type="unfinished" />
+            <translation>Forslag</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4548" />
             <source>Connecting to %1</source>
-            <translation type="unfinished" />
+            <translation>Opretter forbindelse til %1</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4556" />
             <source>Connected to %1</source>
-            <translation type="unfinished" />
+            <translation>Forbundet til %1</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4600" />
             <source>Fail: %1...</source>
-            <translation type="unfinished" />
+            <translation>Fejl: %1...</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4799" />
             <source>Sorry, but nick "%1" is already taken by another user.</source>
-            <translation type="unfinished" />
+            <translation>Beklager, kaldenavnet "%1" bruges allerede af en anden bruger.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4805" />
             <source>Search flood detected: %1</source>
-            <translation type="unfinished" />
+            <translation>Søgeoversvømmelse registreret: %1</translation>
         </message>
     </context>
     <context>
@@ -1617,42 +1655,42 @@ Favorite user</source>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="175" />
             <source>Change rule direction</source>
-            <translation type="unfinished" />
+            <translation>Skift reglens retning</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="183" />
             <source>Change IP/Mask</source>
-            <translation type="unfinished" />
+            <translation>Skift IP/maske</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="184" />
             <source>Delete rule</source>
-            <translation type="unfinished" />
+            <translation>Slet regel</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="216" />
             <source>Enter new rule</source>
-            <translation type="unfinished" />
+            <translation>Indtast ny regel</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="216" />
             <source>Rule:</source>
-            <translation type="unfinished" />
+            <translation>Regel:</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="319" />
             <source>Import list</source>
-            <translation type="unfinished" />
+            <translation>Importér liste</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="374" />
             <source>Export list</source>
-            <translation type="unfinished" />
+            <translation>Eksportér liste</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="375" />
             <source>All Files (*)</source>
-            <translation type="unfinished" />
+            <translation>Alle filer (*)</translation>
         </message>
     </context>
     <context>
@@ -1660,12 +1698,12 @@ Favorite user</source>
         <message>
             <location filename="../src/IPFilterModel.cpp" line="26" />
             <source>IP/Mask</source>
-            <translation type="unfinished" />
+            <translation>IP/maske</translation>
         </message>
         <message>
             <location filename="../src/IPFilterModel.cpp" line="26" />
             <source>Direction</source>
-            <translation type="unfinished" />
+            <translation>Retning</translation>
         </message>
     </context>
     <context>
@@ -1754,33 +1792,34 @@ Favorite user</source>
         <message>
             <location filename="../src/Magnet.cpp" line="61" />
             <source>Run search alternatives manually.</source>
-            <translation type="unfinished" />
+            <translation>Søg manuelt efter alternative kilder.</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="64" />
             <source>Download file via auto search alternatives</source>
-            <translation type="unfinished" />
+            <translation>Hent fil via automatisk søgning efter alternative kilder</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="251" />
             <source>Browse</source>
-            <translation type="unfinished" />
+            <translation>Gennemse</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="271" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="288" />
             <source>Error</source>
-            <translation type="unfinished" />
+            <translation>Fejl</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="288" />
             <source>Some error ocurred when starting download:
  %1</source>
-            <translation type="unfinished" />
+            <translation>Der opstod en fejl ved start af hentningen:
+ %1</translation>
         </message>
     </context>
     <context>
@@ -1788,295 +1827,295 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="319" />
             <source>Ready</source>
-            <translation type="unfinished" />
+            <translation>Klar</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="455" />
             <location filename="../src/MainWindow.cpp" line="3726" />
             <source>Exit program?</source>
-            <translation type="unfinished" />
+            <translation>Afslut programmet?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Dræb alle mennesker?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Bekræft handling</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1325" />
             <source>Next widget</source>
-            <translation type="unfinished" />
+            <translation>Næste panel</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1326" />
             <source>Previous widget</source>
-            <translation type="unfinished" />
+            <translation>Forrige panel</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1327" />
             <source>Next message</source>
-            <translation type="unfinished" />
+            <translation>Næste besked</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1328" />
             <source>Previous message</source>
-            <translation type="unfinished" />
+            <translation>Forrige besked</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1329" />
             <source>Close current widget</source>
-            <translation type="unfinished" />
+            <translation>Luk aktuelt panel</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1330" />
             <source>Toggle main menu</source>
-            <translation type="unfinished" />
+            <translation>Vis/skjul hovedmenu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1564" />
             <source>Counts</source>
-            <translation type="unfinished" />
+            <translation>Antal</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1570" />
             <source>Download/Upload speed</source>
-            <translation type="unfinished" />
+            <translation>Hente-/sendehastighed</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1576" />
             <source>Downloaded/Uploaded</source>
-            <translation type="unfinished" />
+            <translation>Hentet/sendt</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1595" />
             <location filename="../src/MainWindow.cpp" line="1602" />
             <source>Space free</source>
-            <translation type="unfinished" />
+            <translation>Ledig plads</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1616" />
             <source>Hashing progress</source>
-            <translation type="unfinished" />
+            <translation>Hashberegningens fremdrift</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1643" />
             <source>&amp;File</source>
-            <translation type="unfinished" />
+            <translation>&amp;Fil</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1645" />
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Open magnet link</source>
-            <translation type="unfinished" />
+            <translation>Åbn magnetlink</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1647" />
             <location filename="../src/MainWindow.cpp" line="2609" />
             <source>Open log file</source>
-            <translation type="unfinished" />
+            <translation>Åbn logfil</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1649" />
             <source>Open download directory</source>
-            <translation type="unfinished" />
+            <translation>Åbn hentemappe</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1651" />
             <source>Open filelist...</source>
-            <translation type="unfinished" />
+            <translation>Åbn filliste...</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1653" />
             <source>Calculate file TTH</source>
-            <translation type="unfinished" />
+            <translation>Beregn filens TTH</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1655" />
             <source>Open own filelist</source>
-            <translation type="unfinished" />
+            <translation>Åbn egen filliste</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Sammenhold alle fillister</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
             <location filename="../src/MainWindow.cpp" line="2205" />
             <source>Refresh share</source>
-            <translation type="unfinished" />
+            <translation>Opdatér deling</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1661" />
             <location filename="../src/MainWindow.cpp" line="2927" />
             <source>Hide window</source>
-            <translation type="unfinished" />
+            <translation>Skjul vindue</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1664" />
             <location filename="../src/MainWindow.cpp" line="2925" />
             <source>Show/hide find frame</source>
-            <translation type="unfinished" />
+            <translation>Vis/skjul søgefelt</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1666" />
             <source>Quit</source>
-            <translation type="unfinished" />
+            <translation>Afslut</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1668" />
             <source>&amp;Hubs</source>
-            <translation type="unfinished" />
+            <translation>&amp;Hubber</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1670" />
             <source>Reconnect to hub</source>
-            <translation type="unfinished" />
+            <translation>Genopret forbindelse til hub</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1672" />
             <source>Favourite hubs</source>
-            <translation type="unfinished" />
+            <translation>Favorithubber</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1674" />
             <source>Public hubs</source>
-            <translation type="unfinished" />
+            <translation>Offentlige hubber</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1676" />
             <source>Favourite users</source>
-            <translation type="unfinished" />
+            <translation>Favoritbrugere</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1678" />
             <source>Quick connect</source>
-            <translation type="unfinished" />
+            <translation>Hurtig forbindelse</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1680" />
             <source>&amp;Tools</source>
-            <translation type="unfinished" />
+            <translation>&amp;Værktøjer</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1682" />
             <source>Transfers</source>
-            <translation type="unfinished" />
+            <translation>Overførsler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1684" />
             <source>Download queue</source>
-            <translation type="unfinished" />
+            <translation>Overførselskø</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1689" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere i kø</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1691" />
             <source>Hub Manager</source>
-            <translation type="unfinished" />
+            <translation>Hubhåndtering</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1693" />
             <source>Finished downloads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede downloads</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1695" />
             <source>Finished uploads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede afsendelser</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1697" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Søgeovervågning</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1699" />
             <source>AntiSpam module</source>
-            <translation type="unfinished" />
+            <translation>Antispammodul</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1701" />
             <source>IPFilter module</source>
-            <translation type="unfinished" />
+            <translation>IP-filtermodul</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1703" />
             <location filename="../src/MainWindow.cpp" line="3130" />
             <source>Hide free space bar</source>
-            <translation type="unfinished" />
+            <translation>Skjul bjælke for ledig plads</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1706" />
             <location filename="../src/MainWindow.cpp" line="3125" />
             <source>Show free space bar</source>
-            <translation type="unfinished" />
+            <translation>Vis bjælke for ledig plads</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1708" />
             <location filename="../src/MainWindow.cpp" line="3146" />
             <source>Hide last status message</source>
-            <translation type="unfinished" />
+            <translation>Skjul seneste statusmeddelelse</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1711" />
             <location filename="../src/MainWindow.cpp" line="3144" />
             <source>Show last status message</source>
-            <translation type="unfinished" />
+            <translation>Vis seneste statusmeddelelse</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1713" />
             <location filename="../src/MainWindow.cpp" line="3163" />
             <source>Hide users statistics</source>
-            <translation type="unfinished" />
+            <translation>Skjul brugerstatistik</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1716" />
             <location filename="../src/MainWindow.cpp" line="3161" />
             <source>Show users statistics</source>
-            <translation type="unfinished" />
+            <translation>Vis brugerstatistik</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1718" />
             <source>Away message</source>
-            <translation type="unfinished" />
+            <translation>Fraværsbesked</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1720" />
             <source>On</source>
-            <translation type="unfinished" />
+            <translation>Til</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1722" />
             <source>Off</source>
-            <translation type="unfinished" />
+            <translation>Fra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1724" />
             <source>Away when not visible</source>
-            <translation type="unfinished" />
+            <translation>Fraværende når vinduet er skjult</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1726" />
             <source>Copy window title</source>
-            <translation type="unfinished" />
+            <translation>Kopiér vinduestitel</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1728" />
             <source>Preferences</source>
-            <translation type="unfinished" />
+            <translation>Indstillinger</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1730" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1732" />
@@ -2086,12 +2125,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Fejlfindingskonsol</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Sekretær</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2106,102 +2145,102 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1741" />
             <source>Speed limit On/Off</source>
-            <translation type="unfinished" />
+            <translation>Hastighedsgrænse til/fra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1744" />
             <source>Scripts Manager</source>
-            <translation type="unfinished" />
+            <translation>Scripthåndtering</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1746" />
             <source>Script Console</source>
-            <translation type="unfinished" />
+            <translation>Scriptkonsol</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1749" />
             <source>Clear chat</source>
-            <translation type="unfinished" />
+            <translation>Ryd chat</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1751" />
             <source>Find/Filter</source>
-            <translation type="unfinished" />
+            <translation>Find/filtrér</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1753" />
             <source>Disable/enable chat</source>
-            <translation type="unfinished" />
+            <translation>Deaktivér/aktivér chat</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1755" />
             <source>&amp;Widgets</source>
-            <translation type="unfinished" />
+            <translation>&amp;Paneler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1757" />
             <source>&amp;Panels</source>
-            <translation type="unfinished" />
+            <translation>&amp;Værktøjslinjer</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1760" />
             <source>Widgets panel</source>
-            <translation type="unfinished" />
+            <translation>Paneloversigt</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1762" />
             <source>Widgets side dock</source>
-            <translation type="unfinished" />
+            <translation>Sidedok til paneler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1764" />
             <source>Tools panel</source>
-            <translation type="unfinished" />
+            <translation>Værktøjslinje</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1766" />
             <source>Fast search panel</source>
-            <translation type="unfinished" />
+            <translation>Hurtigsøgningslinje</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1768" />
             <source>&amp;Help</source>
-            <translation type="unfinished" />
+            <translation>&amp;Hjælp</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1770" />
             <source>Homepage</source>
-            <translation type="unfinished" />
+            <translation>Hjemmeside</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1774" />
             <source>Report a Bug</source>
-            <translation type="unfinished" />
+            <translation>Rapportér en fejl</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1776" />
             <source>Wiki of project</source>
-            <translation type="unfinished" />
+            <translation>Projektets wiki</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1778" />
             <source>Changelog (git)</source>
-            <translation type="unfinished" />
+            <translation>Ændringslog (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Kildekode (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
             <source>About EiskaltDC++</source>
-            <translation type="unfinished" />
+            <translation>Om EiskaltDC++</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1784" />
             <source>About Qt</source>
-            <translation type="unfinished" />
+            <translation>Om Qt</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1787" />
@@ -2257,43 +2296,43 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="1799" />
             <location filename="../src/MainWindow.cpp" line="1841" />
             <source>Actions</source>
-            <translation type="unfinished" />
+            <translation>Handlinger</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1802" />
             <source>Main layout</source>
-            <translation type="unfinished" />
+            <translation>Hovedlayout</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT-noder: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
             <source>%1/s / %2/s</source>
-            <translation type="unfinished" />
+            <translation>%1/s / %2/s</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2128" />
             <source>%1 / %2</source>
-            <translation type="unfinished" />
+            <translation>%1 / %2</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2135" />
             <location filename="../src/MainWindow.cpp" line="2135" />
             <source>/s</source>
-            <translation type="unfinished" />
+            <translation>/s</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2159" />
             <source>Free %1</source>
-            <translation type="unfinished" />
+            <translation>Ledig %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2162" />
             <source>Free %1 of %2</source>
-            <translation type="unfinished" />
+            <translation>Ledig %1 af %2</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2214" />
@@ -2301,102 +2340,102 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="2240" />
             <location filename="../src/MainWindow.cpp" line="2255" />
             <source>Hash progress</source>
-            <translation type="unfinished" />
+            <translation>Hashberegningens fremdrift</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2217" />
             <source>List update</source>
-            <translation type="unfinished" />
+            <translation>Listeopdatering</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2229" />
             <source>Delayed</source>
-            <translation type="unfinished" />
+            <translation>Forsinket</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2244" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Sat på pause</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2258" />
             <source>%p%</source>
-            <translation type="unfinished" />
+            <translation>%p%</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2351" />
             <source>Choose file to open</source>
-            <translation type="unfinished" />
+            <translation>Vælg fil, der skal åbnes</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2353" />
             <source>Modern XML Filelists</source>
-            <translation type="unfinished" />
+            <translation>Moderne XML-fillister</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2354" />
             <source>Modern XML Filelists uncompressed</source>
-            <translation type="unfinished" />
+            <translation>Moderne XML-fillister uden komprimering</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Torrentfiler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2358" />
             <source>All files</source>
-            <translation type="unfinished" />
+            <translation>Alle filer</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2374" />
             <source>Unable to load file list: Invalid file list name</source>
-            <translation type="unfinished" />
+            <translation>Kan ikke indlæse fillisten: Ugyldigt fillistenavn</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2548" />
             <source>Menu</source>
-            <translation type="unfinished" />
+            <translation>Menu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2585" />
             <source>Unable to open %1 port. Searching or file transfers will not work correctly until you change settings or turn off any application that might be using that port.</source>
-            <translation type="unfinished" />
+            <translation>Kan ikke åbne port %1. Søgning og filoverførsler fungerer ikke korrekt, før du ændrer indstillingerne eller lukker det program, der muligvis bruger porten.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2586" />
             <source>Connectivity Manager: Warning</source>
-            <translation type="unfinished" />
+            <translation>Forbindelseshåndtering: Advarsel</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2609" />
             <source>Log files (*.log);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Logfiler (*.log);;Alle filer (*.*)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Åbn magnetlink eller torrentfil</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Indtast et magnetlink eller en lokal .torrent-sti:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Enter magnet link:</source>
-            <translation type="unfinished" />
+            <translation>Indtast magnetlink:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2865" />
             <source>Script Engine</source>
-            <translation type="unfinished" />
+            <translation>Scriptmotor</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Torrentunderstøttelse er ikke klar.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2431,207 +2470,207 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3272" />
             <source>EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ er en grafisk klient til protokollerne Direct Connect og ADC.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3275" />
             <source>DC++ core version: %1 (modified)</source>
-            <translation type="unfinished" />
+            <translation>DC++-kerneversion: %1 (ændret)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3278" />
             <source>Home page: </source>
-            <translation type="unfinished" />
+            <translation>Hjemmeside: </translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3283" />
             <source>Total up: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Sendt i alt: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3285" />
             <source>Total down: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Hentet i alt: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3287" />
             <source>Ratio: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Forhold: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Brug &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; til at rapportere fejl.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
             <source>&lt;b&gt;Developers&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Udviklere&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
             <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Grafikfiler&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3373" />
             <source>Russian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Russisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3379" />
             <source>Belarusian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Hviderussisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3383" />
             <source>Hungarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ungarsk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3387" />
             <source>French translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Fransk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3390" />
             <source>Polish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Polsk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3393" />
             <source>Ukrainian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ukrainsk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Serbisk (kyrillisk) oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
             <source>Serbian (Latin) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Serbisk (latinsk) oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3405" />
             <source>Spanish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Spansk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
             <source>Basque translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Baskisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
             <source>Bulgarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Bulgarsk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3415" />
             <source>Slovak translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Slovakisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3418" />
             <source>Czech translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tjekkisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3421" />
             <source>German translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tysk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3426" />
             <source>Greek translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Græsk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3429" />
             <source>Italian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Italiensk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3433" />
             <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Portugisisk (Brasilien) oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3436" />
             <source>Vietnamese translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Vietnamesisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3439" />
             <source>Chinese (China) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Kinesisk (Kina) oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3442" />
             <source>Swedish (Sweden) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Svensk (Sverige) oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Tyrkisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Dansk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Georgisk oversættelse&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
             <source>Additional</source>
-            <translation type="unfinished" />
+            <translation>Yderligere</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3681" />
             <source>Suppress sound notifications</source>
-            <translation type="unfinished" />
+            <translation>Undertryk lydmeddelelser</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3682" />
             <source>Suppress text notifications</source>
-            <translation type="unfinished" />
+            <translation>Undertryk tekstmeddelelser</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished" />
+            <translation>Afslut</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Indstil hastighedsgrænser</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn påkrævet</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Indtast et kaldenavn i Indstillinger, før du forbinder til hubber.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2642,24 +2681,24 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Hent program</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3302" />
             <location filename="../src/MainWindow.cpp" line="3330" />
             <source>lead developer</source>
-            <translation type="unfinished" />
+            <translation>hovedudvikler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>udgivelsesansvarlig</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>Arch Linux-vedligeholder</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2667,63 +2706,63 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3344" />
             <location filename="../src/MainWindow.cpp" line="3349" />
             <source>developer</source>
-            <translation type="unfinished" />
+            <translation>udvikler</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>Debian/Ubuntu-vedligeholder</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>oversættelseskoordinator</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>macOS-vedligeholder</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>MS Windows-vedligeholder</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>skaber af projektets logo</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>små opdateringer af logoet</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
             <source>Participate in the translation. It is easy:</source>
-            <translation type="unfinished" />
+            <translation>Deltag i oversættelsen. Det er nemt:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3491" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Vis lukkeknapper</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[Uden navn]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
             <source>Download Queue</source>
-            <translation type="unfinished" />
+            <translation>Overførselskø</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
             <source>All downloads complete</source>
-            <translation type="unfinished" />
+            <translation>Alle hentninger er færdige</translation>
         </message>
         <message>
             <source>Check for Updates</source>
@@ -2791,7 +2830,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MultiLineToolBar.cpp" line="61" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Vis lukkeknapper</translation>
         </message>
     </context>
     <context>
@@ -2799,32 +2838,32 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="120" />
             <source>Additional</source>
-            <translation type="unfinished" />
+            <translation>Yderligere</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="121" />
             <source>Suppress sound notifications</source>
-            <translation type="unfinished" />
+            <translation>Undertryk lydmeddelelser</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="122" />
             <source>Suppress text notifications</source>
-            <translation type="unfinished" />
+            <translation>Undertryk tekstmeddelelser</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="132" />
             <source>Show/Hide window</source>
-            <translation type="unfinished" />
+            <translation>Vis/skjul vindue</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="133" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Indstil hastighedsgrænser</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="134" />
             <source>Exit</source>
-            <translation type="unfinished" />
+            <translation>Afslut</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="253" />
@@ -2832,7 +2871,10 @@ Favorite user</source>
 Download: %1 Upload: %2
 Statistics
 Downloaded: %3 Uploaded: %4</source>
-            <translation type="unfinished" />
+            <translation>Hastighed
+Hentning: %1 Afsendelse: %2
+Statistik
+Hentet: %3 Sendt: %4</translation>
         </message>
     </context>
     <context>
@@ -2850,27 +2892,27 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PMWindow.cpp" line="356" />
             <source>Private message</source>
-            <translation type="unfinished" />
+            <translation>Privat besked</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="357" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="578" />
             <source>%1 on hub %2</source>
-            <translation type="unfinished" />
+            <translation>%1 på hub %2</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="626" />
             <source>Chat cleared.</source>
-            <translation type="unfinished" />
+            <translation>Chatten er ryddet.</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="765" />
             <source>User went offline</source>
-            <translation type="unfinished" />
+            <translation>Brugeren gik offline</translation>
         </message>
     </context>
     <context>
@@ -2878,7 +2920,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="31" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="31" />
@@ -2888,52 +2930,52 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="31" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="31" />
             <source>Address</source>
-            <translation type="unfinished" />
+            <translation>Adresse</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Country</source>
-            <translation type="unfinished" />
+            <translation>Land</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Shared</source>
-            <translation type="unfinished" />
+            <translation>Delt</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Min share</source>
-            <translation type="unfinished" />
+            <translation>Mindste deling</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Min slots</source>
-            <translation type="unfinished" />
+            <translation>Mindste antal pladser</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Max hubs</source>
-            <translation type="unfinished" />
+            <translation>Højeste antal hubber</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Max users</source>
-            <translation type="unfinished" />
+            <translation>Højeste antal brugere</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Reliability</source>
-            <translation type="unfinished" />
+            <translation>Pålidelighed</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Rating</source>
-            <translation type="unfinished" />
+            <translation>Bedømmelse</translation>
         </message>
     </context>
     <context>
@@ -2941,62 +2983,62 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="69" />
             <source>Downloading public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Henter offentlig hubliste...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="175" />
             <source>Connect</source>
-            <translation type="unfinished" />
+            <translation>Forbind</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="176" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Føj til favoritter</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="177" />
             <source>Copy &amp;address to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiér &amp;adresse til udklipsholder</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Opdaterer offentlig hubliste...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
             <source>Downloading public hub list... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Henter offentlig hubliste... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="317" />
             <source>Download failed: %1</source>
-            <translation type="unfinished" />
+            <translation>Hentning mislykkedes: %1</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Hubliste hentet... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>Lokalt gemt version af hublisten (fra %1) indlæst (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
             <source>Cached hub list is corrupted or unsupported</source>
-            <translation type="unfinished" />
+            <translation>Den gemte hubliste er beskadiget eller understøttes ikke</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="332" />
             <source>Downloaded hub list is corrupted or unsupported (%1)</source>
-            <translation type="unfinished" />
+            <translation>Den hentede hubliste er beskadiget eller understøttes ikke (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.h" line="42" />
             <source>Public Hubs</source>
-            <translation type="unfinished" />
+            <translation>Offentlige hubber</translation>
         </message>
         <message>
             <source>Hubs: %1 / %2</source>
@@ -3008,19 +3050,19 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL'er til offentlige hublister</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
             <location filename="../src/PublicHubsList.cpp" line="103" />
             <source>Public hub</source>
-            <translation type="unfinished" />
+            <translation>Offentlig hub</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
             <location filename="../src/PublicHubsList.cpp" line="103" />
             <source>Link</source>
-            <translation type="unfinished" />
+            <translation>Link</translation>
         </message>
     </context>
     <context>
@@ -3028,7 +3070,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/main.cpp" line="103" />
             <source>Loading: </source>
-            <translation type="unfinished" />
+            <translation>Indlæser: </translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="605" />
@@ -3037,74 +3079,79 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Gamle eller inkompatible indstillinger for EiskaltDC++-brugerfladen blev registreret.
+
+Sikre indstillinger såsom hubber, kontooplysninger, deling, hentninger og historik er bevaret. Tema, chatfarve, vindueslayout og tabelkolonner fra den ældre konfiguration er nulstillet, da de kan forhindre skift mellem lyst og mørkt tema under kørsel på nyere macOS.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>En sikkerhedskopi af den tidligere brugerfladekonfiguration blev gemt her:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Den tidligere brugerfladekonfiguration kunne ikke sikkerhedskopieres, men inkompatible visuelle indstillinger blev alligevel kasseret.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++-indstillinger opdateret</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
             <source>UserList icons has been loaded</source>
-            <translation type="unfinished" />
+            <translation>Brugerlistens ikoner er indlæst</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="770" />
             <source>Application icons has been loaded</source>
-            <translation type="unfinished" />
+            <translation>Programikonerne er indlæst</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Billeder (%1);;Alle filer (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Træk for at ændre indtastningsområdets størrelse</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Klik for at udvide eller skjule</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Spoiler: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Åbn eksternt</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Standard (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3112,12 +3159,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/QueuedUsers.cpp" line="78" />
             <source>Grant slot</source>
-            <translation type="unfinished" />
+            <translation>Tildel plads</translation>
         </message>
         <message>
             <location filename="../src/QueuedUsers.h" line="104" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere i kø</translation>
         </message>
     </context>
     <context>
@@ -3125,12 +3172,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/QueuedUsers.cpp" line="126" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../src/QueuedUsers.cpp" line="126" />
             <source>File</source>
-            <translation type="unfinished" />
+            <translation>Fil</translation>
         </message>
     </context>
     <context>
@@ -3146,7 +3193,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ScriptManagerDialog.cpp" line="46" />
             <source>Script Manager</source>
-            <translation type="unfinished" />
+            <translation>Scripthåndtering</translation>
         </message>
     </context>
     <context>
@@ -3167,7 +3214,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="64" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
     </context>
     <context>
@@ -3180,17 +3227,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="184" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>Nøgle</translation>
         </message>
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="185" />
             <source>Type</source>
-            <translation type="unfinished" />
+            <translation>Type</translation>
         </message>
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="284" />
             <source>Set text...</source>
-            <translation type="unfinished" />
+            <translation>Angiv tekst...</translation>
         </message>
     </context>
     <context>
@@ -3199,12 +3246,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../ui/UISearchFrame.ui" line="44" />
             <location filename="../src/SearchFrame.cpp" line="367" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="51" />
             <source>Search for</source>
-            <translation type="unfinished" />
+            <translation>Søg efter</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="58" />
@@ -3214,7 +3261,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="65" />
             <source>Show/Hide side panel</source>
-            <translation type="unfinished" />
+            <translation>Vis/skjul sidepanel</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="82" />
@@ -3224,17 +3271,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="132" />
             <source>Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hubber</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="139" />
             <source>Only users with free slots</source>
-            <translation type="unfinished" />
+            <translation>Kun brugere med ledige pladser</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="146" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="157" />
@@ -3259,42 +3306,42 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="184" />
             <source>Normal</source>
-            <translation type="unfinished" />
+            <translation>Normal</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="189" />
             <source>At least</source>
-            <translation type="unfinished" />
+            <translation>Mindst</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="194" />
             <source>At most</source>
-            <translation type="unfinished" />
+            <translation>Højst</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="205" />
             <source>Don't hide this panel when search</source>
-            <translation type="unfinished" />
+            <translation>Skjul ikke dette panel ved søgning</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="221" />
             <source>Already shared files</source>
-            <translation type="unfinished" />
+            <translation>Allerede delte filer</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="234" />
             <source>Do nothing</source>
-            <translation type="unfinished" />
+            <translation>Gør intet</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="239" />
             <source>Hide</source>
-            <translation type="unfinished" />
+            <translation>Skjul</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="244" />
             <source>Highlight</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="125" />
@@ -3304,134 +3351,134 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="127" />
             <source>Download</source>
-            <translation type="unfinished" />
+            <translation>Hent</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="130" />
             <source>Download to...</source>
-            <translation type="unfinished" />
+            <translation>Hent til...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="133" />
             <source>Download Whole Directory</source>
-            <translation type="unfinished" />
+            <translation>Hent hele mappen</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="136" />
             <source>Download Whole Directory to...</source>
-            <translation type="unfinished" />
+            <translation>Hent hele mappen til...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="142" />
             <source>Search TTH</source>
-            <translation type="unfinished" />
+            <translation>Søg efter TTH</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="145" />
             <source>Copy magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér magnetlink</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="148" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér web-magnetlink</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="151" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Egenskaber for magnetlink</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="154" />
             <source>Browse files</source>
-            <translation type="unfinished" />
+            <translation>Gennemse filer</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="157" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Sammenhold med kø</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="160" />
             <source>Send Private Message</source>
-            <translation type="unfinished" />
+            <translation>Send privat besked</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="163" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Føj til favoritter</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="166" />
             <source>Grant extra slot</source>
-            <translation type="unfinished" />
+            <translation>Tildel ekstra plads</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="178" />
             <source>Remove from Queue</source>
-            <translation type="unfinished" />
+            <translation>Fjern fra kø</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="181" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="184" />
             <source>Blacklist...</source>
-            <translation type="unfinished" />
+            <translation>Sortliste...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="187" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Sortliste</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="190" />
             <source>Add to Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Føj til sortliste</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="296" />
             <location filename="../src/SearchFrame.cpp" line="299" />
             <source>Browse</source>
-            <translation type="unfinished" />
+            <translation>Gennemse</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="485" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1088" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>Søgning - %1</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1196" />
             <location filename="../src/SearchFrame.cpp" line="1254" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1561" />
             <source>Searching for %1 ...</source>
-            <translation type="unfinished" />
+            <translation>Søger efter %1 ...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>Søgningen efter "%1" er %2% færdig</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
             <source>&lt;b&gt;No results&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Ingen resultater&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1597" />
             <source>Found: &lt;b&gt;%1&lt;/b&gt;  Dropped: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Fundet: &lt;b&gt;%1&lt;/b&gt;  Kasseret: &lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
     </context>
     <context>
@@ -3439,67 +3486,67 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>Antal</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>File</source>
-            <translation type="unfinished" />
+            <translation>Fil</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Ext</source>
-            <translation type="unfinished" />
+            <translation>Filtype</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="53" />
             <source>Exact size</source>
-            <translation type="unfinished" />
+            <translation>Nøjagtig størrelse</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="53" />
             <source>Path</source>
-            <translation type="unfinished" />
+            <translation>Sti</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="53" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Free slots</source>
-            <translation type="unfinished" />
+            <translation>Ledige pladser</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Total slots</source>
-            <translation type="unfinished" />
+            <translation>Pladser i alt</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>IP</source>
-            <translation type="unfinished" />
+            <translation>IP</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Vært</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="134" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Filen findes allerede: %1</translation>
         </message>
     </context>
     <context>
@@ -3507,47 +3554,47 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="92" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Sekretær</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="315" />
             <source>Copy</source>
-            <translation type="unfinished" />
+            <translation>Kopiér</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="316" />
             <source>Search text</source>
-            <translation type="unfinished" />
+            <translation>Søg i tekst</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="317" />
             <source>Copy nick</source>
-            <translation type="unfinished" />
+            <translation>Kopiér kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="319" />
             <source>Clear notes</source>
-            <translation type="unfinished" />
+            <translation>Ryd noter</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="320" />
             <source>Find in notes</source>
-            <translation type="unfinished" />
+            <translation>Find i noter</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="322" />
             <source>Select all</source>
-            <translation type="unfinished" />
+            <translation>Vælg alt</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="324" />
             <source>Zoom In</source>
-            <translation type="unfinished" />
+            <translation>Zoom ind</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="325" />
             <source>Zoom Out</source>
-            <translation type="unfinished" />
+            <translation>Zoom ud</translation>
         </message>
     </context>
     <context>
@@ -3555,17 +3602,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="639" />
             <source>Preferences</source>
-            <translation type="unfinished" />
+            <translation>Indstillinger</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Torrentindstillinger</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Kunne ikke gemme torrentindstillinger: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3575,52 +3622,52 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="727" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>Forbindelse</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="732" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>Hentninger</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="737" />
             <source>Sharing</source>
-            <translation type="unfinished" />
+            <translation>Deling</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="742" />
             <source>GUI</source>
-            <translation type="unfinished" />
+            <translation>Brugerflade</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="747" />
             <source>Notifications</source>
-            <translation type="unfinished" />
+            <translation>Meddelelser</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="752" />
             <source>Logs</source>
-            <translation type="unfinished" />
+            <translation>Logge</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="757" />
             <source>User Commands</source>
-            <translation type="unfinished" />
+            <translation>Brugerkommandoer</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="762" />
             <source>Shortcuts</source>
-            <translation type="unfinished" />
+            <translation>Genveje</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="767" />
             <source>History</source>
-            <translation type="unfinished" />
+            <translation>Historik</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="772" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>Avanceret</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="780" />
@@ -3660,22 +3707,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Aktivér IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Ekstern/WAN-IPv6:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>f.eks. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Bind IPv6-adresse</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -3706,27 +3753,27 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>MMDB-fil med lande</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>Sti til GeoLite2/MaxMind-landedatabase (.mmdb)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Konfigurér URL'er til DHT-opstart</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL'er til offentlige hublister</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Konfigurér URL'er til offentlige hublister</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="543" />
@@ -3788,13 +3835,13 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Ingen gyldig ekstern IPv6-adresse fundet!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Ingen gyldig IPv6-bindingsadresse fundet!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="699" />
@@ -3822,7 +3869,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="788" />
             <location filename="../src/SettingsConnection.cpp" line="802" />
             <source>Program need root privileges to open ports less than 1024</source>
-            <translation type="unfinished" />
+            <translation>Programmet kræver root-rettigheder for at åbne porte under 1024</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1155" />
@@ -3938,17 +3985,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Vælg MaxMind-landedatabase</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>MaxMind DB (*.mmdb);;Alle filer (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
             <source>Warning</source>
-            <translation type="unfinished" />
+            <translation>Advarsel</translation>
         </message>
         <message>
         <source>GOST (TLS + UDP)</source>
@@ -4063,7 +4110,7 @@ UDP: %2</translation>
             <location filename="../src/SettingsDownloads.cpp" line="165" />
             <location filename="../src/SettingsDownloads.cpp" line="194" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe</translation>
         </message>
         <message>
             <source>Delete</source>
@@ -4072,12 +4119,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="183" />
             <source>Enter alias for directory</source>
-            <translation type="unfinished" />
+            <translation>Indtast alias for mappe</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="184" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>Alias</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="220" />
@@ -4105,244 +4152,244 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="145" />
             <source>English</source>
-            <translation type="unfinished" />
+            <translation>Engelsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="146" />
             <source>Russian</source>
-            <translation type="unfinished" />
+            <translation>Russisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="147" />
             <source>Belarusian</source>
-            <translation type="unfinished" />
+            <translation>Hviderussisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="148" />
             <source>Hungarian</source>
-            <translation type="unfinished" />
+            <translation>Ungarsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="149" />
             <source>French</source>
-            <translation type="unfinished" />
+            <translation>Fransk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="150" />
             <source>Polish</source>
-            <translation type="unfinished" />
+            <translation>Polsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="151" />
             <source>Portuguese (Brazil)</source>
-            <translation type="unfinished" />
+            <translation>Portugisisk (Brasilien)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="152" />
             <source>Serbian (Cyrillic)</source>
-            <translation type="unfinished" />
+            <translation>Serbisk (kyrillisk)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="153" />
             <source>Serbian (Latin)</source>
-            <translation type="unfinished" />
+            <translation>Serbisk (latinsk)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="154" />
             <source>Ukrainian</source>
-            <translation type="unfinished" />
+            <translation>Ukrainsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="155" />
             <source>Spanish</source>
-            <translation type="unfinished" />
+            <translation>Spansk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="156" />
             <source>Basque</source>
-            <translation type="unfinished" />
+            <translation>Baskisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="157" />
             <source>Bulgarian</source>
-            <translation type="unfinished" />
+            <translation>Bulgarsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="158" />
             <source>Slovak</source>
-            <translation type="unfinished" />
+            <translation>Slovakisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="159" />
             <source>Czech</source>
-            <translation type="unfinished" />
+            <translation>Tjekkisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="160" />
             <source>German</source>
-            <translation type="unfinished" />
+            <translation>Tysk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="161" />
             <source>Greek</source>
-            <translation type="unfinished" />
+            <translation>Græsk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="162" />
             <source>Italian</source>
-            <translation type="unfinished" />
+            <translation>Italiensk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="163" />
             <source>Vietnamese</source>
-            <translation type="unfinished" />
+            <translation>Vietnamesisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="164" />
             <source>Chinese (China)</source>
-            <translation type="unfinished" />
+            <translation>Kinesisk (Kina)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="165" />
             <source>Swedish (Sweden)</source>
-            <translation type="unfinished" />
+            <translation>Svensk (Sverige)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="166" />
             <source>Turkish</source>
-            <translation type="unfinished" />
+            <translation>Tyrkisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="167" />
             <source>Danish</source>
-            <translation type="unfinished" />
+            <translation>Dansk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="168" />
             <source>Georgian</source>
-            <translation type="unfinished" />
+            <translation>Georgisk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Ikontema til værktøjslinje</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished" />
+            <translation>Tema</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>Standard</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Ensfarvet</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Ikontema til brugerliste</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Oprindelig</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Chatbilleder</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Mappe</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Ryd automatisk filer ældre end</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> dage</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
             <source>Local user</source>
-            <translation type="unfinished" />
+            <translation>Lokal bruger</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="361" />
             <source>Operator</source>
-            <translation type="unfinished" />
+            <translation>Operatør</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="365" />
             <source>Bot</source>
-            <translation type="unfinished" />
+            <translation>Bot</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="369" />
             <source>Private: local user</source>
-            <translation type="unfinished" />
+            <translation>Privat: lokal bruger</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="373" />
             <source>Private: user</source>
-            <translation type="unfinished" />
+            <translation>Privat: bruger</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="377" />
             <source>Chat: Say nick</source>
-            <translation type="unfinished" />
+            <translation>Chat: Nævn kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="381" />
             <source>Status</source>
-            <translation type="unfinished" />
+            <translation>Status</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="385" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="389" />
             <source>Favorite User</source>
-            <translation type="unfinished" />
+            <translation>Favoritbruger</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="393" />
             <source>Time stamp</source>
-            <translation type="unfinished" />
+            <translation>Tidsstempel</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="397" />
             <source>Message</source>
-            <translation type="unfinished" />
+            <translation>Besked</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="704" />
             <source>Select translation</source>
-            <translation type="unfinished" />
+            <translation>Vælg oversættelse</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="706" />
             <source>Translation (*.qm)</source>
-            <translation type="unfinished" />
+            <translation>Oversættelse (*.qm)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe til chatbilleder</translation>
         </message>
     </context>
     <context>
@@ -4350,12 +4397,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Hjælp</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappen</translation>
         </message>
     </context>
     <context>
@@ -4363,12 +4410,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsNotification.cpp" line="209" />
             <source>Select file</source>
-            <translation type="unfinished" />
+            <translation>Vælg fil</translation>
         </message>
         <message>
             <location filename="../src/SettingsNotification.cpp" line="209" />
             <source>All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Alle filer (*.*)</translation>
         </message>
     </context>
     <context>
@@ -4380,7 +4427,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsPersonal.cpp" line="154" />
             <source>System default</source>
-            <translation type="unfinished" />
+            <translation>Systemstandard</translation>
         </message>
         <message>
             <location filename="../src/SettingsPersonal.cpp" line="191" />
@@ -4399,64 +4446,64 @@ UDP: %2</translation>
             <location filename="../src/SettingsSharing.cpp" line="125" />
             <location filename="../src/SettingsSharing.cpp" line="176" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>Delt i alt: %1</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="203" />
             <location filename="../src/SettingsSharing.cpp" line="299" />
             <location filename="../src/SettingsSharing.cpp" line="310" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="203" />
             <location filename="../src/SettingsSharing.cpp" line="310" />
             <location filename="../src/SettingsSharing.cpp" line="356" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Add item</source>
-            <translation type="unfinished" />
+            <translation>Tilføj element</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Enter text:</source>
-            <translation type="unfinished" />
+            <translation>Indtast tekst:</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="227" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappen</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="411" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>Tilføj</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="415" />
             <source>Rename</source>
-            <translation type="unfinished" />
+            <translation>Omdøb</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="420" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="323" />
             <location filename="../src/SettingsSharing.cpp" line="366" />
             <source>Error</source>
-            <translation type="unfinished" />
+            <translation>Fejl</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="355" />
             <source>Enter new name</source>
-            <translation type="unfinished" />
+            <translation>Indtast nyt navn</translation>
         </message>
     </context>
     <context>
@@ -4978,7 +5025,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="75" />
             <source>Restrictions</source>
-            <translation type="unfinished" />
+            <translation>Begrænsninger</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="76" />
@@ -4988,124 +5035,124 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="78" />
             <source>Download</source>
-            <translation type="unfinished" />
+            <translation>Hent</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="80" />
             <source>Download to...</source>
-            <translation type="unfinished" />
+            <translation>Hent til...</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="83" />
             <source>Search for alternates</source>
-            <translation type="unfinished" />
+            <translation>Søg efter alternative kilder</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="85" />
             <source>Copy magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér magnetlink</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="87" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiér web-magnetlink</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="89" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Egenskaber for magnetlink</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="92" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Føj til favoritter</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="94" />
             <source>Add restriction</source>
-            <translation type="unfinished" />
+            <translation>Tilføj begrænsning</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="95" />
             <source>Remove restriction</source>
-            <translation type="unfinished" />
+            <translation>Fjern begrænsning</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="96" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Åbn mappe</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="176" />
             <source>Browse</source>
-            <translation type="unfinished" />
+            <translation>Gennemse</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="224" />
             <source>Own files</source>
-            <translation type="unfinished" />
+            <translation>Egne filer</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="226" />
             <location filename="../src/ShareBrowser.cpp" line="229" />
             <source>Listing: </source>
-            <translation type="unfinished" />
+            <translation>Filliste: </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="334" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>Filbrowser</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="336" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="432" />
             <source>Total share size: %1;  Files: %2</source>
-            <translation type="unfinished" />
+            <translation>Samlet delingsstørrelse: %1;  Filer: %2</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>Fejl i delingsbrowser: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
             <location filename="../src/ShareBrowser.cpp" line="658" />
             <source>Total size: %1</source>
-            <translation type="unfinished" />
+            <translation>Samlet størrelse: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>Valgt %1 af %2 elementer; </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
             <source>; Selected: %1</source>
-            <translation type="unfinished" />
+            <translation>; Valgt: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="862" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg mappe</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="992" />
             <source>Enter restriction size (in GB)</source>
-            <translation type="unfinished" />
+            <translation>Indtast størrelsesgrænse (i GB)</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>Delingsbrowser</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>%1 filer matchede</translation>
         </message>
     </context>
     <context>
@@ -5113,12 +5160,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="76" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>Søgning - %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>Fandt %1 elementer</translation>
         </message>
     </context>
     <context>
@@ -5126,7 +5173,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="586" />
             <source>Error</source>
-            <translation type="unfinished" />
+            <translation>Fejl</translation>
         </message>
     </context>
     <context>
@@ -5134,12 +5181,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="217" />
             <source>Modify shortcut</source>
-            <translation type="unfinished" />
+            <translation>Redigér genvej</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="225" />
             <source>Press the key combination you want to assign</source>
-            <translation type="unfinished" />
+            <translation>Tryk på den ønskede tastekombination</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="240" />
@@ -5149,12 +5196,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="242" />
             <source>Capture</source>
-            <translation type="unfinished" />
+            <translation>Registrér</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="243" />
             <source>Capture keystrokes</source>
-            <translation type="unfinished" />
+            <translation>Registrér tastetryk</translation>
         </message>
     </context>
     <context>
@@ -5162,12 +5209,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="177" />
             <source>Action</source>
-            <translation type="unfinished" />
+            <translation>Handling</translation>
         </message>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="178" />
             <source>Hotkey</source>
-            <translation type="unfinished" />
+            <translation>Genvejstast</translation>
         </message>
     </context>
     <context>
@@ -5176,25 +5223,25 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="77" />
             <location filename="../src/SideBar.cpp" line="439" />
             <source>Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hubber</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="78" />
             <location filename="../src/SideBar.cpp" line="440" />
             <source>Private Messages</source>
-            <translation type="unfinished" />
+            <translation>Private beskeder</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="79" />
             <location filename="../src/SideBar.cpp" line="441" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="80" />
             <location filename="../src/SideBar.cpp" line="442" />
             <source>Share Browsers</source>
-            <translation type="unfinished" />
+            <translation>Delingsbrowsere</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="81" />
@@ -5206,7 +5253,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="82" />
             <location filename="../src/SideBar.cpp" line="444" />
             <source>Download Queue</source>
-            <translation type="unfinished" />
+            <translation>Overførselskø</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="86" />
@@ -5218,67 +5265,67 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="90" />
             <location filename="../src/SideBar.cpp" line="457" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere i kø</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="91" />
             <location filename="../src/SideBar.cpp" line="448" />
             <source>Finished Uploads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede afsendelser</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="92" />
             <location filename="../src/SideBar.cpp" line="449" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede hentninger</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="93" />
             <location filename="../src/SideBar.cpp" line="450" />
             <source>Favorite Hubs</source>
-            <translation type="unfinished" />
+            <translation>Favorithubber</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="94" />
             <location filename="../src/SideBar.cpp" line="451" />
             <source>Favorite Users</source>
-            <translation type="unfinished" />
+            <translation>Favoritbrugere</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="95" />
             <location filename="../src/SideBar.cpp" line="452" />
             <source>Public Hubs</source>
-            <translation type="unfinished" />
+            <translation>Offentlige hubber</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="96" />
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Sekretær</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
             <location filename="../src/SideBar.cpp" line="455" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Søgeovervågning</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Fejlfindingskonsol</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
             <location filename="../src/SideBar.cpp" line="456" />
             <source>Other Widgets</source>
-            <translation type="unfinished" />
+            <translation>Andre paneler</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="170" />
             <source>Widgets</source>
-            <translation type="unfinished" />
+            <translation>Paneler</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="97" />
@@ -5292,42 +5339,42 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="591" />
             <source>Close all</source>
-            <translation type="unfinished" />
+            <translation>Luk alle</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="612" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="671" />
             <source>Choose file to open</source>
-            <translation type="unfinished" />
+            <translation>Vælg fil, der skal åbnes</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="673" />
             <source>Modern XML Filelists</source>
-            <translation type="unfinished" />
+            <translation>Moderne XML-fillister</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="674" />
             <source>Modern XML Filelists uncompressed</source>
-            <translation type="unfinished" />
+            <translation>Moderne XML-fillister uden komprimering</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="675" />
             <source>All files</source>
-            <translation type="unfinished" />
+            <translation>Alle filer</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="690" />
             <source>Open log file</source>
-            <translation type="unfinished" />
+            <translation>Åbn logfil</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="690" />
             <source>Log files (*.log);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Logfiler (*.log);;Alle filer (*.*)</translation>
         </message>
     </context>
     <context>
@@ -5342,7 +5389,7 @@ UDP: %2</translation>
             <location filename="../src/SpyFrame.cpp" line="62" />
             <location filename="../src/SpyFrame.h" line="40" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Søgeovervågning</translation>
         </message>
         <message>
             <location filename="../src/SpyFrame.cpp" line="63" />
@@ -5350,7 +5397,10 @@ UDP: %2</translation>
 It will continue to work when the widget is hidden.
 Do you want to stop it?
 </source>
-            <translation type="unfinished" />
+            <translation>Søgeovervågning kører nu.
+Den fortsætter, når panelet er skjult.
+Vil du stoppe den?
+</translation>
         </message>
         <message>
             <location filename="../src/SpyFrame.cpp" line="88" />
@@ -5360,7 +5410,7 @@ Do you want to stop it?
         <message>
             <location filename="../src/SpyFrame.cpp" line="105" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
     </context>
     <context>
@@ -5368,12 +5418,12 @@ Do you want to stop it?
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>Antal</translation>
         </message>
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>Søgestreng</translation>
         </message>
     </context>
     <context>
@@ -5381,7 +5431,7 @@ Do you want to stop it?
         <message>
             <location filename="../src/TabFrame.cpp" line="361" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
         <message>
             <source>Previous tab row</source>
@@ -5397,12 +5447,12 @@ Do you want to stop it?
         <message>
             <location filename="../src/ToolBar.cpp" line="365" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Vis lukkeknapper</translation>
         </message>
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Luk</translation>
         </message>
     </context>
     <context>
@@ -6438,67 +6488,67 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <location filename="../src/TransferView.cpp" line="61" />
             <source>Browse files</source>
-            <translation type="unfinished" />
+            <translation>Gennemse filer</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="64" />
             <source>Search Alternates</source>
-            <translation type="unfinished" />
+            <translation>Søg efter alternative kilder</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="67" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Sammenhold med kø</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="70" />
             <source>Send Private Message</source>
-            <translation type="unfinished" />
+            <translation>Send privat besked</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="73" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Føj til favoritter</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="76" />
             <source>Grant extra slot</source>
-            <translation type="unfinished" />
+            <translation>Tildel ekstra plads</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="79" />
             <source>Copy</source>
-            <translation type="unfinished" />
+            <translation>Kopiér</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="82" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="83" />
             <source>Speed</source>
-            <translation type="unfinished" />
+            <translation>Hastighed</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="84" />
             <source>Status</source>
-            <translation type="unfinished" />
+            <translation>Status</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Flag</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="87" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>Tid tilbage</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="88" />
@@ -6508,23 +6558,23 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <location filename="../src/TransferView.cpp" line="89" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="90" />
             <source>IP</source>
-            <translation type="unfinished" />
+            <translation>IP</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="91" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Kryptering</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokol</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6534,89 +6584,89 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Annullér hentning</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
             <source>Remove Source</source>
-            <translation type="unfinished" />
+            <translation>Fjern kilde</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="109" />
             <source>Force attempt</source>
-            <translation type="unfinished" />
+            <translation>Gennemtving forsøg</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="112" />
             <source>Close connection(s)</source>
-            <translation type="unfinished" />
+            <translation>Luk forbindelse(r)</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Vis kun overførte filer</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
             <location filename="../src/TransferView.cpp" line="419" />
             <location filename="../src/TransferView.cpp" line="829" />
             <source>Download complete</source>
-            <translation type="unfinished" />
+            <translation>Hentning færdig</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="459" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>Filliste</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Torrentoplysninger</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Sæt torrent på pause</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Genoptag torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
             <source>Requesting</source>
-            <translation type="unfinished" />
+            <translation>Anmoder</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="783" />
             <source>Download starting...</source>
-            <translation type="unfinished" />
+            <translation>Hentning starter...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="813" />
             <source>Downloaded %1</source>
-            <translation type="unfinished" />
+            <translation>Hentet %1</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="868" />
             <source>Connecting...</source>
-            <translation type="unfinished" />
+            <translation>Opretter forbindelse...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="892" />
             <source>Connected</source>
-            <translation type="unfinished" />
+            <translation>Forbundet</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="923" />
             <source>Connecting</source>
-            <translation type="unfinished" />
+            <translation>Opretter forbindelse</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="925" />
             <source>No download slots</source>
-            <translation type="unfinished" />
+            <translation>Ingen hentepladser</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="853" />
@@ -6624,27 +6674,27 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <location filename="../src/TransferView.cpp" line="927" />
             <location filename="../src/TransferView.cpp" line="933" />
             <source>Waiting to retry</source>
-            <translation type="unfinished" />
+            <translation>Venter på nyt forsøg</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="971" />
             <source>Upload starting...</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse starter...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>Sendt %1 (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
             <source>Upload complete</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse færdig</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1029" />
             <source>Upload failed</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse mislykkedes</translation>
         </message>
         <message>
             <source>Fit to content</source>
@@ -6680,52 +6730,52 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Speed</source>
-            <translation type="unfinished" />
+            <translation>Hastighed</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Status</source>
-            <translation type="unfinished" />
+            <translation>Status</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Flag</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>Tid tilbage</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>File name</source>
-            <translation type="unfinished" />
+            <translation>Filnavn</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Vært</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>IP</source>
-            <translation type="unfinished" />
+            <translation>IP</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="59" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Kryptering</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="61" />
@@ -6735,42 +6785,42 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="156" />
             <source>/s</source>
-            <translation type="unfinished" />
+            <translation>/s</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Sat på pause</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Seeder</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Venter</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Hentning (%1 peers)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse (%1 peers)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Hentet %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Sendt %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -6782,23 +6832,23 @@ Tilføjet til skrivebeskyttet seedning. Kildefilerne hashkontrolleres, men flytt
             <location filename="../src/TransferViewModel.cpp" line="544" />
             <location filename="../src/TransferViewModel.cpp" line="585" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>Filliste</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="757" />
             <source>Downloaded </source>
-            <translation type="unfinished" />
+            <translation>Hentet </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="759" />
             <source>Waiting for slot </source>
-            <translation type="unfinished" />
+            <translation>Venter på plads </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="813" />
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
-            <translation type="unfinished" />
+            <translation>Afsluttet</translation>
         </message>
         <message>
             <source>D: %1/s | U: %2/s</source>
@@ -6848,23 +6898,23 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../src/UCModel.cpp" line="88" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../src/UCModel.cpp" line="89" />
             <source>Command</source>
-            <translation type="unfinished" />
+            <translation>Kommando</translation>
         </message>
         <message>
             <location filename="../src/UCModel.cpp" line="90" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../src/UCModel.cpp" line="156" />
             <location filename="../src/UCModel.cpp" line="209" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>Skillelinje</translation>
         </message>
     </context>
     <context>
@@ -6887,12 +6937,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIADLSearch.ui" line="100" />
             <source>Move up</source>
-            <translation type="unfinished" />
+            <translation>Flyt op</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearch.ui" line="110" />
             <source>Move down</source>
-            <translation type="unfinished" />
+            <translation>Flyt ned</translation>
         </message>
     </context>
     <context>
@@ -6900,12 +6950,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="38" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>Favorithubbens navn.</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="51" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>Søgestreng</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="74" />
@@ -6926,12 +6976,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="122" />
             <source>Full path</source>
-            <translation type="unfinished" />
+            <translation>Fuld sti</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="133" />
             <source>Min/Max Size</source>
-            <translation type="unfinished" />
+            <translation>Mindste/største størrelse</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="193" />
@@ -6956,12 +7006,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="265" />
             <source>Download</source>
-            <translation type="unfinished" />
+            <translation>Hent</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="278" />
             <source>On</source>
-            <translation type="unfinished" />
+            <translation>Til</translation>
         </message>
     </context>
     <context>
@@ -6969,27 +7019,27 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIAbout.ui" line="14" />
             <source>About EiskaltDC++</source>
-            <translation type="unfinished" />
+            <translation>Om EiskaltDC++</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="41" />
             <source>About program</source>
-            <translation type="unfinished" />
+            <translation>Om programmet</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="67" />
             <source>Authors</source>
-            <translation type="unfinished" />
+            <translation>Forfattere</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="91" />
             <source>Translation</source>
-            <translation type="unfinished" />
+            <translation>Oversættelse</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="112" />
             <source>License</source>
-            <translation type="unfinished" />
+            <translation>Licens</translation>
         </message>
     </context>
     <context>
@@ -6997,12 +7047,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIActionCustomizer.ui" line="88" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>Op</translation>
         </message>
         <message>
             <location filename="../ui/UIActionCustomizer.ui" line="95" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>Ned</translation>
         </message>
     </context>
     <context>
@@ -7010,94 +7060,94 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="14" />
             <source>AntiSpam configuration</source>
-            <translation type="unfinished" />
+            <translation>Antispamkonfiguration</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="20" />
             <source>AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Antispam</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="46" />
             <source>Phrase</source>
-            <translation type="unfinished" />
+            <translation>Udtryk</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="59" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>Nøgle</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="85" />
             <source>Attempts</source>
-            <translation type="unfinished" />
+            <translation>Forsøg</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="95" />
             <source>Enable AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Aktivér antispam</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="102" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="109" />
             <source>Work as filter</source>
-            <translation type="unfinished" />
+            <translation>Brug som filter</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="116" />
             <source>Black list</source>
-            <translation type="unfinished" />
+            <translation>Sortliste</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="157" />
             <location filename="../ui/UIAntiSpam.ui" line="223" />
             <location filename="../ui/UIAntiSpam.ui" line="289" />
             <source>C</source>
-            <translation type="unfinished" />
+            <translation>C</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="171" />
             <location filename="../ui/UIAntiSpam.ui" line="237" />
             <location filename="../ui/UIAntiSpam.ui" line="303" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="182" />
             <source>Gray List</source>
-            <translation type="unfinished" />
+            <translation>Gråliste</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="248" />
             <source>White list</source>
-            <translation type="unfinished" />
+            <translation>Hvidliste</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="314" />
             <location filename="../ui/UIAntiSpam.ui" line="369" />
             <source>Move user to "White" list</source>
-            <translation type="unfinished" />
+            <translation>Flyt bruger til "hvidliste"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="327" />
             <location filename="../ui/UIAntiSpam.ui" line="340" />
             <source>Move user to "Gray" list</source>
-            <translation type="unfinished" />
+            <translation>Flyt bruger til "gråliste"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="353" />
             <location filename="../ui/UIAntiSpam.ui" line="382" />
             <source>Move user to "Black" list</source>
-            <translation type="unfinished" />
+            <translation>Flyt bruger til "sortliste"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="395" />
             <source>Filter Operators</source>
-            <translation type="unfinished" />
+            <translation>Filtrér operatører</translation>
         </message>
     </context>
     <context>
@@ -7105,57 +7155,57 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="57" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Find: </translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="71" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Forrige (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="77" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="84" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Næste (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="90" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="97" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv alle</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="113" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Skjul søgepanel (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="154" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Brug komma som separator</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="157" />
             <source>Filter by IP</source>
-            <translation type="unfinished" />
+            <translation>Filtrér efter IP</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="208" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Linjer:</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="228" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Ryd nu</translation>
         </message>
     </context>
     <context>
@@ -7163,12 +7213,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="41" />
             <source>Expand all</source>
-            <translation type="unfinished" />
+            <translation>Udvid alle</translation>
         </message>
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="54" />
             <source>Collapse all</source>
-            <translation type="unfinished" />
+            <translation>Fold alle sammen</translation>
         </message>
     </context>
     <context>
@@ -7176,37 +7226,37 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="20" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="31" />
             <source>Autoconnect on startup</source>
-            <translation type="unfinished" />
+            <translation>Opret automatisk forbindelse ved start</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="41" />
             <source>Disable chat</source>
-            <translation type="unfinished" />
+            <translation>Deaktivér chat</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="50" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="57" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>Favorithubbens navn.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="64" />
             <source>Address</source>
-            <translation type="unfinished" />
+            <translation>Adresse</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="71" />
             <source>IP address or DNS name of hub.</source>
-            <translation type="unfinished" />
+            <translation>Hubbens IP-adresse eller DNS-navn.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="78" />
@@ -7216,87 +7266,87 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>Denne beskrivelse vises på listen over favorithubber.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
             <source>Encoding</source>
-            <translation type="unfinished" />
+            <translation>Tegnkodning</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="102" />
             <source>Mode</source>
-            <translation type="unfinished" />
+            <translation>Tilstand</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="110" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>Standard</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="115" />
             <source>Active</source>
-            <translation type="unfinished" />
+            <translation>Aktiv</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="120" />
             <source>Passive</source>
-            <translation type="unfinished" />
+            <translation>Passiv</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="128" />
             <source>Client ID</source>
-            <translation type="unfinished" />
+            <translation>Klient-id</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="142" />
             <source>External IP</source>
-            <translation type="unfinished" />
+            <translation>Ekstern IP</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="162" />
             <source>Auto update from Internet</source>
-            <translation type="unfinished" />
+            <translation>Opdatér automatisk fra internettet</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="180" />
             <source>Minimum search interval (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Mindste søgeinterval (sekunder)</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="202" />
             <source>Identification</source>
-            <translation type="unfinished" />
+            <translation>Identifikation</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="223" />
             <source>This nickname, or handle, will identify you when you join a hub.</source>
-            <translation type="unfinished" />
+            <translation>Dette kaldenavn identificerer dig, når du forbinder til en hub.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="230" />
             <source>If hub requires password, define it here.</source>
-            <translation type="unfinished" />
+            <translation>Hvis hubben kræver en adgangskode, angives den her.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>Denne beskrivelse vises på brugerlisten.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="257" />
             <source>User description</source>
-            <translation type="unfinished" />
+            <translation>Brugerbeskrivelse</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="264" />
             <source>Password</source>
-            <translation type="unfinished" />
+            <translation>Adgangskode</translation>
         </message>
     </context>
     <context>
@@ -7319,7 +7369,7 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFavoriteHubs.ui" line="100" />
             <source>Connect</source>
-            <translation type="unfinished" />
+            <translation>Forbind</translation>
         </message>
     </context>
     <context>
@@ -7327,7 +7377,7 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFavoriteUsers.ui" line="41" />
             <source>Auto grant slot to all users</source>
-            <translation type="unfinished" />
+            <translation>Tildel automatisk plads til alle brugere</translation>
         </message>
     </context>
     <context>
@@ -7335,22 +7385,22 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="29" />
             <source>TTH Calculator</source>
-            <translation type="unfinished" />
+            <translation>TTH-beregner</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="93" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>Filsti</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiér magnetlink til udklipsholder</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiér søgelink til udklipsholder</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7360,27 +7410,27 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="185" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>Åbner søgedialogen og søger efter filen.</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="188" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="208" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>Annuller</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="100" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="178" />
             <source>Compute</source>
-            <translation type="unfinished" />
+            <translation>Beregn</translation>
         </message>
     </context>
     <context>
@@ -7388,27 +7438,27 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="22" />
             <source>Show</source>
-            <translation type="unfinished" />
+            <translation>Vis</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="30" />
             <source>Files</source>
-            <translation type="unfinished" />
+            <translation>Filer</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="35" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="43" />
             <source>Show only completely finished transfers</source>
-            <translation type="unfinished" />
+            <translation>Vis kun helt afsluttede overførsler</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="46" />
             <source>Full only</source>
-            <translation type="unfinished" />
+            <translation>Kun fuldstændige</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="66" />
@@ -7421,12 +7471,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="20" />
             <source>Hash progress</source>
-            <translation type="unfinished" />
+            <translation>Hashberegningens fremdrift</translation>
         </message>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="125" />
             <source>Close on finish</source>
-            <translation type="unfinished" />
+            <translation>Luk efter afslutning</translation>
         </message>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="145" />
@@ -7436,7 +7486,7 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="152" />
             <source>Hide</source>
-            <translation type="unfinished" />
+            <translation>Skjul</translation>
         </message>
     </context>
     <context>
@@ -7444,37 +7494,37 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="142" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Find: </translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="156" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Forrige (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="162" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="169" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Næste (F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="175" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="182" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv alle</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="198" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Skjul søgepanel (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="364" />
@@ -7494,12 +7544,12 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Tryk Shift+Enter for indtastning på flere linjer</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
             <source>Last status message on hub</source>
-            <translation type="unfinished" />
+            <translation>Seneste statusmeddelelse på hubben</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7535,22 +7585,22 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIHubManager.ui" line="33" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../ui/UIHubManager.ui" line="38" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
         <message>
             <location filename="../ui/UIHubManager.ui" line="43" />
             <source>Users</source>
-            <translation type="unfinished" />
+            <translation>Brugere</translation>
         </message>
         <message>
             <location filename="../ui/UIHubManager.ui" line="48" />
             <source>Share</source>
-            <translation type="unfinished" />
+            <translation>Deling</translation>
         </message>
     </context>
     <context>
@@ -7558,62 +7608,62 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="29" />
             <source>IP Filter</source>
-            <translation type="unfinished" />
+            <translation>IP-filter</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="47" />
             <source>Enable IPFilter</source>
-            <translation type="unfinished" />
+            <translation>Aktivér IP-filter</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="54" />
             <source>Export</source>
-            <translation type="unfinished" />
+            <translation>Eksportér</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="61" />
             <source>Import</source>
-            <translation type="unfinished" />
+            <translation>Importér</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="99" />
             <source>Direction</source>
-            <translation type="unfinished" />
+            <translation>Retning</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="105" />
             <source>BOTH</source>
-            <translation type="unfinished" />
+            <translation>BEGGE</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="112" />
             <source>IN</source>
-            <translation type="unfinished" />
+            <translation>IND</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="119" />
             <source>OUT</source>
-            <translation type="unfinished" />
+            <translation>UD</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="132" />
             <source>UP</source>
-            <translation type="unfinished" />
+            <translation>OP</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="139" />
             <source>DOWN</source>
-            <translation type="unfinished" />
+            <translation>NED</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="149" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>Tilføj</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="156" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
     </context>
     <context>
@@ -7644,7 +7694,7 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>Magnetlinkviser</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7654,53 +7704,54 @@ Sorteret efter download-peers, derefter upload-peers.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="70" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>Filsti</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="80" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiér magnetlink til udklipsholder</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiér søgelink til udklipsholder</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>Åbner søgedialogen og søger efter filen.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="174" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="181" />
             <source>Adds magnet to download queue. If autosearch for alternatives is enabled
 in options, file will be downloaded without opening search dialog.</source>
-            <translation type="unfinished" />
+            <translation>Føjer magnetlink til overførselskøen. Hvis automatisk søgning efter alternative kilder er aktiveret
+i indstillingerne, hentes filen uden at åbne søgedialogen.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="185" />
             <source>Add to queue</source>
-            <translation type="unfinished" />
+            <translation>Føj til kø</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="205" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>Annuller</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="214" />
             <source>Remember my choice</source>
-            <translation type="unfinished" />
+            <translation>Husk mit valg</translation>
         </message>
     </context>
     <context>
@@ -7708,37 +7759,37 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="99" />
             <source>Find:</source>
-            <translation type="unfinished" />
+            <translation>Find:</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="106" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Forrige (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="112" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="119" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Næste (F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="125" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="132" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Skjul søgepanel (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="142" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv alle</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="295" />
@@ -7758,17 +7809,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Tryk Shift+Enter for indtastning på flere linjer</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
             <source>Go to hub</source>
-            <translation type="unfinished" />
+            <translation>Gå til hub</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="439" />
             <source>User share</source>
-            <translation type="unfinished" />
+            <translation>Brugerens deling</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7804,7 +7855,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Opdatér</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -7820,27 +7871,27 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="23" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>Op</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="30" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>Ned</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="69" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>Tilføj</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="76" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="83" />
             <source>Edit</source>
-            <translation type="unfinished" />
+            <translation>Redigér</translation>
         </message>
     </context>
     <context>
@@ -7848,12 +7899,12 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="32" />
             <source>Quick connect</source>
-            <translation type="unfinished" />
+            <translation>Hurtig forbindelse</translation>
         </message>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="44" />
             <source>IP address of DNS name of hub you want to connect.</source>
-            <translation type="unfinished" />
+            <translation>IP-adresse eller DNS-navn på den hub, du vil forbinde til.</translation>
         </message>
     </context>
     <context>
@@ -7861,22 +7912,22 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="21" />
             <source>Do nothing</source>
-            <translation type="unfinished" />
+            <translation>Gør intet</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="26" />
             <source>Ask user</source>
-            <translation type="unfinished" />
+            <translation>Spørg bruger</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="31" />
             <source>Reload it</source>
-            <translation type="unfinished" />
+            <translation>Genindlæs det</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="39" />
             <source>When script changed</source>
-            <translation type="unfinished" />
+            <translation>Når scriptet ændres</translation>
         </message>
     </context>
     <context>
@@ -7884,17 +7935,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="29" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Sortliste</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="93" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>Annuller</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="100" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>OK</translation>
         </message>
     </context>
     <context>
@@ -7902,98 +7953,98 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISecretary.ui" line="73" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Find: </translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="87" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Forrige (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="93" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="100" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Næste (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="106" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="113" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv alle</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="129" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Skjul søgepanel (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="219" />
             <source>Magnet links</source>
-            <translation type="unfinished" />
+            <translation>Magnetlinks</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="199" />
             <source>Search links</source>
-            <translation type="unfinished" />
+            <translation>Søgelinks</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="209" />
             <source>Public chat</source>
-            <translation type="unfinished" />
+            <translation>Offentlig chat</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="179" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>Statusmeddelelser</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="169" />
             <source>BitTorrent links</source>
-            <translation type="unfinished" />
+            <translation>BitTorrent-links</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="189" />
             <source>Private messages</source>
-            <translation type="unfinished" />
+            <translation>Private beskeder</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="159" />
             <source>Filter duplicates</source>
-            <translation type="unfinished" />
+            <translation>Filtrér dubletter</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="233" />
             <location filename="../ui/UISecretary.ui" line="246" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Brug komma som separator</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="236" />
             <source>Additional keywords</source>
-            <translation type="unfinished" />
+            <translation>Yderligere nøgleord</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="249" />
             <source>Filter hubs by IP</source>
-            <translation type="unfinished" />
+            <translation>Filtrér hubber efter IP</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="277" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Linjer:</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="297" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Ryd nu</translation>
         </message>
     </context>
     <context>
@@ -8001,7 +8052,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettings.ui" line="14" />
             <source>Settings</source>
-            <translation type="unfinished" />
+            <translation>Indstillinger</translation>
         </message>
     </context>
     <context>
@@ -8032,17 +8083,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="27" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>Forbindelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="33" />
             <source>Auto detect connection</source>
-            <translation type="unfinished" />
+            <translation>Registrér automatisk forbindelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="40" />
             <source>Incoming connections</source>
-            <translation type="unfinished" />
+            <translation>Indgående forbindelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="73" />
@@ -8052,12 +8103,17 @@ If your computer is not behind a router all you have to do is to choose
 this option and usually you don't need to alter anything more in the
 connection settings.
 However, if you have a software firewall installed, you may need further configuration in the firewall to allow Internet access for EiskaltDC++.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis computeren er direkte forbundet til internettet.
+Vælg ikke denne tilstand, hvis du har en router eller en ekstern firewall.
+Hvis computeren ikke er bag en router, behøver du blot at vælge
+denne indstilling og normalt ikke ændre andet i
+forbindelsesindstillingerne.
+Hvis du har installeret en softwarefirewall, kan du dog skulle konfigurere den yderligere for at give EiskaltDC++ adgang til internettet.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="81" />
             <source>Active mode</source>
-            <translation type="unfinished" />
+            <translation>Aktiv tilstand</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="91" />
@@ -8066,12 +8122,16 @@ the TCP, UDP and TLS port forwarding on your own.
 You will need to specify the external IP address of your router using
 the setting below if you want downloads to work properly.
 Use this mode only if the previous ones are not options for you.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis du er bag en firewall (router) og selv vil konfigurere
+videresendelse af TCP-, UDP- og TLS-porte.
+Du skal angive routerens eksterne IP-adresse i
+indstillingen nedenfor, hvis hentninger skal fungere korrekt.
+Brug kun denne tilstand, hvis de foregående ikke er mulige.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="98" />
             <source>Firewall with port forwarding</source>
-            <translation type="unfinished" />
+            <translation>Firewall med portvideresendelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="108" />
@@ -8081,12 +8141,17 @@ This mode carries some serious limitations:
   * only 5 results per user will be returned in response to searches;
   * you will not be able to download from other passive users;
   * you may won't be able to search and/or download on certain hubs.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis ingen af de foregående tilstande passer. I denne tilstand
+forsøger EiskaltDC++ kun at oprette udgående forbindelser, ikke indgående.
+Denne tilstand har væsentlige begrænsninger:
+  * søgninger returnerer kun 5 resultater pr. bruger;
+  * du kan ikke hente fra andre passive brugere;
+  * du kan muligvis ikke søge og/eller hente på visse hubber.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="116" />
             <source>Passive mode</source>
-            <translation type="unfinished" />
+            <translation>Passiv tilstand</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="123" />
@@ -8096,64 +8161,71 @@ Most routers do support UPnP but you may need to enable it
 in the router's configuration page.
 This way EiskaltDC++ will automatically open the ports it needs
 and obtain your external IP address as well.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis du er bag en firewall/router, der understøtter
+UPnP-standarden til automatisk programkonfiguration.
+De fleste routere understøtter UPnP, men du skal muligvis aktivere det
+på routerens konfigurationsside.
+Så åbner EiskaltDC++ automatisk de nødvendige porte
+og finder også din eksterne IP-adresse.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="131" />
             <source>Firewall with UPnP</source>
-            <translation type="unfinished" />
+            <translation>Firewall med UPnP</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="165" />
             <source>External/WAN IP:</source>
-            <translation type="unfinished" />
+            <translation>Ekstern/WAN-IP:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>Tillad ikke tilsidesættelse fra hub/UPnP/DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
             <source>TCP port</source>
-            <translation type="unfinished" />
+            <translation>TCP-port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="195" />
             <source>UDP port</source>
-            <translation type="unfinished" />
+            <translation>UDP-port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="202" />
             <source>TLS port</source>
-            <translation type="unfinished" />
+            <translation>TLS-port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="262" />
             <source>Bind to address</source>
-            <translation type="unfinished" />
+            <translation>Bind til adresse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="272" />
             <source>Bind to interface</source>
-            <translation type="unfinished" />
+            <translation>Bind til grænseflade</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="288" />
             <source>Outgoing connections</source>
-            <translation type="unfinished" />
+            <translation>Udgående forbindelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="321" />
             <source>Select this mode if you can make unrestricted outbound connections.
 This includes connecting to any IP address on any port.
 Choose this option if unsure.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis du kan oprette ubegrænsede udgående forbindelser.
+Dette omfatter forbindelse til enhver IP-adresse på enhver port.
+Vælg denne indstilling, hvis du er i tvivl.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="326" />
             <source>Direct connection</source>
-            <translation type="unfinished" />
+            <translation>Direkte forbindelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="336" />
@@ -8161,12 +8233,15 @@ Choose this option if unsure.</source>
 a SOCKS proxy. The caveats for Passive mode also apply here.
 SOCKS5 proxies are not the same as HTTP proxies.
 DC++'s SOCKS5 support does not include GSSAPI.</source>
-            <translation type="unfinished" />
+            <translation>Vælg denne tilstand, hvis du vil oprette udgående forbindelser via
+en SOCKS-proxy. Begrænsningerne for passiv tilstand gælder også her.
+SOCKS5-proxyer er ikke det samme som HTTP-proxyer.
+DC++'s SOCKS5-understøttelse omfatter ikke GSSAPI.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="342" />
             <source>SOCKS5</source>
-            <translation type="unfinished" />
+            <translation>SOCKS5</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="349" />
@@ -8193,17 +8268,17 @@ en Shadowsocks AEAD-server.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="404" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="411" />
             <source>Password</source>
-            <translation type="unfinished" />
+            <translation>Adgangskode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="418" />
             <source>Port</source>
-            <translation type="unfinished" />
+            <translation>Port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="438" />
@@ -8213,7 +8288,7 @@ en Shadowsocks AEAD-server.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="448" />
             <source>Use to resolve hostnames</source>
-            <translation type="unfinished" />
+            <translation>Brug til opslag af værtsnavne</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="455" />
@@ -8230,34 +8305,34 @@ Når aktiveret ser hubs normal aktiv/passiv tilstand i stedet for M:5.</translat
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="487" />
             <source>DynDNS Address:</source>
-            <translation type="unfinished" />
+            <translation>DynDNS-adresse:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="513" />
             <source>When enabled can hang program on exit.</source>
-            <translation type="unfinished" />
+            <translation>Kan få programmet til at hænge ved afslutning, hvis aktiveret.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="516" />
             <source>Automatically update external IP (restart required)</source>
-            <translation type="unfinished" />
+            <translation>Opdatér automatisk ekstern IP (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="540" />
             <location filename="../ui/UISettingsConnection.ui" line="555" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>Grænser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="561" />
             <source>Enable Throttle</source>
-            <translation type="unfinished" />
+            <translation>Aktivér hastighedsbegrænsning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="601" />
             <location filename="../ui/UISettingsConnection.ui" line="753" />
             <source>Download</source>
-            <translation type="unfinished" />
+            <translation>Hent</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="615" />
@@ -8265,48 +8340,48 @@ Når aktiveret ser hubs normal aktiv/passiv tilstand i stedet for M:5.</translat
             <location filename="../ui/UISettingsConnection.ui" line="794" />
             <location filename="../ui/UISettingsConnection.ui" line="827" />
             <source>KiB/s</source>
-            <translation type="unfinished" />
+            <translation>KiB/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="635" />
             <location filename="../ui/UISettingsConnection.ui" line="780" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="678" />
             <source>Alternate speed limit at time from </source>
-            <translation type="unfinished" />
+            <translation>Alternativ hastighedsgrænse i tidsrummet fra </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="704" />
             <source>to</source>
-            <translation type="unfinished" />
+            <translation>til</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="718" />
             <source>hour(s)</source>
-            <translation type="unfinished" />
+            <translation>time(r)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="817" />
             <source>Slots</source>
-            <translation type="unfinished" />
+            <translation>Pladser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="860" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>Avanceret</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="887" />
             <source>Reconnect to hub (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Genopret forbindelse til hub (sekunder)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="910" />
             <source>Type-of-Service (ToS)</source>
-            <translation type="unfinished" />
+            <translation>Type-of-Service (ToS)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="926" />
@@ -8322,32 +8397,43 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Minimal cost&amp;quot;&lt;/span&gt; should be used for &amp;quot;filler data&amp;quot; where slow transmission doesn't matter&lt;/p&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;At most one of these TOS values can be specified. Linux sends &lt;span style=" font-weight:600;"&gt;&amp;quot;Low delay&amp;quot;&lt;/span&gt; datagrams first by default, but the exact behaviour depends on the configured queueing discipline.&lt;span style=" font-weight:600;"&gt; Warning! This option needs superuser privileges!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Angiv Type-Of-Service-feltet (TOS), som sendes med hver &lt;a href="https://en.wikipedia.org/wiki/IP_packet"&gt;&lt;span style=" text-decoration: underline; color:#0057ae;"&gt;IP-pakke&lt;/span&gt;&lt;/a&gt; fra denne sokkel. Det bruges til at prioritere pakker på netværket. TOS er én byte. Følgende standardflag er defineret: &lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Lav forsinkelse&amp;quot;&lt;/span&gt; for at minimere forsinkelser ved interaktiv trafik&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Gennemløb&amp;quot;&lt;/span&gt; for at optimere gennemløbet&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Pålidelighed&amp;quot;&lt;/span&gt; for at optimere pålideligheden&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Laveste omkostning&amp;quot;&lt;/span&gt; bør bruges til &amp;quot;fylddata&amp;quot;, hvor langsom overførsel ikke betyder noget&lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Højst én af disse TOS-værdier kan angives. Linux sender som standard datagrammer med &lt;span style=" font-weight:600;"&gt;&amp;quot;Lav forsinkelse&amp;quot;&lt;/span&gt; først, men den præcise adfærd afhænger af den konfigurerede køstyring.&lt;span style=" font-weight:600;"&gt; Advarsel! Denne indstilling kræver superbrugerrettigheder!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="941" />
             <source>No</source>
-            <translation type="unfinished" />
+            <translation>Nej</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="946" />
             <source>Low delay</source>
-            <translation type="unfinished" />
+            <translation>Lav forsinkelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="951" />
             <source>Throughput</source>
-            <translation type="unfinished" />
+            <translation>Gennemløb</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="956" />
             <source>Reliability</source>
-            <translation type="unfinished" />
+            <translation>Pålidelighed</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="961" />
             <source>Minimal cost</source>
-            <translation type="unfinished" />
+            <translation>Laveste omkostning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="971" />
@@ -8357,47 +8443,47 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="995" />
             <source>DHT port</source>
-            <translation type="unfinished" />
+            <translation>DHT-port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>URL'er til DHT-opstart</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Adskil flere URL'er med semikolon</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>TLS-indstillinger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>Deaktivér TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>Tillad TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>Kræv TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>Tillad ikke-betroede certifikater for hubber</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>Tillad ikke-betroede certifikater for klienter</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
@@ -8413,27 +8499,27 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="30" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>Hentninger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="36" />
             <source>Directories</source>
-            <translation type="unfinished" />
+            <translation>Mapper</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="60" />
             <source>Download directory</source>
-            <translation type="unfinished" />
+            <translation>Hentemappe</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="67" />
             <source>Use unfinished downloads directory</source>
-            <translation type="unfinished" />
+            <translation>Brug mappe til ufærdige hentninger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="106" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>Grænser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="124" />
@@ -8441,65 +8527,71 @@ p, li { white-space: pre-wrap; }
 designed to prevent new downloads if your existing downloads
 exceed a specific threshold. It's measured in kibibytes per second,
 and a value of zero will disable this limit.</source>
-            <translation type="unfinished" />
+            <translation>Dette er en anden måde at begrænse samtidige hentninger på.
+Den forhindrer nye hentninger, hvis de eksisterende
+overskrider en bestemt grænse. Den måles i kibibyte pr. sekund,
+og værdien nul deaktiverer denne grænse.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="137" />
             <source>This limits the number of simultaneous downloads.
 A value of 0 means no limit.</source>
-            <translation type="unfinished" />
+            <translation>Dette begrænser antallet af samtidige hentninger.
+Værdien 0 betyder ingen grænse.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="151" />
             <source>Maximum simultaneous downloads (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Højeste antal samtidige hentninger (0 = ubegrænset)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="167" />
             <source>No new downloads if speed exceeds (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Ingen nye hentninger, hvis hastigheden overstiger (KiB/s, 0 = ubegrænset)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="177" />
             <source>Note: Because of changing download speeds, this is not 100% accurate</source>
-            <translation type="unfinished" />
+            <translation>Bemærk: På grund af skiftende hentehastigheder er dette ikke 100% nøjagtigt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="190" />
             <source>Public Hub lists</source>
-            <translation type="unfinished" />
+            <translation>Offentlige hublister</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="208" />
             <source>This HTTP proxy will only be used to request
 the Public Hub List specified above.
 It's not used for uploads, downloads, or connecting to a hub.</source>
-            <translation type="unfinished" />
+            <translation>Denne HTTP-proxy bruges kun til at hente
+den offentlige hubliste, der er angivet ovenfor.
+Den bruges ikke til afsendelser, hentninger eller hubforbindelser.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="217" />
             <source>Http proxy (hub list only)</source>
-            <translation type="unfinished" />
+            <translation>HTTP-proxy (kun hubliste)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="224" />
             <source>Configure Public Hub Lists</source>
-            <translation type="unfinished" />
+            <translation>Konfigurér offentlige hublister</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="248" />
             <source>Download to</source>
-            <translation type="unfinished" />
+            <translation>Hent til</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="291" />
             <source>Path</source>
-            <translation type="unfinished" />
+            <translation>Sti</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="296" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>Alias</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="319" />
@@ -8514,78 +8606,84 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="336" />
             <source>Queue</source>
-            <translation type="unfinished" />
+            <translation>Kø</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="342" />
             <source>Auto-priority settings</source>
-            <translation type="unfinished" />
+            <translation>Indstillinger for automatisk prioritet</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="360" />
             <source>Files with the same or under the entered size
 will be set to Highest as priority. (default: 64 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Filer med en størrelse på eller under den angivne
+får højeste prioritet. (standard: 64 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Filer med en størrelse på eller under den angivne, men over grænsen
+for højeste prioritet, får høj prioritet. (standard: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Filer med en størrelse på eller under den angivne, men over grænserne
+for højeste og høj prioritet, får normal prioritet. (standard: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Filer med en størrelse på eller under den angivne, men over grænserne for højeste, høj
+og normal prioritet, får lav prioritet. (standard: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
             <source>Highest priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Maks. størrelse for højeste prioritet (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="426" />
             <source>High priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Maks. størrelse for høj prioritet (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="442" />
             <source>Normal priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Maks. størrelse for normal prioritet (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="458" />
             <source>Low priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Maks. størrelse for lav prioritet (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
             <source>Auto-drop settings</source>
-            <translation type="unfinished" />
+            <translation>Indstillinger for automatisk frakobling</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>Hvis en fils hentehastighed er under den angivne værdi,
+frakobles kilden. (standard: 1024 B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
             <source>Check every x second(s) if the source is slow. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Kontrollér hvert x sekund, om kilden er langsom. (standard: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>Tid (i sekunder), der skal gå fra hentningens start,
+før en kilde kan frakobles. (standard: 15 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8593,82 +8691,90 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Dette er den maksimale tid siden modtagelsen af den sidste datablok
+for filen. Det skal forbedre hastighedsmålingens
+nøjagtighed og forhindre, at kilder frakobles
+alene på grund af deres aktuelle inaktivitet. (standard: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>Mindste antal kilder, før nogen kilder
+frakobles. (standard: 1)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Mindste filstørrelse, før kilder frakobles (i KiB). (standard: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>Frakobl kilder under (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
             <source>Check every (s)</source>
-            <translation type="unfinished" />
+            <translation>Kontrollér hvert (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>Mindst forløbet (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
             <source>Max inactivity (s)</source>
-            <translation type="unfinished" />
+            <translation>Maks. inaktivitet (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>Mindste antal kilder online</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
             <source>Min filesize (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Mindste filstørrelse (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="686" />
             <source>Other options</source>
-            <translation type="unfinished" />
+            <translation>Andre indstillinger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="711" />
             <source>Set lowest priority for newly added files larger than low priority size</source>
-            <translation type="unfinished" />
+            <translation>Giv nye filer over størrelsesgrænsen for lav prioritet den laveste prioritet</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="714" />
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>Når dette er aktiveret, får filer over størrelsesgrænsen
+for lav prioritet den laveste prioritet.
+Ellers får filerne normal prioritet.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>Frakobl automatisk langsomme kilder for alle køelementer (undtagen fillister)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Denne indstilling fjerner langsomme kilder for alle køelementer (undtagen fillister).
+Aktivér enten "Frakobl automatisk langsomme kilder for alle køelementer"
+eller "Fjern langsomme fillister" (eller begge) for at aktivere automatisk frakobling.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
             <source>Remove slow filelists</source>
-            <translation type="unfinished" />
+            <translation>Fjern langsomme fillister</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="746" />
@@ -8676,23 +8782,27 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Med denne indstilling sletter EiskaltDC++ en filliste, hvis
+hastigheden vurderes som for lav.
+Aktivér enten "Frakobl automatisk langsomme kilder for alle køelementer"
+eller "Fjern langsomme fillister" (eller begge) for at aktivere automatisk frakobling.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>Fjern ikke kilden ved automatisk frakobling, afbryd kun forbindelsen</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>Med denne indstilling afbrydes forbindelsen til kilderne,
+men de fjernes ikke fra køen.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
             <source>Automatically search for alternative download locations</source>
-            <translation type="unfinished" />
+            <translation>Søg automatisk efter alternative hentekilder</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="778" />
@@ -8702,12 +8812,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>Med få minutters mellemrum søger klienten efter filer i din
+overførselskø for at finde flere hentekilder (flere brugere/kilder).
+Den automatiske søgning finder præcise match ved at søge via hash.
+Ulempen er, at den måske ikke finder ret mange flere kilder
+og forhindrer manuelle søgninger på hubber, hvor
+der gælder et fast minimumsinterval mellem søgninger.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>Sammenhold automatisk køen med automatiske søgeresultater</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8719,12 +8834,19 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>Aktivér for automatisk at hente en brugers filliste og finde
+kilder til filer i din overførselskø, når brugeren er
+fundet som kilde til en af de filer, du henter.
+Hvis du henter filer i sæt, er brugeren sandsynligvis kilde
+til mange flere af de filer, du henter. Aktivér, hvis du er i tvivl.
+Ulemperne er, at der kan blive tilføjet langsommere kilder,
+som muligvis forlænger hentetiden,
+og at du henter mange fillister.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
             <source>Skip zero-byte files</source>
-            <translation type="unfinished" />
+            <translation>Spring filer på nul byte over</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="818" />
@@ -8732,39 +8854,44 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>Når dette er aktiveret, springes filer på nul byte over
+uden meddelelse, når du forsøger at hente dem.
+Tomme filer indeholder nogle gange oplysninger i deres navn.
+Alle filer optager dog plads på drevet, også tomme filer.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
             <source>Don't download files already in share</source>
-            <translation type="unfinished" />
+            <translation>Hent ikke filer, der allerede er delt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>Denne indstilling forhindrer hentning af filer,
+der allerede findes i en af dine delte mapper.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
             <source>Don't download files already in the queue</source>
-            <translation type="unfinished" />
+            <translation>Hent ikke filer, der allerede er i køen</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>Denne indstilling forhindrer hentning af filer,
+der allerede findes i køen.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
             <source>SFV Check</source>
-            <translation type="unfinished" />
+            <translation>SFV-kontrol</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="873" />
             <source>Keep downloaded filelists</source>
-            <translation type="unfinished" />
+            <translation>Behold hentede fillister</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="876" />
@@ -8777,12 +8904,20 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Aktivér, hvis du vil beholde hentede fillister
+i overførselskøen, når de er færdige.
+Efter hentningen får køelementerne status 'Afsluttet',
+og du kan slette dem når som helst senere.
+Bemærk, at hvis du flytter eller sletter de hentede filer
+fra deres målplacering, slettes de tilsvarende
+afsluttede elementer ikke automatisk fra køen.
+Deaktivering af funktionen fjerner heller ikke eksisterende
+afsluttede elementer fra køen; det skal du gøre manuelt.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
             <source>Keep downloaded files</source>
-            <translation type="unfinished" />
+            <translation>Behold hentede filer</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="895" />
@@ -8798,42 +8933,53 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Aktivér, hvis du vil beholde hentede filer og mapper
+i overførselskøen, når de er færdige.
+Efter hentningen får køelementerne status 'Afsluttet',
+og du kan slette dem når som helst senere.
+Med denne funktion kan du holde styr på, hvilke filer der allerede
+er hentet, direkte i køen uden at skulle
+åbne vinduet med afsluttede hentninger.
+Bemærk, at hvis du flytter eller sletter de hentede filer
+fra deres målplacering, slettes de tilsvarende
+afsluttede elementer ikke automatisk fra køen.
+Deaktivering af funktionen fjerner heller ikke eksisterende
+afsluttede elementer fra køen; det skal du gøre manuelt.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
             <source>Compressed transfers</source>
-            <translation type="unfinished" />
+            <translation>Komprimerede overførsler</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="925" />
             <source>Segmented downloads</source>
-            <translation type="unfinished" />
+            <translation>Segmenterede hentninger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="940" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>Avanceret</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="961" />
             <source>Interval for auto search alternates (minutes)</source>
-            <translation type="unfinished" />
+            <translation>Interval for automatisk søgning efter alternative kilder (minutter)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>Segmentstørrelse (i MB, 0 = automatisk segmentstørrelse)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>Tillad samtidige afsendelser til én bruger fra flere NMDC-hubber</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>Tillad samtidige afsendelser til én IP</translation>
         </message>
     </context>
     <context>
@@ -8841,12 +8987,12 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="24" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Grundlæggende</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="30" />
             <source>Language file</source>
-            <translation type="unfinished" />
+            <translation>Sprogfil</translation>
         </message>
         <message>
             <source>Change</source>
@@ -8855,326 +9001,329 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="61" />
             <source>Remember window position on exit</source>
-            <translation type="unfinished" />
+            <translation>Husk vinduets placering ved afslutning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="71" />
             <source>Always hide window to system tray at startup</source>
-            <translation type="unfinished" />
+            <translation>Skjul altid vinduet i statusområdet ved start</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="78" />
             <source>Always show window at startup</source>
-            <translation type="unfinished" />
+            <translation>Vis altid vinduet ved start</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="124" />
             <source>Don't show icons in menus (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Vis ikke ikoner i menuer (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="132" />
             <source>Use default ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Brug standardværktøjslinje (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="137" />
             <source>Use multi-line ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Brug værktøjslinje med flere rækker (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="142" />
             <source>Use SideBar instead of ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Brug sidepanel i stedet for værktøjslinje (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="164" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>Chat</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="170" />
             <source>Show joins</source>
-            <translation type="unfinished" />
+            <translation>Vis tilslutninger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="180" />
             <source>Show joins only for favorite users</source>
-            <translation type="unfinished" />
+            <translation>Vis kun tilslutninger for favoritbrugere</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="187" />
             <source>Show hidden users</source>
-            <translation type="unfinished" />
+            <translation>Vis skjulte brugere</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="194" />
             <source>Ignore private messages from Hub</source>
-            <translation type="unfinished" />
+            <translation>Ignorér private beskeder fra hub</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="201" />
             <source>Ignore private messages from Bot</source>
-            <translation type="unfinished" />
+            <translation>Ignorér private beskeder fra bot</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="208" />
             <source>Redirect messages from Bot to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Omdirigér beskeder fra bot til hovedchatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="215" />
             <source>Redirect new personal messages to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Omdirigér nye personlige beskeder til hovedchatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="222" />
             <source>Do not change focus on new incoming private messages</source>
-            <translation type="unfinished" />
+            <translation>Skift ikke fokus ved nye indgående private beskeder</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="232" />
             <source>Use separator for unread messages in the chat</source>
-            <translation type="unfinished" />
+            <translation>Brug skillelinje til ulæste beskeder i chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="239" />
             <source>Filter kick-messages from the chat</source>
-            <translation type="unfinished" />
+            <translation>Filtrér udelukkelsesbeskeder fra chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="246" />
             <source>Use Ctrl+Enter to send messages</source>
-            <translation type="unfinished" />
+            <translation>Brug Ctrl+Enter til at sende beskeder</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="256" />
             <source>Enable emoticons</source>
-            <translation type="unfinished" />
+            <translation>Aktivér humørikoner</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="263" />
             <source>If checked, you'll see emoticons even in the middle of words.
 If unchecked, you'll see emoticons only if they are isolated
 from other words by spaces.</source>
-            <translation type="unfinished" />
+            <translation>Hvis markeret, vises humørikoner selv midt i ord.
+Ellers vises de kun, hvis de er adskilt
+fra andre ord med mellemrum.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="268" />
             <source>Force emoticon parsing</source>
-            <translation type="unfinished" />
+            <translation>Gennemtving fortolkning af humørikoner</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="275" />
             <source>Use emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Brug humørikonpanel</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="282" />
             <source>Autohide emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Skjul automatisk humørikonpanel</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="303" />
             <source>Chat (extended)</source>
-            <translation type="unfinished" />
+            <translation>Chat (udvidet)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="317" />
             <source>Double click action</source>
-            <translation type="unfinished" />
+            <translation>Handling ved dobbeltklik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="331" />
             <location filename="../ui/UISettingsGUI.ui" line="350" />
             <source>Insert nick into input widget</source>
-            <translation type="unfinished" />
+            <translation>Indsæt kaldenavn i indtastningsfelt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="336" />
             <location filename="../ui/UISettingsGUI.ui" line="355" />
             <source>Get file list</source>
-            <translation type="unfinished" />
+            <translation>Hent filliste</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="341" />
             <location filename="../ui/UISettingsGUI.ui" line="360" />
             <source>Private message</source>
-            <translation type="unfinished" />
+            <translation>Privat besked</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="377" />
             <source>Application unit base</source>
-            <translation type="unfinished" />
+            <translation>Programmets enhedsgrundlag</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="421" />
             <source>Timestamp</source>
-            <translation type="unfinished" />
+            <translation>Tidsstempel</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="440" />
             <source>Middle click action</source>
-            <translation type="unfinished" />
+            <translation>Handling ved klik med midterknap</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>Vis kibibyte (KiB) eller kilobyte (KB) osv.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Vinduesadfærd</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Minimér til statusikon ved klik på lukkeknappen</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Statusikon</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Brug farvet statusikon</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Brug ensfarvet statusikon</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>Metrisk</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
             <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use AM/PM display. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use am/pm display. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disse udtryk kan bruges til klokkeslættet:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Udtryk&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Uddata&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;timen uden foranstillet nul (0 til 23 eller 1 til 12 ved AM/PM-visning)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;timen med foranstillet nul (00 til 23 eller 01 til 12 ved AM/PM-visning)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;timen uden foranstillet nul (0 til 23, også ved AM/PM-visning)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;timen med foranstillet nul (00 til 23, også ved AM/PM-visning)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;minuttet uden foranstillet nul (0 til 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;minuttet med foranstillet nul (00 til 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;sekundet uden foranstillet nul (0 til 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;sekundet med foranstillet nul (00 til 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;millisekunderne uden foranstillede nuller (0 til 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;millisekunderne med foranstillede nuller (000 til 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP eller A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;brug AM/PM-visning. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; erstattes af enten &amp;quot;AM&amp;quot; eller &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap eller a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;brug am/pm-visning. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; erstattes af enten &amp;quot;am&amp;quot; eller &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;tidszonen (for eksempel &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
             <source>Default action with magnet</source>
-            <translation type="unfinished" />
+            <translation>Standardhandling for magnetlink</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="473" />
             <source>Ask</source>
-            <translation type="unfinished" />
+            <translation>Spørg</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="478" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="483" />
             <location filename="../ui/UISettingsGUI.ui" line="795" />
             <source>Download</source>
-            <translation type="unfinished" />
+            <translation>Hent</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="508" />
             <source>Remember outgoing messages (0 = don't remember)</source>
-            <translation type="unfinished" />
+            <translation>Husk udgående beskeder (0 = husk ikke)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="537" />
             <source>Maximum paragraphs</source>
-            <translation type="unfinished" />
+            <translation>Højeste antal afsnit</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="563" />
             <source>Separator in chat</source>
-            <translation type="unfinished" />
+            <translation>Skillelinje i chat</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="592" />
             <source>Highlight favorite users in user list</source>
-            <translation type="unfinished" />
+            <translation>Fremhæv favoritbrugere på brugerlisten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="599" />
             <source>Depending on hub configuration: information about
 them is usually available only to operators</source>
-            <translation type="unfinished" />
+            <translation>Afhænger af hubbens konfiguration: Oplysninger om
+dem er normalt kun tilgængelige for operatører</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="603" />
             <source>Show ip-addresses of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Vis brugernes IP-adresser i chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="610" />
             <source>Show country of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Vis brugernes lande i chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="617" />
             <source>Parse BBCode</source>
-            <translation type="unfinished" />
+            <translation>Fortolk BBCode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="638" />
             <source>Colors</source>
-            <translation type="unfinished" />
+            <translation>Farver</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="644" />
             <source>Text colors in chat</source>
-            <translation type="unfinished" />
+            <translation>Tekstfarver i chat</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="666" />
             <source>Highlighting of search results in the chat</source>
-            <translation type="unfinished" />
+            <translation>Fremhævning af søgeresultater i chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="675" />
             <location filename="../ui/UISettingsGUI.ui" line="733" />
             <source>Color</source>
-            <translation type="unfinished" />
+            <translation>Farve</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="695" />
             <location filename="../ui/UISettingsGUI.ui" line="750" />
             <source>Transparency</source>
-            <translation type="unfinished" />
+            <translation>Gennemsigtighed</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="724" />
             <source>Highlighting of already shared files</source>
-            <translation type="unfinished" />
+            <translation>Fremhævning af allerede delte filer</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="779" />
             <source>Transfer colors</source>
-            <translation type="unfinished" />
+            <translation>Overførselsfarver</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="802" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>Afsendelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="829" />
             <source>Reset</source>
-            <translation type="unfinished" />
+            <translation>Nulstil</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="841" />
             <source>Change background color in the chat</source>
-            <translation type="unfinished" />
+            <translation>Skift baggrundsfarve i chatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
-            <translation type="unfinished" />
+            <translation>Skrifttyper</translation>
         </message>
     </context>
     <context>
@@ -9182,33 +9331,33 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Ryd søgehistorik ved afslutning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Ryd historik for hentemapper ved afslutning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
             <location filename="../ui/UISettingsHistory.ui" line="113" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Ryd nu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Antal elementer i søgehistorikken, der gemmes:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Antal elementer i historikken for hentemapper, der gemmes:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>Husk TTH-søgeudtryk</translation>
         </message>
     </context>
     <context>
@@ -9216,17 +9365,17 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="477" />
             <source>Log directory</source>
-            <translation type="unfinished" />
+            <translation>Logmappe</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="495" />
             <source>All logs generated by EiskaltDC++ will be put in this subdirectory.</source>
-            <translation type="unfinished" />
+            <translation>Alle logge fra EiskaltDC++ placeres i denne undermappe.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="20" />
             <source>Private messages</source>
-            <translation type="unfinished" />
+            <translation>Private beskeder</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="41" />
@@ -9238,7 +9387,7 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsLog.ui" line="315" />
             <location filename="../ui/UISettingsLog.ui" line="441" />
             <source>File</source>
-            <translation type="unfinished" />
+            <translation>Fil</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="51" />
@@ -9249,42 +9398,42 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsLog.ui" line="281" />
             <location filename="../ui/UISettingsLog.ui" line="325" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>Tekst</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="64" />
             <source>Main chat</source>
-            <translation type="unfinished" />
+            <translation>Hovedchat</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="108" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>Hentninger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="152" />
             <source>Uploads</source>
-            <translation type="unfinished" />
+            <translation>Afsendelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="243" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Søgeovervågning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Fejlfindingskonsol</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
             <source>System messages</source>
-            <translation type="unfinished" />
+            <translation>Systemmeddelelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="372" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>Statusmeddelelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="385" />
@@ -9293,37 +9442,41 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Hjælp&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
             <source>Auto search alternates</source>
-            <translation type="unfinished" />
+            <translation>Automatisk søgning efter alternative kilder</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Diagnostisk nedbrudslog</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Gemmer en vedvarende, kompakt diagnoselog med Qt-advarsler, livstegn, afslutningsmarkører og markører for fatale signaler. Nyttig, når programmet lukker efter at have kørt længe.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Skriver til logmappen ovenfor. Bevarer det sidste livstegn før nedbrud eller tvungen afslutning.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
             <source>Own filelist uploads</source>
-            <translation type="unfinished" />
+            <translation>Afsendelser af egen filliste</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="196" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>Afsluttede hentninger</translation>
         </message>
     </context>
     <context>
@@ -9331,85 +9484,85 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="24" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>Tekst</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="30" />
             <source>Ask confirm before exit</source>
-            <translation type="unfinished" />
+            <translation>Bed om bekræftelse før afslutning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="40" />
             <source>Enable notifications</source>
-            <translation type="unfinished" />
+            <translation>Aktivér meddelelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="49" />
             <location filename="../ui/UISettingsNotification.ui" line="201" />
             <source>Your nick is mentioned in main chat</source>
-            <translation type="unfinished" />
+            <translation>Dit kaldenavn nævnes i hovedchatten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="56" />
             <location filename="../ui/UISettingsNotification.ui" line="242" />
             <source>Private message</source>
-            <translation type="unfinished" />
+            <translation>Privat besked</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="63" />
             <location filename="../ui/UISettingsNotification.ui" line="290" />
             <source>Transfer done</source>
-            <translation type="unfinished" />
+            <translation>Overførsel færdig</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>Favoritbruger tilslutter/forlader</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
             <source>Allow other types of notifications</source>
-            <translation type="unfinished" />
+            <translation>Tillad andre typer meddelelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="91" />
             <source>Enable notifications with not active main window</source>
-            <translation type="unfinished" />
+            <translation>Aktivér meddelelser, når hovedvinduet er inaktivt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="98" />
             <source>Enable notifications with active main window</source>
-            <translation type="unfinished" />
+            <translation>Aktivér meddelelser, når hovedvinduet er aktivt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="105" />
             <source>Change icon when main window is visible</source>
-            <translation type="unfinished" />
+            <translation>Skift ikon, når hovedvinduet er synligt</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="133" />
             <source>Notification module</source>
-            <translation type="unfinished" />
+            <translation>Meddelelsesmodul</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="153" />
             <source>Default (Qt)</source>
-            <translation type="unfinished" />
+            <translation>Standard (Qt)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="158" />
             <source>D-Bus</source>
-            <translation type="unfinished" />
+            <translation>D-Bus</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="186" />
             <source>Sound</source>
-            <translation type="unfinished" />
+            <translation>Lyd</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="192" />
             <source>Enable sounds</source>
-            <translation type="unfinished" />
+            <translation>Aktivér lyde</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="225" />
@@ -9417,29 +9570,31 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="314" />
             <location filename="../ui/UISettingsNotification.ui" line="355" />
             <source>Test</source>
-            <translation type="unfinished" />
+            <translation>Test</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>Afspil lyd ved aktivt privatbeskedvindue</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
             <source>Favorite user event</source>
-            <translation type="unfinished" />
+            <translation>Hændelse for favoritbruger</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="388" />
             <source>Use external command</source>
-            <translation type="unfinished" />
+            <translation>Brug ekstern kommando</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="409" />
             <source>If your sound files' format is unsupported by Qt, you can define
 custom media player here to play them.
 For example: /usr/bin/mplayer</source>
-            <translation type="unfinished" />
+            <translation>Hvis Qt ikke understøtter lydfilernes format, kan du angive
+en anden medieafspiller her til at afspille dem.
+For eksempel: /usr/bin/mplayer</translation>
         </message>
     </context>
     <context>
@@ -9448,29 +9603,32 @@ For example: /usr/bin/mplayer</source>
             <location filename="../ui/UISettingsPersonal.ui" line="62" />
             <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Denne beskrivelse vises på brugerlisten.
+Den kan tilsidesættes for hver hub i favorithubbens egenskaber.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="70" />
             <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
-            <translation type="unfinished" />
+            <translation>Hvis du er fraværende, sendes denne besked til alle,
+der sender dig en privat besked.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="78" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Dette kaldenavn identificerer dig, når du forbinder til en hub.
+Det kan tilsidesættes for hver hub i favorithubbens egenskaber.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
             <source>E-Mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="100" />
@@ -9480,17 +9638,17 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="107" />
             <source>Away message</source>
-            <translation type="unfinished" />
+            <translation>Fraværsbesked</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="114" />
             <source>Auto away interval (min)</source>
-            <translation type="unfinished" />
+            <translation>Interval for automatisk fravær (min)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="134" />
             <source>This field is for sharing your email address, if you wish it.</source>
-            <translation type="unfinished" />
+            <translation>Her kan du angive din e-mailadresse, hvis du ønsker det.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="184" />
@@ -9503,12 +9661,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Denne rullemenu indeholder almindelige sendehastigheder (i Mbit/s).
+Vælg den, der ligger nærmest din egen.
+Angiv ikke din hentehastighed; indstillingen angiver,
+hvor hurtig en kilde du sandsynligvis er for andre brugere.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9523,7 +9684,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="264" />
             <source>Default hub encoding</source>
-            <translation type="unfinished" />
+            <translation>Standardtegnkodning for hubber</translation>
         </message>
     </context>
     <context>
@@ -9531,57 +9692,57 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="27" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Grundlæggende</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="33" />
             <source>View share in simple mode</source>
-            <translation type="unfinished" />
+            <translation>Vis deling i enkel tilstand</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="65" />
             <source>Path</source>
-            <translation type="unfinished" />
+            <translation>Sti</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="70" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="75" />
             <source>Size</source>
-            <translation type="unfinished" />
+            <translation>Størrelse</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="98" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>Delt i alt: %1</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>Tilføj</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
             <source>Exceptions</source>
-            <translation type="unfinished" />
+            <translation>Undtagelser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="149" />
             <source>Don't share files and folders containing:</source>
-            <translation type="unfinished" />
+            <translation>Del ikke filer og mapper, som indeholder:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="156" />
             <source>Here you can specify templates for files you don't want to share. </source>
-            <translation type="unfinished" />
+            <translation>Her kan du angive mønstre for filer, du ikke vil dele. </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="165" />
@@ -9591,12 +9752,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="175" />
             <source>Select and add the directory</source>
-            <translation type="unfinished" />
+            <translation>Vælg og tilføj mappen</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="185" />
             <source>Edit</source>
-            <translation type="unfinished" />
+            <translation>Redigér</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="195" />
@@ -9606,12 +9767,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="221" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>Avanceret</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="233" />
             <source>Follow symlinks</source>
-            <translation type="unfinished" />
+            <translation>Følg symbolske links</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="246" />
@@ -9620,72 +9781,76 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>Del filer med attributten Skjult og filer i mapper med
+attributten Skjult.
+Hvis dette er slået fra, deles filer, hvis navn begynder med et punktum, ikke.
+Bemærk: Indstillingen kræver opdatering af fillisten
+og kan få klienten til at se ud, som om den er frosset.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
             <source>Share hidden files</source>
-            <translation type="unfinished" />
+            <translation>Del skjulte filer</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="266" />
             <source>Share temporary files</source>
-            <translation type="unfinished" />
+            <translation>Del midlertidige filer</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>Spring tomme filer over</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
             <source>Auto remove non-existing directories</source>
-            <translation type="unfinished" />
+            <translation>Fjern automatisk mapper, der ikke findes</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="289" />
             <source>Use fast hash</source>
-            <translation type="unfinished" />
+            <translation>Brug hurtig hashberegning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="302" />
             <source>Buffer size (MiB)</source>
-            <translation type="unfinished" />
+            <translation>Bufferstørrelse (MiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="315" />
             <source>8</source>
-            <translation type="unfinished" />
+            <translation>8</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
             <source>FastHash options (restart needed)</source>
-            <translation type="unfinished" />
+            <translation>FastHash-indstillinger (kræver genstart)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="376" />
             <source>Private page mapping</source>
-            <translation type="unfinished" />
+            <translation>Privat hukommelsessideafbildning</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="383" />
             <source>No reserve</source>
-            <translation type="unfinished" />
+            <translation>Ingen reservation</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="397" />
             <source>Proactive read from disk</source>
-            <translation type="unfinished" />
+            <translation>Læs proaktivt fra disk</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>Brug kun ADL-søgning i egen filliste</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
             <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Åbn automatisk ekstra plads, hvis hastigheden er under (KiB/s, 0 = ubegrænset)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="440" />
@@ -9694,39 +9859,44 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>Hvis den gennemsnitlige sendehastighed falder under den angivne værdi,
+tildeles en ekstra sendeplads.
+Sådanne pladser tildeles højst én gang hvert 30. sekund.
+Hvis hastigheden for de oprindelige afsendelser stiger,
+lukkes den tildelte plads ikke.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>Forsinkelse af hashberegning ved start (sekunder, -1 = uendelig)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
             <location filename="../ui/UISettingsSharing.ui" line="511" />
             <source>Here you can set time interval of auto refreshing your share.</source>
-            <translation type="unfinished" />
+            <translation>Her kan du angive intervallet for automatisk opdatering af din deling.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="495" />
             <source>Auto refresh time (minutes, 0 = off)</source>
-            <translation type="unfinished" />
+            <translation>Automatisk opdateringsinterval (minutter, 0 = fra)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Maks. hashhastighed (MB/s) (0 = ubegrænset)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />
             <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
-            <translation type="unfinished" />
+            <translation>Her kan du begrænse hashberegningens maksimale hastighed,
+hvis systemet bliver langsomt under beregningen.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="554" />
             <source>Upload slots</source>
-            <translation type="unfinished" />
+            <translation>Sendepladser</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="564" />
@@ -9739,7 +9909,15 @@ There's a max of 3 connections in addition to normal slots,
 these are called mini slots.
 Note: If a user leaves the hub, EiskaltDC++ will close his slots;
 if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</source>
-            <translation type="unfinished" />
+            <translation>Angiv antallet af pladser, som andre brugere kan optage
+for at hente filer fra dig. En fjernbruger kan kun bruge
+én plads pr. hub, hvor I begge er tilsluttet.
+EiskaltDC++ kan sende fillister og filer under 64 KiB
+til andre DC++-brugere uden at kræve en plads.
+Der er højst 3 forbindelser ud over de normale pladser;
+disse kaldes minipladser.
+Bemærk: Hvis en bruger forlader hubben, lukker EiskaltDC++ brugerens pladser;
+hvis brugeren vender tilbage inden for 10 minutter, tildeles en plads igen.</translation>
         </message>
     </context>
     <context>
@@ -9747,7 +9925,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISettingsUC.ui" line="51" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>Tilføj</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsUC.ui" line="58" />
@@ -9757,17 +9935,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISettingsUC.ui" line="65" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Fjern</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsUC.ui" line="72" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>Op</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsUC.ui" line="92" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>Ned</translation>
         </message>
     </context>
     <context>
@@ -9776,27 +9954,27 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
             <location filename="../ui/UIShareBrowserSearch.ui" line="14" />
             <location filename="../ui/UIShareBrowserSearch.ui" line="25" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Søg kun efter filer</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Søg kun efter mapper</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>Søg efter alt</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="59" />
@@ -9809,12 +9987,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISpy.ui" line="35" />
             <source>Ignore TTH search</source>
-            <translation type="unfinished" />
+            <translation>Ignorér TTH-søgning</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="45" />
             <source>Autoscrolling</source>
-            <translation type="unfinished" />
+            <translation>Automatisk rulning</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="65" />
@@ -9832,92 +10010,92 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="14" />
             <source>New command</source>
-            <translation type="unfinished" />
+            <translation>Ny kommando</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="23" />
             <source>Type</source>
-            <translation type="unfinished" />
+            <translation>Type</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="32" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>Skillelinje</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="42" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>Chat</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="49" />
             <source>Raw</source>
-            <translation type="unfinished" />
+            <translation>Rå</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="56" />
             <source>PM</source>
-            <translation type="unfinished" />
+            <translation>Privat besked</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="66" />
             <source>Context</source>
-            <translation type="unfinished" />
+            <translation>Kontekst</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="75" />
             <source>Hub</source>
-            <translation type="unfinished" />
+            <translation>Hub</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="82" />
             <source>Search</source>
-            <translation type="unfinished" />
+            <translation>Søg</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="89" />
             <source>User</source>
-            <translation type="unfinished" />
+            <translation>Bruger</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="96" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>Filbrowser</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="106" />
             <source>Parameters</source>
-            <translation type="unfinished" />
+            <translation>Parametre</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="139" />
             <source>Name</source>
-            <translation type="unfinished" />
+            <translation>Navn</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="146" />
             <source>Command</source>
-            <translation type="unfinished" />
+            <translation>Kommando</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="153" />
             <source>Hub address</source>
-            <translation type="unfinished" />
+            <translation>Hubadresse</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="160" />
             <source>To</source>
-            <translation type="unfinished" />
+            <translation>Til</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="167" />
             <source>Send once per nick</source>
-            <translation type="unfinished" />
+            <translation>Send én gang pr. kaldenavn</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="191" />
             <source>Result</source>
-            <translation type="unfinished" />
+            <translation>Resultat</translation>
         </message>
     </context>
     <context>
@@ -9925,62 +10103,62 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="147" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Hubrolle&lt;/b&gt;: Operatør</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="149" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Hubrolle&lt;/b&gt;: Bruger</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="152" />
             <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;br/&gt;&lt;b&gt;Favoritbruger&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="185" />
             <source>Nick</source>
-            <translation type="unfinished" />
+            <translation>Kaldenavn</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="186" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>Kommentar</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="187" />
             <source>Tag</source>
-            <translation type="unfinished" />
+            <translation>Tag</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="188" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>Forbindelse</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="189" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="190" />
             <source>Share</source>
-            <translation type="unfinished" />
+            <translation>Deling</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Nøjagtig delingsstørrelse</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
             <source>IP</source>
-            <translation type="unfinished" />
+            <translation>IP</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
@@ -9988,12 +10166,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>Brugerfladeindstilling %1: %2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>Skift brugerfladeindstilling %1 til %2</translation>
         </message>
     </context>
     <context>
@@ -10001,17 +10179,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforUtil.cpp" line="1324" />
             <source>System default</source>
-            <translation type="unfinished" />
+            <translation>Systemstandard</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="1643" />
             <source>Offline</source>
-            <translation type="unfinished" />
+            <translation>Offline</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="1746" />
             <source>User commands</source>
-            <translation type="unfinished" />
+            <translation>Brugerkommandoer</translation>
         </message>
     </context>
     <context>

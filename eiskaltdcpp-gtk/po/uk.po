@@ -1236,7 +1236,7 @@ msgid ""
 "\n"
 "EiskaltDC++ version: %s\n"
 "DC++ core version: %s"
-msgstr ""
+msgstr "Клієнт DC++ на основі вихідного коду FreeDC++ та LinuxDC++\n\nВерсія EiskaltDC++: %s\nВерсія ядра DC++: %s"
 
 #: ../ui/cmddebug.ui:99
 msgid "DETECTION"

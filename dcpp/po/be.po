@@ -130,11 +130,11 @@ msgstr "Памылка злучэньня: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Заблакавана злучэнне C-C з хабам ('%1%:%2%'; запыт ад '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Блакаванне '%1%', выяўлена магчымая DDoS-атака (хаб-крыніца '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -218,7 +218,7 @@ msgstr "Не ўдалося прачытаць асабісты ключ"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Распакованыя даныя перавышаюць абмежаванне памеру"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -238,7 +238,7 @@ msgstr "Карыстальнікі"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Няправільнае пашырэнне спіса файлаў (патрэбна .xml або .bz2)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -286,7 +286,7 @@ msgstr "Самарушна злучацца суполцы (перароблен
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Няправільны URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -332,7 +332,7 @@ msgstr "Не ўдалося стварыць скарот да %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Памылка кадавання перадачы (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -340,7 +340,7 @@ msgstr "Бясконцая пятля перанакіроўваньня (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Занадта шмат даных у целе адказу (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -379,7 +379,7 @@ msgstr " Порт DHT (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Перанакіраванне партоў створана (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%) праз інтэрфейс %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
@@ -398,15 +398,15 @@ msgstr "Не ўдалося адлюстраваць порты"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Перанакіраванне партоў падоўжана"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Перанакіраванне партоў адноўлена"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Не ўдалося падоўжыць перанакіраванне партоў; паўтор праз 60 секунд"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -430,7 +430,7 @@ msgstr "Тэма асяродку:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Занадта малы аб'ём агульных файлаў для спампоўвання ад "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -544,7 +544,7 @@ msgstr "%1% — супала файлаў: %2%"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "Памылка SSL: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -674,7 +674,7 @@ msgstr "Сьпіс файлаў абнавілі"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Абнаўленне спіса файлаў скасавана праз змену агульных каталогаў"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -688,23 +688,23 @@ msgstr "Невядомая памылка: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Алгарытм шыфравання Shadowsocks не падтрымліваецца"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Не ўдалося ініцыялізаваць вывядзенне ключа Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Не ўдалося вывесці падключ Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Не ўдалося ініцыялізаваць шыфраванне Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Памылка шыфравання Shadowsocks"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -714,15 +714,15 @@ msgstr "Паслужніку Socks не ўдалося наладзіць злу
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Сервер Shadowsocks не змог усталяваць злучэнне"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Пароль Shadowsocks не зададзены."
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Няправільны мэтавы адрас Shadowsocks"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -739,83 +739,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Не ўдалося ініцыялізаваць кантэкст SOCKS TLS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Не ўдалося ініцыялізаваць сеанс SOCKS TLS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Не ўдалося прывязаць сеанс SOCKS TLS да сокета"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Час чакання ўзгаднення SOCKS TLS скончыўся"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Не ўдалося ўзгадніць SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Памылка чытання SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Памылка запісу SOCKS TLS: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Няправільны адказ рэтранслятара Shadowsocks UDP"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Няправільны адрас у адказе рэтранслятара Shadowsocks UDP"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Не ўдалося расшыфраваць адказ рэтранслятара Shadowsocks UDP"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Не ўдалося стварыць соль Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Не ўдалося стварыць запаўненне Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Памылка расшыфравання Shadowsocks"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Няправільны памер карыснай нагрузкі Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Паток Shadowsocks скончыўся няпоўным кадрам"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Не ўдалося стварыць сеанс Shadowsocks UDP"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Рэтранслятар Shadowsocks UDP адключаны"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Рэтранслятар Shadowsocks UDP не наладжаны"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Не ўдалося стварыць аднаразовае значэнне Shadowsocks UDP"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Лічыльнік пакетаў Shadowsocks UDP вычарпаны"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -827,7 +827,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Няправільны мэтавы адрас SOCKS5 UDP"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -930,40 +930,40 @@ msgstr "Запісалі байтаў болей за тое, колькі бы�
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Пачатковае падключэнне да DHT пачата"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Памылка пачатковага падключэння да DHT: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Пачатковае падключэнне да DHT паспяхова скончана."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Файл апублікаваны: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Частковы файл апублікаваны: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: Усталяваны стан UDP за міжсеткавым экранам (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Наш порт UDP, відаць, адкрыты (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT зноў уключаны"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT адключаны: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "Памылка SSL: %1% (%2%, %3%)"

@@ -110,7 +110,14 @@ EiskaltDC++ is a cross-platform program that uses the Direct Connect and ADC pro
 Keys:
   -h, --help	 Show this message
   -V, --version	 Show version string</source>
-            <translation type="unfinished" />
+            <translation>用法：
+  eiskaltdcpp-qt &lt;magnet link&gt; &lt;dchub://link&gt; &lt;adc(s)://link&gt;
+  eiskaltdcpp-qt &lt;Key&gt;
+EiskaltDC++ 是使用 Direct Connect 和 ADC 协议的跨平台程序。
+
+选项：
+  -h, --help	 显示此消息
+  -V, --version	 显示版本字符串</translation>
         </message>
     </context>
     <context>
@@ -175,12 +182,12 @@ Keys:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">地址</translation>
+            <translation>地址</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>选择图片</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -203,7 +210,7 @@ Keys:
         <message>
             <location filename="../src/CmdDebug.cpp" line="74" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>调试控制台</translation>
         </message>
     </context>
     <context>
@@ -245,19 +252,19 @@ Keys:
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT 引导 URL</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>DHT 引导 URL</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -270,7 +277,7 @@ Keys:
         <message>
             <location filename="../ui/UIDialogScriptConsole.ui" line="65" />
             <source>Code</source>
-            <translation type="unfinished" />
+            <translation>代码</translation>
         </message>
         <message>
             <location filename="../ui/UIDialogScriptConsole.ui" line="89" />
@@ -443,7 +450,7 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="801" />
             <source>Total files: &lt;b&gt;%1&lt;/b&gt; Total size: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>文件总数：&lt;b&gt;%1&lt;/b&gt; 总大小：&lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.h" line="90" />
@@ -680,7 +687,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="285" />
             <source>Browse Files</source>
-            <translation type="unfinished" />
+            <translation>浏览文件</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.h" line="48" />
@@ -730,27 +737,27 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;媒体信息：&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;视频：&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;音频：&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;比特率：&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;分辨率：&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
@@ -775,22 +782,22 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>比特率</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Resolution</source>
-            <translation type="unfinished" />
+            <translation>分辨率</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Video</source>
-            <translation type="unfinished" />
+            <translation>视频</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Audio</source>
-            <translation type="unfinished" />
+            <translation>音频</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="317" />
@@ -939,7 +946,7 @@ Keys:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1% 剩余 %2</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
@@ -1074,7 +1081,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="726" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>备注</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="727" />
@@ -1084,7 +1091,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1099,7 +1106,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="731" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>电子邮件</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="733" />
@@ -1143,7 +1150,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>搜索</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
@@ -1158,7 +1165,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>筛选</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1463,13 +1470,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - 重建哈希值
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - 更新自己的文件列表
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1489,13 +1498,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - 将界面选项 param 设置为 value（不指定 value 则返回该选项的当前值）
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - 将核心选项 param 设置为 value（不指定 value 则返回该选项的当前值）
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
@@ -1832,12 +1843,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>消灭所有人类？</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>确认操作</translation>
         </message>
         <message>
             <source>Enter user nick</source>
@@ -1951,7 +1962,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>匹配所有文件列表</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
@@ -2135,12 +2146,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>调试控制台</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>记事本</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1741" />
@@ -2215,7 +2226,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">退出</translation>
+            <translation>退出</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2239,7 +2250,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>源代码 (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2315,7 +2326,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT 节点：%1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2336,12 +2347,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2159" />
             <source>Free %1</source>
-            <translation type="unfinished" />
+            <translation>可用 %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2162" />
             <source>Free %1 of %2</source>
-            <translation type="unfinished" />
+            <translation>可用 %1，共 %2</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2214" />
@@ -2389,7 +2400,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>种子文件</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2358" />
@@ -2424,12 +2435,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>打开磁力链接或种子文件</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>输入磁力链接或本地 .torrent 文件路径：</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
@@ -2444,7 +2455,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>种子支持尚未就绪。</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2509,142 +2520,142 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>请通过 &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; 报告错误。&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
             <source>&lt;b&gt;Developers&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;开发者&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
             <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;图形文件&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3373" />
             <source>Russian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>俄语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3379" />
             <source>Belarusian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>白俄罗斯语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3383" />
             <source>Hungarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>匈牙利语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3387" />
             <source>French translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>法语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3390" />
             <source>Polish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>波兰语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3393" />
             <source>Ukrainian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>乌克兰语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>塞尔维亚语（西里尔字母）翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
             <source>Serbian (Latin) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>塞尔维亚语（拉丁字母）翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3405" />
             <source>Spanish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>西班牙语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
             <source>Basque translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>巴斯克语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
             <source>Bulgarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>保加利亚语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3415" />
             <source>Slovak translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>斯洛伐克语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3418" />
             <source>Czech translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>捷克语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3421" />
             <source>German translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>德语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3426" />
             <source>Greek translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>希腊语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3429" />
             <source>Italian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>意大利语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3433" />
             <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>葡萄牙语（巴西）翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3436" />
             <source>Vietnamese translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>越南语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3439" />
             <source>Chinese (China) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>中文（中国）翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3442" />
             <source>Swedish (Sweden) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>瑞典语（瑞典）翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>土耳其语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>丹麦语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>格鲁吉亚语翻译&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
             <source>Additional</source>
-            <translation type="unfinished" />
+            <translation>附加选项</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3681" />
@@ -2659,22 +2670,22 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>设置速度限制</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>种子：%1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>需要昵称</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>连接到集线器之前，请在首选项中输入昵称。</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2685,7 +2696,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>下载程序</translation>
         </message>
         <message>
             <source>Please use &lt;a href="https://github.com/eiskaltdcpp/eiskaltdcpp/issues"&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
@@ -2695,18 +2706,18 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3302" />
             <location filename="../src/MainWindow.cpp" line="3330" />
             <source>lead developer</source>
-            <translation type="unfinished" />
+            <translation>首席开发者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>发布经理</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>Arch Linux 维护者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2714,43 +2725,43 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3344" />
             <location filename="../src/MainWindow.cpp" line="3349" />
             <source>developer</source>
-            <translation type="unfinished" />
+            <translation>开发者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>Debian/Ubuntu 维护者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>翻译协调员</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>macOS 维护者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>MS Windows 维护者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>项目标志设计者</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>标志的细微改进</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
             <source>Participate in the translation. It is easy:</source>
-            <translation type="unfinished" />
+            <translation>参与翻译很简单：</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3491" />
@@ -2760,7 +2771,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[未命名]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
@@ -2856,7 +2867,7 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="120" />
             <source>Additional</source>
-            <translation type="unfinished" />
+            <translation>附加选项</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="121" />
@@ -2876,7 +2887,7 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="133" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>设置速度限制</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="134" />
@@ -3025,7 +3036,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>正在刷新公共集线器列表…</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3040,7 +3051,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>集线器列表已下载… (%1)</translation>
         </message>
         <message>
             <source>Hub list downloaded... (%1 %2) </source>
@@ -3053,7 +3064,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>已加载本地缓存（截至 %1）的集线器列表 (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
@@ -3080,7 +3091,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>公共集线器列表 URL</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3109,23 +3120,28 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>检测到旧版或不兼容的 EiskaltDC++ 图形界面设置。
+
+已保留集线器、账户信息、共享、下载和历史记录等安全设置。旧配置中的主题、聊天颜色、窗口布局和表格列状态已重置，因为这些设置可能导致当前 macOS 上的浅色/深色模式实时切换异常。
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>先前的图形界面配置已备份至：
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>无法备份先前的图形界面配置，但仍已丢弃不兼容的视觉设置。</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ 设置已更新</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3148,43 +3164,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>图片 (%1);;所有文件 (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>拖动以调整输入区域大小</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>单击以展开或折叠</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>剧透内容：%1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>使用外部程序打开</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">关闭</translation>
+            <translation>关闭</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>默认 (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3260,7 +3276,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="184" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>关键词</translation>
         </message>
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="185" />
@@ -3270,7 +3286,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="284" />
             <source>Set text...</source>
-            <translation type="unfinished" />
+            <translation>设置文本…</translation>
         </message>
     </context>
     <context>
@@ -3284,7 +3300,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="51" />
             <source>Search for</source>
-            <translation type="unfinished" />
+            <translation>搜索内容</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="58" />
@@ -3459,17 +3475,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="184" />
             <source>Blacklist...</source>
-            <translation type="unfinished" />
+            <translation>黑名单…</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="187" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>黑名单</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="190" />
             <source>Add to Blacklist</source>
-            <translation type="unfinished" />
+            <translation>加入黑名单</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="296" />
@@ -3485,7 +3501,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1088" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>搜索 - %1</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1196" />
@@ -3496,22 +3512,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1561" />
             <source>Searching for %1 ...</source>
-            <translation type="unfinished" />
+            <translation>正在搜索 %1 …</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>“%1”的搜索进度为 %2%</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
             <source>&lt;b&gt;No results&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;无结果&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1597" />
             <source>Found: &lt;b&gt;%1&lt;/b&gt;  Dropped: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>找到：&lt;b&gt;%1&lt;/b&gt;  丢弃：&lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
     </context>
     <context>
@@ -3519,7 +3535,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>数量</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
@@ -3529,7 +3545,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Ext</source>
-            <translation type="unfinished" />
+            <translation>扩展名</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
@@ -3554,12 +3570,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Free slots</source>
-            <translation type="unfinished" />
+            <translation>空闲槽位</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Total slots</source>
-            <translation type="unfinished" />
+            <translation>总槽位</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
@@ -3574,7 +3590,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>主机</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="134" />
@@ -3587,7 +3603,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="92" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>记事本</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="315" />
@@ -3607,12 +3623,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="319" />
             <source>Clear notes</source>
-            <translation type="unfinished" />
+            <translation>清空笔记</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="320" />
             <source>Find in notes</source>
-            <translation type="unfinished" />
+            <translation>在笔记中查找</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="322" />
@@ -3640,12 +3656,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>种子首选项</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>无法保存种子设置：%1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3655,52 +3671,52 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="727" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>连接</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="732" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>下载</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="737" />
             <source>Sharing</source>
-            <translation type="unfinished" />
+            <translation>共享</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="742" />
             <source>GUI</source>
-            <translation type="unfinished" />
+            <translation>图形界面</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="747" />
             <source>Notifications</source>
-            <translation type="unfinished" />
+            <translation>通知</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="752" />
             <source>Logs</source>
-            <translation type="unfinished" />
+            <translation>日志</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="757" />
             <source>User Commands</source>
-            <translation type="unfinished" />
+            <translation>用户命令</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="762" />
             <source>Shortcuts</source>
-            <translation type="unfinished" />
+            <translation>快捷键</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="767" />
             <source>History</source>
-            <translation type="unfinished" />
+            <translation>历史记录</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="772" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>高级</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="780" />
@@ -3740,59 +3756,59 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>启用 IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>外部/WAN IPv6：</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>例如 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>绑定 IPv6 地址</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>国家/地区 MMDB 文件</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>GeoLite2/MaxMind 国家/地区 .mmdb 文件路径</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>配置 DHT 引导 URL</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>公共集线器列表 URL</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>配置公共集线器列表 URL</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>未找到有效的外部 IPv6 地址！</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>未找到有效的绑定 IPv6 地址！</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="711" />
@@ -3814,22 +3830,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="788" />
             <location filename="../src/SettingsConnection.cpp" line="802" />
             <source>Program need root privileges to open ports less than 1024</source>
-            <translation type="unfinished" />
+            <translation>程序需要 root 权限才能打开小于 1024 的端口</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>选择 MaxMind 国家/地区数据库</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>MaxMind 数据库 (*.mmdb);;所有文件 (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
             <source>Warning</source>
-            <translation type="unfinished" />
+            <translation>警告</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -4152,12 +4168,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="183" />
             <source>Enter alias for directory</source>
-            <translation type="unfinished" />
+            <translation>输入目录别名</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="184" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>别名</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="220" />
@@ -4185,204 +4201,204 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="145" />
             <source>English</source>
-            <translation type="unfinished" />
+            <translation>英语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="146" />
             <source>Russian</source>
-            <translation type="unfinished" />
+            <translation>俄语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="147" />
             <source>Belarusian</source>
-            <translation type="unfinished" />
+            <translation>白俄罗斯语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="148" />
             <source>Hungarian</source>
-            <translation type="unfinished" />
+            <translation>匈牙利语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="149" />
             <source>French</source>
-            <translation type="unfinished" />
+            <translation>法语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="150" />
             <source>Polish</source>
-            <translation type="unfinished" />
+            <translation>波兰语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="151" />
             <source>Portuguese (Brazil)</source>
-            <translation type="unfinished" />
+            <translation>葡萄牙语（巴西）</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="152" />
             <source>Serbian (Cyrillic)</source>
-            <translation type="unfinished" />
+            <translation>塞尔维亚语（西里尔字母）</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="153" />
             <source>Serbian (Latin)</source>
-            <translation type="unfinished" />
+            <translation>塞尔维亚语（拉丁字母）</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="154" />
             <source>Ukrainian</source>
-            <translation type="unfinished" />
+            <translation>乌克兰语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="155" />
             <source>Spanish</source>
-            <translation type="unfinished" />
+            <translation>西班牙语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="156" />
             <source>Basque</source>
-            <translation type="unfinished" />
+            <translation>巴斯克语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="157" />
             <source>Bulgarian</source>
-            <translation type="unfinished" />
+            <translation>保加利亚语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="158" />
             <source>Slovak</source>
-            <translation type="unfinished" />
+            <translation>斯洛伐克语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="159" />
             <source>Czech</source>
-            <translation type="unfinished" />
+            <translation>捷克语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="160" />
             <source>German</source>
-            <translation type="unfinished" />
+            <translation>德语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="161" />
             <source>Greek</source>
-            <translation type="unfinished" />
+            <translation>希腊语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="162" />
             <source>Italian</source>
-            <translation type="unfinished" />
+            <translation>意大利语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="163" />
             <source>Vietnamese</source>
-            <translation type="unfinished" />
+            <translation>越南语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="164" />
             <source>Chinese (China)</source>
-            <translation type="unfinished" />
+            <translation>中文（中国）</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="165" />
             <source>Swedish (Sweden)</source>
-            <translation type="unfinished" />
+            <translation>瑞典语（瑞典）</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="166" />
             <source>Turkish</source>
-            <translation type="unfinished" />
+            <translation>土耳其语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="167" />
             <source>Danish</source>
-            <translation type="unfinished" />
+            <translation>丹麦语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="168" />
             <source>Georgian</source>
-            <translation type="unfinished" />
+            <translation>格鲁吉亚语</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>工具栏图标主题</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished" />
+            <translation>主题</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>默认</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>单色</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>用户列表图标主题</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>原始</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>聊天图片</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>文件夹</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>自动清理早于以下天数的文件</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> 天</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
             <source>Local user</source>
-            <translation type="unfinished" />
+            <translation>本地用户</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="361" />
             <source>Operator</source>
-            <translation type="unfinished" />
+            <translation>管理员</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="365" />
             <source>Bot</source>
-            <translation type="unfinished" />
+            <translation>机器人</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="369" />
             <source>Private: local user</source>
-            <translation type="unfinished" />
+            <translation>私聊：本地用户</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="373" />
             <source>Private: user</source>
-            <translation type="unfinished" />
+            <translation>私聊：用户</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="377" />
             <source>Chat: Say nick</source>
-            <translation type="unfinished" />
+            <translation>聊天：提及昵称</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="381" />
@@ -4397,32 +4413,32 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="389" />
             <source>Favorite User</source>
-            <translation type="unfinished" />
+            <translation>收藏的用户</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="393" />
             <source>Time stamp</source>
-            <translation type="unfinished" />
+            <translation>时间戳</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="397" />
             <source>Message</source>
-            <translation type="unfinished" />
+            <translation>消息</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="704" />
             <source>Select translation</source>
-            <translation type="unfinished" />
+            <translation>选择翻译文件</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="706" />
             <source>Translation (*.qm)</source>
-            <translation type="unfinished" />
+            <translation>翻译文件 (*.qm)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>选择聊天图片文件夹</translation>
         </message>
     </context>
     <context>
@@ -4430,12 +4446,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>帮助</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>选择目录</translation>
         </message>
     </context>
     <context>
@@ -4479,7 +4495,7 @@ UDP：%2</translation>
             <location filename="../src/SettingsSharing.cpp" line="125" />
             <location filename="../src/SettingsSharing.cpp" line="176" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>共享总量：%1</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="203" />
@@ -4499,28 +4515,28 @@ UDP：%2</translation>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Add item</source>
-            <translation type="unfinished" />
+            <translation>添加条目</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Enter text:</source>
-            <translation type="unfinished" />
+            <translation>输入文本：</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="227" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>选择目录</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="411" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>添加</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="415" />
             <source>Rename</source>
-            <translation type="unfinished" />
+            <translation>重命名</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="420" />
@@ -4536,7 +4552,7 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="355" />
             <source>Enter new name</source>
-            <translation type="unfinished" />
+            <translation>输入新名称</translation>
         </message>
     </context>
     <context>
@@ -5058,7 +5074,7 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="75" />
             <source>Restrictions</source>
-            <translation type="unfinished" />
+            <translation>限制</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="76" />
@@ -5103,12 +5119,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="94" />
             <source>Add restriction</source>
-            <translation type="unfinished" />
+            <translation>添加限制</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="95" />
             <source>Remove restriction</source>
-            <translation type="unfinished" />
+            <translation>移除限制</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="96" />
@@ -5123,18 +5139,18 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="224" />
             <source>Own files</source>
-            <translation type="unfinished" />
+            <translation>自己的文件</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="226" />
             <location filename="../src/ShareBrowser.cpp" line="229" />
             <source>Listing: </source>
-            <translation type="unfinished" />
+            <translation>文件列表： </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="334" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>文件浏览器</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="336" />
@@ -5144,28 +5160,28 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="432" />
             <source>Total share size: %1;  Files: %2</source>
-            <translation type="unfinished" />
+            <translation>共享总大小：%1；文件数：%2</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>共享浏览器错误：%1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
             <location filename="../src/ShareBrowser.cpp" line="658" />
             <source>Total size: %1</source>
-            <translation type="unfinished" />
+            <translation>总大小：%1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>已选择 %1 项，共 %2 项； </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
             <source>; Selected: %1</source>
-            <translation type="unfinished" />
+            <translation>；已选择：%1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="862" />
@@ -5175,17 +5191,17 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="992" />
             <source>Enter restriction size (in GB)</source>
-            <translation type="unfinished" />
+            <translation>输入限制大小（GB）</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>共享浏览器</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>已匹配 %1 个文件</translation>
         </message>
     </context>
     <context>
@@ -5193,12 +5209,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="76" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>搜索 - %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>找到 %1 项</translation>
         </message>
     </context>
     <context>
@@ -5214,12 +5230,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="217" />
             <source>Modify shortcut</source>
-            <translation type="unfinished" />
+            <translation>修改快捷键</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="225" />
             <source>Press the key combination you want to assign</source>
-            <translation type="unfinished" />
+            <translation>按下要分配的组合键</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="240" />
@@ -5229,12 +5245,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="242" />
             <source>Capture</source>
-            <translation type="unfinished" />
+            <translation>捕获</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="243" />
             <source>Capture keystrokes</source>
-            <translation type="unfinished" />
+            <translation>捕获按键</translation>
         </message>
     </context>
     <context>
@@ -5242,12 +5258,12 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="177" />
             <source>Action</source>
-            <translation type="unfinished" />
+            <translation>操作</translation>
         </message>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="178" />
             <source>Hotkey</source>
-            <translation type="unfinished" />
+            <translation>快捷键</translation>
         </message>
     </context>
     <context>
@@ -5262,7 +5278,7 @@ UDP：%2</translation>
             <location filename="../src/SideBar.cpp" line="78" />
             <location filename="../src/SideBar.cpp" line="440" />
             <source>Private Messages</source>
-            <translation type="unfinished" />
+            <translation>私人消息</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="79" />
@@ -5274,7 +5290,7 @@ UDP：%2</translation>
             <location filename="../src/SideBar.cpp" line="80" />
             <location filename="../src/SideBar.cpp" line="442" />
             <source>Share Browsers</source>
-            <translation type="unfinished" />
+            <translation>共享浏览器</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="81" />
@@ -5304,25 +5320,25 @@ UDP：%2</translation>
             <location filename="../src/SideBar.cpp" line="91" />
             <location filename="../src/SideBar.cpp" line="448" />
             <source>Finished Uploads</source>
-            <translation type="unfinished" />
+            <translation>已完成的上传</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="92" />
             <location filename="../src/SideBar.cpp" line="449" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>已完成的下载</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="93" />
             <location filename="../src/SideBar.cpp" line="450" />
             <source>Favorite Hubs</source>
-            <translation type="unfinished" />
+            <translation>收藏的集线器</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="94" />
             <location filename="../src/SideBar.cpp" line="451" />
             <source>Favorite Users</source>
-            <translation type="unfinished" />
+            <translation>收藏的用户</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="95" />
@@ -5335,7 +5351,7 @@ UDP：%2</translation>
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>记事本</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
@@ -5347,18 +5363,18 @@ UDP：%2</translation>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>调试控制台</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
             <location filename="../src/SideBar.cpp" line="456" />
             <source>Other Widgets</source>
-            <translation type="unfinished" />
+            <translation>其他组件</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="170" />
             <source>Widgets</source>
-            <translation type="unfinished" />
+            <translation>组件</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="97" />
@@ -5372,7 +5388,7 @@ UDP：%2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="591" />
             <source>Close all</source>
-            <translation type="unfinished" />
+            <translation>全部关闭</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="612" />
@@ -5430,7 +5446,10 @@ UDP：%2</translation>
 It will continue to work when the widget is hidden.
 Do you want to stop it?
 </source>
-            <translation type="unfinished" />
+            <translation>搜索监视器正在运行。
+隐藏此组件后仍会继续工作。
+要停止它吗？
+</translation>
         </message>
         <message>
             <location filename="../src/SpyFrame.cpp" line="88" />
@@ -5448,12 +5467,12 @@ Do you want to stop it?
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>数量</translation>
         </message>
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>搜索字符串</translation>
         </message>
     </context>
     <context>
@@ -5482,7 +5501,7 @@ Do you want to stop it?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>关闭</translation>
         </message>
     </context>
     <context>
@@ -6523,7 +6542,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="64" />
             <source>Search Alternates</source>
-            <translation type="unfinished" />
+            <translation>搜索备用来源</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="67" />
@@ -6568,7 +6587,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>标志</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
@@ -6578,7 +6597,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="87" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>剩余时间</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="88" />
@@ -6598,13 +6617,13 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="91" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>加密</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>协议</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6614,89 +6633,89 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>取消下载</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
             <source>Remove Source</source>
-            <translation type="unfinished" />
+            <translation>移除来源</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="109" />
             <source>Force attempt</source>
-            <translation type="unfinished" />
+            <translation>强制尝试</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="112" />
             <source>Close connection(s)</source>
-            <translation type="unfinished" />
+            <translation>关闭连接</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>仅显示已传输的文件</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
             <location filename="../src/TransferView.cpp" line="419" />
             <location filename="../src/TransferView.cpp" line="829" />
             <source>Download complete</source>
-            <translation type="unfinished" />
+            <translation>下载完成</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="459" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>文件列表</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>种子详情</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>暂停种子</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>恢复种子</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
             <source>Requesting</source>
-            <translation type="unfinished" />
+            <translation>正在请求</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="783" />
             <source>Download starting...</source>
-            <translation type="unfinished" />
+            <translation>正在开始下载…</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="813" />
             <source>Downloaded %1</source>
-            <translation type="unfinished" />
+            <translation>已下载 %1</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="868" />
             <source>Connecting...</source>
-            <translation type="unfinished" />
+            <translation>正在连接…</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="892" />
             <source>Connected</source>
-            <translation type="unfinished" />
+            <translation>已连接</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="923" />
             <source>Connecting</source>
-            <translation type="unfinished" />
+            <translation>正在连接</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="925" />
             <source>No download slots</source>
-            <translation type="unfinished" />
+            <translation>无下载槽位</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="853" />
@@ -6704,27 +6723,27 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferView.cpp" line="927" />
             <location filename="../src/TransferView.cpp" line="933" />
             <source>Waiting to retry</source>
-            <translation type="unfinished" />
+            <translation>等待重试</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="971" />
             <source>Upload starting...</source>
-            <translation type="unfinished" />
+            <translation>正在开始上传…</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>已上传 %1 (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
             <source>Upload complete</source>
-            <translation type="unfinished" />
+            <translation>上传完成</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1029" />
             <source>Upload failed</source>
-            <translation type="unfinished" />
+            <translation>上传失败</translation>
         </message>
         <message>
             <source>Fit to content</source>
@@ -6775,7 +6794,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>标志</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
@@ -6785,17 +6804,17 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>剩余时间</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>File name</source>
-            <translation type="unfinished" />
+            <translation>文件名</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>主机</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
@@ -6805,7 +6824,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="59" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>加密</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="61" />
@@ -6820,37 +6839,37 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>已暂停</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>正在做种</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>等待中</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>下载（%1 个对等节点）</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>上传（%1 个对等节点）</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | 已下载 %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | 已上传 %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -6862,23 +6881,23 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferViewModel.cpp" line="544" />
             <location filename="../src/TransferViewModel.cpp" line="585" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>文件列表</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="757" />
             <source>Downloaded </source>
-            <translation type="unfinished" />
+            <translation>已下载 </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="759" />
             <source>Waiting for slot </source>
-            <translation type="unfinished" />
+            <translation>等待槽位 </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="813" />
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
-            <translation type="unfinished" />
+            <translation>已完成</translation>
         </message>
         <message>
             <source>D: %1/s | U: %2/s</source>
@@ -6933,7 +6952,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../src/UCModel.cpp" line="89" />
             <source>Command</source>
-            <translation type="unfinished" />
+            <translation>命令</translation>
         </message>
         <message>
             <location filename="../src/UCModel.cpp" line="90" />
@@ -6944,7 +6963,7 @@ Sorted by downloading peers, then uploading peers.</source>
             <location filename="../src/UCModel.cpp" line="156" />
             <location filename="../src/UCModel.cpp" line="209" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>分隔符</translation>
         </message>
     </context>
     <context>
@@ -6967,12 +6986,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIADLSearch.ui" line="100" />
             <source>Move up</source>
-            <translation type="unfinished" />
+            <translation>上移</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearch.ui" line="110" />
             <source>Move down</source>
-            <translation type="unfinished" />
+            <translation>下移</translation>
         </message>
     </context>
     <context>
@@ -6980,12 +6999,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="38" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>收藏的集线器名称。</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="51" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>搜索字符串</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="74" />
@@ -7006,12 +7025,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="122" />
             <source>Full path</source>
-            <translation type="unfinished" />
+            <translation>完整路径</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="133" />
             <source>Min/Max Size</source>
-            <translation type="unfinished" />
+            <translation>最小/最大大小</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="193" />
@@ -7054,22 +7073,22 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIAbout.ui" line="41" />
             <source>About program</source>
-            <translation type="unfinished" />
+            <translation>关于程序</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="67" />
             <source>Authors</source>
-            <translation type="unfinished" />
+            <translation>作者</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="91" />
             <source>Translation</source>
-            <translation type="unfinished" />
+            <translation>翻译</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="112" />
             <source>License</source>
-            <translation type="unfinished" />
+            <translation>许可证</translation>
         </message>
     </context>
     <context>
@@ -7077,12 +7096,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIActionCustomizer.ui" line="88" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>上移</translation>
         </message>
         <message>
             <location filename="../ui/UIActionCustomizer.ui" line="95" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>下移</translation>
         </message>
     </context>
     <context>
@@ -7090,7 +7109,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="14" />
             <source>AntiSpam configuration</source>
-            <translation type="unfinished" />
+            <translation>反垃圾消息配置</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="20" />
@@ -7100,44 +7119,44 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="46" />
             <source>Phrase</source>
-            <translation type="unfinished" />
+            <translation>短语</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="59" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>关键词</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="85" />
             <source>Attempts</source>
-            <translation type="unfinished" />
+            <translation>尝试次数</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="95" />
             <source>Enable AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>启用反垃圾消息</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="102" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>确定</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="109" />
             <source>Work as filter</source>
-            <translation type="unfinished" />
+            <translation>作为筛选器工作</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="116" />
             <source>Black list</source>
-            <translation type="unfinished" />
+            <translation>黑名单</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="157" />
             <location filename="../ui/UIAntiSpam.ui" line="223" />
             <location filename="../ui/UIAntiSpam.ui" line="289" />
             <source>C</source>
-            <translation type="unfinished" />
+            <translation>清</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="171" />
@@ -7149,35 +7168,35 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="182" />
             <source>Gray List</source>
-            <translation type="unfinished" />
+            <translation>灰名单</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="248" />
             <source>White list</source>
-            <translation type="unfinished" />
+            <translation>白名单</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="314" />
             <location filename="../ui/UIAntiSpam.ui" line="369" />
             <source>Move user to "White" list</source>
-            <translation type="unfinished" />
+            <translation>将用户移至“白名单”</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="327" />
             <location filename="../ui/UIAntiSpam.ui" line="340" />
             <source>Move user to "Gray" list</source>
-            <translation type="unfinished" />
+            <translation>将用户移至“灰名单”</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="353" />
             <location filename="../ui/UIAntiSpam.ui" line="382" />
             <source>Move user to "Black" list</source>
-            <translation type="unfinished" />
+            <translation>将用户移至“黑名单”</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="395" />
             <source>Filter Operators</source>
-            <translation type="unfinished" />
+            <translation>筛选管理员</translation>
         </message>
     </context>
     <context>
@@ -7185,57 +7204,57 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="57" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>查找： </translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="71" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>上一个 (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="77" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="84" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>下一个 (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="90" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="97" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>全部高亮</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="113" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>隐藏搜索面板 (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="154" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>使用逗号分隔</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="157" />
             <source>Filter by IP</source>
-            <translation type="unfinished" />
+            <translation>按 IP 筛选</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="208" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>行数：</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="228" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>立即清空</translation>
         </message>
     </context>
     <context>
@@ -7243,12 +7262,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="41" />
             <source>Expand all</source>
-            <translation type="unfinished" />
+            <translation>全部展开</translation>
         </message>
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="54" />
             <source>Collapse all</source>
-            <translation type="unfinished" />
+            <translation>全部折叠</translation>
         </message>
     </context>
     <context>
@@ -7261,12 +7280,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="31" />
             <source>Autoconnect on startup</source>
-            <translation type="unfinished" />
+            <translation>启动时自动连接</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="41" />
             <source>Disable chat</source>
-            <translation type="unfinished" />
+            <translation>禁用聊天</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="50" />
@@ -7276,7 +7295,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="57" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>收藏的集线器名称。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="64" />
@@ -7286,7 +7305,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="71" />
             <source>IP address or DNS name of hub.</source>
-            <translation type="unfinished" />
+            <translation>集线器的 IP 地址或 DNS 名称。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="78" />
@@ -7296,72 +7315,72 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>此描述将显示在收藏的集线器列表中。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
             <source>Encoding</source>
-            <translation type="unfinished" />
+            <translation>编码</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="102" />
             <source>Mode</source>
-            <translation type="unfinished" />
+            <translation>模式</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="110" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>默认</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="115" />
             <source>Active</source>
-            <translation type="unfinished" />
+            <translation>主动</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="120" />
             <source>Passive</source>
-            <translation type="unfinished" />
+            <translation>被动</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="128" />
             <source>Client ID</source>
-            <translation type="unfinished" />
+            <translation>客户端 ID</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="142" />
             <source>External IP</source>
-            <translation type="unfinished" />
+            <translation>外部 IP</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="162" />
             <source>Auto update from Internet</source>
-            <translation type="unfinished" />
+            <translation>从互联网自动更新</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="180" />
             <source>Minimum search interval (seconds)</source>
-            <translation type="unfinished" />
+            <translation>最小搜索间隔（秒）</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="202" />
             <source>Identification</source>
-            <translation type="unfinished" />
+            <translation>身份信息</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="223" />
             <source>This nickname, or handle, will identify you when you join a hub.</source>
-            <translation type="unfinished" />
+            <translation>加入集线器时，此昵称或别名将用于标识您的身份。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="230" />
             <source>If hub requires password, define it here.</source>
-            <translation type="unfinished" />
+            <translation>如果集线器需要密码，请在此设置。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>此描述将显示在用户列表中。</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7407,7 +7426,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteUsers.ui" line="41" />
             <source>Auto grant slot to all users</source>
-            <translation type="unfinished" />
+            <translation>自动为所有用户授予槽位</translation>
         </message>
     </context>
     <context>
@@ -7415,22 +7434,22 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="29" />
             <source>TTH Calculator</source>
-            <translation type="unfinished" />
+            <translation>TTH 计算器</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="93" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>文件路径</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>复制磁力链接到剪贴板</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>复制搜索链接到剪贴板</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7440,7 +7459,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="185" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>打开搜索对话框并搜索文件。</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="188" />
@@ -7450,7 +7469,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="208" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>取消</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="100" />
@@ -7460,7 +7479,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="178" />
             <source>Compute</source>
-            <translation type="unfinished" />
+            <translation>计算</translation>
         </message>
         <message>
             <source>Close</source>
@@ -7472,7 +7491,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="22" />
             <source>Show</source>
-            <translation type="unfinished" />
+            <translation>显示</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="30" />
@@ -7487,12 +7506,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="43" />
             <source>Show only completely finished transfers</source>
-            <translation type="unfinished" />
+            <translation>仅显示完全完成的传输</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="46" />
             <source>Full only</source>
-            <translation type="unfinished" />
+            <translation>仅完整传输</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="66" />
@@ -7510,7 +7529,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="125" />
             <source>Close on finish</source>
-            <translation type="unfinished" />
+            <translation>完成后关闭</translation>
         </message>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="145" />
@@ -7528,37 +7547,37 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/HubFrame.ui" line="142" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>查找： </translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="156" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>上一个 (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="162" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="169" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>下一个 (F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="175" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="182" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>全部高亮</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="198" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>隐藏搜索面板 (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="364" />
@@ -7578,12 +7597,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>按 Shift+Enter 输入多行文本</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
             <source>Last status message on hub</source>
-            <translation type="unfinished" />
+            <translation>集线器上的最后一条状态消息</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7624,7 +7643,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIHubManager.ui" line="38" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
         <message>
             <location filename="../ui/UIHubManager.ui" line="43" />
@@ -7642,22 +7661,22 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="29" />
             <source>IP Filter</source>
-            <translation type="unfinished" />
+            <translation>IP 筛选器</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="47" />
             <source>Enable IPFilter</source>
-            <translation type="unfinished" />
+            <translation>启用 IP 筛选器</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="54" />
             <source>Export</source>
-            <translation type="unfinished" />
+            <translation>导出</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="61" />
             <source>Import</source>
-            <translation type="unfinished" />
+            <translation>导入</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="99" />
@@ -7667,37 +7686,37 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="105" />
             <source>BOTH</source>
-            <translation type="unfinished" />
+            <translation>双向</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="112" />
             <source>IN</source>
-            <translation type="unfinished" />
+            <translation>入站</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="119" />
             <source>OUT</source>
-            <translation type="unfinished" />
+            <translation>出站</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="132" />
             <source>UP</source>
-            <translation type="unfinished" />
+            <translation>上移</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="139" />
             <source>DOWN</source>
-            <translation type="unfinished" />
+            <translation>下移</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="149" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>添加</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="156" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>确定</translation>
         </message>
     </context>
     <context>
@@ -7728,7 +7747,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>磁力链接查看器</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7738,7 +7757,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIMagnet.ui" line="70" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>文件路径</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="80" />
@@ -7748,17 +7767,17 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>复制磁力链接到剪贴板</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>复制搜索链接到剪贴板</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>打开搜索对话框并搜索文件。</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="174" />
@@ -7769,22 +7788,23 @@ Sorted by downloading peers, then uploading peers.</source>
             <location filename="../ui/UIMagnet.ui" line="181" />
             <source>Adds magnet to download queue. If autosearch for alternatives is enabled
 in options, file will be downloaded without opening search dialog.</source>
-            <translation type="unfinished" />
+            <translation>将磁力链接加入下载队列。如果在选项中启用了自动搜索备用来源，
+则无需打开搜索对话框即可下载文件。</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="185" />
             <source>Add to queue</source>
-            <translation type="unfinished" />
+            <translation>加入队列</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="205" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>取消</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="214" />
             <source>Remember my choice</source>
-            <translation type="unfinished" />
+            <translation>记住我的选择</translation>
         </message>
     </context>
     <context>
@@ -7792,37 +7812,37 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="99" />
             <source>Find:</source>
-            <translation type="unfinished" />
+            <translation>查找：</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="106" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>上一个 (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="112" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="119" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>下一个 (F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="125" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="132" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>隐藏搜索面板 (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="142" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>全部高亮</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="295" />
@@ -7842,17 +7862,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>按 Shift+Enter 输入多行文本</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
             <source>Go to hub</source>
-            <translation type="unfinished" />
+            <translation>前往集线器</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="439" />
             <source>User share</source>
-            <translation type="unfinished" />
+            <translation>用户共享</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7888,7 +7908,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>刷新</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -7904,17 +7924,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="23" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>上移</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="30" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>下移</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="69" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>添加</translation>
         </message>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="76" />
@@ -7924,7 +7944,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubsList.ui" line="83" />
             <source>Edit</source>
-            <translation type="unfinished" />
+            <translation>编辑</translation>
         </message>
     </context>
     <context>
@@ -7937,7 +7957,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="44" />
             <source>IP address of DNS name of hub you want to connect.</source>
-            <translation type="unfinished" />
+            <translation>要连接的集线器的 IP 地址或 DNS 名称。</translation>
         </message>
     </context>
     <context>
@@ -7950,17 +7970,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="26" />
             <source>Ask user</source>
-            <translation type="unfinished" />
+            <translation>询问用户</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="31" />
             <source>Reload it</source>
-            <translation type="unfinished" />
+            <translation>重新加载</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="39" />
             <source>When script changed</source>
-            <translation type="unfinished" />
+            <translation>脚本更改时</translation>
         </message>
     </context>
     <context>
@@ -7968,17 +7988,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="29" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>黑名单</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="93" />
             <source>Cancel</source>
-            <translation type="unfinished" />
+            <translation>取消</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="100" />
             <source>OK</source>
-            <translation type="unfinished" />
+            <translation>确定</translation>
         </message>
     </context>
     <context>
@@ -7986,98 +8006,98 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISecretary.ui" line="73" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>查找： </translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="87" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>上一个 (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="93" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="100" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>下一个 (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="106" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="113" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>全部高亮</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="129" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>隐藏搜索面板 (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="219" />
             <source>Magnet links</source>
-            <translation type="unfinished" />
+            <translation>磁力链接</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="199" />
             <source>Search links</source>
-            <translation type="unfinished" />
+            <translation>搜索链接</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="209" />
             <source>Public chat</source>
-            <translation type="unfinished" />
+            <translation>公共聊天</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="179" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>状态消息</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="169" />
             <source>BitTorrent links</source>
-            <translation type="unfinished" />
+            <translation>BitTorrent 链接</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="189" />
             <source>Private messages</source>
-            <translation type="unfinished" />
+            <translation>私人消息</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="159" />
             <source>Filter duplicates</source>
-            <translation type="unfinished" />
+            <translation>过滤重复项</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="233" />
             <location filename="../ui/UISecretary.ui" line="246" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>使用逗号分隔</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="236" />
             <source>Additional keywords</source>
-            <translation type="unfinished" />
+            <translation>附加关键词</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="249" />
             <source>Filter hubs by IP</source>
-            <translation type="unfinished" />
+            <translation>按 IP 筛选集线器</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="277" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>行数：</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="297" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>立即清空</translation>
         </message>
     </context>
     <context>
@@ -8085,7 +8105,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettings.ui" line="14" />
             <source>Settings</source>
-            <translation type="unfinished" />
+            <translation>设置</translation>
         </message>
     </context>
     <context>
@@ -8116,17 +8136,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="27" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="33" />
             <source>Auto detect connection</source>
-            <translation type="unfinished" />
+            <translation>自动检测连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="40" />
             <source>Incoming connections</source>
-            <translation type="unfinished" />
+            <translation>入站连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="73" />
@@ -8136,12 +8156,17 @@ If your computer is not behind a router all you have to do is to choose
 this option and usually you don't need to alter anything more in the
 connection settings.
 However, if you have a software firewall installed, you may need further configuration in the firewall to allow Internet access for EiskaltDC++.</source>
-            <translation type="unfinished" />
+            <translation>如果计算机直接连接到互联网，请选择此模式。
+如果使用路由器或任何外部防火墙，请勿选择此模式。
+如果计算机未位于路由器后方，通常只需选择
+此选项，无需再更改其他连接设置。
+但是，如果安装了软件防火墙，
+可能需要进一步配置防火墙，以允许 EiskaltDC++ 访问互联网。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="81" />
             <source>Active mode</source>
-            <translation type="unfinished" />
+            <translation>主动模式</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="91" />
@@ -8150,12 +8175,16 @@ the TCP, UDP and TLS port forwarding on your own.
 You will need to specify the external IP address of your router using
 the setting below if you want downloads to work properly.
 Use this mode only if the previous ones are not options for you.</source>
-            <translation type="unfinished" />
+            <translation>如果位于防火墙（路由器）后方，并且将自行设置
+TCP、UDP 和 TLS 端口转发，请选择此模式。
+要使下载正常工作，需要通过下方设置
+指定路由器的外部 IP 地址。
+仅当前面的模式均不适用时才使用此模式。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="98" />
             <source>Firewall with port forwarding</source>
-            <translation type="unfinished" />
+            <translation>防火墙及端口转发</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="108" />
@@ -8165,12 +8194,17 @@ This mode carries some serious limitations:
   * only 5 results per user will be returned in response to searches;
   * you will not be able to download from other passive users;
   * you may won't be able to search and/or download on certain hubs.</source>
-            <translation type="unfinished" />
+            <translation>如果前面的模式均不适用，请选择此模式。在此模式下，
+EiskaltDC++ 不会尝试建立入站连接，只会建立出站连接。
+此模式有一些重大限制：
+  * 搜索时每个用户仅返回 5 条结果；
+  * 无法从其他被动用户处下载；
+  * 在某些集线器上可能无法搜索和/或下载。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="116" />
             <source>Passive mode</source>
-            <translation type="unfinished" />
+            <translation>被动模式</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="123" />
@@ -8180,64 +8214,71 @@ Most routers do support UPnP but you may need to enable it
 in the router's configuration page.
 This way EiskaltDC++ will automatically open the ports it needs
 and obtain your external IP address as well.</source>
-            <translation type="unfinished" />
+            <translation>如果位于支持 UPnP 程序自动配置标准的防火墙/路由器
+后方，请选择此模式。
+大多数路由器都支持 UPnP，但可能需要在
+路由器配置页面中启用。
+这样，EiskaltDC++ 将自动打开所需端口，
+并获取您的外部 IP 地址。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="131" />
             <source>Firewall with UPnP</source>
-            <translation type="unfinished" />
+            <translation>防火墙及 UPnP</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="165" />
             <source>External/WAN IP:</source>
-            <translation type="unfinished" />
+            <translation>外部/WAN IP：</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>不允许集线器/UPnP/DHT 覆盖</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
             <source>TCP port</source>
-            <translation type="unfinished" />
+            <translation>TCP 端口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="195" />
             <source>UDP port</source>
-            <translation type="unfinished" />
+            <translation>UDP 端口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="202" />
             <source>TLS port</source>
-            <translation type="unfinished" />
+            <translation>TLS 端口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="262" />
             <source>Bind to address</source>
-            <translation type="unfinished" />
+            <translation>绑定地址</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="272" />
             <source>Bind to interface</source>
-            <translation type="unfinished" />
+            <translation>绑定接口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="288" />
             <source>Outgoing connections</source>
-            <translation type="unfinished" />
+            <translation>出站连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="321" />
             <source>Select this mode if you can make unrestricted outbound connections.
 This includes connecting to any IP address on any port.
 Choose this option if unsure.</source>
-            <translation type="unfinished" />
+            <translation>如果可以不受限制地建立出站连接，请选择此模式。
+这包括连接到任何 IP 地址的任何端口。
+不确定时请选择此选项。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="326" />
             <source>Direct connection</source>
-            <translation type="unfinished" />
+            <translation>直接连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="336" />
@@ -8245,12 +8286,15 @@ Choose this option if unsure.</source>
 a SOCKS proxy. The caveats for Passive mode also apply here.
 SOCKS5 proxies are not the same as HTTP proxies.
 DC++'s SOCKS5 support does not include GSSAPI.</source>
-            <translation type="unfinished" />
+            <translation>如果要通过 SOCKS 代理建立出站连接，
+请选择此模式。被动模式的注意事项也适用于此模式。
+SOCKS5 代理与 HTTP 代理不同。
+DC++ 的 SOCKS5 支持不包含 GSSAPI。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="342" />
             <source>SOCKS5</source>
-            <translation type="unfinished" />
+            <translation>SOCKS5</translation>
         </message>
         <message>
             <source>IP</source>
@@ -8291,7 +8335,7 @@ Shadowsocks AEAD 服务器，请选择此模式。</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="418" />
             <source>Port</source>
-            <translation type="unfinished" />
+            <translation>端口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="438" />
@@ -8301,7 +8345,7 @@ Shadowsocks AEAD 服务器，请选择此模式。</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="448" />
             <source>Use to resolve hostnames</source>
-            <translation type="unfinished" />
+            <translation>用于解析主机名</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="455" />
@@ -8318,28 +8362,28 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="487" />
             <source>DynDNS Address:</source>
-            <translation type="unfinished" />
+            <translation>DynDNS 地址：</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="513" />
             <source>When enabled can hang program on exit.</source>
-            <translation type="unfinished" />
+            <translation>启用后可能导致程序退出时挂起。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="516" />
             <source>Automatically update external IP (restart required)</source>
-            <translation type="unfinished" />
+            <translation>自动更新外部 IP（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="540" />
             <location filename="../ui/UISettingsConnection.ui" line="555" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>限制</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="561" />
             <source>Enable Throttle</source>
-            <translation type="unfinished" />
+            <translation>启用限速</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="601" />
@@ -8353,48 +8397,48 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
             <location filename="../ui/UISettingsConnection.ui" line="794" />
             <location filename="../ui/UISettingsConnection.ui" line="827" />
             <source>KiB/s</source>
-            <translation type="unfinished" />
+            <translation>KiB/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="635" />
             <location filename="../ui/UISettingsConnection.ui" line="780" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="678" />
             <source>Alternate speed limit at time from </source>
-            <translation type="unfinished" />
+            <translation>备用限速生效时段，从 </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="704" />
             <source>to</source>
-            <translation type="unfinished" />
+            <translation>至</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="718" />
             <source>hour(s)</source>
-            <translation type="unfinished" />
+            <translation>小时</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="817" />
             <source>Slots</source>
-            <translation type="unfinished" />
+            <translation>槽位</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="860" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>高级</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="887" />
             <source>Reconnect to hub (seconds)</source>
-            <translation type="unfinished" />
+            <translation>重新连接集线器（秒）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="910" />
             <source>Type-of-Service (ToS)</source>
-            <translation type="unfinished" />
+            <translation>服务类型 (ToS)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="926" />
@@ -8410,22 +8454,33 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Minimal cost&amp;quot;&lt;/span&gt; should be used for &amp;quot;filler data&amp;quot; where slow transmission doesn't matter&lt;/p&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;At most one of these TOS values can be specified. Linux sends &lt;span style=" font-weight:600;"&gt;&amp;quot;Low delay&amp;quot;&lt;/span&gt; datagrams first by default, but the exact behaviour depends on the configured queueing discipline.&lt;span style=" font-weight:600;"&gt; Warning! This option needs superuser privileges!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;设置从此套接字发出的每个&lt;a href="https://en.wikipedia.org/wiki/IP_packet"&gt;&lt;span style=" text-decoration: underline; color:#0057ae;"&gt;IP 数据包&lt;/span&gt;&lt;/a&gt;所携带的服务类型 (TOS) 字段。此字段用于确定网络数据包的优先级。TOS 为一个字节。已定义的标准 TOS 标志包括： &lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;低延迟&amp;quot;&lt;/span&gt;，尽量减少交互流量的延迟&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;吞吐量&amp;quot;&lt;/span&gt;，优化吞吐量&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;可靠性&amp;quot;&lt;/span&gt;，优化可靠性&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;最低成本&amp;quot;&lt;/span&gt;，适用于传输缓慢也无妨的“填充数据”&lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;最多只能指定其中一个 TOS 值。Linux 默认优先发送&lt;span style=" font-weight:600;"&gt;&amp;quot;低延迟&amp;quot;&lt;/span&gt;数据报，但具体行为取决于配置的队列调度规则。&lt;span style=" font-weight:600;"&gt; 警告！此选项需要超级用户权限！&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="941" />
             <source>No</source>
-            <translation type="unfinished" />
+            <translation>无</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="946" />
             <source>Low delay</source>
-            <translation type="unfinished" />
+            <translation>低延迟</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="951" />
             <source>Throughput</source>
-            <translation type="unfinished" />
+            <translation>吞吐量</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="956" />
@@ -8435,7 +8490,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="961" />
             <source>Minimal cost</source>
-            <translation type="unfinished" />
+            <translation>最低成本</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="971" />
@@ -8445,47 +8500,47 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="995" />
             <source>DHT port</source>
-            <translation type="unfinished" />
+            <translation>DHT 端口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT 引导 URL</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>多个 URL 之间使用分号分隔</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>TLS 设置</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>禁用 TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>允许 TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>要求 TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>允许集线器使用不受信任的证书</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>允许客户端使用不受信任的证书</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
@@ -8501,27 +8556,27 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="30" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>下载</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="36" />
             <source>Directories</source>
-            <translation type="unfinished" />
+            <translation>目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="60" />
             <source>Download directory</source>
-            <translation type="unfinished" />
+            <translation>下载目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="67" />
             <source>Use unfinished downloads directory</source>
-            <translation type="unfinished" />
+            <translation>使用未完成下载目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="106" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>限制</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="124" />
@@ -8529,55 +8584,61 @@ p, li { white-space: pre-wrap; }
 designed to prevent new downloads if your existing downloads
 exceed a specific threshold. It's measured in kibibytes per second,
 and a value of zero will disable this limit.</source>
-            <translation type="unfinished" />
+            <translation>这是限制同时下载数量的另一种方法，
+用于在现有下载速度超过指定阈值时，
+阻止开始新的下载。其单位为 KiB/s，
+值为零时禁用此限制。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="137" />
             <source>This limits the number of simultaneous downloads.
 A value of 0 means no limit.</source>
-            <translation type="unfinished" />
+            <translation>此选项限制同时下载的数量。
+值为 0 表示不限制。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="151" />
             <source>Maximum simultaneous downloads (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>最大同时下载数量（0 = 不限制）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="167" />
             <source>No new downloads if speed exceeds (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>速度超过此值时不开始新下载（KiB/s，0 = 不限制）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="177" />
             <source>Note: Because of changing download speeds, this is not 100% accurate</source>
-            <translation type="unfinished" />
+            <translation>注意：由于下载速度不断变化，此限制并非 100% 精确</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="190" />
             <source>Public Hub lists</source>
-            <translation type="unfinished" />
+            <translation>公共集线器列表</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="208" />
             <source>This HTTP proxy will only be used to request
 the Public Hub List specified above.
 It's not used for uploads, downloads, or connecting to a hub.</source>
-            <translation type="unfinished" />
+            <translation>此 HTTP 代理仅用于请求
+上方指定的公共集线器列表。
+它不用于上传、下载或连接集线器。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="217" />
             <source>Http proxy (hub list only)</source>
-            <translation type="unfinished" />
+            <translation>HTTP 代理（仅用于集线器列表）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="224" />
             <source>Configure Public Hub Lists</source>
-            <translation type="unfinished" />
+            <translation>配置公共集线器列表</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="248" />
             <source>Download to</source>
-            <translation type="unfinished" />
+            <translation>下载到</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="291" />
@@ -8587,83 +8648,89 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="296" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>别名</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="336" />
             <source>Queue</source>
-            <translation type="unfinished" />
+            <translation>队列</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="342" />
             <source>Auto-priority settings</source>
-            <translation type="unfinished" />
+            <translation>自动优先级设置</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="360" />
             <source>Files with the same or under the entered size
 will be set to Highest as priority. (default: 64 KiB)</source>
-            <translation type="unfinished" />
+            <translation>大小小于或等于输入值的文件，
+优先级设为最高。（默认：64 KiB）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>大小小于或等于输入值，但大于最高优先级
+最大大小的文件，优先级设为高。（默认：0 KiB）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>大小小于或等于输入值，但大于最高和高优先级
+最大大小的文件，优先级设为普通。（默认：0 KiB）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>大小小于或等于输入值，但大于最高、高和普通优先级
+最大大小的文件，优先级设为低。（默认：0 KiB）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
             <source>Highest priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>最高优先级最大大小 (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="426" />
             <source>High priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>高优先级最大大小 (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="442" />
             <source>Normal priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>普通优先级最大大小 (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="458" />
             <source>Low priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>低优先级最大大小 (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
             <source>Auto-drop settings</source>
-            <translation type="unfinished" />
+            <translation>自动断开来源设置</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>如果文件下载速度低于输入值，
+则断开该来源。（默认：1024 B/s）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
             <source>Check every x second(s) if the source is slow. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>每隔指定秒数检查来源是否过慢。（默认：10 s）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>从下载开始到允许断开来源之前
+必须经过的时间（秒）。（默认：15 s）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8671,82 +8738,90 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>自上次接收到该文件数据块以来允许的最长时间。
+此设置用于提高速度测量的准确性，
+并避免仅因来源暂时不活动
+就将其断开。（默认：10 s）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>允许断开任何来源前所需的最少来源
+数量。（默认：1）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>允许断开来源的最小文件大小（KiB）。（默认：0 KiB）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>断开速度低于此值的来源 (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
             <source>Check every (s)</source>
-            <translation type="unfinished" />
+            <translation>检查间隔 (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>最短已用时间 (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
             <source>Max inactivity (s)</source>
-            <translation type="unfinished" />
+            <translation>最长不活动时间 (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>最少在线来源数</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
             <source>Min filesize (KiB)</source>
-            <translation type="unfinished" />
+            <translation>最小文件大小 (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="686" />
             <source>Other options</source>
-            <translation type="unfinished" />
+            <translation>其他选项</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="711" />
             <source>Set lowest priority for newly added files larger than low priority size</source>
-            <translation type="unfinished" />
+            <translation>新添加的文件大于低优先级大小时设为最低优先级</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="714" />
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>启用后，大于低优先级最大大小的文件
+将设为最低优先级。
+禁用时，这些文件将设为普通优先级。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>为所有队列项自动断开慢速来源（文件列表除外）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>此选项会移除所有队列项（文件列表除外）的慢速来源。
+要启用自动断开，请开启“为所有队列项自动断开慢速来源”
+或“移除慢速文件列表”（也可同时开启）。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
             <source>Remove slow filelists</source>
-            <translation type="unfinished" />
+            <translation>移除慢速文件列表</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="746" />
@@ -8754,23 +8829,27 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>启用后，EiskaltDC++ 将删除下载速度
+被判定为过慢的文件列表。
+要启用自动断开，请开启“为所有队列项自动断开慢速来源”
+或“移除慢速文件列表”（也可同时开启）。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>自动断开时不移除来源，仅断开连接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>启用后，只会断开来源的连接，
+不会将其从队列中移除。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
             <source>Automatically search for alternative download locations</source>
-            <translation type="unfinished" />
+            <translation>自动搜索备用下载来源</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="778" />
@@ -8780,12 +8859,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>客户端每隔几分钟会搜索下载队列中的文件，
+以查找更多下载位置（更多用户/来源）。
+自动搜索通过哈希值查找完全匹配的文件。
+缺点是可能找不到更多来源，
+并且在规定了搜索间隔的集线器上，
+会影响手动搜索。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>自动匹配自动搜索结果与队列</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8797,12 +8881,19 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>启用后，当发现某用户是正在下载的某个文件的来源时，
+将自动下载该用户的文件列表，
+并将其中匹配的文件加入下载队列的来源。
+如果成套下载文件，该用户很可能也是
+您正在下载的其他许多文件的来源。不确定时请启用。
+缺点是可能添加速度较慢的来源，
+从而延长完成下载所需的时间，
+并且需要下载大量文件列表。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
             <source>Skip zero-byte files</source>
-            <translation type="unfinished" />
+            <translation>跳过零字节文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="818" />
@@ -8810,39 +8901,44 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>启用此选项后，您尝试下载的所有零字节文件
+都将被静默跳过。
+有时空文件的名称也包含有用信息。
+但是每个文件，即使是空文件，也会占用一些磁盘空间。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
             <source>Don't download files already in share</source>
-            <translation type="unfinished" />
+            <translation>不下载已共享的文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>此选项可防止下载
+已存在于共享目录中的文件。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
             <source>Don't download files already in the queue</source>
-            <translation type="unfinished" />
+            <translation>不下载已在队列中的文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>此选项可防止下载
+已存在于队列中的文件。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
             <source>SFV Check</source>
-            <translation type="unfinished" />
+            <translation>SFV 校验</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="873" />
             <source>Keep downloaded filelists</source>
-            <translation type="unfinished" />
+            <translation>保留已下载的文件列表</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="876" />
@@ -8855,12 +8951,20 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>如果要在文件列表下载完成后，
+仍将其保留在下载队列中，请启用此选项。
+下载完成后，队列项将处于“已完成”状态，
+您以后随时可以删除这些已完成的条目。
+请注意，如果从目标位置移动或删除已下载的文件，
+不会自动删除
+队列中对应的已完成条目。
+禁用此功能也不会从队列中移除现有的已完成条目，
+必须手动移除。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
             <source>Keep downloaded files</source>
-            <translation type="unfinished" />
+            <translation>保留已下载的文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="895" />
@@ -8876,42 +8980,53 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>如果要在文件和文件夹下载完成后，
+仍将其保留在下载队列中，请启用此选项。
+下载完成后，队列项将处于“已完成”状态，
+您以后随时可以删除这些已完成的条目。
+使用此功能可以直接在下载队列中
+查看哪些文件已经下载，
+无需检查“已完成的下载”窗口。
+请注意，如果从目标位置移动或删除已下载的文件，
+不会自动删除
+队列中对应的已完成条目。
+禁用此功能也不会从队列中移除现有的已完成条目，
+必须手动移除。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
             <source>Compressed transfers</source>
-            <translation type="unfinished" />
+            <translation>压缩传输</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="925" />
             <source>Segmented downloads</source>
-            <translation type="unfinished" />
+            <translation>分段下载</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="940" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>高级</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="961" />
             <source>Interval for auto search alternates (minutes)</source>
-            <translation type="unfinished" />
+            <translation>自动搜索备用来源的间隔（分钟）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>分段大小（MB，0 = 自动分段大小）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>允许通过多个 NMDC 集线器同时向同一用户上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>允许同时向同一 IP 上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="319" />
@@ -8929,12 +9044,12 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="24" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>基本</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="30" />
             <source>Language file</source>
-            <translation type="unfinished" />
+            <translation>语言文件</translation>
         </message>
         <message>
             <source>Change</source>
@@ -8943,146 +9058,148 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="61" />
             <source>Remember window position on exit</source>
-            <translation type="unfinished" />
+            <translation>退出时记住窗口位置</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="71" />
             <source>Always hide window to system tray at startup</source>
-            <translation type="unfinished" />
+            <translation>启动时始终将窗口隐藏到系统托盘</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="78" />
             <source>Always show window at startup</source>
-            <translation type="unfinished" />
+            <translation>启动时始终显示窗口</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="124" />
             <source>Don't show icons in menus (need restart)</source>
-            <translation type="unfinished" />
+            <translation>不在菜单中显示图标（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="132" />
             <source>Use default ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>使用默认工具栏（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="137" />
             <source>Use multi-line ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>使用多行工具栏（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="142" />
             <source>Use SideBar instead of ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>使用侧边栏代替工具栏（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="164" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>聊天</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="170" />
             <source>Show joins</source>
-            <translation type="unfinished" />
+            <translation>显示用户加入消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="180" />
             <source>Show joins only for favorite users</source>
-            <translation type="unfinished" />
+            <translation>仅显示收藏用户的加入消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="187" />
             <source>Show hidden users</source>
-            <translation type="unfinished" />
+            <translation>显示隐藏用户</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="194" />
             <source>Ignore private messages from Hub</source>
-            <translation type="unfinished" />
+            <translation>忽略来自集线器的私人消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="201" />
             <source>Ignore private messages from Bot</source>
-            <translation type="unfinished" />
+            <translation>忽略来自机器人的私人消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="208" />
             <source>Redirect messages from Bot to the main chat</source>
-            <translation type="unfinished" />
+            <translation>将机器人的消息重定向至主聊天</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="215" />
             <source>Redirect new personal messages to the main chat</source>
-            <translation type="unfinished" />
+            <translation>将新的私人消息重定向至主聊天</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="222" />
             <source>Do not change focus on new incoming private messages</source>
-            <translation type="unfinished" />
+            <translation>收到新的私人消息时不切换焦点</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="232" />
             <source>Use separator for unread messages in the chat</source>
-            <translation type="unfinished" />
+            <translation>在聊天中使用未读消息分隔符</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="239" />
             <source>Filter kick-messages from the chat</source>
-            <translation type="unfinished" />
+            <translation>从聊天中滤除踢出用户的消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="246" />
             <source>Use Ctrl+Enter to send messages</source>
-            <translation type="unfinished" />
+            <translation>使用 Ctrl+Enter 发送消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="256" />
             <source>Enable emoticons</source>
-            <translation type="unfinished" />
+            <translation>启用表情符号</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="263" />
             <source>If checked, you'll see emoticons even in the middle of words.
 If unchecked, you'll see emoticons only if they are isolated
 from other words by spaces.</source>
-            <translation type="unfinished" />
+            <translation>选中后，即使表情符号出现在单词中间也会显示。
+未选中时，仅当表情符号与其他单词
+以空格分隔时才会显示。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="268" />
             <source>Force emoticon parsing</source>
-            <translation type="unfinished" />
+            <translation>强制解析表情符号</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="275" />
             <source>Use emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>使用表情符号面板</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="282" />
             <source>Autohide emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>自动隐藏表情符号面板</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="303" />
             <source>Chat (extended)</source>
-            <translation type="unfinished" />
+            <translation>聊天（扩展）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="317" />
             <source>Double click action</source>
-            <translation type="unfinished" />
+            <translation>双击操作</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="331" />
             <location filename="../ui/UISettingsGUI.ui" line="350" />
             <source>Insert nick into input widget</source>
-            <translation type="unfinished" />
+            <translation>将昵称插入输入框</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="336" />
             <location filename="../ui/UISettingsGUI.ui" line="355" />
             <source>Get file list</source>
-            <translation type="unfinished" />
+            <translation>获取文件列表</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="341" />
@@ -9093,67 +9210,67 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="377" />
             <source>Application unit base</source>
-            <translation type="unfinished" />
+            <translation>程序单位进制</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="421" />
             <source>Timestamp</source>
-            <translation type="unfinished" />
+            <translation>时间戳</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="440" />
             <source>Middle click action</source>
-            <translation type="unfinished" />
+            <translation>中键单击操作</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>显示 KiB（1024 字节）或 KB（1000 字节）等单位。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>窗口行为</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>单击关闭按钮时最小化至状态图标</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>状态图标</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>使用彩色状态图标</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>使用单色状态图标</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>公制</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
             <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use AM/PM display. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use am/pm display. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;时间格式可使用以下表达式：&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;表达式&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;输出&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;不带前导零的小时（0 至 23；使用 AM/PM 显示时为 1 至 12）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;带前导零的小时（00 至 23；使用 AM/PM 显示时为 01 至 12）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;不带前导零的小时（0 至 23，即使使用 AM/PM 显示）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;带前导零的小时（00 至 23，即使使用 AM/PM 显示）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;不带前导零的分钟（0 至 59）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;带前导零的分钟（00 至 59）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;不带前导零的秒（0 至 59）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;带前导零的秒（00 至 59）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;不带前导零的毫秒（0 至 999）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;带前导零的毫秒（000 至 999）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP 或 A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;使用 AM/PM 显示。&lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; 将替换为 &amp;quot;AM&amp;quot; 或 &amp;quot;PM&amp;quot;。&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap 或 a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;使用 am/pm 显示。&lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; 将替换为 &amp;quot;am&amp;quot; 或 &amp;quot;pm&amp;quot;。&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;时区（例如 &amp;quot;CEST&amp;quot;）&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
             <source>Default action with magnet</source>
-            <translation type="unfinished" />
+            <translation>磁力链接默认操作</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="473" />
             <source>Ask</source>
-            <translation type="unfinished" />
+            <translation>询问</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="478" />
@@ -9169,100 +9286,101 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="508" />
             <source>Remember outgoing messages (0 = don't remember)</source>
-            <translation type="unfinished" />
+            <translation>记住发出的消息（0 = 不记住）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="537" />
             <source>Maximum paragraphs</source>
-            <translation type="unfinished" />
+            <translation>最大段落数</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="563" />
             <source>Separator in chat</source>
-            <translation type="unfinished" />
+            <translation>聊天分隔符</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="592" />
             <source>Highlight favorite users in user list</source>
-            <translation type="unfinished" />
+            <translation>在用户列表中高亮收藏的用户</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="599" />
             <source>Depending on hub configuration: information about
 them is usually available only to operators</source>
-            <translation type="unfinished" />
+            <translation>取决于集线器配置：这些用户的信息
+通常仅管理员可见</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="603" />
             <source>Show ip-addresses of users in chat</source>
-            <translation type="unfinished" />
+            <translation>在聊天中显示用户的 IP 地址</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="610" />
             <source>Show country of users in chat</source>
-            <translation type="unfinished" />
+            <translation>在聊天中显示用户的国家/地区</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="617" />
             <source>Parse BBCode</source>
-            <translation type="unfinished" />
+            <translation>解析 BBCode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="638" />
             <source>Colors</source>
-            <translation type="unfinished" />
+            <translation>颜色</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="644" />
             <source>Text colors in chat</source>
-            <translation type="unfinished" />
+            <translation>聊天文字颜色</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="666" />
             <source>Highlighting of search results in the chat</source>
-            <translation type="unfinished" />
+            <translation>聊天中的搜索结果高亮</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="675" />
             <location filename="../ui/UISettingsGUI.ui" line="733" />
             <source>Color</source>
-            <translation type="unfinished" />
+            <translation>颜色</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="695" />
             <location filename="../ui/UISettingsGUI.ui" line="750" />
             <source>Transparency</source>
-            <translation type="unfinished" />
+            <translation>透明度</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="724" />
             <source>Highlighting of already shared files</source>
-            <translation type="unfinished" />
+            <translation>已共享文件高亮</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="779" />
             <source>Transfer colors</source>
-            <translation type="unfinished" />
+            <translation>传输颜色</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="802" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="829" />
             <source>Reset</source>
-            <translation type="unfinished" />
+            <translation>重置</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="841" />
             <source>Change background color in the chat</source>
-            <translation type="unfinished" />
+            <translation>更改聊天背景颜色</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
-            <translation type="unfinished" />
+            <translation>字体</translation>
         </message>
     </context>
     <context>
@@ -9270,33 +9388,33 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>程序退出时清除搜索历史</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>程序退出时清除下载目录历史</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
             <location filename="../ui/UISettingsHistory.ui" line="113" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>立即清空</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>保存的搜索历史条目数：</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>保存的下载目录历史条目数：</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>记住 TTH 搜索短语</translation>
         </message>
     </context>
     <context>
@@ -9304,17 +9422,17 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="477" />
             <source>Log directory</source>
-            <translation type="unfinished" />
+            <translation>日志目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="495" />
             <source>All logs generated by EiskaltDC++ will be put in this subdirectory.</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ 生成的所有日志都将放入此子目录。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="20" />
             <source>Private messages</source>
-            <translation type="unfinished" />
+            <translation>私人消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="41" />
@@ -9337,22 +9455,22 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsLog.ui" line="281" />
             <location filename="../ui/UISettingsLog.ui" line="325" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>文本</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="64" />
             <source>Main chat</source>
-            <translation type="unfinished" />
+            <translation>主聊天</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="108" />
             <source>Downloads</source>
-            <translation type="unfinished" />
+            <translation>下载</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="152" />
             <source>Uploads</source>
-            <translation type="unfinished" />
+            <translation>上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="243" />
@@ -9362,17 +9480,17 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>调试控制台</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
             <source>System messages</source>
-            <translation type="unfinished" />
+            <translation>系统消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="372" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>状态消息</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="385" />
@@ -9381,37 +9499,41 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;帮助&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
             <source>Auto search alternates</source>
-            <translation type="unfinished" />
+            <translation>自动搜索备用来源</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>崩溃诊断日志</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>保留持久化的低容量诊断日志，记录 Qt 警告、心跳、关闭及致命信号标记。适用于诊断程序长时间运行后退出的问题。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>写入上方指定的日志目录。保留崩溃或强制终止前的最后一次心跳记录。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
             <source>Own filelist uploads</source>
-            <translation type="unfinished" />
+            <translation>自己的文件列表上传</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="196" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>已完成的下载</translation>
         </message>
     </context>
     <context>
@@ -9419,23 +9541,23 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="24" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>文本</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="30" />
             <source>Ask confirm before exit</source>
-            <translation type="unfinished" />
+            <translation>退出前要求确认</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="40" />
             <source>Enable notifications</source>
-            <translation type="unfinished" />
+            <translation>启用通知</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="49" />
             <location filename="../ui/UISettingsNotification.ui" line="201" />
             <source>Your nick is mentioned in main chat</source>
-            <translation type="unfinished" />
+            <translation>主聊天中有人提及您的昵称</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="56" />
@@ -9447,57 +9569,57 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="63" />
             <location filename="../ui/UISettingsNotification.ui" line="290" />
             <source>Transfer done</source>
-            <translation type="unfinished" />
+            <translation>传输完成</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>收藏的用户加入/离开</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
             <source>Allow other types of notifications</source>
-            <translation type="unfinished" />
+            <translation>允许其他类型的通知</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="91" />
             <source>Enable notifications with not active main window</source>
-            <translation type="unfinished" />
+            <translation>主窗口未激活时启用通知</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="98" />
             <source>Enable notifications with active main window</source>
-            <translation type="unfinished" />
+            <translation>主窗口激活时启用通知</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="105" />
             <source>Change icon when main window is visible</source>
-            <translation type="unfinished" />
+            <translation>主窗口可见时更改图标</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="133" />
             <source>Notification module</source>
-            <translation type="unfinished" />
+            <translation>通知模块</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="153" />
             <source>Default (Qt)</source>
-            <translation type="unfinished" />
+            <translation>默认 (Qt)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="158" />
             <source>D-Bus</source>
-            <translation type="unfinished" />
+            <translation>D-Bus</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="186" />
             <source>Sound</source>
-            <translation type="unfinished" />
+            <translation>声音</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="192" />
             <source>Enable sounds</source>
-            <translation type="unfinished" />
+            <translation>启用声音</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="225" />
@@ -9505,29 +9627,31 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="314" />
             <location filename="../ui/UISettingsNotification.ui" line="355" />
             <source>Test</source>
-            <translation type="unfinished" />
+            <translation>测试</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>私人消息窗口激活时播放声音</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
             <source>Favorite user event</source>
-            <translation type="unfinished" />
+            <translation>收藏用户事件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="388" />
             <source>Use external command</source>
-            <translation type="unfinished" />
+            <translation>使用外部命令</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="409" />
             <source>If your sound files' format is unsupported by Qt, you can define
 custom media player here to play them.
 For example: /usr/bin/mplayer</source>
-            <translation type="unfinished" />
+            <translation>如果 Qt 不支持您的声音文件格式，可以在此指定
+自定义媒体播放器来播放。
+例如：/usr/bin/mplayer</translation>
         </message>
     </context>
     <context>
@@ -9536,13 +9660,15 @@ For example: /usr/bin/mplayer</source>
             <location filename="../ui/UISettingsPersonal.ui" line="62" />
             <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>此描述将显示在用户列表中。
+可在收藏的集线器属性中为每个集线器单独覆盖此设置。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="70" />
             <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
-            <translation type="unfinished" />
+            <translation>处于离开模式时，此消息将发送给所有
+向您发送私人消息的人。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="78" />
@@ -9553,12 +9679,13 @@ who sends private message to you.</source>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>加入集线器时，此昵称或别名将用于标识您的身份。
+可在收藏的集线器属性中为每个集线器单独覆盖此设置。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
             <source>E-Mail</source>
-            <translation type="unfinished" />
+            <translation>电子邮件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="100" />
@@ -9573,12 +9700,12 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="114" />
             <source>Auto away interval (min)</source>
-            <translation type="unfinished" />
+            <translation>自动离开间隔（分钟）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="134" />
             <source>This field is for sharing your email address, if you wish it.</source>
-            <translation type="unfinished" />
+            <translation>如果愿意，可以在此字段中填写您的电子邮件地址。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="184" />
@@ -9591,12 +9718,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>此下拉列表包含一些常见上传速度（Mbit/s），
+请选择最接近您实际速度的一项。
+请勿填写下载速度；此设置用于衡量
+其他用户从您这里下载时可能获得的速度。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9611,7 +9741,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="264" />
             <source>Default hub encoding</source>
-            <translation type="unfinished" />
+            <translation>默认集线器编码</translation>
         </message>
     </context>
     <context>
@@ -9619,12 +9749,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="27" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>基本</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="33" />
             <source>View share in simple mode</source>
-            <translation type="unfinished" />
+            <translation>以简单模式查看共享</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="65" />
@@ -9644,32 +9774,32 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="98" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>共享总量：%1</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>添加</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">移除</translation>
+            <translation>移除</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
             <source>Exceptions</source>
-            <translation type="unfinished" />
+            <translation>例外</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="149" />
             <source>Don't share files and folders containing:</source>
-            <translation type="unfinished" />
+            <translation>不共享名称包含以下内容的文件和文件夹：</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="156" />
             <source>Here you can specify templates for files you don't want to share. </source>
-            <translation type="unfinished" />
+            <translation>可在此指定不想共享的文件的匹配模式。 </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="165" />
@@ -9679,12 +9809,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="175" />
             <source>Select and add the directory</source>
-            <translation type="unfinished" />
+            <translation>选择并添加目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="185" />
             <source>Edit</source>
-            <translation type="unfinished" />
+            <translation>编辑</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="195" />
@@ -9694,12 +9824,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="221" />
             <source>Advanced</source>
-            <translation type="unfinished" />
+            <translation>高级</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="233" />
             <source>Follow symlinks</source>
-            <translation type="unfinished" />
+            <translation>跟随符号链接</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="246" />
@@ -9708,72 +9838,76 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>共享设置了隐藏属性的文件，以及设置了隐藏属性的目录
+中的文件。
+关闭此选项时，不会共享以 .（句点）开头的文件。
+注意：此选项需要刷新文件列表，
+并且可能导致客户端看似无响应。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
             <source>Share hidden files</source>
-            <translation type="unfinished" />
+            <translation>共享隐藏文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="266" />
             <source>Share temporary files</source>
-            <translation type="unfinished" />
+            <translation>共享临时文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>跳过零大小文件</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
             <source>Auto remove non-existing directories</source>
-            <translation type="unfinished" />
+            <translation>自动移除不存在的目录</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="289" />
             <source>Use fast hash</source>
-            <translation type="unfinished" />
+            <translation>使用快速哈希</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="302" />
             <source>Buffer size (MiB)</source>
-            <translation type="unfinished" />
+            <translation>缓冲区大小 (MiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="315" />
             <source>8</source>
-            <translation type="unfinished" />
+            <translation>8</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
             <source>FastHash options (restart needed)</source>
-            <translation type="unfinished" />
+            <translation>FastHash 选项（需要重启）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="376" />
             <source>Private page mapping</source>
-            <translation type="unfinished" />
+            <translation>私有页面映射</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="383" />
             <source>No reserve</source>
-            <translation type="unfinished" />
+            <translation>不预留</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="397" />
             <source>Proactive read from disk</source>
-            <translation type="unfinished" />
+            <translation>预读磁盘</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>仅在自己的文件列表中使用 ADL 搜索</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
             <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>速度低于此值时自动开放额外槽位（KiB/s，0 = 不限制）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="440" />
@@ -9782,39 +9916,44 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>如果平均上传速度低于指定值，
+将授予一个额外的上传槽位。
+最多每 30 秒授予一次此类槽位。
+即使原有上传的速度提高，
+已授予的槽位也不会关闭。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>启动时的哈希计算延迟（秒，-1 = 无限期）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
             <location filename="../ui/UISettingsSharing.ui" line="511" />
             <source>Here you can set time interval of auto refreshing your share.</source>
-            <translation type="unfinished" />
+            <translation>可在此设置自动刷新共享的时间间隔。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="495" />
             <source>Auto refresh time (minutes, 0 = off)</source>
-            <translation type="unfinished" />
+            <translation>自动刷新间隔（分钟，0 = 关闭）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>最大哈希计算速度 (MB/s)（0 = 不限制）</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />
             <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
-            <translation type="unfinished" />
+            <translation>如果计算文件哈希时系统变慢，
+可在此限制最大哈希计算速度。</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="554" />
             <source>Upload slots</source>
-            <translation type="unfinished" />
+            <translation>上传槽位</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="564" />
@@ -9827,7 +9966,15 @@ There's a max of 3 connections in addition to normal slots,
 these are called mini slots.
 Note: If a user leaves the hub, EiskaltDC++ will close his slots;
 if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</source>
-            <translation type="unfinished" />
+            <translation>配置其他用户从您这里下载文件时
+可以占用的槽位数。远程用户在与您共同加入的
+每个集线器上只能使用一个槽位。
+EiskaltDC++ 支持向其他 DC++ 用户上传文件列表及小于 64 KiB
+的文件，而无需占用普通槽位。
+除了普通槽位外，最多还可有 3 个连接，
+称为迷你槽位。
+注意：如果用户离开集线器，EiskaltDC++ 将关闭其槽位；
+如果该用户在 10 分钟内返回，EiskaltDC++ 将为其授予槽位。</translation>
         </message>
     </context>
     <context>
@@ -9835,7 +9982,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISettingsUC.ui" line="51" />
             <source>Add</source>
-            <translation type="unfinished" />
+            <translation>添加</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsUC.ui" line="58" />
@@ -9850,12 +9997,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISettingsUC.ui" line="72" />
             <source>Up</source>
-            <translation type="unfinished" />
+            <translation>上移</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsUC.ui" line="92" />
             <source>Down</source>
-            <translation type="unfinished" />
+            <translation>下移</translation>
         </message>
     </context>
     <context>
@@ -9869,17 +10016,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>仅搜索文件</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>仅搜索目录</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>搜索全部</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />
@@ -9897,12 +10044,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISpy.ui" line="35" />
             <source>Ignore TTH search</source>
-            <translation type="unfinished" />
+            <translation>忽略 TTH 搜索</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="45" />
             <source>Autoscrolling</source>
-            <translation type="unfinished" />
+            <translation>自动滚动</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="65" />
@@ -9920,7 +10067,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="14" />
             <source>New command</source>
-            <translation type="unfinished" />
+            <translation>新建命令</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="23" />
@@ -9930,27 +10077,27 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="32" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>分隔符</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="42" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>聊天</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="49" />
             <source>Raw</source>
-            <translation type="unfinished" />
+            <translation>原始命令</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="56" />
             <source>PM</source>
-            <translation type="unfinished" />
+            <translation>私聊</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="66" />
             <source>Context</source>
-            <translation type="unfinished" />
+            <translation>上下文</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="75" />
@@ -9970,12 +10117,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="96" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>文件浏览器</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="106" />
             <source>Parameters</source>
-            <translation type="unfinished" />
+            <translation>参数</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="139" />
@@ -9985,27 +10132,27 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="146" />
             <source>Command</source>
-            <translation type="unfinished" />
+            <translation>命令</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="153" />
             <source>Hub address</source>
-            <translation type="unfinished" />
+            <translation>集线器地址</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="160" />
             <source>To</source>
-            <translation type="unfinished" />
+            <translation>接收者</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="167" />
             <source>Send once per nick</source>
-            <translation type="unfinished" />
+            <translation>每个昵称仅发送一次</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="191" />
             <source>Result</source>
-            <translation type="unfinished" />
+            <translation>结果</translation>
         </message>
     </context>
     <context>
@@ -10013,17 +10160,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="147" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;集线器角色&lt;/b&gt;：管理员</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="149" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;集线器角色&lt;/b&gt;：用户</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="152" />
             <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;br/&gt;&lt;b&gt;收藏的用户&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="185" />
@@ -10033,7 +10180,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="186" />
             <source>Comment</source>
-            <translation type="unfinished" />
+            <translation>备注</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="187" />
@@ -10043,12 +10190,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="188" />
             <source>Connection</source>
-            <translation type="unfinished" />
+            <translation>连接</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="189" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>电子邮件</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="190" />
@@ -10058,7 +10205,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>精确共享大小</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10068,7 +10215,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
@@ -10076,12 +10223,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>图形界面设置 %1：%2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>将图形界面设置 %1 更改为 %2</translation>
         </message>
     </context>
     <context>
@@ -10094,12 +10241,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforUtil.cpp" line="1643" />
             <source>Offline</source>
-            <translation type="unfinished" />
+            <translation>离线</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="1746" />
             <source>User commands</source>
-            <translation type="unfinished" />
+            <translation>用户命令</translation>
         </message>
     </context>
     <context>

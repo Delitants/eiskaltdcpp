@@ -46,7 +46,7 @@ msgstr "საბაზისო პროტოკოლის შეთან�
 msgid ""
 "Hub probably uses an old version of ADC, please encourage the owner to "
 "upgrade"
-msgstr ""
+msgstr "ჰაბი, სავარაუდოდ, ADC-ის ძველ ვერსიას იყენებს. სთხოვეთ მფლობელს მისი განახლება"
 
 #: ../AdcHub.cpp:308
 msgid "%1% was kicked by %2%: %3%"
@@ -123,11 +123,11 @@ msgstr "შეერთების შეცდომა: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "დაიბლოკა კლიენტებს შორის კავშირი ჰაბთან ('%1%:%2%'; მოთხოვნა '%3%'-დან)"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "იბლოკება '%1%', აღმოჩენილია შესაძლო DDoS შეტევა (საწყისი ჰაბი '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -136,24 +136,24 @@ msgstr "მიერთების საუკეთესო პარამ�
 #: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
-msgstr ""
+msgstr "ვერ გაიხსნა %1% პორტი; კავშირის პარამეტრები ხელით უნდა გამართოთ"
 
 #: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
-msgstr ""
+msgstr "აღმოჩენილია საჯარო IP მისამართი, არჩეულია აქტიური რეჟიმი პირდაპირი კავშირით"
 
 #: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
-msgstr ""
+msgstr "აღმოჩენილია ლოკალური ქსელი შესაძლო NAT-ით, მიმდინარეობს პორტების გადამისამართების მცდელობა UPnP-ით..."
 
 #: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
-msgstr ""
+msgstr "აქტიური რეჟიმის ავტომატური გამართვა ვერ მოხერხდა. უკეთესი კავშირისთვის შეგიძლიათ პარამეტრები ხელით გამართოთ"
 
 #: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
@@ -207,7 +207,7 @@ msgstr "პირადი გასაღების ჩატვირთვ�
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "გაშლილი მონაცემები ზომის ზღვარს აჭარბებს"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -337,7 +337,7 @@ msgstr "UPnP-ის მხარდაჭერის გარეშე"
 
 #: ../MappingManager.cpp:57
 msgid "Another UPnP port mapping attempt is in progress..."
-msgstr ""
+msgstr "უკვე მიმდინარეობს UPnP პორტების გადამისამართების სხვა მცდელობა..."
 
 #: ../MappingManager.cpp:108
 msgid "Failed to initialize the %1% interface"
@@ -350,7 +350,7 @@ msgstr " გადაცემის პორტი (%1% TCP)"
 #: ../MappingManager.cpp:115 ../MappingManager.cpp:123
 #: ../MappingManager.cpp:131 ../MappingManager.cpp:139
 msgid "The %1% interface has failed to map the %2% %3% port"
-msgstr ""
+msgstr "%1% ინტერფეისმა ვერ გადაამისამართა %2% %3% პორტი"
 
 #: ../MappingManager.cpp:122
 msgid " Encrypted Transfer Port (%1% TCP)"
@@ -368,13 +368,13 @@ msgstr " DHT პორტი (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "პორტების გადამისამართება წარმატებით შეიქმნა (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), გამოყენებულია %5% ინტერფეისი"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
-msgstr ""
+msgstr "პორტების გადამისამართება წარმატებით შეიქმნა (TCP: %1%, UDP: %2%, TLS: %3%), გამოყენებულია %4% ინტერფეისი"
 
 #: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
@@ -386,23 +386,23 @@ msgstr "პორტების მიბმის შექმნის შე
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "პორტების გადამისამართების ვადა განახლდა"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "პორტების გადამისამართება აღდგა"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "პორტების გადამისამართების ვადის განახლება ვერ მოხერხდა; ხელახალი მცდელობა 60 წამში"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
-msgstr ""
+msgstr "პორტების გადამისამართება წარმატებით წაიშალა %1% ინტერფეისით"
 
 #: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
-msgstr ""
+msgstr "ვერ წაიშალა პორტების გადამისამართება %1% ინტერფეისით"
 
 #: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
@@ -414,7 +414,7 @@ msgstr "%1% (მეტსახელი უცნობია)"
 
 #: ../NmdcHub.cpp:839
 msgid "Hub topic:"
-msgstr ""
+msgstr "ჰაბის თემა:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
@@ -438,7 +438,7 @@ msgstr "არასაჭირო ნაწილი"
 
 #: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
-msgstr ""
+msgstr "მიმდინარეობს TTH ალტერნატიული წყაროების ძებნა: %1%"
 
 #: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
@@ -462,7 +462,7 @@ msgstr "ცდილობთ, საკუთარი თავიდან �
 
 #: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
-msgstr ""
+msgstr "რიგში უკვე არსებობს ფაილი განსხვავებული TTH ფესვით"
 
 #: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
@@ -476,7 +476,7 @@ msgstr "სამიზნე ფაილის სახელი ძალი
 msgid ""
 "Invalid target file (missing directory, check default download directory "
 "setting)"
-msgstr ""
+msgstr "არასწორი სამიზნე ფაილი (საქაღალდე არ არსებობს, შეამოწმეთ ჩამოტვირთვის ნაგულისხმევი საქაღალდის პარამეტრი)"
 
 #: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
@@ -496,11 +496,11 @@ msgstr "სამიზნე ფაილი არ არსებობს �
 
 #: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
-msgstr ""
+msgstr "ვერ მოხერხდა %1%-ის გადატანა %2%-ში (%3%); სახელი შეიცვალა %4%-ით"
 
 #: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
-msgstr ""
+msgstr "ვერ მოხერხდა %1%-ის გადატანა %2%-ში (%3%) და ვერც სახელის შეცვლა %4%-ით (%5%)"
 
 #: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
@@ -514,11 +514,11 @@ msgstr[1] "%1%: მოიძებნა %2% შესაბამისი ფ�
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "ამ ელემენტის სამიზნე ბილიკი მიუწვდომელია: %1%; შეაჩერეთ რიგის ეს ელემენტი."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
-msgstr ""
+msgstr "CRC32 არ ემთხვევა (SFV შემოწმება)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
@@ -527,7 +527,7 @@ msgstr "%1% : ემთხვევა %2% ფაილს"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL შეცდომა: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -619,7 +619,7 @@ msgstr "დროებითი გადმოწერის საქაღ�
 
 #: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
-msgstr ""
+msgstr "%1% საქაღალდის ჰეშირებისას აღმოჩენილია ფაილის არასწორი სახელი"
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
@@ -633,17 +633,17 @@ msgstr "დროებითი ფაილის გაზიარები�
 msgid ""
 "Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: "
 "%3%"
-msgstr ""
+msgstr "დუბლირებული ფაილი არ გაზიარდება: %1% (ზომა: %2% B) დამთხვევა ფაილთან: %3%"
 
 #: ../ShareManager.cpp:1169
 msgid ""
 "File list refresh in progress, please wait for it to finish before trying to "
 "refresh again"
-msgstr ""
+msgstr "მიმდინარეობს ფაილების სიის განახლება. ხელახლა განახლებამდე დაელოდეთ მის დასრულებას"
 
 #: ../ShareManager.cpp:1190
 msgid "File list refresh failed: %1%"
-msgstr ""
+msgstr "ფაილების სიის განახლება ვერ მოხერხდა: %1%"
 
 #: ../ShareManager.cpp:1217
 msgid "File list refresh initiated"
@@ -655,7 +655,7 @@ msgstr "ფაილების სიის განახლება და
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "ფაილების სიის განახლება გაუქმდა, რადგან გაზიარებული საქაღალდეები შეიცვალა"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -669,143 +669,143 @@ msgstr "უცნობი შეცდომა: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "მხარდაუჭერელი Shadowsocks შიფრი"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Shadowsocks გასაღების წარმოების ინიციალიზაცია ვერ მოხერხდა"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Shadowsocks ქვეგასაღების წარმოება ვერ მოხერხდა"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Shadowsocks დაშიფვრის ინიციალიზაცია ვერ მოხერხდა"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks დაშიფვრა ვერ მოხერხდა"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
 #: ../Socket.cpp:860 ../Socket.cpp:930 ../Socket.cpp:945
 msgid "The socks server failed establish a connection"
-msgstr ""
+msgstr "SOCKS სერვერმა კავშირი ვერ დაამყარა"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks სერვერმა კავშირი ვერ დაამყარა"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Shadowsocks პაროლი არ არის მითითებული"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks სამიზნე მისამართი არასწორია"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
-msgstr ""
+msgstr "SOCKS სერვერი ავთენტიფიკაციას მოითხოვს"
 
 #: ../Socket.cpp:948
 msgid "The socks server doesn't support login / password authentication"
-msgstr ""
+msgstr "SOCKS სერვერს მომხმარებლის სახელითა და პაროლით ავთენტიფიკაციის მხარდაჭერა არ აქვს"
 
 #: ../Socket.cpp:962 ../Socket.cpp:966
 msgid "Socks server authentication failed (bad login / password?)"
-msgstr ""
+msgstr "SOCKS სერვერის ავთენტიფიკაცია ვერ მოხერხდა (მომხმარებლის სახელი ან პაროლი არასწორია?)"
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "SOCKS TLS კონტექსტის ინიციალიზაცია ვერ მოხერხდა"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "SOCKS TLS სესიის ინიციალიზაცია ვერ მოხერხდა"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "SOCKS TLS სესიის სოკეტზე მიბმა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "SOCKS TLS შეთანხმების მოლოდინის დრო ამოიწურა"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS შეთანხმება ვერ მოხერხდა: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS წაკითხვა ვერ მოხერხდა: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS ჩაწერა ვერ მოხერხდა: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP რეტრანსლატორის პასუხი არასწორია"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP რეტრანსლატორის პასუხის მისამართი არასწორია"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Shadowsocks UDP რეტრანსლატორის პასუხის გაშიფვრა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Shadowsocks salt-ის შექმნა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Shadowsocks შემავსებელი მონაცემების შექმნა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks გაშიფვრა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Shadowsocks სასარგებლო მონაცემების ზომა არასწორია"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks ნაკადი არასრული კადრით დასრულდა"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Shadowsocks UDP სესიის შექმნა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP რეტრანსლაცია გამორთულია"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Shadowsocks UDP რეტრანსლაცია არ არის გამართული"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Shadowsocks UDP nonce-ის შექმნა ვერ მოხერხდა"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Shadowsocks UDP პაკეტების მრიცხველი ამოიწურა"
 
 #: ../Socket.cpp:2043
 msgid ""
 "Failed to set up the socks server for UDP relay (check socks address and "
 "port)"
-msgstr ""
+msgstr "SOCKS სერვერის გამართვა UDP რეტრანსლაციისთვის ვერ მოხერხდა (შეამოწმეთ SOCKS მისამართი და პორტი)"
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP სამიზნე მისამართი არასწორია"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -818,11 +818,11 @@ msgstr "შეცდომა ფაილის გაგზავნისა�
 
 #: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
-msgstr ""
+msgstr "IP ფილტრი: დაიბლოკა შემომავალი კავშირი მისამართზე "
 
 #: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
-msgstr ""
+msgstr "გაითიშა ჰაბიდან გასული მომხმარებელი: %1%"
 
 #: ../UserConnection.cpp:58 ../UserConnection.cpp:73
 #: ../UserConnection.cpp:147
@@ -831,7 +831,7 @@ msgstr "არასწორი მონაცემები"
 
 #: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
-msgstr ""
+msgstr "ADC კავშირში მონაცემები UTF-8 ფორმატში არ არის"
 
 #: ../Util.cpp:862
 #, c-format
@@ -900,7 +900,7 @@ msgstr "%'lld ბ"
 
 #: ../MerkleCheckOutputStream.h:50 ../MerkleCheckOutputStream.h:110
 msgid "TTH inconsistency"
-msgstr ""
+msgstr "TTH არ ემთხვევა"
 
 #: ../Streams.h:159
 msgid "More bytes written than requested"
@@ -908,32 +908,32 @@ msgstr "ჩაწერილია მოთხოვნილზე მეტ�
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "DHT საწყისი კვანძების მოძიება დაიწყო"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "DHT საწყისი კვანძების მოძიების შეცდომა: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "DHT საწყისი კვანძების მოძიება წარმატებით დასრულდა."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): გამოქვეყნდა ფაილი: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): გამოქვეყნდა ნაწილობრივი ფაილი: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: დაყენდა ფაიერვოლის უკან მყოფი UDP-ის სტატუსი (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: ჩვენი UDP პორტი, როგორც ჩანს, ღიაა (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"

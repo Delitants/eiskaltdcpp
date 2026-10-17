@@ -130,11 +130,11 @@ msgstr "Błąd łączenia: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Zablokowano połączenie C-C z hubem ('%1%:%2%'; żądanie z '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "Blokowanie '%1%': wykryto potencjalny atak DDoS (hub źródłowy '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -143,24 +143,24 @@ msgstr "Określanie najlepszych ustawień łączności..."
 #: ../ConnectivityManager.cpp:119
 msgid ""
 "Unable to open %1% port(s); connectivity settings must be configured manually"
-msgstr ""
+msgstr "Nie można otworzyć portów %1%; ustawienia połączenia trzeba skonfigurować ręcznie"
 
 #: ../ConnectivityManager.cpp:130
 msgid ""
 "Public IP address detected, selecting active mode with direct connection"
-msgstr ""
+msgstr "Wykryto publiczny adres IP, wybrano tryb aktywny z połączeniem bezpośrednim"
 
 #: ../ConnectivityManager.cpp:138
 msgid ""
 "Local network with possible NAT detected, trying to map the ports using "
 "UPnP..."
-msgstr ""
+msgstr "Wykryto sieć lokalną z możliwym NAT, próba przekierowania portów przez UPnP..."
 
 #: ../ConnectivityManager.cpp:169
 msgid ""
 "Automatic setup of active mode has failed. You may want to set up your "
 "connection manually for better connectivity"
-msgstr ""
+msgstr "Automatyczna konfiguracja trybu aktywnego nie powiodła się. Skonfiguruj połączenie ręcznie, aby poprawić łączność"
 
 #: ../ConnectivityManager.cpp:183
 msgid "Transfer (TCP)"
@@ -214,7 +214,7 @@ msgstr "Nie udało się wczytać klucza prywatnego"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Rozpakowane dane przekraczają limit rozmiaru"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -376,13 +376,13 @@ msgstr "Port DHT (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Utworzono przekierowania portów (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%) za pomocą interfejsu %5%"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%), mapped "
 "using the %4% interface"
-msgstr ""
+msgstr "Utworzono przekierowania portów (TCP: %1%, UDP: %2%, TLS: %3%) za pomocą interfejsu %4%"
 
 #: ../MappingManager.cpp:167
 msgid "Failed to get external IP"
@@ -394,23 +394,23 @@ msgstr "Nie udało się utworzyć mapowań portów"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Odnowiono przekierowania portów"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Przywrócono przekierowania portów"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Nie udało się odnowić przekierowań portów; ponowna próba za 60 sekund"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
-msgstr ""
+msgstr "Usunięto przekierowania portów za pomocą interfejsu %1%"
 
 #: ../MappingManager.cpp:222
 msgid "Failed to remove port mappings with the %1% interface"
-msgstr ""
+msgstr "Nie udało się usunąć przekierowań portów za pomocą interfejsu %1%"
 
 #: ../MappingManager.cpp:227
 msgid "UPnP: %1%"
@@ -422,11 +422,11 @@ msgstr "%1% (Nazwa użytkownika nieznana)"
 
 #: ../NmdcHub.cpp:839
 msgid "Hub topic:"
-msgstr ""
+msgstr "Temat huba:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Zbyt mało udostępnionych danych, aby pobierać od "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -434,19 +434,19 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "Odmowa wysłania pliku"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
-msgstr ""
+msgstr " do "
 
 #: ../QueueManager.cpp:234
 msgid "No needed part"
-msgstr ""
+msgstr "Brak potrzebnej części"
 
 #: ../QueueManager.cpp:629
 msgid "Searching TTH alternates for: %1%"
-msgstr ""
+msgstr "Wyszukiwanie alternatywnych źródeł TTH dla: %1%"
 
 #: ../QueueManager.cpp:680 ../QueueManager.cpp:741
 msgid "A file with the same hash already exists in your share"
@@ -470,11 +470,11 @@ msgstr "Próbujesz pobrać sam od siebie!"
 
 #: ../QueueManager.cpp:797
 msgid "A file with a different TTH root already exists in the queue"
-msgstr ""
+msgstr "Plik z innym korzeniem TTH już istnieje w kolejce"
 
 #: ../QueueManager.cpp:801
 msgid "This file has already finished downloading"
-msgstr ""
+msgstr "Pobieranie tego pliku zostało już zakończone"
 
 #: ../QueueManager.cpp:843 ../QueueManager.cpp:852
 msgid "Target filename too long"
@@ -490,7 +490,7 @@ msgstr ""
 
 #: ../QueueManager.cpp:864
 msgid "File already exists at the target location"
-msgstr ""
+msgstr "Plik już istnieje w lokalizacji docelowej"
 
 #: ../QueueManager.cpp:877 ../QueueManager.cpp:881
 msgid "Duplicate source: %1%"
@@ -506,11 +506,11 @@ msgstr "Brak pliku docelowego lub zły rozmiar"
 
 #: ../QueueManager.cpp:1219
 msgid "Unable to move %1% to %2% (%3%); renamed to %4%"
-msgstr ""
+msgstr "Nie można przenieść %1% do %2% (%3%); zmieniono nazwę na %4%"
 
 #: ../QueueManager.cpp:1222
 msgid "Unable to move %1% to %2% (%3%) nor to rename to %4% (%5%)"
-msgstr ""
+msgstr "Nie można przenieść %1% do %2% (%3%) ani zmienić nazwy na %4% (%5%)"
 
 #: ../QueueManager.cpp:1420
 msgid "Unable to open filelist: %1%"
@@ -526,7 +526,7 @@ msgstr[3] "%1%: Znaleziono %2% pasującego pliku"
 
 #: ../QueueManager.cpp:1815
 msgid "Target path for this item is not available: %1%; pause this queue item."
-msgstr ""
+msgstr "Ścieżka docelowa tego elementu jest niedostępna: %1%; wstrzymaj ten element kolejki."
 
 #: ../QueueManager.cpp:2048 ../QueueManager.cpp:2057
 msgid "CRC32 inconsistency (SFV-Check)"
@@ -534,32 +534,32 @@ msgstr "Niezgodne CRC32 (sprawdź SFV)"
 
 #: ../QueueManager.cpp:2232
 msgid "%1% : Matched %2% files"
-msgstr ""
+msgstr "%1% : dopasowano plików: %2%"
 
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "Błąd SSL: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
-msgstr ""
+msgstr "Dowolny"
 
 #: ../SearchManager.cpp:56
 msgid "Audio"
-msgstr ""
+msgstr "Dźwięk"
 
 #: ../SearchManager.cpp:57
 msgid "Compressed"
-msgstr ""
+msgstr "Archiwum"
 
 #: ../SearchManager.cpp:58
 msgid "Document"
-msgstr ""
+msgstr "Dokument"
 
 #: ../SearchManager.cpp:59
 msgid "Executable"
-msgstr ""
+msgstr "Plik wykonywalny"
 
 #: ../SearchManager.cpp:60
 msgid "Picture"
@@ -567,7 +567,7 @@ msgstr "Obraz"
 
 #: ../SearchManager.cpp:61
 msgid "Video"
-msgstr ""
+msgstr "Wideo"
 
 #: ../SearchManager.cpp:62
 msgid "Directory"
@@ -579,7 +579,7 @@ msgstr "TTH"
 
 #: ../SearchManager.cpp:64
 msgid "CD Image"
-msgstr ""
+msgstr "Obraz CD"
 
 #: ../SearchManager.cpp:173
 msgid "Search enabled again"
@@ -591,31 +591,31 @@ msgstr "Wyszukiwanie nieaktywne: %1%"
 
 #: ../SettingsManager.cpp:260
 msgid "downloaded from"
-msgstr ""
+msgstr "pobrano od"
 
 #: ../SettingsManager.cpp:635
 msgid "Invalid search type name"
-msgstr ""
+msgstr "Nieprawidłowa nazwa typu wyszukiwania"
 
 #: ../SettingsManager.cpp:639 ../SettingsManager.cpp:661
 msgid "This search type already exists"
-msgstr ""
+msgstr "Ten typ wyszukiwania już istnieje"
 
 #: ../SettingsManager.cpp:693
 msgid "No such search type"
-msgstr ""
+msgstr "Nie ma takiego typu wyszukiwania"
 
 #: ../SettingsManager.cpp:721 ../SettingsManager.cpp:726
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "Błąd: nie znaleziono ustawienia!"
 
 #: ../SettingsManager.cpp:721
 msgid "Core setting "
-msgstr ""
+msgstr "Ustawienie rdzenia "
 
 #: ../SettingsManager.cpp:726
 msgid "Change core setting "
-msgstr ""
+msgstr "Zmień ustawienie rdzenia "
 
 #: ../ShareManager.cpp:803
 msgid "No directory specified"
@@ -623,7 +623,7 @@ msgstr "Brak zdefiniowanego katalogu"
 
 #: ../ShareManager.cpp:815
 msgid "Directory is hidden"
-msgstr ""
+msgstr "Katalog jest ukryty"
 
 #: ../ShareManager.cpp:819
 msgid "The temporary download directory cannot be shared"
@@ -631,21 +631,21 @@ msgstr "Katalog plików tymczasowych nie może być udostępniony"
 
 #: ../ShareManager.cpp:1016
 msgid "Invalid file name found while hashing folder %1%"
-msgstr ""
+msgstr "Znaleziono nieprawidłową nazwę pliku podczas obliczania skrótów folderu %1%"
 
 #: ../ShareManager.cpp:1035
 msgid "Skip share file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Pominięto udostępnianie pliku: %1% (rozmiar: %2%)"
 
 #: ../ShareManager.cpp:1056
 msgid "Skip share temp file: %1% (Size: %2%)"
-msgstr ""
+msgstr "Pominięto udostępnianie pliku tymczasowego: %1% (rozmiar: %2%)"
 
 #: ../ShareManager.cpp:1147
 msgid ""
 "Duplicate file will not be shared: %1% (Size: %2% B) Dupe matched against: "
 "%3%"
-msgstr ""
+msgstr "Duplikat nie zostanie udostępniony: %1% (rozmiar: %2% B). Duplikat pliku: %3%"
 
 #: ../ShareManager.cpp:1169
 msgid ""
@@ -669,11 +669,11 @@ msgstr "Odświeżanie listy plików zakończone"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Odrzucono odświeżenie listy plików, ponieważ zmieniły się udostępnione katalogi"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
-msgstr ""
+msgstr "Wygenerowano listę plików %1%"
 
 #: ../Socket.cpp:164
 #, c-format
@@ -683,23 +683,23 @@ msgstr "Nieznany błąd: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Nieobsługiwany szyfr Shadowsocks"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Nie udało się zainicjować wyprowadzania klucza Shadowsocks"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Nie udało się wyprowadzić podklucza Shadowsocks"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Nie udało się zainicjować szyfrowania Shadowsocks"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Szyfrowanie Shadowsocks nie powiodło się"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -709,15 +709,15 @@ msgstr "Serwer socks zakończył niepowodzeniem ustanawianie połączenia"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Serwer Shadowsocks nie zdołał nawiązać połączenia"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Nie skonfigurowano hasła Shadowsocks"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Nieprawidłowy adres docelowy Shadowsocks"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -735,83 +735,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "Nie udało się zainicjować kontekstu SOCKS TLS"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "Nie udało się zainicjować sesji SOCKS TLS"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "Nie udało się powiązać sesji SOCKS TLS z gniazdem"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "Przekroczono czas negocjacji SOCKS TLS"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "Negocjacja SOCKS TLS nie powiodła się: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "Odczyt SOCKS TLS nie powiódł się: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "Zapis SOCKS TLS nie powiódł się: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Nieprawidłowa odpowiedź przekaźnika Shadowsocks UDP"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Nieprawidłowy adres w odpowiedzi przekaźnika Shadowsocks UDP"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Nie udało się odszyfrować odpowiedzi przekaźnika Shadowsocks UDP"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Nie udało się utworzyć soli Shadowsocks"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Nie udało się utworzyć dopełnienia Shadowsocks"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Odszyfrowywanie Shadowsocks nie powiodło się"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Nieprawidłowy rozmiar danych użytkowych Shadowsocks"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Strumień Shadowsocks zakończył się niepełną ramką"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Nie udało się utworzyć sesji Shadowsocks UDP"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Przekazywanie Shadowsocks UDP jest wyłączone"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Przekazywanie Shadowsocks UDP nie jest skonfigurowane"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Nie udało się utworzyć wartości jednorazowej Shadowsocks UDP"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Wyczerpano licznik pakietów Shadowsocks UDP"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -823,11 +823,11 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Nieprawidłowy adres docelowy SOCKS5 UDP"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
-msgstr ""
+msgstr "Połączenie już istnieje."
 
 #: ../UploadManager.cpp:271 ../UploadManager.cpp:275
 #: ../UploadManager.cpp:347
@@ -836,7 +836,7 @@ msgstr "Niemożna wysłać pliku %1%: %2%"
 
 #: ../UploadManager.cpp:580
 msgid "IPFilter: Blocked incoming connection to "
-msgstr ""
+msgstr "IPFilter: zablokowano połączenie przychodzące do "
 
 #: ../UploadManager.cpp:648
 msgid "Disconnected user leaving the hub: %1%"
@@ -849,7 +849,7 @@ msgstr "nieprawidłowy rozmiar"
 
 #: ../UserConnection.cpp:64
 msgid "Non-UTF-8 data in an ADC connection"
-msgstr ""
+msgstr "Dane inne niż UTF-8 w połączeniu ADC"
 
 #: ../Util.cpp:862
 #, c-format
@@ -864,7 +864,7 @@ msgstr "%.02f KiB"
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
@@ -874,7 +874,7 @@ msgstr "%.02f MiB"
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
@@ -884,7 +884,7 @@ msgstr "%.02f Gb"
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
@@ -894,7 +894,7 @@ msgstr "%.02f TiB"
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
@@ -904,7 +904,7 @@ msgstr "%.02f PiB"
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
@@ -926,40 +926,40 @@ msgstr "Zapisano więcej bajtów, niż żądano"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "Rozpoczęto inicjowanie DHT"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "Błąd inicjowania DHT: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "Inicjowanie DHT zakończone pomyślnie."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): opublikowano plik: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): opublikowano plik częściowy: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: ustawiono stan UDP za zaporą (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: nasz port UDP wydaje się otwarty (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "DHT ponownie włączone"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "DHT wyłączone: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "Błąd SSL: %1% (%2%, %3%)"

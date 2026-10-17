@@ -1,5 +1,6 @@
 """Run with PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tools/translations."""
 
+import ast
 import re
 import shutil
 import subprocess
@@ -14,6 +15,74 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_all_active_gui_messages_survive_compilation(self):
+        def entries(path):
+            return {(context.findtext("name"), message.findtext("source"),
+                     message.findtext("comment", "")): "".join(message.find("translation").itertext())
+                    for context in ET.parse(path).getroot().findall("context")
+                    for message in context.findall("message")
+                    if message.find("translation").get("type") not in {"obsolete", "vanished"}}
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            with self.subTest(language=path.stem), tempfile.TemporaryDirectory(prefix="eiskalt-all-catalog-") as work:
+                binary, compiled = Path(work) / "catalog.qm", Path(work) / "catalog.ts"
+                subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                               check=True, capture_output=True)
+                subprocess.run(["lconvert", "-i", str(binary), "-o", str(compiled)],
+                               check=True, capture_output=True)
+                self.assertEqual(entries(path), entries(compiled))
+
+    def test_all_current_gui_catalog_entries_are_complete(self):
+        for path in sorted((ROOT / "eiskaltdcpp-qt/translations").glob("*.ts")):
+            incomplete = []
+            for context in ET.parse(path).getroot().findall("context"):
+                for message in context.findall("message"):
+                    translation = message.find("translation")
+                    if translation is not None and translation.get("type") in {"obsolete", "vanished"}:
+                        continue
+                    forms = [] if translation is None else translation.findall("numerusform") or [translation]
+                    if (translation is None or translation.get("type") == "unfinished"
+                            or not forms or any(not "".join(form.itertext()).strip() for form in forms)):
+                        incomplete.append((context.findtext("name"), message.findtext("source")))
+            with self.subTest(language=path.stem):
+                self.assertEqual([], incomplete, f"{path.name}: {len(incomplete)} incomplete entries")
+
+    @unittest.skipUnless(shutil.which("msgcat"), "msgcat is required")
+    def test_all_gettext_catalog_entries_are_complete(self):
+        catalogs = sorted((ROOT / "dcpp/po").glob("*.po"))
+        catalogs += sorted((ROOT / "eiskaltdcpp-gtk/po").glob("*.po"))
+        for path in catalogs:
+            # Let gettext parse legal record layouts before inspecting their forms.
+            canonical = subprocess.run(["msgcat", "--no-wrap", "--force-po", str(path)],
+                                       check=True, capture_output=True, text=True).stdout
+            messages = []
+            for block in re.split(r"\n\s*\n", canonical):
+                fields = {match[1]: "".join(ast.literal_eval(line) for line in match[2].splitlines())
+                          for match in re.finditer(
+                              r'^(msgid(?:_plural)?|msgstr(?:\[\d+\])?) ("[^\n]*"(?:\n"[^\n]*")*)',
+                              block, re.M)}
+                if "msgid" in fields:
+                    messages.append((fields, block))
+            header = next((fields.get("msgstr", "") for fields, _ in messages
+                           if not fields["msgid"]), "")
+            plural_count = re.search(r"nplurals\s*=\s*(\d+)", header)
+            plural_count = int(plural_count[1]) if plural_count else 2
+            incomplete = []
+            for fields, block in messages:
+                if not fields["msgid"]:
+                    continue
+                fuzzy = any("fuzzy" in [flag.strip() for flag in line[2:].split(",")]
+                            for line in block.splitlines() if line.startswith("#,"))
+                required = ({f"msgstr[{i}]" for i in range(plural_count)}
+                            if "msgid_plural" in fields else {"msgstr"})
+                actual = {key for key in fields if key.startswith("msgstr")}
+                if (fuzzy or required != actual
+                        or any(not fields[key].strip() for key in actual)):
+                    incomplete.append(fields["msgid"])
+            with self.subTest(catalog=str(path.relative_to(ROOT))):
+                self.assertEqual([], incomplete, f"{path.name}: {len(incomplete)} incomplete entries")
+
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_greek_appearance_and_languages(self):
@@ -3591,7 +3660,9 @@ class CatalogRegressionTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("msgfmt"), "msgfmt is required")
     def test_core_catalog_formats(self):
-        for path in sorted((ROOT / "dcpp/po").glob("*.po")):
+        catalogs = sorted((ROOT / "dcpp/po").glob("*.po"))
+        catalogs += sorted((ROOT / "eiskaltdcpp-gtk/po").glob("*.po"))
+        for path in catalogs:
             with self.subTest(language=path.stem):
                 result = subprocess.run(["msgfmt", "--check", "--check-format", "-o", "/dev/null", str(path)],
                                         capture_output=True, text=True)

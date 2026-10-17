@@ -219,7 +219,7 @@ msgstr "Özel anahtarın yüklenmesi başarısız oldu"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "Açılmış veri boyut sınırını aşıyor"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -401,15 +401,15 @@ msgstr "Port haritalaması başarısız oldu"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Port eşlemeleri yenilendi"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Port eşlemeleri geri yüklendi"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "Port eşlemeleri yenilenemedi; 60 saniye sonra yeniden denenecek"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -547,7 +547,7 @@ msgstr "%1% : %2% dosya ile eşleşti"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL hatası: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -679,7 +679,7 @@ msgstr "Dosya listesinin tazelenmesi tamamlandı"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "Paylaşılan dizinler değiştiği için dosya listesi yenilemesi iptal edildi"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -693,23 +693,23 @@ msgstr "Bilinmeyen hata: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Desteklenmeyen Shadowsocks şifresi"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "Shadowsocks anahtar türetme işlemi başlatılamadı"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "Shadowsocks alt anahtarı türetilemedi"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "Shadowsocks şifrelemesi başlatılamadı"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "Shadowsocks şifrelemesi başarısız oldu"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -719,15 +719,15 @@ msgstr "SOCKS sunucusu bağlantı kurmada başarısız oldu"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "Shadowsocks sunucusu bağlantı kuramadı"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Shadowsocks parolası yapılandırılmamış"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Shadowsocks hedef adresi geçersiz"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -746,83 +746,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "SOCKS TLS bağlamı başlatılamadı"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "SOCKS TLS oturumu başlatılamadı"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "SOCKS TLS oturumu sokete bağlanamadı"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "SOCKS TLS el sıkışması zaman aşımına uğradı"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS el sıkışması başarısız oldu: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS okuma işlemi başarısız oldu: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "SOCKS TLS yazma işlemi başarısız oldu: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP aktarıcı yanıtı geçersiz"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Shadowsocks UDP aktarıcı yanıt adresi geçersiz"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "Shadowsocks UDP aktarıcı yanıtının şifresi çözülemedi"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "Shadowsocks tuz değeri oluşturulamadı"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "Shadowsocks dolgusu oluşturulamadı"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "Shadowsocks şifre çözme işlemi başarısız oldu"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Geçersiz Shadowsocks veri yükü boyutu"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "Shadowsocks akışı tamamlanmamış bir çerçeveyle sona erdi"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "Shadowsocks UDP oturumu oluşturulamadı"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "Shadowsocks UDP aktarıcısı devre dışı"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "Shadowsocks UDP aktarıcısı yapılandırılmamış"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "Shadowsocks UDP tek kullanımlık değeri oluşturulamadı"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "Shadowsocks UDP paket sayacı tükendi"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -834,7 +834,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "SOCKS5 UDP hedef adresi geçersiz"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."

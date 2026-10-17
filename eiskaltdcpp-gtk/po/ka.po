@@ -20,87 +20,87 @@ msgstr ""
 #: ../src/hub.cc:1087 ../src/hub.cc:1166 ../src/privatemessage.cc:571
 #: ../src/privatemessage.cc:650
 msgid " *** Emoticons limit"
-msgstr ""
+msgstr " *** სმაილების რაოდენობის ზღვარი"
 
 #: ../src/hub.cc:1082 ../src/privatemessage.cc:566
 msgid " *** Emoticons mode off"
-msgstr ""
+msgstr " *** სმაილების რეჟიმი გამორთულია"
 
 #: ../src/hub.cc:1077 ../src/privatemessage.cc:561
 msgid " *** Emoticons not loaded"
-msgstr ""
+msgstr " *** სმაილები არ არის ჩატვირთული"
 
 #: ../src/settingsdialog.cc:2533
 msgid " + system icons"
-msgstr ""
+msgstr " + სისტემური ხატულები"
 
 #: ../src/hub.cc:471 ../src/hub.cc:490
 msgid " Users"
-msgstr ""
+msgstr " მომხმარებლები"
 
 #: ../src/hub.cc:2880
 msgid " added to favorites list"
-msgstr ""
+msgstr " დაემატა რჩეულების სიას"
 
 #: ../src/hub.cc:2008
 msgid " empty..."
-msgstr ""
+msgstr " ცარიელია..."
 
 #: ../src/finishedtransfers.cc:264 ../src/sharebrowser.cc:1140
 msgid " files"
-msgstr ""
+msgstr " ფაილები"
 
 #: ../src/hub.cc:454 ../src/hub.cc:465
 msgid " has joined"
-msgstr ""
+msgstr " შემოვიდა"
 
 #: ../src/hub.cc:455 ../src/hub.cc:464
 msgid " has joined hub "
-msgstr ""
+msgstr " შემოვიდა ჰაბში "
 
 #: ../src/hub.cc:497 ../src/hub.cc:507
 msgid " has quit"
-msgstr ""
+msgstr " გავიდა"
 
 #: ../src/hub.cc:496 ../src/hub.cc:506
 msgid " has quit hub "
-msgstr ""
+msgstr " გავიდა ჰაბიდან "
 
 #: ../src/hub.cc:1981 ../src/hub.cc:2810 ../src/privatemessage.cc:1425
 msgid " is favorite user"
-msgstr ""
+msgstr " რჩეული მომხმარებელია"
 
 #: ../src/hub.cc:1999 ../src/hub.cc:2851 ../src/privatemessage.cc:1446
 msgid " is not favorite user"
-msgstr ""
+msgstr " არ არის რჩეული მომხმარებელი"
 
 #: ../src/hashdialog.cc:63 ../src/hashdialog.cc:72 ../src/hashdialog.cc:81
 msgid " left"
-msgstr ""
+msgstr " დარჩა"
 
 #: ../src/downloadqueue.cc:1312
 msgid " of "
-msgstr ""
+msgstr " / "
 
 #: ../src/hub.cc:2907
 msgid " removed from favorites list"
-msgstr ""
+msgstr " წაიშალა რჩეულების სიიდან"
 
 #: ../src/settingsmanager.cc:525
 msgid " to "
-msgstr ""
+msgstr " ვის "
 
 #: ../src/search.cc:726
 msgid " user(s)"
-msgstr ""
+msgstr " მომხმარებელი"
 
 #: ../src/downloadqueue.cc:1312
 msgid " user(s) online"
-msgstr ""
+msgstr " მომხმარებელი ხაზზეა"
 
 #: ../src/finishedtransfers.cc:273
 msgid " users"
-msgstr ""
+msgstr " მომხმარებლები"
 
 #: ../ui/settingsdialog.ui:4768
 msgid ""
@@ -112,546 +112,546 @@ msgid ""
 "%% a literal '%' character.\n"
 "\n"
 "see man strftime for details."
-msgstr ""
+msgstr "%a კვირის დღის შემოკლებული სახელი.\n%b თვის შემოკლებული სახელი.\n%H საათი ათობითი რიცხვით, 24-საათიანი ფორმატით.\n%M წუთი ათობითი რიცხვით (00-დან 59-მდე).\n%S წამი ათობითი რიცხვით (00-დან 59-მდე).\n%% თავად '%' სიმბოლო.\n\nდეტალებისთვის იხილეთ man strftime."
 
 #: ../src/hub.cc:2437
 msgid "': type /help for a list of available commands"
-msgstr ""
+msgstr "': ხელმისაწვდომი ბრძანებების სიისთვის აკრიფეთ /help"
 
 #: ../src/hub.cc:2106 ../src/privatemessage.cc:1034
 msgid "*** Available commands:"
-msgstr ""
+msgstr "*** ხელმისაწვდომი ბრძანებები:"
 
 #: ../src/settingsdialog.cc:2296
 msgid "*** T E S T ***"
-msgstr ""
+msgstr "*** ტ ე ს ტ ი ***"
 
 #: ../src/settingsdialog.cc:1468 ../ui/mainwindow.ui:251
 #: ../ui/mainwindow.ui:2375 ../ui/mainwindow.ui:2393
 msgid "+/-"
-msgstr ""
+msgstr "+/-"
 
 #: ../src/hashdialog.cc:64 ../src/hashdialog.cc:76
 msgid "-:--:-- left"
-msgstr ""
+msgstr "-:--:-- დარჩა"
 
 #: ../src/settingsdialog.cc:2482 ../src/settingsdialog.cc:2507
 msgid "...must be *.theme"
-msgstr ""
+msgstr "...უნდა იყოს *.theme"
 
 #: ../src/settingsdialog.cc:2382 ../src/settingsdialog.cc:2412
 #: ../src/settingsdialog.cc:2450
 msgid "...must not be empty"
-msgstr ""
+msgstr "...არ უნდა იყოს ცარიელი"
 
 #: ../src/downloadqueue.cc:1338
 msgid "0 B (0.00%)"
-msgstr ""
+msgstr "0 B (0.00%)"
 
 #: ../src/hub.cc:535
 msgid "0 Users"
-msgstr ""
+msgstr "0 მომხმარებელი"
 
 #: ../ui/settingsdialog.ui:8781 ../ui/settingsdialog.ui:8861
 msgid "10AM"
-msgstr ""
+msgstr "10 დილის"
 
 #: ../ui/settingsdialog.ui:8817 ../ui/settingsdialog.ui:8897
 msgid "10PM"
-msgstr ""
+msgstr "10 საღამოს"
 
 #: ../ui/settingsdialog.ui:8784 ../ui/settingsdialog.ui:8864
 msgid "11AM"
-msgstr ""
+msgstr "11 დილის"
 
 #: ../ui/settingsdialog.ui:8820 ../ui/settingsdialog.ui:8900
 msgid "11PM"
-msgstr ""
+msgstr "11 საღამოს"
 
 #: ../ui/settingsdialog.ui:8969
 msgid "16x16"
-msgstr ""
+msgstr "16x16"
 
 #: ../ui/settingsdialog.ui:8754 ../ui/settingsdialog.ui:8834
 msgid "1AM"
-msgstr ""
+msgstr "1 დილის"
 
 #: ../ui/settingsdialog.ui:8790 ../ui/settingsdialog.ui:8870
 msgid "1PM"
-msgstr ""
+msgstr "1 საღამოს"
 
 #: ../ui/settingsdialog.ui:8972
 msgid "22x22"
-msgstr ""
+msgstr "22x22"
 
 #: ../ui/settingsdialog.ui:8975
 msgid "24x24"
-msgstr ""
+msgstr "24x24"
 
 #: ../ui/settingsdialog.ui:8757 ../ui/settingsdialog.ui:8837
 msgid "2AM"
-msgstr ""
+msgstr "2 დილის"
 
 #: ../ui/settingsdialog.ui:8793 ../ui/settingsdialog.ui:8873
 msgid "2PM"
-msgstr ""
+msgstr "2 საღამოს"
 
 #: ../ui/settingsdialog.ui:8978
 msgid "32x32"
-msgstr ""
+msgstr "32x32"
 
 #: ../ui/settingsdialog.ui:8981
 msgid "36x36"
-msgstr ""
+msgstr "36x36"
 
 #: ../ui/settingsdialog.ui:8760 ../ui/settingsdialog.ui:8840
 msgid "3AM"
-msgstr ""
+msgstr "3 დილის"
 
 #: ../ui/settingsdialog.ui:8796 ../ui/settingsdialog.ui:8876
 msgid "3PM"
-msgstr ""
+msgstr "3 საღამოს"
 
 #: ../ui/settingsdialog.ui:8984
 msgid "48x48"
-msgstr ""
+msgstr "48x48"
 
 #: ../ui/settingsdialog.ui:8763 ../ui/settingsdialog.ui:8843
 msgid "4AM"
-msgstr ""
+msgstr "4 დილის"
 
 #: ../ui/settingsdialog.ui:8799 ../ui/settingsdialog.ui:8879
 msgid "4PM"
-msgstr ""
+msgstr "4 საღამოს"
 
 #: ../ui/settingsdialog.ui:8766 ../ui/settingsdialog.ui:8846
 msgid "5AM"
-msgstr ""
+msgstr "5 დილის"
 
 #: ../ui/settingsdialog.ui:8802 ../ui/settingsdialog.ui:8882
 msgid "5PM"
-msgstr ""
+msgstr "5 საღამოს"
 
 #: ../ui/settingsdialog.ui:8987
 msgid "64x64"
-msgstr ""
+msgstr "64x64"
 
 #: ../ui/settingsdialog.ui:8769 ../ui/settingsdialog.ui:8849
 msgid "6AM"
-msgstr ""
+msgstr "6 დილის"
 
 #: ../ui/settingsdialog.ui:8805 ../ui/settingsdialog.ui:8885
 msgid "6PM"
-msgstr ""
+msgstr "6 საღამოს"
 
 #: ../ui/settingsdialog.ui:8772 ../ui/settingsdialog.ui:8852
 msgid "7AM"
-msgstr ""
+msgstr "7 დილის"
 
 #: ../ui/settingsdialog.ui:8808 ../ui/settingsdialog.ui:8888
 msgid "7PM"
-msgstr ""
+msgstr "7 საღამოს"
 
 #: ../ui/settingsdialog.ui:8775 ../ui/settingsdialog.ui:8855
 msgid "8AM"
-msgstr ""
+msgstr "8 დილის"
 
 #: ../ui/settingsdialog.ui:8811 ../ui/settingsdialog.ui:8891
 msgid "8PM"
-msgstr ""
+msgstr "8 საღამოს"
 
 #: ../ui/settingsdialog.ui:8778 ../ui/settingsdialog.ui:8858
 msgid "9AM"
-msgstr ""
+msgstr "9 დილის"
 
 #: ../ui/settingsdialog.ui:8814 ../ui/settingsdialog.ui:8894
 msgid "9PM"
-msgstr ""
+msgstr "9 საღამოს"
 
 #: ../src/privatemessage.cc:1050
 msgid ": type /help for a list of available commands"
-msgstr ""
+msgstr ": ხელმისაწვდომი ბრძანებების სიისთვის აკრიფეთ /help"
 
 #: ../ui/settingsdialog.ui:7259
 msgid ""
 "<a href=\"https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"
 "\">Help</a>"
-msgstr ""
+msgstr "<a href=\"https://dcplusplus.sourceforge.io/webhelp/settings_logs.html\">დახმარება</a>"
 
 #: ../ui/settingsdialog.ui:3855
 msgid "<b>Add player</b>"
-msgstr ""
+msgstr "<b>დამკვრელის დამატება</b>"
 
 #: ../ui/settingsdialog.ui:3651
 msgid "<b>Auto-drop settings</b>"
-msgstr ""
+msgstr "<b>ავტომატური გათიშვის პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:4947
 msgid "<b>Auto-open on startup</b>"
-msgstr ""
+msgstr "<b>ავტომატური გახსნა გაშვებისას</b>"
 
 #: ../ui/settingsdialog.ui:3341
 msgid "<b>Auto-priority settings</b>"
-msgstr ""
+msgstr "<b>ავტომატური პრიორიტეტის პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:5306
 msgid "<b>Available styles</b>"
-msgstr ""
+msgstr "<b>ხელმისაწვდომი სტილები</b>"
 
 #: ../ui/settingsdialog.ui:8204
 msgid "<b>Certificate Paths</b>"
-msgstr ""
+msgstr "<b>სერტიფიკატების ბილიკები</b>"
 
 #: ../ui/settingsdialog.ui:6462
 msgid "<b>Colors</b>"
-msgstr ""
+msgstr "<b>ფერები</b>"
 
 #: ../ui/settingsdialog.ui:646
 msgid "<b>Command Type</b>"
-msgstr ""
+msgstr "<b>ბრძანების ტიპი</b>"
 
 #: ../ui/settingsdialog.ui:5035
 msgid "<b>Confirmation Dialog Options</b>"
-msgstr ""
+msgstr "<b>დადასტურების დიალოგის პარამეტრები</b>"
 
 #: ../ui/mainwindow.ui:714
 msgid "<b>Connect to address:</b>"
-msgstr ""
+msgstr "<b>მისამართთან დაკავშირება:</b>"
 
 #: ../ui/settingsdialog.ui:743
 msgid "<b>Context</b>"
-msgstr ""
+msgstr "<b>კონტექსტი</b>"
 
 #: ../ui/settingsdialog.ui:5993
 msgid "<b>Current theme name:</b>"
-msgstr ""
+msgstr "<b>მიმდინარე თემის სახელი:</b>"
 
 #: ../ui/settingsdialog.ui:4743
 msgid "<b>Default away message</b>"
-msgstr ""
+msgstr "<b>არყოფნის ნაგულისხმევი შეტყობინება</b>"
 
 #: ../ui/favoriteusers.ui:96
 msgid "<b>Description</b>"
-msgstr ""
+msgstr "<b>აღწერა</b>"
 
 #: ../ui/adlsearch.ui:295
 msgid "<b>Destination Directory</b>"
-msgstr ""
+msgstr "<b>სამიზნე საქაღალდე</b>"
 
 #: ../ui/settingsdialog.ui:2743
 msgid "<b>Directories</b>"
-msgstr ""
+msgstr "<b>საქაღალდეები</b>"
 
 #: ../ui/settingsdialog.ui:4396
 msgid "<b>Do not share files and folders containing:</b>"
-msgstr ""
+msgstr "<b>არ გააზიაროთ ფაილები და საქაღალდეები, რომელთა სახელებიც შეიცავს:</b>"
 
 #: ../src/hub.cc:615
 msgid "<b>Enter your password</b>"
-msgstr ""
+msgstr "<b>შეიყვანეთ პაროლი</b>"
 
 #: ../src/settingsdialog.cc:2209
 msgid "<b>Extension</b>"
-msgstr ""
+msgstr "<b>გაფართოება</b>"
 
 #: ../ui/settingsdialog.ui:3106
 msgid "<b>Favorite download to directories</b>"
-msgstr ""
+msgstr "<b>ჩამოტვირთვის რჩეული საქაღალდეები</b>"
 
 #: ../ui/publichubs.ui:236
 msgid "<b>Filter</b>"
-msgstr ""
+msgstr "<b>ფილტრი</b>"
 
 #: ../ui/settingsdialog.ui:6648
 msgid "<b>Frame</b>"
-msgstr ""
+msgstr "<b>პანელი</b>"
 
 #: ../ui/publichubs.ui:292
 msgid "<b>Hub List</b>"
-msgstr ""
+msgstr "<b>ჰაბების სია</b>"
 
 #: ../ui/favoritehubs.ui:81
 msgid "<b>Hub</b>"
-msgstr ""
+msgstr "<b>ჰაბი</b>"
 
 #: ../ui/settingsdialog.ui:5621
 msgid "<b>Icon size</b>"
-msgstr ""
+msgstr "<b>ხატულის ზომა</b>"
 
 #: ../ui/settingsdialog.ui:5929
 msgid "<b>Icons</b>"
-msgstr ""
+msgstr "<b>ხატულები</b>"
 
 #: ../ui/favoritehubs.ui:328
 msgid "<b>Identification</b>"
-msgstr ""
+msgstr "<b>იდენტიფიკაცია</b>"
 
 #: ../ui/settingsdialog.ui:1604
 msgid "<b>Incoming connection settings</b>"
-msgstr ""
+msgstr "<b>შემომავალი კავშირის პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:4538
 msgid "<b>Language</b>"
-msgstr ""
+msgstr "<b>ენა</b>"
 
 #: ../ui/settingsdialog.ui:2859
 msgid "<b>Limits</b>"
-msgstr ""
+msgstr "<b>ლიმიტები</b>"
 
 #: ../ui/settingsdialog.ui:7275
 msgid "<b>Logging</b>"
-msgstr ""
+msgstr "<b>ჟურნალის წარმოება</b>"
 
 #: ../ui/mainwindow.ui:260
 msgid "<b>Magnet properties</b>"
-msgstr ""
+msgstr "<b>მაგნიტური ბმულის თვისებები</b>"
 
 #: ../ui/settingsdialog.ui:4692
 msgid "<b>Main Toolbar Style</b>"
-msgstr ""
+msgstr "<b>მთავარი ხელსაწყოთა ზოლის სტილი</b>"
 
 #: ../ui/adlsearch.ui:211
 msgid "<b>Max FileSize</b>"
-msgstr ""
+msgstr "<b>ფაილის მაქსიმალური ზომა</b>"
 
 #: ../ui/adlsearch.ui:178
 msgid "<b>Min FileSize</b>"
-msgstr ""
+msgstr "<b>ფაილის მინიმალური ზომა</b>"
 
 #: ../src/settingsdialog.cc:1853
 msgid "<b>Name of the new search type</b>"
-msgstr ""
+msgstr "<b>ძებნის ახალი ტიპის სახელი</b>"
 
 #: ../src/settingsdialog.cc:3118
 msgid "<b>Name under which the others see the directory</b>"
-msgstr ""
+msgstr "<b>საქაღალდის სახელი სხვა მომხმარებლებისთვის</b>"
 
 #: ../src/settingsdialog.cc:3754
 msgid "<b>Name, under which you see the directory</b>"
-msgstr ""
+msgstr "<b>საქაღალდის სახელი თქვენთვის</b>"
 
 #: ../src/settingsdialog.cc:2108
 msgid "<b>New name</b>"
-msgstr ""
+msgstr "<b>ახალი სახელი</b>"
 
 #: ../ui/publichubs.ui:151 ../ui/settingsdialog.ui:9258
 msgid "<b>Note:</b> Edit urls in the list by clicking them once when selected"
-msgstr ""
+msgstr "<b>შენიშვნა:</b> სიაში URL-ის შესაცვლელად მონიშნეთ იგი და ერთხელ დააწკაპუნეთ"
 
 #: ../ui/settingsdialog.ui:5545
 msgid "<b>Notify</b>"
-msgstr ""
+msgstr "<b>შეტყობინება</b>"
 
 #: ../ui/settingsdialog.ui:4582
 msgid "<b>Options</b>"
-msgstr ""
+msgstr "<b>პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:8247
 msgid "<b>Other Security Options</b>"
-msgstr ""
+msgstr "<b>უსაფრთხოების სხვა პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:3690
 msgid "<b>Other queue options</b>"
-msgstr ""
+msgstr "<b>რიგის სხვა პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:1863
 msgid "<b>Outgoing connection settings</b>"
-msgstr ""
+msgstr "<b>გამავალი კავშირის პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:940
 msgid "<b>Parameters</b>"
-msgstr ""
+msgstr "<b>პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:1250
 msgid "<b>Personal Information</b>"
-msgstr ""
+msgstr "<b>პირადი ინფორმაცია</b>"
 
 #: ../ui/settingsdialog.ui:3748
 msgid "<b>Players list</b>"
-msgstr ""
+msgstr "<b>დამკვრელების სია</b>"
 
 #: ../ui/settingsdialog.ui:5342
 msgid "<b>Preview styles</b>"
-msgstr ""
+msgstr "<b>სტილების გადახედვა</b>"
 
 #: ../ui/settingsdialog.ui:5235
 msgid "<b>Private message sound</b>"
-msgstr ""
+msgstr "<b>პირადი შეტყობინების ხმა</b>"
 
 #: ../ui/settingsdialog.ui:5840
 msgid "<b>Private message</b>"
-msgstr ""
+msgstr "<b>პირადი შეტყობინება</b>"
 
 #: ../ui/hash.ui:55
 msgid "<b>Processing file:</b>"
-msgstr ""
+msgstr "<b>მუშავდება ფაილი:</b>"
 
 #: ../ui/settingsdialog.ui:2978
 msgid "<b>Public Hubs list</b>"
-msgstr ""
+msgstr "<b>საჯარო ჰაბების სია</b>"
 
 #: ../ui/adlsearch.ui:94
 msgid "<b>Search String</b>"
-msgstr ""
+msgstr "<b>საძებნი სტრიქონი</b>"
 
 #: ../ui/settingsdialog.ui:8474
 msgid "<b>Search types</b>"
-msgstr ""
+msgstr "<b>ძებნის ტიპები</b>"
 
 #: ../ui/settingsdialog.ui:2154
 msgid "<b>Secondary Transfer Rate Limiting</b>"
-msgstr ""
+msgstr "<b>გადაცემის სიჩქარის დამატებითი შეზღუდვა</b>"
 
 #: ../ui/settingsdialog.ui:2340
 msgid "<b>Secondary Transfer Rate Settings</b>"
-msgstr ""
+msgstr "<b>გადაცემის სიჩქარის დამატებითი პარამეტრები</b>"
 
 #: ../ui/settingsdialog.ui:4140
 msgid "<b>Shared directories</b>"
-msgstr ""
+msgstr "<b>გაზიარებული საქაღალდეები</b>"
 
 #: ../ui/adlsearch.ui:252
 msgid "<b>Size Type</b>"
-msgstr ""
+msgstr "<b>ზომის ტიპი</b>"
 
 #: ../ui/settingsdialog.ui:5094
 msgid "<b>Sounds</b>"
-msgstr ""
+msgstr "<b>ხმები</b>"
 
 #: ../ui/adlsearch.ui:128
 msgid "<b>Source Type</b>"
-msgstr ""
+msgstr "<b>წყაროს ტიპი</b>"
 
 #: ../ui/hash.ui:124
 msgid "<b>Statistics</b>"
-msgstr ""
+msgstr "<b>სტატისტიკა</b>"
 
 #: ../ui/settingsdialog.ui:4640
 msgid "<b>Tab Position</b>"
-msgstr ""
+msgstr "<b>ჩანართის მდებარეობა</b>"
 
 #: ../ui/settingsdialog.ui:4868
 msgid "<b>Tab bolding on content change</b>"
-msgstr ""
+msgstr "<b>შიგთავსის ცვლილებისას ჩანართის გამუქება</b>"
 
 #: ../ui/settingsdialog.ui:981
 msgid "<b>Text sent to hub</b>"
-msgstr ""
+msgstr "<b>ჰაბში გაგზავნილი ტექსტი</b>"
 
 #: ../ui/settingsdialog.ui:5965
 msgid "<b>Text styles</b>"
-msgstr ""
+msgstr "<b>ტექსტის სტილები</b>"
 
 #: ../ui/settingsdialog.ui:4791
 msgid "<b>Timestamps</b>"
-msgstr ""
+msgstr "<b>დროის ნიშნულები</b>"
 
 #: ../ui/settingsdialog.ui:5588
 msgid "<b>Title</b>"
-msgstr ""
+msgstr "<b>სათაური</b>"
 
 #: ../ui/settingsdialog.ui:6173
 msgid "<b>Toolbar buttons</b>"
-msgstr ""
+msgstr "<b>ხელსაწყოთა ზოლის ღილაკები</b>"
 
 #: ../ui/settingsdialog.ui:2034
 msgid "<b>Transfer Rate Limiting</b>"
-msgstr ""
+msgstr "<b>გადაცემის სიჩქარის შეზღუდვა</b>"
 
 #: ../ui/mainwindow.ui:429
 msgid "<b>What would you like to do?</b>"
-msgstr ""
+msgstr "<b>რისი გაკეთება გსურთ?</b>"
 
 #: ../ui/settingsdialog.ui:4991
 msgid "<b>Window Options</b>"
-msgstr ""
+msgstr "<b>ფანჯრის პარამეტრები</b>"
 
 #: ../src/mainwindow.cc:2423
 msgid "<b>file:</b> "
-msgstr ""
+msgstr "<b>ფაილი:</b> "
 
 #: ../ui/favoritehubs.ui:444
 msgid "<small>Note: Leave unchecked for default values</small>"
-msgstr ""
+msgstr "<small>შენიშვნა: ნაგულისხმევი მნიშვნელობებისთვის დატოვეთ მოუნიშნავი</small>"
 
 #: ../src/sharebrowser.hh:151 ../src/sharebrowser.hh:154
 msgid "?"
-msgstr ""
+msgstr "?"
 
 #: ../ui/mainwindow.ui:2306 ../ui/mainwindow.ui:2489
 msgid "ADL"
-msgstr ""
+msgstr "ADL"
 
 #: ../src/adlsearch.cc:29 ../ui/mainwindow.ui:2304
 msgid "ADL Search"
-msgstr ""
+msgstr "ADL ძებნა"
 
 #: ../ui/adlsearch.ui:8
 msgid "ADLSearch Properties"
-msgstr ""
+msgstr "ADL ძებნის თვისებები"
 
 #: ../ui/mainwindow.ui:1628
 msgid "About EiskaltDC++"
-msgstr ""
+msgstr "EiskaltDC++-ის შესახებ"
 
 #: ../src/settingsdialog.cc:1652
 msgid "Accept custom user commands from hub"
-msgstr ""
+msgstr "ჰაბიდან მომხმარებლის მორგებული ბრძანებების მიღება"
 
 #: ../ui/favoritehubs.ui:555 ../ui/settingsdialog.ui:1456
 msgid "Active"
-msgstr ""
+msgstr "აქტიური"
 
 #: ../ui/settingsdialog.ui:4326 ../ui/settingsdialog.ui:8361
 msgid "Add"
-msgstr ""
+msgstr "დამატება"
 
 #: ../ui/mainwindow.ui:2373
 msgid "Add / Remove"
-msgstr ""
+msgstr "დამატება / წაშლა"
 
 #: ../src/hub.cc:2111 ../ui/hub.ui:39
 msgid "Add a hub to favorites"
-msgstr ""
+msgstr "ჰაბის რჩეულებში დამატება"
 
 #: ../src/settingsdialog.cc:1654
 msgid "Add finished files to share instantly (if shared)"
-msgstr ""
+msgstr "დასრულებული ფაილების დაუყოვნებლივ გაზიარება (თუ გაზიარებულ საქაღალდეშია)"
 
 #: ../src/hub.cc:2143
 msgid ""
 "Add rule 192.168.1.0/23 where direction incoming and action is allow and "
 "192.168.6.0/24 where direction is incoming or outcoming and action is drop"
-msgstr ""
+msgstr "წესის დამატება: 192.168.1.0/23-დან შემომავალი კავშირების დაშვება და 192.168.6.0/24-ის შემომავალი ან გამავალი კავშირების უარყოფა"
 
 #: ../ui/mainwindow.ui:288
 msgid "Add this file to your download queue"
-msgstr ""
+msgstr "ამ ფაილის ჩამოტვირთვის რიგში დამატება"
 
 #: ../ui/uploadqueue.ui:60
 msgid "Add to Favorite Users"
-msgstr ""
+msgstr "რჩეულ მომხმარებლებში დამატება"
 
 #: ../ui/publichubs.ui:415
 msgid "Add to favorites"
-msgstr ""
+msgstr "რჩეულებში დამატება"
 
 #: ../src/hub.cc:2112 ../src/privatemessage.cc:1039 ../ui/privatemessage.ui:48
 msgid "Add user to favorites list"
-msgstr ""
+msgstr "მომხმარებლის რჩეულების სიაში დამატება"
 
 #: ../ui/adlsearch.ui:452 ../ui/adlsearch.ui:535
 msgid "Add..."
-msgstr ""
+msgstr "დამატება..."
 
 #: ../src/downloadqueue.cc:80 ../src/downloadqueue.cc:292
 #: ../src/downloadqueue.cc:399
 msgid "Added"
-msgstr ""
+msgstr "დამატებულია"
 
 #: ../ui/settingsdialog.ui:6284
 msgid "Adding string or TTH to the top"
-msgstr ""
+msgstr "სტრიქონის ან TTH-ის ლიდერთა სიაში დამატება"
 
 #: ../src/favoritehubs.cc:53 ../src/favoritehubs.cc:140
 #: ../src/favoritehubs.cc:154 ../src/favoritehubs.cc:233
@@ -661,243 +661,243 @@ msgstr ""
 #: ../src/publichubs.cc:49 ../src/publichubs.cc:161 ../src/publichubs.cc:280
 #: ../src/publichubs.cc:305
 msgid "Address"
-msgstr ""
+msgstr "მისამართი"
 
 #: ../ui/settingsdialog.ui:2569 ../ui/settingsdialog.ui:4470
 #: ../ui/settingsdialog.ui:7341
 msgid "Advanced"
-msgstr ""
+msgstr "დამატებითი"
 
 #: ../src/hub.cc:2138
 msgid "Alias A executing"
-msgstr ""
+msgstr "A ფსევდონიმის შესრულება"
 
 #: ../src/hub.cc:2135
 msgid "Alias List"
-msgstr ""
+msgstr "ფსევდონიმების სია"
 
 #: ../src/hub.cc:2136
 msgid "Alias Remove A"
-msgstr ""
+msgstr "A ფსევდონიმის წაშლა"
 
 #: ../src/hub.cc:2137
 msgid "Alias add uname -a as A"
-msgstr ""
+msgstr "uname -a ბრძანების A ფსევდონიმად დამატება"
 
 #: ../src/hub.cc:2337
 msgid "Aliases not found."
-msgstr ""
+msgstr "მეტსახელები ვერ ვიპოვე."
 
 #: ../src/settingsdialog.cc:1728
 msgid "Allow TLS connections to clients without trusted certificate"
-msgstr ""
+msgstr "TLS კავშირების დაშვება კლიენტებთან სანდო სერტიფიკატის გარეშე"
 
 #: ../src/settingsdialog.cc:1727
 msgid "Allow TLS connections to hubs without trusted certificate"
-msgstr ""
+msgstr "TLS კავშირების დაშვება ჰაბებთან სანდო სერტიფიკატის გარეშე"
 
 #: ../src/settingsdialog.cc:1662
 msgid "Allow few connections from one IP"
-msgstr ""
+msgstr "ერთი IP-დან რამდენიმე კავშირის დაშვება"
 
 #: ../src/settingsdialog.cc:1729
 msgid "Allow only TLS connections to clients"
-msgstr ""
+msgstr "კლიენტებთან მხოლოდ TLS კავშირების დაშვება"
 
 #: ../src/settingsdialog.cc:1661
 msgid "Allow overlap chunks"
-msgstr ""
+msgstr "მონაცემთა ნაწილების გადაფარვის დაშვება"
 
 #: ../src/settingsdialog.cc:1663
 msgid "Allow some connections for one user"
-msgstr ""
+msgstr "ერთი მომხმარებლისთვის რამდენიმე კავშირის დაშვება"
 
 #: ../src/settingsdialog.cc:950
 msgid "Amarok player"
-msgstr ""
+msgstr "Amarok დამკვრელი"
 
 #: ../ui/settingsdialog.ui:4829 ../ui/settingsdialog.ui:6691
 msgid "Appearance"
-msgstr ""
+msgstr "გარეგნობა"
 
 #: ../src/settingsdialog.cc:923 ../src/settingsdialog.cc:958
 #: ../src/settingsdialog.cc:3005 ../src/settingsdialog.cc:3039
 #: ../src/settingsdialog.cc:3057 ../src/settingsdialog.cc:3088
 msgid "Application"
-msgstr ""
+msgstr "პროგრამა"
 
 #: ../ui/settingsdialog.ui:3802
 msgid "Application:"
-msgstr ""
+msgstr "პროგრამა:"
 
 #: ../ui/searchspy.ui:241
 msgid "Apply settings"
-msgstr ""
+msgstr "პარამეტრების გამოყენება"
 
 #: ../ui/settingsdialog.ui:3828
 msgid "Apply to Extensions: (avi;mov;divx)"
-msgstr ""
+msgstr "გაფართოებებისთვის გამოყენება: (avi;mov;divx)"
 
 #: ../src/favoritehubs.cc:461
 #, c-format
 msgid "Are you sure you want to delete favorite hub \"%s\"?"
-msgstr ""
+msgstr "ნამდვილად გსურთ რჩეული ჰაბის „%s“ წაშლა?"
 
 #: ../src/favoriteusers.cc:458
 msgid "Are you sure you want to delete favorite user(s)?"
-msgstr ""
+msgstr "ნამდვილად გსურთ რჩეული მომხმარებლების წაშლა?"
 
 #: ../ui/search.ui:89
 msgid "At least"
-msgstr ""
+msgstr "მინიმუმ"
 
 #: ../ui/search.ui:92
 msgid "At most"
-msgstr ""
+msgstr "მაქსიმუმ"
 
 #: ../src/sharebrowser.cc:91 ../src/sharebrowser.cc:362
 msgid "Audio"
-msgstr ""
+msgstr "აუდიო"
 
 #: ../src/favoritehubs.cc:50 ../src/favoritehubs.cc:70
 #: ../src/favoritehubs.cc:129 ../src/favoritehubs.cc:319
 #: ../src/favoritehubs.cc:504 ../src/favoritehubs.cc:506
 msgid "Auto Connect"
-msgstr ""
+msgstr "ავტომატური დაკავშირება"
 
 #: ../ui/favoritehubs.ui:457
 msgid "Auto connect on _startup"
-msgstr ""
+msgstr "ავტომატური დაკავშირება _გაშვებისას"
 
 #: ../src/favoriteusers.cc:46 ../src/favoriteusers.cc:67
 #: ../src/favoriteusers.cc:109 ../src/favoriteusers.cc:491
 #: ../src/favoriteusers.cc:493
 msgid "Auto grant slot"
-msgstr ""
+msgstr "სლოტის ავტომატური გამოყოფა"
 
 #: ../ui/settingsdialog.ui:7811
 msgid "Auto refresh time"
-msgstr ""
+msgstr "ავტომატური განახლების ინტერვალი"
 
 #: ../ui/favoritehubs.ui:510
 msgid "Auto update IP from internet"
-msgstr ""
+msgstr "IP-ის ავტომატური განახლება ინტერნეტიდან"
 
 #: ../src/settingsdialog.cc:1643
 msgid "Auto-away on minimize (and back on restore)"
-msgstr ""
+msgstr "ჩაკეცვისას არყოფნის ავტომატური ჩართვა (აღდგენისას დაბრუნება)"
 
 #: ../src/settingsdialog.cc:983
 msgid "Auto-drop slow sources for all queue items (except filelists)"
-msgstr ""
+msgstr "ნელი წყაროების ავტომატური გათიშვა რიგის ყველა ელემენტისთვის (ფაილების სიების გარდა)"
 
 #: ../src/settingsdialog.cc:1648
 msgid "Automatically disconnect users who leave the hub"
-msgstr ""
+msgstr "ჰაბიდან გასული მომხმარებლების ავტომატური გათიშვა"
 
 #: ../src/settingsdialog.cc:1644
 msgid "Automatically follow redirects"
-msgstr ""
+msgstr "გადამისამართებების ავტომატური მიყოლა"
 
 #: ../src/settingsdialog.cc:987
 msgid "Automatically match queue for auto search hits"
-msgstr ""
+msgstr "ავტომატური ძიების შედეგების რიგთან ავტომატური შედარება"
 
 #: ../ui/settingsdialog.ui:4167
 msgid "Automatically open extra slot if speed is below (0 = disable)"
-msgstr ""
+msgstr "დამატებითი სლოტის ავტომატური გახსნა, თუ სიჩქარე ნაკლებია (0 = გამორთვა)"
 
 #: ../src/settingsdialog.cc:986
 msgid "Automatically search for alternative download locations"
-msgstr ""
+msgstr "ჩამოტვირთვის ალტერნატიული წყაროების ავტომატური ძიება"
 
 #: ../ui/settingsdialog.ui:2408
 msgid "Automatically update external IP (restart required)"
-msgstr ""
+msgstr "გარე IP-ის ავტომატური განახლება (საჭიროა გადატვირთვა)"
 
 #: ../src/hub.cc:2107 ../src/privatemessage.cc:1035 ../ui/hub.ui:12
 #: ../ui/privatemessage.ui:12
 msgid "Away mode message on/off"
-msgstr ""
+msgstr "არყოფნის რეჟიმის შეტყობინების ჩართვა/გამორთვა"
 
 #: ../src/hub.cc:1924 ../src/hub.cc:1937 ../src/hub.cc:2108
 #: ../src/privatemessage.cc:917 ../src/privatemessage.cc:931
 #: ../src/privatemessage.cc:1036 ../ui/hub.ui:21 ../ui/privatemessage.ui:21
 msgid "Away mode off"
-msgstr ""
+msgstr "გასულობის რეჟიმი გამორთულია"
 
 #: ../src/hub.cc:1931 ../src/privatemessage.cc:925
 msgid "Away mode on: "
-msgstr ""
+msgstr "გასულობის რეჟიმი ჩართულია: "
 
 #: ../ui/adlsearch.ui:406 ../ui/search.ui:103 ../ui/settingsdialog.ui:7978
 #: ../ui/settingsdialog.ui:7991
 msgid "B"
-msgstr ""
+msgstr "ბ"
 
 #: ../src/hashdialog.cc:63 ../ui/settingsdialog.ui:3552
 msgid "B/s"
-msgstr ""
+msgstr "B/s"
 
 #: ../ui/settingsdialog.ui:5383
 msgid "Back color"
-msgstr ""
+msgstr "ფონის ფერი"
 
 #: ../src/settingsdialog.cc:1078
 msgid "Basque"
-msgstr ""
+msgstr "ბასკური"
 
 #: ../src/mainwindow.cc:257
 msgid "Basque translation\n"
-msgstr ""
+msgstr "ბასკური თარგმანი\n"
 
 #: ../src/settingsdialog.cc:1060
 msgid "Belarusian"
-msgstr ""
+msgstr "ბელორუსული"
 
 #: ../src/mainwindow.cc:227
 msgid "Belarusian translation\n"
-msgstr ""
+msgstr "ბელარუსული თარგმანი\n"
 
 #: ../ui/settingsdialog.ui:7772
 msgid "Bind address"
-msgstr ""
+msgstr "მისამართზე მიბმა"
 
 #: ../src/sharebrowser.cc:88 ../src/sharebrowser.cc:359
 msgid "Bitrate"
-msgstr ""
+msgstr "სიჩქარე"
 
 #: ../ui/settingsdialog.ui:5451
 msgid "Black/White"
-msgstr ""
+msgstr "შავი/თეთრი"
 
 #: ../ui/settingsdialog.ui:5362
 msgid "Bold Authors of message in chat"
-msgstr ""
+msgstr "ჩატში შეტყობინების ავტორების გამუქება"
 
 #: ../ui/settingsdialog.ui:8949
 msgid "Both"
-msgstr ""
+msgstr "ორივე"
 
 #: ../ui/settingsdialog.ui:8952
 msgid "Both horizontal"
-msgstr ""
+msgstr "ორივე ჰორიზონტალურად"
 
 #: ../ui/settingsdialog.ui:8932
 msgid "Bottom"
-msgstr ""
+msgstr "ქვემოთ"
 
 #: ../ui/uploadqueue.ui:87
 msgid "Browse FileList"
-msgstr ""
+msgstr "ფაილების სიის დათვალიერება"
 
 #: ../ui/settingsdialog.ui:5167
 msgid "Browse file..."
-msgstr ""
+msgstr "ფაილის არჩევა..."
 
 #: ../ui/mainwindow.ui:2218
 msgid "Browse the list of public hubs"
-msgstr ""
+msgstr "საჯარო ჰაბების სიის დათვალიერება"
 
 #: ../src/search.cc:349 ../src/search.cc:419 ../src/sharebrowser.cc:531
 #: ../src/sharebrowser.cc:603 ../ui/hub.ui:231 ../ui/mainwindow.ui:319
@@ -906,19 +906,19 @@ msgstr ""
 #: ../ui/settingsdialog.ui:8062 ../ui/settingsdialog.ui:8080
 #: ../ui/settingsdialog.ui:8098
 msgid "Browse..."
-msgstr ""
+msgstr "დათვალიერება..."
 
 #: ../src/settingsdialog.cc:1080
 msgid "Bulgarian"
-msgstr ""
+msgstr "ბულგარული"
 
 #: ../src/mainwindow.cc:260
 msgid "Bulgarian translation\n"
-msgstr ""
+msgstr "ბულგარული თარგმანი\n"
 
 #: ../src/settingsdialog.cc:1419
 msgid "Button smile"
-msgstr ""
+msgstr "სმაილების ღილაკი"
 
 #: ../src/favoriteusers.cc:51 ../src/favoriteusers.cc:114
 #: ../src/favoriteusers.cc:225 ../src/favoriteusers.cc:255
@@ -927,285 +927,285 @@ msgstr ""
 #: ../src/favoriteusers.cc:445 ../src/favoriteusers.cc:490
 #: ../src/favoriteusers.cc:608
 msgid "CID"
-msgstr ""
+msgstr "CID"
 
 #: ../ui/cmddebug.ui:69
 msgid "CLIENT IN"
-msgstr ""
+msgstr "კლიენტის შემომავალი"
 
 #: ../ui/cmddebug.ui:84
 msgid "CLIENT OUT"
-msgstr ""
+msgstr "კლიენტის გამავალი"
 
 #: ../src/cmddebug.cc:31
 msgid "CMD"
-msgstr ""
+msgstr "ბრძანება"
 
 #: ../ui/mainwindow.ui:1256
 msgid "CMD Debug"
-msgstr ""
+msgstr "ბრძანებების გამართვა"
 
 #: ../src/WulforUtil.cc:212
 msgid "CP1250"
-msgstr ""
+msgstr "CP1250"
 
 #: ../src/WulforUtil.cc:221
 msgid "CP1251"
-msgstr ""
+msgstr "CP1251"
 
 #: ../src/WulforUtil.cc:211
 msgid "CP1252"
-msgstr ""
+msgstr "CP1252"
 
 #: ../src/WulforUtil.cc:222
 msgid "CP1256"
-msgstr ""
+msgstr "CP1256"
 
 #: ../src/WulforUtil.cc:223
 msgid "CP1257"
-msgstr ""
+msgstr "CP1257"
 
 #: ../src/WulforUtil.cc:219
 msgid "CP949"
-msgstr ""
+msgstr "CP949"
 
 #: ../src/finishedtransfers.cc:67 ../src/finishedtransfers.cc:241
 msgid "CRC Checked"
-msgstr ""
+msgstr "CRC შემოწმებულია"
 
 #: ../src/downloadqueue.cc:1382
 msgid "CRC32 inconsistency (SFV-Check)"
-msgstr ""
+msgstr "CRC32 არ ემთხვევა (SFV შემოწმება)"
 
 #: ../ui/mainwindow.ui:1112
 msgid "Calculate file TTH"
-msgstr ""
+msgstr "ფაილის TTH-ის გამოთვლა"
 
 #: ../src/wulfor.cc:108
 #, c-format
 msgid "Cannot handle SIGPIPE\n"
-msgstr ""
+msgstr "SIGPIPE-ის დამუშავება შეუძლებელია\n"
 
 #: ../src/wulfor.cc:79
 msgid "Catching signal "
-msgstr ""
+msgstr "სიგნალის დაჭერა "
 
 #: ../ui/settingsdialog.ui:8172
 msgid "Certificate file"
-msgstr ""
+msgstr "სერტიფიკატის ფაილი"
 
 #: ../src/settingsmanager.cc:525
 msgid "Change gui setting "
-msgstr ""
+msgstr "გრაფიკული ინტერფეისის პარამეტრის შეცვლა "
 
 #: ../ui/mainwindow.ui:1611
 msgid "Changelog (git)"
-msgstr ""
+msgstr "ცვლილებების ჟურნალი (git)"
 
 #: ../ui/settingsdialog.ui:609
 msgid "Chat"
-msgstr ""
+msgstr "ჩატი"
 
 #: ../ui/hub.ui:332 ../ui/privatemessage.ui:260
 msgid "Chat Commands"
-msgstr ""
+msgstr "ჩატის ბრძანებები"
 
 #: ../ui/settingsdialog.ui:688
 msgid "Chat Menu"
-msgstr ""
+msgstr "ჩატის მენიუ"
 
 #: ../src/hub.cc:1951
 msgid "Chat disabled"
-msgstr ""
+msgstr "ჩატი გამორთულია"
 
 #: ../src/hub.cc:1956
 msgid "Chat enabled"
-msgstr ""
+msgstr "ჩატი ჩართულია"
 
 #: ../ui/settingsdialog.ui:3492
 msgid "Check every"
-msgstr ""
+msgstr "შემოწმების ინტერვალი"
 
 #: ../src/settingsdialog.cc:1094
 msgid "Chinese (China)"
-msgstr ""
+msgstr "ჩინური (ჩინეთი)"
 
 #: ../src/mainwindow.cc:285
 msgid "Chinese (China) translation\n"
-msgstr ""
+msgstr "ჩინური (ჩინეთი) თარგმანი\n"
 
 #: ../ui/settingsdialog.ui:8582
 msgid "Choose a File"
-msgstr ""
+msgstr "ფაილის არჩევა"
 
 #: ../src/hub.cc:2735 ../src/mainwindow.cc:1336 ../src/mainwindow.cc:1408
 #: ../src/privatemessage.cc:1328 ../ui/search.ui:7 ../ui/settingsdialog.ui:8510
 #: ../ui/sharebrowser.ui:7
 msgid "Choose a directory"
-msgstr ""
+msgstr "საქაღალდის არჩევა"
 
 #: ../ui/mainwindow.ui:512
 msgid "Chose A File"
-msgstr ""
+msgstr "ფაილის არჩევა"
 
 #: ../ui/search.ui:242 ../ui/searchspy.ui:124 ../ui/searchspy.ui:340
 msgid "Clear"
-msgstr ""
+msgstr "გაწმენდა"
 
 #: ../src/privatemessage.cc:1037 ../ui/privatemessage.ui:30
 msgid "Clear PM"
-msgstr ""
+msgstr "პირადი მიმოწერის გასუფთავება"
 
 #: ../src/hub.cc:2109 ../ui/hub.ui:30
 msgid "Clear chat"
-msgstr ""
+msgstr "ჩატის გასუფთავება"
 
 #: ../src/searchspy.cc:501 ../ui/searchspy.ui:344
 msgid "Clear frame search"
-msgstr ""
+msgstr "ძებნის პანელის გასუფთავება"
 
 #: ../src/settingsdialog.cc:1645
 msgid "Clear search box after each search"
-msgstr ""
+msgstr "ყოველი ძებნის შემდეგ საძიებო ველის გასუფთავება"
 
 #: ../src/privatemessage.cc:1038 ../ui/privatemessage.ui:39
 msgid "Close PM"
-msgstr ""
+msgstr "პირადი მიმოწერის დახურვა"
 
 #: ../ui/mainwindow.ui:1428
 msgid "Close all PM"
-msgstr ""
+msgstr "ყველა პირადი მიმოწერის დახურვა"
 
 #: ../ui/mainwindow.ui:1419
 msgid "Close all hubs"
-msgstr ""
+msgstr "ყველა ჰაბის დახურვა"
 
 #: ../ui/mainwindow.ui:1437
 msgid "Close all search"
-msgstr ""
+msgstr "ყველა ძებნის დახურვა"
 
 #: ../src/hub.cc:2110
 msgid "Close chat"
-msgstr ""
+msgstr "ჩატის დახურვა"
 
 #: ../ui/mainwindow.ui:1446
 msgid "Close offline PM"
-msgstr ""
+msgstr "ხაზგარეშე მომხმარებლების პირადი მიმოწერის დახურვა"
 
 #: ../src/bookentry.cc:74
 msgid "Close tab"
-msgstr ""
+msgstr "ჩანართის დახურვა"
 
 #: ../src/transfers.cc:410
 msgid "Closing connection..."
-msgstr ""
+msgstr "კავშირი იხურება..."
 
 #: ../ui/settingsdialog.ui:401
 msgid "Color select"
-msgstr ""
+msgstr "ფერის არჩევა"
 
 #: ../ui/settingsdialog.ui:5505
 msgid "Colors & Fonts"
-msgstr ""
+msgstr "ფერები და შრიფტები"
 
 #: ../src/settingsdialog.cc:1675 ../src/settingsdialog.cc:1683
 #: ../src/settingsdialog.cc:3364 ../src/settingsdialog.cc:3438
 #: ../ui/settingsdialog.ui:812
 msgid "Command"
-msgstr ""
+msgstr "ბრძანება"
 
 #: ../src/settingsdialog.cc:3482 ../src/settingsdialog.cc:3488
 msgid "Command name already exists"
-msgstr ""
+msgstr "ბრძანების სახელი უკვე არსებობს"
 
 #: ../ui/settingsdialog.ui:2904
 msgid "Configure Public Hub Lists"
-msgstr ""
+msgstr "საჯარო ჰაბების სიების გამართვა"
 
 #: ../ui/publichubs.ui:10 ../ui/settingsdialog.ui:9103
 msgid "Configure hub lists"
-msgstr ""
+msgstr "ჰაბების სიების გამართვა"
 
 #: ../src/settingsdialog.cc:1575
 msgid "Confirm application exit"
-msgstr ""
+msgstr "პროგრამიდან გასვლის დადასტურება"
 
 #: ../src/settingsdialog.cc:1576
 msgid "Confirm favorite hub removal"
-msgstr ""
+msgstr "რჩეული ჰაბის წაშლის დადასტურება"
 
 #: ../src/settingsdialog.cc:1435 ../src/settingsdialog.cc:1474
 #: ../ui/mainwindow.ui:2144 ../ui/mainwindow.ui:2417
 msgid "Connect"
-msgstr ""
+msgstr "დაკავშირება"
 
 #: ../src/hub.cc:3597
 msgid "Connect failed: "
-msgstr ""
+msgstr "კავშირი ვერ დამყარდა: "
 
 #: ../ui/mainwindow.ui:620
 msgid "Connect to a hub"
-msgstr ""
+msgstr "ჰაბთან დაკავშირება"
 
 #: ../ui/favoriteusers.ui:203
 msgid "Connect to hub"
-msgstr ""
+msgstr "ჰაბთან დაკავშირება"
 
 #: ../src/hub.cc:2118 ../ui/hub.ui:57
 msgid "Connect to the hub"
-msgstr ""
+msgstr "ჰაბთან დაკავშირება"
 
 #: ../src/hub.cc:3541 ../src/transfers.cc:1032
 msgid "Connected"
-msgstr ""
+msgstr "დაკავშირებულია"
 
 #: ../src/transfers.cc:1068
 msgid "Connecting"
-msgstr ""
+msgstr "დაკავშირება"
 
 #: ../src/transfers.cc:377
 msgid "Connecting (forced)..."
-msgstr ""
+msgstr "მიმდინარეობს დაკავშირება (იძულებით)..."
 
 #: ../src/hub.cc:3534
 msgid "Connecting to "
-msgstr ""
+msgstr "მიმდინარეობს დაკავშირება "
 
 #: ../src/transfers.cc:1021
 msgid "Connecting..."
-msgstr ""
+msgstr "დაკავშირება..."
 
 #: ../src/hub.cc:100 ../src/hub.cc:419 ../src/hub.cc:439 ../src/search.cc:106
 #: ../src/search.cc:667 ../src/search.cc:752 ../src/search.cc:887
 #: ../ui/search.ui:141 ../ui/settingsdialog.ui:1883
 #: ../ui/settingsdialog.ui:2585
 msgid "Connection"
-msgstr ""
+msgstr "კავშირი"
 
 #: ../src/mainwindow.cc:2366
 msgid "Connectivity Manager: Warning"
-msgstr ""
+msgstr "კავშირების მმართველი: გაფრთხილება"
 
 #: ../src/mainwindow.cc:213
 msgid "Contributors"
-msgstr ""
+msgstr "წვლილის შემტანები"
 
 #: ../src/searchspy.cc:56 ../src/searchspy.cc:155 ../src/searchspy.cc:269
 #: ../src/searchspy.cc:294 ../src/searchspy.cc:310 ../src/searchspy.cc:432
 msgid "Count"
-msgstr ""
+msgstr "რაოდენობა"
 
 #: ../src/publichubs.cc:50 ../src/publichubs.cc:162
 msgid "Country"
-msgstr ""
+msgstr "ქვეყანა"
 
 #: ../src/settingsdialog.cc:1084
 msgid "Czech"
-msgstr ""
+msgstr "ჩეხური"
 
 #: ../src/mainwindow.cc:266
 msgid "Czech translation\n"
-msgstr ""
+msgstr "ჩეხური თარგმანი\n"
 
 #: ../src/mainwindow.cc:186
 #, c-format
@@ -1214,42 +1214,42 @@ msgid ""
 "\n"
 "EiskaltDC++ version: %s\n"
 "DC++ core version: %s"
-msgstr ""
+msgstr "DC++ კლიენტი FreeDC++-ისა და LinuxDC++-ის წყაროს კოდზე დაფუძნებით\n\nEiskaltDC++ ვერსია: %s\nDC++ ბირთვის ვერსია: %s"
 
 #: ../ui/cmddebug.ui:99
 msgid "DETECTION"
-msgstr ""
+msgstr "აღმოჩენა"
 
 #: ../ui/settingsdialog.ui:2508
 msgid "DHT Port"
-msgstr ""
+msgstr "DHT-ის პორტი"
 
 #: ../src/emoticonsdialog.cc:99 ../src/previewmenu.cc:86
 #: ../ui/favoritehubs.ui:552 ../ui/settingsdialog.ui:5721
 #: ../ui/settingsdialog.ui:6436 ../ui/settingsdialog.ui:6622
 #: ../ui/settingsdialog.ui:8421
 msgid "Default"
-msgstr ""
+msgstr "ნაგულისხმევი"
 
 #: ../ui/settingsdialog.ui:2618
 msgid "Default download directory"
-msgstr ""
+msgstr "ჩამოტვირთვის ნაგულისხმევი საქაღალდე"
 
 #: ../ui/settingsdialog.ui:1211
 msgid "Default hub encoding"
-msgstr ""
+msgstr "ჰაბის ნაგულისხმევი კოდირება"
 
 #: ../ui/settingsdialog.ui:6074
 msgid "Default icons"
-msgstr ""
+msgstr "ნაგულისხმევი ხატულები"
 
 #: ../ui/settingsdialog.ui:5434
 msgid "Default styles"
-msgstr ""
+msgstr "ნაგულისხმევი სტილები"
 
 #: ../ui/searchspy.ui:112
 msgid "Delete item"
-msgstr ""
+msgstr "ელემენტის წაშლა"
 
 #: ../src/favoritehubs.cc:52 ../src/favoritehubs.cc:131
 #: ../src/favoritehubs.cc:314 ../src/favoriteusers.cc:50
@@ -1259,26 +1259,26 @@ msgstr ""
 #: ../src/publichubs.cc:159 ../src/publichubs.cc:304 ../ui/favoriteusers.ui:212
 #: ../ui/settingsdialog.ui:1171
 msgid "Description"
-msgstr ""
+msgstr "აღწერა"
 
 #: ../src/adlsearch.cc:40 ../src/adlsearch.cc:60 ../src/adlsearch.cc:110
 #: ../src/adlsearch.cc:208 ../src/adlsearch.cc:233
 msgid "Destination Directory"
-msgstr ""
+msgstr "სამიზნე საქაღალდე"
 
 #: ../src/mainwindow.cc:209
 msgid "Developers"
-msgstr ""
+msgstr "შემმუშავებლები"
 
 #: ../src/sharebrowser.cc:115 ../src/sharebrowser.cc:261
 #: ../src/sharebrowser.cc:278 ../src/sharebrowser.cc:619
 #: ../src/sharebrowser.cc:674
 msgid "Dir"
-msgstr ""
+msgstr "საქაღალდე"
 
 #: ../ui/settingsdialog.ui:1803
 msgid "Direct connection"
-msgstr ""
+msgstr "პირდაპირი გავშირი"
 
 #: ../src/UserCommandMenu.cc:66 ../src/search.cc:933 ../src/search.cc:1773
 #: ../src/settingsdialog.cc:902 ../src/settingsdialog.cc:915
@@ -1288,275 +1288,275 @@ msgstr ""
 #: ../src/settingsdialog.cc:3887 ../src/sharebrowser.cc:326
 #: ../ui/adlsearch.ui:392 ../ui/settingsdialog.ui:6725
 msgid "Directory"
-msgstr ""
+msgstr "საქაღალდე"
 
 #: ../src/settingsdialog.cc:3775
 msgid "Directory or favorite name already exists"
-msgstr ""
+msgstr "საქაღალდის ან რჩეულის სახელი უკვე არსებობს"
 
 #: ../ui/favoritehubs.ui:91 ../ui/hub.ui:344
 msgid "Disable chat"
-msgstr ""
+msgstr "ჩატის გამორთვა"
 
 #: ../src/settingsdialog.cc:1125
 msgid "Do not close the program, hide in the system tray"
-msgstr ""
+msgstr "პროგრამის დახურვის ნაცვლად სისტემურ არეში დამალვა"
 
 #: ../ui/settingsdialog.ui:2669
 msgid "Do not use unfinished downloads directory"
-msgstr ""
+msgstr "დაუსრულებელი ჩამოტვირთვების საქაღალდის არგამოყენება"
 
 #: ../ui/mainwindow.ui:792
 msgid "Do you really want to exit?"
-msgstr ""
+msgstr "ნამდვილად გსურთ გასვლა?"
 
 #: ../ui/settingsdialog.ui:1508
 msgid "Don't allow Hub/UPnP/DHT to override"
-msgstr ""
+msgstr "არ დაუშვა ჰაბის/UPnP/DHT-ის მიერ ჩანაცვლება"
 
 #: ../src/settingsdialog.cc:989
 msgid "Don't download files already in share"
-msgstr ""
+msgstr "უკვე გაზიარებული ფაილები არ ჩამოიტვირთოს"
 
 #: ../src/settingsdialog.cc:990
 msgid "Don't download files already in the queue"
-msgstr ""
+msgstr "რიგში უკვე არსებული ფაილები არ ჩამოიტვირთოს"
 
 #: ../ui/search.ui:549
 msgid "Don't hide side panel on search"
-msgstr ""
+msgstr "ძებნისას გვერდითი პანელის არდამალვა"
 
 #: ../src/settingsdialog.cc:985
 msgid "Don't remove the source when auto-dropping, only disconnect"
-msgstr ""
+msgstr "ავტომატური გათიშვისას წყარო არ წაიშალოს, მხოლოდ კავშირი გაწყდეს"
 
 #: ../src/settingsdialog.cc:1655
 msgid "Don't send the away message to bots"
-msgstr ""
+msgstr "ბოტებისთვის არყოფნის შეტყობინების არგაგზავნა"
 
 #: ../src/hashdialog.cc:101 ../src/sharebrowser.cc:188
 msgid "Done"
-msgstr ""
+msgstr "დასრულებულია"
 
 #: ../src/settingsdialog.cc:1420 ../ui/sharebrowser.ui:80
 #: ../ui/sharebrowser.ui:126
 msgid "Download"
-msgstr ""
+msgstr "გადმოწერა"
 
 #: ../ui/adlsearch.ui:327
 msgid "Download Matches"
-msgstr ""
+msgstr "დამთხვევების ჩამოტვირთვა"
 
 #: ../src/downloadqueue.cc:32 ../src/settingsdialog.cc:1144
 #: ../src/settingsdialog.cc:1554 ../ui/mainwindow.ui:1268
 msgid "Download Queue"
-msgstr ""
+msgstr "გადმოწერის რიგი"
 
 #: ../ui/hub.ui:221 ../ui/privatemessage.ui:178 ../ui/search.ui:664
 msgid "Download _to..."
-msgstr ""
+msgstr "_გადმოწერის საქაღალდე..."
 
 #: ../ui/search.ui:678
 msgid "Download _whole directory"
-msgstr ""
+msgstr "_მთლიანი საქაღალდის კოპირება"
 
 #: ../src/transfers.cc:970
 msgid "Download complete..."
-msgstr ""
+msgstr "ჩამოტვირთვა დასრულდა..."
 
 #: ../src/publichubs.cc:459
 msgid "Download failed: "
-msgstr ""
+msgstr "ჩამოტვირთვა ვერ მოხერხდა: "
 
 #: ../src/settingsdialog.cc:1174 ../src/settingsdialog.cc:1356
 #: ../src/settingsmanager.cc:235 ../src/transfers.cc:1096
 msgid "Download finished"
-msgstr ""
+msgstr "ჩამოტვირთვა დასრულდა"
 
 #: ../src/settingsdialog.cc:1175 ../src/settingsdialog.cc:1360
 #: ../src/settingsmanager.cc:237
 msgid "Download finished file list"
-msgstr ""
+msgstr "ფაილების სიის ჩამოტვირთვა დასრულდა"
 
 #: ../src/publichubs.cc:467
 msgid "Download finished: "
-msgstr ""
+msgstr "ჩამოტვირთვა დასრულდა: "
 
 #: ../ui/hub.ui:149
 msgid "Download image"
-msgstr ""
+msgstr "სურათის ჩამოტვირთვა"
 
 #: ../src/hub.cc:2051
 msgid "Download image: disable"
-msgstr ""
+msgstr "სურათის ჩამოტვირთვა: გამორთვა"
 
 #: ../src/hub.cc:2053
 msgid "Download image: unlimit"
-msgstr ""
+msgstr "სურათის ჩამოტვირთვა: შეუზღუდავი"
 
 #: ../src/hub.cc:2055
 msgid "Download limit image: "
-msgstr ""
+msgstr "სურათის ჩამოტვირთვის ზღვარი: "
 
 #: ../src/hub.cc:2124
 msgid "Download limit image: 0 - disable, n < 0 - unlimit, empty - info"
-msgstr ""
+msgstr "სურათის ჩამოტვირთვის ზღვარი: 0 - გამორთვა, n < 0 - შეუზღუდავი, ცარიელი - ინფორმაცია"
 
 #: ../src/transfers.cc:1105
 msgid "Download removed"
-msgstr ""
+msgstr "ჩამოტვირთვა წაიშალა"
 
 #: ../ui/mainwindow.ui:1813
 msgid "Download speed"
-msgstr ""
+msgstr "ჩამოტვირთვის სიჩქარე"
 
 #: ../src/transfers.cc:921
 msgid "Download starting..."
-msgstr ""
+msgstr "გადმოწერის დასაწყისი..."
 
 #: ../src/publichubs.cc:451
 msgid "Download starting: "
-msgstr ""
+msgstr "ჩამოტვირთვა იწყება: "
 
 #: ../ui/settingsdialog.ui:3119
 msgid "Download to"
-msgstr ""
+msgstr "გადმოწერის საქაღალდე"
 
 #: ../ui/sharebrowser.ui:89 ../ui/sharebrowser.ui:135
 msgid "Download to..."
-msgstr ""
+msgstr "გადმოწერის საქაღალდე..."
 
 #: ../ui/search.ui:687
 msgid "Download whole director_y to..."
-msgstr ""
+msgstr "_მთლიანი საქაღალდის კოპირება მისამართზე..."
 
 #: ../src/mainwindow.cc:773
 msgid "Download: "
-msgstr ""
+msgstr "ჩამოტვირთვა: "
 
 #: ../src/downloadqueue.cc:74 ../src/downloadqueue.cc:94
 #: ../src/downloadqueue.cc:287 ../src/downloadqueue.cc:394
 #: ../src/sharebrowser.cc:92 ../src/sharebrowser.cc:363
 msgid "Downloaded"
-msgstr ""
+msgstr "გადმოწერილია"
 
 #: ../src/publichubs.cc:493
 msgid "Downloaded hub list is corrupted or unsupported "
-msgstr ""
+msgstr "ჩამოტვირთული ჰაბების სია დაზიანებულია ან მხარდაუჭერელია "
 
 #: ../src/transfers.cc:584 ../src/transfers.cc:957
 msgid "Downloading"
-msgstr ""
+msgstr "ჩამოტვირთვა"
 
 #: ../ui/settingsdialog.ui:2995 ../ui/settingsdialog.ui:3966
 msgid "Downloads"
-msgstr ""
+msgstr "გადმოწერები"
 
 #: ../ui/settingsdialog.ui:3626
 msgid "Drop sources below"
-msgstr ""
+msgstr "მითითებულზე ნელი წყაროების გათიშვა"
 
 #: ../src/search.cc:2014
 msgid "Dropped: "
-msgstr ""
+msgstr "უარყოფილია: "
 
 #: ../ui/settingsdialog.ui:2440
 msgid "DynDNS Address"
-msgstr ""
+msgstr "DynDNS მისამართი"
 
 #: ../ui/settingsdialog.ui:1185
 msgid "E-Mail"
-msgstr ""
+msgstr "ელფოსტა"
 
 #: ../ui/mainwindow.ui:2039
 msgid "Edit the preferences"
-msgstr ""
+msgstr "პარამეტრების შეცვლა"
 
 #: ../ui/hub.ui:376 ../ui/privatemessage.ui:290
 msgid "Emoticons"
-msgstr ""
+msgstr "სმაილები"
 
 #: ../src/hub.cc:2035 ../src/privatemessage.cc:973
 msgid "Emoticons mode off"
-msgstr ""
+msgstr "სმაილების რეჟიმი გამორთულია"
 
 #: ../src/hub.cc:2040 ../src/privatemessage.cc:978
 msgid "Emoticons mode on"
-msgstr ""
+msgstr "სმაილების რეჟიმი ჩართულია"
 
 #: ../src/hub.cc:2127 ../src/privatemessage.cc:1043
 msgid "Emoticons on/off"
-msgstr ""
+msgstr "სმაილების ჩართვა/გამორთვა"
 
 #: ../src/emoticonsdialog.cc:62
 msgid "Emotion packs"
-msgstr ""
+msgstr "სმაილების ნაკრებები"
 
 #: ../src/settingsdialog.cc:1650
 msgid "Enable automatic SFV checking"
-msgstr ""
+msgstr "ავტომატური SFV შემოწმების ჩართვა"
 
 #: ../src/settingsdialog.cc:1651
 msgid "Enable safe and compressed transfers"
-msgstr ""
+msgstr "უსაფრთხო და შეკუმშული გადაცემების ჩართვა"
 
 #: ../src/settingsdialog.cc:1649
 msgid "Enable segmented downloads"
-msgstr ""
+msgstr "ნაწილებად ჩამოტვირთვის ჩართვა"
 
 #: ../src/adlsearch.cc:37 ../src/adlsearch.cc:57 ../src/adlsearch.cc:65
 #: ../src/adlsearch.cc:107 ../src/adlsearch.cc:205 ../src/adlsearch.cc:238
 #: ../src/adlsearch.cc:383 ../src/adlsearch.cc:385 ../ui/adlsearch.ui:312
 msgid "Enabled"
-msgstr ""
+msgstr "ჩართულია"
 
 #: ../src/favoritehubs.cc:57 ../src/favoritehubs.cc:142
 #: ../src/favoritehubs.cc:234 ../src/favoritehubs.cc:256
 #: ../src/favoritehubs.cc:318 ../src/favoritehubs.cc:492
 msgid "Encoding"
-msgstr ""
+msgstr "კოდირება"
 
 #: ../src/transfers.cc:69
 msgid "Encryption"
-msgstr ""
+msgstr "დაშიფვრა"
 
 #: ../src/settingsdialog.cc:1056
 msgid "English"
-msgstr ""
+msgstr "ინგლისური"
 
 #: ../ui/mainwindow.ui:2535
 msgid "Enter line for user command"
-msgstr ""
+msgstr "შეიყვანეთ მომხმარებლის ბრძანების სტრიქონი"
 
 #: ../ui/sharebrowser.ui:278
 msgid "Enter text to search for"
-msgstr ""
+msgstr "შეიყვანეთ საძიებო ტექსტი"
 
 #: ../src/mainwindow.cc:1270
 msgid "Enter value for "
-msgstr ""
+msgstr "შეიყვანეთ მნიშვნელობა პარამეტრისთვის "
 
 #: ../src/settingsdialog.cc:1914 ../src/settingsdialog.cc:1958
 #: ../src/settingsdialog.cc:2995
 msgid "Error"
-msgstr ""
+msgstr "შეცდომა"
 
 #: ../src/settingsmanager.cc:527
 msgid "Error: segv parser :D"
-msgstr ""
+msgstr "შეცდომა: სეგმენტაციის შეცდომის ანალიზატორი :D"
 
 #: ../src/settingsmanager.cc:522
 msgid "Error: setting not found!"
-msgstr ""
+msgstr "შეცდომა: პარამეტრი ვერ ვიპოვე!"
 
 #: ../src/downloadqueue.cc:79 ../src/downloadqueue.cc:291
 #: ../src/downloadqueue.cc:398
 msgid "Errors"
-msgstr ""
+msgstr "შეცდომა"
 
 #: ../ui/settingsdialog.ui:5199
 msgid "Every time a private message is received"
-msgstr ""
+msgstr "პირადი შეტყობინების ყოველი მიღებისას"
 
 #: ../src/downloadqueue.cc:78 ../src/downloadqueue.cc:93
 #: ../src/downloadqueue.cc:285 ../src/downloadqueue.cc:392 ../src/search.cc:108
@@ -1564,43 +1564,43 @@ msgstr ""
 #: ../src/search.cc:755 ../src/sharebrowser.cc:87 ../src/sharebrowser.cc:110
 #: ../src/sharebrowser.cc:324 ../src/sharebrowser.cc:355
 msgid "Exact Size"
-msgstr ""
+msgstr "ზუსტი ზომა"
 
 #: ../ui/mainwindow.ui:218
 msgid "Exact size"
-msgstr ""
+msgstr "ზუსტი ზომა"
 
 #: ../ui/settingsdialog.ui:4409
 msgid "Exceptions"
-msgstr ""
+msgstr "გამონაკლისები"
 
 #: ../src/hub.cc:2130
 msgid "Execute Lua Chunk"
-msgstr ""
+msgstr "Lua კოდის ბლოკის შესრულება"
 
 #: ../src/hub.cc:2132
 msgid "Execute code (bash)"
-msgstr ""
+msgstr "კოდის შესრულება (bash)"
 
 #: ../ui/mainwindow.ui:2021
 msgid "Exit"
-msgstr ""
+msgstr "გასვლა"
 
 #: ../ui/mainwindow.ui:734
 msgid "Exit EiskaltDC++ Gtk?"
-msgstr ""
+msgstr "გსურთ EiskaltDC++ Gtk-დან გასვლა?"
 
 #: ../ui/settingsdialog.ui:8033
 msgid "Experts Only"
-msgstr ""
+msgstr "მხოლოდ გამოცდილი მომხმარებლებისთვის"
 
 #: ../ui/settingsdialog.ui:6029
 msgid "Export..."
-msgstr ""
+msgstr "გატანა..."
 
 #: ../src/settingsdialog.cc:2208
 msgid "Extension edition"
-msgstr ""
+msgstr "გაფართოების შეცვლა"
 
 #: ../src/settingsdialog.cc:924 ../src/settingsdialog.cc:959
 #: ../src/settingsdialog.cc:1741 ../src/settingsdialog.cc:1881
@@ -1608,62 +1608,62 @@ msgstr ""
 #: ../src/settingsdialog.cc:3006 ../src/settingsdialog.cc:3040
 #: ../src/settingsdialog.cc:3058 ../src/settingsdialog.cc:3089
 msgid "Extensions"
-msgstr ""
+msgstr "გაფართოებები"
 
 #: ../ui/settingsdialog.ui:1495
 msgid "External / WAN IP"
-msgstr ""
+msgstr "გარე / WAN IP"
 
 #: ../ui/favoritehubs.ui:478
 msgid "External IP"
-msgstr ""
+msgstr "გარე IP"
 
 #: ../ui/favoritehubs.ui:15
 msgid "Favorite Hub Properties"
-msgstr ""
+msgstr "რჩეული ჰაბის თვისებები"
 
 #: ../src/favoritehubs.cc:30 ../src/settingsdialog.cc:1422
 #: ../src/settingsdialog.cc:1476 ../src/settingsdialog.cc:1553
 #: ../ui/mainwindow.ui:1174 ../ui/mainwindow.ui:2168
 msgid "Favorite Hubs"
-msgstr ""
+msgstr "რჩეული ჰაბები"
 
 #: ../src/settingsdialog.cc:901 ../src/settingsdialog.cc:914
 #: ../src/settingsdialog.cc:3769
 msgid "Favorite Name"
-msgstr ""
+msgstr "რჩეულის სახელი"
 
 #: ../src/settingsdialog.cc:1245
 msgid "Favorite User"
-msgstr ""
+msgstr "რჩეული მომხმარებელი"
 
 #: ../src/favoriteusers.cc:32 ../src/settingsdialog.cc:1423
 #: ../src/settingsdialog.cc:1478 ../src/settingsdialog.cc:1557
 #: ../ui/mainwindow.ui:1204 ../ui/mainwindow.ui:2184
 msgid "Favorite Users"
-msgstr ""
+msgstr "რჩეული მომხმარებლები"
 
 #: ../src/hub.cc:3130
 msgid "Favorite hub added"
-msgstr ""
+msgstr "ჰაბი დაემატა რჩეულებში"
 
 #: ../src/hub.cc:3135
 msgid "Favorite hub already exists"
-msgstr ""
+msgstr "რჩეული ჰაბი უკვე არსებობს"
 
 #: ../src/settingsdialog.cc:3752 ../ui/settingsdialog.ui:8996
 msgid "Favorite name"
-msgstr ""
+msgstr "რჩეულის სახელი"
 
 #: ../src/settingsdialog.cc:1180 ../src/settingsdialog.cc:1376
 #: ../src/settingsmanager.cc:245
 msgid "Favorite user joined"
-msgstr ""
+msgstr "რჩეული მომხმარებელი შემოვიდა"
 
 #: ../src/settingsdialog.cc:1181 ../src/settingsdialog.cc:1380
 #: ../src/settingsmanager.cc:247
 msgid "Favorite user quit"
-msgstr ""
+msgstr "რჩეული მომხმარებელი გავიდა"
 
 #: ../src/UserCommandMenu.cc:68 ../src/settingsdialog.cc:363
 #: ../src/settingsdialog.cc:1158 ../src/settingsdialog.cc:1437
@@ -1672,31 +1672,31 @@ msgstr ""
 #: ../ui/settingsdialog.ui:6994 ../ui/settingsdialog.ui:7078
 #: ../ui/settingsdialog.ui:7159
 msgid "File"
-msgstr ""
+msgstr "ფაილი"
 
 #: ../src/transfers.cc:676 ../src/transfers.cc:878
 msgid "File list"
-msgstr ""
+msgstr "ფაილების სია"
 
 #: ../src/sharebrowser.cc:180
 msgid "File list loaded"
-msgstr ""
+msgstr "ფაილების სია ჩაიტვირთა"
 
 #: ../ui/mainwindow.ui:104
 msgid "File name"
-msgstr ""
+msgstr "ფაილის სახელი"
 
 #: ../src/downloadqueue.cc:1378
 msgid "File not available"
-msgstr ""
+msgstr "ფაილი ხელმიუწვდომელია"
 
 #: ../ui/search.ui:153
 msgid "File type"
-msgstr ""
+msgstr "ფაილის ტიპი"
 
 #: ../ui/settingsdialog.ui:705
 msgid "Filelist Menu"
-msgstr ""
+msgstr "ფაილების სიის მენიუ"
 
 #: ../src/downloadqueue.cc:71 ../src/downloadqueue.cc:95
 #: ../src/downloadqueue.cc:96 ../src/downloadqueue.cc:281
@@ -1715,246 +1715,246 @@ msgstr ""
 #: ../src/transfers.cc:65 ../src/transfers.cc:718 ../ui/adlsearch.ui:389
 #: ../ui/search.ui:132
 msgid "Filename"
-msgstr ""
+msgstr "ფაილის სახელი"
 
 #: ../src/finishedtransfers.cc:85 ../src/finishedtransfers.cc:194
 msgid "Files"
-msgstr ""
+msgstr "ფაილები"
 
 #: ../src/downloadqueue.cc:244 ../src/sharebrowser.cc:381
 msgid "Files: "
-msgstr ""
+msgstr "ფაილები: "
 
 #: ../ui/cmddebug.ui:113
 msgid "Filter by IP"
-msgstr ""
+msgstr "IP-ით გაფილტვრა"
 
 #: ../ui/search.ui:478
 msgid "Filter files already in share"
-msgstr ""
+msgstr "უკვე გაზიარებული ფაილების გაფილტვრა"
 
 #: ../src/settingsdialog.cc:1114
 msgid "Filter kick and NMDC debug messages"
-msgstr ""
+msgstr "გაძევებისა და NMDC გამართვის შეტყობინებების გაფილტვრა"
 
 #: ../src/search.cc:2001
 msgid "Filtered: "
-msgstr ""
+msgstr "გაფილტრულია: "
 
 #: ../src/search.cc:573
 msgid "Filtered: 0"
-msgstr ""
+msgstr "გაფილტრულია: 0"
 
 #: ../ui/sharebrowser.ui:433
 msgid "Find"
-msgstr ""
+msgstr "პოვნა"
 
 #: ../ui/sharebrowser.ui:196
 msgid "Find files"
-msgstr ""
+msgstr "ფაილების პოვნა"
 
 #: ../src/finishedtransfers.cc:34 ../src/settingsdialog.cc:1142
 #: ../src/settingsdialog.cc:1424 ../src/settingsdialog.cc:1498
 #: ../src/settingsdialog.cc:1555 ../ui/mainwindow.ui:1280
 #: ../ui/mainwindow.ui:2263 ../ui/mainwindow.ui:2513
 msgid "Finished Downloads"
-msgstr ""
+msgstr "გადმოწერები დასრულდა"
 
 #: ../src/finishedtransfers.cc:39 ../src/settingsdialog.cc:1143
 #: ../src/settingsdialog.cc:1425 ../src/settingsdialog.cc:1500
 #: ../src/settingsdialog.cc:1556 ../ui/mainwindow.ui:1291
 #: ../ui/mainwindow.ui:2280 ../ui/mainwindow.ui:2521
 msgid "Finished Uploads"
-msgstr ""
+msgstr "ატვირთვები დასრულდა"
 
 #: ../ui/settingsdialog.ui:1473
 msgid "Firewall (passive, last resort)"
-msgstr ""
+msgstr "ფაიერვოლი (პასიური რეჟიმი, უკიდურესი ვარიანტი)"
 
 #: ../ui/settingsdialog.ui:1528
 msgid "Firewall with manual port forward"
-msgstr ""
+msgstr "ფაიერვოლი პორტების ხელით გადამისამართებით"
 
 #: ../src/transfers.cc:63
 msgid "Flags"
-msgstr ""
+msgstr "ალმები"
 
 #: ../ui/settingsdialog.ui:4072
 msgid "Follow Links"
-msgstr ""
+msgstr "ბმულების მიყოლა"
 
 #: ../ui/settingsdialog.ui:8653
 msgid "Font select"
-msgstr ""
+msgstr "შრიფტის არჩევა"
 
 #: ../ui/settingsdialog.ui:6798 ../ui/settingsdialog.ui:6882
 #: ../ui/settingsdialog.ui:6966 ../ui/settingsdialog.ui:7050
 #: ../ui/settingsdialog.ui:7132
 msgid "Format"
-msgstr ""
+msgstr "ფორმატი"
 
 #: ../src/sharebrowser.cc:686 ../src/sharebrowser.cc:729
 msgid "Found a match"
-msgstr ""
+msgstr "ნაპოვნია დამთხვევა"
 
 #: ../src/search.cc:686
 msgid "Found: "
-msgstr ""
+msgstr "ნაპოვნია: "
 
 #: ../src/search.cc:572
 msgid "Found: 0"
-msgstr ""
+msgstr "ნაპოვნია: 0"
 
 #: ../ui/settingsdialog.ui:6509
 msgid "Frame (size)"
-msgstr ""
+msgstr "ხედვის არე (ზომა)"
 
 #: ../ui/searchspy.ui:325 ../ui/settingsdialog.ui:6494
 msgid ""
 "Frame size determines the width of the review, higher values affect "
 "performance"
-msgstr ""
+msgstr "ხედვის არე განსაზღვრავს ერთდროულად ნაჩვენები ჩანაწერების რაოდენობას; უფრო დიდი მნიშვნელობები წარმადობაზე მოქმედებს"
 
 #: ../ui/searchspy.ui:313
 msgid "Frame:"
-msgstr ""
+msgstr "ხედვის არე:"
 
 #: ../src/mainwindow.cc:2482
 msgid "Free "
-msgstr ""
+msgstr "თავისუფალია "
 
 #: ../src/settingsdialog.cc:1064
 msgid "French"
-msgstr ""
+msgstr "ფრანგული"
 
 #: ../src/mainwindow.cc:235
 msgid "French translation\n"
-msgstr ""
+msgstr "ფრანგული თარგმანი\n"
 
 #: ../ui/adlsearch.ui:395
 msgid "Full Path"
-msgstr ""
+msgstr "სრული ბილიკი"
 
 #: ../src/downloadqueue.cc:1384
 msgid "Full tree does not match TTH root"
-msgstr ""
+msgstr "სრული ხე TTH root-ს არ ემთხვევა"
 
 #: ../src/WulforUtil.cc:224
 msgid "GB18030"
-msgstr ""
+msgstr "GB18030"
 
 #: ../src/settingsdialog.cc:1221
 msgid "General text"
-msgstr ""
+msgstr "ჩვეულებრივი ტექსტი"
 
 #: ../ui/settingsdialog.ui:8264
 msgid "Generate certificates"
-msgstr ""
+msgstr "სერტიფიკატების შექმნა"
 
 #: ../src/settingsdialog.cc:1086
 msgid "German"
-msgstr ""
+msgstr "გერმანული"
 
 #: ../src/mainwindow.cc:269
 msgid "German translation\n"
-msgstr ""
+msgstr "გერმანული თარგმანი\n"
 
 #: ../src/hub.cc:2115 ../src/privatemessage.cc:1041 ../ui/privatemessage.ui:66
 msgid "Get file list"
-msgstr ""
+msgstr "ფაილების სიის მიღება"
 
 #: ../ui/adlsearch.ui:415 ../ui/search.ui:112
 msgid "GiB"
-msgstr ""
+msgstr "გიბ"
 
 #: ../src/favoritehubs.cc:368 ../src/hub.cc:2947
 msgid "Global hub default"
-msgstr ""
+msgstr "ჰაბების საერთო ნაგულისხმევი პარამეტრები"
 
 #: ../ui/uploadqueue.ui:51
 msgid "Grant Slot"
-msgstr ""
+msgstr "სლოტის მინიჭება"
 
 #: ../src/hub.cc:2116 ../src/privatemessage.cc:1042 ../ui/privatemessage.ui:75
 msgid "Grant extra slot"
-msgstr ""
+msgstr "დამატებით სლოტის მინიჭება"
 
 #: ../src/settingsdialog.cc:1088
 msgid "Greek"
-msgstr ""
+msgstr "ბერძნული"
 
 #: ../src/mainwindow.cc:275
 msgid "Greek translation\n"
-msgstr ""
+msgstr "ბერძნული თარგმანი\n"
 
 #: ../ui/search.ui:382
 msgid "Group by"
-msgstr ""
+msgstr "დაჯგუფება"
 
 #: ../ui/finishedtransfers.ui:34
 msgid "Grouped by Files"
-msgstr ""
+msgstr "ფაილების მიხედვით დაჯგუფება"
 
 #: ../ui/finishedtransfers.ui:62
 msgid "Grouped by Users"
-msgstr ""
+msgstr "მომხმარებლების მიხედვით დაჯგუფება"
 
 #: ../src/settingsmanager.cc:524
 msgid "Gui setting "
-msgstr ""
+msgstr "გრაფიკული ინტერფეისის პარამეტრი "
 
 #: ../ui/settingsdialog.ui:2944
 msgid "HTTP Proxy (for hublist only)"
-msgstr ""
+msgstr "HTTP პროქსი (მხოლოდ ჰაბების სიისთვის)"
 
 #: ../ui/cmddebug.ui:39
 msgid "HUB IN"
-msgstr ""
+msgstr "ჰაბის შემომავალი"
 
 #: ../ui/cmddebug.ui:54
 msgid "HUB OUT"
-msgstr ""
+msgstr "ჰაბის გამავალი"
 
 #: ../ui/downloadqueue.ui:127 ../ui/downloadqueue.ui:261
 msgid "H_igh"
-msgstr ""
+msgstr "_მაღალი"
 
 #: ../src/settingsdialog.cc:1428 ../src/settingsdialog.cc:1488
 #: ../ui/mainwindow.ui:2101 ../ui/mainwindow.ui:2473
 msgid "Hash"
-msgstr ""
+msgstr "ჰეში"
 
 #: ../ui/settingsdialog.ui:8955
 msgid "Hidden"
-msgstr ""
+msgstr "დამალული"
 
 #: ../ui/search.ui:256
 msgid "Hide side panel"
-msgstr ""
+msgstr "გვერდითი პანელის დამალვა"
 
 #: ../ui/mainwindow.ui:1541
 msgid "Hide tools panel"
-msgstr ""
+msgstr "ხელსაწყოთა პანელის დამალვა"
 
 #: ../src/downloadqueue.cc:1354
 msgid "High"
-msgstr ""
+msgstr "მაღალი"
 
 #: ../ui/settingsdialog.ui:3200
 msgid "High priority max size"
-msgstr ""
+msgstr "მაღალი პრიორიტეტის მაქსიმალური ზომა"
 
 #: ../src/downloadqueue.cc:1357
 msgid "Highest"
-msgstr ""
+msgstr "უმაღლესი"
 
 #: ../ui/settingsdialog.ui:3322
 msgid "Highest priority max size"
-msgstr ""
+msgstr "უმაღლესი პრიორიტეტის მაქსიმალური ზომა"
 
 #: ../ui/mainwindow.ui:1561
 msgid "Homepage"
-msgstr ""
+msgstr "საწყისი გვერდი"
 
 #: ../src/finishedtransfers.cc:84 ../src/finishedtransfers.cc:193
 #: ../src/search.cc:107 ../src/search.cc:668 ../src/search.cc:765
@@ -1964,218 +1964,218 @@ msgstr ""
 #: ../src/settingsdialog.cc:4100 ../src/settingsdialog.cc:4123
 #: ../src/settingsdialog.cc:4142 ../ui/search.ui:150
 msgid "Hub"
-msgstr ""
+msgstr "ჰაბი"
 
 #: ../src/settingsdialog.cc:1145
 msgid "Hub (also sets urgency hint)"
-msgstr ""
+msgstr "ჰაბი (ასევე აყენებს საყურადღებობის მინიშნებას)"
 
 #: ../src/favoriteusers.cc:48 ../src/favoriteusers.cc:111
 #: ../src/favoriteusers.cc:605
 msgid "Hub (last seen in, if offline)"
-msgstr ""
+msgstr "ჰაბი (ხაზგარეშე ყოფნისას, სადაც ბოლოს იმყოფებოდა)"
 
 #: ../ui/settingsdialog.ui:850
 msgid "Hub IP / DNS (empty = All, 'op' = where operator)"
-msgstr ""
+msgstr "ჰაბის IP / DNS (ცარიელი = ყველა, 'op' = სადაც ოპერატორი ხართ)"
 
 #: ../ui/settingsdialog.ui:724
 msgid "Hub Menu"
-msgstr ""
+msgstr "ჰაბის მენიუ"
 
 #: ../src/transfers.cc:57 ../src/transfers.cc:503 ../src/transfers.cc:568
 #: ../src/transfers.cc:599
 msgid "Hub Name"
-msgstr ""
+msgstr "ჰაბის სახელი"
 
 #: ../src/settingsdialog.cc:1178 ../src/settingsdialog.cc:1368
 #: ../src/settingsmanager.cc:243
 msgid "Hub connected"
-msgstr ""
+msgstr "ჰაბი დაკავშირებულია"
 
 #: ../src/settingsdialog.cc:1179 ../src/settingsdialog.cc:1372
 #: ../src/settingsmanager.cc:241
 msgid "Hub disconnected"
-msgstr ""
+msgstr "ჰაბი გათიშულია"
 
 #: ../ui/mainwindow.ui:2170 ../ui/mainwindow.ui:2425 ../ui/search.ui:510
 msgid "Hubs"
-msgstr ""
+msgstr "ჰაბები"
 
 #: ../ui/mainwindow.ui:1762
 msgid "Hubs (normal / registered / op)"
-msgstr ""
+msgstr "ჰაბები (ჩვეულებრივი / რეგისტრირებული / ოპერატორი)"
 
 #: ../src/publichubs.cc:178
 msgid "Hubs: "
-msgstr ""
+msgstr "ჰაბები: "
 
 #: ../src/settingsdialog.cc:1062
 msgid "Hungarian"
-msgstr ""
+msgstr "უნგრული"
 
 #: ../src/mainwindow.cc:231
 msgid "Hungarian translation\n"
-msgstr ""
+msgstr "უნგრული თარგმანი\n"
 
 #: ../src/search.cc:109 ../src/search.cc:670 ../src/transfers.cc:68
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: ../src/WulforUtil.cc:217
 msgid "ISO-2022-JP"
-msgstr ""
+msgstr "ISO-2022-JP"
 
 #: ../src/WulforUtil.cc:213
 msgid "ISO-8859-2"
-msgstr ""
+msgstr "ISO-8859-2"
 
 #: ../src/WulforUtil.cc:214
 msgid "ISO-8859-7"
-msgstr ""
+msgstr "ISO-8859-7"
 
 #: ../src/WulforUtil.cc:215
 msgid "ISO-8859-8"
-msgstr ""
+msgstr "ISO-8859-8"
 
 #: ../src/WulforUtil.cc:216
 msgid "ISO-8859-9"
-msgstr ""
+msgstr "ISO-8859-9"
 
 #: ../src/settingsdialog.cc:402 ../src/settingsdialog.cc:1339
 #: ../src/settingsdialog.cc:2294 ../src/settingsdialog.cc:2329
 #: ../src/settingsdialog.cc:2410 ../src/settingsdialog.cc:2447
 msgid "Icon"
-msgstr ""
+msgstr "ხატულა"
 
 #: ../src/emoticonsdialog.cc:67
 msgid "Icon size"
-msgstr ""
+msgstr "ხატულის ზომა"
 
 #: ../ui/settingsdialog.ui:5677
 msgid "Icon..."
-msgstr ""
+msgstr "ხატულა..."
 
 #: ../ui/settingsdialog.ui:8943
 msgid "Icons"
-msgstr ""
+msgstr "ხატულები"
 
 #: ../ui/searchspy.ui:209
 msgid "Ignore TTH"
-msgstr ""
+msgstr "TTH-ის უგულებელყოფა"
 
 #: ../ui/searchspy.ui:213
 msgid "Ignore TTH search"
-msgstr ""
+msgstr "TTH-ის ძებნის იგნორი"
 
 #: ../src/settingsdialog.cc:1568
 msgid "Ignore private messages from bots"
-msgstr ""
+msgstr "ბოტების პირადი შეტყობინებების უგულებელყოფა"
 
 #: ../src/settingsdialog.cc:1567
 msgid "Ignore private messages from the hub"
-msgstr ""
+msgstr "ჰაბის პირადი შეტყობინებების უგულებელყოფა"
 
 #: ../src/hub.cc:3667
 msgid "Ignored private message from bot "
-msgstr ""
+msgstr "უგულებელყოფილია ბოტის პირადი შეტყობინება "
 
 #: ../src/hub.cc:3660
 msgid "Ignored private message from hub"
-msgstr ""
+msgstr "უგულებელყოფილია ჰაბის პირადი შეტყობინება"
 
 #: ../ui/settingsdialog.ui:6044
 msgid "Import..."
-msgstr ""
+msgstr "შემოტანა..."
 
 #: ../ui/mainwindow.ui:1081
 msgid "Indexing Progress"
-msgstr ""
+msgstr "ინდექსირების მიმდინარეობა"
 
 #: ../src/hashdialog.cc:136 ../ui/hash.ui:7
 msgid "Indexing files..."
-msgstr ""
+msgstr "მიმდინარეობს ფაილების ინდექსირება..."
 
 #: ../src/wulfor.cc:95
 msgid "Installing handler for"
-msgstr ""
+msgstr "ყენდება დამმუშავებელი შემდეგისთვის"
 
 #: ../src/settingsdialog.cc:2036 ../src/settingsdialog.cc:2224
 msgid "Invalid extension: "
-msgstr ""
+msgstr "არასწორი გაფართოება: "
 
 #: ../src/hub.cc:2281
 msgid "Ipfilter is disable"
-msgstr ""
+msgstr "IP ფილტრი გამორთულია"
 
 #: ../src/hub.cc:2274
 msgid "Ipfilter is enable"
-msgstr ""
+msgstr "IP ფილტრი ჩართულია"
 
 #: ../src/hub.cc:2139
 msgid "Ipfilter on/off"
-msgstr ""
+msgstr "IP ფილტრის ჩართვა/გამორთვა"
 
 #: ../src/settingsdialog.cc:1090
 msgid "Italian"
-msgstr ""
+msgstr "იტალიური"
 
 #: ../src/mainwindow.cc:278
 msgid "Italian translation\n"
-msgstr ""
+msgstr "იტალიური თარგმანი\n"
 
 #: ../src/downloadqueue.cc:242 ../src/sharebrowser.cc:386
 msgid "Items: "
-msgstr ""
+msgstr "ელემენტები: "
 
 #: ../src/sharebrowser.cc:391
 msgid "Items: 0"
-msgstr ""
+msgstr "ელემენტები: 0"
 
 #: ../src/WulforUtil.cc:220
 msgid "KOI8-R"
-msgstr ""
+msgstr "KOI8-R"
 
 #: ../src/settingsdialog.cc:948
 msgid "Kaffeine player"
-msgstr ""
+msgstr "Kaffeine დამკვრელი"
 
 #: ../src/settingsdialog.cc:1665
 msgid "Keep downloaded files and dirs in queue"
-msgstr ""
+msgstr "ჩამოტვირთული ფაილებისა და საქაღალდეების რიგში დატოვება"
 
 #: ../src/settingsdialog.cc:1646
 msgid ""
 "Keep duplicate files in your file list (duplicates never count towards your "
 "share size)"
-msgstr ""
+msgstr "დუბლირებული ფაილების სიაში დატოვება (ისინი გაზიარების ზომაში არ ითვლება)"
 
 #: ../src/settingsdialog.cc:1647
 msgid "Keep filelists when exiting"
-msgstr ""
+msgstr "გასვლისას ფაილების სიების შენარჩუნება"
 
 #: ../ui/adlsearch.ui:409 ../ui/search.ui:106 ../ui/settingsdialog.ui:3230
 #: ../ui/settingsdialog.ui:3246 ../ui/settingsdialog.ui:3278
 #: ../ui/settingsdialog.ui:3294 ../ui/settingsdialog.ui:3506
 #: ../ui/settingsdialog.ui:7696 ../ui/settingsdialog.ui:7943
 msgid "KiB"
-msgstr ""
+msgstr "კიბ"
 
 #: ../ui/downloadqueue.ui:109 ../ui/downloadqueue.ui:243
 msgid "L_ow"
-msgstr ""
+msgstr "_დაბალი"
 
 #: ../ui/settingsdialog.ui:8926
 msgid "Left"
-msgstr ""
+msgstr "მარცხნივ"
 
 #: ../ui/mainwindow.ui:1505
 msgid "Left position"
-msgstr ""
+msgstr "მარცხენა მდებარეობა"
 
 #: ../ui/settingsdialog.ui:2375
 msgid "Limits"
-msgstr ""
+msgstr "ლიმიტები"
 
 #: ../src/publichubs.cc:68 ../src/publichubs.cc:347 ../src/publichubs.cc:372
 #: ../src/publichubs.cc:422 ../src/settingsdialog.cc:328
@@ -2184,249 +2184,249 @@ msgstr ""
 #: ../src/settingsdialog.cc:3663 ../src/settingsdialog.cc:3680
 #: ../src/settingsdialog.cc:4357 ../src/settingsdialog.cc:4393
 msgid "List"
-msgstr ""
+msgstr "სია"
 
 #: ../src/sharebrowser.cc:37 ../src/sharebrowser.cc:65
 msgid "List: "
-msgstr ""
+msgstr "სია: "
 
 #: ../src/hub.cc:2129
 msgid "Load Lua file"
-msgstr ""
+msgstr "Lua ფაილის ჩატვირთვა"
 
 #: ../src/publichubs.cc:480
 msgid "Loaded from cache: "
-msgstr ""
+msgstr "ქეშიდან ჩაიტვირთა: "
 
 #: ../src/mainwindow.cc:2122
 msgid "Loading file list"
-msgstr ""
+msgstr "ფაილების სია იტვირთება"
 
 #: ../src/wulfor.cc:75
 msgid "Loading: "
-msgstr ""
+msgstr "ჩატვირთვა : "
 
 #: ../ui/settingsdialog.ui:6940
 msgid "Log downloads"
-msgstr ""
+msgstr "ჩამოტვირთვების აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7223
 msgid "Log filelist transfers"
-msgstr ""
+msgstr "ფაილების სიების გადაცემის აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7108
 msgid "Log finished downloads"
-msgstr ""
+msgstr "დასრულებული ჩამოტვირთვების აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:6772
 msgid "Log main chat"
-msgstr ""
+msgstr "მთავარი ჩატის აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:6856
 msgid "Log private chat"
-msgstr ""
+msgstr "პირადი ჩატის აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7240
 msgid "Log search alternate"
-msgstr ""
+msgstr "ალტერნატიული წყაროების ძებნის აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7206
 msgid "Log status messages"
-msgstr ""
+msgstr "სტატუსის შეტყობინებების აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7189
 msgid "Log system messages"
-msgstr ""
+msgstr "სისტემური შეტყობინებების აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7024
 msgid "Log uploads"
-msgstr ""
+msgstr "ატვირთვების აღრიცხვა"
 
 #: ../ui/settingsdialog.ui:7295
 msgid "Logs"
-msgstr ""
+msgstr "ჟურნალი"
 
 #: ../src/downloadqueue.cc:1351
 msgid "Low"
-msgstr ""
+msgstr "დაბალი"
 
 #: ../ui/settingsdialog.ui:3214
 msgid "Low priority size"
-msgstr ""
+msgstr "დაბალი პრიორიტეტის ზომა"
 
 #: ../src/downloadqueue.cc:1348
 msgid "Lowest"
-msgstr ""
+msgstr "უმდაბლესი"
 
 #: ../ui/mainwindow.ui:8 ../ui/mainwindow.ui:92
 msgid "Magnet"
-msgstr ""
+msgstr "მაგნიტი"
 
 #: ../src/mainwindow.cc:1401
 msgid "Magnet Choice"
-msgstr ""
+msgstr "მაგნიტური ბმულის მოქმედების არჩევა"
 
 #: ../src/mainwindow.cc:1327
 msgid "Magnet Properties / Choice"
-msgstr ""
+msgstr "მაგნიტური ბმულის თვისებები / მოქმედების არჩევა"
 
 #: ../ui/sharebrowser.ui:418
 msgid "Match Queue"
-msgstr ""
+msgstr "დამთხვევის რიგი"
 
 #: ../ui/mainwindow.ui:1063
 msgid "Match all listings"
-msgstr ""
+msgstr "ყველა სიის დამთხვევა"
 
 #: ../src/sharebrowser.cc:1140
 msgid "Matched "
-msgstr ""
+msgstr "დაემთხვა "
 
 #: ../ui/settingsdialog.ui:6362
 msgid "Matches"
-msgstr ""
+msgstr "დამთხვევები"
 
 #: ../src/publichubs.cc:54 ../src/publichubs.cc:166
 msgid "Max Hubs"
-msgstr ""
+msgstr "მაქს. ჰაბები"
 
 #: ../src/adlsearch.cc:42 ../src/adlsearch.cc:62 ../src/adlsearch.cc:112
 #: ../src/adlsearch.cc:210
 msgid "Max Size"
-msgstr ""
+msgstr "მაქსიმალური ზომა"
 
 #: ../src/publichubs.cc:55 ../src/publichubs.cc:167
 msgid "Max Users"
-msgstr ""
+msgstr "მაქს. მომხმარებლები"
 
 #: ../ui/settingsdialog.ui:7543
 msgid "Max filelist size"
-msgstr ""
+msgstr "ფაილების სიის მაქსიმალური ზომა"
 
 #: ../ui/settingsdialog.ui:7504
 msgid "Max hash speed"
-msgstr ""
+msgstr "ჰეშირების მაქსიმალური სიჩქარე"
 
 #: ../ui/settingsdialog.ui:3476
 msgid "Max inactivity"
-msgstr ""
+msgstr "უმოქმედობის მაქსიმალური დრო"
 
 #: ../ui/settingsdialog.ui:1157
 msgid "Max upload speed (MiB/s)"
-msgstr ""
+msgstr "ატვირთვის მაქსიმალური სიჩქარე (MiB/s)"
 
 #: ../ui/settingsdialog.ui:1999 ../ui/settingsdialog.ui:2253
 msgid "Maximum Download Rate (KiB/s) (0 = infinite)"
-msgstr ""
+msgstr "ჩამოტვირთვის მაქსიმალური სიჩქარე (KiB/s) (0 = შეუზღუდავი)"
 
 #: ../ui/settingsdialog.ui:1947 ../ui/settingsdialog.ui:2201
 msgid "Maximum Upload Rate (KiB/s) (0 = infinite)"
-msgstr ""
+msgstr "ატვირთვის მაქსიმალური სიჩქარე (KiB/s) (0 = შეუზღუდავი)"
 
 #: ../ui/settingsdialog.ui:5792
 msgid "Maximum message length (0 = infinite)"
-msgstr ""
+msgstr "შეტყობინების მაქსიმალური სიგრძე (0 = შეუზღუდავი)"
 
 #: ../ui/settingsdialog.ui:2794
 msgid "Maximum simultaneous downloads (0 = infinite)"
-msgstr ""
+msgstr "ერთდროული ჩამოტვირთვების მაქსიმუმი (0 = შეუზღუდავი)"
 
 #: ../ui/adlsearch.ui:412 ../ui/search.ui:109 ../ui/settingsdialog.ui:7709
 msgid "MiB"
-msgstr ""
+msgstr "მიბ"
 
 #: ../ui/settingsdialog.ui:7672
 msgid "MiB/s"
-msgstr ""
+msgstr "MiB/s"
 
 #: ../ui/settingsdialog.ui:8751 ../ui/settingsdialog.ui:8831
 msgid "Midnight"
-msgstr ""
+msgstr "შუაღამე"
 
 #: ../src/publichubs.cc:52 ../src/publichubs.cc:164
 msgid "Min Share"
-msgstr ""
+msgstr "მინ. გაზიარება"
 
 #: ../src/adlsearch.cc:41 ../src/adlsearch.cc:61 ../src/adlsearch.cc:111
 #: ../src/adlsearch.cc:209
 msgid "Min Size"
-msgstr ""
+msgstr "მინიმალური ზომა"
 
 #: ../src/publichubs.cc:53 ../src/publichubs.cc:165
 msgid "Min Slots"
-msgstr ""
+msgstr "მინ. სლოტები"
 
 #: ../ui/settingsdialog.ui:3612
 msgid "Min elapsed"
-msgstr ""
+msgstr "გასული მინიმალური დრო"
 
 #: ../ui/settingsdialog.ui:3460
 msgid "Min filesize"
-msgstr ""
+msgstr "ფაილის მინიმალური ზომა"
 
 #: ../ui/settingsdialog.ui:3598
 msgid "Min sources online"
-msgstr ""
+msgstr "ონლაინ წყაროების მინიმუმი"
 
 #: ../ui/settingsdialog.ui:7530
 msgid "Mini slot size"
-msgstr ""
+msgstr "მინი სლოტის ზომა"
 
 #: ../src/settingsdialog.cc:1129
 msgid "Minimize to tray on startup"
-msgstr ""
+msgstr "გაშვებისას სისტემურ არეში ჩაკეცვა"
 
 #: ../ui/favoritehubs.ui:291
 msgid "Minimum search interval (seconds):"
-msgstr ""
+msgstr "ძებნის მინიმალური ინტერვალი (წამი):"
 
 #: ../ui/settingsdialog.ui:8313
 msgid "Miscellaneous"
-msgstr ""
+msgstr "სხვადასხვა"
 
 #: ../ui/settingsdialog.ui:8376
 msgid "Modify"
-msgstr ""
+msgstr "შეცვლა"
 
 #: ../ui/settingsdialog.ui:492
 msgid "Modify User Command"
-msgstr ""
+msgstr "მომხმარებლის ბრძანების შეცვლა"
 
 #: ../ui/adlsearch.ui:494
 msgid "Move Down"
-msgstr ""
+msgstr "ქვემოთ ჩამოწევა"
 
 #: ../ui/adlsearch.ui:480
 msgid "Move Up"
-msgstr ""
+msgstr "აწევა"
 
 #: ../src/hub.cc:2141
 msgid "Move rule up/down"
-msgstr ""
+msgstr "წესის ზემოთ/ქვემოთ გადატანა"
 
 #: ../ui/downloadqueue.ui:7
 msgid "Move to..."
-msgstr ""
+msgstr "გადატანა..."
 
 #: ../src/settingsdialog.cc:949
 msgid "Mplayer player"
-msgstr ""
+msgstr "Mplayer დამკვრელი"
 
 #: ../src/settingsdialog.cc:2987 ../src/settingsdialog.cc:3073
 msgid "Must not be empty..."
-msgstr ""
+msgstr "არ უნდა იყოს ცარიელი..."
 
 #: ../src/settingsdialog.cc:1224
 msgid "My nick"
-msgstr ""
+msgstr "ჩემი მეტსახელი"
 
 #: ../src/settingsdialog.cc:1227
 msgid "My own message"
-msgstr ""
+msgstr "ჩემი შეტყობინება"
 
 #: ../ui/favoritehubs.ui:340
 msgid "N_ick:"
-msgstr ""
+msgstr "_მეტსახელი:"
 
 #: ../src/favoritehubs.cc:51 ../src/favoritehubs.cc:75
 #: ../src/favoritehubs.cc:76 ../src/favoritehubs.cc:130
@@ -2447,35 +2447,35 @@ msgstr ""
 #: ../src/settingsdialog.cc:4099 ../src/settingsdialog.cc:4122
 #: ../src/settingsdialog.cc:4141 ../ui/settingsdialog.ui:774
 msgid "Name"
-msgstr ""
+msgstr "სახელი"
 
 #: ../src/settingsdialog.cc:3476
 msgid "Name and command must not be empty"
-msgstr ""
+msgstr "სახელი და ბრძანება ცარიელი არ უნდა იყოს"
 
 #: ../ui/settingsdialog.ui:3776
 msgid "Name:"
-msgstr ""
+msgstr "სახელი:"
 
 #: ../src/settingsdialog.cc:4357
 msgid "New exception"
-msgstr ""
+msgstr "ახალი გამონაკლისი"
 
 #: ../src/publichubs.cc:372 ../src/settingsdialog.cc:3680
 msgid "New list"
-msgstr ""
+msgstr "ახალი სია"
 
 #: ../src/settingsdialog.cc:1852
 msgid "New search type"
-msgstr ""
+msgstr "ძებნის ახალი ტიპი"
 
 #: ../ui/settingsdialog.ui:6245
 msgid "New string or TTH"
-msgstr ""
+msgstr "ახალი სტრიქონი ან TTH"
 
 #: ../ui/sharebrowser.ui:448
 msgid "Next"
-msgstr ""
+msgstr "შემდეგი"
 
 #: ../src/favoritehubs.cc:54 ../src/favoritehubs.cc:132
 #: ../src/favoritehubs.cc:315 ../src/favoriteusers.cc:47
@@ -2490,182 +2490,182 @@ msgstr ""
 #: ../src/search.cc:661 ../src/search.cc:727 ../src/search.cc:761
 #: ../src/search.cc:893 ../ui/search.ui:147 ../ui/settingsdialog.ui:1199
 msgid "Nick"
-msgstr ""
+msgstr "მეტსახელი"
 
 #: ../src/hub.cc:3764
 msgid "Nick already taken"
-msgstr ""
+msgstr "მეტსახელი უკვე დაკავებულია"
 
 #: ../src/finishedtransfers.cc:64 ../src/finishedtransfers.cc:238
 msgid "Nicks"
-msgstr ""
+msgstr "მეტსახელები"
 
 #: ../src/finishedtransfers.cc:683
 msgid "No"
-msgstr ""
+msgstr "არა"
 
 #: ../src/downloadqueue.cc:1394
 msgid "No errors"
-msgstr ""
+msgstr "შეცდომების გარეშე"
 
 #: ../ui/search.ui:129
 msgid "No grouping"
-msgstr ""
+msgstr "დაჯგუფების გარეშე"
 
 #: ../src/sharebrowser.cc:698 ../src/sharebrowser.cc:903
 msgid "No matches"
-msgstr ""
+msgstr "დამთხვევები არ არის"
 
 #: ../ui/settingsdialog.ui:2778
 msgid "No new downloads if speed exceeds (KiB/s, 0 = disable)"
-msgstr ""
+msgstr "ახალი ჩამოტვირთვები არ დაიწყოს, თუ სიჩქარე აჭარბებს (KiB/s, 0 = გამორთვა)"
 
 #: ../src/sharebrowser.cc:916
 msgid "No search text entered"
-msgstr ""
+msgstr "საძიებო ტექსტი არ არის შეყვანილი"
 
 #: ../src/downloadqueue.cc:1307
 msgid "No users"
-msgstr ""
+msgstr "მომხმარებლები არ არიან"
 
 #: ../ui/settingsdialog.ui:5706
 msgid "None icon"
-msgstr ""
+msgstr "ხატულის გარეშე"
 
 #: ../ui/settingsdialog.ui:8787 ../ui/settingsdialog.ui:8867
 msgid "Noon"
-msgstr ""
+msgstr "შუადღე"
 
 #: ../src/downloadqueue.cc:1360 ../ui/search.ui:86
 msgid "Normal"
-msgstr ""
+msgstr "ნორმალური"
 
 #: ../ui/settingsdialog.ui:3308
 msgid "Normal priority max size"
-msgstr ""
+msgstr "ჩვეულებრივი პრიორიტეტის მაქსიმალური ზომა"
 
 #: ../src/hub.cc:1983 ../src/hub.cc:2018 ../src/hub.cc:2028 ../src/hub.cc:2180
 msgid "Not found user: "
-msgstr ""
+msgstr "მომხმარებელი ვერ მოიძებნა: "
 
 #: ../ui/settingsdialog.ui:8460
 msgid "Note: Custom search types will only be applied to ADC hubs!"
-msgstr ""
+msgstr "შენიშვნა: ძებნის მორგებული ტიპები მხოლოდ ADC ჰაბებზე გამოიყენება!"
 
 #: ../ui/settingsdialog.ui:4815 ../ui/settingsdialog.ui:4885
 msgid "Note: Most of these options require that you restart the application"
-msgstr ""
+msgstr "შენიშვნა: ამ პარამეტრების უმეტესობა პროგრამის ხელახლა გაშვებას მოითხოვს"
 
 #: ../ui/settingsdialog.ui:4022
 msgid "Note: New files are added to the share only once they've been hashed!"
-msgstr ""
+msgstr "შენიშვნა: ახალი ფაილები მხოლოდ ჰეშირების შემდეგ გაზიარდება!"
 
 #: ../ui/settingsdialog.ui:2845
 msgid "Note; because of changing download speeds, this is not 100% accurate..."
-msgstr ""
+msgstr "შენიშვნა: ჩამოტვირთვის სიჩქარის ცვლილების გამო ეს 100%-ით ზუსტი არ არის..."
 
 #: ../src/settingsdialog.cc:1337 ../ui/settingsdialog.ui:5883
 msgid "Notify"
-msgstr ""
+msgstr "შეტყობინება"
 
 #: ../ui/searchspy.ui:267 ../ui/settingsdialog.ui:6572
 msgid "Number of matches for the top"
-msgstr ""
+msgstr "ლიდერთა სიისთვის დამთხვევების რაოდენობა"
 
 #: ../src/WulforUtil.cc:158
 msgid "Offline"
-msgstr ""
+msgstr "გათიშული"
 
 #: ../src/favoriteusers.cc:104 ../src/favoriteusers.cc:643
 #: ../src/favoriteusers.cc:662
 msgid "Online"
-msgstr ""
+msgstr "ონლაინ"
 
 #: ../src/settingsdialog.cc:1119
 msgid "Only show joins / parts for favorite users"
-msgstr ""
+msgstr "მხოლოდ რჩეული მომხმარებლების შემოსვლისა და გასვლის ჩვენება"
 
 #: ../ui/search.ui:455
 msgid "Only users with free slots"
-msgstr ""
+msgstr "მხოლოდ თავისუფალი სლოტების მქონე მომხმარებლები"
 
 #: ../ui/mainwindow.ui:1037
 msgid "Open _file list..."
-msgstr ""
+msgstr "_ფაილების სიის გახსნა..."
 
 #: ../ui/mainwindow.ui:1048
 msgid "Open _own file list"
-msgstr ""
+msgstr "_საკუთარი ფაილების სიის გახსნა"
 
 #: ../ui/finishedtransfers.ui:164
 msgid "Open containing _folder"
-msgstr ""
+msgstr "შემცველი _საქაღალდის გახსნა"
 
 #: ../src/notify.cc:157 ../ui/finishedtransfers.ui:153
 msgid "Open file"
-msgstr ""
+msgstr "ფაილის გახსნა"
 
 #: ../src/settingsdialog.cc:1564
 msgid "Open file list window in the background"
-msgstr ""
+msgstr "ფაილების სიის ფანჯრის ფონურად გახსნა"
 
 #: ../src/notify.cc:160
 msgid "Open folder"
-msgstr ""
+msgstr "საქაღალდის გახსნა"
 
 #: ../ui/hub.ui:157
 msgid "Open image"
-msgstr ""
+msgstr "სურათის გახსნა"
 
 #: ../src/settingsdialog.cc:1565
 msgid "Open new private messages from other users in the background"
-msgstr ""
+msgstr "სხვა მომხმარებლების ახალი პირადი შეტყობინებების ფონურად გახსნა"
 
 #: ../src/settingsdialog.cc:1566
 msgid "Open new window when using /join"
-msgstr ""
+msgstr "/join ბრძანების გამოყენებისას ახალი ფანჯრის გახსნა"
 
 #: ../ui/mainwindow.ui:2065
 msgid "Open own file list"
-msgstr ""
+msgstr "საკუთარი ფაილების სიის გახსნა"
 
 #: ../src/settingsdialog.cc:1248
 msgid "Operator"
-msgstr ""
+msgstr "ოპერატორი"
 
 #: ../src/settingsdialog.cc:1426 ../src/settingsdialog.cc:1484
 #: ../ui/mainwindow.ui:2067 ../ui/mainwindow.ui:2457
 msgid "Own file list"
-msgstr ""
+msgstr "საკუთარი ფაილების სია"
 
 #: ../ui/settingsdialog.ui:589 ../ui/settingsdialog.ui:5860
 msgid "PM"
-msgstr ""
+msgstr "პირადი შეტყობინება"
 
 #: ../ui/settingsdialog.ui:7517
 msgid "PM history"
-msgstr ""
+msgstr "პირადი მიმოწერის ისტორია"
 
 #: ../ui/mainwindow.ui:1475
 msgid "Panels"
-msgstr ""
+msgstr "პანელები"
 
 #: ../src/sharebrowser.cc:186
 msgid "Parse and build tree..."
-msgstr ""
+msgstr "მიმდინარეობს გარჩევა და ხის აგება..."
 
 #: ../ui/favoritehubs.ui:558
 msgid "Passive"
-msgstr ""
+msgstr "პასიური"
 
 #: ../src/downloadqueue.cc:1380
 msgid "Passive user"
-msgstr ""
+msgstr "პასიური მომხმარებელი"
 
 #: ../src/favoritehubs.cc:55 ../src/favoritehubs.cc:133
 #: ../ui/settingsdialog.ui:1723
 msgid "Password"
-msgstr ""
+msgstr "პაროლი"
 
 #: ../src/downloadqueue.cc:77 ../src/downloadqueue.cc:290
 #: ../src/downloadqueue.cc:397 ../src/finishedtransfers.cc:63
@@ -2676,277 +2676,277 @@ msgstr ""
 #: ../src/search.cc:1433 ../src/search.cc:1468 ../src/search.cc:2071
 #: ../src/transfers.cc:67 ../src/transfers.cc:719 ../ui/search.ui:135
 msgid "Path"
-msgstr ""
+msgstr "ბილიკი"
 
 #: ../ui/hash.ui:155
 msgid "Pause"
-msgstr ""
+msgstr "დაპაუზება"
 
 #: ../src/downloadqueue.cc:1345
 msgid "Paused"
-msgstr ""
+msgstr "დაპაუზებულია"
 
 #: ../src/hashdialog.cc:136
 msgid "Paused..."
-msgstr ""
+msgstr "შეჩერებულია..."
 
 #: ../ui/settingsdialog.ui:1267
 msgid "Personal"
-msgstr ""
+msgstr "პირადი"
 
 #: ../ui/settingsdialog.ui:4243
 msgid "Pictures"
-msgstr ""
+msgstr "სურათები"
 
 #: ../src/transfers.cc:896
 msgid "Plain"
-msgstr ""
+msgstr "უბრალო ტექსტი"
 
 #: ../ui/settingsdialog.ui:5112
 msgid "Play"
-msgstr ""
+msgstr "დაკვრა"
 
 #: ../src/settingsdialog.cc:1066
 msgid "Polish"
-msgstr ""
+msgstr "პოლონური"
 
 #: ../src/mainwindow.cc:238
 msgid "Polish translation\n"
-msgstr ""
+msgstr "პოლონური თარგმანი\n"
 
 #: ../src/settingsdialog.cc:1569
 msgid "Popup box to input password for hubs"
-msgstr ""
+msgstr "ჰაბის პაროლის შესაყვანი ფანჯრის ჩვენება"
 
 #: ../ui/settingsdialog.ui:1755
 msgid "Port"
-msgstr ""
+msgstr "პორტი"
 
 #: ../ui/settingsdialog.ui:1445
 msgid "Ports"
-msgstr ""
+msgstr "პორტები"
 
 #: ../src/settingsdialog.cc:1068
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "ბრაზილიური პორტუგალიური"
 
 #: ../src/settingsdialog.cc:1740 ../src/settingsdialog.cc:1840
 #: ../src/settingsdialog.cc:1931
 msgid "Predefined"
-msgstr ""
+msgstr "წინასწარ განსაზღვრული"
 
 #: ../src/settingsdialog.cc:1429 ../src/settingsdialog.cc:1482
 #: ../ui/mainwindow.ui:2041 ../ui/mainwindow.ui:2449
 #: ../ui/settingsdialog.ui:1011
 msgid "Preferences"
-msgstr ""
+msgstr "გამართვა"
 
 #: ../ui/settingsdialog.ui:3950 ../ui/transfers.ui:110
 msgid "Preview"
-msgstr ""
+msgstr "წინასწარი"
 
 #: ../src/downloadqueue.cc:75 ../src/downloadqueue.cc:289
 #: ../src/downloadqueue.cc:396
 msgid "Priority"
-msgstr ""
+msgstr "პრიორიტეტი"
 
 #: ../src/settingsdialog.cc:1146
 msgid "Private Message (also sets urgency hint)"
-msgstr ""
+msgstr "პირადი შეტყობინება (ასევე აყენებს საყურადღებობის მინიშნებას)"
 
 #: ../ui/settingsdialog.ui:8187
 msgid "Private key file"
-msgstr ""
+msgstr "პირადი გასაღების ფაილი"
 
 #: ../src/hub.cc:2120 ../src/settingsdialog.cc:1177
 #: ../src/settingsdialog.cc:1230 ../src/settingsdialog.cc:1364
 #: ../src/settingsmanager.cc:239
 msgid "Private message"
-msgstr ""
+msgstr "პირადი შეტყობინება"
 
 #: ../src/transfers.cc:58 ../src/transfers.cc:603
 msgid "Progress"
-msgstr ""
+msgstr "მიმდინარეობა"
 
 #: ../ui/adlsearch.ui:466 ../ui/adlsearch.ui:544
 msgid "Properties"
-msgstr ""
+msgstr "თვისებები"
 
 #: ../src/publichubs.cc:28 ../src/settingsdialog.cc:1430
 #: ../src/settingsdialog.cc:1480 ../src/settingsdialog.cc:1552
 #: ../ui/mainwindow.ui:1186 ../ui/mainwindow.ui:2220 ../ui/mainwindow.ui:2441
 msgid "Public Hubs"
-msgstr ""
+msgstr "საჯარო ჰაბები"
 
 #: ../ui/settingsdialog.ui:2890
 msgid "Public Hubs list URL"
-msgstr ""
+msgstr "საჯარო ჰაბების სიის URL"
 
 #: ../src/settingsdialog.cc:1431 ../src/settingsdialog.cc:1496
 #: ../ui/mainwindow.ui:2246 ../ui/mainwindow.ui:2505
 #: ../ui/settingsdialog.ui:3710
 msgid "Queue"
-msgstr ""
+msgstr "რიგი"
 
 #: ../ui/mainwindow.ui:2142
 msgid "Quick connect to the hub"
-msgstr ""
+msgstr "ჰაბთან სწრაფი დაკავშირება"
 
 #: ../src/settingsdialog.cc:1434 ../src/settingsdialog.cc:1502
 #: ../ui/mainwindow.ui:2349 ../ui/mainwindow.ui:2529
 msgid "Quit"
-msgstr ""
+msgstr "&გასვლა"
 
 #: ../ui/mainwindow.ui:2347
 msgid "Quit the program"
-msgstr ""
+msgstr "პროგრამიდან გასვლა"
 
 #: ../src/wulfor.cc:194
 msgid "Quit..."
-msgstr ""
+msgstr "გასვლა..."
 
 #: ../src/publichubs.cc:56 ../src/publichubs.cc:168
 msgid "Rating"
-msgstr ""
+msgstr "ხმის მიცემა"
 
 #: ../ui/settingsdialog.ui:571
 msgid "Raw"
-msgstr ""
+msgstr "დაუმუშავებელი"
 
 #: ../ui/downloadqueue.ui:311
 msgid "Re-_add source"
-msgstr ""
+msgstr "წყაროს ხელახლა _დამატება"
 
 #: ../ui/mainwindow.ui:1162
 msgid "Re_connect"
-msgstr ""
+msgstr "_თავიდან დაკავშირება"
 
 #: ../src/hub.cc:2121 ../ui/hub.ui:75
 msgid "Rebuild hash"
-msgstr ""
+msgstr "ჰეშის ხელახლა აგება"
 
 #: ../src/settingsdialog.cc:1436 ../src/settingsdialog.cc:1472
 #: ../ui/mainwindow.ui:2127 ../ui/mainwindow.ui:2409
 msgid "Reconnect"
-msgstr ""
+msgstr "თავიდან დაკავშირება"
 
 #: ../ui/mainwindow.ui:1455
 msgid "Reconnect all hubs"
-msgstr ""
+msgstr "ყველა ჰაბთან ხელახლა დაკავშირება"
 
 #: ../ui/mainwindow.ui:2125
 msgid "Reconnect to the hub"
-msgstr ""
+msgstr "ჰაბთან ხელახლა დაკავშირება"
 
 #: ../src/settingsdialog.cc:1427 ../src/settingsdialog.cc:1486
 #: ../ui/mainwindow.ui:2084 ../ui/mainwindow.ui:2465
 msgid "Refresh"
-msgstr ""
+msgstr "განახლება"
 
 #: ../ui/mainwindow.ui:2082
 msgid "Refresh file list"
-msgstr ""
+msgstr "ფაილების სიის განახლება"
 
 #: ../src/settingsdialog.cc:1657
 msgid "Register with the OS to handle dchub:// and adc:// URL links"
-msgstr ""
+msgstr "ოპერაციულ სისტემაში dchub:// და adc:// URL ბმულების დამმუშავებლად რეგისტრაცია"
 
 #: ../src/settingsdialog.cc:1658
 msgid "Register with the OS to handle magnet: URL links"
-msgstr ""
+msgstr "ოპერაციულ სისტემაში magnet: URL ბმულების დამმუშავებლად რეგისტრაცია"
 
 #: ../ui/mainwindow.ui:389
 msgid "Remember choice"
-msgstr ""
+msgstr "არჩევანის დამახსოვრება"
 
 #: ../src/downloadqueue.cc:1388
 msgid "Remote client does not fully support TTH - cannot download"
-msgstr ""
+msgstr "დაშორებულ კლიენტს TTH-ის სრული მხარდაჭერა არ გააჩნია - გადმოწერა შეუძლებელია"
 
 #: ../ui/adlsearch.ui:508 ../ui/settingsdialog.ui:4341
 #: ../ui/settingsdialog.ui:8406 ../ui/uploadqueue.ui:69
 msgid "Remove"
-msgstr ""
+msgstr "წაშლა"
 
 #: ../ui/finishedtransfers.ui:188
 msgid "Remove All"
-msgstr ""
+msgstr "ყველას წაშლა"
 
 #: ../ui/downloadqueue.ui:331
 msgid "Remove So_urce"
-msgstr ""
+msgstr "_წყაროს წაშლა"
 
 #: ../ui/hub.ui:171
 msgid "Remove image"
-msgstr ""
+msgstr "სურათის წაშლა"
 
 #: ../src/hub.cc:2142
 msgid "Remove rules from list"
-msgstr ""
+msgstr "სიიდან წესების წაშლა"
 
 #: ../src/settingsdialog.cc:984
 msgid "Remove slow filelists"
-msgstr ""
+msgstr "ნელი ფაილების სიების წაშლა"
 
 #: ../src/hub.cc:2113 ../src/privatemessage.cc:1040 ../ui/privatemessage.ui:57
 msgid "Remove user favorite"
-msgstr ""
+msgstr "მომხმარებლის რჩეულებიდან წაშლა"
 
 #: ../ui/downloadqueue.ui:345 ../ui/search.ui:785
 msgid "Remove user from _queue"
-msgstr ""
+msgstr "მომხმარებლის _რიგიდან წაშლა"
 
 #: ../ui/settingsdialog.ui:8391
 msgid "Rename"
-msgstr ""
+msgstr "გადარქმევა"
 
 #: ../src/settingsdialog.cc:2107
 msgid "Rename a search type"
-msgstr ""
+msgstr "ძებნის ტიპის სახელის შეცვლა"
 
 #: ../ui/mainwindow.ui:1583
 msgid "Report a Bug"
-msgstr ""
+msgstr "შეცდომის პატაკი"
 
 #: ../src/transfers.cc:908
 msgid "Requesting"
-msgstr ""
+msgstr "გამოთხოვა"
 
 #: ../ui/settingsdialog.ui:4356
 msgid "Reset changes"
-msgstr ""
+msgstr "ცვლილებების განულება"
 
 #: ../src/sharebrowser.cc:89 ../src/sharebrowser.cc:360
 msgid "Resolution"
-msgstr ""
+msgstr "გარჩევადობა"
 
 #: ../ui/settingsdialog.ui:8929
 msgid "Right"
-msgstr ""
+msgstr "მარჯვნივ"
 
 #: ../ui/hash.ui:21
 msgid "Run in background"
-msgstr ""
+msgstr "ფონურად გაშვება"
 
 #: ../src/downloadqueue.cc:1314
 msgid "Running..."
-msgstr ""
+msgstr "გაშვებულია..."
 
 #: ../src/settingsdialog.cc:1058
 msgid "Russian"
-msgstr ""
+msgstr "რუსული"
 
 #: ../src/mainwindow.cc:223
 msgid "Russian translation\n"
-msgstr ""
+msgstr "რუსული თარგმანი\n"
 
 #: ../src/WulforUtil.cc:218
 msgid "SJIS"
-msgstr ""
+msgstr "SJIS"
 
 #: ../src/hub.cc:2119 ../ui/hub.ui:66
 msgid "Say a third person"
-msgstr ""
+msgstr "მესამე პირით საუბარი"
 
 #: ../src/search.cc:40 ../src/search.cc:86 ../src/search.cc:93
 #: ../src/search.cc:251 ../src/search.cc:453 ../src/search.cc:467
@@ -2956,22 +2956,22 @@ msgstr ""
 #: ../ui/mainwindow.ui:2203 ../ui/mainwindow.ui:2481 ../ui/search.ui:227
 #: ../ui/searchspy.ui:94 ../ui/searchspy.ui:401 ../ui/settingsdialog.ui:8487
 msgid "Search"
-msgstr ""
+msgstr "ძებნა"
 
 #: ../src/settingsdialog.cc:1439 ../ui/mainwindow.ui:1242
 msgid "Search ADL"
-msgstr ""
+msgstr "ADL ძებნა"
 
 #: ../ui/settingsdialog.ui:671
 msgid "Search Menu"
-msgstr ""
+msgstr "ძებნის მენიუ"
 
 #: ../src/searchspy.cc:34 ../src/settingsdialog.cc:1148
 #: ../src/settingsdialog.cc:1433 ../src/settingsdialog.cc:1494
 #: ../src/settingsdialog.cc:1558 ../ui/mainwindow.ui:1317
 #: ../ui/mainwindow.ui:2321 ../ui/settingsdialog.ui:6675
 msgid "Search Spy"
-msgstr ""
+msgstr "ძიების მონიტორი"
 
 #: ../src/adlsearch.cc:38 ../src/adlsearch.cc:58 ../src/adlsearch.cc:108
 #: ../src/adlsearch.cc:206 ../src/adlsearch.cc:232 ../src/searchspy.cc:55
@@ -2980,240 +2980,240 @@ msgstr ""
 #: ../src/searchspy.cc:293 ../src/searchspy.cc:309 ../src/searchspy.cc:468
 #: ../src/searchspy.cc:533 ../src/searchspy.cc:566
 msgid "Search String"
-msgstr ""
+msgstr "საძებნი სტრიქონი"
 
 #: ../ui/search.ui:174
 msgid "Search for"
-msgstr ""
+msgstr "მოძებნა"
 
 #: ../ui/mainwindow.ui:2201
 msgid "Search for files to download"
-msgstr ""
+msgstr "ჩამოსატვირთი ფაილების ძებნა"
 
 #: ../ui/settingsdialog.ui:7759
 msgid "Search history"
-msgstr ""
+msgstr "ძებნის ისტორია"
 
 #: ../ui/search.ui:424
 msgid "Search options"
-msgstr ""
+msgstr "ძებნის პარამეტრები"
 
 #: ../src/hub.cc:3771
 msgid "Search spam detected from "
-msgstr ""
+msgstr "აღმოჩენილია საძიებო სპამი მომხმარებლისგან "
 
 #: ../src/settingsdialog.cc:1739 ../src/settingsdialog.cc:1930
 #: ../src/settingsdialog.cc:1963 ../src/settingsdialog.cc:2051
 #: ../src/settingsdialog.cc:2100 ../src/settingsdialog.cc:2148
 msgid "Search type"
-msgstr ""
+msgstr "ძებნის ტიპი"
 
 #: ../ui/search.ui:434
 msgid "Search within local results"
-msgstr ""
+msgstr "ლოკალურ შედეგებში ძებნა"
 
 #: ../src/search.cc:1972
 msgid "Searching for "
-msgstr ""
+msgstr "მიმდინარეობს ძებნა "
 
 #: ../ui/settingsdialog.ui:8297
 msgid "Security Certificates"
-msgstr ""
+msgstr "უსაფრთხოების სერტიფიკატები"
 
 #: ../src/settingsdialog.cc:3190
 msgid "Select Color"
-msgstr ""
+msgstr "ფერის არჩევა"
 
 #: ../src/settingsdialog.cc:3313
 msgid "Select Font"
-msgstr ""
+msgstr "შრიფტის არჩევა"
 
 #: ../src/mainwindow.cc:2510
 msgid "Select file to Get TTH"
-msgstr ""
+msgstr "აირჩიეთ ფაილი TTH-ის მისაღებად"
 
 #: ../src/mainwindow.cc:2085 ../ui/mainwindow.ui:809
 msgid "Select filelist to browse"
-msgstr ""
+msgstr "აირჩიეთ დასათვალიერებელი ფაილების სია"
 
 #: ../src/settingsdialog.cc:1126
 msgid "Send PM when double clicked in the user list"
-msgstr ""
+msgstr "მომხმარებელთა სიაში ორმაგი დაწკაპუნებისას პირადი შეტყობინების გაგზავნა"
 
 #: ../ui/uploadqueue.ui:78
 msgid "Send Private Message"
-msgstr ""
+msgstr "პირადი შეტყობინების გაგზავნა"
 
 #: ../ui/downloadqueue.ui:297 ../ui/search.ui:758
 msgid "Send _private message"
-msgstr ""
+msgstr "_პირადი შეტყობინების გაგზავნა"
 
 #: ../ui/settingsdialog.ui:919
 msgid "Send once per nick"
-msgstr ""
+msgstr "თითოეული მეტსახელისთვის მხოლოდ ერთხელ გაგზავნა"
 
 #: ../src/settingsdialog.cc:1653
 msgid "Send unknown /commands to the hub"
-msgstr ""
+msgstr "უცნობი /commands ბრძანებების ჰაბში გაგზავნა"
 
 #: ../src/search.cc:579
 #, c-format
 msgid "Sent ADC extensions : %s\n"
-msgstr ""
+msgstr "გაგზავნილი ADC გაფართოებები: %s\n"
 
 #: ../src/settingsdialog.cc:3388 ../src/settingsdialog.cc:3486
 #: ../ui/settingsdialog.ui:627
 msgid "Separator"
-msgstr ""
+msgstr "გამყოფი"
 
 #: ../src/settingsdialog.cc:1470 ../ui/mainwindow.ui:2401
 msgid "Separators"
-msgstr ""
+msgstr "გამყოფები"
 
 #: ../src/settingsdialog.cc:1070
 msgid "Serbian (Cyrillic)"
-msgstr ""
+msgstr "სერბული (კირილიცა)"
 
 #: ../src/mainwindow.cc:245
 msgid "Serbian (Cyrillic) translation\n"
-msgstr ""
+msgstr "სერბული (კირილიცა) თარგმანი\n"
 
 #: ../src/settingsdialog.cc:1072
 msgid "Serbian (Latin)"
-msgstr ""
+msgstr "სერბული (ლათინური)"
 
 #: ../src/mainwindow.cc:249
 msgid "Serbian (Latin) translation\n"
-msgstr ""
+msgstr "სერბული (ლათინური) თარგმანი\n"
 
 #: ../src/hub.cc:2134
 msgid ""
 "Set Core option param in value (without value return current value of option)"
-msgstr ""
+msgstr "ბირთვის param პარამეტრის value მნიშვნელობაზე დაყენება (value-ის გარეშე აბრუნებს პარამეტრის მიმდინარე მნიშვნელობას)"
 
 #: ../src/hub.cc:2133
 msgid ""
 "Set GUI option param in value (without value return current value of option)"
-msgstr ""
+msgstr "გრაფიკული ინტერფეისის param პარამეტრის value მნიშვნელობაზე დაყენება (value-ის გარეშე აბრუნებს პარამეტრის მიმდინარე მნიშვნელობას)"
 
 #: ../ui/downloadqueue.ui:81 ../ui/downloadqueue.ui:215
 msgid "Set Priorit_y"
-msgstr ""
+msgstr "_პრიორიტეტის დაყენება"
 
 #: ../ui/hub.ui:84
 msgid "Set download limit image"
-msgstr ""
+msgstr "სურათის ჩამოტვირთვის ზღვრის დაყენება"
 
 #: ../src/hub.cc:2061
 msgid "Set download limit image: "
-msgstr ""
+msgstr "სურათის ჩამოტვირთვის ზღვრის დაყენება: "
 
 #: ../src/settingsdialog.cc:982
 msgid "Set lowest priority for newly added files larger than low priority size"
-msgstr ""
+msgstr "დაბალი პრიორიტეტის ზომაზე დიდ ახლად დამატებულ ფაილებს მიენიჭოს უმდაბლესი პრიორიტეტი"
 
 #: ../ui/settingsdialog.ui:4054
 msgid "Share hidden files"
-msgstr ""
+msgstr "დამალული ფაილების გაზიარება"
 
 #: ../src/hub.cc:97 ../src/hub.cc:399 ../src/hub.cc:416 ../src/hub.cc:436
 #: ../src/hub.cc:485 ../src/publichubs.cc:51 ../src/publichubs.cc:163
 #: ../src/sharebrowser.cc:93 ../src/sharebrowser.cc:111
 #: ../src/sharebrowser.cc:364
 msgid "Shared"
-msgstr ""
+msgstr "გაზიარებული"
 
 #: ../ui/settingsdialog.ui:4279 ../ui/settingsdialog.ui:4486
 msgid "Sharing"
-msgstr ""
+msgstr "გაზიარება"
 
 #: ../src/settingsdialog.cc:1659
 msgid "Show IP's' in chats"
-msgstr ""
+msgstr "ჩატებში IP მისამართების ჩვენება"
 
 #: ../ui/mainwindow.ui:1994
 msgid "Show Interface"
-msgstr ""
+msgstr "ინტერფეისის ჩვენება"
 
 #: ../src/hub.cc:2114 ../ui/hub.ui:48
 msgid "Show favorites list"
-msgstr ""
+msgstr "რჩეულების სიის ჩვენება"
 
 #: ../ui/mainwindow.ui:1338
 msgid "Show free space bar"
-msgstr ""
+msgstr "თავისუფალი ადგილის პანელის ჩვენება"
 
 #: ../src/hub.cc:2117 ../src/privatemessage.cc:1046 ../ui/hub.ui:111
 #: ../ui/privatemessage.ui:102
 msgid "Show help"
-msgstr ""
+msgstr "დახმარების ჩვენება"
 
 #: ../src/hub.cc:2140
 msgid "Show ipfilter rules list"
-msgstr ""
+msgstr "IP ფილტრის წესების სიის ჩვენება"
 
 #: ../src/settingsdialog.cc:1118
 msgid "Show joins / parts in chat by default"
-msgstr ""
+msgstr "ჩატში შემოსვლისა და გასვლის ნაგულისხმევად ჩვენება"
 
 #: ../ui/mainwindow.ui:358
 msgid "Show magnet dialog"
-msgstr ""
+msgstr "მაგნიტური ბმულის დიალოგის ჩვენება"
 
 #: ../src/settingsdialog.cc:1570
 msgid "Show nicklist in hub frame on the left side"
-msgstr ""
+msgstr "ჰაბის ფანჯრის მარცხენა მხარეს მეტსახელების სიის ჩვენება"
 
 #: ../ui/finishedtransfers.ui:125
 msgid "Show only completely finished downloads"
-msgstr ""
+msgstr "მხოლოდ სრულად დასრულებული ჩამოტვირთვების ჩვენება"
 
 #: ../ui/settingsdialog.ui:5813
 msgid "Show only when the application is not active."
-msgstr ""
+msgstr "ჩვენება მხოლოდ მაშინ, როცა პროგრამა არააქტიურია."
 
 #: ../src/hub.cc:2126 ../src/privatemessage.cc:1045 ../ui/hub.ui:102
 #: ../ui/privatemessage.ui:93
 msgid "Show ratio [send in chat]"
-msgstr ""
+msgstr "თანაფარდობის ჩვენება [ჩატში გაგზავნა]"
 
 #: ../src/settingsdialog.cc:1115
 msgid "Show status icon in the system tray"
-msgstr ""
+msgstr "სისტემურ არეში სტატუსის ხატულის ჩვენება"
 
 #: ../src/settingsdialog.cc:1116
 msgid "Show timestamps in chat by default"
-msgstr ""
+msgstr "ჩატში დროის ნიშნულების ნაგულისხმევად ჩვენება"
 
 #: ../ui/searchspy.ui:376
 msgid "Show top search"
-msgstr ""
+msgstr "პოპულარული ძებნების ჩვენება"
 
 #: ../src/settingsdialog.cc:1660
 msgid "Show user country in chat"
-msgstr ""
+msgstr "ჩატში მომხმარებლის ქვეყნის ჩვენება"
 
 #: ../src/hub.cc:2125 ../src/privatemessage.cc:1044 ../ui/hub.ui:93
 #: ../ui/privatemessage.ui:84
 msgid "Show version"
-msgstr ""
+msgstr "ვერსიის ჩვენება"
 
 #: ../ui/mainwindow.ui:1723
 msgid "Show/Hide transfers panel"
-msgstr ""
+msgstr "გადაცემების პანელის ჩვენება/დამალვა"
 
 #: ../ui/hub.ui:513
 msgid "Show/Hide user list"
-msgstr ""
+msgstr "მომხმარებელთა სიის ჩვენება/დამალვა"
 
 #: ../src/wulfor.cc:192
 msgid "Shutting down libeiskaltdcpp..."
-msgstr ""
+msgstr "libeiskaltdcpp ითიშება..."
 
 #: ../src/wulfor.cc:118
 #, c-format
 msgid "Signal handlers installed.\n"
-msgstr ""
+msgstr "სიგნალების დამმუშავებლები დაყენებულია.\n"
 
 #: ../src/downloadqueue.cc:73 ../src/downloadqueue.cc:92
 #: ../src/downloadqueue.cc:284 ../src/downloadqueue.cc:391 ../src/search.cc:103
@@ -3226,108 +3226,108 @@ msgstr ""
 #: ../src/transfers.cc:720 ../src/transfers.cc:732 ../ui/mainwindow.ui:118
 #: ../ui/search.ui:138 ../ui/search.ui:294
 msgid "Size"
-msgstr ""
+msgstr "ზომა"
 
 #: ../src/downloadqueue.cc:243 ../src/downloadqueue.cc:245
 #: ../src/sharebrowser.cc:387
 msgid "Size: "
-msgstr ""
+msgstr "ზომა: "
 
 #: ../src/sharebrowser.cc:392
 msgid "Size: 0 B"
-msgstr ""
+msgstr "ზომა: 0 B"
 
 #: ../ui/settingsdialog.ui:4430
 msgid "Skip zero sized files"
-msgstr ""
+msgstr "ნულოვანი სიგრძის ფაილების გაზიარება"
 
 #: ../src/settingsdialog.cc:988
 msgid "Skip zero-byte files"
-msgstr ""
+msgstr "ნულოვანი ზომის ფაილების გამოტოვება"
 
 #: ../src/privatemessage.cc:1478
 msgid "Slot granted"
-msgstr ""
+msgstr "სლოტი გამოყოფილია"
 
 #: ../src/favoriteusers.cc:531 ../src/hub.cc:3051
 msgid "Slot granted to "
-msgstr ""
+msgstr "სლოტი მიენიჭა "
 
 #: ../src/search.cc:105 ../src/search.cc:132 ../src/search.cc:663
 msgid "Slots"
-msgstr ""
+msgstr "სლოტები"
 
 #: ../src/settingsdialog.cc:1082
 msgid "Slovak"
-msgstr ""
+msgstr "სლოვაკური"
 
 #: ../src/mainwindow.cc:263
 msgid "Slovak translation\n"
-msgstr ""
+msgstr "სლოვაკური თარგმანი\n"
 
 #: ../ui/mainwindow.ui:1522
 msgid "Small icons"
-msgstr ""
+msgstr "პატარა ხატულები"
 
 #: ../ui/settingsdialog.ui:7785
 msgid "Socket read buffer"
-msgstr ""
+msgstr "სოკეტის წაკითხვის ბუფერი"
 
 #: ../ui/settingsdialog.ui:7798
 msgid "Socket write buffer"
-msgstr ""
+msgstr "სოკეტის ჩაწერის ბუფერი"
 
 #: ../ui/settingsdialog.ui:1771
 msgid "Socks IP"
-msgstr ""
+msgstr "SOCKS IP"
 
 #: ../src/settingsdialog.cc:1120
 msgid "Sort favorite users first"
-msgstr ""
+msgstr "ჯერ რჩეული მომხმარებლების დალაგება"
 
 #: ../src/settingsdialog.cc:1157 ../ui/settingsdialog.ui:5255
 msgid "Sounds"
-msgstr ""
+msgstr "ხმები"
 
 #: ../ui/mainwindow.ui:1572
 msgid "Source (git)"
-msgstr ""
+msgstr "წყაროს კოდი (git)"
 
 #: ../src/adlsearch.cc:39 ../src/adlsearch.cc:59 ../src/adlsearch.cc:109
 #: ../src/adlsearch.cc:207
 msgid "Source Type"
-msgstr ""
+msgstr "წყაროს ტიპი"
 
 #: ../src/downloadqueue.cc:1386
 msgid "Source too slow"
-msgstr ""
+msgstr "წყარო ძალიან ნელია"
 
 #: ../src/settingsdialog.cc:1076
 msgid "Spanish"
-msgstr ""
+msgstr "ესპანური"
 
 #: ../src/mainwindow.cc:253
 msgid "Spanish translation\n"
-msgstr ""
+msgstr "ესპანური თარგმანი\n"
 
 #: ../src/finishedtransfers.cc:66 ../src/finishedtransfers.cc:87
 #: ../src/finishedtransfers.cc:196 ../src/finishedtransfers.cc:240
 #: ../src/transfers.cc:62 ../src/transfers.cc:564 ../src/transfers.cc:600
 #: ../src/transfers.cc:769
 msgid "Speed"
-msgstr ""
+msgstr "სიჩქარე"
 
 #: ../ui/mainwindow.ui:2323 ../ui/mainwindow.ui:2497
 msgid "Spy"
-msgstr ""
+msgstr "მეთვალყურე"
 
 #: ../ui/mainwindow.ui:342
 msgid "Start a search for this file"
-msgstr ""
+msgstr "ამ ფაილის ძებნის დაწყება"
 
 #: ../ui/settingsdialog.ui:6323
 msgid "State of preparedness"
-msgstr ""
+msgstr "მზადყოფნის მდგომარეობა"
 
 #: ../src/downloadqueue.cc:72 ../src/downloadqueue.cc:283
 #: ../src/downloadqueue.cc:390 ../src/searchspy.cc:58 ../src/searchspy.cc:296
@@ -3335,40 +3335,40 @@ msgstr ""
 #: ../src/transfers.cc:410 ../src/transfers.cc:504 ../src/transfers.cc:590
 #: ../src/transfers.cc:604 ../src/transfers.cc:767
 msgid "Status"
-msgstr ""
+msgstr "სტატუსი"
 
 #: ../src/settingsdialog.cc:1236
 msgid "Status message"
-msgstr ""
+msgstr "სტატუსის შეტყობინება"
 
 #: ../src/search.cc:595
 msgid "Stop"
-msgstr ""
+msgstr "შეჩერება"
 
 #: ../src/settingsdialog.cc:1096
 msgid "Swedish (Sweden)"
-msgstr ""
+msgstr "შვედური (შვედეთი)"
 
 #: ../src/mainwindow.cc:288
 msgid "Swedish (Sweden) translation\n"
-msgstr ""
+msgstr "შვედური (შვედეთი) თარგმანი\n"
 
 #: ../src/WulforUtil.cc:41 ../src/settingsdialog.cc:1054
 #: ../ui/settingsdialog.ui:8958
 msgid "System default"
-msgstr ""
+msgstr "სისტემის ნაგულისხმები"
 
 #: ../ui/settingsdialog.ui:6089
 msgid "System icons"
-msgstr ""
+msgstr "სისტემური ხატულები"
 
 #: ../src/settingsdialog.cc:1233
 msgid "System message"
-msgstr ""
+msgstr "სისტემური შეტყობინება"
 
 #: ../src/WulforUtil.cc:225
 msgid "TIS-620"
-msgstr ""
+msgstr "TIS-620"
 
 #: ../src/downloadqueue.cc:81 ../src/downloadqueue.cc:293
 #: ../src/downloadqueue.cc:400 ../src/downloadqueue.cc:751
@@ -3381,53 +3381,53 @@ msgstr ""
 #: ../src/sharebrowser.cc:1054 ../src/sharebrowser.cc:1090
 #: ../ui/mainwindow.ui:132 ../ui/search.ui:144
 msgid "TTH"
-msgstr ""
+msgstr "TTH"
 
 #: ../src/transfers.cc:713 ../src/transfers.cc:714 ../src/transfers.cc:880
 msgid "TTH: "
-msgstr ""
+msgstr "TTH: "
 
 #: ../ui/settingsdialog.ui:4902
 msgid "Tabs"
-msgstr ""
+msgstr "ჩანართები"
 
 #: ../src/hub.cc:99 ../src/hub.cc:418 ../src/hub.cc:438
 msgid "Tag"
-msgstr ""
+msgstr "ჭდე"
 
 #: ../ui/settingsdialog.ui:5646
 msgid "Test"
-msgstr ""
+msgstr "შემოწმება"
 
 #: ../ui/settingsdialog.ui:8946
 msgid "Text"
-msgstr ""
+msgstr "ტექსტი"
 
 #: ../ui/settingsdialog.ui:5400
 msgid "Text color"
-msgstr ""
+msgstr "ტექსტის ფერი"
 
 #: ../ui/settingsdialog.ui:5417
 msgid "Text style"
-msgstr ""
+msgstr "ტექსტის სტილი"
 
 #: ../ui/searchspy.ui:296 ../ui/settingsdialog.ui:6533
 msgid ""
 "The increase in waiting time increases the likelihood of adding to top, but "
 "reduces the dynamics (updating) frame"
-msgstr ""
+msgstr "ლოდინის დროის გაზრდა ლიდერთა სიაში დამატების ალბათობას ზრდის, მაგრამ პანელის განახლების დინამიკას ამცირებს"
 
 #: ../src/favoritehubs.cc:425
 msgid "The name and address fields are required"
-msgstr ""
+msgstr "სახელისა და მისამართის ველები სავალდებულოა"
 
 #: ../ui/settingsdialog.ui:6104
 msgid "Theme default"
-msgstr ""
+msgstr "ნაგულისხმევი თემა"
 
 #: ../ui/settingsdialog.ui:6133
 msgid "Themes"
-msgstr ""
+msgstr "თემები"
 
 #: ../src/finishedtransfers.cc:61 ../src/finishedtransfers.cc:75
 #: ../src/finishedtransfers.cc:76 ../src/finishedtransfers.cc:82
@@ -3436,221 +3436,221 @@ msgstr ""
 #: ../src/searchspy.cc:57 ../src/searchspy.cc:270 ../src/searchspy.cc:295
 #: ../src/searchspy.cc:311 ../src/transfers.cc:60
 msgid "Time"
-msgstr ""
+msgstr "დრო"
 
 #: ../src/transfers.cc:61 ../src/transfers.cc:602
 msgid "Time Left"
-msgstr ""
+msgstr "დარჩენილი დრო"
 
 #: ../src/favoriteusers.cc:49 ../src/favoriteusers.cc:112
 #: ../src/favoriteusers.cc:598 ../src/favoriteusers.cc:606
 msgid "Time last seen"
-msgstr ""
+msgstr "ბოლოს გამოჩენის დრო"
 
 #: ../src/settingsdialog.cc:1239 ../src/settingsdialog.cc:1269
 #: ../src/settingsdialog.cc:1274
 msgid "Timestamp"
-msgstr ""
+msgstr "დროის შტამპი"
 
 #: ../src/settingsdialog.cc:401 ../src/settingsdialog.cc:1338
 #: ../src/settingsdialog.cc:2293 ../src/settingsdialog.cc:2351
 #: ../src/settingsdialog.cc:2368 ../src/settingsdialog.cc:2391
 #: ../src/settingsdialog.cc:2395 ../src/settingsdialog.cc:2447
 msgid "Title"
-msgstr ""
+msgstr "სათაური"
 
 #: ../ui/settingsdialog.ui:888
 msgid "To (empty for selected user)"
-msgstr ""
+msgstr "მიმღები (ცარიელი ნიშნავს არჩეულ მომხმარებელს)"
 
 #: ../ui/mainwindow.ui:293
 msgid ""
 "To start downloading file you need turn on auto search alternatives "
 "(Settings/Downloads/Queue)"
-msgstr ""
+msgstr "ფაილის ჩამოტვირთვის დასაწყებად ჩართეთ ალტერნატიული წყაროების ავტომატური ძებნა (პარამეტრები/ჩამოტვირთვები/რიგი)"
 
 #: ../ui/settingsdialog.ui:6193
 msgid "Toolbar"
-msgstr ""
+msgstr "ხელსაწყოთა ზოლი"
 
 #: ../ui/mainwindow.ui:1485
 msgid "Tools panel"
-msgstr ""
+msgstr "ხელსაწყოების პანელი"
 
 #: ../ui/searchspy.ui:10 ../ui/searchspy.ui:372 ../ui/settingsdialog.ui:8923
 msgid "Top"
-msgstr ""
+msgstr "ზემოთ"
 
 #: ../ui/settingsdialog.ui:6587
 msgid "Top (number of matches, more than)"
-msgstr ""
+msgstr "ლიდერთა სია (დამთხვევების რაოდენობა, მეტი ვიდრე)"
 
 #: ../ui/mainwindow.ui:1495
 msgid "Top position"
-msgstr ""
+msgstr "ზედა მდებარეობა"
 
 #: ../ui/searchspy.ui:255
 msgid "Top: >"
-msgstr ""
+msgstr "ლიდერთა სია: >"
 
 #: ../ui/mainwindow.ui:1864
 msgid "Total received"
-msgstr ""
+msgstr "სულ მიღებულია"
 
 #: ../ui/mainwindow.ui:1941
 msgid "Total sent"
-msgstr ""
+msgstr "სულ გაგზავნილია"
 
 #: ../src/settingsdialog.cc:3893
 msgid "Total size: "
-msgstr ""
+msgstr "სრული ზომა: "
 
 #: ../ui/settingsdialog.ui:4039
 msgid "Total size: 0 B"
-msgstr ""
+msgstr "სრული ზომა: 0 B"
 
 #: ../src/sharebrowser.cc:382
 msgid "Total: "
-msgstr ""
+msgstr "სულ: "
 
 #: ../src/finishedtransfers.cc:65 ../src/finishedtransfers.cc:86
 #: ../src/finishedtransfers.cc:186 ../src/finishedtransfers.cc:195
 #: ../src/finishedtransfers.cc:239 ../src/finishedtransfers.cc:614
 #: ../src/transfers.cc:64 ../src/transfers.cc:601
 msgid "Transferred"
-msgstr ""
+msgstr "გადაცემულია"
 
 #: ../src/transfers.cc:617
 #, c-format
 msgid "Transfers::updateTransfer, CID not found %s\n"
-msgstr ""
+msgstr "Transfers::updateTransfer, CID ვერ მოიძებნა %s\n"
 
 #: ../ui/settingsdialog.ui:8157
 msgid "Trusted certificates path"
-msgstr ""
+msgstr "სანდო სერტიფიკატების ბილიკი"
 
 #: ../src/settingsdialog.cc:1098
 msgid "Turkish"
-msgstr ""
+msgstr "თურქული"
 
 #: ../src/mainwindow.cc:291
 msgid "Turkish translation\n"
-msgstr ""
+msgstr "თურქული თარგმანი\n"
 
 #: ../src/search.cc:102 ../src/search.cc:666 ../src/search.cc:770
 #: ../src/search.cc:899 ../src/search.cc:933 ../src/sharebrowser.cc:85
 #: ../src/sharebrowser.cc:326 ../src/sharebrowser.cc:347
 msgid "Type"
-msgstr ""
+msgstr "ტიპი"
 
 #: ../src/settingsdialog.cc:1242
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: ../src/WulforUtil.cc:210
 msgid "UTF-8"
-msgstr ""
+msgstr "UTF-8"
 
 #: ../src/settingsdialog.cc:1074
 msgid "Ukrainian"
-msgstr ""
+msgstr "უკრაინული"
 
 #: ../src/mainwindow.cc:241
 msgid "Ukrainian translation\n"
-msgstr ""
+msgstr "უკრაინული თარგმანი\n"
 
 #: ../src/hub.cc:3076
 msgid "Unable to connect: already connected to the requested hub"
-msgstr ""
+msgstr "დაკავშირება შეუძლებელია: მოთხოვნილ ჰაბთან კავშირი უკვე არსებობს"
 
 #: ../src/sharebrowser.cc:215
 msgid "Unable to load file list: "
-msgstr ""
+msgstr "ფაილების სიის ჩატვირთვა შეუძლებელია: "
 
 #: ../src/mainwindow.cc:2109
 msgid "Unable to load file list: Invalid file list name"
-msgstr ""
+msgstr "ფაილების სიის ჩატვირთვა ვერ მოხერხდა: ფაილების სიის სახელი არასწორია"
 
 #: ../src/mainwindow.cc:2364
 msgid ""
 "Unable to open %1% port. Searching or file transfers will not work correctly "
 "until you change settings or turn off any application that might be using "
 "that port."
-msgstr ""
+msgstr "ვერ გაიხსნა %1% პორტი. ძებნა ან ფაილების გადაცემა სწორად ვერ იმუშავებს, სანამ არ შეცვლით პარამეტრებს ან არ დახურავთ პროგრამას, რომელიც შესაძლოა ამ პორტს იყენებდეს."
 
 #: ../ui/settingsdialog.ui:2688
 msgid "Unfinished downloads directory"
-msgstr ""
+msgstr "დაუსრულებელი ჩამოტვირთვების საქაღალდე"
 
 #: ../src/WulforUtil.cc:331 ../src/downloadqueue.cc:1320
 #: ../src/downloadqueue.cc:1321 ../src/mainwindow.cc:1096
 #: ../src/mainwindow.cc:1490
 msgid "Unknown"
-msgstr ""
+msgstr "უცნობი"
 
 #: ../src/privatemessage.cc:1050
 msgid "Unknown command "
-msgstr ""
+msgstr "უცნობი ბრძანება "
 
 #: ../src/hub.cc:2437
 msgid "Unknown command '"
-msgstr ""
+msgstr "უცნობი ბრძანება '"
 
 #: ../ui/searchspy.ui:356
 msgid "Update"
-msgstr ""
+msgstr "განახლება"
 
 #: ../src/searchspy.cc:390 ../ui/searchspy.ui:360
 msgid "Update frame search"
-msgstr ""
+msgstr "ძებნის პანელის განახლება"
 
 #: ../src/hub.cc:2122
 msgid "Update own file list"
-msgstr ""
+msgstr "საკუთარი ფაილების სიის განახლება"
 
 #: ../ui/settingsdialog.ui:6401
 msgid "Updating string or TTH"
-msgstr ""
+msgstr "სტრიქონის ან TTH-ის განახლება"
 
 #: ../src/settingsdialog.cc:1421
 msgid "Upload"
-msgstr ""
+msgstr "ატვირთვა"
 
 #: ../src/uploadqueue.cc:34 ../ui/mainwindow.ui:1305
 msgid "Upload Queue"
-msgstr ""
+msgstr "ატვირთვის რიგი"
 
 #: ../ui/settingsdialog.ui:2305
 msgid "Upload Slots"
-msgstr ""
+msgstr "ატვირთვის სლოტები"
 
 #: ../src/transfers.cc:1161
 msgid "Upload complete..."
-msgstr ""
+msgstr "ატვირთვა დასრულდა..."
 
 #: ../src/settingsdialog.cc:1176
 msgid "Upload finished"
-msgstr ""
+msgstr "ატვირთვა დასრულდა"
 
 #: ../ui/settingsdialog.ui:4207
 msgid "Upload slots"
-msgstr ""
+msgstr "ატვირთვის სლოტები"
 
 #: ../ui/mainwindow.ui:1890
 msgid "Upload speed"
-msgstr ""
+msgstr "ატვირთვის სიჩქარე"
 
 #: ../src/transfers.cc:1114
 msgid "Upload starting..."
-msgstr ""
+msgstr "ატვირთვის დაწყება..."
 
 #: ../src/mainwindow.cc:773
 msgid "Upload: "
-msgstr ""
+msgstr "ატვირთვა: "
 
 #: ../src/transfers.cc:1148
 msgid "Uploading"
-msgstr ""
+msgstr "მიმდინარეობს ატვირთვა"
 
 #: ../src/wulfor.cc:45
 #, c-format
@@ -3664,7 +3664,7 @@ msgid ""
 "Keys:\n"
 "  -h, --help\t Show this message\n"
 "  -V, --version\t Show version string\n"
-msgstr ""
+msgstr "გამოყენება:\n  eiskaltdcpp-gtk <magnet link> <dchub://link> <adc(s)://link>\n  eiskaltdcpp-gtk <Key>\nEiskaltDC++ არის მრავალპლატფორმიანი პროგრამა, რომელიც Direct Connect და ADC პროტოკოლებს იყენებს.\n\nპარამეტრები:\n  -h, --help\t ამ შეტყობინების ჩვენება\n  -V, --version\t ვერსიის სტრიქონის ჩვენება\n"
 
 #: ../src/settingsdialog.cc:362 ../src/settingsdialog.cc:400
 #: ../src/settingsdialog.cc:434 ../src/settingsdialog.cc:688
@@ -3673,555 +3673,555 @@ msgstr ""
 #: ../src/settingsdialog.cc:1336 ../src/settingsdialog.cc:1351
 #: ../src/settingsdialog.cc:1452 ../src/settingsdialog.cc:1462
 msgid "Use"
-msgstr ""
+msgstr "გამოყენება"
 
 #: ../src/settingsdialog.cc:1664
 msgid "Use ADL search only in own file list"
-msgstr ""
+msgstr "ADL ძიების გამოყენება მხოლოდ საკუთარ ფაილების სიაში"
 
 #: ../ui/mainwindow.ui:2009
 msgid "Use Blinking Icon"
-msgstr ""
+msgstr "მოციმციმე ხატულის გამოყენება"
 
 #: ../ui/settingsdialog.ui:2476
 msgid "Use DHT"
-msgstr ""
+msgstr "DHT-ის გამოყენება"
 
 #: ../src/hub.cc:1827 ../src/privatemessage.cc:1239
 msgid "Use Emoticons"
-msgstr ""
+msgstr "სმაილების გამოყენება"
 
 #: ../src/settingsdialog.cc:1121
 msgid "Use OEM monospaced font for chat windows"
-msgstr ""
+msgstr "ჩატის ფანჯრებისთვის OEM თანაბარსიგანიანი შრიფტის გამოყენება"
 
 #: ../ui/settingsdialog.ui:1684
 msgid "Use SOCKS5 server to resolve hostnames"
-msgstr ""
+msgstr "ჰოსტების სახელების ამოსახსნელად SOCKS5 სერვერის გამოყენება"
 
 #: ../src/settingsdialog.cc:1726
 msgid "Use TLS when remote client supports it"
-msgstr ""
+msgstr "TLS-ის გამოყენება, როცა დისტანციურ კლიენტს მისი მხარდაჭერა აქვს"
 
 #: ../ui/settingsdialog.ui:1299
 msgid "Use UPnP to let client configure my router"
-msgstr ""
+msgstr "UPnP-ის გამოყენება კლიენტის მიერ როუტერის გასამართად"
 
 #: ../ui/settingsdialog.ui:1897
 msgid "Use bandwidth limits"
-msgstr ""
+msgstr "გამტარუნარიანობის შეზღუდვების გამოყენება"
 
 #: ../src/settingsdialog.cc:1123
 msgid "Use blinking status icon"
-msgstr ""
+msgstr "მოციმციმე სტატუსის ხატულის გამოყენება"
 
 #: ../src/settingsdialog.cc:1124
 msgid "Use emoticons"
-msgstr ""
+msgstr "სმაილების გამოყენება"
 
 #: ../src/settingsdialog.cc:1656
 msgid "Use fast hashing method (disable if you have problems with hashing)"
-msgstr ""
+msgstr "სწრაფი ჰეშირების მეთოდის გამოყენება (გამორთეთ ჰეშირების პრობლემებისას)"
 
 #: ../src/settingsdialog.cc:1122
 msgid "Use magnet split"
-msgstr ""
+msgstr "მაგნიტური ბმულის დაყოფის გამოყენება"
 
 #: ../ui/settingsdialog.ui:2060
 msgid "Use second set of bandwidth limits"
-msgstr ""
+msgstr "გამტარუნარიანობის შეზღუდვების მეორე ნაკრების გამოყენება"
 
 #: ../ui/settingsdialog.ui:79
 msgid "Use separator extensions (doc;xls;ppt;docx;xlsx;pptx)"
-msgstr ""
+msgstr "გაფართოებების გამყოფის გამოყენება (doc;xls;ppt;docx;xlsx;pptx)"
 
 #: ../src/transfers.cc:56 ../src/transfers.cc:87 ../src/transfers.cc:89
 #: ../src/transfers.cc:502 ../src/transfers.cc:567 ../src/transfers.cc:598
 msgid "User"
-msgstr ""
+msgstr "მომხმარებელი"
 
 #: ../src/settingsdialog.cc:1411
 msgid "User (dc)"
-msgstr ""
+msgstr "მომხმარებელი (dc)"
 
 #: ../src/settingsdialog.cc:1415
 msgid "User (normal)"
-msgstr ""
+msgstr "მომხმარებელი (ჩვეულებრივი)"
 
 #: ../ui/settingsdialog.ui:7475
 msgid "User Commands"
-msgstr ""
+msgstr "მომხმარებლის ბრძანებები"
 
 #: ../src/favoritehubs.cc:56 ../src/favoritehubs.cc:141
 #: ../src/favoritehubs.cc:317
 msgid "User Description"
-msgstr ""
+msgstr "მომხმარებლის აღწერა"
 
 #: ../ui/sharebrowser.ui:109 ../ui/sharebrowser.ui:182 ../ui/transfers.ui:90
 msgid "User commands"
-msgstr ""
+msgstr "მომხმარებლის ბრძანებები"
 
 #: ../src/hub.cc:2008
 msgid "User favorite list:"
-msgstr ""
+msgstr "რჩეული მომხმარებლების სია:"
 
 #: ../src/settingsdialog.cc:1412
 msgid "User firewall (dc)"
-msgstr ""
+msgstr "მომხმარებელი ფაიერვოლის უკან (dc)"
 
 #: ../src/settingsdialog.cc:1416
 msgid "User firewall (normal)"
-msgstr ""
+msgstr "მომხმარებელი ფაიერვოლის უკან (ჩვეულებრივი)"
 
 #: ../src/hub.cc:2123
 msgid "User list show/hide"
-msgstr ""
+msgstr "მომხმარებელთა სიის ჩვენება/დამალვა"
 
 #: ../src/hub.cc:3022 ../src/hub.cc:3042
 msgid "User not found"
-msgstr ""
+msgstr "ვერ ვიპოვე მომხმარებელი"
 
 #: ../src/settingsdialog.cc:1414
 msgid "User operator (dc)"
-msgstr ""
+msgstr "მომხმარებელი ოპერატორი (dc)"
 
 #: ../src/settingsdialog.cc:1418
 msgid "User operator (normal)"
-msgstr ""
+msgstr "მომხმარებელი ოპერატორი (ჩვეულებრივი)"
 
 #: ../src/settingsdialog.cc:1413
 msgid "User operator firewall (dc)"
-msgstr ""
+msgstr "მომხმარებელი ოპერატორი ფაიერვოლის უკან (dc)"
 
 #: ../src/settingsdialog.cc:1417
 msgid "User operator firewall (normal)"
-msgstr ""
+msgstr "მომხმარებელი ოპერატორი ფაიერვოლის უკან (ჩვეულებრივი)"
 
 #: ../src/privatemessage.cc:1413
 msgid "User went offline"
-msgstr ""
+msgstr "მომხმარებელი ქსელიდან გავიდა"
 
 #: ../ui/settingsdialog.ui:1671
 msgid "Username"
-msgstr ""
+msgstr "მომხმარებლის სახელი"
 
 #: ../src/downloadqueue.cc:76 ../src/downloadqueue.cc:282
 #: ../src/downloadqueue.cc:389 ../src/publichubs.cc:48 ../src/publichubs.cc:62
 #: ../src/publichubs.cc:63 ../src/publichubs.cc:160 ../ui/mainwindow.ui:2186
 #: ../ui/mainwindow.ui:2433
 msgid "Users"
-msgstr ""
+msgstr "მომხმარებლები"
 
 #: ../src/publichubs.cc:179
 msgid "Users: "
-msgstr ""
+msgstr "მომხმარებლები: "
 
 #: ../src/sharebrowser.cc:90 ../src/sharebrowser.cc:361
 msgid "Video"
-msgstr ""
+msgstr "ვიდეო"
 
 #: ../src/settingsdialog.cc:1092
 msgid "Vietnamese"
-msgstr ""
+msgstr "ვიეტნამური"
 
 #: ../src/mainwindow.cc:282
 msgid "Vietnamese translation\n"
-msgstr ""
+msgstr "ვიეტნამური თარგმანი\n"
 
 #: ../src/settingsdialog.cc:1117
 msgid "View status messages in main chat"
-msgstr ""
+msgstr "მთავარ ჩატში სტატუსის შეტყობინებების ნახვა"
 
 #: ../ui/mainwindow.ui:2244
 msgid "View the files to be downloaded"
-msgstr ""
+msgstr "ჩამოსატვირთი ფაილების ნახვა"
 
 #: ../ui/mainwindow.ui:2099
 msgid "View the hashing progress"
-msgstr ""
+msgstr "ჰეშირების მიმდინარეობის ნახვა"
 
 #: ../ui/mainwindow.ui:2261
 msgid "View the list of finished downloads"
-msgstr ""
+msgstr "დასრულებული ჩამოტვირთვების სიის ნახვა"
 
 #: ../ui/mainwindow.ui:2278
 msgid "View the list of finished uploads"
-msgstr ""
+msgstr "დასრულებული ატვირთვების სიის ნახვა"
 
 #: ../src/settingsdialog.cc:1028 ../src/settingsdialog.cc:3818
 #: ../src/settingsdialog.cc:3886
 msgid "Virtual Name"
-msgstr ""
+msgstr "ვირტუალური სახელი"
 
 #: ../src/settingsdialog.cc:3115
 msgid "Virtual name"
-msgstr ""
+msgstr "ვირტუალური სახელი"
 
 #: ../ui/settingsdialog.ui:6548
 msgid "Waiting (seconds)"
-msgstr ""
+msgstr "ლოდინი (წამი)"
 
 #: ../src/hub.cc:573
 msgid ""
 "Waiting for input password (don't remove /password before your password)"
-msgstr ""
+msgstr "პაროლის შეყვანის მოლოდინი (პაროლის წინ არ წაშალოთ /password)"
 
 #: ../src/transfers.cc:586
 msgid "Waiting for slot"
-msgstr ""
+msgstr "სლოტის მოლოდინი"
 
 #: ../src/transfers.cc:1070
 msgid "Waiting to retry"
-msgstr ""
+msgstr "თავიდან ცდის მოლოდინი"
 
 #: ../ui/searchspy.ui:284
 msgid "Waiting:"
-msgstr ""
+msgstr "მოლოდინი:"
 
 #: ../src/mainwindow.cc:412
 msgid "Welcome to "
-msgstr ""
+msgstr "კეთილი იყოს თქვენი მობრძანება "
 
 #: ../ui/settingsdialog.ui:5215
 msgid "When a private message window is opened"
-msgstr ""
+msgstr "პირადი შეტყობინების ფანჯრის გახსნისას"
 
 #: ../ui/mainwindow.ui:1594
 msgid "Wiki of project"
-msgstr ""
+msgstr "პროექტის ვიკი"
 
 #: ../ui/settingsdialog.ui:5055
 msgid "Windows"
-msgstr ""
+msgstr "ფანჯრები"
 
 #: ../ui/settingsdialog.ui:7746
 msgid "Write buffer size"
-msgstr ""
+msgstr "ჩაწერის ბუფერის ზომა"
 
 #: ../src/settingsdialog.cc:947
 msgid "Xine player"
-msgstr ""
+msgstr "Xine დამკვრელი"
 
 #: ../src/finishedtransfers.cc:683
 msgid "Yes"
-msgstr ""
+msgstr "დიახ"
 
 #: ../src/settingsdialog.cc:3879
 msgid "[HIDDEN SHARE] "
-msgstr ""
+msgstr "[დამალული გაზიარება] "
 
 #: ../src/transfers.cc:944 ../src/transfers.cc:1137
 msgid "[S]"
-msgstr ""
+msgstr "[S]"
 
 #: ../src/transfers.cc:949
 msgid "[T]"
-msgstr ""
+msgstr "[T]"
 
 #: ../src/transfers.cc:946 ../src/transfers.cc:1139
 msgid "[U]"
-msgstr ""
+msgstr "[U]"
 
 #: ../src/transfers.cc:951 ../src/transfers.cc:1142
 msgid "[Z]"
-msgstr ""
+msgstr "[Z]"
 
 #: ../ui/hub.ui:598 ../ui/search.ui:767 ../ui/transfers.ui:63
 msgid "_Add to favorites"
-msgstr ""
+msgstr "_რჩეულებში დამატება"
 
 #: ../ui/favoritehubs.ui:144
 msgid "_Address:"
-msgstr ""
+msgstr "_მისამართი:"
 
 #: ../ui/downloadqueue.ui:283 ../ui/favoriteusers.ui:158 ../ui/hub.ui:556
 #: ../ui/search.ui:731 ../ui/transfers.ui:36
 msgid "_Browse file list"
-msgstr ""
+msgstr "ფაილების სიის _დათვალიერება"
 
 #: ../ui/transfers.ui:145
 msgid "_Close connection"
-msgstr ""
+msgstr "კავშირის _დახურვა"
 
 #: ../ui/mainwindow.ui:1399
 msgid "_Close widget"
-msgstr ""
+msgstr "ვიჯეტის _დახურვა"
 
 #: ../ui/hub.ui:127 ../ui/hub.ui:182 ../ui/privatemessage.ui:118
 #: ../ui/privatemessage.ui:139
 msgid "_Copy link"
-msgstr ""
+msgstr "ბმულის _კოპირება"
 
 #: ../ui/downloadqueue.ui:191 ../ui/hub.ui:244 ../ui/privatemessage.ui:201
 #: ../ui/search.ui:716 ../ui/sharebrowser.ui:164
 msgid "_Copy magnet"
-msgstr ""
+msgstr "_მაგნიტის კოპირება"
 
 #: ../ui/hub.ui:538
 msgid "_Copy nick"
-msgstr ""
+msgstr "_მეტსახელის კოპირება"
 
 #: ../ui/sharebrowser.ui:173
 msgid "_Copy picture"
-msgstr ""
+msgstr "სურათის _კოპირება"
 
 #: ../ui/favoritehubs.ui:176
 msgid "_Description:"
-msgstr ""
+msgstr "_აღწერა:"
 
 #: ../ui/hub.ui:212 ../ui/privatemessage.ui:169 ../ui/search.ui:655
 msgid "_Download"
-msgstr ""
+msgstr "_ჩამოტვირთვა (D)"
 
 #: ../ui/favoritehubs.ui:205
 msgid "_Encoding:"
-msgstr ""
+msgstr "_კოდირება:"
 
 #: ../ui/mainwindow.ui:1124
 msgid "_Exit"
-msgstr ""
+msgstr "_გასვლა"
 
 #: ../ui/mainwindow.ui:1030
 msgid "_File"
-msgstr ""
+msgstr "_ფაილი"
 
 #: ../ui/transfers.ui:130
 msgid "_Force attempt"
-msgstr ""
+msgstr "_ძალით მცდელობა"
 
 #: ../ui/search.ui:776 ../ui/transfers.ui:72
 msgid "_Grant extra slot"
-msgstr ""
+msgstr "_დამატებით სლოტის მინიჭება"
 
 #: ../ui/favoriteusers.ui:185 ../ui/hub.ui:622
 msgid "_Grant slot"
-msgstr ""
+msgstr "_სლოტის მინიჭება"
 
 #: ../ui/mainwindow.ui:1554
 msgid "_Help"
-msgstr ""
+msgstr "_დახმარება"
 
 #: ../ui/downloadqueue.ui:136 ../ui/downloadqueue.ui:270
 msgid "_Highest"
-msgstr ""
+msgstr "_უმაღლესი"
 
 #: ../ui/mainwindow.ui:1143
 msgid "_Hubs"
-msgstr ""
+msgstr "_ჰაბები"
 
 #: ../ui/downloadqueue.ui:100 ../ui/downloadqueue.ui:234
 msgid "_Lowest"
-msgstr ""
+msgstr "_უმდაბლესი"
 
 #: ../ui/mainwindow.ui:1098
 msgid "_Magnet Choice"
-msgstr ""
+msgstr "მაგნიტური ბმულის მოქმედების _არჩევა"
 
 #: ../ui/search.ui:749
 msgid "_Match Queue"
-msgstr ""
+msgstr "_დამთხვევის რიგი"
 
 #: ../ui/favoriteusers.ui:167 ../ui/hub.ui:574 ../ui/transfers.ui:45
 msgid "_Match queue"
-msgstr ""
+msgstr "_დამთხვევის რიგი"
 
 #: ../ui/favoritehubs.ui:251
 msgid "_Mode:"
-msgstr ""
+msgstr "_რეჟიმი:"
 
 #: ../ui/downloadqueue.ui:155
 msgid "_Move"
-msgstr ""
+msgstr "_გადატანა"
 
 #: ../ui/downloadqueue.ui:200
 msgid "_Move/Rename"
-msgstr ""
+msgstr "_გადატანა/სახელის შეცვლა"
 
 #: ../ui/favoritehubs.ui:111
 msgid "_Name:"
-msgstr ""
+msgstr "_სახელი:"
 
 #: ../ui/mainwindow.ui:1392
 msgid "_Next widget"
-msgstr ""
+msgstr "_შემდეგი ვიჯეტი"
 
 #: ../ui/downloadqueue.ui:118 ../ui/downloadqueue.ui:252
 msgid "_Normal"
-msgstr ""
+msgstr "_ნორმალური"
 
 #: ../ui/hub.ui:136 ../ui/privatemessage.ui:127
 msgid "_Open hub"
-msgstr ""
+msgstr "ჰაბის _გახსნა"
 
 #: ../ui/hub.ui:191 ../ui/privatemessage.ui:148
 msgid "_Open link in default application"
-msgstr ""
+msgstr "ბმულის ნაგულისხმევ პროგრამაში _გახსნა"
 
 #: ../ui/hub.ui:565 ../ui/search.ui:740
 msgid "_Open partial file list"
-msgstr ""
+msgstr "ფაილების ნაწილობრივი სიის _გახსნა"
 
 #: ../ui/favoritehubs.ui:377
 msgid "_Password:"
-msgstr ""
+msgstr "_პაროლი:"
 
 #: ../ui/downloadqueue.ui:91 ../ui/downloadqueue.ui:225
 msgid "_Paused"
-msgstr ""
+msgstr "_დაპაუზებულია"
 
 #: ../ui/mainwindow.ui:1351
 msgid "_Preferences"
-msgstr ""
+msgstr "_გამართვა"
 
 #: ../ui/mainwindow.ui:1381
 msgid "_Previous widget"
-msgstr ""
+msgstr "_წინა ვიჯეტი"
 
 #: ../ui/favoriteusers.ui:176 ../ui/hub.ui:583
 msgid "_Private message"
-msgstr ""
+msgstr "_პირადი შეტყობინება"
 
 #: ../ui/hub.ui:259 ../ui/privatemessage.ui:216
 msgid "_Properties/Choice"
-msgstr ""
+msgstr "_თვისებები/არჩევა"
 
 #: ../ui/mainwindow.ui:1150
 msgid "_Quick connect"
-msgstr ""
+msgstr "_სწრაფი დაკავშირება"
 
 #: ../ui/mainwindow.ui:1069
 msgid "_Refresh file list"
-msgstr ""
+msgstr "ფაილების სიის _განახლება"
 
 #: ../ui/adlsearch.ui:553 ../ui/downloadqueue.ui:170 ../ui/downloadqueue.ui:359
 #: ../ui/favoriteusers.ui:227 ../ui/search.ui:814 ../ui/searchspy.ui:108
 #: ../ui/searchspy.ui:416
 msgid "_Remove"
-msgstr ""
+msgstr "_წაშლა"
 
 #: ../ui/hub.ui:607
 msgid "_Remove from favorites"
-msgstr ""
+msgstr "_რჩეულებიდან ამოშლა"
 
 #: ../ui/favoriteusers.ui:194 ../ui/hub.ui:631 ../ui/transfers.ui:81
 msgid "_Remove user from queue"
-msgstr ""
+msgstr "მომხმარებლის რიგიდან _წაშლა"
 
 #: ../ui/downloadqueue.ui:182 ../ui/search.ui:707 ../ui/sharebrowser.ui:155
 msgid "_Search for alternates"
-msgstr ""
+msgstr "_ალტერნატივების ძებნა"
 
 #: ../ui/hub.ui:203 ../ui/privatemessage.ui:160
 msgid "_Search magnet"
-msgstr ""
+msgstr "მაგნიტური ბმულის _ძებნა"
 
 #: ../ui/transfers.ui:54
 msgid "_Send private message"
-msgstr ""
+msgstr "_პირადი შეტყობინების გაგზავნა"
 
 #: ../ui/hub.ui:547
 msgid "_Send public message"
-msgstr ""
+msgstr "საჯარო შეტყობინების _გაგზავნა"
 
 #: ../ui/mainwindow.ui:1223
 msgid "_Tools"
-msgstr ""
+msgstr "_ხელსაწყოები"
 
 #: ../ui/favoritehubs.ui:407
 msgid "_User Description:"
-msgstr ""
+msgstr "_მომხმარებლის აღწერა:"
 
 #: ../ui/hub.ui:640 ../ui/search.ui:794
 msgid "_User commands"
-msgstr ""
+msgstr "_მომხმარებლის ბრძანებები"
 
 #: ../ui/mainwindow.ui:1370
 msgid "_Widgets"
-msgstr ""
+msgstr "_ვიჯეტები"
 
 #: ../src/hub.cc:3259
 msgid "bad image"
-msgstr ""
+msgstr "არასწორი სურათი"
 
 #: ../ui/settingsdialog.ui:8990
 msgid "default"
-msgstr ""
+msgstr "ნაგულისხმევი"
 
 #: ../src/settingsdialog.cc:2523
 msgid "default icons"
-msgstr ""
+msgstr "ნაგულისხმევი ხატულები"
 
 #: ../src/settingsdialog.cc:2557
 msgid "default theme"
-msgstr ""
+msgstr "ნაგულისხმევი თემა"
 
 #: ../src/hub.cc:102 ../src/hub.cc:421 ../src/hub.cc:441
 msgid "eMail"
-msgstr ""
+msgstr "ელფოსტა"
 
 #: ../src/settingsdialog.cc:2794
 #, c-format
 msgid "eiskaltdcpp-gtk: load theme %s...\n"
-msgstr ""
+msgstr "eiskaltdcpp-gtk: იტვირთება თემა %s...\n"
 
 #: ../src/mainwindow.cc:2413
 msgid "file list from "
-msgstr ""
+msgstr "ფაილების სია წყაროდან "
 
 #: ../ui/settingsdialog.ui:2092
 msgid "from"
-msgstr ""
+msgstr "წყარო"
 
 #: ../ui/settingsdialog.ui:5129
 msgid "in program"
-msgstr ""
+msgstr "პროგრამაში"
 
 #: ../src/hub.cc:3250
 msgid "loading error"
-msgstr ""
+msgstr "ჩატვირთვის შეცდომა"
 
 #: ../src/transfers.cc:1117
 msgid "none"
-msgstr ""
+msgstr "არცერთი"
 
 #: ../src/hub.cc:2068 ../src/privatemessage.cc:985
 msgid "project home: "
-msgstr ""
+msgstr "პროექტის მთავარი გვერდი: "
 
 #: ../src/hub.cc:2089 ../src/privatemessage.cc:1006
 msgid "ratio: %1% (uploads: %2%, downloads: %3% )"
-msgstr ""
+msgstr "თანაფარდობა: %1% (ატვირთვები: %2%, ჩამოტვირთვები: %3% )"
 
 #: ../src/hashdialog.cc:72 ../src/mainwindow.cc:2447 ../src/mainwindow.cc:2449
 #: ../src/treeview.cc:219 ../ui/settingsdialog.ui:3522
 #: ../ui/settingsdialog.ui:3538 ../ui/settingsdialog.ui:3582
 msgid "s"
-msgstr ""
+msgstr "წმ"
 
 #: ../src/settingsdialog.cc:1492
 msgid "searchADL"
-msgstr ""
+msgstr "ADL ძებნა"
 
 #: ../src/settingsdialog.cc:3182 ../src/settingsdialog.cc:3309
 msgid "selected style failed"
-msgstr ""
+msgstr "არჩეული სტილის გამოყენება ვერ მოხერხდა"
 
 #: ../ui/settingsdialog.ui:6006
 msgid "theme"
-msgstr ""
+msgstr "თემა"
 
 #: ../ui/settingsdialog.ui:2122
 msgid "to"
-msgstr ""
+msgstr "სადამდე"
 
 #: ../src/searchspy.cc:359
 msgid "top..."
-msgstr ""
+msgstr "ლიდერთა სია..."
 
 #: ../src/searchspy.cc:413
 msgid "top/waiting/frame: "
-msgstr ""
+msgstr "ლიდერთა სია/ლოდინი/ხედვის არე: "
 
 #: ../src/searchspy.cc:296 ../src/searchspy.cc:364
 msgid "waiting..."
-msgstr ""
+msgstr "მოლოდინი..."

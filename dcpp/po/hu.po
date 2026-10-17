@@ -126,11 +126,11 @@ msgstr "Kapcsolódási hiba: %1%"
 
 #: ../ConnectionManager.cpp:871
 msgid "Blocked a C-C connection to a hub ('%1%:%2%'; request from '%3%')"
-msgstr ""
+msgstr "Blokkolt kliens–kliens kapcsolat egy hubhoz ('%1%:%2%'; kérés innen: '%3%')"
 
 #: ../ConnectionManager.cpp:889
 msgid "Blocking '%1%', potential DDoS detected (originating hub '%2%')"
-msgstr ""
+msgstr "'%1%' blokkolása, lehetséges DDoS észlelve (kiinduló hub: '%2%')"
 
 #: ../ConnectivityManager.cpp:113
 msgid "Determining the best connectivity settings..."
@@ -217,7 +217,7 @@ msgstr "Nem sikerült betölteni a pirvát kulcsot"
 
 #: ../CryptoManager.cpp:565
 msgid "Decompressed data exceeds size limit"
-msgstr ""
+msgstr "A kicsomagolt adatok mérete meghaladja a korlátot"
 
 #: ../DCContext.cpp:178
 msgid "Hash database"
@@ -237,7 +237,7 @@ msgstr "Felhasználó(k)"
 
 #: ../DirectoryListing.cpp:98
 msgid "Invalid file list extension (must be .xml or .bz2)"
-msgstr ""
+msgstr "Érvénytelen fájllista-kiterjesztés (.xml vagy .bz2 szükséges)"
 
 #: ../DirectoryListing.cpp:217
 msgid "Directory missing name attribute"
@@ -285,7 +285,7 @@ msgstr "Automatikusan csatlakozó hubok csoportja (konvertált)"
 
 #: ../FavoriteManager.cpp:662
 msgid "Invalid URL: %1%"
-msgstr ""
+msgstr "Érvénytelen URL: %1%"
 
 #: ../HashManager.cpp:232 ../HashManager.cpp:430
 msgid "Hashing failed: %1%"
@@ -331,7 +331,7 @@ msgstr "Hiba a következő hashelésekor: %1%: %2%"
 
 #: ../HttpConnection.cpp:260
 msgid "Transfer-encoding error (%1%)"
-msgstr ""
+msgstr "Átviteli kódolási hiba (%1%)"
 
 #: ../HttpConnection.cpp:299
 msgid "Endless redirection loop (%1%)"
@@ -339,7 +339,7 @@ msgstr "Végtelen átirányítási kör (%1%)"
 
 #: ../HttpConnection.cpp:343
 msgid "Too much data in response body (%1%)"
-msgstr ""
+msgstr "Túl sok adat a válasz törzsében (%1%)"
 
 #: ../MappingManager.cpp:52
 msgid "No UPnP implementation available"
@@ -378,7 +378,7 @@ msgstr " DHT port (%1% UDP)"
 msgid ""
 "Successfully created port mappings (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), "
 "mapped using the %5% interface"
-msgstr ""
+msgstr "Portleképezések sikeresen létrehozva (TCP: %1%, UDP: %2%, TLS: %3%, DHT: %4%), a(z) %5% interfész használatával"
 
 #: ../MappingManager.cpp:153 ../MappingManager.cpp:155
 msgid ""
@@ -398,15 +398,15 @@ msgstr "Nem sikerült létrehozni a port-hozzárendeléseket."
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings renewed"
-msgstr ""
+msgstr "Portleképezések megújítva"
 
 #: ../MappingManager.cpp:210
 msgid "Port mappings restored"
-msgstr ""
+msgstr "Portleképezések helyreállítva"
 
 #: ../MappingManager.cpp:212
 msgid "Port mapping renewal failed; retrying in 60 seconds"
-msgstr ""
+msgstr "A portleképezések megújítása sikertelen; újrapróbálkozás 60 másodperc múlva"
 
 #: ../MappingManager.cpp:221
 msgid "Successfully removed port mappings with the %1% interface"
@@ -432,7 +432,7 @@ msgstr "Hub topic:"
 
 #: ../PerFolderLimit.cpp:89
 msgid "Too small share to download from "
-msgstr ""
+msgstr "Túl kevés a megosztás a letöltéshez innen: "
 
 #: ../PerFolderLimit.cpp:89
 msgid "GiB"
@@ -440,7 +440,7 @@ msgstr "GiB"
 
 #: ../PerFolderLimit.cpp:91
 msgid "Denied to send file"
-msgstr ""
+msgstr "A fájl küldése megtagadva"
 
 #: ../PerFolderLimit.cpp:92 ../SettingsManager.cpp:726
 msgid " to "
@@ -545,7 +545,7 @@ msgstr "%1%: Találat: %2% fájl"
 #: ../SSLSocket.cpp:395
 msgid ""
 "SSL Error: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
-msgstr ""
+msgstr "SSL-hiba: SSL_get_error=%1%, verify=%2%, sni=%3%, openssl=%4% (%5%, %6%)"
 
 #: ../SearchManager.cpp:55
 msgid "Any"
@@ -682,7 +682,7 @@ msgstr "A fájl-lista frissítése befejeződött"
 
 #: ../ShareManager.cpp:1246
 msgid "File list refresh discarded because shared directories changed"
-msgstr ""
+msgstr "A fájllista frissítése elvetve, mert a megosztott könyvtárak megváltoztak"
 
 #: ../ShareManager.cpp:1330
 msgid "File list %1% generated"
@@ -696,23 +696,23 @@ msgstr "Ismeretlen hiba: 0x%1$x"
 #: ../Socket.cpp:479 ../Socket.cpp:579 ../Socket.cpp:1570
 #: ../Socket.cpp:1723
 msgid "Unsupported Shadowsocks cipher"
-msgstr ""
+msgstr "Nem támogatott Shadowsocks-titkosítás"
 
 #: ../Socket.cpp:521
 msgid "Failed to initialize Shadowsocks key derivation"
-msgstr ""
+msgstr "A Shadowsocks-kulcsszármaztatás inicializálása sikertelen"
 
 #: ../Socket.cpp:558
 msgid "Failed to derive Shadowsocks subkey"
-msgstr ""
+msgstr "A Shadowsocks-alkulcs származtatása sikertelen"
 
 #: ../Socket.cpp:586
 msgid "Failed to initialize Shadowsocks encryption"
-msgstr ""
+msgstr "A Shadowsocks-titkosítás inicializálása sikertelen"
 
 #: ../Socket.cpp:595
 msgid "Shadowsocks encryption failed"
-msgstr ""
+msgstr "A Shadowsocks-titkosítás sikertelen"
 
 #: ../Socket.cpp:787 ../Socket.cpp:795 ../Socket.cpp:831
 #: ../Socket.cpp:835 ../Socket.cpp:846 ../Socket.cpp:855
@@ -722,15 +722,15 @@ msgstr "Nem sikerült a socks kiszolgálóhoz kapcsolódni"
 
 #: ../Socket.cpp:889 ../Socket.cpp:899
 msgid "The Shadowsocks server failed to establish a connection"
-msgstr ""
+msgstr "A Shadowsocks-kiszolgáló nem tudott kapcsolatot létesíteni"
 
 #: ../Socket.cpp:892
 msgid "No Shadowsocks password configured"
-msgstr ""
+msgstr "Nincs beállítva Shadowsocks-jelszó"
 
 #: ../Socket.cpp:904 ../Socket.cpp:1970
 msgid "The Shadowsocks target address is invalid"
-msgstr ""
+msgstr "Érvénytelen Shadowsocks-célcím"
 
 #: ../Socket.cpp:934
 msgid "The socks server requires authentication"
@@ -749,83 +749,83 @@ msgstr ""
 
 #: ../Socket.cpp:983
 msgid "Failed to initialize SOCKS TLS context"
-msgstr ""
+msgstr "A SOCKS TLS-környezet inicializálása sikertelen"
 
 #: ../Socket.cpp:994
 msgid "Failed to initialize SOCKS TLS session"
-msgstr ""
+msgstr "A SOCKS TLS-munkamenet inicializálása sikertelen"
 
 #: ../Socket.cpp:1015
 msgid "Failed to attach SOCKS TLS session to socket"
-msgstr ""
+msgstr "A SOCKS TLS-munkamenet csatolása a foglalathoz sikertelen"
 
 #: ../Socket.cpp:1033
 msgid "SOCKS TLS handshake timed out"
-msgstr ""
+msgstr "A SOCKS TLS-kézfogás túllépte az időkorlátot"
 
 #: ../Socket.cpp:1043
 msgid "SOCKS TLS handshake failed: %1%"
-msgstr ""
+msgstr "A SOCKS TLS-kézfogás sikertelen: %1%"
 
 #: ../Socket.cpp:1073
 msgid "SOCKS TLS read failed: %1%"
-msgstr ""
+msgstr "A SOCKS TLS-olvasás sikertelen: %1%"
 
 #: ../Socket.cpp:1102
 msgid "SOCKS TLS write failed: %1%"
-msgstr ""
+msgstr "A SOCKS TLS-írás sikertelen: %1%"
 
 #: ../Socket.cpp:1270 ../Socket.cpp:1293
 msgid "Shadowsocks UDP relay response is invalid"
-msgstr ""
+msgstr "Érvénytelen Shadowsocks UDP-továbbítási válasz"
 
 #: ../Socket.cpp:1280 ../Socket.cpp:1307
 msgid "Shadowsocks UDP relay response address is invalid"
-msgstr ""
+msgstr "Érvénytelen cím a Shadowsocks UDP-továbbítási válaszban"
 
 #: ../Socket.cpp:1302
 msgid "Shadowsocks UDP relay response decryption failed"
-msgstr ""
+msgstr "A Shadowsocks UDP-továbbítási válasz visszafejtése sikertelen"
 
 #: ../Socket.cpp:1585 ../Socket.cpp:1609 ../Socket.cpp:2000
 msgid "Failed to create Shadowsocks salt"
-msgstr ""
+msgstr "A Shadowsocks-só létrehozása sikertelen"
 
 #: ../Socket.cpp:1590
 msgid "Failed to create Shadowsocks padding"
-msgstr ""
+msgstr "A Shadowsocks-kitöltés létrehozása sikertelen"
 
 #: ../Socket.cpp:1753 ../Socket.cpp:1771
 msgid "Shadowsocks decryption failed"
-msgstr ""
+msgstr "A Shadowsocks-visszafejtés sikertelen"
 
 #: ../Socket.cpp:1759
 msgid "Invalid Shadowsocks payload size"
-msgstr ""
+msgstr "Érvénytelen Shadowsocks-adattartalom-méret"
 
 #: ../Socket.cpp:1879
 msgid "Shadowsocks stream ended with an incomplete frame"
-msgstr ""
+msgstr "A Shadowsocks-adatfolyam hiányos kerettel zárult"
 
 #: ../Socket.cpp:1908
 msgid "Failed to create Shadowsocks UDP session"
-msgstr ""
+msgstr "A Shadowsocks UDP-munkamenet létrehozása sikertelen"
 
 #: ../Socket.cpp:1959
 msgid "Shadowsocks UDP relay is disabled"
-msgstr ""
+msgstr "A Shadowsocks UDP-továbbítás le van tiltva"
 
 #: ../Socket.cpp:1965
 msgid "Shadowsocks UDP relay is not configured"
-msgstr ""
+msgstr "A Shadowsocks UDP-továbbítás nincs beállítva"
 
 #: ../Socket.cpp:1979
 msgid "Failed to create Shadowsocks UDP nonce"
-msgstr ""
+msgstr "A Shadowsocks UDP nonce létrehozása sikertelen"
 
 #: ../Socket.cpp:1983
 msgid "Shadowsocks UDP packet counter exhausted"
-msgstr ""
+msgstr "A Shadowsocks UDP-csomagszámláló kimerült"
 
 #: ../Socket.cpp:2043
 msgid ""
@@ -837,7 +837,7 @@ msgstr ""
 
 #: ../Socket.cpp:2049
 msgid "The SOCKS5 UDP target address is invalid"
-msgstr ""
+msgstr "Érvénytelen SOCKS5 UDP-célcím"
 
 #: ../UploadManager.cpp:136
 msgid "Connection already exists."
@@ -878,7 +878,7 @@ msgstr "%.02f KiB"
 #: ../Util.cpp:864
 #, c-format
 msgid "%.02f KB"
-msgstr ""
+msgstr "%.02f KB"
 
 #: ../Util.cpp:866
 #, c-format
@@ -888,7 +888,7 @@ msgstr "%.02f MiB"
 #: ../Util.cpp:866
 #, c-format
 msgid "%.02f MB"
-msgstr ""
+msgstr "%.02f MB"
 
 #: ../Util.cpp:868
 #, c-format
@@ -898,7 +898,7 @@ msgstr "%.02f GiB"
 #: ../Util.cpp:868
 #, c-format
 msgid "%.02f GB"
-msgstr ""
+msgstr "%.02f GB"
 
 #: ../Util.cpp:870
 #, c-format
@@ -908,7 +908,7 @@ msgstr "%.02f TiB"
 #: ../Util.cpp:870
 #, c-format
 msgid "%.02f TB"
-msgstr ""
+msgstr "%.02f TB"
 
 #: ../Util.cpp:872
 #, c-format
@@ -918,7 +918,7 @@ msgstr "%.02f PiB"
 #: ../Util.cpp:872
 #, c-format
 msgid "%.02f PB"
-msgstr ""
+msgstr "%.02f PB"
 
 #: ../Util.cpp:906
 #, c-format
@@ -940,40 +940,40 @@ msgstr "A kértnél több byte írása történt"
 
 #: ../../dht/BootstrapManager.cpp:114
 msgid "DHT bootstrapping started"
-msgstr ""
+msgstr "A DHT kezdeti felderítése elindult"
 
 #: ../../dht/BootstrapManager.cpp:157 ../../dht/BootstrapManager.cpp:211
 #: ../../dht/BootstrapManager.cpp:229 ../../dht/BootstrapManager.cpp:242
 msgid "DHT bootstrap error: "
-msgstr ""
+msgstr "DHT kezdeti felderítési hiba: "
 
 #: ../../dht/BootstrapManager.cpp:225
 msgid "DHT bootstrapping is finished successfully."
-msgstr ""
+msgstr "A DHT kezdeti felderítése sikeresen befejeződött."
 
 #: ../../dht/DHT.cpp:604
 msgid "DHT (%1%): File published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Fájl közzétéve: %2%"
 
 #: ../../dht/DHT.cpp:609
 msgid "DHT (%1%): Partial file published: %2%"
-msgstr ""
+msgstr "DHT (%1%): Részleges fájl közzétéve: %2%"
 
 #: ../../dht/DHT.cpp:630
 msgid "DHT: Firewalled UDP status set (IP: %1%)"
-msgstr ""
+msgstr "DHT: A tűzfal mögötti UDP-állapot beállítva (IP: %1%)"
 
 #: ../../dht/DHT.cpp:636
 msgid "DHT: Our UDP port seems to be opened (IP: %1%)"
-msgstr ""
+msgstr "DHT: Úgy tűnik, az UDP-portunk nyitva van (IP: %1%)"
 
 #: ../../dht/UDPSocket.cpp:364
 msgid "DHT enabled again"
-msgstr ""
+msgstr "A DHT ismét engedélyezve"
 
 #: ../../dht/UDPSocket.cpp:375
 msgid "DHT disabled: "
-msgstr ""
+msgstr "A DHT letiltva: "
 
 #~ msgid "SSL Error: %1% (%2%, %3%)"
 #~ msgstr "SSL Hiba: %1% (%2%, %3%)"

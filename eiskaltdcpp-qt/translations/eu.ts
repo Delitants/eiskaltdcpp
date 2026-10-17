@@ -6,7 +6,7 @@
         <message>
             <location filename="../src/ADLS.cpp" line="61" />
             <source>ADLSearch</source>
-            <translation type="unfinished" />
+            <translation>ADL bilaketa</translation>
         </message>
         <message>
             <location filename="../src/ADLS.cpp" line="146" />
@@ -110,7 +110,14 @@ EiskaltDC++ is a cross-platform program that uses the Direct Connect and ADC pro
 Keys:
   -h, --help	 Show this message
   -V, --version	 Show version string</source>
-            <translation type="unfinished" />
+            <translation>Erabilera:
+  eiskaltdcpp-qt &lt;magnet link&gt; &lt;dchub://link&gt; &lt;adc(s)://link&gt;
+  eiskaltdcpp-qt &lt;Key&gt;
+EiskaltDC++ Direct Connect eta ADC protokoloak erabiltzen dituen plataforma anitzeko programa da.
+
+Aukerak:
+  -h, --help	 Erakutsi mezu hau
+  -V, --version	 Erakutsi bertsio-katea</translation>
         </message>
     </context>
     <context>
@@ -141,27 +148,27 @@ Keys:
         <message>
             <location filename="../src/Antispam.cpp" line="159" />
             <source>Checking user %1 (message: %2, cid: %3)...</source>
-            <translation type="unfinished" />
+            <translation>%1 erabiltzailea egiaztatzen (mezua: %2, cid: %3)...</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="170" />
             <source>%1: Moving user to GRAY.</source>
-            <translation type="unfinished" />
+            <translation>%1: Erabiltzailea zerrenda GRISera mugitzen.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="180" />
             <source>%1: Moving user to BLACK.</source>
-            <translation type="unfinished" />
+            <translation>%1: Erabiltzailea zerrenda BELTZera mugitzen.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="188" />
             <source>%1: Sending "Try again" message.</source>
-            <translation type="unfinished" />
+            <translation>%1: "Saiatu berriro" mezua bidaltzen.</translation>
         </message>
         <message>
             <location filename="../src/Antispam.cpp" line="195" />
             <source>Hi, this is AntiSpam bot. So question is "%1"</source>
-            <translation type="unfinished" />
+            <translation>Kaixo, AntiSpam bota naiz. Galdera hau da: "%1"</translation>
         </message>
     </context>
     <context>
@@ -175,12 +182,12 @@ Keys:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">Helbidea</translation>
+            <translation>Helbidea</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Hautatu irudia</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -203,7 +210,7 @@ Keys:
         <message>
             <location filename="../src/CmdDebug.cpp" line="74" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Arazketa-kontsola</translation>
         </message>
     </context>
     <context>
@@ -227,12 +234,12 @@ Keys:
         <message>
             <location filename="../src/CustomFontModel.cpp" line="39" />
             <source>Public Chat: Chat</source>
-            <translation type="unfinished" />
+            <translation>Txat publikoa: Txata</translation>
         </message>
         <message>
             <location filename="../src/CustomFontModel.cpp" line="40" />
             <source>Public Chat: Userlist</source>
-            <translation type="unfinished" />
+            <translation>Txat publikoa: Erabiltzaile-zerrenda</translation>
         </message>
         <message>
             <location filename="../src/CustomFontModel.cpp" line="41" />
@@ -245,19 +252,19 @@ Keys:
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT abiarazteko URLak</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>DHT abiarazteko URLa</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -298,7 +305,7 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="68" />
             <source>Search for alternates</source>
-            <translation type="unfinished" />
+            <translation>Bilatu ordezko iturriak</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="70" />
@@ -308,12 +315,12 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="71" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu web-magnet esteka</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="72" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet estekaren propietateak</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="73" />
@@ -383,12 +390,12 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="375" />
             <source>No users...</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzailerik ez...</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="382" />
             <source>%1 of %2 user(s) online</source>
-            <translation type="unfinished" />
+            <translation>%2 erabiltzailetik %1 linean</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="384" />
@@ -408,12 +415,12 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="412" />
             <source>Checksum mismatch</source>
-            <translation type="unfinished" />
+            <translation>Kontrol-baturak ez datoz bat</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="414" />
             <source>Full tree does not match TTH root</source>
-            <translation type="unfinished" />
+            <translation>Zuhaitz osoa ez dator bat TTH erroarekin</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="416" />
@@ -423,7 +430,7 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="418" />
             <source>Remote client does not fully support TTH - cannot download</source>
-            <translation type="unfinished" />
+            <translation>Urruneko bezeroak ez du TTH guztiz onartzen; ezin da deskargatu</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="425" />
@@ -443,7 +450,7 @@ Keys:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="801" />
             <source>Total files: &lt;b&gt;%1&lt;/b&gt; Total size: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Fitxategiak guztira: &lt;b&gt;%1&lt;/b&gt; Tamaina guztira: &lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.h" line="90" />
@@ -555,7 +562,10 @@ Keys:
 &lt;b&gt;Path: &lt;/b&gt; %2
 &lt;b&gt;Errors: &lt;/b&gt; %3
 </source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Gehituta: &lt;/b&gt; %1
+&lt;b&gt;Bidea: &lt;/b&gt; %2
+&lt;b&gt;Erroreak: &lt;/b&gt; %3
+</translation>
         </message>
     </context>
     <context>
@@ -606,7 +616,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteHubModel.cpp" line="24" />
             <source>Remote encoding</source>
-            <translation type="unfinished" />
+            <translation>Urruneko kodeketa</translation>
         </message>
     </context>
     <context>
@@ -656,7 +666,7 @@ Keys:
             <location filename="../src/FavoriteUsers.cpp" line="126" />
             <location filename="../src/FavoriteUsers.cpp" line="339" />
             <source>Online</source>
-            <translation type="unfinished" />
+            <translation>Linean</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="203" />
@@ -682,7 +692,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsers.h" line="48" />
             <source>Favourite users</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzaileak</translation>
         </message>
     </context>
     <context>
@@ -700,7 +710,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
             <source>Last seen</source>
-            <translation type="unfinished" />
+            <translation>Azken agerpena</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsersModel.cpp" line="33" />
@@ -717,17 +727,17 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="115" />
             <source>%1 [%2 Gb]</source>
-            <translation type="unfinished" />
+            <translation>%1 [%2 Gb]</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="179" />
             <source>File marked as a duplicate of another file: %1</source>
-            <translation type="unfinished" />
+            <translation>Beste fitxategi baten bikoiztu gisa markatutako fitxategia: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Multimedia-informazioa:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
@@ -742,7 +752,7 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bit-emaria:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
@@ -752,7 +762,7 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Fitxategia badago lehendik: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="315" />
@@ -772,7 +782,7 @@ Keys:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>Bit-emaria</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
@@ -805,7 +815,7 @@ Keys:
         <message>
             <location filename="../src/FileHasher.cpp" line="171" />
             <source>Select file</source>
-            <translation type="unfinished" />
+            <translation>Hautatu fitxategia</translation>
         </message>
         <message>
             <location filename="../src/FileHasher.cpp" line="171" />
@@ -818,12 +828,12 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfers.cpp" line="12" />
             <source>Finished uploads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako igoerak</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfers.cpp" line="13" />
             <source>Finished downloads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako deskargak</translation>
         </message>
     </context>
     <context>
@@ -831,12 +841,12 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfers.h" line="488" />
             <source>Open file</source>
-            <translation type="unfinished" />
+            <translation>Ireki fitxategia</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfers.h" line="489" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Ireki direktorioa</translation>
         </message>
     </context>
     <context>
@@ -856,7 +866,7 @@ Keys:
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
             <source>Time</source>
-            <translation type="unfinished" />
+            <translation>Ordua</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="46" />
@@ -874,7 +884,7 @@ Keys:
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
             <source>Elapsed time</source>
-            <translation type="unfinished" />
+            <translation>Igarotako denbora</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
@@ -895,7 +905,7 @@ Keys:
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="53" />
             <source>Check sum</source>
-            <translation type="unfinished" />
+            <translation>Kontrol-batura</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
@@ -906,7 +916,7 @@ Keys:
             <location filename="../src/FinishedTransfersModel.cpp" line="117" />
             <location filename="../src/FinishedTransfersModel.cpp" line="127" />
             <source>%1/s</source>
-            <translation type="unfinished" />
+            <translation>%1/s</translation>
         </message>
     </context>
     <context>
@@ -914,17 +924,17 @@ Keys:
         <message>
             <location filename="../src/HashProgress.cpp" line="118" />
             <source>Refreshing file list</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-zerrenda freskatzen</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="150" />
             <source>-.-- files/h, %1 files left</source>
-            <translation type="unfinished" />
+            <translation>-.-- fitxategi/h, %1 fitxategi falta dira</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="151" />
             <source>-.-- B/s, %1 left</source>
-            <translation type="unfinished" />
+            <translation>-.-- B/s, %1 falta da</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="152" />
@@ -936,22 +946,22 @@ Keys:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1% %2 falta da</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
             <source>%1 files/h, %2 files left</source>
-            <translation type="unfinished" />
+            <translation>%1 fitxategi/h, %2 fitxategi falta dira</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="165" />
             <source>%1/s, %2 left, %3 shared</source>
-            <translation type="unfinished" />
+            <translation>%1/s, %2 falta da, %3 partekatuta</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="179" />
             <source>%p% %1 left</source>
-            <translation type="unfinished" />
+            <translation>%p% %1 falta da</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="189" />
@@ -995,7 +1005,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="704" />
             <source>Show in list</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi zerrendan</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="705" />
@@ -1005,7 +1015,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="706" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Parekatu ilararekin</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="707" />
@@ -1016,12 +1026,12 @@ Keys:
             <location filename="../src/HubFrame.cpp" line="708" />
             <location filename="../src/HubFrame.cpp" line="2084" />
             <source>Add to Favorites</source>
-            <translation type="unfinished" />
+            <translation>Gehitu gogokoetara</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="709" />
             <source>Remove from Favorites</source>
-            <translation type="unfinished" />
+            <translation>Kendu gogokoetatik</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="710" />
@@ -1031,37 +1041,37 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="711" />
             <source>Remove from Queue</source>
-            <translation type="unfinished" />
+            <translation>Kendu ilaratik</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="715" />
             <source>Clear chat</source>
-            <translation type="unfinished" />
+            <translation>Garbitu txata</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="716" />
             <source>Find in chat</source>
-            <translation type="unfinished" />
+            <translation>Bilatu txatean</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="717" />
             <source>Disable/Enable chat</source>
-            <translation type="unfinished" />
+            <translation>Desgaitu/gaitu txata</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="719" />
             <source>Select all</source>
-            <translation type="unfinished" />
+            <translation>Hautatu dena</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="721" />
             <source>Zoom In</source>
-            <translation type="unfinished" />
+            <translation>Handiagotu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="722" />
             <source>Zoom Out</source>
-            <translation type="unfinished" />
+            <translation>Txikiagotu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="725" />
@@ -1081,7 +1091,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1106,56 +1116,56 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="738" />
             <source>Copy data</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu datuak</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="858" />
             <location filename="../src/HubFrame.cpp" line="945" />
             <source>[User went offline]</source>
-            <translation type="unfinished" />
+            <translation>[Erabiltzailea lineaz kanpo jarri da]</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="877" />
             <location filename="../src/HubFrame.cpp" line="971" />
             <source>AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Spam-iragazkia</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="882" />
             <location filename="../src/HubFrame.cpp" line="976" />
             <source>Add to Black</source>
-            <translation type="unfinished" />
+            <translation>Gehitu zerrenda beltzera</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="885" />
             <location filename="../src/HubFrame.cpp" line="979" />
             <source>Add to White</source>
-            <translation type="unfinished" />
+            <translation>Gehitu zerrenda zurira</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1094" />
             <source>Invalid keywords</source>
-            <translation type="unfinished" />
+            <translation>Gako-hitz baliogabeak</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>bilatu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1348" />
             <source>not shared</source>
-            <translation type="unfinished" />
+            <translation>partekatu gabe</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Iragazkia</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1170,7 +1180,7 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="2080" />
             <source>Hub menu</source>
-            <translation type="unfinished" />
+            <translation>Hubaren menua</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2082" />
@@ -1180,22 +1190,22 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="2083" />
             <source>Show widget</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi trepeta</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2086" />
             <source>Hub IP</source>
-            <translation type="unfinished" />
+            <translation>Hubaren IPa</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2087" />
             <source>Hub URL</source>
-            <translation type="unfinished" />
+            <translation>Hubaren URLa</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2088" />
             <source>Hub Title</source>
-            <translation type="unfinished" />
+            <translation>Hubaren izenburua</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2092" />
@@ -1205,44 +1215,45 @@ Keys:
         <message>
             <location filename="../src/HubFrame.cpp" line="2106" />
             <source>Hub Menu</source>
-            <translation type="unfinished" />
+            <translation>Hubaren menua</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2233" />
             <location filename="../src/HubFrame.cpp" line="2258" />
             <source>Not connected</source>
-            <translation type="unfinished" />
+            <translation>Konektatu gabe</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2292" />
             <source>Chat cleared.</source>
-            <translation type="unfinished" />
+            <translation>Txata garbitu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2301" />
             <source>Chat disabled.</source>
-            <translation type="unfinished" />
+            <translation>Txata desgaitu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2308" />
             <source>Chat enabled.</source>
-            <translation type="unfinished" />
+            <translation>Txata gaitu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2345" />
             <source>Hub role: Operator</source>
-            <translation type="unfinished" />
+            <translation>Hubeko rola: Operadorea</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2347" />
             <source>Hub role: User</source>
-            <translation type="unfinished" />
+            <translation>Hubeko rola: Erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2350" />
             <source>
 Favorite user</source>
-            <translation type="unfinished" />
+            <translation>
+Gogoko erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2425" />
@@ -1250,25 +1261,25 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2648" />
             <location filename="../src/HubFrame.cpp" line="2650" />
             <source>Away mode off</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan modua desaktibatuta</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2439" />
             <location filename="../src/HubFrame.cpp" line="2441" />
             <source>Away mode on: </source>
-            <translation type="unfinished" />
+            <translation>Kanpoan modua aktibatuta: </translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2459" />
             <location filename="../src/HubFrame.cpp" line="2461" />
             <source>Aliases not found.</source>
-            <translation type="unfinished" />
+            <translation>Ez da aliasik aurkitu.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2481" />
             <location filename="../src/HubFrame.cpp" line="2483" />
             <source>Alias removed.</source>
-            <translation type="unfinished" />
+            <translation>Aliasa kendu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2494" />
@@ -1276,13 +1287,13 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2503" />
             <location filename="../src/HubFrame.cpp" line="2505" />
             <source>Invalid alias syntax.</source>
-            <translation type="unfinished" />
+            <translation>Aliasaren sintaxi baliogabea.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2513" />
             <location filename="../src/HubFrame.cpp" line="2515" />
             <source>Alias %1 =&gt; %2 has been added</source>
-            <translation type="unfinished" />
+            <translation>%1 =&gt; %2 aliasa gehitu da</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2537" />
@@ -1290,203 +1301,230 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2546" />
             <location filename="../src/HubFrame.cpp" line="2548" />
             <source>Invalid command syntax.</source>
-            <translation type="unfinished" />
+            <translation>Komandoaren sintaxi baliogabea.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2558" />
             <source>List of keywords:
 </source>
-            <translation type="unfinished" />
+            <translation>Gako-hitzen zerrenda:
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2605" />
             <source>ratio: %1 (uploads: %2, downloads: %3)</source>
-            <translation type="unfinished" />
+            <translation>erlazioa: %1 (igoerak: %2, deskargak: %3)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>Aspell switched %1</source>
-            <translation type="unfinished" />
+            <translation>Aspell: %1</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>on</source>
-            <translation type="unfinished" />
+            <translation>aktibatuta</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2639" />
             <location filename="../src/HubFrame.cpp" line="2641" />
             <source>off</source>
-            <translation type="unfinished" />
+            <translation>desaktibatuta</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2656" />
             <location filename="../src/HubFrame.cpp" line="2658" />
             <source>Chat has been cleared</source>
-            <translation type="unfinished" />
+            <translation>Txata garbitu da</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2708" />
             <source>/aspell on/off - enable/disable spell checking
 </source>
-            <translation type="unfinished" />
+            <translation>/aspell on/off - gaitu/desgaitu ortografia-egiaztapena
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2710" />
             <source>/alias &lt;ALIAS_NAME&gt;::&lt;COMMAND&gt; - make alias /ALIAS_NAME to /COMMAND
 </source>
-            <translation type="unfinished" />
+            <translation>/alias &lt;ALIAS_NAME&gt;::&lt;COMMAND&gt; - sortu /ALIAS_NAME aliasa /COMMAND komandorako
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2711" />
             <source>/alias purge &lt;ALIAS_NAME&gt; - remove alias
 </source>
-            <translation type="unfinished" />
+            <translation>/alias purge &lt;ALIAS_NAME&gt; - kendu aliasa
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2712" />
             <source>/alias list - list all aliases
 </source>
-            <translation type="unfinished" />
+            <translation>/alias list - zerrendatu alias guztiak
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2713" />
             <source>/away &lt;message&gt; - set away-mode on/off
 </source>
-            <translation type="unfinished" />
+            <translation>/away &lt;message&gt; - aktibatu/desaktibatu kanpoan modua
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2714" />
             <source>/back - set away-mode off
 </source>
-            <translation type="unfinished" />
+            <translation>/back - desaktibatu kanpoan modua
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2715" />
             <source>/browse &lt;nick&gt; - browse user files
 </source>
-            <translation type="unfinished" />
+            <translation>/browse &lt;nick&gt; - arakatu erabiltzailearen fitxategiak
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2716" />
             <source>/clear - clear chat window
 </source>
-            <translation type="unfinished" />
+            <translation>/clear - garbitu txat-leihoa
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2717" />
             <source>/kword add &lt;keyword&gt; - add user-defined keyword which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword add &lt;keyword&gt; - gehitu erabiltzaileak zehaztutako gako-hitza txatean nabarmentzeko
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2718" />
             <source>/kword purge &lt;keyword&gt; - remove user-defined keyword
 </source>
-            <translation type="unfinished" />
+            <translation>/kword purge &lt;keyword&gt; - kendu erabiltzaileak zehaztutako gako-hitza
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2719" />
             <source>/kword list - full list of keywords which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword list - txatean nabarmenduko diren gako-hitzen zerrenda osoa
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2720" />
             <source>/magnet - default action with magnet (0-ask, 1-search, 2-download)
 </source>
-            <translation type="unfinished" />
+            <translation>/magnet - magnet esteken ekintza lehenetsia (0-galdetu, 1-bilatu, 2-deskargatu)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2721" />
             <source>/close - close this hub
 </source>
-            <translation type="unfinished" />
+            <translation>/close - itxi hub hau
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2722" />
             <source>/fav - add this hub to favorites
 </source>
-            <translation type="unfinished" />
+            <translation>/fav - gehitu hub hau gogokoetara
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2723" />
             <source>/grant &lt;nick&gt; - grant extra slot to user
 </source>
-            <translation type="unfinished" />
+            <translation>/grant &lt;nick&gt; - eman aparteko erretena erabiltzaileari
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2724" />
             <source>/help, /?, /h - show this help
 </source>
-            <translation type="unfinished" />
+            <translation>/help, /?, /h - erakutsi laguntza hau
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2725" />
             <source>/info &lt;nick&gt; - show info about user
 </source>
-            <translation type="unfinished" />
+            <translation>/info &lt;nick&gt; - erakutsi erabiltzaileari buruzko informazioa
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2726" />
             <source>/ratio [show] - show ratio [send in chat]
 </source>
-            <translation type="unfinished" />
+            <translation>/ratio [show] - erakutsi erlazioa [bidali txatera]
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - berreraiki hash-a
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - eguneratu norberaren fitxategi-zerrenda
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
             <source>/me - say a third person
 </source>
-            <translation type="unfinished" />
+            <translation>/me - hitz egin hirugarren pertsonan
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2730" />
             <source>/pm &lt;nick&gt; - begin private chat with user
 </source>
-            <translation type="unfinished" />
+            <translation>/pm &lt;nick&gt; - hasi txat pribatua erabiltzailearekin
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - ezarri interfazearen param aukera value balioan (baliorik gabe, aukeraren uneko balioa itzultzen du)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - ezarri nukleoaren param aukera value balioan (baliorik gabe, aukeraren uneko balioa itzultzen du)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
             <source>/luafile &lt;file&gt; - load Lua file
 </source>
-            <translation type="unfinished" />
+            <translation>/luafile &lt;file&gt; - kargatu Lua fitxategia
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2735" />
             <source>/lua &lt;chunk&gt; - execute Lua chunk
 </source>
-            <translation type="unfinished" />
+            <translation>/lua &lt;chunk&gt; - exekutatu Lua kode-zatia
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3015" />
             <source> joins the chat</source>
-            <translation type="unfinished" />
+            <translation> txatera sartu da</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3020" />
@@ -1497,63 +1535,63 @@ Favorite user</source>
         <message>
             <location filename="../src/HubFrame.cpp" line="3020" />
             <source>%1 is now online</source>
-            <translation type="unfinished" />
+            <translation>%1 linean dago orain</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3033" />
             <source>User online.</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzailea linean.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3073" />
             <source> left the chat</source>
-            <translation type="unfinished" />
+            <translation> txatetik irten da</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3078" />
             <source>%1 is now offline</source>
-            <translation type="unfinished" />
+            <translation>%1 lineaz kanpo dago orain</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3117" />
             <location filename="../src/HubFrame.cpp" line="3131" />
             <source>User not found</source>
-            <translation type="unfinished" />
+            <translation>Ez da erabiltzailea aurkitu</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3138" />
             <source>Slot granted to </source>
-            <translation type="unfinished" />
+            <translation>Erretena eman zaio honi: </translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3197" />
             <source> has been added to favorites.</source>
-            <translation type="unfinished" />
+            <translation> gogokoetara gehitu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3197" />
             <source> has been removed from favorites.</source>
-            <translation type="unfinished" />
+            <translation> gogokoetatik kendu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3229" />
             <source>Favorite hub added.</source>
-            <translation type="unfinished" />
+            <translation>Gogoko huba gehitu da.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3232" />
             <source>Favorite hub already exists.</source>
-            <translation type="unfinished" />
+            <translation>Gogoko huba badago lehendik.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3470" />
             <source>User offline.</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzailea lineaz kanpo.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3512" />
             <source>Stored password sent...</source>
-            <translation type="unfinished" />
+            <translation>Gordetako pasahitza bidali da...</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3515" />
@@ -1564,22 +1602,22 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="3529" />
             <location filename="../src/HubFrame.cpp" line="4590" />
             <source>Redirect request received to a hub that's already connected</source>
-            <translation type="unfinished" />
+            <translation>Dagoeneko konektatuta dagoen hub batera birbideratzeko eskaera jaso da</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3607" />
             <source>Users count: %3/%1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzaile kopurua: %3/%1 | Partekatuta guztira: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3613" />
             <source>Users count: %1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzaile kopurua: %1 | Partekatuta guztira: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4430" />
             <source>Add to dictionary</source>
-            <translation type="unfinished" />
+            <translation>Gehitu hiztegira</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4436" />
@@ -1589,27 +1627,27 @@ Favorite user</source>
         <message>
             <location filename="../src/HubFrame.cpp" line="4548" />
             <source>Connecting to %1</source>
-            <translation type="unfinished" />
+            <translation>%1 hubera konektatzen</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4556" />
             <source>Connected to %1</source>
-            <translation type="unfinished" />
+            <translation>%1 hubera konektatuta</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4600" />
             <source>Fail: %1...</source>
-            <translation type="unfinished" />
+            <translation>Huts egin du: %1...</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4799" />
             <source>Sorry, but nick "%1" is already taken by another user.</source>
-            <translation type="unfinished" />
+            <translation>Barkatu, baina beste erabiltzaile batek "%1" goitizena hartu du dagoeneko.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4805" />
             <source>Search flood detected: %1</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-uholdea detektatu da: %1</translation>
         </message>
     </context>
     <context>
@@ -1617,42 +1655,42 @@ Favorite user</source>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="175" />
             <source>Change rule direction</source>
-            <translation type="unfinished" />
+            <translation>Aldatu arauaren noranzkoa</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="183" />
             <source>Change IP/Mask</source>
-            <translation type="unfinished" />
+            <translation>Aldatu IPa/maskara</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="184" />
             <source>Delete rule</source>
-            <translation type="unfinished" />
+            <translation>Ezabatu araua</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="216" />
             <source>Enter new rule</source>
-            <translation type="unfinished" />
+            <translation>Sartu arau berria</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="216" />
             <source>Rule:</source>
-            <translation type="unfinished" />
+            <translation>Araua:</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="319" />
             <source>Import list</source>
-            <translation type="unfinished" />
+            <translation>Inportatu zerrenda</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="374" />
             <source>Export list</source>
-            <translation type="unfinished" />
+            <translation>Esportatu zerrenda</translation>
         </message>
         <message>
             <location filename="../src/IPFilterFrame.cpp" line="375" />
             <source>All Files (*)</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi guztiak (*)</translation>
         </message>
     </context>
     <context>
@@ -1754,12 +1792,12 @@ Favorite user</source>
         <message>
             <location filename="../src/Magnet.cpp" line="61" />
             <source>Run search alternatives manually.</source>
-            <translation type="unfinished" />
+            <translation>Exekutatu ordezko iturrien bilaketa eskuz.</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="64" />
             <source>Download file via auto search alternatives</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu fitxategia ordezko iturrien bilaketa automatikoaren bidez</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="251" />
@@ -1769,7 +1807,7 @@ Favorite user</source>
         <message>
             <location filename="../src/Magnet.cpp" line="271" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu direktorioa</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="288" />
@@ -1780,7 +1818,8 @@ Favorite user</source>
             <location filename="../src/Magnet.cpp" line="288" />
             <source>Some error ocurred when starting download:
  %1</source>
-            <translation type="unfinished" />
+            <translation>Errore bat gertatu da deskarga abiaraztean:
+ %1</translation>
         </message>
     </context>
     <context>
@@ -1794,17 +1833,17 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="455" />
             <location filename="../src/MainWindow.cpp" line="3726" />
             <source>Exit program?</source>
-            <translation type="unfinished" />
+            <translation>Programatik irten?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Gizaki guztiak hil?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Ekintzaren berrespena</translation>
         </message>
         <message>
             <source>Nick</source>
@@ -1817,118 +1856,118 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1325" />
             <source>Next widget</source>
-            <translation type="unfinished" />
+            <translation>Hurrengo trepeta</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1326" />
             <source>Previous widget</source>
-            <translation type="unfinished" />
+            <translation>Aurreko trepeta</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1327" />
             <source>Next message</source>
-            <translation type="unfinished" />
+            <translation>Hurrengo mezua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1328" />
             <source>Previous message</source>
-            <translation type="unfinished" />
+            <translation>Aurreko mezua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1329" />
             <source>Close current widget</source>
-            <translation type="unfinished" />
+            <translation>Itxi uneko trepeta</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1330" />
             <source>Toggle main menu</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi/ezkutatu menu nagusia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1564" />
             <source>Counts</source>
-            <translation type="unfinished" />
+            <translation>Kopuruak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1570" />
             <source>Download/Upload speed</source>
-            <translation type="unfinished" />
+            <translation>Deskarga-/igoera-abiadura</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1576" />
             <source>Downloaded/Uploaded</source>
-            <translation type="unfinished" />
+            <translation>Deskargatuta/igota</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1595" />
             <location filename="../src/MainWindow.cpp" line="1602" />
             <source>Space free</source>
-            <translation type="unfinished" />
+            <translation>Leku librea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1616" />
             <source>Hashing progress</source>
-            <translation type="unfinished" />
+            <translation>Hash kalkuluaren aurrerapena</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1643" />
             <source>&amp;File</source>
-            <translation type="unfinished" />
+            <translation>&amp;Fitxategia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1645" />
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Open magnet link</source>
-            <translation type="unfinished" />
+            <translation>Ireki magnet esteka</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1647" />
             <location filename="../src/MainWindow.cpp" line="2609" />
             <source>Open log file</source>
-            <translation type="unfinished" />
+            <translation>Ireki erregistro-fitxategia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1649" />
             <source>Open download directory</source>
-            <translation type="unfinished" />
+            <translation>Ireki deskargen direktorioa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1651" />
             <source>Open filelist...</source>
-            <translation type="unfinished" />
+            <translation>Ireki fitxategi-zerrenda...</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1653" />
             <source>Calculate file TTH</source>
-            <translation type="unfinished" />
+            <translation>Kalkulatu fitxategiaren TTHa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1655" />
             <source>Open own filelist</source>
-            <translation type="unfinished" />
+            <translation>Ireki norberaren fitxategi-zerrenda</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Parekatu zerrenda guztiak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
             <location filename="../src/MainWindow.cpp" line="2205" />
             <source>Refresh share</source>
-            <translation type="unfinished" />
+            <translation>Freskatu partekatutakoa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1661" />
             <location filename="../src/MainWindow.cpp" line="2927" />
             <source>Hide window</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu leihoa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1664" />
             <location filename="../src/MainWindow.cpp" line="2925" />
             <source>Show/hide find frame</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi/ezkutatu bilaketa-markoa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1666" />
@@ -1938,148 +1977,148 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1668" />
             <source>&amp;Hubs</source>
-            <translation type="unfinished" />
+            <translation>&amp;Hubak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1670" />
             <source>Reconnect to hub</source>
-            <translation type="unfinished" />
+            <translation>Berriro konektatu hubera</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1672" />
             <source>Favourite hubs</source>
-            <translation type="unfinished" />
+            <translation>Gogoko hubak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1674" />
             <source>Public hubs</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1676" />
             <source>Favourite users</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1678" />
             <source>Quick connect</source>
-            <translation type="unfinished" />
+            <translation>Konexio azkarra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1680" />
             <source>&amp;Tools</source>
-            <translation type="unfinished" />
+            <translation>&amp;Tresnak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1682" />
             <source>Transfers</source>
-            <translation type="unfinished" />
+            <translation>Transferentziak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1684" />
             <source>Download queue</source>
-            <translation type="unfinished" />
+            <translation>Deskarga-ilara</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1689" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Ilarako erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1691" />
             <source>Hub Manager</source>
-            <translation type="unfinished" />
+            <translation>Hub-kudeatzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1693" />
             <source>Finished downloads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako deskargak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1695" />
             <source>Finished uploads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako igoerak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1697" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-espioia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1699" />
             <source>AntiSpam module</source>
-            <translation type="unfinished" />
+            <translation>AntiSpam modulua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1701" />
             <source>IPFilter module</source>
-            <translation type="unfinished" />
+            <translation>IPFilter modulua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1703" />
             <location filename="../src/MainWindow.cpp" line="3130" />
             <source>Hide free space bar</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu leku librearen barra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1706" />
             <location filename="../src/MainWindow.cpp" line="3125" />
             <source>Show free space bar</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi leku librearen barra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1708" />
             <location filename="../src/MainWindow.cpp" line="3146" />
             <source>Hide last status message</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu azken egoera-mezua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1711" />
             <location filename="../src/MainWindow.cpp" line="3144" />
             <source>Show last status message</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi azken egoera-mezua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1713" />
             <location filename="../src/MainWindow.cpp" line="3163" />
             <source>Hide users statistics</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu erabiltzaileen estatistikak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1716" />
             <location filename="../src/MainWindow.cpp" line="3161" />
             <source>Show users statistics</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi erabiltzaileen estatistikak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1718" />
             <source>Away message</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan egotearen mezua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1720" />
             <source>On</source>
-            <translation type="unfinished" />
+            <translation>Aktibatuta</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1722" />
             <source>Off</source>
-            <translation type="unfinished" />
+            <translation>Desaktibatuta</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1724" />
             <source>Away when not visible</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan, ikusgai ez dagoenean</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1726" />
             <source>Copy window title</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu leihoaren izenburua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1728" />
             <source>Preferences</source>
-            <translation type="unfinished" />
+            <translation>Hobespenak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1730" />
@@ -2089,107 +2128,107 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1732" />
             <source>ADLSearch</source>
-            <translation type="unfinished" />
+            <translation>ADL bilaketa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Arazketa-kontsola</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Idazkaria</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1741" />
             <source>Speed limit On/Off</source>
-            <translation type="unfinished" />
+            <translation>Abiadura-muga aktibatu/desaktibatu</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1744" />
             <source>Scripts Manager</source>
-            <translation type="unfinished" />
+            <translation>Script-kudeatzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1746" />
             <source>Script Console</source>
-            <translation type="unfinished" />
+            <translation>Script-kontsola</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1749" />
             <source>Clear chat</source>
-            <translation type="unfinished" />
+            <translation>Garbitu txata</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1751" />
             <source>Find/Filter</source>
-            <translation type="unfinished" />
+            <translation>Bilatu/iragazi</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1753" />
             <source>Disable/enable chat</source>
-            <translation type="unfinished" />
+            <translation>Desgaitu/gaitu txata</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1755" />
             <source>&amp;Widgets</source>
-            <translation type="unfinished" />
+            <translation>&amp;Trepetak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1757" />
             <source>&amp;Panels</source>
-            <translation type="unfinished" />
+            <translation>&amp;Panelak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1760" />
             <source>Widgets panel</source>
-            <translation type="unfinished" />
+            <translation>Trepeta-panela</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1762" />
             <source>Widgets side dock</source>
-            <translation type="unfinished" />
+            <translation>Trepeten alboko kaia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1764" />
             <source>Tools panel</source>
-            <translation type="unfinished" />
+            <translation>Tresna-panela</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1766" />
             <source>Fast search panel</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa azkarraren panela</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1768" />
             <source>&amp;Help</source>
-            <translation type="unfinished" />
+            <translation>&amp;Laguntza</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1770" />
             <source>Homepage</source>
-            <translation type="unfinished" />
+            <translation>Hasierako orria</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1774" />
             <source>Report a Bug</source>
-            <translation type="unfinished" />
+            <translation>Eman akats baten berri</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1776" />
             <source>Wiki of project</source>
-            <translation type="unfinished" />
+            <translation>Proiektuaren wikia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1778" />
             <source>Changelog (git)</source>
-            <translation type="unfinished" />
+            <translation>Aldaketen erregistroa (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Iturburu-kodea (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2199,7 +2238,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1784" />
             <source>About Qt</source>
-            <translation type="unfinished" />
+            <translation>Qt-ri buruz</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1787" />
@@ -2260,38 +2299,38 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1802" />
             <source>Main layout</source>
-            <translation type="unfinished" />
+            <translation>Diseinu nagusia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT nodoak: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
             <source>%1/s / %2/s</source>
-            <translation type="unfinished" />
+            <translation>%1/s / %2/s</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2128" />
             <source>%1 / %2</source>
-            <translation type="unfinished" />
+            <translation>%1 / %2</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2135" />
             <location filename="../src/MainWindow.cpp" line="2135" />
             <source>/s</source>
-            <translation type="unfinished" />
+            <translation>/s</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2159" />
             <source>Free %1</source>
-            <translation type="unfinished" />
+            <translation>%1 libre</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2162" />
             <source>Free %1 of %2</source>
-            <translation type="unfinished" />
+            <translation>%2(e)tik %1 libre</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2214" />
@@ -2299,12 +2338,12 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="2240" />
             <location filename="../src/MainWindow.cpp" line="2255" />
             <source>Hash progress</source>
-            <translation type="unfinished" />
+            <translation>Hash kalkuluaren aurrerapena</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2217" />
             <source>List update</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda-eguneraketa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2229" />
@@ -2319,27 +2358,27 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2258" />
             <source>%p%</source>
-            <translation type="unfinished" />
+            <translation>%p%</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2351" />
             <source>Choose file to open</source>
-            <translation type="unfinished" />
+            <translation>Aukeratu irekitzeko fitxategia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2353" />
             <source>Modern XML Filelists</source>
-            <translation type="unfinished" />
+            <translation>XML fitxategi-zerrenda modernoak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2354" />
             <source>Modern XML Filelists uncompressed</source>
-            <translation type="unfinished" />
+            <translation>Konprimatu gabeko XML fitxategi-zerrenda modernoak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Torrent fitxategiak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2358" />
@@ -2349,7 +2388,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2374" />
             <source>Unable to load file list: Invalid file list name</source>
-            <translation type="unfinished" />
+            <translation>Ezin da fitxategi-zerrenda kargatu: fitxategi-zerrendaren izena baliogabea da</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2548" />
@@ -2359,42 +2398,42 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="2585" />
             <source>Unable to open %1 port. Searching or file transfers will not work correctly until you change settings or turn off any application that might be using that port.</source>
-            <translation type="unfinished" />
+            <translation>Ezin da %1 ataka ireki. Bilaketek edo fitxategi-transferentziek ez dute behar bezala funtzionatuko ezarpenak aldatu edo ataka hori erabiltzen ari den aplikazioa itzali arte.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2586" />
             <source>Connectivity Manager: Warning</source>
-            <translation type="unfinished" />
+            <translation>Konexio-kudeatzailea: Abisua</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2609" />
             <source>Log files (*.log);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Erregistro-fitxategiak (*.log);;Fitxategi guztiak (*.*)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Ireki magnet esteka edo Torrent fitxategia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Sartu magnet esteka bat edo tokiko .torrent fitxategiaren bidea:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2687" />
             <source>Enter magnet link:</source>
-            <translation type="unfinished" />
+            <translation>Sartu magnet esteka:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2865" />
             <source>Script Engine</source>
-            <translation type="unfinished" />
+            <translation>Script-motorra</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Torrent euskarria ez dago prest.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3181" />
@@ -2429,37 +2468,37 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3272" />
             <source>EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ Direct Connect eta ADC protokoloetarako bezero grafikoa da.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3275" />
             <source>DC++ core version: %1 (modified)</source>
-            <translation type="unfinished" />
+            <translation>DC++ nukleoaren bertsioa: %1 (aldatua)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3278" />
             <source>Home page: </source>
-            <translation type="unfinished" />
+            <translation>Hasierako orria: </translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3283" />
             <source>Total up: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Igota guztira: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3285" />
             <source>Total down: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Deskargatuta guztira: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3287" />
             <source>Ratio: &lt;b&gt;%1&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Erlazioa: &lt;b&gt;%1&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Erabili &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; akatsen berri emateko.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
@@ -2469,12 +2508,12 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
             <source>&lt;b&gt;Graphic files&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Fitxategi grafikoak&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3373" />
@@ -2499,27 +2538,27 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3390" />
             <source>Polish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Polonierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3393" />
             <source>Ukrainian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Ukrainerazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Serbierazko itzulpena (zirilikoa)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
             <source>Serbian (Latin) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Serbierazko itzulpena (latindarra)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3405" />
             <source>Spanish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Gaztelaniazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
@@ -2529,67 +2568,67 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
             <source>Bulgarian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Bulgarierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3415" />
             <source>Slovak translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Eslovakierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3418" />
             <source>Czech translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Txekierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3421" />
             <source>German translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Alemanezko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3426" />
             <source>Greek translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Grezierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3429" />
             <source>Italian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Italierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3433" />
             <source>Portuguese (Brazil) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Portugesezko itzulpena (Brasil)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3436" />
             <source>Vietnamese translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Vietnamerazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3439" />
             <source>Chinese (China) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Txinerazko itzulpena (Txina)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3442" />
             <source>Swedish (Sweden) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Suedierazko itzulpena (Suedia)&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Turkierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Danierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Georgierazko itzulpena&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
@@ -2599,37 +2638,37 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3681" />
             <source>Suppress sound notifications</source>
-            <translation type="unfinished" />
+            <translation>Ezabatu soinu-jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3682" />
             <source>Suppress text notifications</source>
-            <translation type="unfinished" />
+            <translation>Ezabatu testu-jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Irten</translation>
+            <translation>Irten</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3676" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu abiadura-mugak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrenta: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Goitizena behar da</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Sartu goitizen bat Hobespenetan hubetara konektatu aurretik.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2640,24 +2679,24 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu programa</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3302" />
             <location filename="../src/MainWindow.cpp" line="3330" />
             <source>lead developer</source>
-            <translation type="unfinished" />
+            <translation>garatzaile nagusia</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>bertsio-argitalpenen arduraduna</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
             <source>Arch Linux maintainer</source>
-            <translation type="unfinished" />
+            <translation>Arch Linuxeko mantentzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3313" />
@@ -2665,53 +2704,53 @@ Favorite user</source>
             <location filename="../src/MainWindow.cpp" line="3344" />
             <location filename="../src/MainWindow.cpp" line="3349" />
             <source>developer</source>
-            <translation type="unfinished" />
+            <translation>garatzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3318" />
             <source>Debian/Ubuntu maintainer</source>
-            <translation type="unfinished" />
+            <translation>Debian/Ubuntuko mantentzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>itzulpenen koordinatzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
             <source>macOS maintainer</source>
-            <translation type="unfinished" />
+            <translation>macOSeko mantentzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3336" />
             <location filename="../src/MainWindow.cpp" line="3341" />
             <source>MS Windows maintainer</source>
-            <translation type="unfinished" />
+            <translation>MS Windowseko mantentzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3356" />
             <source>creator of the logo of the project</source>
-            <translation type="unfinished" />
+            <translation>proiektuaren logotipoaren sortzailea</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>logotipoaren eguneraketa txikiak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
             <source>Participate in the translation. It is easy:</source>
-            <translation type="unfinished" />
+            <translation>Parte hartu itzulpenean. Erraza da:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3491" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi ixteko botoiak</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3523" />
             <source>[No name]</source>
-            <translation type="unfinished" />
+            <translation>[Izenik gabe]</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
@@ -2721,7 +2760,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MainWindow.cpp" line="3612" />
             <source>All downloads complete</source>
-            <translation type="unfinished" />
+            <translation>Deskarga guztiak amaitu dira</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2799,7 +2838,7 @@ Favorite user</source>
         <message>
             <location filename="../src/MultiLineToolBar.cpp" line="61" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi ixteko botoiak</translation>
         </message>
     </context>
     <context>
@@ -2812,22 +2851,22 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="121" />
             <source>Suppress sound notifications</source>
-            <translation type="unfinished" />
+            <translation>Ezabatu soinu-jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="122" />
             <source>Suppress text notifications</source>
-            <translation type="unfinished" />
+            <translation>Ezabatu testu-jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="132" />
             <source>Show/Hide window</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi/ezkutatu leihoa</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="133" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu abiadura-mugak</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="134" />
@@ -2840,7 +2879,10 @@ Favorite user</source>
 Download: %1 Upload: %2
 Statistics
 Downloaded: %3 Uploaded: %4</source>
-            <translation type="unfinished" />
+            <translation>Abiadura
+Deskarga: %1 Igoera: %2
+Estatistikak
+Deskargatuta: %3 Igota: %4</translation>
         </message>
     </context>
     <context>
@@ -2868,17 +2910,17 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PMWindow.cpp" line="578" />
             <source>%1 on hub %2</source>
-            <translation type="unfinished" />
+            <translation>%1, %2 hubean</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="626" />
             <source>Chat cleared.</source>
-            <translation type="unfinished" />
+            <translation>Txata garbitu da.</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="765" />
             <source>User went offline</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzailea lineaz kanpo jarri da</translation>
         </message>
     </context>
     <context>
@@ -2906,7 +2948,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Country</source>
-            <translation type="unfinished" />
+            <translation>Herrialdea</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
@@ -2916,32 +2958,32 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Min share</source>
-            <translation type="unfinished" />
+            <translation>Gutxieneko partekatzea</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="32" />
             <source>Min slots</source>
-            <translation type="unfinished" />
+            <translation>Gutxieneko erretenak</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Max hubs</source>
-            <translation type="unfinished" />
+            <translation>Gehieneko hubak</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Max users</source>
-            <translation type="unfinished" />
+            <translation>Gehieneko erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Reliability</source>
-            <translation type="unfinished" />
+            <translation>Fidagarritasuna</translation>
         </message>
         <message>
             <location filename="../src/PublicHubModel.cpp" line="33" />
             <source>Rating</source>
-            <translation type="unfinished" />
+            <translation>Balorazioa</translation>
         </message>
     </context>
     <context>
@@ -2949,7 +2991,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="69" />
             <source>Downloading public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrenda deskargatzen...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="175" />
@@ -2959,52 +3001,52 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="176" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Gehitu gogokoetara</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="177" />
             <source>Copy &amp;address to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu &amp;helbidea arbelean</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrenda freskatzen...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
             <source>Downloading public hub list... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrenda deskargatzen... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="317" />
             <source>Download failed: %1</source>
-            <translation type="unfinished" />
+            <translation>Deskargak huts egin du: %1</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Huben zerrenda deskargatu da... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>Tokian cachean gordetako huben zerrendaren bertsioa (%1(e)koa) kargatu da (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
             <source>Cached hub list is corrupted or unsupported</source>
-            <translation type="unfinished" />
+            <translation>Cachean gordetako huben zerrenda hondatuta dago edo ez da onartzen</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="332" />
             <source>Downloaded hub list is corrupted or unsupported (%1)</source>
-            <translation type="unfinished" />
+            <translation>Deskargatutako huben zerrenda hondatuta dago edo ez da onartzen (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.h" line="42" />
             <source>Public Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoak</translation>
         </message>
         <message>
             <source>Hubs: %1 / %2</source>
@@ -3016,19 +3058,19 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrenden URLak</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
             <location filename="../src/PublicHubsList.cpp" line="103" />
             <source>Public hub</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoa</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
             <location filename="../src/PublicHubsList.cpp" line="103" />
             <source>Link</source>
-            <translation type="unfinished" />
+            <translation>Esteka</translation>
         </message>
     </context>
     <context>
@@ -3036,7 +3078,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/main.cpp" line="103" />
             <source>Loading: </source>
-            <translation type="unfinished" />
+            <translation>Kargatzen: </translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="605" />
@@ -3045,74 +3087,79 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ interfazearen ezarpen zaharrak edo bateraezinak detektatu dira.
+
+Hubak, kontuaren xehetasunak, partekatzea, deskargak eta historia bezalako ezarpen seguruak mantendu dira. Aurreko konfigurazioko gaia, txataren kolorea, leihoen diseinua eta taulen zutabeen egoera berrezarri dira, uneko macOSen modu argiaren eta ilunaren arteko zuzeneko aldaketa oztopa dezaketelako.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Interfazearen aurreko konfigurazioaren babeskopia hemen gorde da:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Ezin izan da interfazearen aurreko konfigurazioaren babeskopiarik egin, baina ikusizko ezarpen bateraezinak baztertu dira hala ere.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ ezarpenak eguneratu dira</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
             <source>UserList icons has been loaded</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzaile-zerrendaren ikonoak kargatu dira</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="770" />
             <source>Application icons has been loaded</source>
-            <translation type="unfinished" />
+            <translation>Aplikazioaren ikonoak kargatu dira</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Irudiak (%1);;Fitxategi guztiak (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Arrastatu sarrera-eremuaren tamaina aldatzeko</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Egin klik zabaltzeko edo tolesteko</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Ezkutuko edukia: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Ireki kanpoan</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Itxi</translation>
+            <translation>Itxi</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Lehenetsia (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3125,7 +3172,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/QueuedUsers.h" line="104" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Ilarako erabiltzaileak</translation>
         </message>
     </context>
     <context>
@@ -3154,7 +3201,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ScriptManagerDialog.cpp" line="46" />
             <source>Script Manager</source>
-            <translation type="unfinished" />
+            <translation>Script-kudeatzailea</translation>
         </message>
     </context>
     <context>
@@ -3188,7 +3235,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="184" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>Gakoa</translation>
         </message>
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="185" />
@@ -3198,7 +3245,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchBlacklistDialog.cpp" line="284" />
             <source>Set text...</source>
-            <translation type="unfinished" />
+            <translation>Ezarri testua...</translation>
         </message>
     </context>
     <context>
@@ -3212,7 +3259,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="51" />
             <source>Search for</source>
-            <translation type="unfinished" />
+            <translation>Bilatu hau</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="58" />
@@ -3222,7 +3269,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="65" />
             <source>Show/Hide side panel</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi/ezkutatu alboko panela</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="82" />
@@ -3232,12 +3279,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="132" />
             <source>Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hubak</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="139" />
             <source>Only users with free slots</source>
-            <translation type="unfinished" />
+            <translation>Erreten libreak dituzten erabiltzaileak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="146" />
@@ -3272,37 +3319,37 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="189" />
             <source>At least</source>
-            <translation type="unfinished" />
+            <translation>Gutxienez</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="194" />
             <source>At most</source>
-            <translation type="unfinished" />
+            <translation>Gehienez</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="205" />
             <source>Don't hide this panel when search</source>
-            <translation type="unfinished" />
+            <translation>Ez ezkutatu panel hau bilatzean</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="221" />
             <source>Already shared files</source>
-            <translation type="unfinished" />
+            <translation>Dagoeneko partekatutako fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="234" />
             <source>Do nothing</source>
-            <translation type="unfinished" />
+            <translation>Ez egin ezer</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="239" />
             <source>Hide</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="244" />
             <source>Highlight</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="125" />
@@ -3317,22 +3364,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="130" />
             <source>Download to...</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu hona...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="133" />
             <source>Download Whole Directory</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu direktorio osoa</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="136" />
             <source>Download Whole Directory to...</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu direktorio osoa hona...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="142" />
             <source>Search TTH</source>
-            <translation type="unfinished" />
+            <translation>Bilatu TTHa</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="145" />
@@ -3342,12 +3389,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="148" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu web-magnet esteka</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="151" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet estekaren propietateak</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="154" />
@@ -3357,7 +3404,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="157" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Parekatu ilararekin</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="160" />
@@ -3367,17 +3414,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="163" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Gehitu gogokoetara</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="166" />
             <source>Grant extra slot</source>
-            <translation type="unfinished" />
+            <translation>Eman aparteko erretena</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="178" />
             <source>Remove from Queue</source>
-            <translation type="unfinished" />
+            <translation>Kendu ilaratik</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="181" />
@@ -3387,17 +3434,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="184" />
             <source>Blacklist...</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda beltza...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="187" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda beltza</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="190" />
             <source>Add to Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Gehitu zerrenda beltzera</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="296" />
@@ -3413,33 +3460,33 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1088" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa - %1</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1196" />
             <location filename="../src/SearchFrame.cpp" line="1254" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu direktorioa</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1561" />
             <source>Searching for %1 ...</source>
-            <translation type="unfinished" />
+            <translation>%1 bilatzen ...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>"%1" bilaketaren aurrerapena %2% da</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
             <source>&lt;b&gt;No results&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Emaitzarik ez&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1597" />
             <source>Found: &lt;b&gt;%1&lt;/b&gt;  Dropped: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Aurkituta: &lt;b&gt;%1&lt;/b&gt;  Baztertuta: &lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
     </context>
     <context>
@@ -3447,7 +3494,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>Kopurua</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
@@ -3457,7 +3504,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
             <source>Ext</source>
-            <translation type="unfinished" />
+            <translation>Luz.</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="52" />
@@ -3482,12 +3529,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Free slots</source>
-            <translation type="unfinished" />
+            <translation>Erreten libreak</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="54" />
             <source>Total slots</source>
-            <translation type="unfinished" />
+            <translation>Erretenak guztira</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
@@ -3502,12 +3549,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Ostalaria</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="134" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Fitxategia badago lehendik: %1</translation>
         </message>
     </context>
     <context>
@@ -3515,7 +3562,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="92" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Idazkaria</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="315" />
@@ -3535,27 +3582,27 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="319" />
             <source>Clear notes</source>
-            <translation type="unfinished" />
+            <translation>Garbitu oharrak</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="320" />
             <source>Find in notes</source>
-            <translation type="unfinished" />
+            <translation>Bilatu oharretan</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="322" />
             <source>Select all</source>
-            <translation type="unfinished" />
+            <translation>Hautatu dena</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="324" />
             <source>Zoom In</source>
-            <translation type="unfinished" />
+            <translation>Handiagotu</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="325" />
             <source>Zoom Out</source>
-            <translation type="unfinished" />
+            <translation>Txikiagotu</translation>
         </message>
     </context>
     <context>
@@ -3563,17 +3610,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="639" />
             <source>Preferences</source>
-            <translation type="unfinished" />
+            <translation>Hobespenak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Torrenten hobespenak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Ezin izan dira Torrenten ezarpenak gorde: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3593,37 +3640,37 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="737" />
             <source>Sharing</source>
-            <translation type="unfinished" />
+            <translation>Partekatzea</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="742" />
             <source>GUI</source>
-            <translation type="unfinished" />
+            <translation>Interfaze grafikoa</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="747" />
             <source>Notifications</source>
-            <translation type="unfinished" />
+            <translation>Jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="752" />
             <source>Logs</source>
-            <translation type="unfinished" />
+            <translation>Erregistroak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="757" />
             <source>User Commands</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzaile-komandoak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="762" />
             <source>Shortcuts</source>
-            <translation type="unfinished" />
+            <translation>Lasterbideak</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="767" />
             <source>History</source>
-            <translation type="unfinished" />
+            <translation>Historia</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="772" />
@@ -3668,59 +3715,59 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>Gaitu IPv6</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Kanpoko/WAN IPv6a:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>adib. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Lotu IPv6 helbidea</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>Herrialdeen MMDB fitxategia</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>GeoLite2/MaxMind herrialdeen .mmdb fitxategiaren bidea</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu DHT abiarazteko URLak</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrenden URLak</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu hub publikoen zerrenden URLak</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Ez da kanpoko IPv6 helbide baliozkorik aurkitu!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Ez da lotzeko IPv6 helbide baliozkorik aurkitu!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="711" />
@@ -3742,22 +3789,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="788" />
             <location filename="../src/SettingsConnection.cpp" line="802" />
             <source>Program need root privileges to open ports less than 1024</source>
-            <translation type="unfinished" />
+            <translation>Programak root pribilegioak behar ditu 1024tik beherako atakak irekitzeko</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>Hautatu MaxMind herrialdeen datu-basea</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>MaxMind DB (*.mmdb);;Fitxategi guztiak (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
             <source>Warning</source>
-            <translation type="unfinished" />
+            <translation>Abisua</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -4071,7 +4118,7 @@ UDP: %2</translation>
             <location filename="../src/SettingsDownloads.cpp" line="165" />
             <location filename="../src/SettingsDownloads.cpp" line="194" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu direktorioa</translation>
         </message>
         <message>
             <source>Delete</source>
@@ -4080,12 +4127,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="183" />
             <source>Enter alias for directory</source>
-            <translation type="unfinished" />
+            <translation>Sartu direktorioaren aliasa</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="184" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>Aliasa</translation>
         </message>
         <message>
             <location filename="../src/SettingsDownloads.cpp" line="220" />
@@ -4113,12 +4160,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="145" />
             <source>English</source>
-            <translation type="unfinished" />
+            <translation>Ingelesa</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="146" />
             <source>Russian</source>
-            <translation type="unfinished" />
+            <translation>Errusiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="147" />
@@ -4128,42 +4175,42 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="148" />
             <source>Hungarian</source>
-            <translation type="unfinished" />
+            <translation>Hungariera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="149" />
             <source>French</source>
-            <translation type="unfinished" />
+            <translation>Frantsesa</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="150" />
             <source>Polish</source>
-            <translation type="unfinished" />
+            <translation>Poloniera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="151" />
             <source>Portuguese (Brazil)</source>
-            <translation type="unfinished" />
+            <translation>Portugesa (Brasil)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="152" />
             <source>Serbian (Cyrillic)</source>
-            <translation type="unfinished" />
+            <translation>Serbiera (zirilikoa)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="153" />
             <source>Serbian (Latin)</source>
-            <translation type="unfinished" />
+            <translation>Serbiera (latindarra)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="154" />
             <source>Ukrainian</source>
-            <translation type="unfinished" />
+            <translation>Ukrainera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="155" />
             <source>Spanish</source>
-            <translation type="unfinished" />
+            <translation>Gaztelania</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="156" />
@@ -4178,139 +4225,139 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="158" />
             <source>Slovak</source>
-            <translation type="unfinished" />
+            <translation>Eslovakiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="159" />
             <source>Czech</source>
-            <translation type="unfinished" />
+            <translation>Txekiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="160" />
             <source>German</source>
-            <translation type="unfinished" />
+            <translation>Alemana</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="161" />
             <source>Greek</source>
-            <translation type="unfinished" />
+            <translation>Greziera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="162" />
             <source>Italian</source>
-            <translation type="unfinished" />
+            <translation>Italiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="163" />
             <source>Vietnamese</source>
-            <translation type="unfinished" />
+            <translation>Vietnamera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="164" />
             <source>Chinese (China)</source>
-            <translation type="unfinished" />
+            <translation>Txinera (Txina)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="165" />
             <source>Swedish (Sweden)</source>
-            <translation type="unfinished" />
+            <translation>Suediera (Suedia)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="166" />
             <source>Turkish</source>
-            <translation type="unfinished" />
+            <translation>Turkiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="167" />
             <source>Danish</source>
-            <translation type="unfinished" />
+            <translation>Daniera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="168" />
             <source>Georgian</source>
-            <translation type="unfinished" />
+            <translation>Georgiera</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Tresna-barraren ikono-gaia</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished" />
+            <translation>Gaia</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>Lehenetsia</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Monokromoa</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzaile-zerrendaren ikono-gaia</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Jatorrizkoa</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Txateko irudiak</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Karpeta</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Garbitu automatikoki hau baino zaharragoak diren fitxategiak:</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> egun</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
             <source>Local user</source>
-            <translation type="unfinished" />
+            <translation>Tokiko erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="361" />
             <source>Operator</source>
-            <translation type="unfinished" />
+            <translation>Operadorea</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="365" />
             <source>Bot</source>
-            <translation type="unfinished" />
+            <translation>Bota</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="369" />
             <source>Private: local user</source>
-            <translation type="unfinished" />
+            <translation>Pribatua: tokiko erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="373" />
             <source>Private: user</source>
-            <translation type="unfinished" />
+            <translation>Pribatua: erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="377" />
             <source>Chat: Say nick</source>
-            <translation type="unfinished" />
+            <translation>Txata: Goitizenaren aipamena</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="381" />
@@ -4325,32 +4372,32 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="389" />
             <source>Favorite User</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="393" />
             <source>Time stamp</source>
-            <translation type="unfinished" />
+            <translation>Denbora-marka</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="397" />
             <source>Message</source>
-            <translation type="unfinished" />
+            <translation>Mezua</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="704" />
             <source>Select translation</source>
-            <translation type="unfinished" />
+            <translation>Hautatu itzulpena</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="706" />
             <source>Translation (*.qm)</source>
-            <translation type="unfinished" />
+            <translation>Itzulpena (*.qm)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Hautatu txateko irudien karpeta</translation>
         </message>
     </context>
     <context>
@@ -4358,12 +4405,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Laguntza</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>Aukeratu direktorioa</translation>
         </message>
     </context>
     <context>
@@ -4371,7 +4418,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsNotification.cpp" line="209" />
             <source>Select file</source>
-            <translation type="unfinished" />
+            <translation>Hautatu fitxategia</translation>
         </message>
         <message>
             <location filename="../src/SettingsNotification.cpp" line="209" />
@@ -4407,14 +4454,14 @@ UDP: %2</translation>
             <location filename="../src/SettingsSharing.cpp" line="125" />
             <location filename="../src/SettingsSharing.cpp" line="176" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>Partekatuta guztira: %1</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="203" />
             <location filename="../src/SettingsSharing.cpp" line="299" />
             <location filename="../src/SettingsSharing.cpp" line="310" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu direktorioa</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="203" />
@@ -4427,18 +4474,18 @@ UDP: %2</translation>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Add item</source>
-            <translation type="unfinished" />
+            <translation>Gehitu elementua</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="220" />
             <location filename="../src/SettingsSharing.cpp" line="249" />
             <source>Enter text:</source>
-            <translation type="unfinished" />
+            <translation>Sartu testua:</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="227" />
             <source>Choose the directory</source>
-            <translation type="unfinished" />
+            <translation>Aukeratu direktorioa</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="411" />
@@ -4448,7 +4495,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="415" />
             <source>Rename</source>
-            <translation type="unfinished" />
+            <translation>Aldatu izena</translation>
         </message>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="420" />
@@ -4464,7 +4511,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsSharing.cpp" line="355" />
             <source>Enter new name</source>
-            <translation type="unfinished" />
+            <translation>Sartu izen berria</translation>
         </message>
     </context>
     <context>
@@ -4986,7 +5033,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="75" />
             <source>Restrictions</source>
-            <translation type="unfinished" />
+            <translation>Murrizketak</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="76" />
@@ -5001,12 +5048,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="80" />
             <source>Download to...</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu hona...</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="83" />
             <source>Search for alternates</source>
-            <translation type="unfinished" />
+            <translation>Bilatu ordezko iturriak</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="85" />
@@ -5016,32 +5063,32 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="87" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu web-magnet esteka</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="89" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet estekaren propietateak</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="92" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Gehitu gogokoetara</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="94" />
             <source>Add restriction</source>
-            <translation type="unfinished" />
+            <translation>Gehitu murrizketa</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="95" />
             <source>Remove restriction</source>
-            <translation type="unfinished" />
+            <translation>Kendu murrizketa</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="96" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Ireki direktorioa</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="176" />
@@ -5051,18 +5098,18 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="224" />
             <source>Own files</source>
-            <translation type="unfinished" />
+            <translation>Norberaren fitxategiak</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="226" />
             <location filename="../src/ShareBrowser.cpp" line="229" />
             <source>Listing: </source>
-            <translation type="unfinished" />
+            <translation>Zerrendatzen: </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="334" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-arakatzailea</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="336" />
@@ -5072,48 +5119,48 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="432" />
             <source>Total share size: %1;  Files: %2</source>
-            <translation type="unfinished" />
+            <translation>Partekatutako tamaina guztira: %1;  Fitxategiak: %2</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>Partekatutakoaren arakatzailearen errorea: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
             <location filename="../src/ShareBrowser.cpp" line="658" />
             <source>Total size: %1</source>
-            <translation type="unfinished" />
+            <translation>Tamaina guztira: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>%2 elementutatik %1 hautatuta; </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
             <source>; Selected: %1</source>
-            <translation type="unfinished" />
+            <translation>; Hautatuta: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="862" />
             <source>Select directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu direktorioa</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="992" />
             <source>Enter restriction size (in GB)</source>
-            <translation type="unfinished" />
+            <translation>Sartu murrizketaren tamaina (GBtan)</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>Partekatutakoaren arakatzailea</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>%1 fitxategi parekatu dira</translation>
         </message>
     </context>
     <context>
@@ -5121,12 +5168,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="76" />
             <source>Search - %1</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa - %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>%1 elementu aurkitu dira</translation>
         </message>
     </context>
     <context>
@@ -5142,12 +5189,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="217" />
             <source>Modify shortcut</source>
-            <translation type="unfinished" />
+            <translation>Aldatu lasterbidea</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="225" />
             <source>Press the key combination you want to assign</source>
-            <translation type="unfinished" />
+            <translation>Sakatu esleitu nahi duzun tekla-konbinazioa</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="240" />
@@ -5157,12 +5204,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="242" />
             <source>Capture</source>
-            <translation type="unfinished" />
+            <translation>Harrapatu</translation>
         </message>
         <message>
             <location filename="../src/ShortcutGetter.cpp" line="243" />
             <source>Capture keystrokes</source>
-            <translation type="unfinished" />
+            <translation>Harrapatu tekla-sakatzeak</translation>
         </message>
     </context>
     <context>
@@ -5170,12 +5217,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="177" />
             <source>Action</source>
-            <translation type="unfinished" />
+            <translation>Ekintza</translation>
         </message>
         <message>
             <location filename="../src/SettingsShortcuts.cpp" line="178" />
             <source>Hotkey</source>
-            <translation type="unfinished" />
+            <translation>Laster-tekla</translation>
         </message>
     </context>
     <context>
@@ -5184,7 +5231,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="77" />
             <location filename="../src/SideBar.cpp" line="439" />
             <source>Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hubak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="78" />
@@ -5202,13 +5249,13 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="80" />
             <location filename="../src/SideBar.cpp" line="442" />
             <source>Share Browsers</source>
-            <translation type="unfinished" />
+            <translation>Partekatutakoaren arakatzaileak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="81" />
             <location filename="../src/SideBar.cpp" line="443" />
             <source>ADLSearch</source>
-            <translation type="unfinished" />
+            <translation>ADL bilaketa</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="82" />
@@ -5226,67 +5273,67 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="90" />
             <location filename="../src/SideBar.cpp" line="457" />
             <source>Queued Users</source>
-            <translation type="unfinished" />
+            <translation>Ilarako erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="91" />
             <location filename="../src/SideBar.cpp" line="448" />
             <source>Finished Uploads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako igoerak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="92" />
             <location filename="../src/SideBar.cpp" line="449" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako deskargak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="93" />
             <location filename="../src/SideBar.cpp" line="450" />
             <source>Favorite Hubs</source>
-            <translation type="unfinished" />
+            <translation>Gogoko hubak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="94" />
             <location filename="../src/SideBar.cpp" line="451" />
             <source>Favorite Users</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="95" />
             <location filename="../src/SideBar.cpp" line="452" />
             <source>Public Hubs</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="96" />
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Idazkaria</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
             <location filename="../src/SideBar.cpp" line="455" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-espioia</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Arazketa-kontsola</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
             <location filename="../src/SideBar.cpp" line="456" />
             <source>Other Widgets</source>
-            <translation type="unfinished" />
+            <translation>Beste trepetak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="170" />
             <source>Widgets</source>
-            <translation type="unfinished" />
+            <translation>Trepetak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="97" />
@@ -5300,7 +5347,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="591" />
             <source>Close all</source>
-            <translation type="unfinished" />
+            <translation>Itxi guztiak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="612" />
@@ -5310,17 +5357,17 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="671" />
             <source>Choose file to open</source>
-            <translation type="unfinished" />
+            <translation>Aukeratu irekitzeko fitxategia</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="673" />
             <source>Modern XML Filelists</source>
-            <translation type="unfinished" />
+            <translation>XML fitxategi-zerrenda modernoak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="674" />
             <source>Modern XML Filelists uncompressed</source>
-            <translation type="unfinished" />
+            <translation>Konprimatu gabeko XML fitxategi-zerrenda modernoak</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="675" />
@@ -5330,12 +5377,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SideBar.cpp" line="690" />
             <source>Open log file</source>
-            <translation type="unfinished" />
+            <translation>Ireki erregistro-fitxategia</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="690" />
             <source>Log files (*.log);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>Erregistro-fitxategiak (*.log);;Fitxategi guztiak (*.*)</translation>
         </message>
     </context>
     <context>
@@ -5350,7 +5397,7 @@ UDP: %2</translation>
             <location filename="../src/SpyFrame.cpp" line="62" />
             <location filename="../src/SpyFrame.h" line="40" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-espioia</translation>
         </message>
         <message>
             <location filename="../src/SpyFrame.cpp" line="63" />
@@ -5358,7 +5405,10 @@ UDP: %2</translation>
 It will continue to work when the widget is hidden.
 Do you want to stop it?
 </source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-espioia martxan dago orain.
+Trepeta ezkutatuta dagoenean ere lanean jarraituko du.
+Gelditu nahi duzu?
+</translation>
         </message>
         <message>
             <location filename="../src/SpyFrame.cpp" line="88" />
@@ -5376,12 +5426,12 @@ Do you want to stop it?
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Count</source>
-            <translation type="unfinished" />
+            <translation>Kopurua</translation>
         </message>
         <message>
             <location filename="../src/SpyModel.cpp" line="27" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-katea</translation>
         </message>
     </context>
     <context>
@@ -5405,12 +5455,12 @@ Do you want to stop it?
         <message>
             <location filename="../src/ToolBar.cpp" line="365" />
             <source>Show close buttons</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi ixteko botoiak</translation>
         </message>
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Itxi</translation>
         </message>
     </context>
     <context>
@@ -6451,12 +6501,12 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="64" />
             <source>Search Alternates</source>
-            <translation type="unfinished" />
+            <translation>Bilatu ordezko iturriak</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="67" />
             <source>Match Queue</source>
-            <translation type="unfinished" />
+            <translation>Parekatu ilararekin</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="70" />
@@ -6466,12 +6516,12 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="73" />
             <source>Add to favorites</source>
-            <translation type="unfinished" />
+            <translation>Gehitu gogokoetara</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="76" />
             <source>Grant extra slot</source>
-            <translation type="unfinished" />
+            <translation>Eman aparteko erretena</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="79" />
@@ -6496,7 +6546,7 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Banderak</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
@@ -6506,7 +6556,7 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="87" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>Geratzen den denbora</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="88" />
@@ -6526,13 +6576,13 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="91" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Zifratzea</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokoloa</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6542,89 +6592,89 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Utzi deskarga</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
             <source>Remove Source</source>
-            <translation type="unfinished" />
+            <translation>Kendu iturria</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="109" />
             <source>Force attempt</source>
-            <translation type="unfinished" />
+            <translation>Behartu saiakera</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="112" />
             <source>Close connection(s)</source>
-            <translation type="unfinished" />
+            <translation>Itxi konexioak</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi transferitutako fitxategiak soilik</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
             <location filename="../src/TransferView.cpp" line="419" />
             <location filename="../src/TransferView.cpp" line="829" />
             <source>Download complete</source>
-            <translation type="unfinished" />
+            <translation>Deskarga amaitu da</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="459" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-zerrenda</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Torrentaren xehetasunak</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Pausatu torrenta</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Berrekin torrentari</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
             <source>Requesting</source>
-            <translation type="unfinished" />
+            <translation>Eskatzen</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="783" />
             <source>Download starting...</source>
-            <translation type="unfinished" />
+            <translation>Deskarga abiarazten...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="813" />
             <source>Downloaded %1</source>
-            <translation type="unfinished" />
+            <translation>%1 deskargatuta</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="868" />
             <source>Connecting...</source>
-            <translation type="unfinished" />
+            <translation>Konektatzen...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="892" />
             <source>Connected</source>
-            <translation type="unfinished" />
+            <translation>Konektatuta</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="923" />
             <source>Connecting</source>
-            <translation type="unfinished" />
+            <translation>Konektatzen</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="925" />
             <source>No download slots</source>
-            <translation type="unfinished" />
+            <translation>Deskargarako erretenik ez</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="853" />
@@ -6632,27 +6682,27 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <location filename="../src/TransferView.cpp" line="927" />
             <location filename="../src/TransferView.cpp" line="933" />
             <source>Waiting to retry</source>
-            <translation type="unfinished" />
+            <translation>Berriro saiatzeko zain</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="971" />
             <source>Upload starting...</source>
-            <translation type="unfinished" />
+            <translation>Igoera abiarazten...</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>%1 igota (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
             <source>Upload complete</source>
-            <translation type="unfinished" />
+            <translation>Igoera amaitu da</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1029" />
             <source>Upload failed</source>
-            <translation type="unfinished" />
+            <translation>Igoerak huts egin du</translation>
         </message>
         <message>
             <source>Fit to content</source>
@@ -6703,7 +6753,7 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Banderak</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
@@ -6713,17 +6763,17 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Time left</source>
-            <translation type="unfinished" />
+            <translation>Geratzen den denbora</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>File name</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-izena</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Ostalaria</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
@@ -6733,7 +6783,7 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="59" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Zifratzea</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="61" />
@@ -6743,42 +6793,42 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
         <message>
             <location filename="../src/TransferViewModel.cpp" line="156" />
             <source>/s</source>
-            <translation type="unfinished" />
+            <translation>/s</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Pausatu</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Partekatzen</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Zain</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Deskarga (%1 pare)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Igoera (%1 pare)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | %2 deskargatuta (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | %2 igota</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -6790,23 +6840,23 @@ Irakurtzeko soilik den partekatzera gehituta. Iturburu-fitxategien hashak egiazt
             <location filename="../src/TransferViewModel.cpp" line="544" />
             <location filename="../src/TransferViewModel.cpp" line="585" />
             <source>File list</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-zerrenda</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="757" />
             <source>Downloaded </source>
-            <translation type="unfinished" />
+            <translation>Deskargatuta </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="759" />
             <source>Waiting for slot </source>
-            <translation type="unfinished" />
+            <translation>Erretenaren zain </translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="813" />
             <location filename="../src/TransferViewModel.cpp" line="819" />
             <source>Finished</source>
-            <translation type="unfinished" />
+            <translation>Amaituta</translation>
         </message>
         <message>
             <source>D: %1/s | U: %2/s</source>
@@ -6895,12 +6945,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIADLSearch.ui" line="100" />
             <source>Move up</source>
-            <translation type="unfinished" />
+            <translation>Mugitu gora</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearch.ui" line="110" />
             <source>Move down</source>
-            <translation type="unfinished" />
+            <translation>Mugitu behera</translation>
         </message>
     </context>
     <context>
@@ -6908,12 +6958,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="38" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>Gogoko hubaren izena.</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="51" />
             <source>Search string</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-katea</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="74" />
@@ -6934,12 +6984,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="122" />
             <source>Full path</source>
-            <translation type="unfinished" />
+            <translation>Bide osoa</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="133" />
             <source>Min/Max Size</source>
-            <translation type="unfinished" />
+            <translation>Gutx./geh. tamaina</translation>
         </message>
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="193" />
@@ -6969,7 +7019,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIADLSearchEditor.ui" line="278" />
             <source>On</source>
-            <translation type="unfinished" />
+            <translation>Aktibatuta</translation>
         </message>
     </context>
     <context>
@@ -6982,22 +7032,22 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIAbout.ui" line="41" />
             <source>About program</source>
-            <translation type="unfinished" />
+            <translation>Programari buruz</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="67" />
             <source>Authors</source>
-            <translation type="unfinished" />
+            <translation>Egileak</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="91" />
             <source>Translation</source>
-            <translation type="unfinished" />
+            <translation>Itzulpena</translation>
         </message>
         <message>
             <location filename="../ui/UIAbout.ui" line="112" />
             <source>License</source>
-            <translation type="unfinished" />
+            <translation>Lizentzia</translation>
         </message>
     </context>
     <context>
@@ -7018,32 +7068,32 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="14" />
             <source>AntiSpam configuration</source>
-            <translation type="unfinished" />
+            <translation>AntiSpam konfigurazioa</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="20" />
             <source>AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Spam-iragazkia</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="46" />
             <source>Phrase</source>
-            <translation type="unfinished" />
+            <translation>Esaldia</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="59" />
             <source>Key</source>
-            <translation type="unfinished" />
+            <translation>Gakoa</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="85" />
             <source>Attempts</source>
-            <translation type="unfinished" />
+            <translation>Saiakerak</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="95" />
             <source>Enable AntiSpam</source>
-            <translation type="unfinished" />
+            <translation>Gaitu AntiSpam</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="102" />
@@ -7053,19 +7103,19 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="109" />
             <source>Work as filter</source>
-            <translation type="unfinished" />
+            <translation>Lan egin iragazki gisa</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="116" />
             <source>Black list</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda beltza</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="157" />
             <location filename="../ui/UIAntiSpam.ui" line="223" />
             <location filename="../ui/UIAntiSpam.ui" line="289" />
             <source>C</source>
-            <translation type="unfinished" />
+            <translation>C</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="171" />
@@ -7077,35 +7127,35 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="182" />
             <source>Gray List</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda grisa</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="248" />
             <source>White list</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda zuria</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="314" />
             <location filename="../ui/UIAntiSpam.ui" line="369" />
             <source>Move user to "White" list</source>
-            <translation type="unfinished" />
+            <translation>Mugitu erabiltzailea zerrenda "Zurira"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="327" />
             <location filename="../ui/UIAntiSpam.ui" line="340" />
             <source>Move user to "Gray" list</source>
-            <translation type="unfinished" />
+            <translation>Mugitu erabiltzailea zerrenda "Grisera"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="353" />
             <location filename="../ui/UIAntiSpam.ui" line="382" />
             <source>Move user to "Black" list</source>
-            <translation type="unfinished" />
+            <translation>Mugitu erabiltzailea zerrenda "Beltzera"</translation>
         </message>
         <message>
             <location filename="../ui/UIAntiSpam.ui" line="395" />
             <source>Filter Operators</source>
-            <translation type="unfinished" />
+            <translation>Iragazi operadoreak</translation>
         </message>
     </context>
     <context>
@@ -7113,57 +7163,57 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UICmdDebug.ui" line="57" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Bilatu: </translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="71" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Aurrekoa (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="77" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="84" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Hurrengoa (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="90" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="97" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu guztiak</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="113" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu bilaketa-panela (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="154" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Erabili koma bereizle gisa</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="157" />
             <source>Filter by IP</source>
-            <translation type="unfinished" />
+            <translation>Iragazi IParen arabera</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="208" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Lerroak:</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="228" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Garbitu orain</translation>
         </message>
     </context>
     <context>
@@ -7171,12 +7221,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="41" />
             <source>Expand all</source>
-            <translation type="unfinished" />
+            <translation>Zabaldu guztiak</translation>
         </message>
         <message>
             <location filename="../ui/UIDownloadQueue.ui" line="54" />
             <source>Collapse all</source>
-            <translation type="unfinished" />
+            <translation>Tolestu guztiak</translation>
         </message>
     </context>
     <context>
@@ -7189,12 +7239,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="31" />
             <source>Autoconnect on startup</source>
-            <translation type="unfinished" />
+            <translation>Konektatu automatikoki abiaraztean</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="41" />
             <source>Disable chat</source>
-            <translation type="unfinished" />
+            <translation>Desgaitu txata</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="50" />
@@ -7204,7 +7254,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="57" />
             <source>Favorite hub name.</source>
-            <translation type="unfinished" />
+            <translation>Gogoko hubaren izena.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="64" />
@@ -7214,7 +7264,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="71" />
             <source>IP address or DNS name of hub.</source>
-            <translation type="unfinished" />
+            <translation>Hubaren IP helbidea edo DNS izena.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="78" />
@@ -7224,22 +7274,22 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>Deskribapen hau gogoko huben zerrendan erakutsiko da.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
             <source>Encoding</source>
-            <translation type="unfinished" />
+            <translation>Kodeketa</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="102" />
             <source>Mode</source>
-            <translation type="unfinished" />
+            <translation>Modua</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="110" />
             <source>Default</source>
-            <translation type="unfinished" />
+            <translation>Lehenetsia</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="115" />
@@ -7249,47 +7299,47 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="120" />
             <source>Passive</source>
-            <translation type="unfinished" />
+            <translation>Pasiboa</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="128" />
             <source>Client ID</source>
-            <translation type="unfinished" />
+            <translation>Bezeroaren IDa</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="142" />
             <source>External IP</source>
-            <translation type="unfinished" />
+            <translation>Kanpoko IPa</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="162" />
             <source>Auto update from Internet</source>
-            <translation type="unfinished" />
+            <translation>Eguneratu automatikoki Internetetik</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="180" />
             <source>Minimum search interval (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Bilaketen arteko gutxieneko tartea (segundoak)</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="202" />
             <source>Identification</source>
-            <translation type="unfinished" />
+            <translation>Identifikazioa</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="223" />
             <source>This nickname, or handle, will identify you when you join a hub.</source>
-            <translation type="unfinished" />
+            <translation>Goitizen honek identifikatuko zaitu hub batera sartzean.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="230" />
             <source>If hub requires password, define it here.</source>
-            <translation type="unfinished" />
+            <translation>Hubak pasahitza eskatzen badu, zehaztu hemen.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>Deskribapen hau erabiltzaile-zerrendan erakutsiko da.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7335,7 +7385,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFavoriteUsers.ui" line="41" />
             <source>Auto grant slot to all users</source>
-            <translation type="unfinished" />
+            <translation>Eman erretena automatikoki erabiltzaile guztiei</translation>
         </message>
     </context>
     <context>
@@ -7343,22 +7393,22 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFileHasher.ui" line="29" />
             <source>TTH Calculator</source>
-            <translation type="unfinished" />
+            <translation>TTH kalkulagailua</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="93" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>Fitxategiaren bidea</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu magnet esteka arbelean</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu bilaketa-esteka arbelean</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7368,7 +7418,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFileHasher.ui" line="185" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-elkarrizketa ireki eta fitxategia bilatzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="188" />
@@ -7388,7 +7438,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFileHasher.ui" line="178" />
             <source>Compute</source>
-            <translation type="unfinished" />
+            <translation>Kalkulatu</translation>
         </message>
         <message>
             <source>Close</source>
@@ -7400,7 +7450,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="22" />
             <source>Show</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="30" />
@@ -7415,12 +7465,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="43" />
             <source>Show only completely finished transfers</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi guztiz amaitutako transferentziak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="46" />
             <source>Full only</source>
-            <translation type="unfinished" />
+            <translation>Osoak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="66" />
@@ -7433,12 +7483,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="20" />
             <source>Hash progress</source>
-            <translation type="unfinished" />
+            <translation>Hash kalkuluaren aurrerapena</translation>
         </message>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="125" />
             <source>Close on finish</source>
-            <translation type="unfinished" />
+            <translation>Itxi amaitzean</translation>
         </message>
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="145" />
@@ -7448,7 +7498,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIHashProgressDialog.ui" line="152" />
             <source>Hide</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu</translation>
         </message>
     </context>
     <context>
@@ -7456,37 +7506,37 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/HubFrame.ui" line="142" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Bilatu: </translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="156" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Aurrekoa (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="162" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="169" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Hurrengoa (F3)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="175" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="182" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu guztiak</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="198" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu bilaketa-panela (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="364" />
@@ -7506,12 +7556,12 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Sakatu Shift+Enter lerro anitzeko sarrerarako</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
             <source>Last status message on hub</source>
-            <translation type="unfinished" />
+            <translation>Hubeko azken egoera-mezua</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7552,7 +7602,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIHubManager.ui" line="38" />
             <source>URL</source>
-            <translation type="unfinished" />
+            <translation>URL</translation>
         </message>
         <message>
             <location filename="../ui/UIHubManager.ui" line="43" />
@@ -7570,22 +7620,22 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIIPFilter.ui" line="29" />
             <source>IP Filter</source>
-            <translation type="unfinished" />
+            <translation>IP iragazkia</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="47" />
             <source>Enable IPFilter</source>
-            <translation type="unfinished" />
+            <translation>Gaitu IPFilter</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="54" />
             <source>Export</source>
-            <translation type="unfinished" />
+            <translation>Esportatu</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="61" />
             <source>Import</source>
-            <translation type="unfinished" />
+            <translation>Inportatu</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="99" />
@@ -7595,27 +7645,27 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIIPFilter.ui" line="105" />
             <source>BOTH</source>
-            <translation type="unfinished" />
+            <translation>BIAK</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="112" />
             <source>IN</source>
-            <translation type="unfinished" />
+            <translation>SARRERA</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="119" />
             <source>OUT</source>
-            <translation type="unfinished" />
+            <translation>IRTEERA</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="132" />
             <source>UP</source>
-            <translation type="unfinished" />
+            <translation>GORA</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="139" />
             <source>DOWN</source>
-            <translation type="unfinished" />
+            <translation>BEHERA</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="149" />
@@ -7656,7 +7706,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>Magnet esteken ikustailea</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7666,7 +7716,7 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIMagnet.ui" line="70" />
             <source>Filepath</source>
-            <translation type="unfinished" />
+            <translation>Fitxategiaren bidea</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="80" />
@@ -7676,17 +7726,17 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu magnet esteka arbelean</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiatu bilaketa-esteka arbelean</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-elkarrizketa ireki eta fitxategia bilatzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="174" />
@@ -7697,12 +7747,13 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
             <location filename="../ui/UIMagnet.ui" line="181" />
             <source>Adds magnet to download queue. If autosearch for alternatives is enabled
 in options, file will be downloaded without opening search dialog.</source>
-            <translation type="unfinished" />
+            <translation>Magnet esteka deskarga-ilarara gehitzen du. Aukeretan ordezko iturrien
+bilaketa automatikoa gaituta badago, fitxategia bilaketa-elkarrizketa ireki gabe deskargatuko da.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="185" />
             <source>Add to queue</source>
-            <translation type="unfinished" />
+            <translation>Gehitu ilarara</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="205" />
@@ -7712,7 +7763,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIMagnet.ui" line="214" />
             <source>Remember my choice</source>
-            <translation type="unfinished" />
+            <translation>Gogoratu nire aukera</translation>
         </message>
     </context>
     <context>
@@ -7720,37 +7771,37 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="99" />
             <source>Find:</source>
-            <translation type="unfinished" />
+            <translation>Bilatu:</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="106" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Aurrekoa (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="112" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="119" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Hurrengoa (F3)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="125" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="132" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu bilaketa-panela (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="142" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu guztiak</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="295" />
@@ -7770,17 +7821,17 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Sakatu Shift+Enter lerro anitzeko sarrerarako</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
             <source>Go to hub</source>
-            <translation type="unfinished" />
+            <translation>Joan hubera</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="439" />
             <source>User share</source>
-            <translation type="unfinished" />
+            <translation>Erabiltzailearen partekatzea</translation>
         </message>
         <message>
             <source>Bold</source>
@@ -7816,7 +7867,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Freskatu</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -7860,12 +7911,12 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="32" />
             <source>Quick connect</source>
-            <translation type="unfinished" />
+            <translation>Konexio azkarra</translation>
         </message>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="44" />
             <source>IP address of DNS name of hub you want to connect.</source>
-            <translation type="unfinished" />
+            <translation>Konektatu nahi duzun hubaren IP helbidea edo DNS izena.</translation>
         </message>
     </context>
     <context>
@@ -7873,22 +7924,22 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="21" />
             <source>Do nothing</source>
-            <translation type="unfinished" />
+            <translation>Ez egin ezer</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="26" />
             <source>Ask user</source>
-            <translation type="unfinished" />
+            <translation>Galdetu erabiltzaileari</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="31" />
             <source>Reload it</source>
-            <translation type="unfinished" />
+            <translation>Birkargatu</translation>
         </message>
         <message>
             <location filename="../ui/UIScriptManager.ui" line="39" />
             <source>When script changed</source>
-            <translation type="unfinished" />
+            <translation>Scripta aldatzean</translation>
         </message>
     </context>
     <context>
@@ -7896,7 +7947,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="29" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Zerrenda beltza</translation>
         </message>
         <message>
             <location filename="../ui/UISearchBlacklist.ui" line="93" />
@@ -7914,62 +7965,62 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISecretary.ui" line="73" />
             <source>Find: </source>
-            <translation type="unfinished" />
+            <translation>Bilatu: </translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="87" />
             <source>Previous (Shift+F3)</source>
-            <translation type="unfinished" />
+            <translation>Aurrekoa (Shift+F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="93" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="100" />
             <source>Next (F3)</source>
-            <translation type="unfinished" />
+            <translation>Hurrengoa (F3)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="106" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="113" />
             <source>Highlight all</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu guztiak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="129" />
             <source>Hide search panel (Ctrl+F)</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu bilaketa-panela (Ctrl+F)</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="219" />
             <source>Magnet links</source>
-            <translation type="unfinished" />
+            <translation>Magnet estekak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="199" />
             <source>Search links</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-estekak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="209" />
             <source>Public chat</source>
-            <translation type="unfinished" />
+            <translation>Txat publikoa</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="179" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>Egoera-mezuak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="169" />
             <source>BitTorrent links</source>
-            <translation type="unfinished" />
+            <translation>BitTorrent estekak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="189" />
@@ -7979,33 +8030,33 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISecretary.ui" line="159" />
             <source>Filter duplicates</source>
-            <translation type="unfinished" />
+            <translation>Iragazi bikoiztuak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="233" />
             <location filename="../ui/UISecretary.ui" line="246" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Erabili koma bereizle gisa</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="236" />
             <source>Additional keywords</source>
-            <translation type="unfinished" />
+            <translation>Gako-hitz gehigarriak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="249" />
             <source>Filter hubs by IP</source>
-            <translation type="unfinished" />
+            <translation>Iragazi hubak IParen arabera</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="277" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Lerroak:</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="297" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Garbitu orain</translation>
         </message>
     </context>
     <context>
@@ -8013,7 +8064,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettings.ui" line="14" />
             <source>Settings</source>
-            <translation type="unfinished" />
+            <translation>Ezarpenak</translation>
         </message>
     </context>
     <context>
@@ -8049,12 +8100,12 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="33" />
             <source>Auto detect connection</source>
-            <translation type="unfinished" />
+            <translation>Detektatu konexioa automatikoki</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="40" />
             <source>Incoming connections</source>
-            <translation type="unfinished" />
+            <translation>Sarrerako konexioak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="73" />
@@ -8064,12 +8115,17 @@ If your computer is not behind a router all you have to do is to choose
 this option and usually you don't need to alter anything more in the
 connection settings.
 However, if you have a software firewall installed, you may need further configuration in the firewall to allow Internet access for EiskaltDC++.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau ordenagailua zuzenean Internetera konektatuta badago.
+Ez hautatu modu hau bideratzailea edo kanpoko suebakia baduzu.
+Ordenagailua bideratzaile baten atzean ez badago, aukera hau hautatu
+besterik ez duzu egin behar; normalean ez da konexio-ezarpenetan
+beste ezer aldatu behar.
+Hala ere, software bidezko suebakia instalatuta baduzu, agian suebakia gehiago konfiguratu beharko duzu EiskaltDC++ programari Interneterako sarbidea emateko.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="81" />
             <source>Active mode</source>
-            <translation type="unfinished" />
+            <translation>Modu aktiboa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="91" />
@@ -8078,12 +8134,16 @@ the TCP, UDP and TLS port forwarding on your own.
 You will need to specify the external IP address of your router using
 the setting below if you want downloads to work properly.
 Use this mode only if the previous ones are not options for you.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau suebaki (bideratzaile) baten atzean bazaude eta
+TCP, UDP eta TLS ataken birbidaltzea zeuk konfiguratuko baduzu.
+Deskargek behar bezala funtzionatzeko, bideratzailearen kanpoko
+IP helbidea zehaztu beharko duzu beheko ezarpenean.
+Erabili modu hau aurrekoak erabilgarri ez badituzu soilik.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="98" />
             <source>Firewall with port forwarding</source>
-            <translation type="unfinished" />
+            <translation>Ataka-birbidalketa duen suebakia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="108" />
@@ -8093,12 +8153,17 @@ This mode carries some serious limitations:
   * only 5 results per user will be returned in response to searches;
   * you will not be able to download from other passive users;
   * you may won't be able to search and/or download on certain hubs.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau aurreko moduetako bat ere egokia ez bada. Modu honetan,
+EiskaltDC++ ez da sarrerako konexioak egiten saiatuko, irteerakoak soilik.
+Modu honek muga larriak ditu:
+  * bilaketek gehienez 5 emaitza itzuliko dituzte erabiltzaile bakoitzeko;
+  * ezingo duzu beste erabiltzaile pasiboengandik deskargatu;
+  * agian ezingo duzu zenbait hubetan bilatu eta/edo deskargatu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="116" />
             <source>Passive mode</source>
-            <translation type="unfinished" />
+            <translation>Modu pasiboa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="123" />
@@ -8108,64 +8173,71 @@ Most routers do support UPnP but you may need to enable it
 in the router's configuration page.
 This way EiskaltDC++ will automatically open the ports it needs
 and obtain your external IP address as well.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau programak automatikoki konfiguratzeko UPnP
+estandarra onartzen duen suebaki/bideratzaile baten atzean bazaude.
+Bideratzaile gehienek UPnP onartzen dute, baina agian gaitu beharko
+duzu bideratzailearen konfigurazio-orrian.
+Horrela, EiskaltDC++ programak behar dituen atakak automatikoki irekiko
+ditu eta zure kanpoko IP helbidea ere lortuko du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="131" />
             <source>Firewall with UPnP</source>
-            <translation type="unfinished" />
+            <translation>UPnP duen suebakia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="165" />
             <source>External/WAN IP:</source>
-            <translation type="unfinished" />
+            <translation>Kanpoko/WAN IPa:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>Ez utzi Hub/UPnP/DHTri gainidazten</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
             <source>TCP port</source>
-            <translation type="unfinished" />
+            <translation>TCP ataka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="195" />
             <source>UDP port</source>
-            <translation type="unfinished" />
+            <translation>UDP ataka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="202" />
             <source>TLS port</source>
-            <translation type="unfinished" />
+            <translation>TLS ataka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="262" />
             <source>Bind to address</source>
-            <translation type="unfinished" />
+            <translation>Lotu helbideari</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="272" />
             <source>Bind to interface</source>
-            <translation type="unfinished" />
+            <translation>Lotu interfazeari</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="288" />
             <source>Outgoing connections</source>
-            <translation type="unfinished" />
+            <translation>Irteerako konexioak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="321" />
             <source>Select this mode if you can make unrestricted outbound connections.
 This includes connecting to any IP address on any port.
 Choose this option if unsure.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau irteerako konexioak mugarik gabe egin baditzakezu.
+Horrek edozein IP helbidetara edozein atakatan konektatzea barne hartzen du.
+Zalantzarik baduzu, hautatu aukera hau.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="326" />
             <source>Direct connection</source>
-            <translation type="unfinished" />
+            <translation>Konexio zuzena</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="336" />
@@ -8173,12 +8245,15 @@ Choose this option if unsure.</source>
 a SOCKS proxy. The caveats for Passive mode also apply here.
 SOCKS5 proxies are not the same as HTTP proxies.
 DC++'s SOCKS5 support does not include GSSAPI.</source>
-            <translation type="unfinished" />
+            <translation>Hautatu modu hau irteerako konexioak SOCKS proxy baten bidez egin
+nahi badituzu. Modu pasiboaren mugak hemen ere aplikatzen dira.
+SOCKS5 proxyak ez dira HTTP proxyak bezalakoak.
+DC++ programaren SOCKS5 euskarriak ez du GSSAPI barne hartzen.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="342" />
             <source>SOCKS5</source>
-            <translation type="unfinished" />
+            <translation>SOCKS5</translation>
         </message>
         <message>
             <source>IP</source>
@@ -8219,7 +8294,7 @@ Shadowsocks AEAD zerbitzari bat erabiltzea nahi baduzu.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="418" />
             <source>Port</source>
-            <translation type="unfinished" />
+            <translation>Ataka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="438" />
@@ -8229,7 +8304,7 @@ Shadowsocks AEAD zerbitzari bat erabiltzea nahi baduzu.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="448" />
             <source>Use to resolve hostnames</source>
-            <translation type="unfinished" />
+            <translation>Erabili ostalari-izenak ebazteko</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="455" />
@@ -8246,28 +8321,28 @@ Gaituta dagoenean, hubek M:5 ordez aktibo/pasibo modu arrunta ikusiko dute.</tra
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="487" />
             <source>DynDNS Address:</source>
-            <translation type="unfinished" />
+            <translation>DynDNS helbidea:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="513" />
             <source>When enabled can hang program on exit.</source>
-            <translation type="unfinished" />
+            <translation>Gaituta dagoenean, programa blokeatu dezake irtetean.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="516" />
             <source>Automatically update external IP (restart required)</source>
-            <translation type="unfinished" />
+            <translation>Eguneratu kanpoko IPa automatikoki (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="540" />
             <location filename="../ui/UISettingsConnection.ui" line="555" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>Mugak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="561" />
             <source>Enable Throttle</source>
-            <translation type="unfinished" />
+            <translation>Gaitu abiadura-mugatzailea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="601" />
@@ -8287,27 +8362,27 @@ Gaituta dagoenean, hubek M:5 ordez aktibo/pasibo modu arrunta ikusiko dute.</tra
             <location filename="../ui/UISettingsConnection.ui" line="635" />
             <location filename="../ui/UISettingsConnection.ui" line="780" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>Igoera</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="678" />
             <source>Alternate speed limit at time from </source>
-            <translation type="unfinished" />
+            <translation>Ordezko abiadura-muga ordu honetatik: </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="704" />
             <source>to</source>
-            <translation type="unfinished" />
+            <translation>hona</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="718" />
             <source>hour(s)</source>
-            <translation type="unfinished" />
+            <translation>ordu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="817" />
             <source>Slots</source>
-            <translation type="unfinished" />
+            <translation>Erretenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="860" />
@@ -8317,12 +8392,12 @@ Gaituta dagoenean, hubek M:5 ordez aktibo/pasibo modu arrunta ikusiko dute.</tra
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="887" />
             <source>Reconnect to hub (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Hubera berriz konektatzeko tartea (segundoak)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="910" />
             <source>Type-of-Service (ToS)</source>
-            <translation type="unfinished" />
+            <translation>Zerbitzu mota (ToS)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="926" />
@@ -8338,7 +8413,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Minimal cost&amp;quot;&lt;/span&gt; should be used for &amp;quot;filler data&amp;quot; where slow transmission doesn't matter&lt;/p&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;At most one of these TOS values can be specified. Linux sends &lt;span style=" font-weight:600;"&gt;&amp;quot;Low delay&amp;quot;&lt;/span&gt; datagrams first by default, but the exact behaviour depends on the configured queueing discipline.&lt;span style=" font-weight:600;"&gt; Warning! This option needs superuser privileges!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;Ezarri socket honetatik bidalitako &lt;a href="https://en.wikipedia.org/wiki/IP_packet"&gt;&lt;span style=" text-decoration: underline; color:#0057ae;"&gt;IP pakete&lt;/span&gt;&lt;/a&gt; bakoitzarekin bidaltzen den zerbitzu motaren (TOS) eremua. Sareko paketeei lehentasuna emateko erabiltzen da. TOS byte bat da. TOS bandera estandar batzuk definituta daude: &lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Atzerapen txikia&amp;quot;&lt;/span&gt; trafiko interaktiboaren atzerapenak minimizatzeko&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Emaria&amp;quot;&lt;/span&gt; emaria optimizatzeko&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Fidagarritasuna&amp;quot;&lt;/span&gt; fidagarritasuna optimizatzeko&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Gutxieneko kostua&amp;quot;&lt;/span&gt; transmisio motela axola ez den &amp;quot;betegarri-datuetarako&amp;quot; erabili behar da&lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;TOS balio hauetako bat zehaztu daiteke gehienez. Linuxek lehenespenez &lt;span style=" font-weight:600;"&gt;&amp;quot;Atzerapen txikia&amp;quot;&lt;/span&gt; datagramak bidaltzen ditu lehenik, baina portaera zehatza konfiguratutako ilara-diziplinaren araberakoa da.&lt;span style=" font-weight:600;"&gt; Abisua! Aukera honek supererabiltzailearen pribilegioak behar ditu!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="941" />
@@ -8348,22 +8434,22 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="946" />
             <source>Low delay</source>
-            <translation type="unfinished" />
+            <translation>Atzerapen txikia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="951" />
             <source>Throughput</source>
-            <translation type="unfinished" />
+            <translation>Emaria</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="956" />
             <source>Reliability</source>
-            <translation type="unfinished" />
+            <translation>Fidagarritasuna</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="961" />
             <source>Minimal cost</source>
-            <translation type="unfinished" />
+            <translation>Gutxieneko kostua</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="971" />
@@ -8373,47 +8459,47 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="995" />
             <source>DHT port</source>
-            <translation type="unfinished" />
+            <translation>DHT ataka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT abiarazteko URLak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Bereizi URLak puntu eta komaz</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
             <source>TLS settings</source>
-            <translation type="unfinished" />
+            <translation>TLS ezarpenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1041" />
             <source>Disable TLS</source>
-            <translation type="unfinished" />
+            <translation>Desgaitu TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1046" />
             <source>Allow TLS</source>
-            <translation type="unfinished" />
+            <translation>Baimendu TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1051" />
             <source>Require TLS</source>
-            <translation type="unfinished" />
+            <translation>Behartu TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1059" />
             <source>Allow untrusted certificate for hubs</source>
-            <translation type="unfinished" />
+            <translation>Baimendu hubentzako ziurtagiri ez-fidagarriak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1066" />
             <source>Allow untrusted certificate for clients</source>
-            <translation type="unfinished" />
+            <translation>Baimendu bezeroentzako ziurtagiri ez-fidagarriak</translation>
         </message>
         <message>
             <source>Do not advertise DHT to hubs</source>
@@ -8439,17 +8525,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="60" />
             <source>Download directory</source>
-            <translation type="unfinished" />
+            <translation>Deskargen direktorioa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="67" />
             <source>Use unfinished downloads directory</source>
-            <translation type="unfinished" />
+            <translation>Erabili amaitu gabeko deskargen direktorioa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="106" />
             <source>Limits</source>
-            <translation type="unfinished" />
+            <translation>Mugak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="124" />
@@ -8457,55 +8543,61 @@ p, li { white-space: pre-wrap; }
 designed to prevent new downloads if your existing downloads
 exceed a specific threshold. It's measured in kibibytes per second,
 and a value of zero will disable this limit.</source>
-            <translation type="unfinished" />
+            <translation>Aldi bereko deskargak mugatzeko beste metodo bat da hau:
+deskarga berriak eragozten ditu martxan dauden deskargek
+atalase jakin bat gainditzen badute. Segundoko kibibytetan neurtzen da,
+eta zero balioak muga hau desgaitzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="137" />
             <source>This limits the number of simultaneous downloads.
 A value of 0 means no limit.</source>
-            <translation type="unfinished" />
+            <translation>Aldi bereko deskargen kopurua mugatzen du.
+0 balioak mugarik ez dagoela esan nahi du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="151" />
             <source>Maximum simultaneous downloads (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Aldi bereko gehieneko deskargak (0 = mugagabea)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="167" />
             <source>No new downloads if speed exceeds (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Ez hasi deskarga berririk abiadurak hau gainditzen badu (KiB/s, 0 = mugagabea)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="177" />
             <source>Note: Because of changing download speeds, this is not 100% accurate</source>
-            <translation type="unfinished" />
+            <translation>Oharra: deskarga-abiadura aldakorra denez, hau ez da 100% zehatza</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="190" />
             <source>Public Hub lists</source>
-            <translation type="unfinished" />
+            <translation>Hub publikoen zerrendak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="208" />
             <source>This HTTP proxy will only be used to request
 the Public Hub List specified above.
 It's not used for uploads, downloads, or connecting to a hub.</source>
-            <translation type="unfinished" />
+            <translation>HTTP proxy hau goian zehaztutako
+hub publikoen zerrenda eskatzeko soilik erabiliko da.
+Ez da igoeretarako, deskargetarako edo hubetara konektatzeko erabiltzen.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="217" />
             <source>Http proxy (hub list only)</source>
-            <translation type="unfinished" />
+            <translation>HTTP proxya (huben zerrendarako soilik)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="224" />
             <source>Configure Public Hub Lists</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu hub publikoen zerrendak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="248" />
             <source>Download to</source>
-            <translation type="unfinished" />
+            <translation>Deskargatu hona</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="291" />
@@ -8515,7 +8607,7 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="296" />
             <source>Alias</source>
-            <translation type="unfinished" />
+            <translation>Aliasa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="336" />
@@ -8525,73 +8617,79 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="342" />
             <source>Auto-priority settings</source>
-            <translation type="unfinished" />
+            <translation>Lehentasun automatikoaren ezarpenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="360" />
             <source>Files with the same or under the entered size
 will be set to Highest as priority. (default: 64 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Sartutako tamainako edo txikiagoko fitxategiei
+Lehentasun gorena ezarriko zaie. (lehenetsia: 64 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Sartutako tamainako edo txikiagoko fitxategiei, Lehentasun goreneko
+gehieneko tamaina gainditzen badute, Lehentasun handia ezarriko zaie. (lehenetsia: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Sartutako tamainako edo txikiagoko fitxategiei, Lehentasun goreneko eta
+handiko gehieneko tamaina gainditzen badute, Lehentasun normala ezarriko zaie. (lehenetsia: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Sartutako tamainako edo txikiagoko fitxategiei, Lehentasun goreneko, handiko
+eta normaleko gehieneko tamaina gainditzen badute, Lehentasun txikia ezarriko zaie. (lehenetsia: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
             <source>Highest priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Lehentasun goreneko gehieneko tamaina (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="426" />
             <source>High priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Lehentasun handiko gehieneko tamaina (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="442" />
             <source>Normal priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Lehentasun normaleko gehieneko tamaina (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="458" />
             <source>Low priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Lehentasun txikiko gehieneko tamaina (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
             <source>Auto-drop settings</source>
-            <translation type="unfinished" />
+            <translation>Baztertze automatikoaren ezarpenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi baten deskarga-abiadura sartutako baliotik beherakoa bada,
+iturria baztertuko da. (lehenetsia: 1024 B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
             <source>Check every x second(s) if the source is slow. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Egiaztatu x segundoz behin iturria motela den. (lehenetsia: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>Deskarga hasi zenetik iturri bat baztertu ahal izan arte
+igarotako denbora (segundotan). (lehenetsia: 15 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8599,82 +8697,91 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Fitxategiaren azken datu-zatia jaso zenetik
+igaro daitekeen gehieneko denbora da. Abiadura-neurketaren
+zehaztasuna hobetzeko eta uneko jarduerarik ezagatik soilik
+deskonektatuko liratekeen iturriak baztertzea
+saihesteko balio du. (lehenetsia: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>Edozein iturri baztertu aurretik egon behar den
+gutxieneko iturri kopurua. (lehenetsia: 1)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Iturriak baztertzeko gutxieneko fitxategi-tamaina (KiBtan). (lehenetsia: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>Baztertu abiadura honetatik beherako iturriak (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
             <source>Check every (s)</source>
-            <translation type="unfinished" />
+            <translation>Egiaztatzeko tartea (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>Gutxieneko denbora igarota (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
             <source>Max inactivity (s)</source>
-            <translation type="unfinished" />
+            <translation>Jarduerarik gabeko gehieneko denbora (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>Lineako gutxieneko iturriak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
             <source>Min filesize (KiB)</source>
-            <translation type="unfinished" />
+            <translation>Gutxieneko fitxategi-tamaina (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="686" />
             <source>Other options</source>
-            <translation type="unfinished" />
+            <translation>Beste aukerak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="711" />
             <source>Set lowest priority for newly added files larger than low priority size</source>
-            <translation type="unfinished" />
+            <translation>Ezarri lehentasun txikiena gehitutako fitxategi berriei lehentasun txikiko tamaina gainditzen badute</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="714" />
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>Gaituta dagoenean, lehentasun txikiko gehieneko tamaina gainditzen duten
+fitxategiei Lehentasun txikiena ezartzen zaie.
+Desgaituta badago, Lehentasun normala ezarriko zaie.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>Baztertu automatikoki ilarako elementu guztien iturri motelak (fitxategi-zerrendak izan ezik)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Aukera honek ilarako elementu guztien iturri motelak kentzen ditu (fitxategi-zerrendenak izan ezik).
+Baztertze automatikoa gaitzeko, aktibatu "Baztertu automatikoki ilarako elementu guztien iturri motelak"
+edo "Kendu fitxategi-zerrenda motelak" (edo biak).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
             <source>Remove slow filelists</source>
-            <translation type="unfinished" />
+            <translation>Kendu fitxategi-zerrenda motelak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="746" />
@@ -8682,23 +8789,27 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>Aukera hau gaituta dagoenean, EiskaltDC++ programak motelegitzat
+jotako fitxategi-zerrendak ezabatuko ditu.
+Baztertze automatikoa gaitzeko, aktibatu "Baztertu automatikoki ilarako elementu guztien iturri motelak"
+edo "Kendu fitxategi-zerrenda motelak" (edo biak).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>Ez kendu iturria automatikoki baztertzean, deskonektatu soilik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>Aukera hau gaituta dagoenean, iturriak deskonektatuko dira soilik,
+baina ez dira ilaratik kenduko.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />
             <source>Automatically search for alternative download locations</source>
-            <translation type="unfinished" />
+            <translation>Bilatu automatikoki deskargatzeko ordezko kokalekuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="778" />
@@ -8708,12 +8819,17 @@ The autosearch will find exact matches by searching via hash.
 The drawback is that it may won't find much more sources
 and will prevent manual searches on hubs where
 a predefined search interval rule is in effect.</source>
-            <translation type="unfinished" />
+            <translation>Minutu gutxiro, bezeroak zure deskarga-ilarako fitxategiak bilatuko ditu
+deskargatzeko kokaleku gehiago aurkitzeko (erabiltzaile/iturri gehiago).
+Bilaketa automatikoak bat-etortze zehatzak aurkituko ditu hashen bidez.
+Eragozpena da agian ez dituela askoz iturri gehiago aurkituko
+eta eskuzko bilaketak eragotziko dituela aurrez zehaztutako
+bilaketa-tartearen araua indarrean duten hubetan.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="794" />
             <source>Automatically match queue for auto search hits</source>
-            <translation type="unfinished" />
+            <translation>Parekatu ilara automatikoki bilaketa automatikoaren emaitzekin</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="797" />
@@ -8725,12 +8841,19 @@ for many more files you're downloading. Enable if unsure.
 The drawbacks are that it might add slower sources, possibly
 increasing the time needed to complete a download,
 and that you'll download a lot of file lists.</source>
-            <translation type="unfinished" />
+            <translation>Gaitu erabiltzailearen zerrenda automatikoki deskargatzeko eta zure
+deskarga-ilarako fitxategien iturri gisa parekatzeko, deskargatzen ari zaren
+fitxategietako baten iturri gisa aurkitu ondoren.
+Fitxategiak multzoka deskargatzen badituzu, erabiltzaile hori ziurrenik
+deskargatzen ari zaren beste fitxategi askoren iturri ere izango da. Zalantzarik baduzu, gaitu.
+Eragozpenak dira iturri motelagoak gehi ditzakeela, deskarga
+amaitzeko behar den denbora luzatuz,
+eta fitxategi-zerrenda asko deskargatuko dituzula.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="815" />
             <source>Skip zero-byte files</source>
-            <translation type="unfinished" />
+            <translation>Saltatu zero byteko fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="818" />
@@ -8738,39 +8861,44 @@ and that you'll download a lot of file lists.</source>
 try to download will be silently skipped.
 Sometimes empty files contain information through their naming.
 However every file, even an empty one, will consume some drive space.</source>
-            <translation type="unfinished" />
+            <translation>Aukera hau gaituta dagoenean, deskargatzen saiatzen zaren zero byteko
+fitxategiak isilean saltatuko dira.
+Batzuetan fitxategi hutsek informazioa dute izenean.
+Hala ere, fitxategi bakoitzak, hutsik egonda ere, diskoko leku pixka bat hartzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="832" />
             <source>Don't download files already in share</source>
-            <translation type="unfinished" />
+            <translation>Ez deskargatu dagoeneko partekatutako fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="835" />
             <source>This option will stop you from downloading files
 which already exist in one of your shared directories.</source>
-            <translation type="unfinished" />
+            <translation>Aukera honek partekatutako direktorioren batean
+dagoeneko dauden fitxategiak deskargatzea eragotziko dizu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="847" />
             <source>Don't download files already in the queue</source>
-            <translation type="unfinished" />
+            <translation>Ez deskargatu dagoeneko ilaran dauden fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="850" />
             <source>This option will stop you from downloading files
 which already exist in your queue.</source>
-            <translation type="unfinished" />
+            <translation>Aukera honek zure ilaran dagoeneko dauden
+fitxategiak deskargatzea eragotziko dizu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="862" />
             <source>SFV Check</source>
-            <translation type="unfinished" />
+            <translation>SFV egiaztapena</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="873" />
             <source>Keep downloaded filelists</source>
-            <translation type="unfinished" />
+            <translation>Mantendu deskargatutako fitxategi-zerrendak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="876" />
@@ -8783,12 +8911,20 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Gaitu aukera hau deskargatutako fitxategi-zerrendak
+amaitu ondoren deskarga-ilaran mantendu nahi badituzu.
+Deskargatu ondoren, ilarako elementuek 'Amaituta' egoera izango dute
+eta sarrera amaitu horiek geroago nahi duzunean ezaba ditzakezu.
+Kontuan izan deskargatutako fitxategiak helmugatik fisikoki
+mugitzen edo ezabatzen badituzu, ez direla automatikoki ezabatuko
+ilarako dagozkien sarrera amaituak.
+Funtzio hau desgaitzeak ere ez ditu ilarako elementu amaituak
+kenduko; eskuz egin behar duzu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
             <source>Keep downloaded files</source>
-            <translation type="unfinished" />
+            <translation>Mantendu deskargatutako fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="895" />
@@ -8804,17 +8940,28 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Gaitu aukera hau deskargatutako fitxategiak eta karpetak
+amaitu ondoren deskarga-ilaran mantendu nahi badituzu.
+Deskargatu ondoren, ilarako elementuek 'Amaituta' egoera izango dute
+eta sarrera amaitu horiek geroago nahi duzunean ezaba ditzakezu.
+Funtzio honekin dagoeneko deskargatutako fitxategien
+jarraipena egin dezakezu deskarga-ilaran bertan,
+Amaitutako deskargak leihoa begiratu beharrik gabe.
+Kontuan izan deskargatutako fitxategiak helmugatik fisikoki
+mugitzen edo ezabatzen badituzu, ez direla automatikoki ezabatuko
+ilarako dagozkien sarrera amaituak.
+Funtzio hau desgaitzeak ere ez ditu ilarako elementu amaituak
+kenduko; eskuz egin behar duzu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="914" />
             <source>Compressed transfers</source>
-            <translation type="unfinished" />
+            <translation>Transferentzia konprimatuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="925" />
             <source>Segmented downloads</source>
-            <translation type="unfinished" />
+            <translation>Deskarga segmentatuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="940" />
@@ -8824,22 +8971,22 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="961" />
             <source>Interval for auto search alternates (minutes)</source>
-            <translation type="unfinished" />
+            <translation>Ordezko iturrien bilaketa automatikoaren tartea (minutuak)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="984" />
             <source>Segment size (in MB, 0 = auto segment size)</source>
-            <translation type="unfinished" />
+            <translation>Segmentuaren tamaina (MBtan, 0 = tamaina automatikoa)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1001" />
             <source>Allow simultaneous uploads by one user from few NMDC hubs</source>
-            <translation type="unfinished" />
+            <translation>Baimendu erabiltzaile berari aldi berean igotzea hainbat NMDC huben bidez</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="1008" />
             <source>Allow simultaneous uploads by one IP</source>
-            <translation type="unfinished" />
+            <translation>Baimendu IP berera aldi berean igotzea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="319" />
@@ -8857,12 +9004,12 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="24" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Oinarrizkoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="30" />
             <source>Language file</source>
-            <translation type="unfinished" />
+            <translation>Hizkuntza-fitxategia</translation>
         </message>
         <message>
             <source>Change</source>
@@ -8871,37 +9018,37 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="61" />
             <source>Remember window position on exit</source>
-            <translation type="unfinished" />
+            <translation>Gogoratu leihoaren kokapena irtetean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="71" />
             <source>Always hide window to system tray at startup</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu beti leihoa sistemaren erretiluan abiaraztean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="78" />
             <source>Always show window at startup</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi beti leihoa abiaraztean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="124" />
             <source>Don't show icons in menus (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Ez erakutsi ikonorik menuetan (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="132" />
             <source>Use default ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Erabili tresna-barra lehenetsia (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="137" />
             <source>Use multi-line ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Erabili lerro anitzeko tresna-barra (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="142" />
             <source>Use SideBar instead of ToolBar (need restart)</source>
-            <translation type="unfinished" />
+            <translation>Erabili alboko barra tresna-barraren ordez (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="164" />
@@ -8911,106 +9058,108 @@ from the queue either, you must do that manually.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="170" />
             <source>Show joins</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi sarrerak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="180" />
             <source>Show joins only for favorite users</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi gogoko erabiltzaileen sarrerak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="187" />
             <source>Show hidden users</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi ezkutuko erabiltzaileak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="194" />
             <source>Ignore private messages from Hub</source>
-            <translation type="unfinished" />
+            <translation>Ez ikusi egin hubaren mezu pribatuei</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="201" />
             <source>Ignore private messages from Bot</source>
-            <translation type="unfinished" />
+            <translation>Ez ikusi egin botaren mezu pribatuei</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="208" />
             <source>Redirect messages from Bot to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Birbideratu botaren mezuak txat nagusira</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="215" />
             <source>Redirect new personal messages to the main chat</source>
-            <translation type="unfinished" />
+            <translation>Birbideratu mezu pertsonal berriak txat nagusira</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="222" />
             <source>Do not change focus on new incoming private messages</source>
-            <translation type="unfinished" />
+            <translation>Ez aldatu fokua mezu pribatu berriak jasotzean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="232" />
             <source>Use separator for unread messages in the chat</source>
-            <translation type="unfinished" />
+            <translation>Erabili bereizlea txatean irakurri gabeko mezuetarako</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="239" />
             <source>Filter kick-messages from the chat</source>
-            <translation type="unfinished" />
+            <translation>Iragazi kanporatze-mezuak txatetik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="246" />
             <source>Use Ctrl+Enter to send messages</source>
-            <translation type="unfinished" />
+            <translation>Erabili Ctrl+Enter mezuak bidaltzeko</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="256" />
             <source>Enable emoticons</source>
-            <translation type="unfinished" />
+            <translation>Gaitu aurpegierak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="263" />
             <source>If checked, you'll see emoticons even in the middle of words.
 If unchecked, you'll see emoticons only if they are isolated
 from other words by spaces.</source>
-            <translation type="unfinished" />
+            <translation>Markatuta badago, aurpegierak hitzen erdian ere ikusiko dituzu.
+Markatu gabe badago, beste hitzetatik zuriunez
+bereizita daudenean soilik ikusiko dituzu aurpegierak.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="268" />
             <source>Force emoticon parsing</source>
-            <translation type="unfinished" />
+            <translation>Behartu aurpegieren analisia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="275" />
             <source>Use emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Erabili aurpegieren panela</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="282" />
             <source>Autohide emoticons panel</source>
-            <translation type="unfinished" />
+            <translation>Ezkutatu automatikoki aurpegieren panela</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="303" />
             <source>Chat (extended)</source>
-            <translation type="unfinished" />
+            <translation>Txata (hedatua)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="317" />
             <source>Double click action</source>
-            <translation type="unfinished" />
+            <translation>Klik bikoitzaren ekintza</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="331" />
             <location filename="../ui/UISettingsGUI.ui" line="350" />
             <source>Insert nick into input widget</source>
-            <translation type="unfinished" />
+            <translation>Txertatu goitizena sarrerako trepetan</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="336" />
             <location filename="../ui/UISettingsGUI.ui" line="355" />
             <source>Get file list</source>
-            <translation type="unfinished" />
+            <translation>Lortu fitxategi-zerrenda</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="341" />
@@ -9021,62 +9170,62 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="377" />
             <source>Application unit base</source>
-            <translation type="unfinished" />
+            <translation>Aplikazioaren unitate-oinarria</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="421" />
             <source>Timestamp</source>
-            <translation type="unfinished" />
+            <translation>Denbora-marka</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="440" />
             <source>Middle click action</source>
-            <translation type="unfinished" />
+            <translation>Erdiko klikaren ekintza</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi kibibyte (KiB) edo kilobyte (KB), etab.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Leihoaren portaera</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Minimizatu egoera-ikonora ixteko botoian klik egitean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Egoera-ikonoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Erabili koloretako egoera-ikonoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Erabili egoera-ikono monokromoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>Metrikoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
             <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use AM/PM display. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use am/pm display. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Adierazpen hauek erabil daitezke ordurako:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Adierazpena&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Emaitza&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ordua hasierako zerorik gabe (0tik 23ra edo 1etik 12ra AM/PM bistaratzean)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ordua hasierako zeroarekin (00tik 23ra edo 01etik 12ra AM/PM bistaratzean)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ordua hasierako zerorik gabe (0tik 23ra, AM/PM bistaratzean ere)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ordua hasierako zeroarekin (00tik 23ra, AM/PM bistaratzean ere)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;minutua hasierako zerorik gabe (0tik 59ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;minutua hasierako zeroarekin (00tik 59ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;segundoa hasierako zerorik gabe (0tik 59ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;segundoa hasierako zeroarekin (00tik 59ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;milisegundoak hasierako zerorik gabe (0tik 999ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;milisegundoak hasierako zeroekin (000tik 999ra)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP edo A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;erabili AM/PM bistaratzea. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; adierazpena &amp;quot;AM&amp;quot; edo &amp;quot;PM&amp;quot; bihurtuko da.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap edo a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;erabili am/pm bistaratzea. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; adierazpena &amp;quot;am&amp;quot; edo &amp;quot;pm&amp;quot; bihurtuko da.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ordu-eremua (adibidez &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
             <source>Default action with magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet esteken ekintza lehenetsia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="473" />
@@ -9097,43 +9246,44 @@ from other words by spaces.</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="508" />
             <source>Remember outgoing messages (0 = don't remember)</source>
-            <translation type="unfinished" />
+            <translation>Gogoratu bidalitako mezuak (0 = ez gogoratu)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="537" />
             <source>Maximum paragraphs</source>
-            <translation type="unfinished" />
+            <translation>Gehieneko paragrafoak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="563" />
             <source>Separator in chat</source>
-            <translation type="unfinished" />
+            <translation>Txateko bereizlea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="592" />
             <source>Highlight favorite users in user list</source>
-            <translation type="unfinished" />
+            <translation>Nabarmendu gogoko erabiltzaileak erabiltzaile-zerrendan</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="599" />
             <source>Depending on hub configuration: information about
 them is usually available only to operators</source>
-            <translation type="unfinished" />
+            <translation>Hubaren konfigurazioaren araberakoa: haiei buruzko informazioa
+normalean operadoreentzat soilik dago eskuragarri</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="603" />
             <source>Show ip-addresses of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi erabiltzaileen IP helbideak txatean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="610" />
             <source>Show country of users in chat</source>
-            <translation type="unfinished" />
+            <translation>Erakutsi erabiltzaileen herrialdea txatean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="617" />
             <source>Parse BBCode</source>
-            <translation type="unfinished" />
+            <translation>Analizatu BBCode</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="638" />
@@ -9143,12 +9293,12 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="644" />
             <source>Text colors in chat</source>
-            <translation type="unfinished" />
+            <translation>Testu-koloreak txatean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="666" />
             <source>Highlighting of search results in the chat</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-emaitzak nabarmentzea txatean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="675" />
@@ -9160,37 +9310,37 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsGUI.ui" line="695" />
             <location filename="../ui/UISettingsGUI.ui" line="750" />
             <source>Transparency</source>
-            <translation type="unfinished" />
+            <translation>Gardentasuna</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="724" />
             <source>Highlighting of already shared files</source>
-            <translation type="unfinished" />
+            <translation>Dagoeneko partekatutako fitxategiak nabarmentzea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="779" />
             <source>Transfer colors</source>
-            <translation type="unfinished" />
+            <translation>Transferentzien koloreak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="802" />
             <source>Upload</source>
-            <translation type="unfinished" />
+            <translation>Igoera</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="829" />
             <source>Reset</source>
-            <translation type="unfinished" />
+            <translation>Berrezarri</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="841" />
             <source>Change background color in the chat</source>
-            <translation type="unfinished" />
+            <translation>Aldatu txataren atzeko planoaren kolorea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
-            <translation type="unfinished" />
+            <translation>Letra-tipoak</translation>
         </message>
     </context>
     <context>
@@ -9198,33 +9348,33 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Garbitu bilaketa-historia programatik irtetean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Garbitu deskarga-direktorioen historia programatik irtetean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
             <location filename="../ui/UISettingsHistory.ui" line="113" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Garbitu orain</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Gordetzeko bilaketa-historiako elementu kopurua:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Gordetzeko deskarga-direktorioen historiako elementu kopurua:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>Gogoratu TTH bilaketen esaldiak</translation>
         </message>
     </context>
     <context>
@@ -9232,12 +9382,12 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="477" />
             <source>Log directory</source>
-            <translation type="unfinished" />
+            <translation>Erregistroen direktorioa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="495" />
             <source>All logs generated by EiskaltDC++ will be put in this subdirectory.</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ programak sortutako erregistro guztiak azpidirektorio honetan gordeko dira.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="20" />
@@ -9270,7 +9420,7 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="64" />
             <source>Main chat</source>
-            <translation type="unfinished" />
+            <translation>Txat nagusia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="108" />
@@ -9280,27 +9430,27 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="152" />
             <source>Uploads</source>
-            <translation type="unfinished" />
+            <translation>Igoerak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="243" />
             <source>Search Spy</source>
-            <translation type="unfinished" />
+            <translation>Bilaketa-espioia</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Arazketa-kontsola</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
             <source>System messages</source>
-            <translation type="unfinished" />
+            <translation>Sistemaren mezuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="372" />
             <source>Status messages</source>
-            <translation type="unfinished" />
+            <translation>Egoera-mezuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="385" />
@@ -9309,37 +9459,41 @@ them is usually available only to operators</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Laguntza&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
             <source>Auto search alternates</source>
-            <translation type="unfinished" />
+            <translation>Ordezko iturrien bilaketa automatikoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Ustekabeko itxieren diagnostiko-erregistroa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Bolumen txikiko diagnostiko-erregistro iraunkorra mantentzen du, Qt abisuekin, bizirik dagoela adierazteko markekin, itzaltze-markekin eta seinale larrien markekin. Erabilgarria da aplikazioa denbora luzez martxan egon ondoren ixten denean.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Goiko erregistro-direktorioan idazten du. Ustekabeko itxiera edo behartutako amaiera aurreko azken bizi-marka gordetzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
             <source>Own filelist uploads</source>
-            <translation type="unfinished" />
+            <translation>Norberaren fitxategi-zerrendaren igoerak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="196" />
             <source>Finished Downloads</source>
-            <translation type="unfinished" />
+            <translation>Amaitutako deskargak</translation>
         </message>
         <message>
             <source>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
@@ -9364,18 +9518,18 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="30" />
             <source>Ask confirm before exit</source>
-            <translation type="unfinished" />
+            <translation>Eskatu berrespena irten aurretik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="40" />
             <source>Enable notifications</source>
-            <translation type="unfinished" />
+            <translation>Gaitu jakinarazpenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="49" />
             <location filename="../ui/UISettingsNotification.ui" line="201" />
             <source>Your nick is mentioned in main chat</source>
-            <translation type="unfinished" />
+            <translation>Zure goitizena txat nagusian aipatzen da</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="56" />
@@ -9387,57 +9541,57 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="63" />
             <location filename="../ui/UISettingsNotification.ui" line="290" />
             <source>Transfer done</source>
-            <translation type="unfinished" />
+            <translation>Transferentzia amaituta</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzailearen sarrera/irteera</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
             <source>Allow other types of notifications</source>
-            <translation type="unfinished" />
+            <translation>Baimendu beste jakinarazpen motak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="91" />
             <source>Enable notifications with not active main window</source>
-            <translation type="unfinished" />
+            <translation>Gaitu jakinarazpenak leiho nagusia aktibo ez dagoenean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="98" />
             <source>Enable notifications with active main window</source>
-            <translation type="unfinished" />
+            <translation>Gaitu jakinarazpenak leiho nagusia aktibo dagoenean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="105" />
             <source>Change icon when main window is visible</source>
-            <translation type="unfinished" />
+            <translation>Aldatu ikonoa leiho nagusia ikusgai dagoenean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="133" />
             <source>Notification module</source>
-            <translation type="unfinished" />
+            <translation>Jakinarazpen-modulua</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="153" />
             <source>Default (Qt)</source>
-            <translation type="unfinished" />
+            <translation>Lehenetsia (Qt)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="158" />
             <source>D-Bus</source>
-            <translation type="unfinished" />
+            <translation>D-Bus</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="186" />
             <source>Sound</source>
-            <translation type="unfinished" />
+            <translation>Soinua</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="192" />
             <source>Enable sounds</source>
-            <translation type="unfinished" />
+            <translation>Gaitu soinuak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="225" />
@@ -9445,29 +9599,31 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="314" />
             <location filename="../ui/UISettingsNotification.ui" line="355" />
             <source>Test</source>
-            <translation type="unfinished" />
+            <translation>Probatu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>Erreproduzitu soinua mezu pribatuen leihoa aktibo dagoenean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
             <source>Favorite user event</source>
-            <translation type="unfinished" />
+            <translation>Gogoko erabiltzailearen gertaera</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="388" />
             <source>Use external command</source>
-            <translation type="unfinished" />
+            <translation>Erabili kanpoko komandoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="409" />
             <source>If your sound files' format is unsupported by Qt, you can define
 custom media player here to play them.
 For example: /usr/bin/mplayer</source>
-            <translation type="unfinished" />
+            <translation>Qt-k zure soinu-fitxategien formatua onartzen ez badu, hemen
+multimedia-erreproduzitzaile pertsonalizatua zehaztu dezakezu haiek erreproduzitzeko.
+Adibidez: /usr/bin/mplayer</translation>
         </message>
     </context>
     <context>
@@ -9476,13 +9632,15 @@ For example: /usr/bin/mplayer</source>
             <location filename="../ui/UISettingsPersonal.ui" line="62" />
             <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Deskribapen hau erabiltzaile-zerrendan erakutsiko da.
+Hub bakoitzerako gainidatz daiteke Gogoko hubaren propietateetan.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="70" />
             <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan moduan bazaude, mezu hau mezu pribatu bat
+bidaltzen dizun orori bidaliko zaio.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="78" />
@@ -9493,12 +9651,13 @@ who sends private message to you.</source>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Goitizen honek identifikatuko zaitu hub batera sartzean.
+Hub bakoitzerako gainidatz daiteke Gogoko hubaren propietateetan.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
             <source>E-Mail</source>
-            <translation type="unfinished" />
+            <translation>Posta elektronikoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="100" />
@@ -9508,17 +9667,17 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="107" />
             <source>Away message</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan egotearen mezua</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="114" />
             <source>Auto away interval (min)</source>
-            <translation type="unfinished" />
+            <translation>Kanpoan modu automatikorako tartea (min)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="134" />
             <source>This field is for sharing your email address, if you wish it.</source>
-            <translation type="unfinished" />
+            <translation>Eremu hau zure helbide elektronikoa partekatzeko da, nahi baduzu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="184" />
@@ -9531,12 +9690,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Goitibeherako zerrenda honek ohiko igoera-abiadurak ditu (Mbit/s-tan);
+aukeratu zure abiaduratik hurbilen dagoena.
+Ez sartu deskarga-abiadura; ezarpen honek beste erabiltzaileentzat
+nolako abiadurako iturria izan zaitezkeen neurtzen du.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9555,7 +9717,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="264" />
             <source>Default hub encoding</source>
-            <translation type="unfinished" />
+            <translation>Huben kodeketa lehenetsia</translation>
         </message>
     </context>
     <context>
@@ -9563,12 +9725,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="27" />
             <source>Basic</source>
-            <translation type="unfinished" />
+            <translation>Oinarrizkoa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="33" />
             <source>View share in simple mode</source>
-            <translation type="unfinished" />
+            <translation>Ikusi partekatutakoa modu sinplean</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="65" />
@@ -9588,32 +9750,32 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="98" />
             <source>Total shared: %1</source>
-            <translation type="unfinished" />
+            <translation>Partekatuta guztira: %1</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Gehitu</translation>
+            <translation>Gehitu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">Ezabatu</translation>
+            <translation>Ezabatu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
             <source>Exceptions</source>
-            <translation type="unfinished" />
+            <translation>Salbuespenak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="149" />
             <source>Don't share files and folders containing:</source>
-            <translation type="unfinished" />
+            <translation>Ez partekatu hau duten fitxategiak eta karpetak:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="156" />
             <source>Here you can specify templates for files you don't want to share. </source>
-            <translation type="unfinished" />
+            <translation>Hemen partekatu nahi ez dituzun fitxategietarako ereduak zehaztu ditzakezu. </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="165" />
@@ -9623,7 +9785,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="175" />
             <source>Select and add the directory</source>
-            <translation type="unfinished" />
+            <translation>Hautatu eta gehitu direktorioa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="185" />
@@ -9643,7 +9805,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="233" />
             <source>Follow symlinks</source>
-            <translation type="unfinished" />
+            <translation>Jarraitu esteka sinbolikoei</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="246" />
@@ -9652,37 +9814,41 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>Partekatu Ezkutua atributua duten fitxategiak eta Ezkutua atributua
+duten direktorioen barruko fitxategiak.
+Aukera hau desgaituta, . (puntu) batez hasten diren fitxategiak ez dira partekatuko.
+Oharra: aukera honek fitxategi-zerrenda freskatzea eskatzen du,
+eta bezeroa blokeatu dela iruditu daiteke.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
             <source>Share hidden files</source>
-            <translation type="unfinished" />
+            <translation>Partekatu ezkutuko fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="266" />
             <source>Share temporary files</source>
-            <translation type="unfinished" />
+            <translation>Partekatu aldi baterako fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>Saltatu zero tamainako fitxategiak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
             <source>Auto remove non-existing directories</source>
-            <translation type="unfinished" />
+            <translation>Kendu automatikoki existitzen ez diren direktorioak</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="289" />
             <source>Use fast hash</source>
-            <translation type="unfinished" />
+            <translation>Erabili hash kalkulu azkarra</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="302" />
             <source>Buffer size (MiB)</source>
-            <translation type="unfinished" />
+            <translation>Bufferraren tamaina (MiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="315" />
@@ -9692,12 +9858,12 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
             <source>FastHash options (restart needed)</source>
-            <translation type="unfinished" />
+            <translation>FastHash aukerak (berrabiarazi behar da)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="376" />
             <source>Private page mapping</source>
-            <translation type="unfinished" />
+            <translation>Orrialde-mapatze pribatua</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="383" />
@@ -9707,17 +9873,17 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="397" />
             <source>Proactive read from disk</source>
-            <translation type="unfinished" />
+            <translation>Diskotik aldez aurretik irakurtzea</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>Erabili ADL bilaketa norberaren fitxategi-zerrendan soilik</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
             <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Ireki automatikoki aparteko erretena abiadura honetatik beherakoa bada (KiB/s, 0 = mugagabea)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="440" />
@@ -9726,34 +9892,39 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>Batez besteko igoera-abiadura emandako zenbakitik behera jaisten bada,
+igoerarako aparteko erreten bat emango da.
+Erreten hauek gehienez 30 segundoz behin ematen dira.
+Jatorrizko igoeren abiadura handitzen bada,
+eman den erretena ez da itxiko.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>Hash kalkuluaren atzerapena abiaraztean (segundoak, -1 = mugagabea)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
             <location filename="../ui/UISettingsSharing.ui" line="511" />
             <source>Here you can set time interval of auto refreshing your share.</source>
-            <translation type="unfinished" />
+            <translation>Hemen partekatutakoa automatikoki freskatzeko denbora-tartea ezar dezakezu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="495" />
             <source>Auto refresh time (minutes, 0 = off)</source>
-            <translation type="unfinished" />
+            <translation>Freskatze automatikoaren tartea (minutuak, 0 = desgaituta)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>Hash kalkuluaren gehieneko abiadura (MB/s) (0 = mugagabea)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />
             <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
-            <translation type="unfinished" />
+            <translation>Hemen hash kalkuluaren gehieneko abiadura muga dezakezu
+fitxategien hashak kalkulatzean sistema moteltzen bada.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="554" />
@@ -9771,7 +9942,15 @@ There's a max of 3 connections in addition to normal slots,
 these are called mini slots.
 Note: If a user leaves the hub, EiskaltDC++ will close his slots;
 if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</source>
-            <translation type="unfinished" />
+            <translation>Konfiguratu beste erabiltzaileek zure fitxategiak deskargatzeko
+har ditzaketen erretenen kopurua. Urruneko erabiltzaile batek erreten
+bakarra erabil dezake zurekin partekatzen duen hub bakoitzeko.
+EiskaltDC++ programak beste DC++ erabiltzaileei fitxategi-zerrendak
+eta 64 KiBtik beherako fitxategiak igotzea onartzen du erretenik gabe.
+Erreten arruntez gain, gehienez 3 konexio daude;
+hauei erreten txiki esaten zaie.
+Oharra: erabiltzailea hubetik irteten bada, EiskaltDC++ programak haren erretenak itxiko ditu;
+erabiltzailea 10 minuturen barruan itzultzen bada, EiskaltDC++ programak erreten bat emango dio.</translation>
         </message>
     </context>
     <context>
@@ -9813,12 +9992,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Bilatu fitxategiak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Bilatu direktorioak soilik</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
@@ -9841,12 +10020,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UISpy.ui" line="35" />
             <source>Ignore TTH search</source>
-            <translation type="unfinished" />
+            <translation>Ez ikusi egin TTH bilaketari</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="45" />
             <source>Autoscrolling</source>
-            <translation type="unfinished" />
+            <translation>Korritze automatikoa</translation>
         </message>
         <message>
             <location filename="../ui/UISpy.ui" line="65" />
@@ -9884,12 +10063,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="49" />
             <source>Raw</source>
-            <translation type="unfinished" />
+            <translation>Gordina</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="56" />
             <source>PM</source>
-            <translation type="unfinished" />
+            <translation>Mezu pribatua</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="66" />
@@ -9914,7 +10093,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="96" />
             <source>Filebrowser</source>
-            <translation type="unfinished" />
+            <translation>Fitxategi-arakatzailea</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="106" />
@@ -9934,17 +10113,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="153" />
             <source>Hub address</source>
-            <translation type="unfinished" />
+            <translation>Hubaren helbidea</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="160" />
             <source>To</source>
-            <translation type="unfinished" />
+            <translation>Hartzailea</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="167" />
             <source>Send once per nick</source>
-            <translation type="unfinished" />
+            <translation>Bidali behin goitizen bakoitzeko</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="191" />
@@ -9957,17 +10136,17 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="147" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Hubeko rola&lt;/b&gt;: Operadorea</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="149" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Hubeko rola&lt;/b&gt;: Erabiltzailea</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="152" />
             <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;br/&gt;&lt;b&gt;Gogoko erabiltzailea&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="185" />
@@ -10002,7 +10181,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Partekatutako tamaina zehatza</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10012,7 +10191,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
@@ -10020,12 +10199,12 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/WulforSettings.cpp" line="414" />
             <source>GUI setting %1: %2</source>
-            <translation type="unfinished" />
+            <translation>Interfazearen %1 ezarpena: %2</translation>
         </message>
         <message>
             <location filename="../src/WulforSettings.cpp" line="423" />
             <source>Change GUI setting %1 to %2</source>
-            <translation type="unfinished" />
+            <translation>Aldatu interfazearen %1 ezarpena %2 baliora</translation>
         </message>
     </context>
     <context>
