@@ -9663,7 +9663,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="33" />
             <source>View share in simple mode</source>
-            <translation type="unfinished" />
+            <translation>გაზიარების ნახვა მარტივ რეჟიმში</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="65" />
@@ -9688,12 +9688,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">დამატება</translation>
+            <translation>დამატება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">წაშლა</translation>
+            <translation>წაშლა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -9703,12 +9703,12 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="149" />
             <source>Don't share files and folders containing:</source>
-            <translation type="unfinished" />
+            <translation>არ გააზიარო ფაილები და საქაღალდეები, რომლებიც შეიცავს:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="156" />
             <source>Here you can specify templates for files you don't want to share. </source>
-            <translation type="unfinished" />
+            <translation>აქ შეგიძლიათ მიუთითოთ იმ ფაილების შაბლონები, რომელთა გაზიარებაც არ გსურთ. </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="165" />
@@ -9718,7 +9718,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="175" />
             <source>Select and add the directory</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ და დაამატეთ საქაღალდე</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="185" />
@@ -9747,7 +9747,11 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>გააზიარე დამალულის ატრიბუტის მქონე ფაილები და ფაილები იმ საქაღალდეში, რომელსაც
+დამალულის ატრიბუტი აქვს.
+თუ ეს პარამეტრი გამორთულია, . (წერტილით) დაწყებული ფაილები არ გაზიარდება.
+შენიშვნა: ამ პარამეტრის გამოყენება მოითხოვს ფაილების სიის განახლებას
+და შესაძლოა კლიენტი დროებით გაჭედილი ჩანდეს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
@@ -9767,7 +9771,7 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
             <source>Auto remove non-existing directories</source>
-            <translation type="unfinished" />
+            <translation>არარსებული საქაღალდეების ავტომატური წაშლა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="289" />
@@ -9787,32 +9791,32 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
             <source>FastHash options (restart needed)</source>
-            <translation type="unfinished" />
+            <translation>FastHash-ის პარამეტრები (საჭიროა გადატვირთვა)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="376" />
             <source>Private page mapping</source>
-            <translation type="unfinished" />
+            <translation>მეხსიერების გვერდების კერძო ასახვა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="383" />
             <source>No reserve</source>
-            <translation type="unfinished" />
+            <translation>რეზერვირების გარეშე</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="397" />
             <source>Proactive read from disk</source>
-            <translation type="unfinished" />
+            <translation>დისკიდან წინასწარი წაკითხვა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>ADL ძიების გამოყენება მხოლოდ საკუთარ ფაილების სიაში</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
             <source>Automatically open extra slot if speed is below (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>დამატებითი სლოტის ავტომატურად გახსნა, თუ სიჩქარე ნაკლებია (KiB/s, 0 = შეუზღუდავი)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="440" />
@@ -9821,34 +9825,39 @@ an additional upload slot will be granted.
 These slots are granted once every 30 seconds at maximum.
 If the speed of the original uploads increases,
 the granted slot will not be closed.</source>
-            <translation type="unfinished" />
+            <translation>თუ ატვირთვის საშუალო სიჩქარე მითითებულ მნიშვნელობაზე დაბლა დაეცემა,
+გამოიყოფა დამატებითი ატვირთვის სლოტი.
+ასეთი სლოტები გამოიყოფა არაუმეტეს ერთხელ ყოველ 30 წამში.
+თუ თავდაპირველი ატვირთვების სიჩქარე გაიზრდება,
+გამოყოფილი სლოტი არ დაიხურება.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>ჰეშირების დაყოვნება გაშვებისას (წამები, -1 = უსასრულობა)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
             <location filename="../ui/UISettingsSharing.ui" line="511" />
             <source>Here you can set time interval of auto refreshing your share.</source>
-            <translation type="unfinished" />
+            <translation>აქ შეგიძლიათ დააყენოთ თქვენი გაზიარების ავტომატური განახლების ინტერვალი.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="495" />
             <source>Auto refresh time (minutes, 0 = off)</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური განახლების ინტერვალი (წუთები, 0 = გამორთული)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="527" />
             <source>Max hash speed (MB/s) (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>ჰეშირების მაქსიმალური სიჩქარე (MB/s) (0 = შეუზღუდავი)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="540" />
             <source>You can limit maximum hash speed here
 if your system becomes slow while hashing files.</source>
-            <translation type="unfinished" />
+            <translation>აქ შეგიძლიათ შეზღუდოთ ჰეშირების მაქსიმალური სიჩქარე,
+თუ ფაილების ჰეშირებისას თქვენი სისტემა ნელდება.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="554" />
@@ -9866,7 +9875,15 @@ There's a max of 3 connections in addition to normal slots,
 these are called mini slots.
 Note: If a user leaves the hub, EiskaltDC++ will close his slots;
 if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</source>
-            <translation type="unfinished" />
+            <translation>დააყენეთ სლოტების რაოდენობა, რომელთა დაკავებაც სხვა მომხმარებლებს შეუძლიათ
+თქვენგან ფაილების ჩამოსატვირთად. დაშორებულ მომხმარებელს შეუძლია გამოიყენოს მხოლოდ
+ერთი სლოტი თითოეული ჰაბისთვის, რომელზეც თქვენთან ერთად იმყოფება.
+EiskaltDC++ მხარს უჭერს ფაილების სიებისა და 64 KiB-ზე პატარა ფაილების ატვირთვას
+სხვა DC++ მომხმარებლებთან სლოტის მოთხოვნის გარეშე.
+ჩვეულებრივი სლოტების გარდა დასაშვებია მაქსიმუმ 3 კავშირი,
+რომლებსაც მინი-სლოტები ეწოდება.
+შენიშვნა: თუ მომხმარებელი ჰაბს დატოვებს, EiskaltDC++ მის სლოტებს დახურავს;
+თუ ის 10 წუთში დაბრუნდება, EiskaltDC++ მას სლოტს გამოუყოფს.</translation>
         </message>
     </context>
     <context>

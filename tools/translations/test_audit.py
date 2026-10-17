@@ -16,6 +16,73 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_sharing_translations(self):
+        required = {
+            "View share in simple mode", "Add", "Remove",
+            "Don't share files and folders containing:",
+            "Here you can specify templates for files you don't want to share. ",
+            "Select and add the directory",
+            "Share files with the Hidden attribute set and files inside directory with\n"
+            "the Hidden attribute set.\n"
+            "With this option off, files starting with a . (full stop) will not be shared.\n"
+            "Note: this option requires a refresh of the file list,\n"
+            "and may cause the client to appear to freeze.",
+            "Auto remove non-existing directories", "FastHash options (restart needed)",
+            "Private page mapping", "No reserve", "Proactive read from disk",
+            "Use ADL search only in own file list",
+            "Automatically open extra slot if speed is below (KiB/s, 0 = infinite)",
+            "If the average upload speed drops below the given number,\n"
+            "an additional upload slot will be granted.\n"
+            "These slots are granted once every 30 seconds at maximum.\n"
+            "If the speed of the original uploads increases,\n"
+            "the granted slot will not be closed.",
+            "Hashing delay on startup (seconds, -1 = infinity)",
+            "Here you can set time interval of auto refreshing your share.",
+            "Auto refresh time (minutes, 0 = off)", "Max hash speed (MB/s) (0 = infinite)",
+            "You can limit maximum hash speed here\n"
+            "if your system becomes slow while hashing files.",
+            "Configure the number of slots that other users can occupy\n"
+            "to download files from you. A remote user can use only\n"
+            "one slot for each hub that they're on with you.\n"
+            "EiskaltDC++ supports uploading file lists and files below 64 KiB\n"
+            "to other DC++ users without requiring a slot.\n"
+            "There's a max of 3 connections in addition to normal slots,\n"
+            "these are called mini slots.\n"
+            "Note: If a user leaves the hub, EiskaltDC++ will close his slots;\n"
+            "if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsSharing" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-sharing-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertNotEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                    self.assertEqual(Counter(re.findall(r"-?\d+", source)),
+                                     Counter(re.findall(r"-?\d+", text)))
+                    for token in ("FastHash", "ADL", "KiB/s", "MB/s", "KiB", "EiskaltDC++", "DC++"):
+                        if token in source:
+                            self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_hub_and_browser_translations(self):
         required = {
             "ChatEdit": {"Address", "Select image"},
