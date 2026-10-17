@@ -3096,23 +3096,28 @@ Stiahnuté: %3 Uploadované: %4</translation>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Boli zistené staré alebo nekompatibilné nastavenia rozhrania EiskaltDC++.
+
+Bezpečné nastavenia, ako sú huby, údaje účtu, zdieľanie, sťahovanie a história, boli zachované. Téma, farba chatu, rozloženie okien a stav stĺpcov tabuliek zo staršej konfigurácie boli obnovené na predvolené hodnoty, pretože môžu narušiť prepínanie svetlého a tmavého režimu za behu v aktuálnom macOS.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Záloha predchádzajúcej konfigurácie rozhrania bola uložená sem:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Predchádzajúcu konfiguráciu rozhrania sa nepodarilo zálohovať, ale nekompatibilné vizuálne nastavenia boli napriek tomu odstránené.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>Nastavenia EiskaltDC++ boli aktualizované</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3135,43 +3140,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Obrázky (%1);;Všetky súbory (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Ťahaním zmeníte veľkosť vstupnej oblasti</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Kliknutím rozbalíte alebo zbalíte</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Spoiler: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Otvoriť v externej aplikácii</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Zatvoriť</translation>
+            <translation>Zavrieť</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Predvolené (EiskaltDC++)</translation>
         </message>
     </context>
     <context>

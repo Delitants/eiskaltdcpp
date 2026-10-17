@@ -16,6 +16,53 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_migration_and_shared_ui_messages(self):
+        expected = {"QObject": {
+            "Old or incompatible EiskaltDC++ GUI settings were detected.\n\n"
+            "Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.\n\n":
+                "Boli zistené staré alebo nekompatibilné nastavenia rozhrania EiskaltDC++.\n\n"
+                "Bezpečné nastavenia, ako sú huby, údaje účtu, zdieľanie, sťahovanie a história, boli zachované. Téma, farba chatu, rozloženie okien a stav stĺpcov tabuliek zo staršej konfigurácie boli obnovené na predvolené hodnoty, pretože môžu narušiť prepínanie svetlého a tmavého režimu za behu v aktuálnom macOS.\n\n",
+            "A backup of the previous GUI config was saved here:\n%1":
+                "Záloha predchádzajúcej konfigurácie rozhrania bola uložená sem:\n%1",
+            "The previous GUI config could not be backed up, but incompatible visual settings were still discarded.":
+                "Predchádzajúcu konfiguráciu rozhrania sa nepodarilo zálohovať, ale nekompatibilné vizuálne nastavenia boli napriek tomu odstránené.",
+            "EiskaltDC++ settings updated": "Nastavenia EiskaltDC++ boli aktualizované",
+            "Images (%1);;All files (*)": "Obrázky (%1);;Všetky súbory (*)",
+            "Drag to resize input area": "Ťahaním zmeníte veľkosť vstupnej oblasti",
+            "%1 (%2)": "%1 (%2)", "Click to expand or collapse": "Kliknutím rozbalíte alebo zbalíte",
+            "Spoiler: %1": "Spoiler: %1", "Open Externally": "Otvoriť v externej aplikácii",
+            "Close": "Zavrieť", "Default (EiskaltDC++)": "Predvolené (EiskaltDC++)",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "QObject" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-migration-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(15, len(original))
+            self.assertTrue(expected["QObject"].keys() <= original.keys())
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in expected["QObject"]:
+                        self.assertEqual(expected["QObject"][source], text)
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                         Counter(re.findall(r"%\d+", text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_navigation_and_settings_messages(self):
         expected = {
             "FavoriteUsers": {"Browse Files": "Prehliadať súbory"},
