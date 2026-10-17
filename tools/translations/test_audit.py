@@ -16,6 +16,54 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_transfer_translations(self):
+        required = {
+            "TransferView": {"Flags", "Encryption", "Protocol", "Magnet", "Cancel download",
+                             "Show only transferred files", "Torrent details", "Pause Torrent",
+                             "Resume Torrent", "Uploaded %1 (%2%) "},
+            "TransferViewModel": {"Flags", "Host", "Encryption", "Paused", "Seeding", "Waiting",
+                                  "Download (%1 peers)", "Upload (%1 peers)",
+                                  "%1 | Downloaded %2 (%3%)", "%1 | Uploaded %2"},
+            "UIFileHasher": {"Copy magnet link to clipboard", "Copy search link to clipboard"},
+            "UIFinishedTransfers": {"Show only completely finished transfers", "Full only"},
+        }
+        exact = {"Paused": "Pozastavené", "Seeding": "Zdieľanie", "Waiting": "Čakanie",
+                 "Cancel download": "Zrušiť sťahovanie", "Pause Torrent": "Pozastaviť torrent",
+                 "Resume Torrent": "Pokračovať v torrente", "Download (%1 peers)": "Sťahovanie (%1 partnerov)",
+                 "Upload (%1 peers)": "Odosielanie (%1 partnerov)"}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-transfers-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source != "Magnet":
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                         Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("%"), text.count("%"))
+                        self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_connection_catalog_survives_compilation(self):
         self._assert_connection_catalog_survives_compilation("sk")
 

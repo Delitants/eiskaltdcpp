@@ -6566,7 +6566,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Príznaky</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
@@ -6596,23 +6596,23 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferView.cpp" line="91" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Šifrovanie</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokol</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
             <source>Magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Zrušiť sťahovanie</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6632,7 +6632,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Zobraziť iba prenesené súbory</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
@@ -6649,17 +6649,17 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Podrobnosti torrentu</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Pozastaviť torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Pokračovať v torrente</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6712,7 +6712,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>Odoslané %1 (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
@@ -6773,7 +6773,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Príznaky</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
@@ -6793,7 +6793,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Hostiteľ</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="58" />
@@ -6803,7 +6803,7 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferViewModel.cpp" line="59" />
             <source>Encryption</source>
-            <translation type="unfinished" />
+            <translation>Šifrovanie</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="61" />
@@ -6818,37 +6818,37 @@ Pridané na zdieľanie iba na čítanie. Overia sa odtlačky zdrojových súboro
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Pozastavené</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Zdieľanie</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Čakanie</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Sťahovanie (%1 partnerov)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Odosielanie (%1 partnerov)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Stiahnuté %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Odoslané %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -7423,12 +7423,12 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať magnetický odkaz do schránky</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať odkaz na vyhľadávanie do schránky</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7485,12 +7485,12 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="43" />
             <source>Show only completely finished transfers</source>
-            <translation type="unfinished" />
+            <translation>Zobraziť iba úplne dokončené prenosy</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="46" />
             <source>Full only</source>
-            <translation type="unfinished" />
+            <translation>Iba úplné</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="66" />
