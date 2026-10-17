@@ -16,6 +16,56 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_hub_and_browser_translations(self):
+        required = {
+            "ChatEdit": {"Address", "Select image"},
+            "PublicHubs": {"Downloading public hub list...", "Copy &address to clipboard",
+                           "Refreshing public hub list...", "Downloading public hub list... (%1)",
+                           "Hub list downloaded... (%1)",
+                           "Locally cached (as of %1) version of the hub list loaded (%2)",
+                           "Cached hub list is corrupted or unsupported",
+                           "Downloaded hub list is corrupted or unsupported (%1)"},
+            "PublicHubsList": {"Public hub list URLs"},
+            "SearchFrame": {"Don't hide this panel when search", 'Search progress of "%1" is %2%'},
+            "ShareBrowser": {"Total share size: %1;  Files: %2", "Share browser error: %1",
+                             "Selected %1 from %2 items; "},
+            "UIPublicHubs": {"Refresh"}, "UserListModel": {"IPv6"},
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-browser-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source != "IPv6":
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                         Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("%"), text.count("%"))
+                        self.assertEqual(source.count("&"), text.count("&"))
+                        self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                        for token in ("IPv6", "URL"):
+                            if token in source:
+                                self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_transfer_translations(self):
         required = {
             "TransferView": {"Protocol", "Cancel download", "Torrent details",

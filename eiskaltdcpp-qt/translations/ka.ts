@@ -182,12 +182,12 @@ EiskaltDC++ პლატფორმათაშორისი პროგრ�
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">მისამართი</translation>
+            <translation>მისამართი</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ სურათი</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -2984,7 +2984,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="69" />
             <source>Downloading public hub list...</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის ჩამოტვირთვა...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="175" />
@@ -2999,17 +2999,17 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="177" />
             <source>Copy &amp;address to clipboard</source>
-            <translation type="unfinished" />
+            <translation>&amp;მისამართის კოპირება გაცვლის ბუფერში</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის განახლება...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
             <source>Downloading public hub list... (%1)</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის ჩამოტვირთვა... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="317" />
@@ -3019,7 +3019,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>ჰაბების სია ჩამოტვირთულია... (%1)</translation>
         </message>
         <message>
             <source>from Coral</source>
@@ -3028,17 +3028,17 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>ჩაიტვირთა ჰაბების სიის ადგილობრივად ქეშირებული ვერსია (%1-ის მდგომარეობით) (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
             <source>Cached hub list is corrupted or unsupported</source>
-            <translation type="unfinished" />
+            <translation>ქეშირებული ჰაბების სია დაზიანებულია ან მხარდაუჭერელია</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="332" />
             <source>Downloaded hub list is corrupted or unsupported (%1)</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთული ჰაბების სია დაზიანებულია ან მხარდაუჭერელია (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.h" line="42" />
@@ -3055,7 +3055,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიის URL-ები</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3325,7 +3325,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../ui/UISearchFrame.ui" line="205" />
             <source>Don't hide this panel when search</source>
-            <translation type="unfinished" />
+            <translation>არ დამალო ეს პანელი ძიებისას</translation>
         </message>
         <message>
             <location filename="../ui/UISearchFrame.ui" line="221" />
@@ -3472,7 +3472,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>"%1"-ის ძიების პროგრესია %2%</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
@@ -5127,12 +5127,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="432" />
             <source>Total share size: %1;  Files: %2</source>
-            <translation type="unfinished" />
+            <translation>გაზიარების სრული ზომა: %1;  ფაილები: %2</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>გაზიარების ბრაუზერის შეცდომა: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
@@ -5143,7 +5143,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>არჩეულია %1 ელემენტი %2-დან; </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
@@ -7875,7 +7875,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>განახლება</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -10107,7 +10107,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
