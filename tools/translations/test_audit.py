@@ -16,6 +16,69 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_appearance_and_languages(self):
+        expected = {
+            'SettingsGUI': {
+                'Portuguese (Brazil)': 'Πορτογαλικά (Βραζιλία)',
+                'Serbian (Cyrillic)': 'Σερβικά (Κυριλλικά)',
+                'Basque': 'Βασκικά',
+                'Greek': 'Ελληνικά',
+                'Italian': 'Ιταλικά',
+                'Vietnamese': 'Βιετναμικά',
+                'Chinese (China)': 'Κινεζικά (Κίνα)',
+                'Swedish (Sweden)': 'Σουηδικά (Σουηδία)',
+                'Turkish': 'Τουρκικά',
+                'Danish': 'Δανικά',
+                'Georgian': 'Γεωργιανά',
+                'Toolbar icon theme': 'Θέμα εικονιδίων γραμμής εργαλείων',
+                'Theme': 'Θέμα',
+                'Default': 'Προεπιλογή',
+                'Monochrome': 'Μονόχρωμο',
+                'User list icon theme': 'Θέμα εικονιδίων λίστας χρηστών',
+                'Original': 'Αρχικό',
+                'Chat pictures': 'Εικόνες συνομιλίας',
+                'Folder': 'Φάκελος',
+                'Auto-clean files older than': 'Αυτόματη εκκαθάριση αρχείων παλαιότερων από',
+                ' days': ' ημέρες',
+                'Select chat pictures folder': 'Επιλογή φακέλου εικόνων συνομιλίας',
+            },
+        }
+        counts = {"SettingsGUI": 48}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-appearance-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%[1-9]\d*", source)),
+                                             Counter(re.findall(r"%[1-9]\d*", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+                            self.assertEqual(source.endswith(" "), text.endswith(" "))
+                            self.assertEqual(source.count("\n"), text.count("\n"))
+                            self.assertEqual(source.startswith(" "), text.startswith(" "))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_hub_users_sidebar_and_commands(self):
         expected = {
             'HubFrame': {
