@@ -16,6 +16,73 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_transfers_and_torrent_settings(self):
+        expected = {
+            'TransferView': {
+                'Flags': 'Σημαίες',
+                'Protocol': 'Πρωτόκολλο',
+                'Cancel download': 'Ακύρωση λήψης',
+                'Show only transferred files': 'Εμφάνιση μόνο μεταφερμένων αρχείων',
+                'Torrent details': 'Λεπτομέρειες torrent',
+                'Pause Torrent': 'Παύση torrent',
+                'Resume Torrent': 'Συνέχιση torrent',
+                'Uploaded %1 (%2%) ': 'Απεστάλησαν %1 (%2%) ',
+            },
+            'TransferViewModel': {
+                'Flags': 'Σημαίες',
+                'Paused': 'Σε παύση',
+                'Seeding': 'Διαμοιρασμός',
+                'Waiting': 'Σε αναμονή',
+                'Download (%1 peers)': 'Λήψη (%1 ομότιμοι)',
+                'Upload (%1 peers)': 'Αποστολή (%1 ομότιμοι)',
+                '%1 | Downloaded %2 (%3%)': '%1 | Λήφθηκαν %2 (%3%)',
+                '%1 | Uploaded %2': '%1 | Απεστάλησαν %2',
+            },
+            'Settings': {
+                'Torrent preferences': 'Προτιμήσεις torrent',
+                'Could not save Torrent settings: %1': 'Αδυναμία αποθήκευσης ρυθμίσεων torrent: %1',
+            },
+            'Notification': {
+                'Setup speed limits': 'Ρύθμιση ορίων ταχύτητας',
+            },
+        }
+        counts = {"TransferView": 48, "TransferViewModel": 33, "Settings": 16, "Notification": 7}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-transfers-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%[1-9]\d*", source)),
+                                             Counter(re.findall(r"%[1-9]\d*", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+                            self.assertEqual(source.endswith(" "), text.endswith(" "))
+                            self.assertEqual(re.findall(r"%[1-9]\d*%", source),
+                                             re.findall(r"%[1-9]\d*%", text))
+                            self.assertEqual(source.count(" | "), text.count(" | "))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_hubs_magnets_and_chat(self):
         expected = {
             'ChatEdit': {

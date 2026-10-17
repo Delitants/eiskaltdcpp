@@ -2873,7 +2873,7 @@ Favorite user</source>
         <message>
             <location filename="../src/Notification.cpp" line="133" />
             <source>Setup speed limits</source>
-            <translation type="unfinished" />
+            <translation>Ρύθμιση ορίων ταχύτητας</translation>
         </message>
         <message>
             <location filename="../src/Notification.cpp" line="134" />
@@ -3641,12 +3641,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Προτιμήσεις torrent</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Αδυναμία αποθήκευσης ρυθμίσεων torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -6587,7 +6587,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Σημαίες</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
@@ -6623,7 +6623,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Πρωτόκολλο</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6633,7 +6633,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Ακύρωση λήψης</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6653,7 +6653,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Εμφάνιση μόνο μεταφερμένων αρχείων</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
@@ -6670,17 +6670,17 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Λεπτομέρειες torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Παύση torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Συνέχιση torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6733,7 +6733,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>Απεστάλησαν %1 (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
@@ -6794,7 +6794,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Σημαίες</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
@@ -6839,37 +6839,37 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Σε παύση</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Διαμοιρασμός</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Σε αναμονή</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Λήψη (%1 ομότιμοι)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Αποστολή (%1 ομότιμοι)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Λήφθηκαν %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Απεστάλησαν %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
