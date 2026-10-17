@@ -16,6 +16,66 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_hub_chat_translations(self):
+        required = {
+            "IPv6", "Filter", "/back - set away-mode off\n", "/browse <nick> - browse user files\n",
+            "/clear - clear chat window\n",
+            "/kword add <keyword> - add user-defined keyword which will be highlighted in the chat\n",
+            "/kword purge <keyword> - remove user-defined keyword\n",
+            "/kword list - full list of keywords which will be highlighted in the chat\n",
+            "/magnet - default action with magnet (0-ask, 1-search, 2-download)\n",
+            "/close - close this hub\n", "/fav - add this hub to favorites\n",
+            "/grant <nick> - grant extra slot to user\n", "/help, /?, /h - show this help\n",
+            "/info <nick> - show info about user\n", "/ratio [show] - show ratio [send in chat]\n",
+            "/refresh - update own file list\n", "/pm <nick> - begin private chat with user\n",
+            "/ws param value - set gui option param in value (without value return current value of option)\n",
+            "/dcpps param value - set core option param in value (without value return current value of option)\n",
+            "/luafile <file> - load Lua file\n", "/lua <chunk> - execute Lua chunk\n",
+            " joins the chat", "%1 is now offline", " has been removed from favorites.",
+            "Favorite hub added.", "Favorite hub already exists.", "User offline.",
+            "Stored password sent...", "Redirect request received to a hub that's already connected",
+            "Users count: %3/%1 | Total share: %2", "Users count: %1 | Total share: %2",
+            'Sorry, but nick "%1" is already taken by another user.', "Search flood detected: %1",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "HubFrame" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-hub-chat-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    if source != "IPv6":
+                        self.assertNotEqual(source, text)
+                    else:
+                        self.assertEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                     Counter(re.findall(r"%\d+|%n", text)))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                    self.assertEqual(source[:len(source)-len(source.lstrip())],
+                                     text[:len(text)-len(text.lstrip())])
+                    if source.startswith("/"):
+                        self.assertTrue(text.startswith(source.split(" - ", 1)[0] + " - "))
+                        self.assertEqual(re.findall(r"\d+", source), re.findall(r"\d+", text))
+                    if "Lua" in source:
+                        self.assertIn("Lua", text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_download_retention_and_search(self):
         required = {
             "Automatically search for alternative download locations",

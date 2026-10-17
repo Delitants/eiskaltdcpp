@@ -1091,7 +1091,7 @@ EiskaltDC++ პლატფორმათაშორისი პროგრ�
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1165,7 +1165,7 @@ EiskaltDC++ პლატფორმათაშორისი პროგრ�
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>ფილტრი</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1378,79 +1378,92 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2714" />
             <source>/back - set away-mode off
 </source>
-            <translation type="unfinished" />
+            <translation>/back - არყოფნის რეჟიმის გამორთვა
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2715" />
             <source>/browse &lt;nick&gt; - browse user files
 </source>
-            <translation type="unfinished" />
+            <translation>/browse &lt;nick&gt; - მომხმარებლის ფაილების დათვალიერება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2716" />
             <source>/clear - clear chat window
 </source>
-            <translation type="unfinished" />
+            <translation>/clear - ჩატის ფანჯრის გასუფთავება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2717" />
             <source>/kword add &lt;keyword&gt; - add user-defined keyword which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword add &lt;keyword&gt; - მომხმარებლის საკვანძო სიტყვის დამატება ჩატში გამოსაყოფად
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2718" />
             <source>/kword purge &lt;keyword&gt; - remove user-defined keyword
 </source>
-            <translation type="unfinished" />
+            <translation>/kword purge &lt;keyword&gt; - მომხმარებლის საკვანძო სიტყვის წაშლა
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2719" />
             <source>/kword list - full list of keywords which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword list - ჩატში გამოსაყოფი საკვანძო სიტყვების სრული სია
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2720" />
             <source>/magnet - default action with magnet (0-ask, 1-search, 2-download)
 </source>
-            <translation type="unfinished" />
+            <translation>/magnet - მაგნიტური ბმულის ნაგულისხმევი მოქმედება (0-კითხვა, 1-ძიება, 2-ჩამოტვირთვა)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2721" />
             <source>/close - close this hub
 </source>
-            <translation type="unfinished" />
+            <translation>/close - ამ ჰაბის დახურვა
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2722" />
             <source>/fav - add this hub to favorites
 </source>
-            <translation type="unfinished" />
+            <translation>/fav - ამ ჰაბის რჩეულებში დამატება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2723" />
             <source>/grant &lt;nick&gt; - grant extra slot to user
 </source>
-            <translation type="unfinished" />
+            <translation>/grant &lt;nick&gt; - მომხმარებლისთვის დამატებითი სლოტის გამოყოფა
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2724" />
             <source>/help, /?, /h - show this help
 </source>
-            <translation type="unfinished" />
+            <translation>/help, /?, /h - ამ დახმარების ჩვენება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2725" />
             <source>/info &lt;nick&gt; - show info about user
 </source>
-            <translation type="unfinished" />
+            <translation>/info &lt;nick&gt; - მომხმარებლის შესახებ ინფორმაციის ჩვენება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2726" />
             <source>/ratio [show] - show ratio [send in chat]
 </source>
-            <translation type="unfinished" />
+            <translation>/ratio [show] - თანაფარდობის ჩვენება [ჩატში გაგზავნა]
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2727" />
@@ -1463,7 +1476,8 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - საკუთარი ფაილების სიის განახლება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1476,36 +1490,41 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2730" />
             <source>/pm &lt;nick&gt; - begin private chat with user
 </source>
-            <translation type="unfinished" />
+            <translation>/pm &lt;nick&gt; - მომხმარებელთან პირადი ჩატის დაწყება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - გრაფიკული ინტერფეისის param პარამეტრისთვის value მნიშვნელობის მინიჭება (მნიშვნელობის გარეშე აბრუნებს პარამეტრის მიმდინარე მნიშვნელობას)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - ბირთვის param პარამეტრისთვის value მნიშვნელობის მინიჭება (მნიშვნელობის გარეშე აბრუნებს პარამეტრის მიმდინარე მნიშვნელობას)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
             <source>/luafile &lt;file&gt; - load Lua file
 </source>
-            <translation type="unfinished" />
+            <translation>/luafile &lt;file&gt; - Lua ფაილის ჩატვირთვა
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2735" />
             <source>/lua &lt;chunk&gt; - execute Lua chunk
 </source>
-            <translation type="unfinished" />
+            <translation>/lua &lt;chunk&gt; - Lua კოდის ფრაგმენტის შესრულება
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3015" />
             <source> joins the chat</source>
-            <translation type="unfinished" />
+            <translation> შემოდის ჩატში</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3020" />
@@ -1531,7 +1550,7 @@ Favorite user</source>
         <message>
             <location filename="../src/HubFrame.cpp" line="3078" />
             <source>%1 is now offline</source>
-            <translation type="unfinished" />
+            <translation>%1 ახლა ოფლაინია</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3117" />
@@ -1552,27 +1571,27 @@ Favorite user</source>
         <message>
             <location filename="../src/HubFrame.cpp" line="3197" />
             <source> has been removed from favorites.</source>
-            <translation type="unfinished" />
+            <translation> წაიშალა რჩეულებიდან.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3229" />
             <source>Favorite hub added.</source>
-            <translation type="unfinished" />
+            <translation>რჩეული ჰაბი დამატებულია.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3232" />
             <source>Favorite hub already exists.</source>
-            <translation type="unfinished" />
+            <translation>რჩეული ჰაბი უკვე არსებობს.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3470" />
             <source>User offline.</source>
-            <translation type="unfinished" />
+            <translation>მომხმარებელი ოფლაინია.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3512" />
             <source>Stored password sent...</source>
-            <translation type="unfinished" />
+            <translation>შენახული პაროლი გაიგზავნა...</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3515" />
@@ -1583,17 +1602,17 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="3529" />
             <location filename="../src/HubFrame.cpp" line="4590" />
             <source>Redirect request received to a hub that's already connected</source>
-            <translation type="unfinished" />
+            <translation>მიღებულია გადამისამართების მოთხოვნა უკვე დაკავშირებულ ჰაბზე</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3607" />
             <source>Users count: %3/%1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>მომხმარებელთა რაოდენობა: %3/%1 | გაზიარების ჯამური ზომა: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="3613" />
             <source>Users count: %1 | Total share: %2</source>
-            <translation type="unfinished" />
+            <translation>მომხმარებელთა რაოდენობა: %1 | გაზიარების ჯამური ზომა: %2</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4430" />
@@ -1623,12 +1642,12 @@ Favorite user</source>
         <message>
             <location filename="../src/HubFrame.cpp" line="4799" />
             <source>Sorry, but nick "%1" is already taken by another user.</source>
-            <translation type="unfinished" />
+            <translation>უკაცრავად, მეტსახელი "%1" უკვე დაკავებულია სხვა მომხმარებლის მიერ.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="4805" />
             <source>Search flood detected: %1</source>
-            <translation type="unfinished" />
+            <translation>აღმოჩენილია ძიების მოთხოვნების სიჭარბე: %1</translation>
         </message>
     </context>
     <context>
