@@ -8652,24 +8652,26 @@ and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</sour
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
             <source>Auto-drop settings</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური გათიშვის პარამეტრები</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>თუ ფაილის ჩამოტვირთვის სიჩქარე მითითებულ მნიშვნელობაზე დაბალია,
+წყარო გაითიშება. (ნაგულისხმევი: 1024 B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
             <source>Check every x second(s) if the source is slow. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>ყოველ x წამში შემოწმდეს, ნელია თუ არა წყარო. (ნაგულისხმევი: 10 წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>დრო (წამებში), რომელიც ჩამოტვირთვის დაწყებიდან უნდა გავიდეს,
+სანამ წყაროს გათიშვა გახდება შესაძლებელი. (ნაგულისხმევი: 15 წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8677,48 +8679,52 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>ეს არის მაქსიმალური დრო ფაილის მონაცემების ბოლო ნაწილის
+მიღებიდან. ის განკუთვნილია სიჩქარის გაზომვის სიზუსტის
+გასაუმჯობესებლად და იმ წყაროების გათიშვის თავიდან ასაცილებლად,
+რომლებიც მხოლოდ მიმდინარე უმოქმედობის გამო გაითიშებოდა. (ნაგულისხმევი: 10 წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>წყაროების მინიმალური რაოდენობა, რომლის არსებობაც აუცილებელია
+რომელიმე წყაროს გათიშვამდე. (ნაგულისხმევი: 1)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>ფაილის მინიმალური ზომა წყაროების გათიშვამდე (KiB). (ნაგულისხმევი: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>წყაროების გათიშვა ამაზე დაბალი სიჩქარისას (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
             <source>Check every (s)</source>
-            <translation type="unfinished" />
+            <translation>შემოწმების ინტერვალი (წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>მინ. გასული დრო (წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
             <source>Max inactivity (s)</source>
-            <translation type="unfinished" />
+            <translation>მაქს. უმოქმედობა (წმ)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>ონლაინ წყაროების მინიმუმი</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
             <source>Min filesize (KiB)</source>
-            <translation type="unfinished" />
+            <translation>ფაილის მინ. ზომა (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="686" />
@@ -8742,19 +8748,21 @@ If disabled, the files will be set to Normal as priority.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />
             <source>Auto-drop slow sources for all queue items (except filelists)</source>
-            <translation type="unfinished" />
+            <translation>ნელი წყაროების ავტომატური გათიშვა რიგის ყველა ელემენტისთვის (ფაილების სიების გარდა)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="730" />
             <source>This option removes the slow sources for all queue items (except file lists).
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>ეს პარამეტრი შლის ნელ წყაროებს რიგის ყველა ელემენტისთვის (ფაილების სიების გარდა).
+ავტომატური გათიშვის ჩასართავად ჩართეთ „ნელი წყაროების ავტომატური გათიშვა რიგის ყველა ელემენტისთვის“
+ან „ნელი ფაილების სიების წაშლა“ (ან ორივე).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="743" />
             <source>Remove slow filelists</source>
-            <translation type="unfinished" />
+            <translation>ნელი ფაილების სიების წაშლა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="746" />
@@ -8762,18 +8770,22 @@ or "Remove slow file lists" (or both of them).</source>
 was recognized as too slow.
 To enable autodrop, turn on either "Autodrop slow sources for all queue items"
 or "Remove slow file lists" (or both of them).</source>
-            <translation type="unfinished" />
+            <translation>თუ ეს ჩართულია, EiskaltDC++ წაშლის ფაილების სიას, რომლის ჩამოტვირთვის სიჩქარე
+ზედმეტად ნელად იქნა მიჩნეული.
+ავტომატური გათიშვის ჩასართავად ჩართეთ „ნელი წყაროების ავტომატური გათიშვა რიგის ყველა ელემენტისთვის“
+ან „ნელი ფაილების სიების წაშლა“ (ან ორივე).</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="760" />
             <source>Don't remove the source when auto-dropping, only disconnect</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური გათიშვისას წყარო არ წაიშალოს, მხოლოდ კავშირი გაწყდეს</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="763" />
             <source>With this option enabled, sources will only be disconnected
 but not removed from the queue.</source>
-            <translation type="unfinished" />
+            <translation>თუ ეს ჩართულია, წყაროებთან მხოლოდ კავშირი გაწყდება,
+მაგრამ ისინი რიგიდან არ წაიშლება.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="775" />

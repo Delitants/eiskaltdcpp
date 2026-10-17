@@ -16,6 +16,73 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_slow_source_translations(self):
+        required = {
+            "Auto-drop settings",
+            "If the download speed of a file is below the entered value,\n"
+            "the source will be dropped. (default: 1024 B/s)",
+            "Check every x second(s) if the source is slow. (default: 10 s)",
+            "Amount of time (in seconds) that has to pass since the download\n"
+            "started before a source can be dropped. (default: 15 s)",
+            "This is the maximal time since the last chunk of data for\n"
+            "the file was received. It is meant to improve speed measurement\n"
+            "accuracy and to prevent dropping sources that are going to be\n"
+            "disconnected only because of their current inactivity. (default: 10 s)",
+            "Minimum amount of sources before any sources\nwill be dropped. (default: 1)",
+            "Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)",
+            "Drop sources below (B/s)", "Check every (s)", "Min. elapsed (s)",
+            "Max inactivity (s)", "Min sources online", "Min filesize (KiB)",
+            "Auto-drop slow sources for all queue items (except filelists)",
+            'This option removes the slow sources for all queue items (except file lists).\n'
+            'To enable autodrop, turn on either "Autodrop slow sources for all queue items"\n'
+            'or "Remove slow file lists" (or both of them).',
+            "Remove slow filelists",
+            'With this option enabled, EiskaltDC++ will delete a file list whose speed\n'
+            'was recognized as too slow.\n'
+            'To enable autodrop, turn on either "Autodrop slow sources for all queue items"\n'
+            'or "Remove slow file lists" (or both of them).',
+            "Don't remove the source when auto-dropping, only disconnect",
+            "With this option enabled, sources will only be disconnected\nbut not removed from the queue.",
+        }
+        exact = {
+            "Don't remove the source when auto-dropping, only disconnect":
+                "ავტომატური გათიშვისას წყარო არ წაიშალოს, მხოლოდ კავშირი გაწყდეს",
+            "With this option enabled, sources will only be disconnected\nbut not removed from the queue.":
+                "თუ ეს ჩართულია, წყაროებთან მხოლოდ კავშირი გაწყდება,\nმაგრამ ისინი რიგიდან არ წაიშლება.",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsDownloads" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-slow-sources-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertNotEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(Counter(re.findall(r"\d+", source)),
+                                     Counter(re.findall(r"\d+", text)))
+                    for token in ("B/s", "KiB", "EiskaltDC++"):
+                        if token in source:
+                            self.assertRegex(text, r"(?<![A-Za-z/])" + re.escape(token) + r"(?![A-Za-z/])")
+                    if source in exact:
+                        self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_download_limits_and_priorities(self):
         required = {
             "Use unfinished downloads directory",
