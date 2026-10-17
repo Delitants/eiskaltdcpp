@@ -202,6 +202,14 @@ class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_ukrainian_connection_catalogs_survive_compilation(self):
+        self._assert_connection_catalog_survives_compilation("uk")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_belarusian_connection_catalog_survives_compilation(self):
+        self._assert_connection_catalog_survives_compilation("be")
+
+    def _assert_connection_catalog_survives_compilation(self, language):
         required = {
             "DHTBootstrapList": {"DHT bootstrap URLs", "DHT bootstrap URL", "URL"},
             "SettingsConnection": {
@@ -216,9 +224,9 @@ class CatalogRegressionTests(unittest.TestCase):
                 "DHT bootstrap URLs", "Separate multiple URLs with semicolons",
             },
         }
-        path = ROOT / "eiskaltdcpp-qt/translations/uk.ts"
-        with tempfile.TemporaryDirectory(prefix="eiskalt-uk-connection-") as work:
-            binary, output = Path(work) / "uk.qm", Path(work) / "compiled.ts"
+        path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
+        with tempfile.TemporaryDirectory(prefix="eiskalt-connection-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
             subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
                            check=True, capture_output=True, text=True)
             subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
