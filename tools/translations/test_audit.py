@@ -16,6 +16,51 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_transfer_and_command_translations(self):
+        required = {
+            "HubFrame": {"IPv6", "search", "Filter",
+                         "/rebuild - rebuild hash\n", "/refresh - update own file list\n",
+                         "/ws param value - set gui option param in value (without value return current value of option)\n",
+                         "/dcpps param value - set core option param in value (without value return current value of option)\n"},
+            "Settings": {"Torrent preferences", "Could not save Torrent settings: %1"},
+            "TransferView": {"Flags", "Protocol", "Cancel download", "Show only transferred files",
+                             "Torrent details", "Pause Torrent", "Resume Torrent", "Uploaded %1 (%2%) "},
+            "TransferViewModel": {"Flags", "Paused", "Seeding", "Waiting", "Download (%1 peers)",
+                                  "Upload (%1 peers)", "%1 | Downloaded %2 (%3%)", "%1 | Uploaded %2"},
+        }
+        exact = {"Pause Torrent": "Wstrzymaj torrent", "Resume Torrent": "Wznów torrent",
+                 "Paused": "Wstrzymano", "Seeding": "Udostępnianie", "Waiting": "Oczekiwanie",
+                 "Cancel download": "Anuluj pobieranie"}
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context") for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-transfers-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)), Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                        if source.startswith("/"):
+                            self.assertEqual(source.split(" - ", 1)[0], text.split(" - ", 1)[0])
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_connection_policy_help_survives_compilation(self):
         expected = {
             "Don't allow Hub/UPnP/DHT to override": "Nie zezwalaj hubowi/UPnP/DHT na nadpisanie",

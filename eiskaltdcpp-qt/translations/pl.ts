@@ -1091,7 +1091,7 @@ Opcje:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1150,7 +1150,7 @@ Opcje:
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>szukaj</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
@@ -1165,7 +1165,7 @@ Opcje:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Filtr</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1452,13 +1452,15 @@ Ulubiony użytkownik</translation>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - przelicz hasze
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - zaktualizuj własną listę plików
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1476,13 +1478,15 @@ Ulubiony użytkownik</translation>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - ustaw opcję interfejsu param na wartość value (bez value zwraca bieżącą wartość opcji)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - ustaw opcję rdzenia param na wartość value (bez value zwraca bieżącą wartość opcji)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
@@ -3630,12 +3634,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Ustawienia torrentów</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Nie udało się zapisać ustawień torrentów: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -6577,7 +6581,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferView.cpp" line="85" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Flagi</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="86" />
@@ -6613,7 +6617,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokół</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6623,7 +6627,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Anuluj pobieranie</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6643,7 +6647,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Pokaż tylko przesłane pliki</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
@@ -6660,17 +6664,17 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Szczegóły torrenta</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Wstrzymaj torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Wznów torrent</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6723,7 +6727,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferView.cpp" line="998" />
             <source>Uploaded %1 (%2%) </source>
-            <translation type="unfinished" />
+            <translation>Wysłano %1 (%2%) </translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="1015" />
@@ -6784,7 +6788,7 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
             <source>Flags</source>
-            <translation type="unfinished" />
+            <translation>Flagi</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="57" />
@@ -6829,37 +6833,37 @@ Dodano do seedowania tylko do odczytu. Pliki źródłowe zostaną sprawdzone na 
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Wstrzymano</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Udostępnianie</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Oczekiwanie</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Pobieranie (liczba peerów: %1)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Wysyłanie (liczba peerów: %1)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Pobrano %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Wysłano %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
