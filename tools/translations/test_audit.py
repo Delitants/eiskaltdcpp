@@ -16,6 +16,51 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_ukrainian_connection_catalogs_survive_compilation(self):
+        required = {
+            "DHTBootstrapList": {"DHT bootstrap URLs", "DHT bootstrap URL", "URL"},
+            "SettingsConnection": {
+                "Enable IPv6", "External/WAN IPv6:", "e.g. 2001:db8::1234",
+                "Bind IPv6 address", "Country MMDB file",
+                "Path to GeoLite2/MaxMind country .mmdb", "Configure DHT bootstrap URLs",
+                "Public hub list URLs", "Configure public hub list URLs",
+                "No valid external IPv6 address found!", "No valid bind IPv6 address found!",
+                "Select MaxMind country database", "MaxMind DB (*.mmdb);;All files (*.*)",
+            },
+            "UISettingsConnection": {
+                "DHT bootstrap URLs", "Separate multiple URLs with semicolons",
+            },
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/uk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-uk-connection-") as work:
+            binary, output = Path(work) / "uk.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            def entries(catalog):
+                return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                        for c in ET.parse(catalog).getroot().findall("context")
+                        for m in c.findall("message")}
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        value = original[(context, source)]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source != "URL":
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[(context, source)].itertext()))
+                        for token in ("IPv6", "WAN", "DHT", "URL", "MaxMind", "GeoLite2/MaxMind", "MMDB",
+                                      ".mmdb", "2001:db8::1234", "(*.mmdb)", ";;", "(*.*)"):
+                            if token in source:
+                                self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_shutdown_refusal_diagnostic_survives_compilation(self):
         self._assert_compiled_runtime_messages("eiskalt::torrent::TorrentEngine", {
             "Torrent shutdown refused. Stages: %1; last operation: %2; elapsed: %3 us; "
