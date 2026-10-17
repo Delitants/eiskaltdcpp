@@ -14,6 +14,70 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_slovak_final_html_help(self):
+        replacements = {
+            "UISettingsConnection": {
+                "Set the Type-Of-Service (TOS) field that is sent with every ": "Nastaví pole typu služby (TOS), ktoré sa odosiela s každým ",
+                "IP packet": "IP paketom",
+                " originating from this socket. It is used to prioritize packets on the network. TOS is a byte. There are some standard TOS flags defined: ":
+                    " pochádzajúcim z tohto soketu. Používa sa na určovanie priority paketov v sieti. TOS je bajt. Sú definované niektoré štandardné príznaky TOS: ",
+                "Low delay": "Nízke oneskorenie", "Throughput": "Priepustnosť", "Reliability": "Spoľahlivosť", "Minimal cost": "Minimálne náklady",
+                " to minimize delays for interactive traffic": " na minimalizáciu oneskorenia interaktívnej komunikácie",
+                " to optimize throughput": " na optimalizáciu priepustnosti",
+                " to optimize for reliability": " na optimalizáciu spoľahlivosti",
+                " should be used for &quot;filler data&quot; where slow transmission doesn't matter":
+                    " sa má používať pre &quot;výplňové dáta&quot;, pri ktorých pomalý prenos neprekáža",
+                "At most one of these TOS values can be specified. Linux sends ": "Možno zadať najviac jednu z týchto hodnôt TOS. Linux predvolene odosiela ",
+                " datagrams first by default, but the exact behaviour depends on the configured queueing discipline.":
+                    " datagramy ako prvé, ale presné správanie závisí od nastaveného spôsobu radenia do frontu.",
+                " Warning! This option needs superuser privileges!": " Upozornenie! Táto možnosť vyžaduje oprávnenia superpoužívateľa!",
+            },
+            "UISettingsGUI": {
+                "These expressions may be used for the time:": "Pre čas možno použiť tieto výrazy:",
+                "Expression": "Výraz", "Output": "Výstup",
+                "the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)": "hodina bez úvodnej nuly (0 až 23 alebo 1 až 12 pri zobrazení AM/PM)",
+                "the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)": "hodina s úvodnou nulou (00 až 23 alebo 01 až 12 pri zobrazení AM/PM)",
+                "the hour without a leading zero (0 to 23, even with AM/PM display)": "hodina bez úvodnej nuly (0 až 23 aj pri zobrazení AM/PM)",
+                "the hour with a leading zero (00 to 23, even with AM/PM display)": "hodina s úvodnou nulou (00 až 23 aj pri zobrazení AM/PM)",
+                "the minute without a leading zero (0 to 59)": "minúta bez úvodnej nuly (0 až 59)",
+                "the minute with a leading zero (00 to 59)": "minúta s úvodnou nulou (00 až 59)",
+                "the second without a leading zero (0 to 59)": "sekunda bez úvodnej nuly (0 až 59)",
+                "the second with a leading zero (00 to 59)": "sekunda s úvodnou nulou (00 až 59)",
+                "the milliseconds without leading zeroes (0 to 999)": "milisekundy bez úvodných núl (0 až 999)",
+                "the milliseconds with leading zeroes (000 to 999)": "milisekundy s úvodnými nulami (000 až 999)",
+                "AP or A": "AP alebo A", "ap or a": "ap alebo a",
+                "use AM/PM display. ": "použiť zobrazenie AM/PM. ", "use am/pm display. ": "použiť zobrazenie am/pm. ",
+                " will be replaced by either &quot;AM&quot; or &quot;PM&quot;.": " sa nahradí buď &quot;AM&quot;, alebo &quot;PM&quot;.",
+                " will be replaced by either &quot;am&quot; or &quot;pm&quot;.": " sa nahradí buď &quot;am&quot;, alebo &quot;pm&quot;.",
+                "the timezone (for example &quot;CEST&quot;)": "časové pásmo (napríklad &quot;CEST&quot;)",
+            },
+        }
+        markers = {"UISettingsConnection": "Set the Type-Of-Service", "UISettingsGUI": "These expressions may be used for the time:"}
+        root = ET.parse(ROOT / "eiskaltdcpp-qt/translations/sk.ts").getroot()
+        for context, mapping in replacements.items():
+            messages = [m for c in root.findall("context") if c.findtext("name") == context
+                        for m in c.findall("message") if markers[context] in m.findtext("source", "")
+                        and m.find("translation").get("type") not in {"obsolete", "vanished"}]
+            self.assertEqual(1, len(messages), context)
+            message = messages[0]
+            source = message.findtext("source")
+            expected = source
+            for old, new in mapping.items():
+                self.assertIn(old, expected)
+                expected = expected.replace(old, new)
+            with self.subTest(context=context):
+                value = message.find("translation")
+                self.assertNotEqual("unfinished", value.get("type"))
+                text = "".join(value.itertext())
+                self.assertEqual(expected, text)
+                self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                self.assertEqual(Counter(re.findall(r"\d+", source)), Counter(re.findall(r"\d+", text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_slovak_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("sk")
+
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_slovak_connection_labels_and_warnings(self):
