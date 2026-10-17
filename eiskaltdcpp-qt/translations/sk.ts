@@ -4206,17 +4206,17 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="151" />
             <source>Portuguese (Brazil)</source>
-            <translation type="unfinished" />
+            <translation>Portugalčina (Brazília)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="152" />
             <source>Serbian (Cyrillic)</source>
-            <translation type="unfinished" />
+            <translation>Srbčina (cyrilika)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="153" />
             <source>Serbian (Latin)</source>
-            <translation type="unfinished" />
+            <translation>Srbčina (latinka)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="154" />
@@ -4231,7 +4231,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="156" />
             <source>Basque</source>
-            <translation type="unfinished" />
+            <translation>Baskičtina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="157" />
@@ -4246,104 +4246,104 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="159" />
             <source>Czech</source>
-            <translation type="unfinished" />
+            <translation>Čeština</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="160" />
             <source>German</source>
-            <translation type="unfinished" />
+            <translation>Nemčina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="161" />
             <source>Greek</source>
-            <translation type="unfinished" />
+            <translation>Gréčtina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="162" />
             <source>Italian</source>
-            <translation type="unfinished" />
+            <translation>Taliančina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="163" />
             <source>Vietnamese</source>
-            <translation type="unfinished" />
+            <translation>Vietnamčina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="164" />
             <source>Chinese (China)</source>
-            <translation type="unfinished" />
+            <translation>Čínština (Čína)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="165" />
             <source>Swedish (Sweden)</source>
-            <translation type="unfinished" />
+            <translation>Švédčina (Švédsko)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="166" />
             <source>Turkish</source>
-            <translation type="unfinished" />
+            <translation>Turečtina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="167" />
             <source>Danish</source>
-            <translation type="unfinished" />
+            <translation>Dánčina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="168" />
             <source>Georgian</source>
-            <translation type="unfinished" />
+            <translation>Gruzínčina</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Téma ikon panela nástrojov</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished">Téma</translation>
+            <translation>Téma</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished">Štandartne</translation>
+            <translation>Predvolená</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Jednofarebná</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Téma ikon zoznamu používateľov</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Pôvodná</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Obrázky v chate</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Priečinok</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Automaticky odstrániť súbory staršie ako</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> dní</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
@@ -4413,7 +4413,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Vybrať priečinok obrázkov v chate</translation>
         </message>
     </context>
     <context>

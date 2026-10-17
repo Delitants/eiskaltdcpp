@@ -16,6 +16,48 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_gui_choices_and_picture_storage(self):
+        expected = {"SettingsGUI": {
+            "Portuguese (Brazil)": "Portugalčina (Brazília)",
+            "Serbian (Cyrillic)": "Srbčina (cyrilika)", "Serbian (Latin)": "Srbčina (latinka)",
+            "Basque": "Baskičtina", "Czech": "Čeština", "German": "Nemčina",
+            "Greek": "Gréčtina", "Italian": "Taliančina", "Vietnamese": "Vietnamčina",
+            "Chinese (China)": "Čínština (Čína)", "Swedish (Sweden)": "Švédčina (Švédsko)",
+            "Turkish": "Turečtina", "Danish": "Dánčina", "Georgian": "Gruzínčina",
+            "Toolbar icon theme": "Téma ikon panela nástrojov", "Theme": "Téma",
+            "Default": "Predvolená", "Monochrome": "Jednofarebná",
+            "User list icon theme": "Téma ikon zoznamu používateľov", "Original": "Pôvodná",
+            "Chat pictures": "Obrázky v chate", "Folder": "Priečinok",
+            "Auto-clean files older than": "Automaticky odstrániť súbory staršie ako",
+            " days": " dní", "Select chat pictures folder": "Vybrať priečinok obrázkov v chate",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "SettingsGUI" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-gui-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(48, len(original))
+            self.assertTrue(expected["SettingsGUI"].keys() <= original.keys())
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in expected["SettingsGUI"]:
+                        self.assertEqual(expected["SettingsGUI"][source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_hub_filter_and_shortcut_dialogs(self):
         expected = {
             "SearchBlackListModel": {"Set text...": "Zadať text..."},
