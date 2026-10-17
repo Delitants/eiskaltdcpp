@@ -8512,7 +8512,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="67" />
             <source>Use unfinished downloads directory</source>
-            <translation type="unfinished" />
+            <translation>დაუმთავრებელი ჩამოტვირთვების საქაღალდის გამოყენება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="106" />
@@ -8525,50 +8525,56 @@ p, li { white-space: pre-wrap; }
 designed to prevent new downloads if your existing downloads
 exceed a specific threshold. It's measured in kibibytes per second,
 and a value of zero will disable this limit.</source>
-            <translation type="unfinished" />
+            <translation>ეს ერთდროული ჩამოტვირთვების შეზღუდვის კიდევ ერთი მეთოდია,
+რომელიც ახალი ჩამოტვირთვების დაწყებას კრძალავს, თუ მიმდინარე ჩამოტვირთვების სიჩქარე
+განსაზღვრულ ზღვარს აჭარბებს. ის იზომება კიბიბაიტებით წამში,
+ხოლო ნულოვანი მნიშვნელობა ამ შეზღუდვას გამორთავს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="137" />
             <source>This limits the number of simultaneous downloads.
 A value of 0 means no limit.</source>
-            <translation type="unfinished" />
+            <translation>ეს ზღუდავს ერთდროული ჩამოტვირთვების რაოდენობას.
+მნიშვნელობა 0 ნიშნავს შეუზღუდავს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="151" />
             <source>Maximum simultaneous downloads (0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>ერთდროული ჩამოტვირთვების მაქსიმუმი (0 = შეუზღუდავი)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="167" />
             <source>No new downloads if speed exceeds (KiB/s, 0 = infinite)</source>
-            <translation type="unfinished" />
+            <translation>არ დაიწყოს ახალი ჩამოტვირთვები, თუ სიჩქარე აჭარბებს (KiB/s, 0 = შეუზღუდავი)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="177" />
             <source>Note: Because of changing download speeds, this is not 100% accurate</source>
-            <translation type="unfinished" />
+            <translation>შენიშვნა: ჩამოტვირთვის სიჩქარის ცვლილების გამო ეს 100%-ით ზუსტი არ არის</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="190" />
             <source>Public Hub lists</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიები</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="208" />
             <source>This HTTP proxy will only be used to request
 the Public Hub List specified above.
 It's not used for uploads, downloads, or connecting to a hub.</source>
-            <translation type="unfinished" />
+            <translation>ეს HTTP პროქსი გამოიყენება მხოლოდ ზემოთ მითითებული
+საჯარო ჰაბების სიის მოსათხოვნად.
+ის არ გამოიყენება ატვირთვისთვის, ჩამოტვირთვისთვის ან ჰაბთან დასაკავშირებლად.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="217" />
             <source>Http proxy (hub list only)</source>
-            <translation type="unfinished" />
+            <translation>HTTP პროქსი (მხოლოდ ჰაბების სიისთვის)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="224" />
             <source>Configure Public Hub Lists</source>
-            <translation type="unfinished" />
+            <translation>საჯარო ჰაბების სიების გამართვა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="248" />
@@ -8593,51 +8599,55 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="342" />
             <source>Auto-priority settings</source>
-            <translation type="unfinished" />
+            <translation>ავტომატური პრიორიტეტის პარამეტრები</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="360" />
             <source>Files with the same or under the entered size
 will be set to Highest as priority. (default: 64 KiB)</source>
-            <translation type="unfinished" />
+            <translation>მითითებული ზომის ტოლ ან მასზე პატარა ფაილებს
+მიენიჭება უმაღლესი პრიორიტეტი. (ნაგულისხმევი: 64 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>მითითებული ზომის ტოლ ან მასზე პატარა, მაგრამ უმაღლესი პრიორიტეტის
+მაქსიმალურ ზომაზე დიდ ფაილებს მიენიჭება მაღალი პრიორიტეტი. (ნაგულისხმევი: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>მითითებული ზომის ტოლ ან მასზე პატარა, მაგრამ უმაღლესი და მაღალი
+პრიორიტეტების მაქსიმალურ ზომებზე დიდ ფაილებს მიენიჭება ჩვეულებრივი პრიორიტეტი. (ნაგულისხმევი: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>მითითებული ზომის ტოლ ან მასზე პატარა, მაგრამ უმაღლესი, მაღალი
+და ჩვეულებრივი პრიორიტეტების მაქსიმალურ ზომებზე დიდ ფაილებს მიენიჭება დაბალი პრიორიტეტი. (ნაგულისხმევი: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
             <source>Highest priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>უმაღლესი პრიორიტეტის მაქსიმალური ზომა (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="426" />
             <source>High priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>მაღალი პრიორიტეტის მაქსიმალური ზომა (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="442" />
             <source>Normal priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>ჩვეულებრივი პრიორიტეტის მაქსიმალური ზომა (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="458" />
             <source>Low priority max size (KiB)</source>
-            <translation type="unfinished" />
+            <translation>დაბალი პრიორიტეტის მაქსიმალური ზომა (KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
@@ -8718,14 +8728,16 @@ will be dropped. (default: 1)</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="711" />
             <source>Set lowest priority for newly added files larger than low priority size</source>
-            <translation type="unfinished" />
+            <translation>დაბალი პრიორიტეტის ზომაზე დიდ ახლად დამატებულ ფაილებს მიენიჭოს უმდაბლესი პრიორიტეტი</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="714" />
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>თუ ეს ჩართულია, დაბალი პრიორიტეტის მაქსიმალურ ზომაზე დიდ ფაილებს
+მიენიჭება უმდაბლესი პრიორიტეტი.
+თუ გამორთულია, ფაილებს მიენიჭება ჩვეულებრივი პრიორიტეტი.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />

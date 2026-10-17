@@ -16,6 +16,76 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_download_limits_and_priorities(self):
+        required = {
+            "Use unfinished downloads directory",
+            "This is another method of limiting simultaneous downloads,\n"
+            "designed to prevent new downloads if your existing downloads\n"
+            "exceed a specific threshold. It's measured in kibibytes per second,\n"
+            "and a value of zero will disable this limit.",
+            "This limits the number of simultaneous downloads.\nA value of 0 means no limit.",
+            "Maximum simultaneous downloads (0 = infinite)",
+            "No new downloads if speed exceeds (KiB/s, 0 = infinite)",
+            "Note: Because of changing download speeds, this is not 100% accurate",
+            "Public Hub lists",
+            "This HTTP proxy will only be used to request\n"
+            "the Public Hub List specified above.\n"
+            "It's not used for uploads, downloads, or connecting to a hub.",
+            "Http proxy (hub list only)", "Configure Public Hub Lists", "Auto-priority settings",
+            "Files with the same or under the entered size\n"
+            "will be set to Highest as priority. (default: 64 KiB)",
+            "Files with the same or under the entered size, but above Highest\n"
+            "prio max size, will be set to High as priority. (default: 0 KiB)",
+            "Files with the same or under the entered size, but above Highest and\n"
+            "High prio max size, will be set to Normal as priority. (default: 0 KiB)",
+            "Files with the same or under the entered size, but above Highest, High\n"
+            "and Normal prio max size, will be set to Low as priority. (default: 0 KiB)",
+            "Highest priority max size (KiB)", "High priority max size (KiB)",
+            "Normal priority max size (KiB)", "Low priority max size (KiB)",
+            "Set lowest priority for newly added files larger than low priority size",
+            "With this enabled, files that are larger than Low prio max size\n"
+            "are set to Lowest as priority.\nIf disabled, the files will be set to Normal as priority.",
+        }
+        exact = {
+            "Highest priority max size (KiB)": "უმაღლესი პრიორიტეტის მაქსიმალური ზომა (KiB)",
+            "High priority max size (KiB)": "მაღალი პრიორიტეტის მაქსიმალური ზომა (KiB)",
+            "Normal priority max size (KiB)": "ჩვეულებრივი პრიორიტეტის მაქსიმალური ზომა (KiB)",
+            "Low priority max size (KiB)": "დაბალი პრიორიტეტის მაქსიმალური ზომა (KiB)",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsDownloads" for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-download-limits-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for source in sorted(required):
+                with self.subTest(source=source):
+                    self.assertIn(source, original)
+                    value = original[source]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertNotEqual(source, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(source.count("%"), text.count("%"))
+                    self.assertEqual(Counter(re.findall(r"\d+", source)),
+                                     Counter(re.findall(r"\d+", text)))
+                    for token in ("KiB/s", "KiB", "HTTP"):
+                        if token in source:
+                            self.assertIn(token, text)
+                    if source in exact:
+                        self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_mainwindow_translations(self):
         required = {
             "Search Spy", "Away when not visible", "Exit", " | DHT nodes: %1",
