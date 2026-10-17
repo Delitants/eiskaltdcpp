@@ -16,6 +16,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_bulgarian_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("bg")
+
+    def test_bulgarian_rich_help_and_commands(self):
+        self._assert_rich_help_and_commands("bg", "или")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_bulgarian_connection_catalog_survives_compilation(self):
         self._assert_connection_catalog_survives_compilation("bg")
 
