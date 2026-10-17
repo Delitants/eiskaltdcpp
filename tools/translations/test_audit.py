@@ -14,6 +14,28 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_french_rich_help_preserves_markup_and_links(self):
+        checked = 0
+        for context in ET.parse(ROOT / "eiskaltdcpp-qt/translations/fr.ts").getroot().findall("context"):
+            if context.findtext("name") not in {"MainWindow", "UISettingsLog"}:
+                continue
+            for message in context.findall("message"):
+                source = message.findtext("source", "")
+                value = message.find("translation")
+                if value is None or value.get("type") in {"obsolete", "vanished"}:
+                    continue
+                if not (source.startswith("<!DOCTYPE HTML PUBLIC") or
+                        "github.com/Delitants/eiskaltdcpp/issues" in source or
+                        source.startswith('2026 <a href="mailto:')):
+                    continue
+                checked += 1
+                text = "".join(value.itertext())
+                with self.subTest(context=context.findtext("name"), source=source[:80]):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+        self.assertEqual(3, checked)
+
     def test_ukrainian_rich_help_preserves_markup_and_links(self):
         checked = 0
         for context in ET.parse(ROOT / "eiskaltdcpp-qt/translations/uk.ts").getroot().findall("context"):
@@ -47,9 +69,17 @@ class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_ukrainian_active_catalog_is_complete_and_compiles(self):
-        path = ROOT / "eiskaltdcpp-qt/translations/uk.ts"
-        with tempfile.TemporaryDirectory(prefix="eiskalt-uk-complete-") as work:
-            binary, output = Path(work) / "uk.qm", Path(work) / "compiled.ts"
+        self._assert_active_catalog_is_complete_and_compiles("uk")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_french_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("fr")
+
+    def _assert_active_catalog_is_complete_and_compiles(self, language):
+        path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
+        with tempfile.TemporaryDirectory(prefix="eiskalt-catalog-complete-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
             subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
                            check=True, capture_output=True, text=True)
             subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
