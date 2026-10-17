@@ -9323,33 +9323,33 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Vymazať históriu vyhľadávania pri ukončení programu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Vymazať históriu priečinkov sťahovania pri ukončení programu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
             <location filename="../ui/UISettingsHistory.ui" line="113" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Vymazať teraz</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Počet uložených položiek histórie vyhľadávania:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Počet uložených položiek histórie priečinkov sťahovania:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>Pamätať si vyhľadávacie frázy TTH</translation>
         </message>
     </context>
     <context>
@@ -9472,7 +9472,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="24" />
             <source>Text</source>
-            <translation type="unfinished" />
+            <translation>Text</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="30" />
@@ -9505,7 +9505,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="70" />
             <source>Favorite user join/part</source>
-            <translation type="unfinished" />
+            <translation>Príchod/odchod obľúbeného používateľa</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="77" />
@@ -9540,7 +9540,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="158" />
             <source>D-Bus</source>
-            <translation type="unfinished" />
+            <translation>D-Bus</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="186" />
@@ -9558,12 +9558,12 @@ p, li { white-space: pre-wrap; }
             <location filename="../ui/UISettingsNotification.ui" line="314" />
             <location filename="../ui/UISettingsNotification.ui" line="355" />
             <source>Test</source>
-            <translation type="unfinished" />
+            <translation>Test</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="280" />
             <source>Play sound on active PM window</source>
-            <translation type="unfinished" />
+            <translation>Prehrať zvuk aj pri aktívnom okne súkromnej správy</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsNotification.ui" line="331" />
@@ -9609,12 +9609,13 @@ who sends private message to you.</source>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Táto prezývka vás identifikuje po pripojení k hubu.
+Pre každý hub ju môžete zmeniť vo vlastnostiach obľúbeného hubu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
             <source>E-Mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="100" />
@@ -9647,12 +9648,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Tento rozbaľovací zoznam obsahuje bežné rýchlosti odosielania (v Mbit/s),
+vyberte hodnotu najbližšiu vašej rýchlosti.
+Nezadávajte rýchlosť sťahovania; toto nastavenie vyjadruje,
+akým rýchlym zdrojom budete pravdepodobne pre ostatných používateľov.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />

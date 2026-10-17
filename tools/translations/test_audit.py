@@ -16,6 +16,66 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_personal_history_and_notifications(self):
+        required = {
+            "UISettingsHistory": {"Clear search history on program exit",
+                                  "Clear download directories history on program exit", "Clear now",
+                                  "Number of search history elements to store:",
+                                  "Number of download directories history elements to store:",
+                                  "Memorize TTH search phrases"},
+            "UISettingsNotification": {"Text", "Favorite user join/part", "D-Bus", "Test",
+                                       "Play sound on active PM window",
+                                       "Enable notifications with not active main window",
+                                       "Enable notifications with active main window"},
+            "UISettingsPersonal": {
+                "This nickname, or handle, will identify you when you join a hub.\n"
+                "It can be overridden on a per-hub basis in the Favorite Hub Properties.",
+                "E-Mail", "Mbit/s",
+                "This drop-down contains a number of common upload speeds (in Mbit/s),\n"
+                "please choose the one closest to your own.\n"
+                "Do not put in your download speed; this setting is a measure\n"
+                "of how fast a source you are likely to be for other users.",
+            },
+        }
+        exact = {
+            "Enable notifications with not active main window": "Zapnúť upozornenia ak nie je aktívne hlavné okno",
+            "Enable notifications with active main window": "Zapnúť upozornenia ak je aktívne hlavné okno",
+            "Play sound on active PM window": "Prehrať zvuk aj pri aktívnom okne súkromnej správy",
+            "Clear now": "Vymazať teraz",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-personal-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source not in {"Text", "Test", "D-Bus", "E-Mail", "Mbit/s"}:
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        for token in ("TTH", "D-Bus", "Mbit/s"):
+                            if token in source:
+                                self.assertRegex(text, r"(?<![A-Za-z/])" + re.escape(token) + r"(?![A-Za-z/])")
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_hubs_search_and_browser(self):
         required = {
             "ChatEdit": {"Address", "Select image"},
