@@ -16,6 +16,57 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_console_and_notes_sections(self):
+        expected = {
+            "CmdDebug": {"Debug Console": "Ladiaca konzola"},
+            "DialogScriptConsole": {"Output": "Výstup", "Code": "Kód"},
+            "Secretary": {"Secretary": "Zápisník", "Search text": "Hľadať text",
+                          "Clear notes": "Vymazať poznámky", "Find in notes": "Hľadať v poznámkach"},
+            "UICmdDebug": {"Shift+F3": "Shift+F3", "F3": "F3",
+                           "Use comma as separator": "Použiť čiarku ako oddeľovač",
+                           "Filter by IP": "Filtrovať podľa IP",
+                           "Lines:": "Riadky:", "Clear now": "Vymazať teraz"},
+            "UISecretary": {"Shift+F3": "Shift+F3", "F3": "F3",
+                            "Magnet links": "Magnetové odkazy", "Search links": "Odkazy na vyhľadávanie",
+                            "Public chat": "Verejný chat", "BitTorrent links": "Odkazy BitTorrent",
+                            "Filter duplicates": "Filtrovať duplicity",
+                            "Use comma as separator": "Použiť čiarku ako oddeľovač",
+                            "Additional keywords": "Ďalšie kľúčové slová",
+                            "Filter hubs by IP": "Filtrovať huby podľa IP",
+                            "Lines:": "Riadky:", "Clear now": "Vymazať teraz"},
+        }
+        counts = {"CmdDebug": 1, "DialogScriptConsole": 5, "Secretary": 9,
+                  "UICmdDebug": 11, "UISecretary": 19}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-notes-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_sharing_section_is_complete(self):
         required = {
             "Add", "Remove", "Skip zero sized files", "8",
