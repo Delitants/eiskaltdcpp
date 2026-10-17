@@ -16,6 +16,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("ka")
+
+    def test_georgian_rich_help_and_commands(self):
+        self._assert_rich_help_and_commands("ka", "ან")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_connection_help(self):
         path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
         def entries(catalog):
