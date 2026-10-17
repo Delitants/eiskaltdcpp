@@ -8596,7 +8596,9 @@ Hodnota 0 znamená bez limitov.</translation>
             <source>This HTTP proxy will only be used to request
 the Public Hub List specified above.
 It's not used for uploads, downloads, or connecting to a hub.</source>
-            <translation type="unfinished" />
+            <translation>Tento HTTP proxy sa použije iba na získanie
+zoznamu verejných hubov uvedeného vyššie.
+Nepoužíva sa na odosielanie, sťahovanie ani pripájanie k hubu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="217" />
@@ -8647,25 +8649,29 @@ It's not used for uploads, downloads, or connecting to a hub.</source>
             <location filename="../ui/UISettingsDownloads.ui" line="360" />
             <source>Files with the same or under the entered size
 will be set to Highest as priority. (default: 64 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota
+budú mať najvyššiu prioritu. (predvolené: 64 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="371" />
             <source>Files with the same or under the entered size, but above Highest
 prio max size, will be set to High as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximom najvyššej
+priority, budú mať vysokú prioritu. (predvolené: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="382" />
             <source>Files with the same or under the entered size, but above Highest and
 High prio max size, will be set to Normal as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximami najvyššej a
+vysokej priority, budú mať normálnu prioritu. (predvolené: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="393" />
             <source>Files with the same or under the entered size, but above Highest, High
 and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximami najvyššej, vysokej
+a normálnej priority, budú mať nízku prioritu. (predvolené: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="410" />
@@ -8690,13 +8696,14 @@ and Normal prio max size, will be set to Low as priority. (default: 0 KiB)</sour
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="487" />
             <source>Auto-drop settings</source>
-            <translation type="unfinished" />
+            <translation>Nastavenia automatického vyraďovania</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="505" />
             <source>If the download speed of a file is below the entered value,
 the source will be dropped. (default: 1024 B/s)</source>
-            <translation type="unfinished" />
+            <translation>Ak je rýchlosť sťahovania súboru nižšia než zadaná hodnota,
+zdroj sa vyradí. (predvolené: 1024 B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="516" />
@@ -8707,7 +8714,8 @@ the source will be dropped. (default: 1024 B/s)</source>
             <location filename="../ui/UISettingsDownloads.ui" line="526" />
             <source>Amount of time (in seconds) that has to pass since the download
 started before a source can be dropped. (default: 15 s)</source>
-            <translation type="unfinished" />
+            <translation>Čas (v sekundách), ktorý musí uplynúť od začiatku sťahovania,
+kým sa zdroj môže vyradiť. (predvolené: 15 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="537" />
@@ -8715,23 +8723,27 @@ started before a source can be dropped. (default: 15 s)</source>
 the file was received. It is meant to improve speed measurement
 accuracy and to prevent dropping sources that are going to be
 disconnected only because of their current inactivity. (default: 10 s)</source>
-            <translation type="unfinished" />
+            <translation>Toto je maximálny čas od prijatia posledného bloku dát
+súboru. Slúži na zvýšenie presnosti merania rýchlosti
+a zabránenie vyraďovaniu zdrojov, ktoré by sa odpojili
+iba pre svoju aktuálnu nečinnosť. (predvolené: 10 s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="550" />
             <source>Minimum amount of sources before any sources
 will be dropped. (default: 1)</source>
-            <translation type="unfinished" />
+            <translation>Minimálny počet zdrojov potrebný na to, aby sa niektoré
+zdroje mohli vyradiť. (predvolené: 1)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="561" />
             <source>Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)</source>
-            <translation type="unfinished" />
+            <translation>Minimálna veľkosť súboru na vyraďovanie zdrojov (v KiB). (predvolené: 0 KiB)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="577" />
             <source>Drop sources below (B/s)</source>
-            <translation type="unfinished" />
+            <translation>Vyradiť zdroje pod (B/s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="593" />
@@ -8741,7 +8753,7 @@ will be dropped. (default: 1)</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="609" />
             <source>Min. elapsed (s)</source>
-            <translation type="unfinished" />
+            <translation>Min. uplynutý čas (s)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="625" />
@@ -8751,7 +8763,7 @@ will be dropped. (default: 1)</source>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="641" />
             <source>Min sources online</source>
-            <translation type="unfinished" />
+            <translation>Min. počet dostupných zdrojov</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="657" />
@@ -8773,7 +8785,9 @@ will be dropped. (default: 1)</source>
             <source>With this enabled, files that are larger than Low prio max size
 are set to Lowest as priority.
 If disabled, the files will be set to Normal as priority.</source>
-            <translation type="unfinished" />
+            <translation>Ak je táto možnosť zapnutá, súbory väčšie než maximum nízkej priority
+budú mať najnižšiu prioritu.
+Ak je vypnutá, súbory budú mať normálnu prioritu.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="727" />

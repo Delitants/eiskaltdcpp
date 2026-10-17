@@ -16,6 +16,64 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_download_priority_and_drop_thresholds(self):
+        expected = {"UISettingsDownloads": {
+            "This HTTP proxy will only be used to request\nthe Public Hub List specified above.\nIt's not used for uploads, downloads, or connecting to a hub.":
+                "Tento HTTP proxy sa použije iba na získanie\nzoznamu verejných hubov uvedeného vyššie.\nNepoužíva sa na odosielanie, sťahovanie ani pripájanie k hubu.",
+            "Files with the same or under the entered size\nwill be set to Highest as priority. (default: 64 KiB)":
+                "Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota\nbudú mať najvyššiu prioritu. (predvolené: 64 KiB)",
+            "Files with the same or under the entered size, but above Highest\nprio max size, will be set to High as priority. (default: 0 KiB)":
+                "Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximom najvyššej\npriority, budú mať vysokú prioritu. (predvolené: 0 KiB)",
+            "Files with the same or under the entered size, but above Highest and\nHigh prio max size, will be set to Normal as priority. (default: 0 KiB)":
+                "Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximami najvyššej a\nvysokej priority, budú mať normálnu prioritu. (predvolené: 0 KiB)",
+            "Files with the same or under the entered size, but above Highest, High\nand Normal prio max size, will be set to Low as priority. (default: 0 KiB)":
+                "Súbory s veľkosťou rovnou alebo menšou než zadaná hodnota, ale nad maximami najvyššej, vysokej\na normálnej priority, budú mať nízku prioritu. (predvolené: 0 KiB)",
+            "Auto-drop settings": "Nastavenia automatického vyraďovania",
+            "If the download speed of a file is below the entered value,\nthe source will be dropped. (default: 1024 B/s)":
+                "Ak je rýchlosť sťahovania súboru nižšia než zadaná hodnota,\nzdroj sa vyradí. (predvolené: 1024 B/s)",
+            "Amount of time (in seconds) that has to pass since the download\nstarted before a source can be dropped. (default: 15 s)":
+                "Čas (v sekundách), ktorý musí uplynúť od začiatku sťahovania,\nkým sa zdroj môže vyradiť. (predvolené: 15 s)",
+            "This is the maximal time since the last chunk of data for\nthe file was received. It is meant to improve speed measurement\naccuracy and to prevent dropping sources that are going to be\ndisconnected only because of their current inactivity. (default: 10 s)":
+                "Toto je maximálny čas od prijatia posledného bloku dát\nsúboru. Slúži na zvýšenie presnosti merania rýchlosti\na zabránenie vyraďovaniu zdrojov, ktoré by sa odpojili\niba pre svoju aktuálnu nečinnosť. (predvolené: 10 s)",
+            "Minimum amount of sources before any sources\nwill be dropped. (default: 1)":
+                "Minimálny počet zdrojov potrebný na to, aby sa niektoré\nzdroje mohli vyradiť. (predvolené: 1)",
+            "Minimum filesize before sources will be dropped (in KiB). (default: 0 KiB)":
+                "Minimálna veľkosť súboru na vyraďovanie zdrojov (v KiB). (predvolené: 0 KiB)",
+            "Drop sources below (B/s)": "Vyradiť zdroje pod (B/s)",
+            "Min. elapsed (s)": "Min. uplynutý čas (s)", "Min sources online": "Min. počet dostupných zdrojov",
+            "With this enabled, files that are larger than Low prio max size\nare set to Lowest as priority.\nIf disabled, the files will be set to Normal as priority.":
+                "Ak je táto možnosť zapnutá, súbory väčšie než maximum nízkej priority\nbudú mať najnižšiu prioritu.\nAk je vypnutá, súbory budú mať normálnu prioritu.",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsDownloads" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-priorities-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(15, len(expected["UISettingsDownloads"]))
+            self.assertTrue(expected["UISettingsDownloads"].keys() <= original.keys())
+            for source, translation in expected["UISettingsDownloads"].items():
+                with self.subTest(source=source):
+                    value = original[source]
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertEqual(translation, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(Counter(re.findall(r"\d+", source)), Counter(re.findall(r"\d+", text)))
+                    units = r"(?<![A-Za-z/])(?:KiB|B/s)(?![A-Za-z/])|(?<=\d )s\b|(?<=\()s(?=\))"
+                    self.assertEqual(Counter(re.findall(units, source)), Counter(re.findall(units, text)))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_main_window_about_and_credits(self):
         expected = {"MainWindow": {
             "EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.":
