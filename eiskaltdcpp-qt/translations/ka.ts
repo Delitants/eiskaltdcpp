@@ -1773,12 +1773,12 @@ Favorite user</source>
         <message>
             <location filename="../src/Magnet.cpp" line="61" />
             <source>Run search alternatives manually.</source>
-            <translation type="unfinished" />
+            <translation>ალტერნატიული წყაროების ძიების ხელით გაშვება.</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="64" />
             <source>Download file via auto search alternatives</source>
-            <translation type="unfinished" />
+            <translation>ფაილის ჩამოტვირთვა ალტერნატიული წყაროების ავტომატური ძიებით</translation>
         </message>
         <message>
             <location filename="../src/Magnet.cpp" line="251" />
@@ -1799,7 +1799,8 @@ Favorite user</source>
             <location filename="../src/Magnet.cpp" line="288" />
             <source>Some error ocurred when starting download:
  %1</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთვის დაწყებისას მოხდა შეცდომა:
+ %1</translation>
         </message>
     </context>
     <context>
@@ -2875,7 +2876,10 @@ Favorite user</source>
 Download: %1 Upload: %2
 Statistics
 Downloaded: %3 Uploaded: %4</source>
-            <translation type="unfinished" />
+            <translation>სიჩქარე
+ჩამოტვირთვა: %1 ატვირთვა: %2
+სტატისტიკა
+ჩამოტვირთულია: %3 ატვირთულია: %4</translation>
         </message>
     </context>
     <context>
@@ -2903,7 +2907,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PMWindow.cpp" line="578" />
             <source>%1 on hub %2</source>
-            <translation type="unfinished" />
+            <translation>%1 ჰაბზე %2</translation>
         </message>
         <message>
             <location filename="../src/PMWindow.cpp" line="626" />
@@ -7279,7 +7283,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>ეს აღწერა გამოჩნდება რჩეული ჰაბების სიაში.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
@@ -7319,12 +7323,12 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="162" />
             <source>Auto update from Internet</source>
-            <translation type="unfinished" />
+            <translation>ინტერნეტიდან ავტომატური განახლება</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="180" />
             <source>Minimum search interval (seconds)</source>
-            <translation type="unfinished" />
+            <translation>ძიების მინიმალური ინტერვალი (წამები)</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="202" />
@@ -7334,17 +7338,17 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="223" />
             <source>This nickname, or handle, will identify you when you join a hub.</source>
-            <translation type="unfinished" />
+            <translation>ეს მეტსახელი თქვენს ვინაობას აღნიშნავს ჰაბში შესვლისას.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="230" />
             <source>If hub requires password, define it here.</source>
-            <translation type="unfinished" />
+            <translation>თუ ჰაბი პაროლს მოითხოვს, მიუთითეთ ის აქ.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>ეს აღწერა გამოჩნდება მომხმარებელთა სიაში.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7390,7 +7394,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteUsers.ui" line="41" />
             <source>Auto grant slot to all users</source>
-            <translation type="unfinished" />
+            <translation>სლოტის ავტომატურად გამოყოფა ყველა მომხმარებლისთვის</translation>
         </message>
     </context>
     <context>
@@ -7745,7 +7749,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>ხსნის ძიების დიალოგს და ეძებს ფაილს.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="174" />
@@ -7756,7 +7760,8 @@ Sorted by downloading peers, then uploading peers.</source>
             <location filename="../ui/UIMagnet.ui" line="181" />
             <source>Adds magnet to download queue. If autosearch for alternatives is enabled
 in options, file will be downloaded without opening search dialog.</source>
-            <translation type="unfinished" />
+            <translation>ამატებს მაგნიტურ ბმულს ჩამოტვირთვის რიგში. თუ ალტერნატიული წყაროების ავტომატური ძიება ჩართულია
+პარამეტრებში, ფაილი ჩამოიტვირთება ძიების დიალოგის გახსნის გარეშე.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="185" />
@@ -7829,7 +7834,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>მრავალხაზიანი ტექსტის შესაყვანად დააჭირეთ Shift+Enter-ს</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
@@ -7924,7 +7929,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIQuickConnect.ui" line="44" />
             <source>IP address of DNS name of hub you want to connect.</source>
-            <translation type="unfinished" />
+            <translation>იმ ჰაბის IP მისამართი ან DNS სახელი, რომელთან დაკავშირებაც გსურთ.</translation>
         </message>
     </context>
     <context>
@@ -10064,7 +10069,7 @@ EiskaltDC++ მხარს უჭერს ფაილების სიე�
         <message>
             <location filename="../ui/UIUserCommands.ui" line="167" />
             <source>Send once per nick</source>
-            <translation type="unfinished" />
+            <translation>თითოეული მეტსახელისთვის მხოლოდ ერთხელ გაგზავნა</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="191" />

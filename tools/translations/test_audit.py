@@ -16,6 +16,59 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_magnets_favorites_and_messages(self):
+        required = {
+            "Magnet": {"Run search alternatives manually.", "Download file via auto search alternatives",
+                       "Some error ocurred when starting download:\n %1"},
+            "Notification": {"Speed\nDownload: %1 Upload: %2\nStatistics\nDownloaded: %3 Uploaded: %4"},
+            "PMWindow": {"%1 on hub %2"},
+            "UIFavoriteHubEditor": {
+                "This description will be shown in the list of favorite hubs.",
+                "Auto update from Internet", "Minimum search interval (seconds)",
+                "This nickname, or handle, will identify you when you join a hub.",
+                "If hub requires password, define it here.",
+                "This description will be shown in the user list.",
+            },
+            "UIFavoriteUsers": {"Auto grant slot to all users"},
+            "UIMagnet": {"Opens search dialog and searches file.",
+                         "Adds magnet to download queue. If autosearch for alternatives is enabled\n"
+                         "in options, file will be downloaded without opening search dialog."},
+            "UIPrivateMessage": {"Press Shift+Enter for multiline input"},
+            "UIQuickConnect": {"IP address of DNS name of hub you want to connect."},
+            "UIUserCommands": {"Send once per nick"},
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-magnets-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                         Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        for token in ("Shift+Enter", "IP", "DNS"):
+                            if token in source:
+                                self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_personal_history_and_notifications(self):
         required = {
             "UISettingsHistory": {
