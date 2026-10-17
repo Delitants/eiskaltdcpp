@@ -16,6 +16,58 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_hubs_notes_and_magnets(self):
+        required = {
+            "CmdDebug": {"Debug Console"}, "HashProgress": {"%1% %2 left"},
+            "PublicHubs": {"Refreshing public hub list...", "Hub list downloaded... (%1)",
+                           "Locally cached (as of %1) version of the hub list loaded (%2)"},
+            "PublicHubsList": {"Public hub list URLs"},
+            "Secretary": {"Secretary", "Clear notes", "Find in notes"},
+            "UICmdDebug": {"Use comma as separator", "Filter by IP", "Lines:", "Clear now"},
+            "UIFileHasher": {"Copy magnet link to clipboard", "Copy search link to clipboard"},
+            "UIMagnet": {"Magnet link viewer", "Copy magnet link to clipboard", "Copy search link to clipboard"},
+            "UIHubFrame": {"Press Shift+Enter for multiline input"},
+            "UIPrivateMessage": {"Press Shift+Enter for multiline input"},
+            "UIPublicHubs": {"Refresh"},
+            "UISecretary": {"Magnet links", "Search links", "Public chat", "BitTorrent links",
+                            "Filter duplicates", "Use comma as separator", "Additional keywords",
+                            "Filter hubs by IP", "Lines:", "Clear now"},
+        }
+        exact = {"Clear notes": "Wyczyść notatki", "Find in notes": "Szukaj w notatkach",
+                 "Clear now": "Wyczyść teraz", "Refresh": "Odśwież",
+                 "Copy magnet link to clipboard": "Kopiuj link magnet do schowka",
+                 "Copy search link to clipboard": "Kopiuj link wyszukiwania do schowka"}
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context") for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-hubs-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)), Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("%"), text.count("%"))
+                        for token in ("Shift+Enter", "BitTorrent", "IP", "URL"):
+                            if token in source:
+                                self.assertIn(token, text)
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_browser_and_search_translations(self):
         required = {
             "ChatEdit": {"Address", "Select image"},

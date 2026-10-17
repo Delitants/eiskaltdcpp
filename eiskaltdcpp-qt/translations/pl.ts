@@ -210,7 +210,7 @@ Opcje:
         <message>
             <location filename="../src/CmdDebug.cpp" line="74" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Konsola debugowania</translation>
         </message>
     </context>
     <context>
@@ -946,7 +946,7 @@ Opcje:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1%, pozostało %2</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
@@ -3015,7 +3015,7 @@ Pobrano: %3 Wysłano: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Odświeżanie publicznej listy hubów...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3030,7 +3030,7 @@ Pobrano: %3 Wysłano: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Lista hubów pobrana... (%1)</translation>
         </message>
         <message>
             <source>Hub list downloaded... (%1 %2) </source>
@@ -3043,7 +3043,7 @@ Pobrano: %3 Wysłano: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>Wczytano lokalnie zapisaną wersję listy hubów z dnia %1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
@@ -3070,7 +3070,7 @@ Pobrano: %3 Wysłano: %4</translation>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Adresy URL publicznych list hubów</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3582,7 +3582,7 @@ Bezpieczne ustawienia, takie jak huby, dane konta, udostępnianie, pobieranie i 
         <message>
             <location filename="../src/Secretary.cpp" line="92" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Notatnik</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="315" />
@@ -3602,12 +3602,12 @@ Bezpieczne ustawienia, takie jak huby, dane konta, udostępnianie, pobieranie i 
         <message>
             <location filename="../src/Secretary.cpp" line="319" />
             <source>Clear notes</source>
-            <translation type="unfinished" />
+            <translation>Wyczyść notatki</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="320" />
             <source>Find in notes</source>
-            <translation type="unfinished" />
+            <translation>Szukaj w notatkach</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="322" />
@@ -7238,22 +7238,22 @@ Sortowanie według partnerów pobierania, a następnie wysyłania.</translation>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="154" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Używaj przecinka jako separatora</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="157" />
             <source>Filter by IP</source>
-            <translation type="unfinished" />
+            <translation>Filtruj według IP</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="208" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Wiersze:</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="228" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Wyczyść teraz</translation>
         </message>
     </context>
     <context>
@@ -7443,12 +7443,12 @@ Sortowanie według partnerów pobierania, a następnie wysyłania.</translation>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiuj link magnet do schowka</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiuj link wyszukiwania do schowka</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7600,7 +7600,7 @@ Sortowanie według partnerów pobierania, a następnie wysyłania.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Naciśnij Shift+Enter, aby wprowadzić tekst w wielu wierszach</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
@@ -7750,7 +7750,7 @@ Sortowanie według partnerów pobierania, a następnie wysyłania.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>Przeglądarka linków magnet</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7770,12 +7770,12 @@ Sortowanie według partnerów pobierania, a następnie wysyłania.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiuj link magnet do schowka</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopiuj link wyszukiwania do schowka</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
@@ -7865,7 +7865,7 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Naciśnij Shift+Enter, aby wprowadzić tekst w wielu wierszach</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
@@ -7911,7 +7911,7 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Odśwież</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -8044,17 +8044,17 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
         <message>
             <location filename="../ui/UISecretary.ui" line="219" />
             <source>Magnet links</source>
-            <translation type="unfinished" />
+            <translation>Linki magnet</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="199" />
             <source>Search links</source>
-            <translation type="unfinished" />
+            <translation>Linki wyszukiwania</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="209" />
             <source>Public chat</source>
-            <translation type="unfinished" />
+            <translation>Czat publiczny</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="179" />
@@ -8064,7 +8064,7 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
         <message>
             <location filename="../ui/UISecretary.ui" line="169" />
             <source>BitTorrent links</source>
-            <translation type="unfinished" />
+            <translation>Linki BitTorrent</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="189" />
@@ -8074,33 +8074,33 @@ w opcjach, plik zostanie pobrany bez otwierania okna wyszukiwania.</translation>
         <message>
             <location filename="../ui/UISecretary.ui" line="159" />
             <source>Filter duplicates</source>
-            <translation type="unfinished" />
+            <translation>Filtruj duplikaty</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="233" />
             <location filename="../ui/UISecretary.ui" line="246" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Używaj przecinka jako separatora</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="236" />
             <source>Additional keywords</source>
-            <translation type="unfinished" />
+            <translation>Dodatkowe słowa kluczowe</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="249" />
             <source>Filter hubs by IP</source>
-            <translation type="unfinished" />
+            <translation>Filtruj huby według IP</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="277" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Wiersze:</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="297" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Wyczyść teraz</translation>
         </message>
     </context>
     <context>
