@@ -16,6 +16,67 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_georgian_connection_help(self):
+        path = ROOT / "eiskaltdcpp-qt/translations/ka.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        original = entries(path)
+        required = [("SettingsConnection", "Program need root privileges to open ports less than 1024")]
+        required += [("UISettingsConnection", s) for s in (
+            "Don't allow Hub/UPnP/DHT to override", "When enabled can hang program on exit.",
+            "Automatically update external IP (restart required)", "Enable Throttle",
+            "Alternate speed limit at time from ", "Reconnect to hub (seconds)",
+            "Type-of-Service (ToS)", "Minimal cost")]
+        prefixes = (
+            "Select this mode if your computer is connected directly",
+            "Select this mode if you are behind a firewall (router)",
+            "Select this mode if none of the previous modes apply.",
+            "Select this mode if you are behind a firewall/router",
+            "Select this mode if you can make unrestricted outbound",
+            "Select this mode if you want to make outbound connections through",
+            '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"',
+        )
+        for prefix in prefixes:
+            matches = [k for k in original if k[0] == "UISettingsConnection" and k[1].startswith(prefix)]
+            self.assertEqual(1, len(matches), prefix)
+            required.extend(matches)
+        self.assertEqual(16, len(required))
+        with tempfile.TemporaryDirectory(prefix="eiskalt-ka-connection-help-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            compiled = entries(output)
+            for key in required:
+                with self.subTest(source=key[1][:80]):
+                    self.assertIn(key, original)
+                    value = original[key]
+                    source = key[1]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertNotEqual(source, text)
+                    self.assertIn(key, compiled)
+                    self.assertEqual(text, "".join(compiled[key].itertext()))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                    self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                    self.assertEqual(Counter(re.findall(r"\d+", source)),
+                                     Counter(re.findall(r"\d+", text)))
+                    for token in ("TCP", "UDP", "TLS", "UPnP", "DHT", "IP", "SOCKS5",
+                                  "GSSAPI", "HTTP", "DC++", "EiskaltDC++", "TOS", "ToS", "Linux"):
+                        if token in source:
+                            self.assertIn(token, text)
+                    if source.startswith("<!DOCTYPE"):
+                        for phrase in ("ამ TOS მნიშვნელობებიდან მაქსიმუმ ერთის მითითებაა შესაძლებელი.",
+                                       "ამ პარამეტრს სუპერმომხმარებლის უფლებები სჭირდება!"):
+                            self.assertIn(phrase, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_georgian_hub_chat_translations(self):
         required = {
             "IPv6", "Filter", "/back - set away-mode off\n", "/browse <nick> - browse user files\n",

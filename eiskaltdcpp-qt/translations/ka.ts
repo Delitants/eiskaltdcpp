@@ -3812,7 +3812,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="788" />
             <location filename="../src/SettingsConnection.cpp" line="802" />
             <source>Program need root privileges to open ports less than 1024</source>
-            <translation type="unfinished" />
+            <translation>1024-ზე დაბალი პორტების გასახსნელად პროგრამას root უფლებები სჭირდება</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
@@ -8151,7 +8151,12 @@ If your computer is not behind a router all you have to do is to choose
 this option and usually you don't need to alter anything more in the
 connection settings.
 However, if you have a software firewall installed, you may need further configuration in the firewall to allow Internet access for EiskaltDC++.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ თქვენი კომპიუტერი პირდაპირ ინტერნეტთანაა დაკავშირებული.
+არ აირჩიოთ ეს რეჟიმი, თუ გაქვთ როუტერი ან გარე ქსელური ეკრანი.
+თუ თქვენი კომპიუტერი როუტერის უკან არ არის, საკმარისია აირჩიოთ
+ეს პარამეტრი და, ჩვეულებრივ, კავშირის პარამეტრებში
+მეტის შეცვლა აღარ დაგჭირდებათ.
+თუმცა, თუ დაყენებული გაქვთ პროგრამული ქსელური ეკრანი, შესაძლოა მისი დამატებითი გამართვა დაგჭირდეთ, რათა EiskaltDC++-ს ინტერნეტზე წვდომა მისცეთ.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="81" />
@@ -8165,7 +8170,11 @@ the TCP, UDP and TLS port forwarding on your own.
 You will need to specify the external IP address of your router using
 the setting below if you want downloads to work properly.
 Use this mode only if the previous ones are not options for you.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ ქსელური ეკრანის (როუტერის) უკან ხართ და თავად გამართავთ
+TCP, UDP და TLS პორტების გადამისამართებას.
+ჩამოტვირთვების სწორად მუშაობისთვის ქვემოთ მოცემულ პარამეტრში
+უნდა მიუთითოთ თქვენი როუტერის გარე IP მისამართი.
+ეს რეჟიმი გამოიყენეთ მხოლოდ მაშინ, თუ წინა რეჟიმები თქვენთვის გამოსადეგი არ არის.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="98" />
@@ -8180,7 +8189,12 @@ This mode carries some serious limitations:
   * only 5 results per user will be returned in response to searches;
   * you will not be able to download from other passive users;
   * you may won't be able to search and/or download on certain hubs.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ არცერთი წინა რეჟიმი არ გამოგადგებათ. ამ რეჟიმში
+EiskaltDC++ შემომავალ კავშირებს არ შეეცდება, მხოლოდ გამავალს.
+ამ რეჟიმს რამდენიმე მნიშვნელოვანი შეზღუდვა აქვს:
+  * ძიებაზე თითოეული მომხმარებლისგან მხოლოდ 5 შედეგი დაბრუნდება;
+  * სხვა პასიური მომხმარებლებისგან ჩამოტვირთვას ვერ შეძლებთ;
+  * ზოგიერთ ჰაბზე შესაძლოა ვერ შეძლოთ ძიება ან ჩამოტვირთვა.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="116" />
@@ -8195,7 +8209,12 @@ Most routers do support UPnP but you may need to enable it
 in the router's configuration page.
 This way EiskaltDC++ will automatically open the ports it needs
 and obtain your external IP address as well.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ იმყოფებით ქსელური ეკრანის/როუტერის უკან, რომელიც მხარს უჭერს
+პროგრამის ავტომატური გამართვის UPnP სტანდარტს.
+როუტერების უმეტესობას UPnP-ის მხარდაჭერა აქვს, მაგრამ შესაძლოა მისი ჩართვა დაგჭირდეთ
+როუტერის კონფიგურაციის გვერდზე.
+ამ გზით EiskaltDC++ ავტომატურად გახსნის საჭირო პორტებს
+და ასევე მიიღებს თქვენს გარე IP მისამართს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="131" />
@@ -8210,7 +8229,7 @@ and obtain your external IP address as well.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>არ დაუშვა ჰაბის/UPnP/DHT-ის მიერ ჩანაცვლება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
@@ -8247,7 +8266,9 @@ and obtain your external IP address as well.</source>
             <source>Select this mode if you can make unrestricted outbound connections.
 This includes connecting to any IP address on any port.
 Choose this option if unsure.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ შეუზღუდავი გამავალი კავშირების დამყარება შეგიძლიათ.
+ეს მოიცავს ნებისმიერ IP მისამართთან ნებისმიერ პორტზე დაკავშირებას.
+თუ არ ხართ დარწმუნებული, აირჩიეთ ეს პარამეტრი.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="326" />
@@ -8260,7 +8281,10 @@ Choose this option if unsure.</source>
 a SOCKS proxy. The caveats for Passive mode also apply here.
 SOCKS5 proxies are not the same as HTTP proxies.
 DC++'s SOCKS5 support does not include GSSAPI.</source>
-            <translation type="unfinished" />
+            <translation>აირჩიეთ ეს რეჟიმი, თუ გსურთ გამავალი კავშირების დამყარება
+SOCKS პროქსის გავლით. პასიური რეჟიმის შეზღუდვები აქაც მოქმედებს.
+SOCKS5 პროქსი იგივე არ არის, რაც HTTP პროქსი.
+DC++-ის SOCKS5 მხარდაჭერა GSSAPI-ს არ მოიცავს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="342" />
@@ -8338,12 +8362,12 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="513" />
             <source>When enabled can hang program on exit.</source>
-            <translation type="unfinished" />
+            <translation>ჩართვისას შეიძლება პროგრამა გასვლის დროს გაიჭედოს.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="516" />
             <source>Automatically update external IP (restart required)</source>
-            <translation type="unfinished" />
+            <translation>გარე IP-ის ავტომატური განახლება (საჭიროა გადატვირთვა)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="540" />
@@ -8354,7 +8378,7 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="561" />
             <source>Enable Throttle</source>
-            <translation type="unfinished" />
+            <translation>სიჩქარის შეზღუდვის ჩართვა</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="601" />
@@ -8379,7 +8403,7 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="678" />
             <source>Alternate speed limit at time from </source>
-            <translation type="unfinished" />
+            <translation>სიჩქარის ალტერნატიული ლიმიტი დროიდან </translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="704" />
@@ -8404,12 +8428,12 @@ When enabled, hubs see normal active/passive mode instead of M:5.</source>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="887" />
             <source>Reconnect to hub (seconds)</source>
-            <translation type="unfinished" />
+            <translation>ჰაბთან ხელახლა დაკავშირება (წამები)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="910" />
             <source>Type-of-Service (ToS)</source>
-            <translation type="unfinished" />
+            <translation>მომსახურების ტიპი (ToS)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="926" />
@@ -8425,7 +8449,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;Minimal cost&amp;quot;&lt;/span&gt; should be used for &amp;quot;filler data&amp;quot; where slow transmission doesn't matter&lt;/p&gt;
 &lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;At most one of these TOS values can be specified. Linux sends &lt;span style=" font-weight:600;"&gt;&amp;quot;Low delay&amp;quot;&lt;/span&gt; datagrams first by default, but the exact behaviour depends on the configured queueing discipline.&lt;span style=" font-weight:600;"&gt; Warning! This option needs superuser privileges!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;დააყენეთ მომსახურების ტიპის (TOS) ველი, რომელიც იგზავნება თითოეულ &lt;a href="https://en.wikipedia.org/wiki/IP_packet"&gt;&lt;span style=" text-decoration: underline; color:#0057ae;"&gt;IP პაკეტთან&lt;/span&gt;&lt;/a&gt; ამ სოკეტიდან. ის ქსელში პაკეტების პრიორიტეტების დასადგენად გამოიყენება. TOS ერთი ბაიტია. განსაზღვრულია რამდენიმე სტანდარტული TOS ალამი: &lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;დაბალი დაყოვნება&amp;quot;&lt;/span&gt; ინტერაქტიული ტრაფიკის დაყოვნების შესამცირებლად&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;გამტარუნარიანობა&amp;quot;&lt;/span&gt; გამტარუნარიანობის ოპტიმიზაციისთვის&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;საიმედოობა&amp;quot;&lt;/span&gt; საიმედოობის ოპტიმიზაციისთვის&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt; - &amp;quot;მინიმალური ღირებულება&amp;quot;&lt;/span&gt; გამოიყენება &amp;quot;შემავსებელი მონაცემებისთვის&amp;quot;, როცა ნელ გადაცემას მნიშვნელობა არ აქვს&lt;/p&gt;
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;/p&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;ამ TOS მნიშვნელობებიდან მაქსიმუმ ერთის მითითებაა შესაძლებელი. Linux ნაგულისხმევად პირველ რიგში აგზავნის &lt;span style=" font-weight:600;"&gt;&amp;quot;დაბალი დაყოვნება&amp;quot;&lt;/span&gt; დატაგრამებს, მაგრამ ზუსტი ქცევა დამოკიდებულია რიგის მართვის კონფიგურირებულ წესზე.&lt;span style=" font-weight:600;"&gt; გაფრთხილება! ამ პარამეტრს სუპერმომხმარებლის უფლებები სჭირდება!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="941" />
@@ -8450,7 +8485,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="961" />
             <source>Minimal cost</source>
-            <translation type="unfinished" />
+            <translation>მინიმალური ღირებულება</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="971" />
