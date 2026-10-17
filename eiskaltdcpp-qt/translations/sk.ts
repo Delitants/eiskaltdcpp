@@ -994,7 +994,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/HubFrame.cpp" line="702" />
             <source>Search text</source>
-            <translation type="unfinished" />
+            <translation>Hľadať text</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="703" />
@@ -1090,7 +1090,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1105,7 +1105,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/HubFrame.cpp" line="731" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="733" />
@@ -1121,7 +1121,7 @@ Kľúčové skratky:
             <location filename="../src/HubFrame.cpp" line="858" />
             <location filename="../src/HubFrame.cpp" line="945" />
             <source>[User went offline]</source>
-            <translation type="unfinished" />
+            <translation>[Používateľ sa odpojil]</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="877" />
@@ -1144,17 +1144,17 @@ Kľúčové skratky:
         <message>
             <location filename="../src/HubFrame.cpp" line="1094" />
             <source>Invalid keywords</source>
-            <translation type="unfinished" />
+            <translation>Neplatné kľúčové slová</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>hľadať</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
             <source>%1 (%2)</source>
-            <translation type="unfinished" />
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1348" />
@@ -1164,7 +1164,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Filter</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1299,13 +1299,14 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2546" />
             <location filename="../src/HubFrame.cpp" line="2548" />
             <source>Invalid command syntax.</source>
-            <translation type="unfinished" />
+            <translation>Neplatná syntax príkazu.</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2558" />
             <source>List of keywords:
 </source>
-            <translation type="unfinished" />
+            <translation>Zoznam kľúčových slov:
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2605" />
@@ -1395,19 +1396,22 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2717" />
             <source>/kword add &lt;keyword&gt; - add user-defined keyword which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword add &lt;keyword&gt; - pridať vlastné kľúčové slovo, ktoré bude zvýraznené v chate
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2718" />
             <source>/kword purge &lt;keyword&gt; - remove user-defined keyword
 </source>
-            <translation type="unfinished" />
+            <translation>/kword purge &lt;keyword&gt; - odstrániť vlastné kľúčové slovo
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2719" />
             <source>/kword list - full list of keywords which will be highlighted in the chat
 </source>
-            <translation type="unfinished" />
+            <translation>/kword list - úplný zoznam kľúčových slov, ktoré budú zvýraznené v chate
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2720" />
@@ -1462,13 +1466,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - znova vytvoriť haš
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - aktualizovať vlastný zoznam súborov
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1488,13 +1494,15 @@ Favorite user</source>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - nastaviť voľbu rozhrania param na value (bez value vráti aktuálnu hodnotu voľby)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - nastaviť voľbu jadra param na value (bez value vráti aktuálnu hodnotu voľby)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
@@ -7536,7 +7544,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="162" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="169" />
@@ -7546,7 +7554,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="175" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="182" />
@@ -7576,7 +7584,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Stlačte Shift+Enter pre viacriadkový vstup</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
@@ -7726,7 +7734,7 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>Prehliadač magnetových odkazov</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7746,12 +7754,12 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať magnetový odkaz do schránky</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať odkaz na vyhľadávanie do schránky</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
@@ -7767,7 +7775,8 @@ Zoradené najprv podľa partnerov sťahovania, potom odosielania.</translation>
             <location filename="../ui/UIMagnet.ui" line="181" />
             <source>Adds magnet to download queue. If autosearch for alternatives is enabled
 in options, file will be downloaded without opening search dialog.</source>
-            <translation type="unfinished" />
+            <translation>Pridá magnet do frontu sťahovania. Ak je v nastaveniach zapnuté automatické
+vyhľadávanie alternatív, súbor sa stiahne bez otvorenia dialógu vyhľadávania.</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="185" />
@@ -7790,7 +7799,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="99" />
             <source>Find:</source>
-            <translation type="unfinished" />
+            <translation>Hľadať:</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="106" />
@@ -7800,7 +7809,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="112" />
             <source>Shift+F3</source>
-            <translation type="unfinished" />
+            <translation>Shift+F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="119" />
@@ -7810,7 +7819,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="125" />
             <source>F3</source>
-            <translation type="unfinished" />
+            <translation>F3</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="132" />
@@ -7840,7 +7849,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Stlačte Shift+Enter pre viacriadkový vstup</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />

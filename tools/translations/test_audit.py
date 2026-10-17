@@ -16,6 +16,76 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_chat_and_magnet_dialogs(self):
+        expected = {
+            "HubFrame": {
+                "Search text": "Hľadať text", "IPv6": "IPv6", "E-mail": "E-mail",
+                "[User went offline]": "[Používateľ sa odpojil]",
+                "Invalid keywords": "Neplatné kľúčové slová", "search": "hľadať",
+                "%1 (%2)": "%1 (%2)", "Filter": "Filter",
+                "Invalid command syntax.": "Neplatná syntax príkazu.",
+                "List of keywords:\n": "Zoznam kľúčových slov:\n",
+                "/kword add <keyword> - add user-defined keyword which will be highlighted in the chat\n":
+                    "/kword add <keyword> - pridať vlastné kľúčové slovo, ktoré bude zvýraznené v chate\n",
+                "/kword purge <keyword> - remove user-defined keyword\n":
+                    "/kword purge <keyword> - odstrániť vlastné kľúčové slovo\n",
+                "/kword list - full list of keywords which will be highlighted in the chat\n":
+                    "/kword list - úplný zoznam kľúčových slov, ktoré budú zvýraznené v chate\n",
+                "/rebuild - rebuild hash\n": "/rebuild - znova vytvoriť haš\n",
+                "/refresh - update own file list\n": "/refresh - aktualizovať vlastný zoznam súborov\n",
+                "/ws param value - set gui option param in value (without value return current value of option)\n":
+                    "/ws param value - nastaviť voľbu rozhrania param na value (bez value vráti aktuálnu hodnotu voľby)\n",
+                "/dcpps param value - set core option param in value (without value return current value of option)\n":
+                    "/dcpps param value - nastaviť voľbu jadra param na value (bez value vráti aktuálnu hodnotu voľby)\n",
+            },
+            "UIHubFrame": {"Shift+F3": "Shift+F3", "F3": "F3",
+                           "Press Shift+Enter for multiline input": "Stlačte Shift+Enter pre viacriadkový vstup"},
+            "UIPrivateMessage": {"Find:": "Hľadať:", "Shift+F3": "Shift+F3", "F3": "F3",
+                                 "Press Shift+Enter for multiline input": "Stlačte Shift+Enter pre viacriadkový vstup"},
+            "UIMagnet": {
+                "Magnet link viewer": "Prehliadač magnetových odkazov",
+                "Copy magnet link to clipboard": "Kopírovať magnetový odkaz do schránky",
+                "Copy search link to clipboard": "Kopírovať odkaz na vyhľadávanie do schránky",
+                "Adds magnet to download queue. If autosearch for alternatives is enabled\nin options, file will be downloaded without opening search dialog.":
+                    "Pridá magnet do frontu sťahovania. Ak je v nastaveniach zapnuté automatické\nvyhľadávanie alternatív, súbor sa stiahne bez otvorenia dialógu vyhľadávania.",
+            },
+        }
+        counts = {"HubFrame": 116, "UIHubFrame": 19, "UIPrivateMessage": 20, "UIMagnet": 12}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-chat-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(source.count("\n"), text.count("\n"))
+                            self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                             Counter(re.findall(r"%\d+", text)))
+                            if source.startswith("/"):
+                                self.assertEqual(source.split(" - ")[0], text.split(" - ")[0])
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_gui_choices_and_picture_storage(self):
         expected = {"SettingsGUI": {
             "Portuguese (Brazil)": "Portugalčina (Brazília)",
