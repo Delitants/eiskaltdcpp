@@ -14,6 +14,66 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 class CatalogRegressionTests(unittest.TestCase):
+    def test_ukrainian_rich_help_preserves_markup_and_links(self):
+        checked = 0
+        for context in ET.parse(ROOT / "eiskaltdcpp-qt/translations/uk.ts").getroot().findall("context"):
+            if context.findtext("name") not in {"MainWindow", "UISettingsGUI", "UISettingsLog"}:
+                continue
+            for message in context.findall("message"):
+                source = message.findtext("source", "")
+                value = message.find("translation")
+                if value is None or value.get("type") in {"obsolete", "vanished"}:
+                    continue
+                if not (source.startswith("<html><head/><body><p>These expressions") or
+                        source.startswith("<!DOCTYPE HTML PUBLIC") or
+                        "github.com/Delitants/eiskaltdcpp/issues" in source or
+                        source.startswith('2026 <a href="mailto:')):
+                    continue
+                checked += 1
+                text = "".join(value.itertext())
+                with self.subTest(context=context.findtext("name"), source=source[:80]):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                    self.assertEqual(source.count("\n"), text.count("\n"))
+                    if source.startswith("<html><head/><body><p>These expressions"):
+                        for token in ("h", "hh", "H", "HH", "m", "mm", "s", "ss", "z", "zzz",
+                                      "AP or A", "ap or a", "t"):
+                            self.assertIn(">" + token + "<", text)
+                        for token in ("A/AP", "a/ap", "&quot;AM&quot;", "&quot;PM&quot;",
+                                      "&quot;am&quot;", "&quot;pm&quot;", "&quot;CEST&quot;"):
+                            self.assertIn(token, text)
+        self.assertEqual(4, checked)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_ukrainian_active_catalog_is_complete_and_compiles(self):
+        path = ROOT / "eiskaltdcpp-qt/translations/uk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-uk-complete-") as work:
+            binary, output = Path(work) / "uk.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            def entries(catalog):
+                return {(c.findtext("name"), m.findtext("source"), m.findtext("comment", "")):
+                        m.find("translation")
+                        for c in ET.parse(catalog).getroot().findall("context")
+                        for m in c.findall("message")}
+            original, compiled = entries(path), entries(output)
+            active = 0
+            for key, value in original.items():
+                if value is not None and value.get("type") in {"obsolete", "vanished"}:
+                    continue
+                active += 1
+                with self.subTest(context=key[0], source=key[1]):
+                    self.assertIsNotNone(value)
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(key, compiled)
+                    self.assertEqual(text, "".join(compiled[key].itertext()))
+            self.assertGreaterEqual(active, 2086)
+
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_ukrainian_connection_catalogs_survive_compilation(self):
