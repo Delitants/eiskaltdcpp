@@ -16,6 +16,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("pl")
+
+    def test_polish_rich_help_and_commands(self):
+        self._assert_rich_help_and_commands("pl", "lub")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_mainwindow_translations(self):
         required = {
             "Kill all humans?", "Action confirm", "Match all listings", "Debug Console", "Secretary",
