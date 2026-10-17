@@ -52,7 +52,6 @@ class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
     def test_hungarian_tls_choices_survive_compilation(self):
-        path = ROOT / "eiskaltdcpp-qt/translations/hu.ts"
         expected = {
             "TLS settings": "TLS-beállítások",
             "Disable TLS": "TLS letiltása",
@@ -61,7 +60,28 @@ class CatalogRegressionTests(unittest.TestCase):
             "Allow untrusted certificate for hubs": "Nem megbízható tanúsítvány engedélyezése hubokhoz",
             "Allow untrusted certificate for clients": "Nem megbízható tanúsítvány engedélyezése kliensekhez",
         }
-        with tempfile.TemporaryDirectory(prefix="eiskalt-hu-tls-") as work:
+        self._assert_tls_choices_survive_compilation("hu", expected)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_czech_connection_catalog_survives_compilation(self):
+        self._assert_connection_catalog_survives_compilation("cs")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_czech_tls_choices_survive_compilation(self):
+        self._assert_tls_choices_survive_compilation("cs", {
+            "TLS settings": "Nastavení TLS",
+            "Disable TLS": "Zakázat TLS",
+            "Allow TLS": "Povolit TLS",
+            "Require TLS": "Vyžadovat TLS",
+            "Allow untrusted certificate for hubs": "Povolit nedůvěryhodný certifikát pro huby",
+            "Allow untrusted certificate for clients": "Povolit nedůvěryhodný certifikát pro klienty",
+        })
+
+    def _assert_tls_choices_survive_compilation(self, language, expected):
+        path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
+        with tempfile.TemporaryDirectory(prefix="eiskalt-tls-") as work:
             binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
             subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
                            check=True, capture_output=True, text=True)
