@@ -6587,7 +6587,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>პროტოკოლი</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6597,7 +6597,7 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთვის გაუქმება</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6634,17 +6634,17 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>ტორენტის დეტალები</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>ტორენტის შეჩერება</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>ტორენტის გაგრძელება</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6803,37 +6803,37 @@ Added for read-only seeding. Source files will be hash-checked, not moved or dow
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>შეჩერებულია</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>განაწილება</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>მოლოდინი</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>ჩამოტვირთვა (%1 პირი)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>ატვირთვა (%1 პირი)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | ჩამოტვირთულია %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | ატვირთულია %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -7423,7 +7423,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="185" />
             <source>Opens search dialog and searches file.</source>
-            <translation type="unfinished" />
+            <translation>ხსნის ძიების დიალოგს და ეძებს ფაილს.</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="188" />
@@ -7474,7 +7474,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="43" />
             <source>Show only completely finished transfers</source>
-            <translation type="unfinished" />
+            <translation>მხოლოდ სრულად დასრულებული გადაცემების ჩვენება</translation>
         </message>
         <message>
             <location filename="../ui/UIFinishedTransfers.ui" line="46" />
