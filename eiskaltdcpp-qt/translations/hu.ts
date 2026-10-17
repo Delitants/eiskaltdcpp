@@ -182,12 +182,12 @@ Kapcsolók:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">Cím</translation>
+            <translation>Cím</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Kép kiválasztása</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -210,7 +210,7 @@ Kapcsolók:
         <message>
             <location filename="../src/CmdDebug.cpp" line="74" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Hibakereső konzol</translation>
         </message>
     </context>
     <context>
@@ -737,27 +737,27 @@ Kapcsolók:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Médiainformáció:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Videó:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Hang:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitráta:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Felbontás:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
@@ -946,7 +946,7 @@ Kapcsolók:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1%, hátralévő: %2</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
@@ -1091,7 +1091,7 @@ Kapcsolók:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1150,7 +1150,7 @@ Kapcsolók:
         <message>
             <location filename="../src/HubFrame.cpp" line="1112" />
             <source>search</source>
-            <translation type="unfinished" />
+            <translation>keresés</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1303" />
@@ -1165,7 +1165,7 @@ Kapcsolók:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Szűrő</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -1469,13 +1469,15 @@ Kedvenc felhasználó</translation>
             <location filename="../src/HubFrame.cpp" line="2727" />
             <source>/rebuild - rebuild hash
 </source>
-            <translation type="unfinished" />
+            <translation>/rebuild - hashértékek újraszámítása
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2728" />
             <source>/refresh - update own file list
 </source>
-            <translation type="unfinished" />
+            <translation>/refresh - saját fájllista frissítése
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2729" />
@@ -1495,13 +1497,15 @@ Kedvenc felhasználó</translation>
             <location filename="../src/HubFrame.cpp" line="2731" />
             <source>/ws param value - set gui option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/ws param value - a param felületi beállítás értékének beállítása value értékre (value nélkül visszaadja a beállítás jelenlegi értékét)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2732" />
             <source>/dcpps param value - set core option param in value (without value return current value of option)
 </source>
-            <translation type="unfinished" />
+            <translation>/dcpps param value - a param magbeállítás értékének beállítása value értékre (value nélkül visszaadja a beállítás jelenlegi értékét)
+</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="2734" />
@@ -1838,12 +1842,12 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="457" />
             <source>Kill all humans?</source>
-            <translation type="unfinished" />
+            <translation>Minden ember megölése?</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="459" />
             <source>Action confirm</source>
-            <translation type="unfinished" />
+            <translation>Művelet megerősítése</translation>
         </message>
         <message>
             <source>Enter user nick</source>
@@ -1957,7 +1961,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1657" />
             <source>Match all listings</source>
-            <translation type="unfinished" />
+            <translation>Összes fájllista egyeztetése</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1659" />
@@ -2141,12 +2145,12 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1734" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Hibakereső konzol</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1736" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Titkár</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1738" />
@@ -2281,27 +2285,27 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Torrentfájlok</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Magnet hivatkozás vagy torrentfájl megnyitása</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Adjon meg egy magnet hivatkozást vagy egy helyi .torrent fájl elérési útját:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>A torrenttámogatás még nem áll készen.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Kilépés</translation>
+            <translation>Kilépés</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2325,7 +2329,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1780" />
             <source>Source code (git)</source>
-            <translation type="unfinished" />
+            <translation>Forráskód (git)</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1782" />
@@ -2351,7 +2355,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT-csomópontok: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2525,7 +2529,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Hibák bejelentéséhez használja a &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; oldalt.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
@@ -2535,7 +2539,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
@@ -2575,7 +2579,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3397" />
             <source>Serbian (Cyrillic) translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Szerb (cirill) fordítás&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3401" />
@@ -2590,7 +2594,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3409" />
             <source>Basque translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Baszk fordítás&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3412" />
@@ -2645,17 +2649,17 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3445" />
             <source>Turkish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Török fordítás&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3448" />
             <source>Danish translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Dán fordítás&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3451" />
             <source>Georgian translation&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Grúz fordítás&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3680" />
@@ -2680,17 +2684,17 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Becenév szükséges</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>A hubokhoz való csatlakozás előtt adjon meg egy becenevet a beállításokban.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -2701,7 +2705,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="1772" />
             <source>Download program</source>
-            <translation type="unfinished" />
+            <translation>Program letöltése</translation>
         </message>
         <message>
             <source>Please use &lt;a href="https://github.com/eiskaltdcpp/eiskaltdcpp/issues"&gt;https://github.com/eiskaltdcpp/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
@@ -2717,7 +2721,7 @@ Kedvenc felhasználó</translation>
             <location filename="../src/MainWindow.cpp" line="3305" />
             <location filename="../src/MainWindow.cpp" line="3327" />
             <source>release manager</source>
-            <translation type="unfinished" />
+            <translation>kiadásokért felelős személy</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3310" />
@@ -2740,7 +2744,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3324" />
             <source>translations coordinator</source>
-            <translation type="unfinished" />
+            <translation>fordítások koordinátora</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3333" />
@@ -2761,7 +2765,7 @@ Kedvenc felhasználó</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3361" />
             <source>tiny updates of the logo</source>
-            <translation type="unfinished" />
+            <translation>a logó kisebb módosításai</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3369" />
@@ -3031,7 +3035,7 @@ Letöltve: %3 Feltöltve: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Nyilvános hublista frissítése...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3046,7 +3050,7 @@ Letöltve: %3 Feltöltve: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Hublista letöltve... (%1)</translation>
         </message>
         <message>
             <source>Hub list downloaded... (%1 %2) </source>
@@ -3059,7 +3063,7 @@ Letöltve: %3 Feltöltve: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>A hublista helyben gyorsítótárazott (%1 állapotú) változata betöltve (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
@@ -3086,7 +3090,7 @@ Letöltve: %3 Feltöltve: %4</translation>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Nyilvános hublisták URL-címei</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3115,23 +3119,28 @@ Letöltve: %3 Feltöltve: %4</translation>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Régi vagy nem kompatibilis EiskaltDC++ felületi beállítások észlelhetők.
+
+A biztonságos beállítások, például a hubok, fiókadatok, megosztások, letöltések és előzmények megmaradtak. A régi konfiguráció témája, csevegési színei, ablakelrendezése és táblázatoszlopainak állapota vissza lett állítva, mert ezek megzavarhatják a világos és sötét mód közötti menet közbeni váltást a jelenlegi macOS rendszeren.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>A korábbi felületi beállítások biztonsági másolata ide lett mentve:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Nem sikerült biztonsági másolatot készíteni a korábbi felületi beállításokról, de a nem kompatibilis megjelenítési beállítások így is el lettek vetve.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>Az EiskaltDC++ beállításai frissítve</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3154,43 +3163,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Képek (%1);;Minden fájl (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Húzza a beviteli terület átméretezéséhez</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Kattintson a kibontáshoz vagy összecsukáshoz</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Spoiler: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Megnyitás külső programmal</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Bezárás</translation>
+            <translation>Bezárás</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Alapértelmezett (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3507,7 +3516,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>A(z) „%1” keresés előrehaladása: %2%</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
@@ -3593,7 +3602,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="92" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Titkár</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="315" />
@@ -3613,12 +3622,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Secretary.cpp" line="319" />
             <source>Clear notes</source>
-            <translation type="unfinished" />
+            <translation>Jegyzetek törlése</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="320" />
             <source>Find in notes</source>
-            <translation type="unfinished" />
+            <translation>Keresés a jegyzetekben</translation>
         </message>
         <message>
             <location filename="../src/Secretary.cpp" line="322" />
@@ -3650,12 +3659,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Torrentbeállítások</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Nem sikerült menteni a torrentbeállításokat: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -4242,7 +4251,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="152" />
             <source>Serbian (Cyrillic)</source>
-            <translation type="unfinished" />
+            <translation>Szerb (cirill)</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="153" />
@@ -4262,7 +4271,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="156" />
             <source>Basque</source>
-            <translation type="unfinished" />
+            <translation>Baszk</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="157" />
@@ -4312,69 +4321,69 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="166" />
             <source>Turkish</source>
-            <translation type="unfinished" />
+            <translation>Török</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="167" />
             <source>Danish</source>
-            <translation type="unfinished" />
+            <translation>Dán</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="168" />
             <source>Georgian</source>
-            <translation type="unfinished" />
+            <translation>Grúz</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Eszköztár ikontémája</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished">Téma</translation>
+            <translation>Téma</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished">Alapértelmezett</translation>
+            <translation>Alapértelmezett</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Egyszínű</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Felhasználólista ikontémája</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Eredeti</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Csevegési képek</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Mappa</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Ennél régebbi fájlok automatikus törlése:</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> nap</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
@@ -4444,7 +4453,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Csevegési képek mappájának kiválasztása</translation>
         </message>
     </context>
     <context>
@@ -4452,7 +4461,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Súgó</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
@@ -5357,7 +5366,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="453" />
             <location filename="../src/SideBar.cpp" line="459" />
             <source>Secretary</source>
-            <translation type="unfinished" />
+            <translation>Titkár</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="98" />
@@ -5373,7 +5382,7 @@ UDP: %2</translation>
             <location filename="../src/SideBar.cpp" line="99" />
             <location filename="../src/SideBar.cpp" line="458" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Hibakereső konzol</translation>
         </message>
         <message>
             <location filename="../src/SideBar.cpp" line="101" />
@@ -5511,7 +5520,7 @@ Biztosan le akarod állítani?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Bezárás</translation>
         </message>
     </context>
     <context>
@@ -6633,7 +6642,7 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokoll</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6643,7 +6652,7 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>Letöltés megszakítása</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6663,7 +6672,7 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <location filename="../src/TransferView.cpp" line="115" />
             <source>Show only transferred files</source>
-            <translation type="unfinished" />
+            <translation>Csak az átvitt fájlok megjelenítése</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="231" />
@@ -6680,17 +6689,17 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Torrent részletei</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Torrent szüneteltetése</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Torrent folytatása</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6849,37 +6858,37 @@ Hozzáadva csak olvasási visszaosztáshoz. A forrásfájlok hash-ellenőrzése 
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Szüneteltetve</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Visszaosztás</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Várakozás</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Letöltés (%1 partner)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Feltöltés (%1 partner)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | Letöltve: %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Feltöltve: %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -7249,7 +7258,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UICmdDebug.ui" line="154" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Vessző használata elválasztóként</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="157" />
@@ -7259,7 +7268,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UICmdDebug.ui" line="208" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Sorok:</translation>
         </message>
         <message>
             <location filename="../ui/UICmdDebug.ui" line="228" />
@@ -7325,7 +7334,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>Ez a leírás a kedvenc hubok listájában jelenik meg.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
@@ -7390,7 +7399,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>Ez a leírás a felhasználólistában jelenik meg.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7454,12 +7463,12 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UIFileHasher.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Magnet hivatkozás másolása a vágólapra</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Keresési hivatkozás másolása a vágólapra</translation>
         </message>
         <message>
             <location filename="../ui/UIFileHasher.ui" line="146" />
@@ -7611,7 +7620,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Többsoros bevitelhez nyomja meg a Shift+Enter billentyűket</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
@@ -7761,7 +7770,7 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UIMagnet.ui" line="20" />
             <source>Magnet link viewer</source>
-            <translation type="unfinished" />
+            <translation>Magnet hivatkozás megtekintője</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="56" />
@@ -7781,12 +7790,12 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
         <message>
             <location filename="../ui/UIMagnet.ui" line="113" />
             <source>Copy magnet link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Magnet hivatkozás másolása a vágólapra</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="136" />
             <source>Copy search link to clipboard</source>
-            <translation type="unfinished" />
+            <translation>Keresési hivatkozás másolása a vágólapra</translation>
         </message>
         <message>
             <location filename="../ui/UIMagnet.ui" line="171" />
@@ -7876,7 +7885,7 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Többsoros bevitelhez nyomja meg a Shift+Enter billentyűket</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
@@ -7922,7 +7931,7 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Frissítés</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -8055,17 +8064,17 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
         <message>
             <location filename="../ui/UISecretary.ui" line="219" />
             <source>Magnet links</source>
-            <translation type="unfinished" />
+            <translation>Magnet hivatkozások</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="199" />
             <source>Search links</source>
-            <translation type="unfinished" />
+            <translation>Keresési hivatkozások</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="209" />
             <source>Public chat</source>
-            <translation type="unfinished" />
+            <translation>Nyilvános csevegés</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="179" />
@@ -8075,7 +8084,7 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
         <message>
             <location filename="../ui/UISecretary.ui" line="169" />
             <source>BitTorrent links</source>
-            <translation type="unfinished" />
+            <translation>BitTorrent hivatkozások</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="189" />
@@ -8085,28 +8094,28 @@ be van kapcsolva a beállításokban, a fájl automatikusan letötésre kerül a
         <message>
             <location filename="../ui/UISecretary.ui" line="159" />
             <source>Filter duplicates</source>
-            <translation type="unfinished" />
+            <translation>Ismétlődések kiszűrése</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="233" />
             <location filename="../ui/UISecretary.ui" line="246" />
             <source>Use comma as separator</source>
-            <translation type="unfinished" />
+            <translation>Vessző használata elválasztóként</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="236" />
             <source>Additional keywords</source>
-            <translation type="unfinished" />
+            <translation>További kulcsszavak</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="249" />
             <source>Filter hubs by IP</source>
-            <translation type="unfinished" />
+            <translation>Hubok szűrése IP-cím szerint</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="277" />
             <source>Lines:</source>
-            <translation type="unfinished" />
+            <translation>Sorok:</translation>
         </message>
         <message>
             <location filename="../ui/UISecretary.ui" line="297" />
@@ -8970,7 +8979,15 @@ their target location, it won't result automatic deletion of
 the corresponding finished entries from the queue.
 If you disable this function, it won't remove existing finished items
 from the queue either, you must do that manually.</source>
-            <translation type="unfinished" />
+            <translation>Engedélyezze ezt, ha a letöltött fájllistákat meg szeretné tartani
+a letöltési sorban a letöltés befejezése után.
+A letöltés után a sor elemei „Befejezve” állapotúak lesznek,
+és ezeket a befejezett bejegyzéseket később bármikor törölheti.
+Ha a letöltött fájlokat fizikailag áthelyezi vagy törli
+a célhelyükről, az nem törli automatikusan
+a megfelelő befejezett bejegyzéseket a sorból.
+A funkció letiltása sem távolítja el a már befejezett elemeket
+a sorból; ezt kézzel kell megtennie.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsDownloads.ui" line="892" />
@@ -9258,42 +9275,42 @@ ha azok egy szóközzel el vannak választva a szavaktól.</translation>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="374" />
             <source>Show kibibyte (KiB) or kilobyte (KB), etc.</source>
-            <translation type="unfinished" />
+            <translation>Kibibájt (KiB) vagy kilobájt (KB) stb. megjelenítése</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Ablak viselkedése</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Kis méretre állítás az állapotikonra a bezárás gombra kattintva</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Állapotikon</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Színes állapotikon használata</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Egyszínű állapotikon használata</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
             <source>Metric</source>
-            <translation type="unfinished" />
+            <translation>Mértékegység</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="418" />
             <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;These expressions may be used for the time:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Expression&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23 or 1 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23 or 01 to 12 if AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour without a leading zero (0 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the hour with a leading zero (00 to 23, even with AM/PM display)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the minute with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second without a leading zero (0 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the second with a leading zero (00 to 59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds without leading zeroes (0 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the milliseconds with leading zeroes (000 to 999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP or A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use AM/PM display. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; will be replaced by either &amp;quot;AM&amp;quot; or &amp;quot;PM&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap or a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;use am/pm display. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; will be replaced by either &amp;quot;am&amp;quot; or &amp;quot;pm&amp;quot;.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;the timezone (for example &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Az időhöz a következő kifejezések használhatók:&lt;/p&gt;&lt;table border="0" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;" cellspacing="2" cellpadding="0"&gt;&lt;thead&gt;&lt;tr&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Kifejezés&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td&gt;&lt;p align="center"&gt;&lt;span style=" font-weight:600;"&gt;Kimenet&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;h&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az óra kezdő nulla nélkül (0–23 vagy AM/PM megjelenítés esetén 1–12)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;hh&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az óra kezdő nullával (00–23 vagy AM/PM megjelenítés esetén 01–12)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;H&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az óra kezdő nulla nélkül (0–23, AM/PM megjelenítés esetén is)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;HH&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az óra kezdő nullával (00–23, AM/PM megjelenítés esetén is)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;m&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;a perc kezdő nulla nélkül (0–59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;mm&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;a perc kezdő nullával (00–59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;s&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;a másodperc kezdő nulla nélkül (0–59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ss&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;a másodperc kezdő nullával (00–59)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;z&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az ezredmásodperc kezdő nullák nélkül (0–999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;zzz&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az ezredmásodperc kezdő nullákkal (000–999)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AP vagy A&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;AM/PM megjelenítés használata. &lt;span style=" font-style:italic;"&gt;A/AP&lt;/span&gt; helyére &amp;quot;AM&amp;quot; vagy &amp;quot;PM&amp;quot; kerül.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;ap vagy a&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;am/pm megjelenítés használata. &lt;span style=" font-style:italic;"&gt;a/ap&lt;/span&gt; helyére &amp;quot;am&amp;quot; vagy &amp;quot;pm&amp;quot; kerül.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;t&lt;/p&gt;&lt;/td&gt;&lt;td style=" vertical-align:top;"&gt;&lt;p&gt;az időzóna (például &amp;quot;CEST&amp;quot;)&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="459" />
@@ -9513,7 +9530,7 @@ a hub operátoraitól kaphatsz</translation>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="294" />
             <source>Debug Console</source>
-            <translation type="unfinished" />
+            <translation>Hibakereső konzol</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="346" />
@@ -9532,7 +9549,11 @@ a hub operátoraitól kaphatsz</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Súgó&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
@@ -9542,17 +9563,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Diagnosztikai összeomlási napló</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Tartós, kis méretű diagnosztikai naplót vezet Qt-figyelmeztetésekkel, rendszeres működésjelzésekkel, valamint leállítási és végzetes szignáljelölőkkel. Hasznos, ha az alkalmazás hosszú működés után kilép.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>A fenti naplókönyvtárba ír. Megőrzi az összeomlás vagy kényszerített leállítás előtti utolsó működésjelzést.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
@@ -9758,12 +9779,15 @@ Az általánosan használt nick hubonként megváltoztatható a "Kedvenc Hubok" 
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Ez a legördülő lista gyakori feltöltési sebességeket tartalmaz (Mbit/s egységben),
+válassza ki a sajátjához legközelebb állót.
+Ne a letöltési sebességét adja meg; ez a beállítás azt jelzi,
+hogy milyen gyors forrás lehet más felhasználók számára.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9834,12 +9858,12 @@ hogy te mint forrás kb. mekkora sebességre vagy képes, ha letöltenek tőled.
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Hozzáadás</translation>
+            <translation>Hozzáadás</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Eltávolítás</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -10070,17 +10094,17 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Csak fájlok keresése</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Csak könyvtárak keresése</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>Keresés mindenben</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />
@@ -10259,7 +10283,7 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Megosztás pontos mérete</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10269,7 +10293,7 @@ Mivel az eltellt idő alatt a megüresedett feltöltési slotot más is elfoglal
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
