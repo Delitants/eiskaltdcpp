@@ -8220,32 +8220,32 @@ Týmto spôsobom EiskaltDC++ automaticky nastaví porty ak to bude potrebné na 
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="179" />
             <source>Don't allow Hub/UPnP/DHT to override</source>
-            <translation type="unfinished" />
+            <translation>Nepovoliť prepísanie hubom/UPnP/DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="188" />
             <source>TCP port</source>
-            <translation type="unfinished" />
+            <translation>Port TCP</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="195" />
             <source>UDP port</source>
-            <translation type="unfinished" />
+            <translation>Port UDP</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="202" />
             <source>TLS port</source>
-            <translation type="unfinished" />
+            <translation>Port TLS</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="262" />
             <source>Bind to address</source>
-            <translation type="unfinished" />
+            <translation>Viazať na adresu</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="272" />
             <source>Bind to interface</source>
-            <translation type="unfinished" />
+            <translation>Viazať na rozhranie</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="288" />
@@ -8280,7 +8280,7 @@ DC++ SOCKS5 nepodporuje GSSAPI.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="342" />
             <source>SOCKS5</source>
-            <translation type="unfinished" />
+            <translation>SOCKS5</translation>
         </message>
         <message>
             <source>IP</source>
@@ -8321,7 +8321,7 @@ server Shadowsocks AEAD.</translation>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="418" />
             <source>Port</source>
-            <translation type="unfinished" />
+            <translation>Port</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="438" />
@@ -8353,7 +8353,7 @@ Ak je zapnuté, huby vidia bežný aktívny/pasívny režim namiesto M:5.</trans
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="513" />
             <source>When enabled can hang program on exit.</source>
-            <translation type="unfinished" />
+            <translation>Po zapnutí môže program pri ukončovaní zamrznúť.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="516" />
@@ -8383,7 +8383,7 @@ Ak je zapnuté, huby vidia bežný aktívny/pasívny režim namiesto M:5.</trans
             <location filename="../ui/UISettingsConnection.ui" line="794" />
             <location filename="../ui/UISettingsConnection.ui" line="827" />
             <source>KiB/s</source>
-            <translation type="unfinished" />
+            <translation>KiB/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="635" />
@@ -8419,12 +8419,12 @@ Ak je zapnuté, huby vidia bežný aktívny/pasívny režim namiesto M:5.</trans
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="887" />
             <source>Reconnect to hub (seconds)</source>
-            <translation type="unfinished" />
+            <translation>Znovu sa pripojiť k hubu (sekundy)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="910" />
             <source>Type-of-Service (ToS)</source>
-            <translation type="unfinished" />
+            <translation>Typ služby (ToS)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="926" />
@@ -8450,12 +8450,12 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="946" />
             <source>Low delay</source>
-            <translation type="unfinished" />
+            <translation>Nízke oneskorenie</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="951" />
             <source>Throughput</source>
-            <translation type="unfinished" />
+            <translation>Priepustnosť</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="956" />
@@ -8465,7 +8465,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="961" />
             <source>Minimal cost</source>
-            <translation type="unfinished" />
+            <translation>Minimálne náklady</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="971" />
@@ -8475,7 +8475,7 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="995" />
             <source>DHT port</source>
-            <translation type="unfinished" />
+            <translation>Port DHT</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />

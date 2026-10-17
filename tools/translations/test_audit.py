@@ -16,6 +16,41 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_connection_labels_and_warnings(self):
+        expected = {"UISettingsConnection": {
+            "Don't allow Hub/UPnP/DHT to override": "Nepovoliť prepísanie hubom/UPnP/DHT",
+            "TCP port": "Port TCP", "UDP port": "Port UDP", "TLS port": "Port TLS",
+            "Bind to address": "Viazať na adresu", "Bind to interface": "Viazať na rozhranie",
+            "SOCKS5": "SOCKS5", "Port": "Port",
+            "When enabled can hang program on exit.": "Po zapnutí môže program pri ukončovaní zamrznúť.",
+            "KiB/s": "KiB/s", "Reconnect to hub (seconds)": "Znovu sa pripojiť k hubu (sekundy)",
+            "Type-of-Service (ToS)": "Typ služby (ToS)", "Low delay": "Nízke oneskorenie",
+            "Throughput": "Priepustnosť", "Minimal cost": "Minimálne náklady", "DHT port": "Port DHT",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsConnection" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-connection-labels-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(16, len(expected["UISettingsConnection"]))
+            self.assertTrue(expected["UISettingsConnection"].keys() <= original.keys())
+            for source, translation in expected["UISettingsConnection"].items():
+                with self.subTest(source=source):
+                    value = original[source]
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertEqual(translation, text)
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_antispam_and_logging_settings(self):
         expected = {
             "AntiSpam": {"%1: Moving user to GRAY.": "%1: Presúvam používateľa do sivého zoznamu.",
