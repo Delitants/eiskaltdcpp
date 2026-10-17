@@ -16,6 +16,82 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_hubs_magnets_and_chat(self):
+        expected = {
+            'ChatEdit': {
+                'Address': 'Διεύθυνση',
+                'Select image': 'Επιλογή εικόνας',
+            },
+            'DHTBootstrapList': {
+                'DHT bootstrap URLs': 'Διευθύνσεις URL αρχικής σύνδεσης DHT',
+                'DHT bootstrap URL': 'Διεύθυνση URL αρχικής σύνδεσης DHT',
+                'URL': 'URL',
+            },
+            'PublicHubs': {
+                'Refreshing public hub list...': 'Ανανέωση λίστας δημόσιων κόμβων...',
+                'Hub list downloaded... (%1)': 'Η λίστα κόμβων λήφθηκε... (%1)',
+                'Locally cached (as of %1) version of the hub list loaded (%2)': 'Φορτώθηκε η τοπικά αποθηκευμένη έκδοση της λίστας κόμβων (από %1) (%2)',
+            },
+            'PublicHubsList': {
+                'Public hub list URLs': 'Διευθύνσεις URL λιστών δημόσιων κόμβων',
+            },
+            'SearchFrame': {
+                'Searching for %1 ...': 'Αναζήτηση για %1 ...',
+                'Search progress of "%1" is %2%': 'Η πρόοδος αναζήτησης για "%1" είναι %2%',
+            },
+            'UIHubFrame': {
+                'Press Shift+Enter for multiline input': 'Πατήστε Shift+Enter για εισαγωγή πολλών γραμμών',
+            },
+            'UIMagnet': {
+                'Magnet link viewer': 'Προβολή συνδέσμου magnet',
+                'Copy magnet link to clipboard': 'Αντιγραφή συνδέσμου magnet στο πρόχειρο',
+                'Copy search link to clipboard': 'Αντιγραφή συνδέσμου αναζήτησης στο πρόχειρο',
+            },
+            'UIPrivateMessage': {
+                'Press Shift+Enter for multiline input': 'Πατήστε Shift+Enter για εισαγωγή πολλών γραμμών',
+            },
+            'UIPublicHubs': {
+                'Refresh': 'Ανανέωση',
+            },
+        }
+        counts = {"ChatEdit": 6, "DHTBootstrapList": 3, "PublicHubs": 13, "PublicHubsList": 3, "SearchFrame": 47, "UIHubFrame": 19, "UIMagnet": 12, "UIPrivateMessage": 20, "UIPublicHubs": 3}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-hubs-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%[1-9]\d*", source)),
+                                             Counter(re.findall(r"%[1-9]\d*", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+                            self.assertEqual(source.endswith(" "), text.endswith(" "))
+                            if source == 'Search progress of "%1" is %2%':
+                                self.assertIn("%2%", text)
+                            if "Shift+Enter" in source:
+                                self.assertIn("Shift+Enter", text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_file_browsing_and_hashing(self):
         expected = {
             'FileBrowserModel': {
