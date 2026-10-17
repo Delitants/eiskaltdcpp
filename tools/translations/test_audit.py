@@ -16,6 +16,60 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_sharing_section_is_complete(self):
+        required = {
+            "Add", "Remove", "Skip zero sized files", "8",
+            "Use ADL search only in own file list",
+            "Hashing delay on startup (seconds, -1 = infinity)",
+            "Share files with the Hidden attribute set and files inside directory with\n"
+            "the Hidden attribute set.\n"
+            "With this option off, files starting with a . (full stop) will not be shared.\n"
+            "Note: this option requires a refresh of the file list,\n"
+            "and may cause the client to appear to freeze.",
+        }
+        exact = {"Add": "Pridať", "Remove": "Odstrániť", "8": "8",
+                 "Skip zero sized files": "Vynechať súbory s nulovou veľkosťou",
+                 "Use ADL search only in own file list": "Používať vyhľadávanie ADL iba vo vlastnom zozname súborov",
+                 "Hashing delay on startup (seconds, -1 = infinity)":
+                     "Oneskorenie hašovania pri spustení (sekundy, -1 = nekonečno)"}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsSharing" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-sharing-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(39, len(original))
+            self.assertTrue(required.issubset(original))
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in required:
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        self.assertEqual(Counter(re.findall(r"-?\d+", source)),
+                                         Counter(re.findall(r"-?\d+", text)))
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+                        else:
+                            self.assertEqual(
+                                "Zdieľať súbory s nastaveným atribútom Skrytý a súbory v priečinku\n"
+                                "s nastaveným atribútom Skrytý.\n"
+                                "Ak je táto možnosť vypnutá, súbory začínajúce bodkou (.) sa nebudú zdieľať.\n"
+                                "Poznámka: táto možnosť vyžaduje obnovenie zoznamu súborov\n"
+                                "a môže spôsobiť, že klient bude pôsobiť ako zamrznutý.", text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_personal_history_and_notifications(self):
         required = {
             "UISettingsHistory": {"Clear search history on program exit",

@@ -9713,12 +9713,12 @@ akým rýchlym zdrojom budete pravdepodobne pre ostatných používateľov.</tra
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Pridať</translation>
+            <translation>Pridať</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished" />
+            <translation>Odstrániť</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -9772,7 +9772,11 @@ the Hidden attribute set.
 With this option off, files starting with a . (full stop) will not be shared.
 Note: this option requires a refresh of the file list,
 and may cause the client to appear to freeze.</source>
-            <translation type="unfinished" />
+            <translation>Zdieľať súbory s nastaveným atribútom Skrytý a súbory v priečinku
+s nastaveným atribútom Skrytý.
+Ak je táto možnosť vypnutá, súbory začínajúce bodkou (.) sa nebudú zdieľať.
+Poznámka: táto možnosť vyžaduje obnovenie zoznamu súborov
+a môže spôsobiť, že klient bude pôsobiť ako zamrznutý.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="253" />
@@ -9787,7 +9791,7 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="273" />
             <source>Skip zero sized files</source>
-            <translation type="unfinished" />
+            <translation>Vynechať súbory s nulovou veľkosťou</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="280" />
@@ -9807,7 +9811,7 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="315" />
             <source>8</source>
-            <translation type="unfinished" />
+            <translation>8</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="368" />
@@ -9832,7 +9836,7 @@ and may cause the client to appear to freeze.</source>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="409" />
             <source>Use ADL search only in own file list</source>
-            <translation type="unfinished" />
+            <translation>Používať vyhľadávanie ADL iba vo vlastnom zozname súborov</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="424" />
@@ -9853,7 +9857,7 @@ Ak rýchosť uploadovania vzrastie, tak tento extra slot sa uzavrie.</translatio
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="460" />
             <source>Hashing delay on startup (seconds, -1 = infinity)</source>
-            <translation type="unfinished" />
+            <translation>Oneskorenie hašovania pri spustení (sekundy, -1 = nekonečno)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="476" />
