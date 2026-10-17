@@ -16,6 +16,65 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_hubs_search_and_browser(self):
+        required = {
+            "ChatEdit": {"Address", "Select image"},
+            "PublicHubs": {"Refreshing public hub list...", "Hub list downloaded... (%1)",
+                           "Locally cached (as of %1) version of the hub list loaded (%2)",
+                           "Cached hub list is corrupted or unsupported",
+                           "Downloaded hub list is corrupted or unsupported (%1)"},
+            "PublicHubsList": {"Public hub list URLs"},
+            "SearchFrame": {"Magnet", "Copy web-magnet", "Properties of magnet", "Blacklist...",
+                            "Blacklist", "Add to Blacklist", "Searching for %1 ...",
+                            'Search progress of "%1" is %2%'},
+            "ShareBrowser": {"Restrictions", "Magnet", "Copy web-magnet", "Properties of magnet",
+                             "Add restriction", "Remove restriction", "Open directory",
+                             "Share browser error: %1", "Selected %1 from %2 items; ",
+                             "Enter restriction size (in GB)", "Share browser", "Matched %1 files"},
+            "UIPublicHubs": {"Refresh"},
+            "UserListModel": {"<b>Hub role</b>: Operator", "<b>Hub role</b>: User",
+                              "<br/><b>Favorite user</b>", "E-mail", "Exact share size", "IPv6"},
+        }
+        exact = {"Add restriction": "Pridať obmedzenie", "Remove restriction": "Odstrániť obmedzenie",
+                 "<b>Hub role</b>: Operator": "<b>Rola v hube</b>: Operátor",
+                 "<b>Hub role</b>: User": "<b>Rola v hube</b>: Používateľ"}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        def entries(catalog):
+            return {(c.findtext("name"), m.findtext("source")): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    for m in c.findall("message")}
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-browser-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            original, compiled = entries(path), entries(output)
+            for context, sources in required.items():
+                for source in sorted(sources):
+                    with self.subTest(context=context, source=source):
+                        self.assertIn((context, source), original)
+                        value = original[context, source]
+                        self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        if source not in {"Magnet", "E-mail", "IPv6"}:
+                            self.assertNotEqual(source, text)
+                        self.assertIn((context, source), compiled)
+                        self.assertEqual(text, "".join(compiled[context, source].itertext()))
+                        self.assertEqual(Counter(re.findall(r"%\d+|%n", source)),
+                                         Counter(re.findall(r"%\d+|%n", text)))
+                        self.assertEqual(source.count("%"), text.count("%"))
+                        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                        self.assertEqual(source[len(source.rstrip()):], text[len(text.rstrip()):])
+                        for token in ("GB", "URL", "IPv6"):
+                            if token in source:
+                                self.assertIn(token, text)
+                        if source in exact:
+                            self.assertEqual(exact[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_transfer_translations(self):
         required = {
             "TransferView": {"Flags", "Encryption", "Protocol", "Magnet", "Cancel download",

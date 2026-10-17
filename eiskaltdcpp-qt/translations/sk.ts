@@ -181,12 +181,12 @@ Kľúčové skratky:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished" />
+            <translation>Adresa</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Vybrať obrázok</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -3012,7 +3012,7 @@ Stiahnuté: %3 Uploadované: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Obnovuje sa zoznam verejných hubov...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3027,22 +3027,22 @@ Stiahnuté: %3 Uploadované: %4</translation>
         <message>
             <location filename="../src/PublicHubs.cpp" line="321" />
             <source>Hub list downloaded... (%1)</source>
-            <translation type="unfinished" />
+            <translation>Zoznam hubov bol stiahnutý... (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="325" />
             <source>Locally cached (as of %1) version of the hub list loaded (%2)</source>
-            <translation type="unfinished" />
+            <translation>Načítaná lokálne uložená verzia zoznamu hubov zo dňa %1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="330" />
             <source>Cached hub list is corrupted or unsupported</source>
-            <translation type="unfinished" />
+            <translation>Uložený zoznam hubov je poškodený alebo nepodporovaný</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="332" />
             <source>Downloaded hub list is corrupted or unsupported (%1)</source>
-            <translation type="unfinished" />
+            <translation>Stiahnutý zoznam hubov je poškodený alebo nepodporovaný (%1)</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.h" line="42" />
@@ -3059,7 +3059,7 @@ Stiahnuté: %3 Uploadované: %4</translation>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>URL zoznamov verejných hubov</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3358,7 +3358,7 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="125" />
             <source>Magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="127" />
@@ -3393,12 +3393,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="148" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať webový magnetický odkaz</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="151" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Vlastnosti magnetického odkazu</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="154" />
@@ -3438,17 +3438,17 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="184" />
             <source>Blacklist...</source>
-            <translation type="unfinished" />
+            <translation>Zoznam blokovaných...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="187" />
             <source>Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Zoznam blokovaných</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="190" />
             <source>Add to Blacklist</source>
-            <translation type="unfinished" />
+            <translation>Pridať do zoznamu blokovaných</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="296" />
@@ -3475,12 +3475,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchFrame.cpp" line="1561" />
             <source>Searching for %1 ...</source>
-            <translation type="unfinished" />
+            <translation>Vyhľadáva sa %1 ...</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1565" />
             <source>Search progress of "%1" is %2%</source>
-            <translation type="unfinished" />
+            <translation>Priebeh vyhľadávania "%1" je %2%</translation>
         </message>
         <message>
             <location filename="../src/SearchFrame.cpp" line="1588" />
@@ -5049,12 +5049,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="75" />
             <source>Restrictions</source>
-            <translation type="unfinished" />
+            <translation>Obmedzenia</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="76" />
             <source>Magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="78" />
@@ -5079,12 +5079,12 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="87" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať webový magnetický odkaz</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="89" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Vlastnosti magnetického odkazu</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="92" />
@@ -5094,17 +5094,17 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="94" />
             <source>Add restriction</source>
-            <translation type="unfinished" />
+            <translation>Pridať obmedzenie</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="95" />
             <source>Remove restriction</source>
-            <translation type="unfinished" />
+            <translation>Odstrániť obmedzenie</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="96" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Otvoriť priečinok</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="176" />
@@ -5140,7 +5140,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="466" />
             <source>Share browser error: %1</source>
-            <translation type="unfinished" />
+            <translation>Chyba prehliadača zdieľaných súborov: %1</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="636" />
@@ -5151,7 +5151,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="656" />
             <source>Selected %1 from %2 items; </source>
-            <translation type="unfinished" />
+            <translation>Vybraných %1 z %2 položiek; </translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="661" />
@@ -5166,17 +5166,17 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="992" />
             <source>Enter restriction size (in GB)</source>
-            <translation type="unfinished" />
+            <translation>Zadajte veľkosť obmedzenia (v GB)</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1130" />
             <source>Share browser</source>
-            <translation type="unfinished" />
+            <translation>Prehliadač zdieľaných súborov</translation>
         </message>
         <message>
             <location filename="../src/ShareBrowser.cpp" line="1137" />
             <source>Matched %1 files</source>
-            <translation type="unfinished" />
+            <translation>Nájdených %1 zhodných súborov</translation>
         </message>
     </context>
     <context>
@@ -7886,7 +7886,7 @@ in options, file will be downloaded without opening search dialog.</source>
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Obnoviť</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -10080,17 +10080,17 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../src/UserListModel.cpp" line="147" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: Operator</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Rola v hube&lt;/b&gt;: Operátor</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="149" />
             <source>&lt;b&gt;Hub role&lt;/b&gt;: User</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Rola v hube&lt;/b&gt;: Používateľ</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="152" />
             <source>&lt;br/&gt;&lt;b&gt;Favorite user&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;br/&gt;&lt;b&gt;Obľúbený používateľ&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="185" />
@@ -10115,7 +10115,7 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../src/UserListModel.cpp" line="189" />
             <source>E-mail</source>
-            <translation type="unfinished" />
+            <translation>E-mail</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="190" />
@@ -10125,7 +10125,7 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../src/UserListModel.cpp" line="191" />
             <source>Exact share size</source>
-            <translation type="unfinished" />
+            <translation>Presná veľkosť zdieľania</translation>
         </message>
         <message>
             <location filename="../src/UserListModel.cpp" line="192" />
@@ -10135,7 +10135,7 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
