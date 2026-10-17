@@ -15,8 +15,15 @@ ROOT = Path(__file__).resolve().parents[2]
 
 class CatalogRegressionTests(unittest.TestCase):
     def test_french_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("fr")
+
+    def test_spanish_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("es")
+
+    def _assert_rich_help_preserves_markup_and_links(self, language):
         checked = 0
-        for context in ET.parse(ROOT / "eiskaltdcpp-qt/translations/fr.ts").getroot().findall("context"):
+        path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
+        for context in ET.parse(path).getroot().findall("context"):
             if context.findtext("name") not in {"MainWindow", "UISettingsLog"}:
                 continue
             for message in context.findall("message"):
@@ -75,6 +82,11 @@ class CatalogRegressionTests(unittest.TestCase):
                          "lrelease and lconvert are required")
     def test_french_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("fr")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_spanish_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("es")
 
     def _assert_active_catalog_is_complete_and_compiles(self, language):
         path = ROOT / "eiskaltdcpp-qt/translations" / (language + ".ts")
