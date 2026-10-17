@@ -16,6 +16,82 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_main_window_about_and_credits(self):
+        expected = {"MainWindow": {
+            "EiskaltDC++ is a graphical client for Direct Connect and ADC protocols.":
+                "EiskaltDC++ je grafický klient pre protokoly Direct Connect a ADC.",
+            "DC++ core version: %1 (modified)": "Verzia jadra DC++: %1 (upravená)",
+            "Home page: ": "Domovská stránka: ", "Total up: <b>%1</b>": "Celkovo odoslané: <b>%1</b>",
+            "Total down: <b>%1</b>": "Celkovo stiahnuté: <b>%1</b>", "Ratio: <b>%1</b>": "Pomer: <b>%1</b>",
+            'Please use <a href="https://github.com/Delitants/eiskaltdcpp/issues">https://github.com/Delitants/eiskaltdcpp/issues</a> to report bugs.<br/>':
+                'Na hlásenie chýb použite <a href="https://github.com/Delitants/eiskaltdcpp/issues">https://github.com/Delitants/eiskaltdcpp/issues</a>.<br/>',
+            "<b>Developers</b><br/>": "<b>Vývojári</b><br/>",
+            '2026 <a href="mailto:admin@nlight.org.ua">Neolo</a><br/>':
+                '2026 <a href="mailto:admin@nlight.org.ua">Neolo</a><br/>',
+            "<b>Graphic files</b><br/>": "<b>Grafické súbory</b><br/>",
+            "Russian translation<br/>": "Ruský preklad<br/>",
+            "Belarusian translation<br/>": "Bieloruský preklad<br/>",
+            "Hungarian translation<br/>": "Maďarský preklad<br/>",
+            "French translation<br/>": "Francúzsky preklad<br/>",
+            "Polish translation<br/>": "Poľský preklad<br/>",
+            "Ukrainian translation<br/>": "Ukrajinský preklad<br/>",
+            "Serbian (Cyrillic) translation<br/>": "Srbský preklad (cyrilika)<br/>",
+            "Serbian (Latin) translation<br/>": "Srbský preklad (latinka)<br/>",
+            "Spanish translation<br/>": "Španielsky preklad<br/>",
+            "Basque translation<br/>": "Baskický preklad<br/>",
+            "Bulgarian translation<br/>": "Bulharský preklad<br/>",
+            "Slovak translation<br/>": "Slovenský preklad<br/>",
+            "Czech translation<br/>": "Český preklad<br/>",
+            "German translation<br/>": "Nemecký preklad<br/>",
+            "Greek translation<br/>": "Grécky preklad<br/>",
+            "Italian translation<br/>": "Taliansky preklad<br/>",
+            "Portuguese (Brazil) translation<br/>": "Portugalský preklad (Brazília)<br/>",
+            "Vietnamese translation<br/>": "Vietnamský preklad<br/>",
+            "Chinese (China) translation<br/>": "Čínsky preklad (Čína)<br/>",
+            "Swedish (Sweden) translation<br/>": "Švédsky preklad (Švédsko)<br/>",
+            "Turkish translation<br/>": "Turecký preklad<br/>",
+            "Danish translation<br/>": "Dánsky preklad<br/>",
+            "Georgian translation<br/>": "Gruzínsky preklad<br/>",
+            "lead developer": "hlavný vývojár", "release manager": "správca vydaní",
+            "Arch Linux maintainer": "správca pre Arch Linux", "developer": "vývojár",
+            "Debian/Ubuntu maintainer": "správca pre Debian/Ubuntu",
+            "translations coordinator": "koordinátor prekladov", "macOS maintainer": "správca pre macOS",
+            "MS Windows maintainer": "správca pre MS Windows",
+            "creator of the logo of the project": "tvorca loga projektu",
+            "tiny updates of the logo": "drobné úpravy loga",
+            "Participate in the translation. It is easy:": "Zapojte sa do prekladu. Je to jednoduché:",
+        }}
+        def entries(path):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") == "MainWindow" for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-about-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(198, len(original))
+            self.assertEqual(44, len(expected["MainWindow"]))
+            self.assertTrue(expected["MainWindow"].keys() <= original.keys())
+            for source, value in original.items():
+                with self.subTest(source=source):
+                    self.assertNotEqual("unfinished", value.get("type"))
+                    text = "".join(value.itertext())
+                    self.assertTrue(text.strip())
+                    self.assertIn(source, compiled)
+                    self.assertEqual(text, "".join(compiled[source].itertext()))
+                    if source in expected["MainWindow"]:
+                        self.assertEqual(expected["MainWindow"][source], text)
+                        self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                         Counter(re.findall(r"%\d+", text)))
+                        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_main_window_actions_and_prompts(self):
         expected = {"MainWindow": {
             "Kill all humans?": "Zabiť všetkých ľudí?", "Action confirm": "Potvrdenie akcie",
