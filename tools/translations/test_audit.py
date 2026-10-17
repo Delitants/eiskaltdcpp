@@ -16,6 +16,52 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_polish_connection_policy_help_survives_compilation(self):
+        expected = {
+            "Don't allow Hub/UPnP/DHT to override": "Nie zezwalaj hubowi/UPnP/DHT na nadpisanie",
+            "Type-of-Service (ToS)": "Typ usługi (ToS)",
+            "No": "Nie",
+            "Low delay": "Małe opóźnienie",
+            "Throughput": "Przepustowość",
+            "Minimal cost": "Minimalny koszt",
+            "DHT port": "Port DHT",
+        }
+        path = ROOT / "eiskaltdcpp-qt/translations/pl.ts"
+        def entries(catalog):
+            return {m.findtext("source"): m.find("translation")
+                    for c in ET.parse(catalog).getroot().findall("context")
+                    if c.findtext("name") == "UISettingsConnection"
+                    for m in c.findall("message")}
+        original = entries(path)
+        help_sources = [s for s in original if s.startswith("<!DOCTYPE") and "Type-Of-Service" in s]
+        self.assertEqual(1, len(help_sources))
+        source = help_sources[0]
+        with tempfile.TemporaryDirectory(prefix="eiskalt-pl-policy-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            compiled = entries(output)
+            for key in (*expected, source):
+                with self.subTest(source=key[:80]):
+                    value = original[key]
+                    self.assertNotIn(value.get("type"), {"unfinished", "obsolete", "vanished"})
+                    text = "".join(value.itertext())
+                    self.assertIn(key, compiled)
+                    self.assertEqual(text, "".join(compiled[key].itertext()))
+                    if key in expected:
+                        self.assertEqual(expected[key], text)
+                    else:
+                        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+                        self.assertEqual(source.count("\n"), text.count("\n"))
+                        for phrase in ("Uwaga! Ta opcja wymaga uprawnień administratora!",
+                                       "Można określić co najwyżej jedną z tych wartości TOS.",
+                                       "Małe opóźnienie", "Przepustowość", "Niezawodność", "Minimalny koszt"):
+                            self.assertIn(phrase, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_polish_connection_catalog_survives_compilation(self):
         self._assert_connection_catalog_survives_compilation("pl")
 
