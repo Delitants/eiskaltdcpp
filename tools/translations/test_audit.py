@@ -16,6 +16,60 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_history_and_personal_settings(self):
+        expected = {
+            "UISettingsHistory": {
+                "Clear search history on program exit": "Εκκαθάριση ιστορικού αναζητήσεων κατά την έξοδο από το πρόγραμμα",
+                "Clear download directories history on program exit": "Εκκαθάριση ιστορικού φακέλων λήψης κατά την έξοδο από το πρόγραμμα",
+                "Clear now": "Εκκαθάριση τώρα",
+                "Number of search history elements to store:": "Αριθμός εγγραφών ιστορικού αναζητήσεων προς αποθήκευση:",
+                "Number of download directories history elements to store:": "Αριθμός εγγραφών ιστορικού φακέλων λήψης προς αποθήκευση:",
+                "Memorize TTH search phrases": "Απομνημόνευση φράσεων αναζήτησης TTH",
+            },
+            "UISettingsPersonal": {
+                "This description will show in the user list.\nIt can be overridden on a per-hub basis in the Favorite Hub Properties.":
+                    "Αυτή η περιγραφή θα εμφανίζεται στη λίστα χρηστών.\nΜπορεί να αντικατασταθεί ξεχωριστά για κάθε κόμβο στις ιδιότητες αγαπημένου κόμβου.",
+                "If you are in away mode, this message will be sent to everybody\nwho sends private message to you.":
+                    "Αν βρίσκεστε σε κατάσταση απουσίας, αυτό το μήνυμα θα αποστέλλεται σε όποιον\nσας στέλνει προσωπικό μήνυμα.",
+                "This nickname, or handle, will identify you when you join a hub.\nIt can be overridden on a per-hub basis in the Favorite Hub Properties.":
+                    "Αυτό το ψευδώνυμο θα σας προσδιορίζει όταν συνδέεστε σε έναν κόμβο.\nΜπορεί να αντικατασταθεί ξεχωριστά για κάθε κόμβο στις ιδιότητες αγαπημένου κόμβου.",
+                "E-Mail": "Ηλεκτρονικό ταχυδρομείο", "Auto away interval (min)": "Διάστημα αυτόματης απουσίας (λεπτά)",
+                "This field is for sharing your email address, if you wish it.": "Αυτό το πεδίο είναι για την κοινοποίηση της διεύθυνσης ηλεκτρονικού ταχυδρομείου σας, αν το επιθυμείτε.",
+                "This drop-down contains a number of common upload speeds (in Mbit/s),\nplease choose the one closest to your own.\nDo not put in your download speed; this setting is a measure\nof how fast a source you are likely to be for other users.":
+                    "Αυτή η αναπτυσσόμενη λίστα περιέχει συνήθεις ταχύτητες αποστολής (σε Mbit/s),\nεπιλέξτε την πλησιέστερη στη δική σας.\nΜην εισάγετε την ταχύτητα λήψης σας· αυτή η ρύθμιση δείχνει\nπόσο γρήγορη πηγή είναι πιθανό να είστε για τους άλλους χρήστες.",
+                "Mbit/s": "Mbit/s", "Default hub encoding": "Προεπιλεγμένη κωδικοποίηση κόμβου",
+            },
+        }
+        counts = {"UISettingsHistory": 6, "UISettingsPersonal": 15}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-personal-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(source.count("\n"), text.count("\n"))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_notification_and_sound_settings(self):
         expected = {"UISettingsNotification": {
             "Text": "Κείμενο", "Ask confirm before exit": "Ερώτηση επιβεβαίωσης πριν από την έξοδο",

@@ -9321,33 +9321,33 @@ them is usually available only to operators</source>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="71" />
             <source>Clear search history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Εκκαθάριση ιστορικού αναζητήσεων κατά την έξοδο από το πρόγραμμα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="84" />
             <source>Clear download directories history on program exit</source>
-            <translation type="unfinished" />
+            <translation>Εκκαθάριση ιστορικού φακέλων λήψης κατά την έξοδο από το πρόγραμμα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="100" />
             <location filename="../ui/UISettingsHistory.ui" line="113" />
             <source>Clear now</source>
-            <translation type="unfinished" />
+            <translation>Εκκαθάριση τώρα</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="126" />
             <source>Number of search history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Αριθμός εγγραφών ιστορικού αναζητήσεων προς αποθήκευση:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="152" />
             <source>Number of download directories history elements to store:</source>
-            <translation type="unfinished" />
+            <translation>Αριθμός εγγραφών ιστορικού φακέλων λήψης προς αποθήκευση:</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsHistory.ui" line="191" />
             <source>Memorize TTH search phrases</source>
-            <translation type="unfinished" />
+            <translation>Απομνημόνευση φράσεων αναζήτησης TTH</translation>
         </message>
     </context>
     <context>
@@ -9589,13 +9589,15 @@ For example: /usr/bin/mplayer</source>
             <location filename="../ui/UISettingsPersonal.ui" line="62" />
             <source>This description will show in the user list.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η περιγραφή θα εμφανίζεται στη λίστα χρηστών.
+Μπορεί να αντικατασταθεί ξεχωριστά για κάθε κόμβο στις ιδιότητες αγαπημένου κόμβου.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="70" />
             <source>If you are in away mode, this message will be sent to everybody
 who sends private message to you.</source>
-            <translation type="unfinished" />
+            <translation>Αν βρίσκεστε σε κατάσταση απουσίας, αυτό το μήνυμα θα αποστέλλεται σε όποιον
+σας στέλνει προσωπικό μήνυμα.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="78" />
@@ -9606,12 +9608,13 @@ who sends private message to you.</source>
             <location filename="../ui/UISettingsPersonal.ui" line="85" />
             <source>This nickname, or handle, will identify you when you join a hub.
 It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
-            <translation type="unfinished" />
+            <translation>Αυτό το ψευδώνυμο θα σας προσδιορίζει όταν συνδέεστε σε έναν κόμβο.
+Μπορεί να αντικατασταθεί ξεχωριστά για κάθε κόμβο στις ιδιότητες αγαπημένου κόμβου.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="93" />
             <source>E-Mail</source>
-            <translation type="unfinished" />
+            <translation>Ηλεκτρονικό ταχυδρομείο</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="100" />
@@ -9626,12 +9629,12 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="114" />
             <source>Auto away interval (min)</source>
-            <translation type="unfinished" />
+            <translation>Διάστημα αυτόματης απουσίας (λεπτά)</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="134" />
             <source>This field is for sharing your email address, if you wish it.</source>
-            <translation type="unfinished" />
+            <translation>Αυτό το πεδίο είναι για την κοινοποίηση της διεύθυνσης ηλεκτρονικού ταχυδρομείου σας, αν το επιθυμείτε.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="184" />
@@ -9644,12 +9647,15 @@ It can be overridden on a per-hub basis in the Favorite Hub Properties.</source>
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η αναπτυσσόμενη λίστα περιέχει συνήθεις ταχύτητες αποστολής (σε Mbit/s),
+επιλέξτε την πλησιέστερη στη δική σας.
+Μην εισάγετε την ταχύτητα λήψης σας· αυτή η ρύθμιση δείχνει
+πόσο γρήγορη πηγή είναι πιθανό να είστε για τους άλλους χρήστες.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9664,7 +9670,7 @@ of how fast a source you are likely to be for other users.</source>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="264" />
             <source>Default hub encoding</source>
-            <translation type="unfinished" />
+            <translation>Προεπιλεγμένη κωδικοποίηση κόμβου</translation>
         </message>
     </context>
     <context>
