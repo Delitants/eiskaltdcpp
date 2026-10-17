@@ -680,7 +680,7 @@ Keys:
         <message>
             <location filename="../src/FavoriteUsers.cpp" line="285" />
             <source>Browse Files</source>
-            <translation type="unfinished" />
+            <translation>Περιήγηση αρχείων</translation>
         </message>
         <message>
             <location filename="../src/FavoriteUsers.h" line="48" />
@@ -6963,7 +6963,7 @@ Sorted by downloading peers, then uploading peers.</source>
             <location filename="../src/UCModel.cpp" line="156" />
             <location filename="../src/UCModel.cpp" line="209" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>Διαχωριστικό</translation>
         </message>
     </context>
     <context>
@@ -7315,7 +7315,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="85" />
             <source>This description will be shown in the list of favorite hubs.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η περιγραφή θα εμφανίζεται στη λίστα αγαπημένων κόμβων.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="92" />
@@ -7380,7 +7380,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="243" />
             <source>This description will be shown in the user list.</source>
-            <translation type="unfinished" />
+            <translation>Αυτή η περιγραφή θα εμφανίζεται στη λίστα χρηστών.</translation>
         </message>
         <message>
             <location filename="../ui/UIFavoriteHubEditor.ui" line="250" />
@@ -7680,7 +7680,7 @@ Sorted by downloading peers, then uploading peers.</source>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="61" />
             <source>Import</source>
-            <translation type="unfinished" />
+            <translation>Εισαγωγή</translation>
         </message>
         <message>
             <location filename="../ui/UIIPFilter.ui" line="99" />
@@ -9983,7 +9983,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="14" />
             <source>New command</source>
-            <translation type="unfinished" />
+            <translation>Νέα εντολή</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="23" />
@@ -9993,27 +9993,27 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="32" />
             <source>Separator</source>
-            <translation type="unfinished" />
+            <translation>Διαχωριστικό</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="42" />
             <source>Chat</source>
-            <translation type="unfinished" />
+            <translation>Συνομιλία</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="49" />
             <source>Raw</source>
-            <translation type="unfinished" />
+            <translation>Ακατέργαστη εντολή</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="56" />
             <source>PM</source>
-            <translation type="unfinished" />
+            <translation>Προσωπικό μήνυμα</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="66" />
             <source>Context</source>
-            <translation type="unfinished" />
+            <translation>Πλαίσιο χρήσης</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="75" />
@@ -10038,7 +10038,7 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="106" />
             <source>Parameters</source>
-            <translation type="unfinished" />
+            <translation>Παράμετροι</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="139" />
@@ -10053,22 +10053,22 @@ if the user is back within 10 minutes, EiskaltDC++ will grant him a slot.</sourc
         <message>
             <location filename="../ui/UIUserCommands.ui" line="153" />
             <source>Hub address</source>
-            <translation type="unfinished" />
+            <translation>Διεύθυνση κόμβου</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="160" />
             <source>To</source>
-            <translation type="unfinished" />
+            <translation>Προς</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="167" />
             <source>Send once per nick</source>
-            <translation type="unfinished" />
+            <translation>Αποστολή μία φορά ανά ψευδώνυμο</translation>
         </message>
         <message>
             <location filename="../ui/UIUserCommands.ui" line="191" />
             <source>Result</source>
-            <translation type="unfinished" />
+            <translation>Αποτέλεσμα</translation>
         </message>
     </context>
     <context>

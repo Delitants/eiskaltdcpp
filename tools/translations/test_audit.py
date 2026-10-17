@@ -16,6 +16,64 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_commands_favorites_and_ipfilter(self):
+        expected = {
+            'UCModel': {
+                'Separator': 'Διαχωριστικό',
+            },
+            'UIUserCommands': {
+                'New command': 'Νέα εντολή',
+                'Separator': 'Διαχωριστικό',
+                'Chat': 'Συνομιλία',
+                'Raw': 'Ακατέργαστη εντολή',
+                'PM': 'Προσωπικό μήνυμα',
+                'Context': 'Πλαίσιο χρήσης',
+                'Parameters': 'Παράμετροι',
+                'Hub address': 'Διεύθυνση κόμβου',
+                'To': 'Προς',
+                'Send once per nick': 'Αποστολή μία φορά ανά ψευδώνυμο',
+                'Result': 'Αποτέλεσμα',
+            },
+            'FavoriteUsers': {
+                'Browse Files': 'Περιήγηση αρχείων',
+            },
+            'UIFavoriteHubEditor': {
+                'This description will be shown in the list of favorite hubs.': 'Αυτή η περιγραφή θα εμφανίζεται στη λίστα αγαπημένων κόμβων.',
+                'This description will be shown in the user list.': 'Αυτή η περιγραφή θα εμφανίζεται στη λίστα χρηστών.',
+            },
+            'UIIPFilter': {
+                'Import': 'Εισαγωγή',
+            },
+        }
+        counts = {"UCModel": 4, "UIUserCommands": 18, "FavoriteUsers": 6, "UIFavoriteHubEditor": 25, "UIIPFilter": 12}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-commands-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_logging_scripts_and_spy(self):
         expected = {
             'SettingsLog': {
