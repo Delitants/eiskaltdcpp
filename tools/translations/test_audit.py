@@ -16,6 +16,40 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_hungarian_connection_catalog_survives_compilation(self):
+        self._assert_connection_catalog_survives_compilation("hu")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
+    def test_hungarian_tls_choices_survive_compilation(self):
+        path = ROOT / "eiskaltdcpp-qt/translations/hu.ts"
+        expected = {
+            "TLS settings": "TLS-beállítások",
+            "Disable TLS": "TLS letiltása",
+            "Allow TLS": "TLS engedélyezése",
+            "Require TLS": "TLS megkövetelése",
+            "Allow untrusted certificate for hubs": "Nem megbízható tanúsítvány engedélyezése hubokhoz",
+            "Allow untrusted certificate for clients": "Nem megbízható tanúsítvány engedélyezése kliensekhez",
+        }
+        with tempfile.TemporaryDirectory(prefix="eiskalt-hu-tls-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True, text=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True, text=True)
+            for catalog in (path, output):
+                entries = {m.findtext("source"): m.find("translation")
+                           for c in ET.parse(catalog).getroot().findall("context")
+                           if c.findtext("name") == "UISettingsConnection"
+                           for m in c.findall("message")}
+                for source, text in expected.items():
+                    with self.subTest(catalog=catalog.name, source=source):
+                        self.assertIn(source, entries)
+                        self.assertNotIn(entries[source].get("type"), {"unfinished", "obsolete", "vanished"})
+                        self.assertEqual(text, "".join(entries[source].itertext()))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_belarusian_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("be")
 
