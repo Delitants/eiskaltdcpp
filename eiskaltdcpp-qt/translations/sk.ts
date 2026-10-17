@@ -299,7 +299,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="65" />
             <source>Magnet</source>
-            <translation type="unfinished" />
+            <translation>Magnet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="68" />
@@ -314,12 +314,12 @@ Kľúčové skratky:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="71" />
             <source>Copy web-magnet</source>
-            <translation type="unfinished" />
+            <translation>Kopírovať webový magnet</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="72" />
             <source>Properties of magnet</source>
-            <translation type="unfinished" />
+            <translation>Vlastnosti magnetu</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.cpp" line="73" />
@@ -449,7 +449,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/DownloadQueue.cpp" line="801" />
             <source>Total files: &lt;b&gt;%1&lt;/b&gt; Total size: &lt;b&gt;%2&lt;/b&gt;</source>
-            <translation type="unfinished" />
+            <translation>Celkový počet súborov: &lt;b&gt;%1&lt;/b&gt; Celková veľkosť: &lt;b&gt;%2&lt;/b&gt;</translation>
         </message>
         <message>
             <location filename="../src/DownloadQueue.h" line="90" />
@@ -726,42 +726,42 @@ Kľúčové skratky:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="115" />
             <source>%1 [%2 Gb]</source>
-            <translation type="unfinished" />
+            <translation>%1 [%2 Gb]</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="179" />
             <source>File marked as a duplicate of another file: %1</source>
-            <translation type="unfinished" />
+            <translation>Súbor označený ako duplikát iného súboru: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="194" />
             <source>&lt;b&gt;Media Info:&lt;/b&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;b&gt;Informácie o médiu:&lt;/b&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="196" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Video:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="198" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Audio:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Zvuk:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="200" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Bitrate:&lt;/b&gt; %1&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Dátový tok:&lt;/b&gt; %1&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="202" />
             <source>&amp;nbsp;&amp;nbsp;&lt;b&gt;Resolution:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>&amp;nbsp;&amp;nbsp;&lt;b&gt;Rozlíšenie:&lt;/b&gt; %1&lt;br/&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="213" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Súbor už existuje: %1</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="315" />
@@ -781,22 +781,22 @@ Kľúčové skratky:
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Bitrate</source>
-            <translation type="unfinished" />
+            <translation>Dátový tok</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Resolution</source>
-            <translation type="unfinished" />
+            <translation>Rozlíšenie</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Video</source>
-            <translation type="unfinished" />
+            <translation>Video</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="316" />
             <source>Audio</source>
-            <translation type="unfinished" />
+            <translation>Zvuk</translation>
         </message>
         <message>
             <location filename="../src/FileBrowserModel.cpp" line="317" />
@@ -845,7 +845,7 @@ Kľúčové skratky:
         <message>
             <location filename="../src/FinishedTransfers.h" line="489" />
             <source>Open directory</source>
-            <translation type="unfinished" />
+            <translation>Otvoriť priečinok</translation>
         </message>
     </context>
     <context>
@@ -889,7 +889,7 @@ Kľúčové skratky:
             <location filename="../src/FinishedTransfersModel.cpp" line="47" />
             <location filename="../src/FinishedTransfersModel.cpp" line="54" />
             <source>Full</source>
-            <translation type="unfinished" />
+            <translation>Úplný</translation>
         </message>
         <message>
             <location filename="../src/FinishedTransfersModel.cpp" line="52" />
@@ -915,7 +915,7 @@ Kľúčové skratky:
             <location filename="../src/FinishedTransfersModel.cpp" line="117" />
             <location filename="../src/FinishedTransfersModel.cpp" line="127" />
             <source>%1/s</source>
-            <translation type="unfinished" />
+            <translation>%1/s</translation>
         </message>
     </context>
     <context>
@@ -945,7 +945,7 @@ Kľúčové skratky:
             <location filename="../src/HashProgress.cpp" line="155" />
             <location filename="../src/HashProgress.cpp" line="181" />
             <source>%1% %2 left</source>
-            <translation type="unfinished" />
+            <translation>%1% zostáva %2</translation>
         </message>
         <message>
             <location filename="../src/HashProgress.cpp" line="164" />
@@ -3553,12 +3553,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SearchModel.cpp" line="55" />
             <source>Host</source>
-            <translation type="unfinished" />
+            <translation>Hostiteľ</translation>
         </message>
         <message>
             <location filename="../src/SearchModel.cpp" line="134" />
             <source>File already exists: %1</source>
-            <translation type="unfinished" />
+            <translation>Súbor už existuje: %1</translation>
         </message>
     </context>
     <context>
@@ -5189,7 +5189,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/ShareBrowserSearch.cpp" line="113" />
             <source>Found %1 items</source>
-            <translation type="unfinished" />
+            <translation>Počet nájdených položiek: %1</translation>
         </message>
     </context>
     <context>
@@ -9944,17 +9944,17 @@ avšak ak sa vráti do 10 min, EiskaltDC++ mu udelí spät jeho slot.</translati
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="35" />
             <source>Search only files</source>
-            <translation type="unfinished" />
+            <translation>Hľadať iba súbory</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="40" />
             <source>Search only directories</source>
-            <translation type="unfinished" />
+            <translation>Hľadať iba priečinky</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="45" />
             <source>Search all</source>
-            <translation type="unfinished" />
+            <translation>Hľadať všetko</translation>
         </message>
         <message>
             <location filename="../ui/UIShareBrowserSearch.ui" line="54" />

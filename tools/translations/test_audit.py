@@ -16,6 +16,71 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_slovak_file_queue_and_search_sections(self):
+        expected = {
+            "DownloadQueue": {"Magnet": "Magnet", "Copy web-magnet": "Kopírovať webový magnet",
+                              "Properties of magnet": "Vlastnosti magnetu",
+                              "Total files: <b>%1</b> Total size: <b>%2</b>":
+                                  "Celkový počet súborov: <b>%1</b> Celková veľkosť: <b>%2</b>"},
+            "FileBrowserModel": {
+                "%1 [%2 Gb]": "%1 [%2 Gb]",
+                "File marked as a duplicate of another file: %1":
+                    "Súbor označený ako duplikát iného súboru: %1",
+                "<b>Media Info:</b><br/>": "<b>Informácie o médiu:</b><br/>",
+                "&nbsp;&nbsp;<b>Video:</b> %1<br/>": "&nbsp;&nbsp;<b>Video:</b> %1<br/>",
+                "&nbsp;&nbsp;<b>Audio:</b> %1<br/>": "&nbsp;&nbsp;<b>Zvuk:</b> %1<br/>",
+                "&nbsp;&nbsp;<b>Bitrate:</b> %1<br/>": "&nbsp;&nbsp;<b>Dátový tok:</b> %1<br/>",
+                "&nbsp;&nbsp;<b>Resolution:</b> %1<br/><br/>":
+                    "&nbsp;&nbsp;<b>Rozlíšenie:</b> %1<br/><br/>",
+                "File already exists: %1": "Súbor už existuje: %1",
+                "Bitrate": "Dátový tok", "Resolution": "Rozlíšenie",
+                "Video": "Video", "Audio": "Zvuk"},
+            "FinishedTransfers": {"Open directory": "Otvoriť priečinok"},
+            "FinishedTransfersModel": {"Full": "Úplný", "%1/s": "%1/s"},
+            "HashProgress": {"%1% %2 left": "%1% zostáva %2"},
+            "SearchModel": {"Host": "Hostiteľ", "File already exists: %1": "Súbor už existuje: %1"},
+            "ShareBrowserSearch": {"Found %1 items": "Počet nájdených položiek: %1"},
+            "UIShareBrowserSearch": {"Search only files": "Hľadať iba súbory",
+                                     "Search only directories": "Hľadať iba priečinky",
+                                     "Search all": "Hľadať všetko"},
+        }
+        counts = {"DownloadQueue": 32, "FileBrowserModel": 18, "FinishedTransfers": 2,
+                  "FinishedTransfersModel": 12, "HashProgress": 12, "SearchModel": 13,
+                  "ShareBrowserSearch": 2, "UIShareBrowserSearch": 6}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/sk.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-sk-file-search-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)],
+                           check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)],
+                           check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+                            self.assertEqual(Counter(re.findall(r"%\d+", source)),
+                                             Counter(re.findall(r"%\d+", text)))
+                            self.assertEqual(re.findall(r"<[^>]+>|&nbsp;", source),
+                                             re.findall(r"<[^>]+>|&nbsp;", text))
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_slovak_console_and_notes_sections(self):
         expected = {
             "CmdDebug": {"Debug Console": "Ladiaca konzola"},
