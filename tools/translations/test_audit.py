@@ -16,6 +16,59 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_greek_console_and_notes(self):
+        expected = {
+            "CmdDebug": {"Debug Console": "Κονσόλα αποσφαλμάτωσης"},
+            "Secretary": {
+                "Secretary": "Σημειωματάριο",
+                "Clear notes": "Εκκαθάριση σημειώσεων",
+                "Find in notes": "Εύρεση στις σημειώσεις",
+            },
+            "UICmdDebug": {
+                "Use comma as separator": "Χρήση κόμματος ως διαχωριστικού",
+                "Filter by IP": "Φιλτράρισμα κατά IP",
+                "Lines:": "Γραμμές:", "Clear now": "Εκκαθάριση τώρα",
+            },
+            "UISecretary": {
+                "Magnet links": "Σύνδεσμοι magnet", "Search links": "Σύνδεσμοι αναζήτησης",
+                "Public chat": "Δημόσια συνομιλία", "Status messages": "Μηνύματα κατάστασης",
+                "BitTorrent links": "Σύνδεσμοι BitTorrent", "Private messages": "Προσωπικά μηνύματα",
+                "Filter duplicates": "Φιλτράρισμα διπλοτύπων",
+                "Use comma as separator": "Χρήση κόμματος ως διαχωριστικού",
+                "Additional keywords": "Πρόσθετες λέξεις-κλειδιά",
+                "Filter hubs by IP": "Φιλτράρισμα κόμβων κατά IP",
+                "Lines:": "Γραμμές:", "Clear now": "Εκκαθάριση τώρα",
+            },
+        }
+        counts = {"CmdDebug": 1, "Secretary": 9, "UICmdDebug": 11, "UISecretary": 19}
+        def entries(path):
+            return {c.findtext("name"): {m.findtext("source"): m.find("translation")
+                    for m in c.findall("message")
+                    if m.find("translation").get("type") not in {"obsolete", "vanished"}}
+                    for c in ET.parse(path).getroot().findall("context")
+                    if c.findtext("name") in expected}
+        path = ROOT / "eiskaltdcpp-qt/translations/el.ts"
+        with tempfile.TemporaryDirectory(prefix="eiskalt-el-console-") as work:
+            binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"
+            subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
+            subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
+            original, compiled = entries(path), entries(output)
+            self.assertEqual(set(expected), set(original))
+            for context, required in expected.items():
+                self.assertEqual(counts[context], len(original[context]))
+                self.assertTrue(required.keys() <= original[context].keys())
+                for source, value in original[context].items():
+                    with self.subTest(context=context, source=source):
+                        self.assertNotEqual("unfinished", value.get("type"))
+                        text = "".join(value.itertext())
+                        self.assertTrue(text.strip())
+                        self.assertIn(source, compiled.get(context, {}))
+                        self.assertEqual(text, "".join(compiled[context][source].itertext()))
+                        if source in required:
+                            self.assertEqual(required[source], text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_greek_history_and_personal_settings(self):
         expected = {
             "UISettingsHistory": {
