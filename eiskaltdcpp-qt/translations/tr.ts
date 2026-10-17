@@ -182,12 +182,12 @@ Anahtarlar:
         <message>
             <location filename="../src/ChatEdit.cpp" line="389" />
             <source>Address</source>
-            <translation type="unfinished">Adres</translation>
+            <translation>Adres</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="410" />
             <source>Select image</source>
-            <translation type="unfinished" />
+            <translation>Resim seç</translation>
         </message>
         <message>
             <location filename="../src/ChatEdit.cpp" line="493" />
@@ -252,19 +252,19 @@ Anahtarlar:
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="30" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT başlangıç URL’leri</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>DHT bootstrap URL</source>
-            <translation type="unfinished" />
+            <translation>DHT başlangıç URL’si</translation>
         </message>
         <message>
             <location filename="../src/DHTBootstrapList.cpp" line="77" />
             <location filename="../src/DHTBootstrapList.cpp" line="101" />
             <source>URL</source>
-            <translation type="unfinished">URL</translation>
+            <translation>URL</translation>
         </message>
     </context>
     <context>
@@ -1091,7 +1091,7 @@ Anahtarlar:
         <message>
             <location filename="../src/HubFrame.cpp" line="728" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="729" />
@@ -1165,7 +1165,7 @@ Anahtarlar:
         <message>
             <location filename="../src/HubFrame.cpp" line="1895" />
             <source>Filter</source>
-            <translation type="unfinished" />
+            <translation>Süzgeç</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="1916" />
@@ -2285,27 +2285,27 @@ Favori kullanıcı</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2356" />
             <source>Torrent files</source>
-            <translation type="unfinished" />
+            <translation>Torrent dosyaları</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Open magnet or Torrent file</source>
-            <translation type="unfinished" />
+            <translation>Magnet bağlantısı veya Torrent dosyası aç</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2685" />
             <source>Enter a magnet link or local .torrent path:</source>
-            <translation type="unfinished" />
+            <translation>Bir magnet bağlantısı veya yerel .torrent dosyasının yolunu girin:</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2940" />
             <source>Torrent support is not ready.</source>
-            <translation type="unfinished" />
+            <translation>Torrent desteği henüz hazır değil.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3725" />
             <source>Exit</source>
-            <translation type="unfinished">Çık</translation>
+            <translation>Çıkış</translation>
         </message>
         <message>
             <source>Source (git)</source>
@@ -2355,7 +2355,7 @@ Favori kullanıcı</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="2119" />
             <source> | DHT nodes: %1</source>
-            <translation type="unfinished" />
+            <translation> | DHT düğümleri: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="2127" />
@@ -2529,7 +2529,7 @@ Favori kullanıcı</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3294" />
             <source>Please use &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; to report bugs.&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>Hataları bildirmek için lütfen &lt;a href="https://github.com/Delitants/eiskaltdcpp/issues"&gt;https://github.com/Delitants/eiskaltdcpp/issues&lt;/a&gt; adresini kullanın.&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3297" />
@@ -2539,7 +2539,7 @@ Favori kullanıcı</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="3298" />
             <source>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</source>
-            <translation type="unfinished" />
+            <translation>2026 &lt;a href="mailto:admin@nlight.org.ua"&gt;Neolo&lt;/a&gt;&lt;br/&gt;</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="3352" />
@@ -2684,17 +2684,17 @@ Favori kullanıcı</translation>
         <message>
             <location filename="../src/MainWindow.cpp" line="331" />
             <source>Torrent: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent: %1</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="635" />
             <source>Nickname required</source>
-            <translation type="unfinished" />
+            <translation>Takma ad gerekli</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="636" />
             <source>Enter a nickname in Preferences before connecting to hubs.</source>
-            <translation type="unfinished" />
+            <translation>Hublara bağlanmadan önce Tercihler bölümünde bir takma ad girin.</translation>
         </message>
         <message>
             <location filename="../src/MainWindow.cpp" line="1054" />
@@ -3035,7 +3035,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubs.cpp" line="295" />
             <source>Refreshing public hub list...</source>
-            <translation type="unfinished" />
+            <translation>Genel hub listesi yenileniyor...</translation>
         </message>
         <message>
             <location filename="../src/PublicHubs.cpp" line="313" />
@@ -3090,7 +3090,7 @@ Downloaded: %3 Uploaded: %4</source>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="30" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Genel hub listesi URL’leri</translation>
         </message>
         <message>
             <location filename="../src/PublicHubsList.cpp" line="79" />
@@ -3119,23 +3119,28 @@ Downloaded: %3 Uploaded: %4</source>
 Safe settings such as hubs, account details, sharing, downloads and history were kept. Theme, chat color, window layout and table-column state from the older config were reset because they can break live light/dark switching on current macOS.
 
 </source>
-            <translation type="unfinished" />
+            <translation>Eski veya uyumsuz EiskaltDC++ grafik arayüz ayarları algılandı.
+
+Hublar, hesap bilgileri, paylaşım, indirmeler ve geçmiş gibi güvenli ayarlar korundu. Eski yapılandırmadaki tema, sohbet rengi, pencere düzeni ve tablo sütunlarının durumu, güncel macOS sürümlerinde yeniden başlatmadan açık ve koyu mod arasında geçişi bozabilecekleri için sıfırlandı.
+
+</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="612" />
             <source>A backup of the previous GUI config was saved here:
 %1</source>
-            <translation type="unfinished" />
+            <translation>Önceki grafik arayüz yapılandırmasının yedeği buraya kaydedildi:
+%1</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="615" />
             <source>The previous GUI config could not be backed up, but incompatible visual settings were still discarded.</source>
-            <translation type="unfinished" />
+            <translation>Önceki grafik arayüz yapılandırması yedeklenemedi, ancak uyumsuz görünüm ayarları yine de kaldırıldı.</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="620" />
             <source>EiskaltDC++ settings updated</source>
-            <translation type="unfinished" />
+            <translation>EiskaltDC++ ayarları güncellendi</translation>
         </message>
         <message>
             <location filename="../src/main.cpp" line="767" />
@@ -3158,43 +3163,43 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/ChatEdit.cpp" line="305" />
             <source>Images (%1);;All files (*)</source>
-            <translation type="unfinished" />
+            <translation>Resimler (%1);;Tüm dosyalar (*)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="264" />
             <source>Drag to resize input area</source>
-            <translation type="unfinished" />
+            <translation>Giriş alanını yeniden boyutlandırmak için sürükleyin</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="589" />
             <location filename="../src/PMWindow.cpp" line="221" />
             <source>%1 (%2)</source>
-            <translation type="unfinished">%1 (%2)</translation>
+            <translation>%1 (%2)</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="616" />
             <source>Click to expand or collapse</source>
-            <translation type="unfinished" />
+            <translation>Genişletmek veya daraltmak için tıklayın</translation>
         </message>
         <message>
             <location filename="../src/HubFrame.cpp" line="617" />
             <source>Spoiler: %1</source>
-            <translation type="unfinished" />
+            <translation>Gizli içerik: %1</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="151" />
             <source>Open Externally</source>
-            <translation type="unfinished" />
+            <translation>Harici uygulamada aç</translation>
         </message>
         <message>
             <location filename="../src/WulforUtil.cpp" line="152" />
             <source>Close</source>
-            <translation type="unfinished">Kapat</translation>
+            <translation>Kapat</translation>
         </message>
         <message>
             <location filename="../src/ClientTagPresets.h" line="29" />
             <source>Default (EiskaltDC++)</source>
-            <translation type="unfinished" />
+            <translation>Varsayılan (EiskaltDC++)</translation>
         </message>
     </context>
     <context>
@@ -3654,12 +3659,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/Settings.cpp" line="655" />
             <source>Torrent preferences</source>
-            <translation type="unfinished" />
+            <translation>Torrent tercihleri</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="656" />
             <source>Could not save Torrent settings: %1</source>
-            <translation type="unfinished" />
+            <translation>Torrent ayarları kaydedilemedi: %1</translation>
         </message>
         <message>
             <location filename="../src/Settings.cpp" line="722" />
@@ -3758,22 +3763,22 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="462" />
             <source>Enable IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6’yı etkinleştir</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="465" />
             <source>External/WAN IPv6:</source>
-            <translation type="unfinished" />
+            <translation>Harici/WAN IPv6:</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="468" />
             <source>e.g. 2001:db8::1234</source>
-            <translation type="unfinished" />
+            <translation>örn. 2001:db8::1234</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="471" />
             <source>Bind IPv6 address</source>
-            <translation type="unfinished" />
+            <translation>Yerel IPv6 bağlama adresi</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="480" />
@@ -3804,27 +3809,27 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="503" />
             <source>Country MMDB file</source>
-            <translation type="unfinished" />
+            <translation>Ülke MMDB dosyası</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="506" />
             <source>Path to GeoLite2/MaxMind country .mmdb</source>
-            <translation type="unfinished" />
+            <translation>GeoLite2/MaxMind ülke .mmdb dosyasının yolu</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="530" />
             <source>Configure DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT başlangıç URL’lerini yapılandır</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="535" />
             <source>Public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Genel hub listesi URL’leri</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="537" />
             <source>Configure public hub list URLs</source>
-            <translation type="unfinished" />
+            <translation>Genel hub listesi URL’lerini yapılandır</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="543" />
@@ -3886,13 +3891,13 @@ Safe settings such as hubs, account details, sharing, downloads and history were
             <location filename="../src/SettingsConnection.cpp" line="642" />
             <location filename="../src/SettingsConnection.cpp" line="674" />
             <source>No valid external IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Geçerli bir harici IPv6 adresi bulunamadı!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="646" />
             <location filename="../src/SettingsConnection.cpp" line="678" />
             <source>No valid bind IPv6 address found!</source>
-            <translation type="unfinished" />
+            <translation>Geçerli bir yerel IPv6 bağlama adresi bulunamadı!</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="699" />
@@ -4040,12 +4045,12 @@ Safe settings such as hubs, account details, sharing, downloads and history were
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1509" />
             <source>Select MaxMind country database</source>
-            <translation type="unfinished" />
+            <translation>MaxMind ülke veritabanını seç</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1511" />
             <source>MaxMind DB (*.mmdb);;All files (*.*)</source>
-            <translation type="unfinished" />
+            <translation>MaxMind veritabanı (*.mmdb);;Tüm dosyalar (*.*)</translation>
         </message>
         <message>
             <location filename="../src/SettingsConnection.cpp" line="1551" />
@@ -4335,54 +4340,54 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="222" />
             <source>Toolbar icon theme</source>
-            <translation type="unfinished" />
+            <translation>Araç çubuğu simge teması</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="224" />
             <location filename="../src/SettingsGUI.cpp" line="265" />
             <source>Theme</source>
-            <translation type="unfinished">Tema</translation>
+            <translation>Tema</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="232" />
             <source>Default</source>
-            <translation type="unfinished">Varsayılan</translation>
+            <translation>Varsayılan</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="238" />
             <source>Monochrome</source>
-            <translation type="unfinished" />
+            <translation>Tek renkli</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="263" />
             <source>User list icon theme</source>
-            <translation type="unfinished" />
+            <translation>Kullanıcı listesi simge teması</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="235" />
             <location filename="../src/SettingsGUI.cpp" line="268" />
             <source>Original</source>
-            <translation type="unfinished" />
+            <translation>Özgün</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="315" />
             <source>Chat pictures</source>
-            <translation type="unfinished" />
+            <translation>Sohbet resimleri</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="317" />
             <source>Folder</source>
-            <translation type="unfinished" />
+            <translation>Klasör</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="321" />
             <source>Auto-clean files older than</source>
-            <translation type="unfinished" />
+            <translation>Şu süreden eski dosyaları otomatik sil:</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="324" />
             <source> days</source>
-            <translation type="unfinished" />
+            <translation> gün</translation>
         </message>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="357" />
@@ -4452,7 +4457,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsGUI.cpp" line="729" />
             <source>Select chat pictures folder</source>
-            <translation type="unfinished" />
+            <translation>Sohbet resimleri klasörünü seç</translation>
         </message>
     </context>
     <context>
@@ -4460,7 +4465,7 @@ UDP: %2</translation>
         <message>
             <location filename="../src/SettingsLog.cpp" line="49" />
             <source>Help</source>
-            <translation type="unfinished" />
+            <translation>Yardım</translation>
         </message>
         <message>
             <location filename="../src/SettingsLog.cpp" line="134" />
@@ -5519,7 +5524,7 @@ Onu durdurmak istiyor musunuz?
         <message>
             <location filename="../src/ToolBar.cpp" line="446" />
             <source>Close</source>
-            <translation type="unfinished" />
+            <translation>Kapat</translation>
         </message>
     </context>
     <context>
@@ -6641,7 +6646,7 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
             <location filename="../src/TransferView.cpp" line="93" />
             <location filename="../src/TransferView.cpp" line="238" />
             <source>Protocol</source>
-            <translation type="unfinished" />
+            <translation>Protokol</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="95" />
@@ -6651,7 +6656,7 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
         <message>
             <location filename="../src/TransferView.cpp" line="100" />
             <source>Cancel download</source>
-            <translation type="unfinished" />
+            <translation>İndirmeyi iptal et</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="103" />
@@ -6688,17 +6693,17 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
         <message>
             <location filename="../src/TransferView.cpp" line="722" />
             <source>Torrent details</source>
-            <translation type="unfinished" />
+            <translation>Torrent ayrıntıları</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="725" />
             <source>Pause Torrent</source>
-            <translation type="unfinished" />
+            <translation>Torrent’i duraklat</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="726" />
             <source>Resume Torrent</source>
-            <translation type="unfinished" />
+            <translation>Torrent’i sürdür</translation>
         </message>
         <message>
             <location filename="../src/TransferView.cpp" line="772" />
@@ -6857,37 +6862,37 @@ Salt okunur gönderim için eklendi. Kaynak dosyaların karma değerleri denetle
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Paused</source>
-            <translation type="unfinished" />
+            <translation>Duraklatıldı</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Seeding</source>
-            <translation type="unfinished" />
+            <translation>Dağıtılıyor</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="440" />
             <source>Waiting</source>
-            <translation type="unfinished" />
+            <translation>Bekleniyor</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="444" />
             <source>Download (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>İndirme (%1 eş)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="445" />
             <source>Upload (%1 peers)</source>
-            <translation type="unfinished" />
+            <translation>Yükleme (%1 eş)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="448" />
             <source>%1 | Downloaded %2 (%3%)</source>
-            <translation type="unfinished" />
+            <translation>%1 | İndirilen %2 (%3%)</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="449" />
             <source>%1 | Uploaded %2</source>
-            <translation type="unfinished" />
+            <translation>%1 | Yüklenen %2</translation>
         </message>
         <message>
             <location filename="../src/TransferViewModel.cpp" line="455" />
@@ -7619,7 +7624,7 @@ Yararlı veri hızları saniyede bir ölçülür; bir eş her iki yönde de say�
         <message>
             <location filename="../ui/HubFrame.ui" line="473" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Çok satırlı giriş için Shift+Enter tuşlarına basın</translation>
         </message>
         <message>
             <location filename="../ui/HubFrame.ui" line="552" />
@@ -7884,7 +7889,7 @@ etkinleştirildiyse, dosya arama diyaloğu açılmadan indirilecektir.</translat
         <message>
             <location filename="../ui/PrivateMessage.ui" line="391" />
             <source>Press Shift+Enter for multiline input</source>
-            <translation type="unfinished" />
+            <translation>Çok satırlı giriş için Shift+Enter tuşlarına basın</translation>
         </message>
         <message>
             <location filename="../ui/PrivateMessage.ui" line="432" />
@@ -7930,7 +7935,7 @@ etkinleştirildiyse, dosya arama diyaloğu açılmadan indirilecektir.</translat
         <message>
             <location filename="../ui/UIPublicHubs.ui" line="38" />
             <source>Refresh</source>
-            <translation type="unfinished" />
+            <translation>Yenile</translation>
         </message>
         <message>
             <source>Filter hubs</source>
@@ -8532,12 +8537,12 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1015" />
             <source>DHT bootstrap URLs</source>
-            <translation type="unfinished" />
+            <translation>DHT başlangıç URL’leri</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1022" />
             <source>Separate multiple URLs with semicolons</source>
-            <translation type="unfinished" />
+            <translation>Birden fazla URL’yi noktalı virgülle ayırın</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsConnection.ui" line="1034" />
@@ -9289,27 +9294,27 @@ diğer kelimelerden boşluklarla ayrılmışlar ise görürsünüz.</translation
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="55" />
             <source>Window behavior</source>
-            <translation type="unfinished" />
+            <translation>Pencere davranışı</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="85" />
             <source>Minimize to status icon when clicking the close button</source>
-            <translation type="unfinished" />
+            <translation>Kapat düğmesine tıklandığında durum simgesine küçült</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="95" />
             <source>Status icon</source>
-            <translation type="unfinished" />
+            <translation>Durum simgesi</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="104" />
             <source>Use colored status icon</source>
-            <translation type="unfinished" />
+            <translation>Renkli durum simgesi kullan</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="114" />
             <source>Use monochrome status icon</source>
-            <translation type="unfinished" />
+            <translation>Tek renkli durum simgesi kullan</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsGUI.ui" line="404" />
@@ -9558,7 +9563,11 @@ sadece operatörler için mevcuttur</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-            <translation type="unfinished" />
+            <translation>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "https://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-size:9pt; font-weight:400; font-style:normal;"&gt;
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;a href="https://dcplusplus.sourceforge.io/webhelp/settings_logs.html"&gt;&lt;span style=" text-decoration: underline; color:#296fbe;"&gt;Yardım&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="408" />
@@ -9568,17 +9577,17 @@ p, li { white-space: pre-wrap; }
         <message>
             <location filename="../ui/UISettingsLog.ui" line="417" />
             <source>Diagnostic crash log</source>
-            <translation type="unfinished" />
+            <translation>Çökme tanılama günlüğü</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="420" />
             <source>Keeps a persistent low-volume diagnostic log with Qt warnings, heartbeat, shutdown and fatal signal markers. Useful when the application exits after running for a long time.</source>
-            <translation type="unfinished" />
+            <translation>Qt uyarıları, etkinlik, kapanış ve ölümcül sinyal işaretlerini içeren kalıcı ve küçük boyutlu bir tanılama günlüğü tutar. Uygulama uzun süre çalıştıktan sonra kapanırsa yararlıdır.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="451" />
             <source>Writes to the log directory above. Keeps the last heartbeat before crashes or forced termination.</source>
-            <translation type="unfinished" />
+            <translation>Yukarıdaki günlük dizinine yazar. Çökme veya zorla sonlandırma öncesindeki son etkinlik işaretini saklar.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsLog.ui" line="359" />
@@ -9785,12 +9794,15 @@ Hub başına başka bir rumuz kullanmak Favori Hub özelliklerinde mümkündür.
 please choose the one closest to your own.
 Do not put in your download speed; this setting is a measure
 of how fast a source you are likely to be for other users.</source>
-            <translation type="unfinished" />
+            <translation>Bu liste yaygın yükleme hızlarını (Mbit/s cinsinden) içerir,
+lütfen kendi hızınıza en yakın olanı seçin.
+İndirme hızınızı girmeyin; bu ayar, diğer kullanıcıların
+sizden yaklaşık ne kadar hızlı indirme yapabileceğini belirtir.</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="219" />
             <source>Mbit/s</source>
-            <translation type="unfinished" />
+            <translation>Mbit/s</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsPersonal.ui" line="232" />
@@ -9861,12 +9873,12 @@ olacağınızı gösterir.</translation>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="118" />
             <source>Add</source>
-            <translation type="unfinished">Ekle</translation>
+            <translation>Ekle</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="125" />
             <source>Remove</source>
-            <translation type="unfinished">Kaldır</translation>
+            <translation>Kaldır</translation>
         </message>
         <message>
             <location filename="../ui/UISettingsSharing.ui" line="143" />
@@ -10295,7 +10307,7 @@ kapatacaktır; 10 dakika içinde dönerse EiskaltDC++ ona bir oluk verecektir.</
         <message>
             <location filename="../src/UserListModel.cpp" line="193" />
             <source>IPv6</source>
-            <translation type="unfinished" />
+            <translation>IPv6</translation>
         </message>
     </context>
     <context>
