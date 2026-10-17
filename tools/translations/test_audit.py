@@ -16,6 +16,27 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_belarusian_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("be")
+
+    def test_belarusian_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("be")
+        entries = [m for c in ET.parse(ROOT / "eiskaltdcpp-qt/translations/be.ts").getroot().findall("context")
+                   if c.findtext("name") == "UISettingsGUI" for m in c.findall("message")
+                   if m.findtext("source", "").startswith("<html><head/><body><p>These expressions")]
+        self.assertEqual(1, len(entries))
+        source = entries[0].findtext("source")
+        value = entries[0].find("translation")
+        self.assertNotEqual("unfinished", value.get("type"))
+        text = "".join(value.itertext())
+        self.assertEqual(re.findall(r"<[^>]+>", source), re.findall(r"<[^>]+>", text))
+        for token in ("h", "hh", "H", "HH", "m", "mm", "s", "ss", "z", "zzz", "AP або A", "ap або a", "t"):
+            self.assertIn(">" + token + "<", text)
+        for token in ("A/AP", "a/ap", "&quot;AM&quot;", "&quot;PM&quot;", "&quot;am&quot;", "&quot;pm&quot;", "&quot;CEST&quot;"):
+            self.assertIn(token, text)
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_serbian_latin_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("sr@latin")
 
