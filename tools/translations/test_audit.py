@@ -16,6 +16,14 @@ ROOT = Path(__file__).resolve().parents[2]
 class CatalogRegressionTests(unittest.TestCase):
     @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
                          "lrelease and lconvert are required")
+    def test_serbian_latin_active_catalog_is_complete_and_compiles(self):
+        self._assert_active_catalog_is_complete_and_compiles("sr@latin")
+
+    def test_serbian_latin_rich_help_preserves_markup_and_links(self):
+        self._assert_rich_help_preserves_markup_and_links("sr@latin")
+
+    @unittest.skipUnless(shutil.which("lrelease") and shutil.which("lconvert"),
+                         "lrelease and lconvert are required")
     def test_serbian_active_catalog_is_complete_and_compiles(self):
         self._assert_active_catalog_is_complete_and_compiles("sr")
 
