@@ -1,0 +1,97 @@
+name: Torrent Linux QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-torrent:
+    name: Ubuntu 24.04 / Qt6 / Torrent (Release)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      QT_QPA_PLATFORM: offscreen
+      PYTHONDONTWRITEBYTECODE: 1
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Record source and check QA contracts
+        run: |
+          mkdir -p Work/qa/linux-torrent
+          git rev-parse HEAD | tee Work/qa/linux-torrent/source.txt
+          sha256sum dependencies/libtorrent/source.json dependencies/libtorrent/patches/0001-selected-recheck.patch \
+            > Work/qa/linux-torrent/input-hashes.txt
+          python3 tests/ci/test_linux_torrent_qa.py 2>&1 | tee Work/qa/linux-torrent/contracts.log
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build g++ gettext jq curl patch iproute2 util-linux \
+            libboost-dev libbz2-dev zlib1g-dev libssl-dev libc-ares-dev \
+            libminiupnpc-dev libidn2-dev libpcre2-dev liblua5.4-dev libaspell-dev \
+            libmaxminddb-dev qt6-base-dev qt6-tools-dev qt6-tools-dev-tools \
+            qt6-multimedia-dev qt6-declarative-dev qt6-l10n-tools libqt6svg6-dev \
+            libgl-dev libdbus-1-dev libsqlite3-dev
+          dpkg-query -W > Work/qa/linux-torrent/packages.txt
+          cmake --version > Work/qa/linux-torrent/cmake-version.txt
+          c++ --version > Work/qa/linux-torrent/compiler-version.txt
+
+      - name: Build pinned selected-recheck dependency
+        run: |
+          bash tools/dependencies/build-libtorrent.sh \
+            --staging-root "$PWD/Work/dependencies/linux-qa" \
+            --prefix "$PWD/Work/dependencies/linux-qa/prefix" \
+            --architecture x86_64 --jobs 2 \
+            2>&1 | tee Work/qa/linux-torrent/dependency-build.log
+
+      - name: Configure full-featured application
+        run: |
+          cmake -S . -B build-torrent-linux -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$PWD/Work/staging/linux-qa" \
+            -DLibtorrentRasterbar_DIR="$PWD/Work/dependencies/linux-qa/prefix/lib/cmake/LibtorrentRasterbar" \
+            -DUSE_TORRENT=ON -DEISKALT_REQUIRE_SELECTED_RECHECK=ON -DBUILD_TESTS=ON \
+            -DUSE_QT6=ON -DUSE_GTK3=OFF -DUSE_JS=ON -DUSE_QT_QML=OFF \
+            -DUSE_MINIUPNP=ON -DWITH_DHT=ON -DUSE_IDN2=ON -DLUA_SCRIPT=ON \
+            -DPERL_REGEX=ON -DUSE_ASPELL=ON -DDBUS_NOTIFY=ON \
+            -DWITH_EMOTICONS=ON -DWITH_SOUNDS=ON \
+            2>&1 | tee Work/qa/linux-torrent/configure.log
+
+      - name: Build application and explicit dependency tests
+        run: |
+          cmake --build build-torrent-linux --parallel 2 \
+            2>&1 | tee Work/qa/linux-torrent/build.log
+          cmake --build build-torrent-linux --parallel 2 --target eiskalt-selected-recheck-dependency-tests \
+            2>&1 | tee Work/qa/linux-torrent/dependency-test-build.log
+
+      - name: Test with no external network and disposable profile
+        run: |
+          sudo unshare --net -- bash -c '
+            set -euo pipefail
+            ip link set lo up
+            exec runuser -u "$1" -- bash tools/ci/test-linux-torrent.sh
+          ' -- "$(id -un)"
+
+      - name: Retain QA evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: torrent-linux-qa-${{ github.sha }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            Work/qa/linux-torrent/*.txt
+            Work/qa/linux-torrent/*.log
+            Work/qa/linux-torrent/*.json
+            Work/qa/linux-torrent/*.xml
+            build-torrent-linux/CMakeCache.txt
+            build-torrent-linux/CMakeFiles/CMakeConfigureLog.yaml
+            build-torrent-linux/Testing/Temporary/

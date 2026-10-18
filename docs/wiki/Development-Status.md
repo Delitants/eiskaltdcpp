@@ -54,7 +54,10 @@ application suites were not rerun for this test-only repair.
 ## Remaining Work
 
 - Native minimum-OS and physical Intel compatibility coverage.
-- Broader Windows/Linux runtime QA.
+- Broader Windows/Linux runtime QA. A focused manual Linux Torrent workflow is
+  now available with required selected-recheck ABI 2, loopback-only test
+  networking and explicit test-inventory/results checks. Its offline contract
+  tests are not hosted runtime acceptance; see [Linux QA](../linux-torrent-qa.md).
 - Native-speaker translation review.
 - Further dependency reproducibility tooling.
 - Developer ID signing and notarization when an identity is available.
