@@ -1,30 +1,30 @@
 {
   "schema_version": 1,
-  "version": "3.0.0-pre.1",
-  "build_number": 30000001,
+  "version": "3.0.0-pre.2",
+  "build_number": 30000002,
   "channel": "preview",
   "bundle_id": "com.github.eiskaltdcpp",
-  "notes": "# EiskaltDC++ 3.0.0-pre.1\n\nPreview release of the integrated Direct Connect and BitTorrent client.\n\n## Highlights\n\n- Torrent management, per-file selection/priorities, selected-file rechecking,\n  peers, encryption controls and country blocklists.\n- Unified transfer monitoring and optional DC++ sharing of eligible completed\n  Torrent files, with per-Torrent exclusions.\n- Global and Torrent-only proxy routing, including authenticated GOST TLS/UDP.\n- GitHub-hosted authenticated updates with verified staging and installation\n  deferred until an explicitly committed normal application quit.\n- Refreshed chat formatting controls, file icons, tabs and certificate settings.\n\n## Downloads\n\nChoose exactly one package for your CPU:\n\n- Intel x86_64 only: macOS 14 or newer.\n- Apple Silicon arm64 only: macOS 26 or newer.\n\nThe minimum-OS declarations are checked in every bundled Mach-O dependency.\nNative testing on each advertised minimum OS is not yet established. Intel\nexecution on the development Mac uses Rosetta, not physical Intel hardware.\n\n## Before Updating\n\nThese packages are **not notarized and not Developer ID signed**. App bundles\nuse ad-hoc signatures; macOS may require manual approval before first launch.\nSparkle update archives and feeds are separately authenticated with the\napplication's pinned Ed25519 update key. This does not replace Apple notarization.\n\nThis is a prerelease. Back up your profile and use care with valuable downloads.\nPackage hashes, source archives and dependency notices accompany the release.\nDo not infer anonymity from proxy routing or country filters.\n\nInternal macOS build: **30000001** for both architectures.\n\nRegression suites passed 1,973 cases per architecture (211,163 assertions on\nApple Silicon; 210,951 under Intel/Rosetta), including controlled shutdown and\ninjected failure checks. Test host: macOS 27.0; the minimum OS versions above\nwere checked statically, not tested on separate minimum-version machines.\n\nReal GOST interoperability passed all eight scenarios on each CPU. Disposable\nfull-app updater tests passed normal installation, canceled quit, forced exit\nbefore commit, native macOS termination, and canceled native termination on\nboth CPU builds. Test data remained unchanged and updates did not relaunch\nwithout consent. These are host-based tests, not VM/minimum-OS certification.\n\nApplication source: `c40689d43`. Dependency sources, local patches and notices\nare supplied separately; complete bit-for-bit dependency reproducibility is\nnot claimed. Experimental private OpenSSL QA tooling is not part of the app.\n",
+  "notes": "# EiskaltDC++ 3.0.0-pre.2\n\nTranslation-completion preview of the integrated Direct Connect and BitTorrent client.\n\n## Changes\n\n- Completed all 19,006 outstanding catalog entries across the Qt interface,\n  DC++ core, and legacy GTK interface. This includes 972 explicit English\n  source-language entries in the GTK catalog. All 25 Qt language catalogs\n  now have zero unfinished entries.\n- Corrected upload-recipient wording and small label/keyboard-accelerator issues\n  found during cross-review.\n- Added complete-catalog checks, including fuzzy and incomplete gettext plurals,\n  and verified roundtrips for all 52,150 active Qt messages.\n- Screened 480 settings views in the seven newly completed GUI languages and\n  English at two widths and two palettes. No clipping candidates were detected\n  in the tested labels, checkboxes and radio buttons. This is static screening,\n  not native-speaker certification or complete native UI acceptance.\n\nRuntime C++ implementation remains the same as pre.1; this release incorporates\ncompleted translation resources and documentation/verification updates.\n\n## Downloads\n\n- Intel x86_64 only: macOS 14 or newer.\n- Apple Silicon arm64 only: macOS 26 or newer.\n\nBoth include the native updater. Internal macOS build **30000002** orders this\nrelease after pre.1/build 30000001. Updates are staged and installed only after\nan explicitly committed normal quit.\n\n## Signing And Test Limits\n\nThese apps are **ad-hoc signed, not Developer ID signed or notarized**.\nSparkle archives and feeds are separately authenticated with the pinned update\nkey. macOS may require approval before first launch.\n\nBoth CPUs passed five disposable full-application updater/quit scenarios,\nincluding canceled quit and forced precommit exit. Actual bundled Cocoa startup\nand dependency-closure checks passed on macOS 27; Intel execution used Rosetta.\nAdvertised minimum OS versions are checked in every bundled Mach-O image,\nbut native macOS 14/26 and physical Intel acceptance remain unverified.\n\nNative-speaker review, broader Windows/Linux QA and whole-archive dependency\nreproducibility remain future work. Project and matching dependency sources,\nnotices and SHA-256 hashes accompany the release.\n\nApplication source: `f2c668f2d1f3559eeca05d01d3cc720e457ced71`.\n",
   "assets": [
     {
       "flavor": "intel",
       "arch": "x86_64",
       "minimum_os": "14.0",
-      "filename": "EiskaltDCpp-3.0.0-pre.1-macOS14-plus-Intel-x86_64.zip",
-      "url": "https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.1/EiskaltDCpp-3.0.0-pre.1-macOS14-plus-Intel-x86_64.zip",
-      "size": 45183814,
-      "sha256": "e7a099bea9ecce6130c1d62ef0f94c05ac955e2cce384ef735930e45ad72668c",
-      "ed_signature": "gWd2qhUVsaLRRMcGnLhwaepOFdELDkrCetMKV2sMDv5F85SpErSNOHlBfvRsgw2GfewbUlYGkbiFQvJ343MqDA=="
+      "filename": "EiskaltDCpp-3.0.0-pre.2-macOS14-plus-Intel-x86_64.zip",
+      "url": "https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.2/EiskaltDCpp-3.0.0-pre.2-macOS14-plus-Intel-x86_64.zip",
+      "size": 45815965,
+      "sha256": "29196c40bd5aa9c9ccfe5e6ce493a4f61236097d60a55ebebf08f217d8997c11",
+      "ed_signature": "hNruDraQ3RFuguiD6dYQaxKUQagcSuA0UPrt5+7eVqVVB+nXuhREDnUDoT6IvlzYm+XCyGOhLpVcaHMWY4XZBA=="
     },
     {
       "flavor": "apple-silicon",
       "arch": "arm64",
       "minimum_os": "26.0",
-      "filename": "EiskaltDCpp-3.0.0-pre.1-macOS26-plus-AppleSilicon-arm64.zip",
-      "url": "https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.1/EiskaltDCpp-3.0.0-pre.1-macOS26-plus-AppleSilicon-arm64.zip",
-      "size": 62687169,
-      "sha256": "2ab643cf5ea249b41d0a82b552b71b7913301dd2fb67a9cc84540e1ec812eef7",
-      "ed_signature": "5y+mwl9Nz/9xy24VKjhqvWRdPiXdy5941ltGdM8IMMYhLx/HBxmFPu2XmAQ6ChybFOXsJGgZbbPwioYggbCmBA=="
+      "filename": "EiskaltDCpp-3.0.0-pre.2-macOS26-plus-AppleSilicon-arm64.zip",
+      "url": "https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.2/EiskaltDCpp-3.0.0-pre.2-macOS26-plus-AppleSilicon-arm64.zip",
+      "size": 63319322,
+      "sha256": "8f1e16e86353c2a1ae0b5b3ef17889e15e026f019b9f1eaa0bfbcf219c226722",
+      "ed_signature": "rdJXruh0Y07qHCKQVn6JqvTl+dQcIB3iUJ/Q60n1ve8YIg9+23lfBeIC4pGPsyvc9kkTOwzqNtj3xnMltdHABg=="
     }
   ]
 }
