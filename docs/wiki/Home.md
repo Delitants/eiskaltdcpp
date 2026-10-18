@@ -2,7 +2,7 @@
 
 EiskaltDC++ combines Direct Connect hub chat, search and TTH sharing with an
 optional BitTorrent engine in its native Qt interface. The 3.x line is under
-active development. [v3.0.0-pre.1](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.1)
+active development. [v3.0.0-pre.2](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.2)
 is available as separate Intel-only macOS 14+ and Apple-Silicon-only macOS 26+
 packages, both with the built-in updater.
 

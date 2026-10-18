@@ -6,12 +6,13 @@ A native Qt desktop client for **Direct Connect and BitTorrent**, with shared
 transfer monitoring, hub chat and controlled publication of completed Torrent
 files to DC++.
 
-This repository contains the current 3.x development work. The first preview is
-[v3.0.0-pre.1](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.1):
+This repository contains the current 3.x development work. The current preview is
+[v3.0.0-pre.2](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.2):
 separate **Intel-only macOS 14+** and **Apple-Silicon-only macOS 26+** packages,
 both with the built-in updater. These preview apps are **not notarized or
 Developer ID signed**; update archives and feeds have separate authenticated
 Sparkle signatures. See the release notes for testing limits and source downloads.
+All 74 translation catalogs are complete; native-speaker review remains welcome.
 
 ## Current Work
 

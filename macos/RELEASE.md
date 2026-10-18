@@ -4,16 +4,25 @@ Offline authenticated update-feed preparation is documented in
 [updater/README.md](updater/README.md). That tooling is not publication or
 installer acceptance. Release builds and package audits require a separately
 allocated numeric build number, shared by both CPU flavors and the signed feed.
-The same guide documents offline, pinned, CPU-specific Sparkle framework/helper
-staging with notices and strict signatures. That dependency stage is not yet
-integrated into production bundles and does not enable update installation.
+The same guide documents pinned, CPU-specific Sparkle framework/helper staging
+with notices and strict signatures. Both published pre.1 bundles integrate that
+stage and enable the native updater. New builds must retain the matching audited
+stage, trust metadata and committed-quit installation checks.
+
+The ordinary presets do not enable the updater by themselves. Updater release
+configuration must also set `EISKALT_MAC_UPDATER_NATIVE`,
+`EISKALT_MAC_UPDATER_METADATA` and `EISKALT_MAC_UPDATER_PACKAGE` to `ON`, provide
+the matching `EISKALT_SPARKLE_ROOT`, `EISKALT_MAC_UPDATER_STAGE` and
+`EISKALT_MAC_UPDATER_STAGE_SHA256`, and supply the pinned public key and the
+CPU-specific feed URL. See the updater guide for those audited inputs; never
+substitute a downloaded feed key for the application's pinned trust key.
 
 The v3 prerelease uses two separate bundles, not a universal binary:
 
 | Profile | Architecture | Minimum macOS | ZIP filename |
 | --- | --- | --- | --- |
-| `intel` | Intel `x86_64` only | 14 Sonoma | `EiskaltDCpp-3.0.0-pre.1-macOS14-plus-Intel-x86_64.zip` |
-| `apple-silicon` | Apple Silicon `arm64` only | 26 Tahoe | `EiskaltDCpp-3.0.0-pre.1-macOS26-plus-AppleSilicon-arm64.zip` |
+| `intel` | Intel `x86_64` only | 14 Sonoma | `EiskaltDCpp-3.0.0-pre.2-macOS14-plus-Intel-x86_64.zip` |
+| `apple-silicon` | Apple Silicon `arm64` only | 26 Tahoe | `EiskaltDCpp-3.0.0-pre.2-macOS26-plus-AppleSilicon-arm64.zip` |
 
 These are release targets, not claims of completed runtime testing. Intel Macs
 running macOS 13 or earlier and Apple Silicon Macs running macOS 25 or earlier
@@ -63,16 +72,18 @@ export QT_PREFIX=/path/to/matching-qt
 export COCOA_PLUGIN=/path/to/matching-patched/libqcocoa.dylib
 export COCOA_PLUGIN_SHA256="$(shasum -a 256 "$COCOA_PLUGIN" | cut -d ' ' -f1)"
 export RECHECK_PREFIX=/path/to/matching-private-libtorrent
-export EISKALT_MACOS_BUILD_NUMBER=30000001 # Example only; use the allocated release build.
+export EISKALT_MACOS_BUILD_NUMBER=30000002 # Example only; use the allocated release build.
 
 # Choose one; the presets have separate build directories and two build workers.
 cmake --preset macos-intel \
+  -DREPLACE_VERSION=3.0.0-pre.2 \
   -DLibtorrentRasterbar_DIR="$RECHECK_PREFIX/lib/cmake/LibtorrentRasterbar"
 cmake --build --preset build-macos-intel
 ctest --test-dir out/build/macos-intel --output-on-failure -j1
 
 # Or, with the Apple Silicon dependency paths exported instead:
 cmake --preset macos-apple-silicon \
+  -DREPLACE_VERSION=3.0.0-pre.2 \
   -DLibtorrentRasterbar_DIR="$RECHECK_PREFIX/lib/cmake/LibtorrentRasterbar"
 cmake --build --preset build-macos-apple-silicon
 ctest --test-dir out/build/macos-apple-silicon --output-on-failure -j1
@@ -84,6 +95,11 @@ Their outputs are `out/build/<preset>/eiskaltdcpp-qt/EiskaltDC++.app`.
 Never reuse the other architecture's CMake cache. On an ARM host, running Intel
 tests also requires a working x86_64 execution environment; Rosetta testing is
 not native Intel/macOS 14 acceptance. Do not install Rosetta implicitly.
+
+Allocation-failure regression tests require the test-only
+`eiskalt-publisher-allocation-failure` target, which is intentionally excluded
+from ordinary builds. Build it explicitly for each CPU before injecting that
+library; a loader refusal from a missing interposer is not a product-test result.
 
 The legacy `build-using-homebrew.sh` and general CI DMGs are not this release
 path. In particular, do not run `fix-bundle-self-containment.sh` on these bundles:
@@ -121,15 +137,15 @@ archives with both binary downloads and document which sources belong to which.
 
 ```sh
 tools/dependencies/audit-selected-recheck.sh /path/to/Intel/EiskaltDC++.app x86_64 14.0
-python3 macos/release.py check --profile intel --version 3.0.0-pre.1 \
+python3 macos/release.py check --profile intel --version 3.0.0-pre.2 \
   --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/Intel/EiskaltDC++.app
-python3 macos/release.py package --profile intel --version 3.0.0-pre.1 \
+python3 macos/release.py package --profile intel --version 3.0.0-pre.2 \
   --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/Intel/EiskaltDC++.app --output /path/to/release-assets
 
 tools/dependencies/audit-selected-recheck.sh /path/to/AppleSilicon/EiskaltDC++.app arm64 26.0
-python3 macos/release.py package --profile apple-silicon --version 3.0.0-pre.1 \
+python3 macos/release.py package --profile apple-silicon --version 3.0.0-pre.2 \
   --build-number "$EISKALT_MACOS_BUILD_NUMBER" \
   --app /path/to/AppleSilicon/EiskaltDC++.app --output /path/to/release-assets
 ```
