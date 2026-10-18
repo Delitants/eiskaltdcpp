@@ -293,16 +293,31 @@ void AdcHub::handle(AdcCommand::MSG, AdcCommand& c) {
 }
 
 void AdcHub::handle(AdcCommand::GPA, AdcCommand& c) {
-    if(c.getParameters().empty())
+    if(c.getParameters().empty()) {
+        fire(ClientListener::StatusMessage(), this, _("Password authentication failed: missing ADC password challenge."), ClientListener::FLAG_AUTHENTICATION_FAILED);
         return;
-    const int commandLimit = CTX_SETTING(MAX_COMMAND_LENGTH);
+    }
     size_t decoded;
-    if(!adcPasswordChallengeSize(c.getParam(0), commandLimit > 5 ? size_t(commandLimit - 5) : 0, decoded))
+    if(!passwordChallengeSize(c.getParam(0), decoded, true))
         return;
     salt = c.getParam(0);
     state = STATE_VERIFY;
 
     fire(ClientListener::GetPassword(), this);
+}
+
+bool AdcHub::passwordChallengeSize(const string& encoded, size_t& decoded, bool warn) {
+    const int commandLimit = CTX_SETTING(MAX_COMMAND_LENGTH);
+    const size_t maximum = commandLimit > 5 ? size_t(commandLimit - 5) : 0;
+    if(adcPasswordChallengeSize(encoded, maximum, decoded)) return true;
+    if(allowsLegacyAdcPasswordChallenges() && adcPasswordChallengeSize(encoded, maximum, decoded, true)) {
+        if(warn) fire(ClientListener::StatusMessage(), this,
+            _("Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."));
+        return true;
+    }
+    fire(ClientListener::StatusMessage(), this,
+        _("Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."), ClientListener::FLAG_AUTHENTICATION_FAILED);
+    return false;
 }
 
 void AdcHub::handle(AdcCommand::QUI, AdcCommand& c) {
@@ -963,9 +978,8 @@ void AdcHub::password(const string& pwd) {
     if(state != STATE_VERIFY)
         return;
     if(!salt.empty()) {
-        const int commandLimit = CTX_SETTING(MAX_COMMAND_LENGTH);
         size_t saltBytes;
-        if(!adcPasswordChallengeSize(salt, commandLimit > 5 ? size_t(commandLimit - 5) : 0, saltBytes)) {
+        if(!passwordChallengeSize(salt, saltBytes, false)) {
             salt.clear();
             return;
         }

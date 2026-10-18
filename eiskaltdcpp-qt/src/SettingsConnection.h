@@ -37,6 +37,9 @@ class SettingsConnection :
 public:
     SettingsConnection(QWidget* = nullptr);
     bool validate();
+    void setTorrentProxyPage(QWidget *page);
+    void showProxyPage(QWidget *focusTarget = nullptr);
+    void showLimitsPage();
 
 public slots:
     void ok();

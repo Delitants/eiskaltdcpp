@@ -27,6 +27,7 @@ private:
     void refuse(const QString&);
     void advance();
     void showRecoveryPrompt(const QString&);
+    QString workerTimeoutMessage(const char* branch) const;
     ApplicationQuitCoordinator coordinator;
     QPointer<UpdateController> updater;
     bool hadUpdater;
@@ -34,6 +35,9 @@ private:
     QTimer workerPoll;
     QElapsedTimer workerDeadline;
     uint32_t drainTimeout = 0;
+    QString lastObservedComponent;
+    ApplicationQuitCoordinator::Status lastObservedStatus = ApplicationQuitCoordinator::Status::NotAdmitted;
+    qint64 lastPrepareMs = 0;
     bool workerRetryAllowed = false;
     bool checkpointRetryAllowed = false, retryingCheckpoint = false;
     std::unique_ptr<QMessageBox> recoveryPrompt;

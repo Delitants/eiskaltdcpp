@@ -63,7 +63,7 @@ public:
     explicit FavoriteHubEntry(DCContext& ctx) : ctx_(ctx), encoding(Text::systemCharset), connect(false),
         mode(0), overrideId(false), clientId(DEF_FAKE_ID),
         useInternetIp(false), disableChat(false),
-        searchInterval(0)  // caller should set via setSearchInterval
+        searchInterval(0), legacyAdcPasswordChallenges(false)
     { }
 
     FavoriteHubEntry(DCContext& ctx, const HubEntry& rhs) : ctx_(ctx), name(rhs.getName()),
@@ -71,7 +71,7 @@ public:
         hubDescription(rhs.getDescription()), encoding(Text::systemCharset),
         connect(false), mode(0), overrideId(false),
         clientId(DEF_FAKE_ID), useInternetIp(false), disableChat(false),
-        searchInterval(0)
+        searchInterval(0), legacyAdcPasswordChallenges(false)
     { }
 
     FavoriteHubEntry(const FavoriteHubEntry& rhs) :
@@ -82,7 +82,7 @@ public:
         connect(rhs.getConnect()), mode(rhs.mode),
         overrideId(rhs.overrideId), clientId(rhs.clientId),
         externalIP(""), useInternetIp(false), disableChat(false),
-        searchInterval(rhs.searchInterval), nick(rhs.nick)
+        searchInterval(rhs.searchInterval), legacyAdcPasswordChallenges(rhs.legacyAdcPasswordChallenges), nick(rhs.nick)
     { }
 
     DCContext& ctx() const { return ctx_; }
@@ -106,6 +106,7 @@ public:
     GETSET(bool, disableChat, DisableChat);
     GETSET(string, group, Group);
     GETSET(uint32_t, searchInterval, SearchInterval);
+    GETSET(bool, legacyAdcPasswordChallenges, LegacyAdcPasswordChallenges);
 
 private:
     DCContext& ctx_;

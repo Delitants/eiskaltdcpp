@@ -18,6 +18,7 @@
 #include "WulforUtil.h"
 #include "Antispam.h"
 #include "HubManager.h"
+#include "FavoriteHubs.h"
 #include "Notification.h"
 #include "QtContext.h"
 #include "QtContextAware.h"
@@ -36,6 +37,7 @@
 #include "GlobalTimer.h"
 #include "RetainedGuiInputFence.h"
 #include <QApplication>
+#include <QPushButton>
 
 #include "UserListModel.h"
 #include "EmoticonFactory.h"
@@ -1898,7 +1900,7 @@ void HubFrame::setupChatInputSplitter()
     auto *splitter = new QSplitter(Qt::Vertical, layoutWidget);
     splitter->setObjectName(QStringLiteral("splitter_CHAT_INPUT"));
     splitter->setChildrenCollapsible(false);
-    splitter->setHandleWidth(1);
+    splitter->setHandleWidth(5);
     splitter->setOpaqueResize(true);
 
     const QPalette splitterPalette = splitter->palette();
@@ -1913,7 +1915,7 @@ void HubFrame::setupChatInputSplitter()
     splitter->setStyleSheet(QStringLiteral(
         "QSplitter::handle:vertical {"
         "  background: transparent;"
-        "  height: 1px;"
+        "  height: 5px;"
         "}"
         "QSplitter::handle:vertical:hover {"
         "  background: %1;"
@@ -1924,7 +1926,7 @@ void HubFrame::setupChatInputSplitter()
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 0);
     const int totalHeight = qMax(layoutWidget->height(), 600);
-    const int inputHeight = qMax(130, totalHeight / 3);
+    const int inputHeight = 110;
     splitter->setSizes(QList<int>() << (totalHeight - inputHeight) << inputHeight);
     if (QSplitterHandle *handle = splitter->handle(1))
         handle->setCursor(Qt::SplitVCursor);
@@ -1993,6 +1995,56 @@ void HubFrame::init(){
 
     toolButton_HIDE->setIcon(qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiEDITDELETE));
     setupChatInputSplitter();
+
+    auto *failure = new QFrame(layoutWidget);
+    failure->setObjectName(QStringLiteral("hubConnectionFailure"));
+    auto *failureLayout = new QHBoxLayout(failure);
+    failureLayout->setContentsMargins(6, 4, 6, 4);
+    failureLayout->setSpacing(6);
+    auto *failureMessage = new QLabel(failure);
+    failureMessage->setObjectName(QStringLiteral("hubConnectionFailureMessage"));
+    failureMessage->setTextFormat(Qt::PlainText);
+    failureMessage->setWordWrap(true);
+    failureMessage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    QPalette failurePalette = failureMessage->palette();
+    failurePalette.setColor(QPalette::WindowText,
+        failurePalette.color(QPalette::Window).lightness() < 128 ? QColor(255, 135, 135) : QColor(180, 25, 25));
+    failureMessage->setPalette(failurePalette);
+    failureLayout->addWidget(failureMessage, 1);
+    auto *retry = new QPushButton(tr("Retry"), failure);
+    retry->setObjectName(QStringLiteral("hubConnectionRetry"));
+    auto *settings = new QPushButton(tr("Open settings"), failure);
+    settings->setObjectName(QStringLiteral("hubConnectionSettings"));
+    failureLayout->addWidget(retry);
+    failureLayout->addWidget(settings);
+    verticalLayout_3->insertWidget(0, failure);
+    failure->hide();
+    connect(retry, &QPushButton::clicked, this, &HubFrame::slotReconnect);
+    connect(settings, &QPushButton::clicked, this, [this, failure] {
+        Q_D(HubFrame);
+        if (d->quitPrepared || !d->client) return;
+        if (failure->property("authenticationFailure").toBool()) {
+            auto *workspace = qtCtx()->mainWindow()->widgetForRole(ArenaWidget::FavoriteHubs);
+            if (auto *favorites = workspace ? qobject_cast<::FavoriteHubs*>(workspace->getWidget()) : nullptr)
+                favorites->editHub(_q(d->client->getHubUrl()));
+        } else
+            QMetaObject::invokeMethod(qtCtx()->mainWindow(), "slotToolsSettings", Qt::QueuedConnection);
+    });
+    connect(this, &HubFrame::coreStatusMsg, this, [failure](const QString &message) {
+        failure->setProperty("pendingFailureMessage", message.trimmed());
+    }, Qt::QueuedConnection);
+    connect(this, &HubFrame::coreFailed, this, [failure, failureMessage] {
+        failureMessage->setText(failure->property("pendingFailureMessage").toString());
+        failure->show();
+    }, Qt::QueuedConnection);
+    connect(this, &HubFrame::coreAuthenticationFailed, this, [failure] {
+        failure->setProperty("authenticationFailure", true);
+    }, Qt::QueuedConnection);
+    connect(this, &HubFrame::coreConnecting, this, [failure] {
+        failure->setProperty("authenticationFailure", false);
+        failure->hide();
+    }, Qt::QueuedConnection);
+    connect(this, &HubFrame::coreConnected, this, [failure] { failure->hide(); }, Qt::QueuedConnection);
 
     frame_SMILES->setLayout(new FlowLayout(frame_SMILES));
     frame_SMILES->setVisible(false);
@@ -2077,7 +2129,7 @@ void HubFrame::init(){
     frame_INPUT->setStyleSheet(QStringLiteral(
         "QFrame#frame_INPUT {"
         " border: 1px solid %1;"
-        " border-radius: 8px;"
+        " border-radius: 4px;"
         " background: %2;"
         "}"
     ).arg(inputBorder.name(), inputBackground.name()));
@@ -2240,7 +2292,7 @@ void HubFrame::reloadSomeSettings(){
     frame_INPUT->setStyleSheet(QStringLiteral(
         "QFrame#frame_INPUT {"
         " border: 1px solid %1;"
-        " border-radius: 8px;"
+        " border-radius: 4px;"
         " background: %2;"
         "}"
     ).arg(inputBorder.name(), inputBackground.name()));
@@ -2258,7 +2310,7 @@ void HubFrame::reloadSomeSettings(){
         splitter->setStyleSheet(QStringLiteral(
             "QSplitter::handle:vertical {"
             "  background: transparent;"
-            "  height: 1px;"
+            "  height: 5px;"
             "}"
             "QSplitter::handle:vertical:hover {"
             "  background: %1;"
@@ -4844,10 +4896,14 @@ void HubFrame::on(ClientListener::Message, Client*, const ChatMessage &message) 
     }
 }
 
-void HubFrame::on(ClientListener::StatusMessage, Client*, const string &msg, int) noexcept{
+void HubFrame::on(ClientListener::StatusMessage, Client*, const string &msg, int flags) noexcept{
     QString status = QString("%1 ").arg(_q(msg));
 
     emit coreStatusMsg(status);
+    if (flags & ClientListener::FLAG_AUTHENTICATION_FAILED) {
+        emit coreAuthenticationFailed();
+        emit coreFailed();
+    }
 
     Q_D(HubFrame);
 

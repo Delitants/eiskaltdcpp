@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <title>go-up-search</title>
+  <g transform="translate(0 0) scale(0.78)">
+    <path d="M12 3v12"/>
+    <path d="m17 8-5-5-5 5"/>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+  </g>
+  <g transform="translate(13 13) scale(0.43)" stroke="#ca8a04">
+    <path d="M20 6 9 17l-5-5"/>
+  </g>
+</svg>

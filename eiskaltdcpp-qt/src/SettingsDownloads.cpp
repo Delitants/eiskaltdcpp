@@ -15,7 +15,7 @@
 #include "QtContextAware.h"
 #include "QtContext.h"
 #include "WulforUtil.h"
-#include "PublicHubsList.h"
+#include "PreferencesCheckIndicators.h"
 
 #include "dcpp/stdinc.h"
 #include "dcpp/SettingsManager.h"
@@ -26,6 +26,9 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QDir>
+#include <QGridLayout>
+#include <QLabel>
+#include <QSpinBox>
 
 using namespace dcpp;
 
@@ -50,6 +53,31 @@ SettingsDownloads::SettingsDownloads(QWidget *parent):
     other_settings.insert(SettingsManager::SEGMENTED_DL, 13);
 
     init();
+    // Only the Queue numeric grids need compact column pairs. Leave surplus
+    // width after both pairs, using live size hints for font/style changes.
+    for (auto *grid : {gridLayout_8, gridLayout_9}) {
+        grid->setAlignment(Qt::AlignTop);
+        grid->setHorizontalSpacing(6);
+        for (int column = 0; column < 5; ++column)
+            grid->setColumnStretch(column, 0);
+        grid->setColumnStretch(5, 1);
+        for (int row = 0; row < grid->rowCount(); ++row) {
+            for (int column : {0, 3}) {
+                auto *item = grid->itemAtPosition(row, column);
+                if (auto *label = item ? qobject_cast<QLabel*>(item->widget()) : nullptr) {
+                    label->setWordWrap(false);
+                    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+                    label->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+                }
+            }
+            for (int column : {1, 4}) {
+                auto *item = grid->itemAtPosition(row, column);
+                if (auto *spin = item ? qobject_cast<QSpinBox*>(item->widget()) : nullptr)
+                    spin->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+            }
+        }
+    }
+    preferences_check_indicators::install(this);
 }
 
 SettingsDownloads::~SettingsDownloads(){
@@ -110,8 +138,6 @@ void SettingsDownloads::init(){
         toolButton_BROWSE1->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiFOLDER_BLUE));
         pushButton_DOWNLOADTO_ADD->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITADD));
         pushButton_DOWNLOADTO_REMOVE->setIcon(qtCtx()->wulforUtil()->getIcon(WulforUtil::eiEDITDELETE));
-        groupBox_3->hide();
-        pushButton_CFGLISTS->hide();
 
         connect(toolButton_BROWSE, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);
         connect(toolButton_BROWSE1, &QToolButton::clicked, this, &SettingsDownloads::slotBrowse);
@@ -270,10 +296,4 @@ void SettingsDownloads::saveDownloadToEntries()
     const auto encoded = encodeDownloadTo(entries);
     qtCtx()->settings()->setStr(WS_DOWNLOADTO_PATHS, encoded.first);
     qtCtx()->settings()->setStr(WS_DOWNLOADTO_ALIASES, encoded.second);
-}
-
-void SettingsDownloads::slotCfgPublic(){
-    PublicHubsList h;
-
-    h.exec();
 }

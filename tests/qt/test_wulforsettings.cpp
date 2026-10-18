@@ -103,10 +103,10 @@ TEST_CASE("Multi-line tab icons retain their logical size on Retina screens", "[
     CHECK(iconLabel->contentsRect().size() == QSize(16, 16));
 }
 
-TEST_CASE("WulforSettings: Reborn is the default toolbar theme", "[qt][wulforsettings][icontheme]") {
+TEST_CASE("WulforSettings: Superdesign is the default toolbar theme", "[qt][wulforsettings][icontheme]") {
     ensureSettings();
     qtCtx()->settings()->load();
-    REQUIRE(qtCtx()->settings()->getStr(WS_APP_ICONTHEME) == "reborn");
+    REQUIRE(qtCtx()->settings()->getStr(WS_APP_ICONTHEME) == "superdesign");
     REQUIRE(qtCtx()->settings()->getStr(WS_APP_USERTHEME) == "apex");
 }
 

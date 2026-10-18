@@ -1,7 +1,11 @@
 # Release Source And Notice Inventory
 
-This records the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory,
-split-CPU input preparation and the remaining updater-enabled release gates.
+This retains the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory and
+split-CPU input preparation, with current post-pre.2 icon additions below.
+The published updater-enabled pre.2 materials are described separately in its
+[release qualification](releases/3.0.0-pre.2-readiness.md). Historical pending
+statements below describe those earlier preparation checkpoints, not the current
+updater's supported capabilities.
 It is not a legal certification or a claim that both final CPU flavors have
 complete source/notice sets. Verify the actual distributed artifacts and their
 checksums.
@@ -29,6 +33,19 @@ Run the offline generator check and tests documented in
 survive the actual application/installer packaging, not just the source tree.
 The legacy icons keep their existing provenance and are not covered by the
 Phosphor notice.
+
+The separate Superdesign theme uses pinned Lucide 1.8.0 geometry under ISC,
+including the upstream MIT notices for Feather-derived icons. Its
+[complete license](../tools/icon-themes/vendor-lucide/LICENSE),
+[provenance](../tools/icon-themes/vendor-lucide/provenance.json) and
+[offline regeneration guide](../tools/icon-themes/SUPERDESIGN.md) accompany the
+retained source modules and node arrays. The theme's LICENSE must match the
+vendored notice byte-for-byte in each actual distributed app, not just in the
+source tree. This addition does not relicense legacy artwork.
+
+The current development bundles retain icon notices but are not yet successor
+release packages. Final dependency/source notice maps, complete dependency
+notices, signed archives and public readback remain release gates.
 
 ## Modified Qt Cocoa Plugin
 

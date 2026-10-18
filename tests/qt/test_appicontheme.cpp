@@ -33,13 +33,16 @@ TEST_CASE("App branding: modern themes use the approved Modern Classic icon", "[
     }
 }
 
-TEST_CASE("Icon themes: four approved styles with Reborn fourth", "[qt][icontheme]")
+TEST_CASE("Icon themes: Superdesign default preserves the four existing styles", "[qt][icontheme]")
 {
-    CHECK(app_icon_theme::modernIds() == QStringList{"prism", "contour", "slate", "reborn"});
-    CHECK(app_icon_theme::canonicalId("") == "reborn");
+    CHECK(app_icon_theme::modernIds() == QStringList{"prism", "contour", "slate", "reborn", "superdesign"});
+    CHECK(app_icon_theme::canonicalId("") == "superdesign");
     CHECK(app_icon_theme::canonicalId(" Apex ") == "reborn");
     CHECK(app_icon_theme::canonicalId("default") == "default");
     CHECK(app_icon_theme::canonicalId("faenza") == "faenza");
+    CHECK(app_icon_theme::canonicalId("reborn") == "reborn");
+    CHECK(app_icon_theme::canonicalId("haiku") == "haiku");
+    CHECK(app_icon_theme::canonicalId("monochrome") == "monochrome");
 }
 
 TEST_CASE("Icon themes: all bundled SVGs render at toolbar size", "[qt][icontheme]")

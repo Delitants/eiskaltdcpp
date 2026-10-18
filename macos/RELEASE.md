@@ -10,12 +10,30 @@ stage and enable the native updater. New builds must retain the matching audited
 stage, trust metadata and committed-quit installation checks.
 
 The ordinary presets do not enable the updater by themselves. Updater release
-configuration must also set `EISKALT_MAC_UPDATER_NATIVE`,
+configuration must also set `EISKALT_MAC_UPDATER_NATIVE`, `EISKALT_MAC_UPDATER_INSTALLATION`,
 `EISKALT_MAC_UPDATER_METADATA` and `EISKALT_MAC_UPDATER_PACKAGE` to `ON`, provide
 the matching `EISKALT_SPARKLE_ROOT`, `EISKALT_MAC_UPDATER_STAGE` and
 `EISKALT_MAC_UPDATER_STAGE_SHA256`, and supply the pinned public key and the
 CPU-specific feed URL. See the updater guide for those audited inputs; never
 substitute a downloaded feed key for the application's pinned trust key.
+
+Installation admission defaults off and requires a fresh audited package, its
+explicit stage pins and one supported CPU. Compiling or packaging Sparkle alone
+does not prove installation support. The admission setting is bound into the
+bundle generation/relink receipt, including transitions back to off.
+
+Before publication, qualify each completed bundle through the real production
+factory and application owner, not an installation-enabled fixture wrapper:
+
+```sh
+python3 tests/macos/updater/run_native_selection.py \
+  --build /path/to/completed-build --expect-installation enabled
+```
+
+This uses a disposable deployed copy and isolated profile. It checks capability,
+the real Updates page, canceled draft preservation, absence of construction-time
+scheduling and checked no-update disposal. It does not replace signed-download,
+routing, normal-quit, cancellation or recovery acceptance.
 
 The v3 prerelease uses two separate bundles, not a universal binary:
 

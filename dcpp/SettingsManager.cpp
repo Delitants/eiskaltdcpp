@@ -237,6 +237,7 @@ SettingsManager::SettingsManager(DCContext& ctx) : ContextAware(ctx)
     setDefault(LIST_DUPES, true);
     setDefault(BUFFER_SIZE, 64);
     setDefault(HUBLIST_SERVERS,
+               "https://hublist.eu/hublist.xml.bz2;"
                "https://www.te-home.net/?do=hublist&get=hublist.xml.bz2;"
                "https://dchublist.org/hublist.xml.bz2;"
                "https://dchublist.biz/hublist.xml.bz2;"
@@ -525,6 +526,10 @@ void SettingsManager::load(string const& aFileName)
             StringTokenizer<string> t(getDefault(HUBLIST_SERVERS), ';');
 
             for(auto& i: t.getTokens()) {
+                // The preferred source is a fresh-profile default, not an
+                // addition to an older user's explicitly configured list.
+                if(i == "https://hublist.eu/hublist.xml.bz2")
+                    continue;
                 if(lists.find(i) == string::npos)
                     lists += ";" + i;
             }

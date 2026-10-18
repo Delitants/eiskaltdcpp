@@ -165,6 +165,19 @@ void SettingsPersonal::init(){
     spinBox->setValue(qtCtx()->settings()->getInt(WI_APP_AUTOAWAY_INTERVAL));
 
     initClientTagPresets();
+
+    // Keep the shared label column at its content width; only fields absorb
+    // surplus space when the Preferences window is widened.
+    gridLayout->setColumnStretch(0, 0);
+    gridLayout->setColumnStretch(1, 1);
+    gridLayout->setColumnStretch(2, 0);
+    for (int row = 0; row < gridLayout->rowCount(); ++row) {
+        auto *item = gridLayout->itemAtPosition(row, 0);
+        if (auto *label = item ? qobject_cast<QLabel*>(item->widget()) : nullptr) {
+            label->setWordWrap(false);
+            label->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+        }
+    }
 }
 
 void SettingsPersonal::initClientTagPresets(){

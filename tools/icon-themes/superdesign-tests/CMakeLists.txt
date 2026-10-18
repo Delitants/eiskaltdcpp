@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.24)
+project(SuperdesignIconRegression LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Svg)
+get_filename_component(REPO "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+add_executable(superdesign-icon-regression
+    "${REPO}/tests/qt/test_superdesignicons.cpp"
+    "${REPO}/eiskaltdcpp-qt/src/AppIconTheme.cpp")
+target_include_directories(superdesign-icon-regression PRIVATE "${REPO}/eiskaltdcpp-qt/src")
+target_link_libraries(superdesign-icon-regression PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Svg)
+include("${REPO}/cmake/AppIconThemes.cmake")
+set(_source_dir "${CMAKE_SOURCE_DIR}")
+set(CMAKE_SOURCE_DIR "${REPO}")
+eiskalt_add_icon_themes(superdesign-icon-regression)
+set(CMAKE_SOURCE_DIR "${_source_dir}")
+enable_testing()
+add_test(NAME superdesign-icon-runtime COMMAND superdesign-icon-regression)
+set_tests_properties(superdesign-icon-runtime PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

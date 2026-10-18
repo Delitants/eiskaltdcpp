@@ -53,6 +53,28 @@ application suites were not rerun for this test-only repair.
 
 ## Remaining Work
 
+Post-pre.2 development is not yet a published prerelease. It includes the
+compact native GUI and separate default Superdesign icon set, consolidated
+proxy settings, scoped legacy ADC authentication compatibility, qualified
+production-updater installation admission, and improved quit diagnostics.
+See [Compact Native GUI](../compact-native-gui.md) and
+[Legacy ADC authentication](../adc-legacy-authentication.md).
+
+Before publishing that successor:
+
+- Synchronize and translate the new GUI text. A fresh GUI-source extraction
+  found 27 new message/context entries missing from each of the 25 Qt catalogs;
+  zero unfinished entries in older catalogs does not prove current-source
+  coverage. Core authentication text also needs extraction/translation review.
+- Complete the final dependency/source/notice mapping for both release bundles,
+  preserve the new Lucide/Feather notices, and qualify the actual signed ZIPs
+  and feeds. Development-bundle tests are not public-asset readback.
+- Preserve the unresolved intermittent private shutdown-refusal evidence.
+  Subsequent successful tests and a normal installed-app quit did not establish
+  its cause or a fix.
+
+Longer-term coverage remains separate:
+
 - Native minimum-OS and physical Intel compatibility coverage.
 - Broader Windows/Linux runtime QA. A focused manual Linux Torrent workflow is
   now available with required selected-recheck ABI 2, loopback-only test

@@ -1,0 +1,405 @@
+{
+  "package": "lucide",
+  "version": "1.8.0",
+  "repository": "https://github.com/lucide-icons/lucide",
+  "origin": "Bundled offline workspace dependency; no download or package scripts",
+  "licenseSha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57",
+  "nodesSha256": "dc727ff13a1e06a36720129d81670a74a2859b65844ad5561df8932aa16f12cf",
+  "sources": [
+    {
+      "path": "dist/esm/icons/app-window.js",
+      "local": "sources/app-window.js",
+      "sha256": "818932b73c35029fbc20df79ab27ebaad9dccb47330ef0027ef9951b634c98e1"
+    },
+    {
+      "path": "dist/esm/icons/arrow-down.js",
+      "local": "sources/arrow-down.js",
+      "sha256": "e774a76a3eaf3b518cc49716d2034f8a26ad996810b8997106af8ce734d39b8d"
+    },
+    {
+      "path": "dist/esm/icons/arrow-down-up.js",
+      "local": "sources/arrow-down-up.js",
+      "sha256": "e5a1f299c865f0743bd1d3667240e17a9261cef2539eb7281b4e73fe5f8d7111"
+    },
+    {
+      "path": "dist/esm/icons/arrow-left.js",
+      "local": "sources/arrow-left.js",
+      "sha256": "938d80c22809b30d5af05675a195f34f8e96e04b50d57a41dd5da658be9a67f8"
+    },
+    {
+      "path": "dist/esm/icons/arrow-right.js",
+      "local": "sources/arrow-right.js",
+      "sha256": "3ba797eb49deaf0a00b9dce7194119e82be51357a42a59ac282f0da6a65768fa"
+    },
+    {
+      "path": "dist/esm/icons/arrow-up.js",
+      "local": "sources/arrow-up.js",
+      "sha256": "0a5d903d0824ac56b165e24076423811d194ae34deb264da140363cc281127b4"
+    },
+    {
+      "path": "dist/esm/icons/arrow-up-to-line.js",
+      "local": "sources/arrow-up-to-line.js",
+      "sha256": "fd191ec3d10994cd02f7893e9308d6dfe855fafd53ba30b0dad2be1526f7ea02"
+    },
+    {
+      "path": "dist/esm/icons/bell.js",
+      "local": "sources/bell.js",
+      "sha256": "4e4bdc9e5a64f3f60bf12ba57bfeb892453eaddd9f86455943e7f1f3eca71d37"
+    },
+    {
+      "path": "dist/esm/icons/bookmark-plus.js",
+      "local": "sources/bookmark-plus.js",
+      "sha256": "30f60a026157ea0052fe8a635097dad6771da8c031b995c560b6bad99153b1fc"
+    },
+    {
+      "path": "dist/esm/icons/brush-cleaning.js",
+      "local": "sources/brush-cleaning.js",
+      "sha256": "416c8a83351229fc70b565b1ee5e7e6ee507e9c22fcf0d592cf05df7b6bd6158"
+    },
+    {
+      "path": "dist/esm/icons/check.js",
+      "local": "sources/check.js",
+      "sha256": "b3248607aa8dcd31b4b856c033f02d3560aae4a87776aa8e81b4b8b21b7eef51"
+    },
+    {
+      "path": "dist/esm/icons/circle-check.js",
+      "local": "sources/circle-check.js",
+      "sha256": "cfc6053e0b2f3c53a3f26fc25dd2426dbfc601f9c911e210011a3880c0928220"
+    },
+    {
+      "path": "dist/esm/icons/circle-minus.js",
+      "local": "sources/circle-minus.js",
+      "sha256": "d95074247ca6b77b54ab20c3f2a8ef3c91286072730fab96d81f4133f7c3a428"
+    },
+    {
+      "path": "dist/esm/icons/circle-plus.js",
+      "local": "sources/circle-plus.js",
+      "sha256": "422a55064d7a48360d9e400266027c039402eb1de450cab10e8a3bdc8be69015"
+    },
+    {
+      "path": "dist/esm/icons/cloud-download.js",
+      "local": "sources/cloud-download.js",
+      "sha256": "22a3e48bbadeea72ad01c92c1e8e4b01ef2bbe0bdc0870c13e3cb151fb6e1307"
+    },
+    {
+      "path": "dist/esm/icons/copy.js",
+      "local": "sources/copy.js",
+      "sha256": "3be772a15f3f493fa88e9eedcdb7ee330a22aa892b2b802dc99a0253b887e952"
+    },
+    {
+      "path": "dist/esm/icons/delete.js",
+      "local": "sources/delete.js",
+      "sha256": "f7d0c94906425267449c7ce09664522541118740864e23216e61ec2990c9195a"
+    },
+    {
+      "path": "dist/esm/icons/download.js",
+      "local": "sources/download.js",
+      "sha256": "d6c66cd78b2f14c601f0a77d17d93fd4918733b886cb59a10f87f80aef18e13d"
+    },
+    {
+      "path": "dist/esm/icons/eraser.js",
+      "local": "sources/eraser.js",
+      "sha256": "c2ad7f53977ddd093874f0d39a7f2351dc6e265fb5b0e89d851e6b40d6dff994"
+    },
+    {
+      "path": "dist/esm/icons/eye.js",
+      "local": "sources/eye.js",
+      "sha256": "a2e8cfb4ff32d74e8a450dc6212978e8023945dc61c75ed8bdbb243d93089c0e"
+    },
+    {
+      "path": "dist/esm/icons/file-archive.js",
+      "local": "sources/file-archive.js",
+      "sha256": "47a04ab67b0fafa04d5e024c20c1fc480eda5eb1e0998a5f31a57fbc2e381913"
+    },
+    {
+      "path": "dist/esm/icons/file-pen-line.js",
+      "local": "sources/file-pen-line.js",
+      "sha256": "d6687c1747f608b58f6b464c1d85e6f18a89aebe7a3124c892722a03f4f52222"
+    },
+    {
+      "path": "dist/esm/icons/file-plus.js",
+      "local": "sources/file-plus.js",
+      "sha256": "1cf906d4e7239ab2f1ecd2ffe826d01907a2a8a912e54f7f961ac78373357ab5"
+    },
+    {
+      "path": "dist/esm/icons/file-question-mark.js",
+      "local": "sources/file-question-mark.js",
+      "sha256": "5c0e6094445a25daae804df5a8f5090fed91d287c9673f742fdd201b137b9847"
+    },
+    {
+      "path": "dist/esm/icons/file-search.js",
+      "local": "sources/file-search.js",
+      "sha256": "08232419729351002e92c2ec2ee5672366534c4ba75c799cc8c72c3660c1b826"
+    },
+    {
+      "path": "dist/esm/icons/file-text.js",
+      "local": "sources/file-text.js",
+      "sha256": "b5f87ce693977d1bcf4c15f9d28392b2599fde9621a8feae0dfb9f720be8b93d"
+    },
+    {
+      "path": "dist/esm/icons/film.js",
+      "local": "sources/film.js",
+      "sha256": "c49ac70bac13ba840a38827369f4b0ca0360667f6529247c40948ea761dbccf2"
+    },
+    {
+      "path": "dist/esm/icons/folder.js",
+      "local": "sources/folder.js",
+      "sha256": "9ebf8f0c5893101cb65bdfe819f53e63a1db1f39622b1650db32f06158fd9266"
+    },
+    {
+      "path": "dist/esm/icons/folder-search.js",
+      "local": "sources/folder-search.js",
+      "sha256": "bb9db83b5c834c64fcbff90185194c53aab24b5dd320f6bd963a414305b0aa72"
+    },
+    {
+      "path": "dist/esm/icons/folder-up.js",
+      "local": "sources/folder-up.js",
+      "sha256": "e2af40e6b826fc8615b66c65afe2351641e0ebcf7bc4b9ace0f112582fa81545"
+    },
+    {
+      "path": "dist/esm/icons/gauge.js",
+      "local": "sources/gauge.js",
+      "sha256": "dbbe6d761676d8fb01d17f6a0fc7d5c3bb5c140ff06ca4e4e4ab68be495ae470"
+    },
+    {
+      "path": "dist/esm/icons/globe.js",
+      "local": "sources/globe.js",
+      "sha256": "84c8bf60665a7180d4cb99f6c4d455d3397eb45ed55cd9ea0b91d963348247c8"
+    },
+    {
+      "path": "dist/esm/icons/hard-drive.js",
+      "local": "sources/hard-drive.js",
+      "sha256": "f3badc23d2e6cbde266dd94808e2d408b0d5ab5bc734aa2412ab5a36dde4485c"
+    },
+    {
+      "path": "dist/esm/icons/hash.js",
+      "local": "sources/hash.js",
+      "sha256": "f48525822ab66c165214c0ebe7d2f53d186d7bc487a3b40382cc1014bd10c276"
+    },
+    {
+      "path": "dist/esm/icons/history.js",
+      "local": "sources/history.js",
+      "sha256": "bf1cc951e2174abec4bd99e00962ea9863fbeed9cb29d0855190f2d604475e26"
+    },
+    {
+      "path": "dist/esm/icons/image.js",
+      "local": "sources/image.js",
+      "sha256": "b6ea580a24e6ca53d47d1b636d9183f67e76089dca0a5a1d8c0deb3766a569b3"
+    },
+    {
+      "path": "dist/esm/icons/inbox.js",
+      "local": "sources/inbox.js",
+      "sha256": "5c253aabd8d09703a8dc93bbb2597da9d51f6f287315201134482a0164fd3a50"
+    },
+    {
+      "path": "dist/esm/icons/info.js",
+      "local": "sources/info.js",
+      "sha256": "5abbb699752e1e0e0aefad5ac000dad2b6b221ba662f7b426199d9762794011c"
+    },
+    {
+      "path": "dist/esm/icons/keyboard.js",
+      "local": "sources/keyboard.js",
+      "sha256": "d9354e6643420ff305a4c45f9b4ac935a7c956e17c17f06f8ef4785e3dabaf2e"
+    },
+    {
+      "path": "dist/esm/icons/list.js",
+      "local": "sources/list.js",
+      "sha256": "eca3c46b3eee6b65cdbc8431c1bcb5da23c7aab82673c7aef357aac800451e47"
+    },
+    {
+      "path": "dist/esm/icons/list-filter.js",
+      "local": "sources/list-filter.js",
+      "sha256": "03bb0b7ee12ff94093503020c2fd4071e4d561dc89dceec717c57430547e5e00"
+    },
+    {
+      "path": "dist/esm/icons/list-ordered.js",
+      "local": "sources/list-ordered.js",
+      "sha256": "1c7a4f7ba97511c57e0abb811fad5c14257f88a77d0ee69021303ae06291e04d"
+    },
+    {
+      "path": "dist/esm/icons/lock-keyhole.js",
+      "local": "sources/lock-keyhole.js",
+      "sha256": "20b8eca84b917ed00007f4ab1d7509c419a711fa27e72323a351e0a2dec01056"
+    },
+    {
+      "path": "dist/esm/icons/magnet.js",
+      "local": "sources/magnet.js",
+      "sha256": "09e7e2288797de45e7107a0e1e83193a1ef56ac31a7cfe9b851712fa73e5f0aa"
+    },
+    {
+      "path": "dist/esm/icons/mail.js",
+      "local": "sources/mail.js",
+      "sha256": "58e96bac07ac2055349edfe5acf8b11de42ff05e1453311bb5406c98a5907365"
+    },
+    {
+      "path": "dist/esm/icons/message-circle.js",
+      "local": "sources/message-circle.js",
+      "sha256": "3c06267ec69dbc63b8792e4c7d3bcc0401feec83753c39550ab87810cfc4dc60"
+    },
+    {
+      "path": "dist/esm/icons/messages-square.js",
+      "local": "sources/messages-square.js",
+      "sha256": "3d4775922478428f76bc76ee279d11887c24fb22c80085cb3c03a49f8c910c3e"
+    },
+    {
+      "path": "dist/esm/icons/monitor.js",
+      "local": "sources/monitor.js",
+      "sha256": "c561b9086dfabc06aea6b6b4e8f9466ddb44de294e74613e0ddf318b596e0c9d"
+    },
+    {
+      "path": "dist/esm/icons/moon.js",
+      "local": "sources/moon.js",
+      "sha256": "493739062562fb2cbd52fbd7d140e5cb6465935b9743bdf6fa070884c44c369b"
+    },
+    {
+      "path": "dist/esm/icons/music.js",
+      "local": "sources/music.js",
+      "sha256": "943ac337f8fc2e59d3157767ad87e7b4904e8cc94546693a2bb1c82099984000"
+    },
+    {
+      "path": "dist/esm/icons/network.js",
+      "local": "sources/network.js",
+      "sha256": "c2371f8e701b206f7a9ed18d54b1803990c44243cb8f57cf77305d6c66593844"
+    },
+    {
+      "path": "dist/esm/icons/panels-top-left.js",
+      "local": "sources/panels-top-left.js",
+      "sha256": "f4703bdb043f007dd829ab88ecf2014cee50619cc7c04f8f27c6bc0fa2520140"
+    },
+    {
+      "path": "dist/esm/icons/pause.js",
+      "local": "sources/pause.js",
+      "sha256": "c644714fe5035b6524e9faa32136ea4d6fece70e1bd28b0e42412f757bff0e7e"
+    },
+    {
+      "path": "dist/esm/icons/play.js",
+      "local": "sources/play.js",
+      "sha256": "656a4d389b2e8ade4b7a7db81377785a7a3cc5d55e4c82e362c955606c15f0b7"
+    },
+    {
+      "path": "dist/esm/icons/plug.js",
+      "local": "sources/plug.js",
+      "sha256": "cf2a7eb6bd9bce991b6170397a5834d5bd03438b41878dc166009f48e3e0b2b0"
+    },
+    {
+      "path": "dist/esm/icons/plus.js",
+      "local": "sources/plus.js",
+      "sha256": "121027976b16d9fff46734fadb798f3853e1298b4697e2890914a1da4286598b"
+    },
+    {
+      "path": "dist/esm/icons/power.js",
+      "local": "sources/power.js",
+      "sha256": "121fc1cdc0fa3e135a3d95e7c536f9d354c15946b9fda72467f794d7f6897784"
+    },
+    {
+      "path": "dist/esm/icons/puzzle.js",
+      "local": "sources/puzzle.js",
+      "sha256": "e1f13418af960c8e0c02e6017273973482739775d5b2ef50faa3c54d651dcc6e"
+    },
+    {
+      "path": "dist/esm/icons/refresh-cw.js",
+      "local": "sources/refresh-cw.js",
+      "sha256": "d4125e890702fe96b0f8e25f175be07b17a669f0297c9caa6a503d2c7d79f1c6"
+    },
+    {
+      "path": "dist/esm/icons/rotate-cw.js",
+      "local": "sources/rotate-cw.js",
+      "sha256": "0171248b8e4a1efa43dcfd7e217b90e1ddf695b2c048659607a5f1d0b0d4f5d4"
+    },
+    {
+      "path": "dist/esm/icons/search.js",
+      "local": "sources/search.js",
+      "sha256": "68384da66739da9af839ba15f59d0f7663faaaf631f2fd5eb0160c881ff1ec1c"
+    },
+    {
+      "path": "dist/esm/icons/settings.js",
+      "local": "sources/settings.js",
+      "sha256": "fe08b25f43af8fdbe555f72e4b5b712d913294622fa7952a832dd1e165eb4a86"
+    },
+    {
+      "path": "dist/esm/icons/shield.js",
+      "local": "sources/shield.js",
+      "sha256": "99dce31365980ceeb7da7f302211134bfa32c8d268c809acc5bd38b925959f29"
+    },
+    {
+      "path": "dist/esm/icons/sliders-horizontal.js",
+      "local": "sources/sliders-horizontal.js",
+      "sha256": "d9bdaba15c52c08f86428a41271659277a50371f197389e4c70d09f26c362b71"
+    },
+    {
+      "path": "dist/esm/icons/smile.js",
+      "local": "sources/smile.js",
+      "sha256": "2c92277ae111967d9d4822493aba5300944658b7bda1c20c67be8a1d7341237e"
+    },
+    {
+      "path": "dist/esm/icons/square-minus.js",
+      "local": "sources/square-minus.js",
+      "sha256": "c258eac599b244efd0ade53ac800350b7aa75c377ce6848f826da19bc3f72d8c"
+    },
+    {
+      "path": "dist/esm/icons/star.js",
+      "local": "sources/star.js",
+      "sha256": "f2e81fa145b8d8d15803edb583bd77118e0326588ca6c534ac96c245abbea5b8"
+    },
+    {
+      "path": "dist/esm/icons/terminal.js",
+      "local": "sources/terminal.js",
+      "sha256": "e1d1814c4515fec7f7955fd34703e4da8ebf02af2813a4c7ad334803aa167d9d"
+    },
+    {
+      "path": "dist/esm/icons/trash-2.js",
+      "local": "sources/trash-2.js",
+      "sha256": "e8f5d44edffaf2c63beea7b99913864ea5feba292c33b6be324b852ae800a9f5"
+    },
+    {
+      "path": "dist/esm/icons/unplug.js",
+      "local": "sources/unplug.js",
+      "sha256": "f1ea9873529e067fa94a8e6c02ede2f72f5bb9b14acedfd205102d4d069e477f"
+    },
+    {
+      "path": "dist/esm/icons/upload.js",
+      "local": "sources/upload.js",
+      "sha256": "a69ed3bed3ae28255ddd1370e46367555fa50acba2be6404e97ac584f774638e"
+    },
+    {
+      "path": "dist/esm/icons/user-plus.js",
+      "local": "sources/user-plus.js",
+      "sha256": "a89ff3a6dd151367dee08c068d4bef7a1c624ad31247ffd6de2d0bf7a7e5101b"
+    },
+    {
+      "path": "dist/esm/icons/user-round.js",
+      "local": "sources/user-round.js",
+      "sha256": "18d0d820ea8014f550585e4123e692c5c3f4edfb0a5092c6adf382bf01cfac32"
+    },
+    {
+      "path": "dist/esm/icons/users.js",
+      "local": "sources/users.js",
+      "sha256": "1b721f7b2ac0acd6d8879e112fde82e4093d959a096ff605583a8931f363d4ad"
+    },
+    {
+      "path": "dist/esm/icons/x.js",
+      "local": "sources/x.js",
+      "sha256": "9321ce0c8ac8ab912a2b75f7b1c447cd1c95459a5b14e4bf9eb23005ef8043d8"
+    },
+    {
+      "path": "dist/esm/icons/zap.js",
+      "local": "sources/zap.js",
+      "sha256": "620f0a17d828fcb6d990e3505be81cfef612e99417ae3fbf8f140f6c65fccc1b"
+    },
+    {
+      "path": "dist/esm/icons/zap-off.js",
+      "local": "sources/zap-off.js",
+      "sha256": "36597f47d2b96e7a1be263402c651091ca56f3551c843c90771ab4ae53200b81"
+    },
+    {
+      "path": "dist/esm/icons/zoom-in.js",
+      "local": "sources/zoom-in.js",
+      "sha256": "d042d0ef1a9e177ece39756a597b73fab5668ff4fd09a7311570b22fe66dd953"
+    },
+    {
+      "path": "dist/esm/icons/zoom-out.js",
+      "local": "sources/zoom-out.js",
+      "sha256": "a9fcd4ed6f700c68ef822ff9e6d415909df29cdcace12cfa7e94aeb610727610"
+    }
+  ]
+}

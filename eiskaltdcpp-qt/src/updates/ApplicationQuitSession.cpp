@@ -25,6 +25,22 @@ ApplicationQuitSession::ApplicationQuitSession(QtContext& context, UpdateControl
 }
 ApplicationQuitSession::~ApplicationQuitSession() = default;
 
+QString ApplicationQuitSession::workerTimeoutMessage(const char* branch) const {
+    const char* status = "Unknown";
+    switch(lastObservedStatus) {
+    case ApplicationQuitCoordinator::Status::NotAdmitted: status = "NotAdmitted"; break;
+    case ApplicationQuitCoordinator::Status::Pending: status = "Pending"; break;
+    case ApplicationQuitCoordinator::Status::Ready: status = "Ready"; break;
+    case ApplicationQuitCoordinator::Status::Refused: status = "Refused"; break;
+    }
+    // Observations are not live liveness claims. Never re-poll a worker here.
+    return QStringLiteral("Worker timeout; retry quit after the worker finishes"
+        " [last observed: %1; status=%2; elapsed_ms=%3; budget_ms=%4; prepare_ms=%5; timeout=%6]")
+        .arg(lastObservedComponent, QString::fromLatin1(status))
+        .arg(workerDeadline.elapsed()).arg(drainTimeout).arg(lastPrepareMs)
+        .arg(QString::fromLatin1(branch));
+}
+
 void ApplicationQuitSession::showRecoveryPrompt(const QString& component) {
     if(!recoveryPrompt) {
         recoveryPrompt = std::make_unique<QMessageBox>();
@@ -71,6 +87,9 @@ void ApplicationQuitSession::request(uint32_t timeout) {
     if(recoveryPrompt) recoveryPrompt->hide();
     workerRetryAllowed = false;
     drainTimeout = timeout;
+    lastObservedComponent = QStringLiteral("Not observed");
+    lastObservedStatus = ApplicationQuitCoordinator::Status::NotAdmitted;
+    lastPrepareMs = 0;
     workerDeadline.start();
     current = State::Preparing;
     advance();
@@ -81,14 +100,19 @@ void ApplicationQuitSession::advance() {
     // installation consent just because the worker finished in the meantime.
     if(workerPoll.isActive() && workerDeadline.elapsed() >= drainTimeout) {
         workerRetryAllowed = true;
-        refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
+        refuse(workerTimeoutMessage("before-poll"));
         return;
     }
+    QElapsedTimer prepareTimer;
+    prepareTimer.start();
     const auto result = retryingCheckpoint ? coordinator.retryCheckpoint(true) : coordinator.prepare(drainTimeout, true);
+    lastPrepareMs = prepareTimer.elapsed();
+    lastObservedComponent = QString::fromLatin1(result.component);
+    lastObservedStatus = result.status;
     if(result.status == ApplicationQuitCoordinator::Status::Pending) {
         if(workerDeadline.elapsed() >= drainTimeout) {
             workerRetryAllowed = true;
-            refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
+            refuse(workerTimeoutMessage("pending-return"));
         } else workerPoll.start();
         return;
     }
@@ -110,7 +134,7 @@ void ApplicationQuitSession::advance() {
     // the budget. Neither path authorizes commitment after the deadline.
     if(workerDeadline.elapsed() >= drainTimeout) {
         workerRetryAllowed = true;
-        refuse(QStringLiteral("Worker timeout; retry quit after the worker finishes"));
+        refuse(workerTimeoutMessage("ready-after-deadline"));
         return;
     }
     if(!hadUpdater) { queueExit(); return; }

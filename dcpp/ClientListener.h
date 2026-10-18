@@ -47,7 +47,8 @@ public:
 
     enum StatusFlags {
         FLAG_NORMAL = 0x00,
-        FLAG_IS_SPAM = 0x01
+        FLAG_IS_SPAM = 0x01,
+        FLAG_AUTHENTICATION_FAILED = 0x02
     };
 
     virtual void on(Connecting, Client*) { }

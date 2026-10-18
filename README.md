@@ -12,7 +12,9 @@ separate **Intel-only macOS 14+** and **Apple-Silicon-only macOS 26+** packages,
 both with the built-in updater. These preview apps are **not notarized or
 Developer ID signed**; update archives and feeds have separate authenticated
 Sparkle signatures. See the release notes for testing limits and source downloads.
-All 74 translation catalogs are complete; native-speaker review remains welcome.
+The published pre.2 catalogs were completed for all 74 languages/catalogs.
+Post-pre.2 GUI work adds text that still needs catalog synchronization and
+translation before the next prerelease; native-speaker review remains welcome.
 
 ## Current Work
 
@@ -33,6 +35,10 @@ All 74 translation catalogs are complete; native-speaker review remains welcome.
   persistent column widths and a categorized Live Log.
 - DC certificate lifecycle management and an off-by-default option to omit the
   DHT capability from hub advertisements without changing DHT enablement.
+- Post-pre.2 development adds compact Preferences and toolbar layouts, a
+  separate Superdesign icon theme, consolidated proxy settings and scoped
+  legacy ADC authentication compatibility. See [the GUI guide](docs/compact-native-gui.md)
+  and [authentication guidance](docs/adc-legacy-authentication.md).
 
 The Torrent backend is optional and currently requires Qt6 and
 **libtorrent-rasterbar 2.1+**. DC and Torrent pieces are **not combined** into one

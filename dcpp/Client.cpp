@@ -175,6 +175,9 @@ void Client::reloadSettings(bool updateNick) {
 
     const bool adcProtocol = (::strncmp(getHubUrl().c_str(),"adc://", 6) == 0 ||
             ::strncmp(getHubUrl().c_str(),"adcs://", 7) == 0);
+    // Only connection setup refreshes this policy, not periodic identity updates.
+    if(updateNick)
+        legacyAdcPasswordChallenges = adcProtocol && fav && fav->getLegacyAdcPasswordChallenges();
     const string globalClientId = adcProtocol ? CTX_SETTING(CLIENT_ID_ADC) : CTX_SETTING(CLIENT_ID_NMDC);
     if (!globalClientId.empty())
         ClientId = globalClientId;

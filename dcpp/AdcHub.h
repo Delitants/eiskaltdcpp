@@ -128,6 +128,7 @@ private:
     void handle(AdcCommand::MSG, AdcCommand& c);
     void handle(AdcCommand::INF, AdcCommand& c);
     void handle(AdcCommand::GPA, AdcCommand& c);
+    bool passwordChallengeSize(const string& encoded, size_t& decoded, bool warn);
     void handle(AdcCommand::QUI, AdcCommand& c);
     void handle(AdcCommand::CTM, AdcCommand& c);
     void handle(AdcCommand::RCM, AdcCommand& c);

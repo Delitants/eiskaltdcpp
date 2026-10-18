@@ -21,6 +21,10 @@
 #include "SearchBlacklist.h"
 #include "Antispam.h"
 
+#if defined(Q_OS_MAC) && !defined(QT_CONTEXT_MINIMAL)
+#include "PreferencesCheckIndicators.h"
+#endif
+
 #ifndef QT_CONTEXT_MINIMAL
 #include "GlobalTimer.h"
 #include "WulforUtil.h"
@@ -59,6 +63,9 @@ QtContext::QtContext(dcpp::DCContext& dcCtx)
     : dcCtx_(dcCtx)
 {
     QtContextAware::setCurrent(this);
+#if defined(Q_OS_MAC) && !defined(QT_CONTEXT_MINIMAL)
+    preferences_check_indicators::installApplication(qApp);
+#endif
 }
 
 QtContext::~QtContext() {

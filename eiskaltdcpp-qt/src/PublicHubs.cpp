@@ -55,9 +55,8 @@ PublicHubs::PublicHubs(dcpp::DCContext& ctx, QWidget *parent) :
 
     dcCtx().getFavoriteManager()->addListener(this);
 
-    QString hubs = _q(dcCtx().getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS));
-
-    comboBox_HUBS->addItems(hubs.split(";", Qt::SkipEmptyParts));
+    for (const auto &hubList : dcCtx().getFavoriteManager()->getHubLists())
+        comboBox_HUBS->addItem(_q(hubList));
     comboBox_HUBS->setCurrentIndex(dcCtx().getFavoriteManager()->getSelectedHubList());
 
     for (int i = 0; i < model->columnCount(); i++)

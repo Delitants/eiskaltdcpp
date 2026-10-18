@@ -1,24 +1,57 @@
 #include "SettingsUpdates.h"
+#include "../FlowLayout.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLocale>
+#include <QListView>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QStyleOptionButton>
 #include <QStylePainter>
+#include <QStyledItemDelegate>
 #include <QTextBrowser>
 #include <QVBoxLayout>
+#ifdef Q_OS_MAC
+#include "../PreferencesCheckIndicators.h"
+#endif
 
 namespace updates {
 namespace {
+class ReleaseChannelComboBox final : public QComboBox {
+public:
+    explicit ReleaseChannelComboBox(QWidget* parent) : QComboBox(parent) {
+        setStyleSheet(QStringLiteral("QComboBox { combobox-popup: 0; }"));
+        setView(new QListView(this));
+        setItemDelegate(new QStyledItemDelegate(this));
+        setSizeAdjustPolicy(QComboBox::AdjustToContents);
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        view()->setTextElideMode(Qt::ElideNone);
+    }
+    void showPopup() override {
+        ensurePolished();
+        view()->ensurePolished();
+        view()->doItemsLayout();
+        int height = 0;
+        for(int row = 0; row < count(); ++row)
+            height += qMax(view()->sizeHintForRow(row), view()->fontMetrics().height());
+        // Match the styled list's frame and padding, not Cocoa menu scrollers.
+        view()->setMinimumHeight(height + 2 * view()->frameWidth() + 8);
+        view()->setMinimumWidth(qMax(width(),
+            view()->sizeHintForColumn(modelColumn()) + 2 * view()->frameWidth() + 12));
+        setMaxVisibleItems(qMax(1, count()));
+        QComboBox::showPopup();
+    }
+};
+
 // Keep the native indicator, shortcuts and accessibility while wrapping long captions.
 class WrappingCheckBox final : public QCheckBox {
 public:
     WrappingCheckBox(const QString& text, QWidget* parent) : QCheckBox(text, parent) {
+        setProperty("eiskaltPreserveCustomCheckPainting", true);
         auto policy = sizePolicy();
         policy.setHorizontalPolicy(QSizePolicy::Preferred);
         policy.setVerticalPolicy(QSizePolicy::Preferred);
@@ -49,6 +82,31 @@ public:
 protected:
     bool hitButton(const QPoint& point) const override { return rect().contains(point); }
     void paintEvent(QPaintEvent* event) override {
+#ifdef Q_OS_MAC
+        Q_UNUSED(event);
+        QStyleOptionButton option;
+        initStyleOption(&option);
+        const auto contents = style()->subElementRect(QStyle::SE_CheckBoxContents, &option, this);
+        const auto mnemonic = style()->styleHint(QStyle::SH_UnderlineShortcut, &option, this)
+            ? Qt::TextShowMnemonic : Qt::TextHideMnemonic;
+        const int flags = Qt::AlignLeading | Qt::AlignVCenter | Qt::TextWordWrap | mnemonic;
+        const auto block = fontMetrics().boundingRect(contents, flags, text());
+        const QRect firstLine(contents.left(), block.top(), contents.width(), fontMetrics().height());
+        auto indicator = style()->subElementRect(QStyle::SE_CheckBoxIndicator, &option, this);
+        indicator.moveCenter(QPoint(indicator.center().x(),
+            preferences_check_indicators::textInkCenter(firstLine, fontMetrics(), text())));
+        QStylePainter painter(this);
+        painter.drawPrimitive(QStyle::PE_Widget, option);
+        painter.drawItemText(contents, flags, option.palette, isEnabled(), text(), QPalette::WindowText);
+        preferences_check_indicators::drawIndicator(&painter, style(), option, indicator, this);
+        if(hasFocus()) {
+            QStyleOptionFocusRect focus;
+            focus.QStyleOption::operator=(option);
+            focus.rect = contents.adjusted(-1, 1, 1, -1);
+            focus.backgroundColor = option.palette.window().color();
+            painter.drawPrimitive(QStyle::PE_FrameFocusRect, focus);
+        }
+#else
         const auto native = QCheckBox::sizeHint();
         if(heightForWidth(width()) <= native.height()) {
             QCheckBox::paintEvent(event);
@@ -65,6 +123,7 @@ protected:
             ? Qt::TextShowMnemonic : Qt::TextHideMnemonic;
         painter.drawItemText(contents, Qt::AlignLeading | Qt::AlignVCenter | Qt::TextWordWrap | mnemonic,
             option.palette, isEnabled(), text(), QPalette::WindowText);
+#endif
     }
 };
 
@@ -98,7 +157,11 @@ SettingsUpdates::SettingsUpdates(UpdateController& owner, QWidget* parent)
     preferenceLayout->addWidget(notifications);
     preferenceLayout->addWidget(autoInstall);
     auto* channelLayout = new QFormLayout;
-    channel = named(new QComboBox(preferences), "updateChannel", tr("Release channel"));
+    channelLayout->setContentsMargins(0, 0, 0, 0);
+    channelLayout->setFormAlignment(Qt::AlignLeading | Qt::AlignTop);
+    channelLayout->setLabelAlignment(Qt::AlignLeading | Qt::AlignVCenter);
+    channelLayout->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);
+    channel = named(new ReleaseChannelComboBox(preferences), "updateChannel", tr("Release channel"));
     channel->addItem(tr("Stable"), static_cast<int>(Channel::Stable));
     channel->addItem(tr("Preview"), static_cast<int>(Channel::Preview));
     channelLayout->addRow(tr("Release c&hannel:"), channel);
@@ -123,13 +186,15 @@ SettingsUpdates::SettingsUpdates(UpdateController& owner, QWidget* parent)
     activityLayout->addWidget(notes);
     progress = named(new QProgressBar(activity), "updateProgress", tr("Update download progress"));
     activityLayout->addWidget(progress);
-    auto* actions = new QFormLayout;
-    actions->setRowWrapPolicy(QFormLayout::WrapLongRows);
-    actions->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    auto* actions = new FlowLayout(0, 6, 6);
+    actions->setRowAlignment(layoutDirection() == Qt::RightToLeft ? Qt::AlignRight : Qt::AlignLeft);
     const auto button = [&](const QString& text, const char* name) {
         auto accessible = text;
         accessible.remove('&');
         auto* widget = named(new QPushButton(text, activity), name, accessible);
+        // Flow rows reserve complete widget bounds. Cocoa's default layout-item
+        // margins otherwise expand the button beyond its assigned row rectangle.
+        widget->setAttribute(Qt::WA_LayoutUsesWidgetRect);
         return widget;
     };
     checkNow = button(tr("Check &Now"), "updateCheckNow");
@@ -138,9 +203,8 @@ SettingsUpdates::SettingsUpdates(UpdateController& owner, QWidget* parent)
     installOnQuit = button(tr("Install on Next &Quit"), "updateInstallOnQuit");
     later = button(tr("La&ter"), "updateLater");
     skip = button(tr("&Skip This Version"), "updateSkip");
-    actions->addRow(checkNow, cancel);
-    actions->addRow(download, installOnQuit);
-    actions->addRow(later, skip);
+    for(auto* action : {checkNow, cancel, download, installOnQuit, later, skip})
+        actions->addWidget(action);
     activityLayout->addLayout(actions);
     layout->addWidget(activity);
     layout->addStretch();

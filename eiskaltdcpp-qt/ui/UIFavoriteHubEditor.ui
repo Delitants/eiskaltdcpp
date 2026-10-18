@@ -265,6 +265,16 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBox_LEGACY_ADC_PASSWORD">
+        <property name="text">
+         <string>Allow legacy ADC password challenges for this hub (less secure)</string>
+        </property>
+        <property name="toolTip">
+         <string>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

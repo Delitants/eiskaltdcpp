@@ -22,6 +22,9 @@ public:
     void setApplicationProxy(const eiskalt::torrent::ProxyConfig &proxy);
     // Observes runtime only; opening preferences never starts networking.
     void setEngine(eiskalt::torrent::TorrentEngine *engine);
+    QWidget *takeProxyPage();
+    void restoreProxyPageOwnership();
+    bool hasInvalidCustomProxy() const;
 
 signals:
     void saved();

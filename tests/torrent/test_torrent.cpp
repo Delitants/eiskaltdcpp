@@ -4898,6 +4898,57 @@ TEST_CASE("Selected-check disk errors are explicit and cannot resume or write so
     }
 }
 
+TEST_CASE("Selected checks preserve affected path spelling and synchronous revocation order", "[selected-recheck-engine][selected-recheck-paths]") {
+    application();
+    for (bool trailingSeparator : {false, true}) {
+        DYNAMIC_SECTION("trailing separator=" << trailingSeparator) {
+            QTemporaryDir dir;
+            REQUIRE(dir.isValid());
+            auto root = dir.filePath(QStringLiteral("payload space \u00e9"));
+            if (trailingSeparator) root += '/';
+            const auto settings = isolated(root);
+            const QStringList names{QStringLiteral("bundle/nested/a file.bin"),
+                QStringLiteral("bundle/other space/b\u00e9.bin"), QStringLiteral("bundle/\u03b2.bin")};
+            QStringList events, paths;
+            TorrentEngine engine(dir.filePath("state"));
+            engine.configure(settings, {});
+            EngineDiskProbe disk(engine);
+            const auto id = engine.add(fixture(root, lt::create_torrent::v1_only, true, {}, true, names));
+            REQUIRE(eventually([&] { return jobSnapshot(engine, id).complete; }));
+            const auto before = jobSnapshot(engine, id);
+            const auto files = engine.files(id);
+            REQUIRE(files.size() == 3);
+            QStringList expected;
+            for (const auto &entry : files)
+                expected.append(QDir(before.savePath).filePath(entry.path));
+            QObject::connect(&engine, &TorrentEngine::storageInvalidating, &engine, [&](QString target) {
+                CHECK(target == id);
+                events.append("storage");
+            }, Qt::DirectConnection);
+            connectScopedHashes(engine, [&](QString target, QStringList affected) {
+                CHECK(target == id);
+                CHECK(events == QStringList{"storage"});
+                CHECK(QThread::currentThread() == engine.thread());
+                CHECK(jobSnapshot(engine, id).revision == before.revision);
+                CHECK_FALSE(jobSnapshot(engine, id).fileCheck.active);
+                paths = std::move(affected);
+                events.append("hash");
+            });
+            disk.hold();
+            engine.recheckFiles(id, {2, 0, 1, 2}, before.revision);
+            CHECK(events == QStringList{"storage", "hash"});
+            CHECK(paths == expected);
+            CHECK(paths.size() == 3);
+            REQUIRE(eventually([&] { return disk.held(); }));
+            const auto token = jobSnapshot(engine, id).fileCheck.token;
+            engine.cancelFileRecheck(id, token);
+            disk.release();
+            REQUIRE(eventually([&] { return !jobSnapshot(engine, id).fileCheck.active; }));
+            CHECK(engine.shutdownChecked());
+        }
+    }
+}
+
 TEST_CASE("Large selected scopes keep owner admission bounded", "[selected-recheck-engine][selected-recheck-responsive]") {
     application();
     QTemporaryDir dir;

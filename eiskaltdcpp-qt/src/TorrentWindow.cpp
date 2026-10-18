@@ -1113,9 +1113,23 @@ void TorrentWindow::renderPeers(const QString &id, const QList<Peer> &peers)
 void TorrentWindow::refreshFiles()
 {
     const auto id = selectedId();
+    const auto files = engine && !id.isEmpty() ? engine->files(id) : QList<FileEntry>{};
+    QString error;
+    if (engine && !id.isEmpty() && files.isEmpty()) {
+        for (const auto &job : engine->jobs()) {
+            if (job.id == id) {
+                error = job.error;
+                break;
+            }
+        }
+    }
+    // Status may change while the file snapshot stays empty or unchanged.
+    ui->fileNotice->setText(id.isEmpty() ? tr("Select a Torrent to review its files.") :
+                           files.isEmpty() ? (!error.isEmpty() ? tr("Error: %1").arg(error) :
+                               tr("File selection is available when metadata arrives. A paused magnet may need to be resumed to fetch metadata.")) :
+                           tr("Unchecked files are not wanted. Apply an empty selection to download none. Changing selection retracts managed DC publication; it does not delete existing data."));
     if (selectionDirty && id == fileJobId)
         return;
-    const auto files = engine && !id.isEmpty() ? engine->files(id) : QList<FileEntry>{};
     if (ui->filesInitialized && id == fileJobId &&
         files.size() == ui->displayedFiles.size() &&
         std::equal(files.begin(), files.end(), ui->displayedFiles.begin(), [](const FileEntry &a, const FileEntry &b) {
@@ -1151,9 +1165,6 @@ void TorrentWindow::refreshFiles()
     }
     ui->files->setSortingEnabled(sorting);
     ui->files->verticalScrollBar()->setValue(scroll);
-    ui->fileNotice->setText(id.isEmpty() ? tr("Select a Torrent to review its files.") :
-                           files.isEmpty() ? tr("File selection is available when metadata arrives. A paused magnet may need to be resumed to fetch metadata.") :
-                           tr("Unchecked files are not wanted. Apply an empty selection to download none. Changing selection retracts managed DC publication; it does not delete existing data."));
 }
 
 void TorrentWindow::updateActions()

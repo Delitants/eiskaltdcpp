@@ -8,14 +8,15 @@
 
 namespace dcpp {
 
-inline bool adcPasswordChallengeSize(std::string_view encoded, size_t maxEncoded, size_t& decoded) {
+inline bool adcPasswordChallengeSize(std::string_view encoded, size_t maxEncoded, size_t& decoded,
+        bool legacy = false) {
     if(encoded.empty() || encoded.size() > maxEncoded)
         return false;
     const size_t remainder = encoded.size() % 8;
     if(remainder == 1 || remainder == 3 || remainder == 6)
         return false;
     const size_t bytes = (encoded.size() / 8) * 5 + (remainder * 5) / 8;
-    if(bytes < 24)
+    if(bytes < (legacy ? 6U : 24U))
         return false;
     unsigned last = 0;
     for(char c : encoded) {
@@ -24,7 +25,9 @@ inline bool adcPasswordChallengeSize(std::string_view encoded, size_t maxEncoded
         else return false;
     }
     const unsigned unused = static_cast<unsigned>((remainder * 5) % 8);
-    if((last & ((1U << unused) - 1)) != 0)
+    // Some legacy hubs generate Base32 characters rather than encoding bytes.
+    // Only an explicit per-hub exception may discard their unused tail bits.
+    if(!legacy && (last & ((1U << unused) - 1)) != 0)
         return false;
     decoded = bytes;
     return true;

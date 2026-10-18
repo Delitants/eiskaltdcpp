@@ -58,6 +58,8 @@
 #include <QTcpSocket>
 #include <QFormLayout>
 #include <QSettings>
+#include <QListView>
+#include <QStyledItemDelegate>
 #include "dcpp/Util.h"
 
 #ifndef IPTOS_TOS_MASK
@@ -85,6 +87,31 @@
 using namespace dcpp;
 
 namespace {
+
+class TlsPolicyComboBox : public QComboBox {
+public:
+    explicit TlsPolicyComboBox(QWidget *parent) : QComboBox(parent)
+    {
+        setStyleSheet(QStringLiteral("QComboBox { combobox-popup: 0; }"));
+        setView(new QListView(this));
+        setItemDelegate(new QStyledItemDelegate(this));
+        view()->setTextElideMode(Qt::ElideNone);
+    }
+
+    void showPopup() override
+    {
+        ensurePolished();
+        view()->ensurePolished();
+        view()->doItemsLayout();
+        int height = 0;
+        for (int row = 0; row < count(); ++row)
+            height += qMax(view()->sizeHintForRow(row), view()->fontMetrics().height());
+        view()->setMinimumHeight(height + 2 * view()->frameWidth() + 8);
+        view()->setMinimumWidth(qMax(width(), view()->sizeHintForColumn(modelColumn()) + 2 * view()->frameWidth() + 12));
+        setMaxVisibleItems(count());
+        QComboBox::showPopup();
+    }
+};
 
 QString proxyDiagnosticsPath()
 {
@@ -168,15 +195,17 @@ QString disabledComboStyle(QWidget *widget)
     const QColor border = dark ? QColor(78, 78, 78) : QColor(166, 166, 166);
     const QColor text = dark ? QColor(138, 138, 138) : QColor(78, 78, 78);
     const QColor dropBackground = dark ? QColor(40, 40, 40) : QColor(188, 188, 188);
+    const QString arrow = dark ? QStringLiteral(":/control-icons/combo-arrow-down-light.svg")
+                               : QStringLiteral(":/control-icons/combo-arrow-down-dark.svg");
 
     return QStringLiteral(
         "QComboBox {"
         " background-color: %1;"
         " border: 1px solid %2;"
-        " border-radius: 7px;"
+        " border-radius: 3px;"
         " color: %3;"
-        " padding: 3px 30px 3px 9px;"
-        " min-height: 26px;"
+        " padding: 2px 24px 2px 6px;"
+        " min-height: 18px;"
         "}"
         "QComboBox::drop-down {"
         " subcontrol-origin: border;"
@@ -184,19 +213,16 @@ QString disabledComboStyle(QWidget *widget)
         " width: 24px;"
         " background-color: %4;"
         " border-left: 1px solid %2;"
-        " border-top-right-radius: 7px;"
-        " border-bottom-right-radius: 7px;"
+        " border-top-right-radius: 3px;"
+        " border-bottom-right-radius: 3px;"
         "}"
         "QComboBox::down-arrow {"
-        " image: none;"
-        " width: 0px;"
-        " height: 0px;"
-        " border-left: 4px solid transparent;"
-        " border-right: 4px solid transparent;"
-        " border-top: 5px solid %3;"
+        " image: url(%5);"
+        " width: 9px;"
+        " height: 9px;"
         " margin-right: 7px;"
         "}"
-    ).arg(background.name(), border.name(), text.name(), dropBackground.name());
+    ).arg(background.name(), border.name(), text.name(), dropBackground.name(), arrow);
 }
 
 QString disabledCheckStyle(QWidget *widget)
@@ -409,16 +435,47 @@ SettingsConnection::SettingsConnection( QWidget *parent):
 {
     setupUi(this);
 
+    auto *tlsPolicy = new TlsPolicyComboBox(comboBox_TLS->parentWidget());
+    tlsPolicy->setObjectName(comboBox_TLS->objectName());
+    for (int row = 0; row < comboBox_TLS->count(); ++row)
+        tlsPolicy->addItem(comboBox_TLS->itemText(row), comboBox_TLS->itemData(row));
+    delete verticalLayout_6->replaceWidget(comboBox_TLS, tlsPolicy);
+    delete comboBox_TLS;
+    comboBox_TLS = tlsPolicy;
+    comboBox_TLS->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    verticalLayout_6->setAlignment(comboBox_TLS, Qt::AlignLeft);
+
     tabWidget->setDocumentMode(true);
     tabWidget->setUsesScrollButtons(false);
+    const auto refreshTabIcons = [this] {
+        auto *util = qtCtx()->wulforUtil();
+        tabWidget->setTabIcon(0, util->getIcon(WulforUtil::eiSETTINGS_CONNECTION));
+        tabWidget->setTabIcon(1, util->getIcon(WulforUtil::eiCONNECT));
+        tabWidget->setTabIcon(2, util->getIcon(WulforUtil::eiSPEED_LIMIT_ON));
+        tabWidget->setTabIcon(3, util->getIcon(WulforUtil::eiCONSOLE));
+        connectionProxyProfiles->setTabIcon(0, util->getIcon(WulforUtil::eiCONNECT));
+        connectionProxyProfiles->setTabIcon(connectionProxyProfiles->count() - 1, util->getIcon(WulforUtil::eiSERVER));
+        if (connectionProxyProfiles->count() == 3)
+            connectionProxyProfiles->setTabIcon(1, util->getIcon(WulforUtil::eiSETTINGS_DOWNLOADS));
+    };
+    refreshTabIcons();
+    connect(qtCtx()->wulforUtil(), &WulforUtil::iconsReloaded, this, refreshTabIcons);
 
     formLayout->setLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     formLayout->setHorizontalSpacing(8);
     formLayout->setVerticalSpacing(6);
     verticalLayout->setContentsMargins(2, 2, 2, 2);
     verticalLayout->setSpacing(6);
+    verticalLayout->setAlignment(Qt::AlignTop);
+    globalProxyLayout->setAlignment(Qt::AlignTop);
+    hubListProxyPageLayout->setAlignment(Qt::AlignTop);
+    proxyPageLayout->setContentsMargins(0, 0, 0, 0);
+    globalProxyLayout->setContentsMargins(2, 2, 2, 2);
+    hubListProxyPageLayout->setContentsMargins(2, 2, 2, 2);
+    groupBox_2->setTitle(tr("Global proxy"));
     verticalLayout_5->setContentsMargins(2, 2, 2, 2);
     verticalLayout_5->setSpacing(6);
+    verticalLayout_5->setAlignment(Qt::AlignTop);
     gridLayout_4->setHorizontalSpacing(10);
     gridLayout_4->setVerticalSpacing(6);
     gridLayout_5->setHorizontalSpacing(14);
@@ -490,7 +547,28 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     comboBox_BIND_ADDRESS = replaceLineEditWithCombo(lineEdit_BIND_ADDRESS);
     comboBox_BIND_ADDRESS6 = replaceLineEditWithCombo(lineEdit_BIND_ADDRESS6);
 
-    groupBox_HUBLIST_PROXY = new QGroupBox(tr("Public hub list proxy"), tab);
+    formLayout->removeItem(gridLayout_4);
+    gridLayout_4->setParent(nullptr);
+    gridLayout_5->addLayout(gridLayout_4, 1, 1, Qt::AlignRight | Qt::AlignTop);
+    gridLayout_5->addWidget(frame, 2, 0, 1, 2);
+    gridLayout_5->addWidget(groupBox_5, 3, 0, 1, 2);
+    gridLayout_5->setColumnStretch(0, 1);
+    gridLayout_5->setColumnStretch(1, 0);
+    formLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    for (auto *port : {spinBox_TCP, spinBox_UDP, spinBox_TLS})
+        port->setFixedWidth(120);
+    gridLayout_12->addWidget(radioButton_BIND_ADDR, 0, 0);
+    gridLayout_12->addWidget(comboBox_BIND_ADDRESS, 0, 1);
+    gridLayout_12->addWidget(radioButton_BIND_IFACE, 1, 0);
+    gridLayout_12->addWidget(comboBox_IFACES, 1, 1);
+    gridLayout_12->addWidget(label_BIND_ADDRESS6, 2, 0);
+    gridLayout_12->addWidget(comboBox_BIND_ADDRESS6, 2, 1);
+    gridLayout_12->setColumnStretch(1, 1);
+    groupBox_4->setTitle(tr("External address updates"));
+    groupBox_4->setFlat(false);
+    groupBox_4->setProperty("settingsFlatSection", false);
+
+    groupBox_HUBLIST_PROXY = new QGroupBox(tr("Public hub list proxy"), tab_HUBLIST_PROXY);
     groupBox_HUBLIST_PROXY->setProperty("settingsSectionHeader", true);
     auto *hubListProxyLayout = new QHBoxLayout(groupBox_HUBLIST_PROXY);
     hubListProxyLayout->setContentsMargins(12, 8, 12, 10);
@@ -499,8 +577,10 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     label_HUBLIST_PROXY_HOST = new QLabel(tr("Host"), groupBox_HUBLIST_PROXY);
     label_HUBLIST_PROXY_PORT = new QLabel(tr("Port"), groupBox_HUBLIST_PROXY);
     lineEdit_HUBLIST_PROXY_HOST = new QLineEdit(groupBox_HUBLIST_PROXY);
+    lineEdit_HUBLIST_PROXY_HOST->setObjectName(QStringLiteral("hubListProxyHost"));
     lineEdit_HUBLIST_PROXY_HOST->setPlaceholderText(tr("HTTP proxy host or IP"));
     lineEdit_HUBLIST_PROXY_PORT = new QLineEdit(groupBox_HUBLIST_PROXY);
+    lineEdit_HUBLIST_PROXY_PORT->setObjectName(QStringLiteral("hubListProxyPort"));
     lineEdit_HUBLIST_PROXY_PORT->setPlaceholderText(tr("Port"));
     lineEdit_HUBLIST_PROXY_PORT->setValidator(new QIntValidator(1, 65535, lineEdit_HUBLIST_PROXY_PORT));
     lineEdit_HUBLIST_PROXY_PORT->setMaximumWidth(96);
@@ -511,7 +591,10 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     hubListProxyLayout->addWidget(label_HUBLIST_PROXY_PORT);
     hubListProxyLayout->addWidget(lineEdit_HUBLIST_PROXY_PORT);
     hubListProxyLayout->addWidget(button_TEST_HUBLIST_PROXY);
-    verticalLayout->insertWidget(4, groupBox_HUBLIST_PROXY);
+    auto *hubListNotice = new QLabel(tr("This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly."), tab_HUBLIST_PROXY);
+    hubListNotice->setWordWrap(true);
+    hubListProxyPageLayout->addWidget(hubListNotice);
+    hubListProxyPageLayout->addWidget(groupBox_HUBLIST_PROXY);
 
     auto *labelCountryDb = new QLabel(tr("Country MMDB file"), tab_3);
     labelCountryDb->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -560,6 +643,38 @@ SettingsConnection::SettingsConnection( QWidget *parent):
     gridLayout_11->addWidget(labelHubLists, 3, 0);
     gridLayout_11->addWidget(buttonEditHubLists, 3, 1);
     connect(buttonEditHubLists, &QPushButton::clicked, this, &SettingsConnection::slotCfgPublicHubs);
+
+    auto advancedGroup = [this](const QString &title, const char *name) {
+        auto *group = new QGroupBox(title, tab_3);
+        group->setObjectName(QString::fromLatin1(name));
+        auto *form = new QFormLayout(group);
+        form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+        form->setHorizontalSpacing(8);
+        form->setVerticalSpacing(6);
+        verticalLayout_5->insertWidget(verticalLayout_5->indexOf(groupBox_DHT), group);
+        return form;
+    };
+    for (QWidget *control : QList<QWidget *>{label_20, spinBox_RECONNECT_DELAY, label_22, comboBox_TOS,
+                                           labelCountryDb, lineEdit_COUNTRY_DB, toolButton_COUNTRY_DB,
+                                           labelHubLists, buttonEditHubLists})
+        gridLayout_11->removeWidget(control);
+    auto *behavior = advancedGroup(tr("Connection behavior"), "connectionBehaviorGroup");
+    behavior->addRow(label_20, spinBox_RECONNECT_DELAY);
+    behavior->addRow(label_22, comboBox_TOS);
+    spinBox_RECONNECT_DELAY->setFixedWidth(120);
+    comboBox_TOS->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    auto *country = advancedGroup(tr("Country database"), "connectionCountryGroup");
+    auto *countryPath = new QWidget(country->parentWidget());
+    auto *countryRow = new QHBoxLayout(countryPath);
+    countryRow->setContentsMargins(0, 0, 0, 0);
+    countryRow->addWidget(lineEdit_COUNTRY_DB, 1);
+    countryRow->addWidget(toolButton_COUNTRY_DB);
+    lineEdit_COUNTRY_DB->setMinimumWidth(0);
+    country->addRow(labelCountryDb, countryPath);
+    auto *hubLists = advancedGroup(tr("Public hub list URLs"), "connectionHubListsGroup");
+    hubLists->addRow(labelHubLists, buttonEditHubLists);
+    groupBox_7->setTitle(tr("TLS and certificates"));
+    spinBox_DHT->setFixedWidth(120);
 
     checkBox_SOCKS_TLS = new QCheckBox(tr("Use TLS to proxy server"), frame_2);
     checkBox_SOCKS_TLS->setToolTip(tr("Wrap the SOCKS5 TCP connection in TLS before sending the SOCKS handshake. "
@@ -710,6 +825,42 @@ SettingsConnection::SettingsConnection( QWidget *parent):
         QString::fromStdString(qtCtx()->dcCtx().getClientManager()->getMyCID().toBase32()),
         QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG)) + QStringLiteral("Certificates"), groupBox_7);
     verticalLayout_6->addWidget(certificates);
+}
+
+void SettingsConnection::setTorrentProxyPage(QWidget *page)
+{
+    if (page) {
+        connectionProxyProfiles->insertTab(1, page,
+            qtCtx()->wulforUtil()->getIcon(WulforUtil::eiSETTINGS_DOWNLOADS), tr("Torrents"));
+    }
+}
+
+void SettingsConnection::showLimitsPage()
+{
+    for (int index = 0; index < tabWidget->count(); ++index) {
+        QWidget *page = tabWidget->widget(index);
+        if (page == tab_2 || page->isAncestorOf(tab_2)) {
+            tabWidget->setCurrentIndex(index);
+            return;
+        }
+    }
+}
+
+void SettingsConnection::showProxyPage(QWidget *focusTarget)
+{
+    const int directIndex = tabWidget->indexOf(tab_PROXY);
+    if (directIndex >= 0)
+        tabWidget->setCurrentIndex(directIndex);
+    // prepareWidget may wrap the original pages in scroll areas.
+    for (int index = 0; index < tabWidget->count(); ++index)
+        if (tabWidget->widget(index)->isAncestorOf(tab_PROXY))
+            tabWidget->setCurrentIndex(index);
+    if (!focusTarget)
+        return;
+    for (int index = 0; index < connectionProxyProfiles->count(); ++index)
+        if (connectionProxyProfiles->widget(index)->isAncestorOf(focusTarget))
+            connectionProxyProfiles->setCurrentIndex(index);
+    focusTarget->setFocus();
 }
 
 bool SettingsConnection::eventFilter(QObject *obj, QEvent *e){
@@ -1733,6 +1884,15 @@ bool SettingsConnection::validateIp6(QString& ip) const {
 }
 
 void SettingsConnection::showMsg(QString msg, QWidget *focusTo){
+    if (focusTo) {
+        if (tab_PROXY->isAncestorOf(focusTo)) {
+            showProxyPage(focusTo);
+        } else {
+            for (int index = 0; index < tabWidget->count(); ++index)
+                if (tabWidget->widget(index)->isAncestorOf(focusTo))
+                    tabWidget->setCurrentIndex(index);
+        }
+    }
     QMessageBox::warning(this, tr("Warning"), msg);
 
     if (focusTo)

@@ -161,6 +161,8 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor){
     editor.comboBox_CID->setEnabled(false);
     editor.comboBox_CID->setVisible(true);
     connect(editor.lineEdit_ADDRESS, &QLineEdit::textChanged, this, &FavoriteHubs::slotUpdateComboBox_CID);
+    connect(editor.lineEdit_ADDRESS, &QLineEdit::textChanged, editor.checkBox_LEGACY_ADC_PASSWORD,
+        [checkbox = editor.checkBox_LEGACY_ADC_PASSWORD] { checkbox->setChecked(false); });
 }
 
 static bool isValidIP(const QString &ip){
@@ -202,6 +204,7 @@ void FavoriteHubs::initHubEditor(FavoriteHubEditor &editor, StrMap &map){
     editor.checkBox_IP->setChecked(isValidIP(map["IP"].toString()));
     editor.checkBox_USEINTERNET->setChecked(map["IIP"].toBool());
     editor.checkBox_DISABLECHAT->setChecked(map["DCHAT"].toBool());
+    editor.checkBox_LEGACY_ADC_PASSWORD->setChecked(map["LEGACY_ADC_PASSWORD"].toBool());
     editor.checkBox_CID->setChecked(map["OVERTAG"].toBool());
     editor.comboBox_MODE->setCurrentIndex(map["MODE"].toInt());
     editor.spinBox_MINSEARCH_INTERVAL->setValue(map["SINT"].toInt());
@@ -273,6 +276,7 @@ void FavoriteHubs::getParams(const FavoriteHubEntry *entry, StrMap &map){
     map["IP"]       = _q(entry->getExternalIP());
     map["IIP"]      = entry->getUseInternetIP();
     map["DCHAT"]    = entry->getDisableChat();
+    map["LEGACY_ADC_PASSWORD"] = entry->getLegacyAdcPasswordChallenges();
     map["MODE"]     = entry->getMode();
     map["SINT"]     = entry->getSearchInterval();
 }
@@ -287,6 +291,7 @@ void FavoriteHubs::getParams(const FavoriteHubEditor &editor, StrMap &map){
     map["PASS"]     = editor.lineEdit_PASSWORD->text();
     map["IIP"]      = editor.checkBox_USEINTERNET->isChecked();
     map["DCHAT"]    = editor.checkBox_DISABLECHAT->isChecked();
+    map["LEGACY_ADC_PASSWORD"] = editor.checkBox_LEGACY_ADC_PASSWORD->isChecked();
 
     if (isValidIP(editor.lineEdit_IP->text()) && editor.checkBox_IP->isChecked())
         map["IP"] = editor.lineEdit_IP->text();
@@ -321,6 +326,7 @@ void FavoriteHubs::updateEntry(FavoriteHubEntry &entry, StrMap &map){
     entry.setEncoding(map["ENC"].toString().toStdString());
     entry.setNick(map["NICK"].toString().toStdString());
     entry.setPassword(map["PASS"].toString().toStdString());
+    entry.setLegacyAdcPasswordChallenges(map["LEGACY_ADC_PASSWORD"].toBool());
     entry.setUserDescription(map["UDESC"].toString().toStdString());
     entry.setHubDescription(map["DESC"].toString().toStdString());
     entry.setExternalIP(map["IP"].toString().toStdString());
@@ -518,28 +524,39 @@ void FavoriteHubs::slotAdd_newButtonClicked(){
 
 void FavoriteHubs::slotChangeButtonClicked(){
     FavoriteHubItem *item = getItem();
-
     if (!item)
         return;
+    editHub(item->data(COLUMN_HUB_ADDRESS).toString());
+}
 
-    QString address = item->data(COLUMN_HUB_ADDRESS).toString();
+void FavoriteHubs::editHub(const QString &address){
     FavoriteHubEntry *entry = dcCtx().getFavoriteManager()->getFavoriteHubEntry(address.toStdString());
-
-    FavoriteHubEditor editor;
-
-    if (entry){
-        StrMap map;
-
+    StrMap map;
+    if (entry)
         getParams(entry, map);
-        initHubEditor(editor, map);
-
-        if (editor.exec() == QDialog::Accepted){
-            getParams(editor, map);
-            updateItem(item, map);
-            updateEntry(*entry, map);
-
-            dcCtx().getFavoriteManager()->save();
+    else {
+        map["ADDR"] = address;
+        map["NAME"] = address;
+    }
+    FavoriteHubEditor editor(this);
+    initHubEditor(editor, map);
+    if (editor.exec() != QDialog::Accepted)
+        return;
+    getParams(editor, map);
+    entry = dcCtx().getFavoriteManager()->getFavoriteHubEntry(address.toStdString());
+    if (entry) {
+        for (int row = 0; row < model->rowCount(); ++row) {
+            if (model->index(row, COLUMN_HUB_ADDRESS).data().toString() == address) {
+                updateItem(static_cast<FavoriteHubItem*>(model->index(row, 0).internalPointer()), map);
+                break;
+            }
         }
+        updateEntry(*entry, map);
+        dcCtx().getFavoriteManager()->save();
+    } else {
+        FavoriteHubEntry added(dcCtx());
+        updateEntry(added, map);
+        dcCtx().getFavoriteManager()->addFavorite(added);
     }
 }
 

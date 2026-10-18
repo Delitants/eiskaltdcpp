@@ -189,6 +189,7 @@ Q_SIGNALS:
     void coreStatusMsg(QString);
     void coreFollow(QString);
     void coreFailed();
+    void coreAuthenticationFailed();
     void corePassword();
     void coreMessage(const VarMap&);
     void corePrivateMsg(const VarMap&);

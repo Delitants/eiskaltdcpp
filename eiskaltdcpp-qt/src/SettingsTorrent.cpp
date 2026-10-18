@@ -57,6 +57,7 @@ struct SettingsTorrent::Controls {
     eiskalt::torrent::Settings values;
     QCheckBox *enabled;
     QTabWidget *tabs;
+    QPointer<QWidget> proxyPage;
     QComboBox *proxyMode, *encryptionMode;
     QLabel *proxyWarning, *effectiveListeners, *networkRouteStatus;
     QPushButton *configureProxy;
@@ -117,6 +118,8 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
     auto group = [](QVBoxLayout *column, const QString &title) {
         auto *box = new QGroupBox(title, column->parentWidget());
         auto *form = new QFormLayout(box);
+        form->setFormAlignment(Qt::AlignLeading | Qt::AlignTop);
+        form->setLabelAlignment(Qt::AlignLeading | Qt::AlignVCenter);
         form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
         form->setRowWrapPolicy(QFormLayout::WrapLongRows);
         column->addWidget(box);
@@ -155,6 +158,8 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
         spin->setObjectName(QString::fromLatin1(name));
         spin->setRange(minimum, maximum);
         spin->setValue(ui->values.*member);
+        // Honor Qt's range/font-aware size hint without stretching or shrinking.
+        spin->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         form->addRow(label, spin);
         connect(spin, qOverload<int>(&QSpinBox::valueChanged), this, [this, member](int value) {
             ui->values.*member = value;
@@ -193,11 +198,14 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
     ratio->setDecimals(2);
     ratio->setSingleStep(0.1);
     ratio->setValue(ui->values.seedRatio);
+    ratio->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     seeding->addRow(tr("Ratio (0 = unlimited):"), ratio);
     connect(ratio, qOverload<double>(&QDoubleSpinBox::valueChanged), this, [this](double value) { ui->values.seedRatio = value; });
     integer(seeding, tr("Time (minutes, 0 = unlimited):"), "seedMinutes", &eiskalt::torrent::Settings::seedMinutes, 0, 10000000);
 
     auto *proxyPage = page(tr("Proxy"));
+    ui->proxyPage = ui->tabs->widget(ui->tabs->count() - 1);
+    ui->proxyPage->setObjectName(QStringLiteral("torrentProxyPage"));
     auto *routing = group(proxyPage, tr("Torrent routing"));
     ui->proxyMode = new QComboBox(this);
     ui->proxyMode->setObjectName(QStringLiteral("proxyMode"));
@@ -236,7 +244,7 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
         auto *portLabel = new QLabel(tr("Port:"), row);
         portLabel->setBuddy(port);
         line->addWidget(portLabel);
-        port->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+        port->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         line->addWidget(port);
         diagnostics->addRow(label, row);
     };
@@ -322,6 +330,7 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
     ui->proxyPort = new QSpinBox(this);
     ui->proxyPort->setObjectName(QStringLiteral("torrentProxyPort"));
     ui->proxyPort->setRange(1, 65535);
+    ui->proxyPort->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     ui->proxyForm->addRow(tr("Port:"), ui->proxyPort);
     ui->proxyUser = proxyText(tr("Username:"), "torrentProxyUser");
     ui->proxyPassword = proxyText(tr("Password / key:"), "torrentProxyPassword");
@@ -431,6 +440,15 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
     status->setWordWrap(true);
     publication->addRow(status);
 
+    // Use actual widget edges for the explicit form anchors, rather than
+    // Cocoa's optical checkbox/label layout margins.
+    for (auto *form : findChildren<QFormLayout*>()) {
+        for (int item = 0; item < form->count(); ++item) {
+            if (auto *widget = form->itemAt(item)->widget())
+                widget->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+        }
+    }
+
     connect(ui->enabled, &QCheckBox::toggled, this, [this](bool enabled) {
         invalidateProxyTest();
         ui->values.enabled = enabled;
@@ -445,6 +463,33 @@ SettingsTorrent::SettingsTorrent(const QString &settingsPath, const ProxyConfig 
 }
 
 SettingsTorrent::~SettingsTorrent() { ui->proxyTester->cancel(); }
+
+QWidget *SettingsTorrent::takeProxyPage()
+{
+    const int index = ui->tabs->indexOf(ui->proxyPage);
+    if (index >= 0)
+        ui->tabs->removeTab(index);
+    ui->proxyPage->hide();
+    ui->proxyPage->setParent(nullptr);
+    delete ui->configureProxy;
+    ui->configureProxy = nullptr;
+    return ui->proxyPage;
+}
+
+void SettingsTorrent::restoreProxyPageOwnership()
+{
+    if (ui->proxyPage && !isAncestorOf(ui->proxyPage)) {
+        // The tester's receiver accesses these controls during cancellation.
+        ui->proxyPage->hide();
+        ui->proxyPage->setParent(this);
+    }
+}
+
+bool SettingsTorrent::hasInvalidCustomProxy() const
+{
+    return ui->values.proxyMode == ProxyMode::Custom &&
+        !validateProxy(selectedProxy(ui->values, applicationProxy)).isEmpty();
+}
 
 void SettingsTorrent::invalidateProxyTest()
 {
@@ -594,6 +639,7 @@ void SettingsTorrent::updateListeners()
 void SettingsTorrent::updateEnabled()
 {
     ui->tabs->setEnabled(ui->values.enabled);
+    ui->proxyPage->setEnabled(ui->values.enabled);
     const bool custom = ui->values.proxyMode == ProxyMode::Custom;
     const auto proxy = selectedProxy(ui->values, applicationProxy);
     const bool testing = ui->proxyTester->isRunning();
@@ -659,12 +705,14 @@ void SettingsTorrent::updateEnabled()
     else if (encrypted || proxy.type == ProxyType::Gost)
         discovery = tr("This proxy route is TCP-only. DHT, bootstrap nodes, uTP and UDP trackers are unavailable; peer uploads and downloads can still use TCP through the proxy. Saved discovery preferences are retained.");
     else
-        discovery = tr("SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in the Proxy tab and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.");
+        discovery = tr("SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection > Proxy > Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.");
     ui->networkRouteStatus->setText(discovery);
     ui->dht->setToolTip(discovery);
     ui->bootstrapNodes->setToolTip(discovery);
-    ui->configureProxy->setVisible(!direct);
-    ui->configureProxy->setEnabled(!direct);
+    if (ui->configureProxy) {
+        ui->configureProxy->setVisible(!direct);
+        ui->configureProxy->setEnabled(!direct);
+    }
     ui->shareName->setEnabled(ui->values.shareCompleted);
     QString warning;
     if (ui->values.proxyMode == ProxyMode::Direct)

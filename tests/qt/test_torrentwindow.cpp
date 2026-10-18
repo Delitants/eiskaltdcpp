@@ -4,6 +4,7 @@
 #include "ArenaWidget.h"
 #include "TorrentToolbar.h"
 #include "TorrentWindow.h"
+#include "SettingsTorrent.h"
 #include "TorrentCheckDelegate.h"
 #include "FileExtensionIcons.h"
 #include "MacInputStyle.h"
@@ -14,14 +15,21 @@
 #include "TorrentLocationProbe.h"
 #endif
 #include "torrent/TorrentEngine.h"
+#include "torrent/TorrentSettings.h"
+#include <QAbstractSpinBox>
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QContextMenuEvent>
 #include <QCryptographicHash>
 #include <QDesktopServices>
+#include <QDialog>
+#include <QDoubleSpinBox>
 #include <QElapsedTimer>
 #include <QFile>
+#include <QFormLayout>
+#include <QFontMetricsF>
+#include <QGroupBox>
 #include <QHeaderView>
 #include <QLabel>
 #include <QLayout>
@@ -29,6 +37,7 @@
 #include <QListWidget>
 #include <QLocale>
 #include <QMessageBox>
+#include <QMap>
 #include <QMenu>
 #include <QProgressBar>
 #include <QStandardItemModel>
@@ -37,9 +46,11 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSettings>
+#include <QSet>
 #include <QSignalBlocker>
 #include <QSignalSpy>
 #include <QSplitter>
+#include <QSpinBox>
 #include <QTabWidget>
 #include <QTest>
 #include <QTemporaryDir>
@@ -51,6 +62,8 @@
 #include <QToolBar>
 #include <QTranslator>
 #include <QTreeWidget>
+#include <QVBoxLayout>
+#include <QtMath>
 #include <functional>
 #include <atomic>
 #include <future>
@@ -227,6 +240,234 @@ QTreeWidgetItem *metadataItem(QTreeWidget *files, int index)
     FAIL("Metadata file index missing");
     return nullptr;
 }
+}
+
+TEST_CASE("Torrent numeric Preferences forms stay left top anchored without stretching fields",
+          "[qt][torrent-settings][torrent-form-geometry]")
+{
+    const int appearance = GENERATE(-1, 0, 1);
+    const int fontPixels = GENERATE(12, 18);
+    ApplicationInputStyle appearanceScope(appearance);
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    const auto path = dir.filePath("torrent-settings.json");
+    Settings saved;
+    saved.downloadLimitKiB = 173;
+    saved.uploadLimitKiB = 97;
+    saved.seedRatio = 2.75;
+    saved.seedMinutes = 123;
+    saved.randomizePort = false;
+    saved.listenPort = 49001;
+    saved.downloadPath = dir.filePath("downloads");
+    saved.completedPath = dir.filePath("completed");
+    REQUIRE(saveSettings(path, saved));
+    QFile file(path);
+    REQUIRE(file.open(QIODevice::ReadOnly));
+    const auto preimage = file.readAll();
+    file.close();
+
+    QDialog dialog;
+    auto *layout = new QVBoxLayout(&dialog);
+    auto *page = new SettingsTorrent(path, ProxyConfig{}, &dialog);
+    layout->addWidget(page);
+    auto font = page->font();
+    font.setPixelSize(fontPixels);
+    dialog.setFont(font);
+    dialog.setLayoutDirection(Qt::LeftToRight);
+    const auto originalValues = page->settings();
+    auto *tabs = page->findChild<QTabWidget*>();
+    REQUIRE(tabs);
+    REQUIRE(tabs->count() >= 3);
+    const QStringList numericNames = {"downloadLimitKiB", "uploadLimitKiB", "activeDownloads",
+        "connectionLimit", "perTorrentConnections", "seedRatio", "seedMinutes", "listenPort",
+        "torrentProxyPort", "torrentProxyTestTcpPort", "torrentProxyTestDnsPort"};
+    for (const auto &name : numericNames)
+        REQUIRE(page->findChild<QAbstractSpinBox*>(name));
+
+    QMap<QString, int> numericWidths;
+    QMap<QString, int> pathWidths;
+    QSet<QString> inspected;
+    int inspectedForms = 0;
+    dialog.show();
+    for (const int width : {640, 1400}) {
+        dialog.resize(width, 850);
+        for (int tab = 0; tab < tabs->count(); ++tab) {
+            tabs->setCurrentIndex(tab);
+            QApplication::sendPostedEvents();
+            QApplication::processEvents();
+            CAPTURE(appearance, fontPixels, width, tab, dialog.width());
+            for (auto *form : tabs->widget(tab)->findChildren<QFormLayout*>()) {
+                auto *group = qobject_cast<QGroupBox*>(form->parentWidget());
+                if (!group || !group->isVisibleTo(&dialog))
+                    continue;
+                form->activate();
+                REQUIRE(form->contentsRect().isValid());
+                ++inspectedForms;
+                QRect occupied;
+                for (int item = 0; item < form->count(); ++item) {
+                    auto *widget = form->itemAt(item)->widget();
+                    if (widget && widget->isVisibleTo(group))
+                        occupied = occupied.united(QRect(widget->mapTo(group, QPoint()), widget->size()));
+                }
+                REQUIRE_FALSE(occupied.isEmpty());
+                const auto content = form->contentsRect();
+                INFO("group=" << group->title().toStdString()
+                     << " content=" << content.x() << ',' << content.y() << ' '
+                     << content.width() << 'x' << content.height()
+                     << " occupied=" << occupied.x() << ',' << occupied.y() << ' '
+                     << occupied.width() << 'x' << occupied.height()
+                     << " formAlignment=" << int(form->formAlignment()));
+                CHECK(form->formAlignment().testFlag(Qt::AlignLeft));
+                CHECK(form->formAlignment().testFlag(Qt::AlignTop));
+                CHECK(qAbs(occupied.left() - content.left()) <= 2);
+                CHECK(qAbs(occupied.top() - content.top()) <= 2);
+            }
+            for (auto *spin : tabs->widget(tab)->findChildren<QAbstractSpinBox*>()) {
+                if (!spin->isVisibleTo(&dialog))
+                    continue;
+                const auto name = spin->objectName();
+                REQUIRE(numericNames.contains(name));
+                inspected.insert(name);
+                INFO("numeric=" << name.toStdString() << " allocated=" << spin->width()
+                     << " hint=" << spin->sizeHint().width() << " font=" << spin->font().toString().toStdString());
+                CHECK(spin->width() >= spin->minimumSizeHint().width());
+                CHECK(spin->width() <= spin->sizeHint().width() + 2);
+                if (width == 640)
+                    numericWidths.insert(name, spin->width());
+                else {
+                    REQUIRE(numericWidths.contains(name));
+                    CHECK(qAbs(spin->width() - numericWidths.value(name)) <= 2);
+                }
+                // Show the complete range extrema without changing staged values
+                // or emitting configuration/diagnostic edits.
+                const QSignalBlocker block(spin);
+                auto *integer = qobject_cast<QSpinBox*>(spin);
+                auto *decimal = qobject_cast<QDoubleSpinBox*>(spin);
+                REQUIRE((integer || decimal));
+                const double value = integer ? integer->value() : decimal->value();
+                for (bool maximum : {false, true}) {
+                    if (integer) integer->setValue(maximum ? integer->maximum() : integer->minimum());
+                    else decimal->setValue(maximum ? decimal->maximum() : decimal->minimum());
+                    auto *editor = spin->findChild<QLineEdit*>();
+                    REQUIRE(editor);
+                    const auto margins = editor->textMargins();
+                    const int available = editor->contentsRect().width() - margins.left() - margins.right();
+                    const int required = qCeil(QFontMetricsF(editor->font()).horizontalAdvance(editor->text()));
+                    CAPTURE(maximum, available, required);
+                    CHECK(available >= required);
+                    CHECK(spin->rect().contains(editor->geometry()));
+                }
+                if (integer) integer->setValue(int(value));
+                else decimal->setValue(value);
+            }
+            for (const auto &name : {QStringLiteral("downloadPath"), QStringLiteral("completedPath")}) {
+                auto *edit = page->findChild<QLineEdit*>(name);
+                REQUIRE(edit);
+                if (!edit->isVisibleTo(&dialog))
+                    continue;
+                if (width == 640)
+                    pathWidths.insert(name, edit->width());
+                else {
+                    REQUIRE(pathWidths.contains(name));
+                    CHECK(edit->width() > pathWidths.value(name) + 200);
+                }
+            }
+            CHECK(page->settings() == originalValues);
+        }
+    }
+    CHECK(inspected.size() == numericNames.size());
+    CHECK(inspectedForms >= 6);
+    // Exercise rejection, not Apply/save: layout work must not rewrite settings.
+    auto *staged = page->findChild<QSpinBox*>("downloadLimitKiB");
+    REQUIRE(staged);
+    staged->setValue(saved.downloadLimitKiB + 1);
+    dialog.reject();
+    CHECK(dialog.result() == QDialog::Rejected);
+    REQUIRE(file.open(QIODevice::ReadOnly));
+    CHECK(file.readAll() == preimage);
+    file.close();
+    SettingsTorrent reopened(path, ProxyConfig{});
+    CHECK(reopened.settings() == originalValues);
+}
+
+TEST_CASE("Torrent empty file notice reports storage failure instead of waiting for metadata",
+          "[qt][torrent-error-hint]")
+{
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    TorrentEngine engine(dir.filePath("state"));
+    const auto healthy = pausedFixture(dir, engine);
+    // A regular-file ancestor deterministically prevents mkpath, without
+    // permissions assumptions, outside-profile writes, or a native session.
+    QFile obstacle(dir.filePath("not-a-directory"));
+    REQUIRE(obstacle.open(QIODevice::WriteOnly));
+    REQUIRE(obstacle.write("keep this regular file") > 0);
+    obstacle.close();
+    const auto failed = engine.add(
+        "magnet:?xt=urn:btih:1123456789012345678901234567890123456789",
+        obstacle.fileName() + "/cannot-create", {}, true);
+    REQUIRE_FALSE(failed.isEmpty());
+    QString storageError;
+    REQUIRE(waitFor([&] {
+        for (const auto &job : engine.jobs()) {
+            if (job.id == failed && !job.error.isEmpty()) {
+                storageError = job.error;
+                return true;
+            }
+        }
+        return false;
+    }));
+    REQUIRE(storageError == QCoreApplication::translate("TorrentEngine", "Cannot create Torrent download directory."));
+    REQUIRE(engine.files(failed).isEmpty());
+    CHECK(engine.effectiveListeners().isEmpty());
+    CHECK(QFileInfo(obstacle.fileName()).isFile());
+    CHECK_FALSE(QFileInfo::exists(obstacle.fileName() + "/cannot-create"));
+
+    const auto waiting = engine.add(
+        "magnet:?xt=urn:btih:0123456789012345678901234567890123456789",
+        dir.filePath("waiting-for-metadata"), {}, true);
+    REQUIRE_FALSE(waiting.isEmpty());
+    REQUIRE(waitFor([&] {
+        for (const auto &job : engine.jobs())
+            if (job.id == waiting) return job.error.isEmpty() && job.paused;
+        return false;
+    }));
+    REQUIRE(engine.files(waiting).isEmpty());
+    TorrentWindow window(&engine, dir.filePath("layout.ini"));
+    auto *files = control<QTreeWidget>(window, "torrentFiles");
+    // Inspect the actual Files-panel notice without adding a production-only
+    // accessor or matching whichever global error banner happens to be shown.
+    REQUIRE(files->parentWidget()->layout());
+    REQUIRE(files->parentWidget()->layout()->itemAt(0));
+    auto *notice = qobject_cast<QLabel*>(files->parentWidget()->layout()->itemAt(0)->widget());
+    REQUIRE(notice);
+    CHECK(notice->textFormat() == Qt::PlainText);
+    const auto metadataHint = QCoreApplication::translate("TorrentWindow",
+        "File selection is available when metadata arrives. A paused magnet may need to be resumed to fetch metadata.");
+
+    window.selectJob(failed);
+    CAPTURE(storageError, notice->text());
+    CHECK(files->topLevelItemCount() == 0);
+    CHECK(notice->text().contains(storageError));
+    CHECK(notice->text() != metadataHint);
+
+    window.selectJob(waiting);
+    CHECK(files->topLevelItemCount() == 0);
+    CHECK(notice->text() == metadataHint);
+    CHECK_FALSE(notice->text().contains(storageError));
+    window.selectJob(healthy);
+    CHECK(files->topLevelItemCount() == 1);
+    CHECK(notice->text() != metadataHint);
+    CHECK_FALSE(notice->text().contains(storageError));
+    window.selectJob(failed);
+    CHECK(notice->text().contains(storageError));
+    auto *jobs = control<QTreeWidget>(window, "torrentJobs");
+    jobs->clearSelection();
+    CHECK(notice->text() == QCoreApplication::translate("TorrentWindow", "Select a Torrent to review its files."));
+    CHECK_FALSE(notice->text().contains(storageError));
+    CHECK(engine.effectiveListeners().isEmpty());
+    REQUIRE(obstacle.open(QIODevice::ReadOnly));
+    CHECK(obstacle.readAll() == QByteArray("keep this regular file"));
 }
 
 TEST_CASE("Selected-file checks use metadata selection across confirmation sorting", "[qt][selected-recheck-ui]")
@@ -672,6 +913,8 @@ TEST_CASE("Torrent Open keeps GUI responsive and drops removed job results", "[q
     TorrentEngine engine(dir.filePath("state"));
     const auto id = pausedFixture(dir, engine);
     REQUIRE(QDir().mkpath(dir.filePath("payload")));
+    const auto expectedPath = QFileInfo(dir.filePath("payload")).canonicalFilePath();
+    REQUIRE_FALSE(expectedPath.isEmpty());
     TorrentLocationCapture capture;
     QDesktopServices::setUrlHandler("file", &capture, "open");
     LocationHandlerReset reset;
@@ -682,7 +925,7 @@ TEST_CASE("Torrent Open keeps GUI responsive and drops removed job results", "[q
     TorrentWindowTestAccess::openLocation(tab, held.function());
     REQUIRE(waitFor([&] { return held.entered.load(std::memory_order_acquire); }));
     CHECK(held.background);
-    CHECK(held.path == dir.filePath("payload"));
+    CHECK(held.path == expectedPath);
     int ticks = 0;
     QTimer heartbeat;
     QObject::connect(&heartbeat, &QTimer::timeout, &tab, [&] { ++ticks; });
@@ -708,7 +951,7 @@ TEST_CASE("Torrent Open keeps GUI responsive and drops removed job results", "[q
     }
     else {
         REQUIRE(capture.opened.size() == 1);
-        CHECK(capture.opened.first() == QUrl::fromLocalFile(dir.filePath("payload")));
+        CHECK(capture.opened.first() == QUrl::fromLocalFile(expectedPath));
         CHECK(engine.jobs().first().paused);
     }
 }

@@ -1,0 +1,1200 @@
+{
+  "theme": "superdesign",
+  "source": "lucide@1.8.0",
+  "reference": ".superdesign/tmp/compact-native.html",
+  "palette": {
+    "gray": [
+      "#374151",
+      "#d1d5db"
+    ],
+    "muted": [
+      "#6b7280",
+      "#9ca3af"
+    ],
+    "blue": [
+      "#2563eb",
+      "#60a5fa"
+    ],
+    "sky": [
+      "#60a5fa",
+      "#93c5fd"
+    ],
+    "teal": [
+      "#0d9488",
+      "#2dd4bf"
+    ],
+    "transfers": [
+      "#0f766e",
+      "#5eead4"
+    ],
+    "green": [
+      "#16a34a",
+      "#4ade80"
+    ],
+    "gold": [
+      "#ca8a04",
+      "#facc15"
+    ],
+    "red": [
+      "#ef4444",
+      "#f87171"
+    ],
+    "cyan": [
+      "#0891b2",
+      "#22d3ee"
+    ],
+    "indigo": [
+      "#6366f1",
+      "#a5b4fc"
+    ],
+    "purple": [
+      "#9333ea",
+      "#c084fc"
+    ],
+    "orange": [
+      "#f97316",
+      "#fb923c"
+    ]
+  },
+  "icons": [
+    {
+      "stem": "adls",
+      "source": "file-search",
+      "color": "orange"
+    },
+    {
+      "stem": "application-exit",
+      "source": "power",
+      "color": "red"
+    },
+    {
+      "stem": "application-x-archive",
+      "source": "file-archive",
+      "color": "gold"
+    },
+    {
+      "stem": "application-x-executable",
+      "source": "app-window",
+      "color": "gray"
+    },
+    {
+      "stem": "audio-x-generic",
+      "source": "music",
+      "color": "teal"
+    },
+    {
+      "stem": "ball_green",
+      "source": "circle-check",
+      "color": "green"
+    },
+    {
+      "stem": "bookmark-new",
+      "source": "bookmark-plus",
+      "color": "gold"
+    },
+    {
+      "stem": "chat",
+      "source": "messages-square",
+      "color": "teal"
+    },
+    {
+      "stem": "configure",
+      "source": "settings",
+      "color": "gray"
+    },
+    {
+      "stem": "console",
+      "source": "terminal",
+      "color": "gray"
+    },
+    {
+      "stem": "dialog-close",
+      "source": "x",
+      "color": "muted"
+    },
+    {
+      "stem": "document-edit",
+      "source": "file-pen-line",
+      "color": "gray"
+    },
+    {
+      "stem": "document-new",
+      "source": "file-plus",
+      "color": "gray"
+    },
+    {
+      "stem": "download",
+      "source": "list-ordered",
+      "color": "gray"
+    },
+    {
+      "stem": "edit-clear",
+      "source": "brush-cleaning",
+      "color": "red"
+    },
+    {
+      "stem": "edit-clear-locationbar-rtl",
+      "source": "delete",
+      "color": "red"
+    },
+    {
+      "stem": "edit-copy",
+      "source": "copy",
+      "color": "gray"
+    },
+    {
+      "stem": "edit-delete",
+      "source": "trash-2",
+      "color": "red"
+    },
+    {
+      "stem": "edit-find",
+      "source": "file-search",
+      "color": "blue"
+    },
+    {
+      "stem": "eraser",
+      "source": "eraser",
+      "color": "red"
+    },
+    {
+      "stem": "face-smile",
+      "source": "smile",
+      "color": "gold"
+    },
+    {
+      "stem": "fav",
+      "source": "star",
+      "color": "gold"
+    },
+    {
+      "stem": "favadd",
+      "source": "star",
+      "color": "gold",
+      "badge": "circle-plus"
+    },
+    {
+      "stem": "favrem",
+      "source": "star",
+      "color": "gold",
+      "badge": "circle-minus"
+    },
+    {
+      "stem": "favserver",
+      "source": "globe",
+      "color": "sky"
+    },
+    {
+      "stem": "favusers",
+      "source": "users",
+      "color": "blue"
+    },
+    {
+      "stem": "find",
+      "source": "search",
+      "color": "blue"
+    },
+    {
+      "stem": "folder-blue",
+      "source": "folder",
+      "color": "blue"
+    },
+    {
+      "stem": "freespace",
+      "source": "hard-drive",
+      "color": "gray"
+    },
+    {
+      "stem": "go-down",
+      "source": "arrow-down",
+      "color": "green"
+    },
+    {
+      "stem": "go-down-search",
+      "source": "inbox",
+      "color": "green",
+      "badge": "check"
+    },
+    {
+      "stem": "go-next",
+      "source": "arrow-right",
+      "color": "blue"
+    },
+    {
+      "stem": "go-previous",
+      "source": "arrow-left",
+      "color": "blue"
+    },
+    {
+      "stem": "go-top",
+      "source": "arrow-up-to-line",
+      "color": "blue"
+    },
+    {
+      "stem": "go-up",
+      "source": "arrow-up",
+      "color": "blue"
+    },
+    {
+      "stem": "go-up-search",
+      "source": "upload",
+      "color": "blue",
+      "badge": "check"
+    },
+    {
+      "stem": "gui",
+      "source": "panels-top-left",
+      "color": "gray"
+    },
+    {
+      "stem": "hashing",
+      "source": "hash",
+      "color": "indigo"
+    },
+    {
+      "stem": "history",
+      "source": "history",
+      "color": "teal"
+    },
+    {
+      "stem": "hubmsg",
+      "source": "globe",
+      "color": "sky",
+      "badge": "message-circle"
+    },
+    {
+      "stem": "im-user-away",
+      "source": "user-round",
+      "color": "blue",
+      "badge": "moon"
+    },
+    {
+      "stem": "image-x-generic",
+      "source": "image",
+      "color": "teal"
+    },
+    {
+      "stem": "list-add",
+      "source": "plus",
+      "color": "green"
+    },
+    {
+      "stem": "log_file",
+      "source": "file-text",
+      "color": "gray"
+    },
+    {
+      "stem": "magnet",
+      "source": "magnet",
+      "color": "red"
+    },
+    {
+      "stem": "media-pause",
+      "source": "pause",
+      "color": "gold"
+    },
+    {
+      "stem": "media-play",
+      "source": "play",
+      "color": "green"
+    },
+    {
+      "stem": "message",
+      "source": "mail",
+      "color": "teal"
+    },
+    {
+      "stem": "network-connect",
+      "source": "plug",
+      "color": "blue"
+    },
+    {
+      "stem": "network-disconnect",
+      "source": "unplug",
+      "color": "red"
+    },
+    {
+      "stem": "openlist",
+      "source": "folder-search",
+      "color": "gold"
+    },
+    {
+      "stem": "own_filelist",
+      "source": "list",
+      "color": "teal"
+    },
+    {
+      "stem": "plugin",
+      "source": "puzzle",
+      "color": "muted"
+    },
+    {
+      "stem": "pmmsg",
+      "source": "message-circle",
+      "color": "blue",
+      "badge": "lock-keyhole"
+    },
+    {
+      "stem": "queued-users",
+      "source": "user-plus",
+      "color": "cyan"
+    },
+    {
+      "stem": "queued-users-highlight",
+      "source": "user-plus",
+      "color": "cyan",
+      "badge": "bell"
+    },
+    {
+      "stem": "reconnect",
+      "source": "zap-off",
+      "color": "muted"
+    },
+    {
+      "stem": "refrlist",
+      "source": "refresh-cw",
+      "color": "green"
+    },
+    {
+      "stem": "reload",
+      "source": "rotate-cw",
+      "color": "teal"
+    },
+    {
+      "stem": "server",
+      "source": "list",
+      "color": "teal"
+    },
+    {
+      "stem": "settings-advanced",
+      "source": "sliders-horizontal",
+      "color": "gray"
+    },
+    {
+      "stem": "settings-connection",
+      "source": "network",
+      "color": "sky"
+    },
+    {
+      "stem": "settings-downloads",
+      "source": "download",
+      "color": "green"
+    },
+    {
+      "stem": "settings-gui",
+      "source": "monitor",
+      "color": "blue"
+    },
+    {
+      "stem": "settings-main",
+      "source": "user-round",
+      "color": "blue"
+    },
+    {
+      "stem": "settings-notifications",
+      "source": "bell",
+      "color": "gold"
+    },
+    {
+      "stem": "settings-sharing",
+      "source": "folder-up",
+      "color": "green"
+    },
+    {
+      "stem": "settings-shortcuts",
+      "source": "keyboard",
+      "color": "gray"
+    },
+    {
+      "stem": "settings-user-commands",
+      "source": "terminal",
+      "color": "teal"
+    },
+    {
+      "stem": "sliders",
+      "source": "sliders-horizontal",
+      "color": "gray"
+    },
+    {
+      "stem": "slow",
+      "source": "gauge",
+      "color": "gold",
+      "badge": "lock-keyhole"
+    },
+    {
+      "stem": "slow_off",
+      "source": "gauge",
+      "color": "blue",
+      "badge": "zap"
+    },
+    {
+      "stem": "spam",
+      "source": "shield",
+      "color": "red"
+    },
+    {
+      "stem": "spy",
+      "source": "eye",
+      "color": "purple"
+    },
+    {
+      "stem": "status",
+      "source": "info",
+      "color": "teal"
+    },
+    {
+      "stem": "text-x-generic",
+      "source": "file-text",
+      "color": "teal"
+    },
+    {
+      "stem": "torrent",
+      "source": "cloud-download",
+      "color": "blue"
+    },
+    {
+      "stem": "transfer",
+      "source": "arrow-down-up",
+      "color": "transfers"
+    },
+    {
+      "stem": "transfer-highlight",
+      "source": "arrow-down-up",
+      "color": "transfers",
+      "badge": "bell"
+    },
+    {
+      "stem": "unknown",
+      "source": "file-question-mark",
+      "color": "muted"
+    },
+    {
+      "stem": "users",
+      "source": "users",
+      "color": "blue"
+    },
+    {
+      "stem": "video-x-generic",
+      "source": "film",
+      "color": "blue"
+    },
+    {
+      "stem": "view-close",
+      "source": "square-minus",
+      "color": "gray"
+    },
+    {
+      "stem": "view-filter",
+      "source": "list-filter",
+      "color": "teal"
+    },
+    {
+      "stem": "zoom-in",
+      "source": "zoom-in",
+      "color": "blue"
+    },
+    {
+      "stem": "zoom-out",
+      "source": "zoom-out",
+      "color": "blue"
+    }
+  ],
+  "files": [
+    {
+      "path": "adls.svg",
+      "sha256": "113a745fbb5dc644aeca5b34a46be0cb53411d0ef8226f4cb5830af861843874"
+    },
+    {
+      "path": "application-exit.svg",
+      "sha256": "03de648a36945b600e2f49548b372505a6969c61e3be0b6d43f257d21d5686e5"
+    },
+    {
+      "path": "application-x-archive.svg",
+      "sha256": "ee79fa6bf0371b2dc94c89a33017670e9d55817d6b3ef80399a3a35e2dac1b56"
+    },
+    {
+      "path": "application-x-executable.svg",
+      "sha256": "76321fa4cf1ed2808768a42f78fad8045248480abe277c95635ebc6f6e9fbb35"
+    },
+    {
+      "path": "audio-x-generic.svg",
+      "sha256": "4a7fd5a60907d2e02e76ecfb289d4fe3b9364234119f2b993d2f5accf9715cb4"
+    },
+    {
+      "path": "ball_green.svg",
+      "sha256": "918821c3d0c875c8bda1a0ecdfc5c51781b15531f71a6c733637d899440d48c3"
+    },
+    {
+      "path": "bookmark-new.svg",
+      "sha256": "ea8ee88e36025c841755e480625648d0d814f9bacb0f5b486dad0df0b4b928e5"
+    },
+    {
+      "path": "chat.svg",
+      "sha256": "ec310804770313e330a1b9c37ac25a103ac01565dbe7139ef99d92a0879d7e90"
+    },
+    {
+      "path": "configure.svg",
+      "sha256": "f75fa1dda7abeb3eb61b2c48246fbd9ba18a4fe68d9c17c63538fe2cd5878d46"
+    },
+    {
+      "path": "console.svg",
+      "sha256": "93cc898deb59add92ba0090327b89f870388949692bc749a9666af897bc44c0d"
+    },
+    {
+      "path": "dialog-close.svg",
+      "sha256": "17ad1b77927f7fb8eec126bb2d61e4423b9205bb248eb197632d1042c0040045"
+    },
+    {
+      "path": "document-edit.svg",
+      "sha256": "097b0b934dbc227c5fabafa861d12971c81d0402dd63dc3e136ee69882924764"
+    },
+    {
+      "path": "document-new.svg",
+      "sha256": "807dad681859ac2b95a7ab2d4a3fa886ac9450cc65c3dd3e551a400d1c7a3f81"
+    },
+    {
+      "path": "download.svg",
+      "sha256": "653c2ef83f47b0093a82936b602abf31723045dc356a7e12e69adc0cb79b4cb8"
+    },
+    {
+      "path": "edit-clear.svg",
+      "sha256": "15dc500c5c0b47c6fbca25c04d2f746d628541bc30a827dff51951a39e52f927"
+    },
+    {
+      "path": "edit-clear-locationbar-rtl.svg",
+      "sha256": "3528c78d838fade65df36d6ae16573e85cd14d88fd345605533c0792fa394649"
+    },
+    {
+      "path": "edit-copy.svg",
+      "sha256": "353b427f97a81b614a980cf189d2ac2fd312165c0be03990f74abd663ff6d578"
+    },
+    {
+      "path": "edit-delete.svg",
+      "sha256": "124a75b4c140c68a04152b7a8c56990f14f5f630a871190537dce39a4b455021"
+    },
+    {
+      "path": "edit-find.svg",
+      "sha256": "c45d2088bbb25d6d5e0c5ded7d0f7a1cbeb83212f9cc5d04c55e6a0cf9caee4f"
+    },
+    {
+      "path": "eraser.svg",
+      "sha256": "af623556319ef2cf9e3c391cacc695087da4e524411bfea07ca0d57a6610aaaf"
+    },
+    {
+      "path": "face-smile.svg",
+      "sha256": "4e79d19eab2fc1ddf537c3739355715b841478f53bce7a687f96bf5c667767c9"
+    },
+    {
+      "path": "fav.svg",
+      "sha256": "12bec25ebc085b3a37bf860216aedea68995f2708dd6126c6ae75150bcdedc7f"
+    },
+    {
+      "path": "favadd.svg",
+      "sha256": "b3c008f314df9f02aad56a0943796205e9e07a67a214a7bdd9f7c5394cf71fac"
+    },
+    {
+      "path": "favrem.svg",
+      "sha256": "850998f382d75050fc60c39011c663dcefbc258e175197242e60606ce6ab6af6"
+    },
+    {
+      "path": "favserver.svg",
+      "sha256": "0eb2819398be0150faca73cb5161c1462086e5ef04b4eeb72db811d257225a65"
+    },
+    {
+      "path": "favusers.svg",
+      "sha256": "7986d8155fd1fe1b85a4001db4972cdcfef7b0f8d2d6742650a97ac83ebe8d2d"
+    },
+    {
+      "path": "find.svg",
+      "sha256": "a980cd619b0a888238afdf306bd5d6c9bb75c38ffbf8edd8c910fd5389500028"
+    },
+    {
+      "path": "folder-blue.svg",
+      "sha256": "6a7c82c9f893e01589aa45648184e1b2da98a76088788f389de452c8e718f80b"
+    },
+    {
+      "path": "freespace.svg",
+      "sha256": "58fd811bbbd84d5800dc752378e5c0948bdff20528f6ab64d4c6f26a6f641680"
+    },
+    {
+      "path": "go-down.svg",
+      "sha256": "30a6f8726dda2124915bc29b83bdd8c97610d55cca56e91c9c8cfc61a353fd5e"
+    },
+    {
+      "path": "go-down-search.svg",
+      "sha256": "6ac5e2b6c0d8fe8541d2a42c42e70c9d9d7c2e242364fd750d9f6fd908b0f9c9"
+    },
+    {
+      "path": "go-next.svg",
+      "sha256": "f3e67756336d8647e0b0b88ee79b02f715f02ebf3dc282e728a43f26dab941ad"
+    },
+    {
+      "path": "go-previous.svg",
+      "sha256": "7c8dfac266683f926af57e15ce8e882f93fc57a3e8a50c2378a0a391464bdbb1"
+    },
+    {
+      "path": "go-top.svg",
+      "sha256": "1b6e208ea0fecfeb8cd559910883186b291ac6999d582c01c63fe5423d3a44bf"
+    },
+    {
+      "path": "go-up.svg",
+      "sha256": "85307d8d3ff0c838a54529382c996c9ddb626cceeba1e9c706a5d7d6b5232696"
+    },
+    {
+      "path": "go-up-search.svg",
+      "sha256": "27ce38f93d68ba8ed86f6e93943e27332a8d53d31a8bde053dd913dce12a8a8c"
+    },
+    {
+      "path": "gui.svg",
+      "sha256": "37ece7081afe525485d34a7259876373381b577a05af997974da1e5c2d38e795"
+    },
+    {
+      "path": "hashing.svg",
+      "sha256": "ab6871d635213150b8cda22545d06a8a9485c9da783d274562e2266c0fbb8395"
+    },
+    {
+      "path": "history.svg",
+      "sha256": "10d08926050ce02d48d712954383eecc07f0035a831eacef41a4055e94a12fc9"
+    },
+    {
+      "path": "hubmsg.svg",
+      "sha256": "8c934cc082a02b5c721ce836dc83a0a5da8029f18d04d88fa4de2c94fc2e69e1"
+    },
+    {
+      "path": "im-user-away.svg",
+      "sha256": "8ba9259f00e14e849308080f16f364fada03429acef274b3fd2e3d7c878db446"
+    },
+    {
+      "path": "image-x-generic.svg",
+      "sha256": "4e0b3742299c82a8d2ecbfa1be6326f9abd8e5028141e91c62bc86226f63895a"
+    },
+    {
+      "path": "list-add.svg",
+      "sha256": "9487728105a59340310df62dc863c3d150d7b5573bcfbefec9881739d48d2114"
+    },
+    {
+      "path": "log_file.svg",
+      "sha256": "0bfdbd128d0ab541319ffb4f5bf6bd6a4fefb915b9d687243f53c4d1788773f0"
+    },
+    {
+      "path": "magnet.svg",
+      "sha256": "614fdd1a170259c30b6f0542bf361273b0317284813a9438d2826917cb1d7871"
+    },
+    {
+      "path": "media-pause.svg",
+      "sha256": "97bdd87edf7d36ebef32e913052424b567aacf4fbb0106206913cb975b47de4d"
+    },
+    {
+      "path": "media-play.svg",
+      "sha256": "c7375ef0636fa62da2e8258a0693bb40909b2405e6bf842cd7a6b77fb4b708da"
+    },
+    {
+      "path": "message.svg",
+      "sha256": "b38730991ed4b8189f6b62077fa52b84e20c942a5faa430d936d60e9edf84e30"
+    },
+    {
+      "path": "network-connect.svg",
+      "sha256": "24966b7ae8bdb9fe690d3dd206c71d0e5e3ef3f0035976e3e436a2a714008ee9"
+    },
+    {
+      "path": "network-disconnect.svg",
+      "sha256": "1a4cb199727ffead65a2da87f84d273596087f7175b85f8d67d3c447a8bc1add"
+    },
+    {
+      "path": "openlist.svg",
+      "sha256": "ad095d24b89d18415516b92b0bc86384aa4c19d3385d3ec2b24d23b230a46cc3"
+    },
+    {
+      "path": "own_filelist.svg",
+      "sha256": "8998b807f03aedeaee8b017cdc1e03090a18bf881c31ece74a8e3c73985e53a9"
+    },
+    {
+      "path": "plugin.svg",
+      "sha256": "10ba08f30405dde7c76133ce877ab2cecf0ce4d67da59722344fe0f7560beff7"
+    },
+    {
+      "path": "pmmsg.svg",
+      "sha256": "20452f5f4fe6c97f8d6f53c2b97d2998936a18cae6ef41fe2e23df2e9fef7b49"
+    },
+    {
+      "path": "queued-users.svg",
+      "sha256": "0c90cb1a837e9d58a0a7ea1b60043cfbb6e98c8de008753dda5a41980d2ce141"
+    },
+    {
+      "path": "queued-users-highlight.svg",
+      "sha256": "145f307fc3bb78c796dfcc9bf215b3b0123a94fe12f0474feca0d24f89cc09c2"
+    },
+    {
+      "path": "reconnect.svg",
+      "sha256": "bd8daca39bbb363d370831a3ca89227ee7432c63858f787e019c184b1036fcad"
+    },
+    {
+      "path": "refrlist.svg",
+      "sha256": "18ee59cbb2bf295e675e5540dc15793804ba7aba0d0c0e56f352efda5ce58836"
+    },
+    {
+      "path": "reload.svg",
+      "sha256": "081585521156d154cc941042499a5eb481c538c0c47fe9469cef6f6a39b41387"
+    },
+    {
+      "path": "server.svg",
+      "sha256": "a1a5e1e0d98ca5ecde8e760eceeb12ea14a2636b99124c0896c43b51667a830b"
+    },
+    {
+      "path": "settings-advanced.svg",
+      "sha256": "ca64bc09b8e406810b02c6e03adfb4853e9fcafdd3b2b8d90d6461cafc6fce8f"
+    },
+    {
+      "path": "settings-connection.svg",
+      "sha256": "6d86634655f038710973a49e2d5abef916c7e59f398f923efdc7f868ef4b02c5"
+    },
+    {
+      "path": "settings-downloads.svg",
+      "sha256": "625b91c6d5f61cdc7cab336b9f20fed41990f1397af178e2a34e54839605db80"
+    },
+    {
+      "path": "settings-gui.svg",
+      "sha256": "545d5dcc93626d38a7f9a6a8ab2dad6034aae1bae7fed3be08dfb93444cab1b9"
+    },
+    {
+      "path": "settings-main.svg",
+      "sha256": "191680c2556ce403370486723996630f17c53a5ca8440786dd0e3d7788f1d35d"
+    },
+    {
+      "path": "settings-notifications.svg",
+      "sha256": "1266fcb2df4fef1bbbf7f7467f0221779b2f2bdad491ad997a665b3a33100d73"
+    },
+    {
+      "path": "settings-sharing.svg",
+      "sha256": "e630940274566f28210f3e7b9693209119d764f762d0a91623ae65035c1ec052"
+    },
+    {
+      "path": "settings-shortcuts.svg",
+      "sha256": "090712813a81f5a134d94fcbae464b3623884b95f8aac1b9d48782f66d436ff4"
+    },
+    {
+      "path": "settings-user-commands.svg",
+      "sha256": "ac849c3044c4b8ea064f2f01e7312f1427ce7d333b84bcaf169676503ca2e623"
+    },
+    {
+      "path": "sliders.svg",
+      "sha256": "4ce50ceb0c930b1fe7170927951596a60419583ad82491f6866b5025cf81e8da"
+    },
+    {
+      "path": "slow.svg",
+      "sha256": "9a50f8c449b6303fcf81607fd49a6fd0f9e2c22d6ce7d76bf77952eadbb8b03b"
+    },
+    {
+      "path": "slow_off.svg",
+      "sha256": "098c3f263cf7738e1918dd9a0056b4e3a2289139ebfec6f04fac5fcd4cd5d28f"
+    },
+    {
+      "path": "spam.svg",
+      "sha256": "1b5281ad1f1aad0529908baea83685379960bae2d0aaca0a83eab7ab46b57d9a"
+    },
+    {
+      "path": "spy.svg",
+      "sha256": "251973e64e7a3e8cda8adbafb46cade50f008cd129978cdff36bd9360d779f3b"
+    },
+    {
+      "path": "status.svg",
+      "sha256": "ae9c6e5f07faa3f3abd6ee392acf567589e60062c3d5982b8b2fa9e415f6ad58"
+    },
+    {
+      "path": "text-x-generic.svg",
+      "sha256": "7bb8f736d0576b1fb1803fab813a863419af03caaf6292e2f96c9339799b74a0"
+    },
+    {
+      "path": "torrent.svg",
+      "sha256": "f242e9d749ae6cf2438099cbe723eac27d75c5ce75eee2af2728f72ceb5b6561"
+    },
+    {
+      "path": "transfer.svg",
+      "sha256": "204cad1011f6520b8e6ef2b46bc962f684e1004ad4bd3190a5ad31d62d1c0952"
+    },
+    {
+      "path": "transfer-highlight.svg",
+      "sha256": "281ed76e8a1c1adb600afd95cb11c1766ce5e7c97020172af90e8fcd88084da9"
+    },
+    {
+      "path": "unknown.svg",
+      "sha256": "997fdd52c651e201a352201bcb094598e1ce667434d48d2e9deea8d2aa9975db"
+    },
+    {
+      "path": "users.svg",
+      "sha256": "efdd3bf7b823d49bdc2ee1c9e3f1119783d4c9ba247a71a10c2dc1e376b9424e"
+    },
+    {
+      "path": "video-x-generic.svg",
+      "sha256": "4ad6e50cab73f914e0997ff5caab83e2154258a7811459fb5832133f442f54a7"
+    },
+    {
+      "path": "view-close.svg",
+      "sha256": "669376d3e0387c7f1b853360ce4964e0668736621835912fe0019f2ed41dc637"
+    },
+    {
+      "path": "view-filter.svg",
+      "sha256": "9c105f220d0063b2b45992bad54f2c1f6f20b64eca70e8e39508d341e7cbc9f9"
+    },
+    {
+      "path": "zoom-in.svg",
+      "sha256": "fac50a14af6f1408904774e00ad23e82e50e3b7dee2dc90772b0792a8005460b"
+    },
+    {
+      "path": "zoom-out.svg",
+      "sha256": "0e4d735aa44abb763525f833ca386914d4e1c2537526e930390bec46286fad46"
+    },
+    {
+      "path": "dark/adls.svg",
+      "sha256": "60b0054def3e2f575a6087539535bc29118aa8c43be627b7d208e07650898354"
+    },
+    {
+      "path": "dark/application-exit.svg",
+      "sha256": "7ead207987aec5fe35874717046d351c026190d7ee5338d42e28519b2da60356"
+    },
+    {
+      "path": "dark/application-x-archive.svg",
+      "sha256": "3a135d7e409bdee51e26e34ec3132364c86c1cc6a4e7952a1fb65a9a28bfb1d9"
+    },
+    {
+      "path": "dark/application-x-executable.svg",
+      "sha256": "9fe79ad84dac98d666708a1c379e09152d07b375aac325e74a80413907358440"
+    },
+    {
+      "path": "dark/audio-x-generic.svg",
+      "sha256": "0bdb63e6dd631214cce0c7be7f2fbf57ed36e41a274676c67e650131dadd9422"
+    },
+    {
+      "path": "dark/ball_green.svg",
+      "sha256": "deb23dc7b1c72a836a7f7009e7d3c86559f8cffed33033588787665d7c4d2748"
+    },
+    {
+      "path": "dark/bookmark-new.svg",
+      "sha256": "d89435d02cf2e32c3a1d12d65d98913d3b68eba2c071ac869cbefd9a13add7e1"
+    },
+    {
+      "path": "dark/chat.svg",
+      "sha256": "2b2531b03a30a0d84c38dfd4adb0ed3ac0f7570456a0898b20e53257c118e54b"
+    },
+    {
+      "path": "dark/configure.svg",
+      "sha256": "8b9babf1ecb652e00eec69cbeb362afb89ff1f6fd6758235c9494bf7c60ddccb"
+    },
+    {
+      "path": "dark/console.svg",
+      "sha256": "cce3ca7a9f95a1ee3b60a3b6b1664ba87f133b806b77889abf66b508775eea92"
+    },
+    {
+      "path": "dark/dialog-close.svg",
+      "sha256": "a5b2be22864fda1dc26391ade09e0db1b523bbaefa55a2eef8c7d51a78e1985d"
+    },
+    {
+      "path": "dark/document-edit.svg",
+      "sha256": "6936e80582a7b3232a5e1148536d512efe89baf41b5c39d7363e147b46dd7bdc"
+    },
+    {
+      "path": "dark/document-new.svg",
+      "sha256": "9e802f2dbc7d4b89ced577426e6cd5b97bfbbdf6913e7a83b3cba7d8bb44508d"
+    },
+    {
+      "path": "dark/download.svg",
+      "sha256": "9a9be2f3e801f530da55f5d392a2bfa7e1a0a09875bb7f5e12c8c5083d8934c8"
+    },
+    {
+      "path": "dark/edit-clear.svg",
+      "sha256": "45809b53990ea6191285c751af5b34281489b375ede37f5a55fd6d95b228eb04"
+    },
+    {
+      "path": "dark/edit-clear-locationbar-rtl.svg",
+      "sha256": "5e9ff827335ab5f1a1098ff55f548fd61cb778e549b556799516ea6c05e5cf79"
+    },
+    {
+      "path": "dark/edit-copy.svg",
+      "sha256": "0d8f2ddaeb4a6204b283121e8902070c5b99756ff8380fde0a04552514504507"
+    },
+    {
+      "path": "dark/edit-delete.svg",
+      "sha256": "e09ac000a262efeaaa881c05eccdcc542f94d9b4d58e392f16c8fd33e36d3bb5"
+    },
+    {
+      "path": "dark/edit-find.svg",
+      "sha256": "80256af435665e173fc3120c9bf923aba61a7b3d5447be29671cff27493dd174"
+    },
+    {
+      "path": "dark/eraser.svg",
+      "sha256": "cede07dd00ace9593a70d37f2a3cff846513285e40cca68026f7e85a896548c3"
+    },
+    {
+      "path": "dark/face-smile.svg",
+      "sha256": "f0daa545485c255c091074e79f2c6ca506f0db043fa81d6e6a8b8d7649bd6d6d"
+    },
+    {
+      "path": "dark/fav.svg",
+      "sha256": "ac27ad13df8d9e3efa90d212f09ffbfd6e1e91f644054446d00d0539c94d55fd"
+    },
+    {
+      "path": "dark/favadd.svg",
+      "sha256": "8804c116d3d8401e749277ccb3042ab5213e744c23f7b6fffaa4ac47b39b63b9"
+    },
+    {
+      "path": "dark/favrem.svg",
+      "sha256": "f72c8d68862d7e6b5447479c9cdbb236e8552f10cfd8abdb9d8cd649a4c3f166"
+    },
+    {
+      "path": "dark/favserver.svg",
+      "sha256": "4f7f8f5e606f2f2b89d344b7780370dc5e2d7378d9050ae28e8deb0566a27f3b"
+    },
+    {
+      "path": "dark/favusers.svg",
+      "sha256": "09e413e0f97c80eeb4d4452fc2121ec97c5a27824f31251d8108bde00d63ce04"
+    },
+    {
+      "path": "dark/find.svg",
+      "sha256": "eef364e6ab7389b30ebd59e2ee3483156345f5ed77232c31d5e8e0621d010efb"
+    },
+    {
+      "path": "dark/folder-blue.svg",
+      "sha256": "e9bb4bd83e56ee1df46ace0606bea95479bba66ea2ec6f32953be0647f2b2427"
+    },
+    {
+      "path": "dark/freespace.svg",
+      "sha256": "473703b5c2ceef2d762671c10d3bf948bf540fdb5e32634538c11e0425213d40"
+    },
+    {
+      "path": "dark/go-down.svg",
+      "sha256": "89ac46ff0d3bddc087fd122edbeeed3330e21497e0cea4218051afa51c95e58d"
+    },
+    {
+      "path": "dark/go-down-search.svg",
+      "sha256": "d17d9f6d9155c47909389e7723fd886a64387c4484b2eba1d5bdce03b2736a6b"
+    },
+    {
+      "path": "dark/go-next.svg",
+      "sha256": "8a91c248eb0887de55764dc4fdd412a9d7aefcd6634343dc1eee74ca7e9a5473"
+    },
+    {
+      "path": "dark/go-previous.svg",
+      "sha256": "3ef008eca8c6fa81e694ae82f24b05559c61ebb130c660f6fdac57e6478a54fb"
+    },
+    {
+      "path": "dark/go-top.svg",
+      "sha256": "e8c61b774b7bef9c55ca31988872feab329266401873f00391b57389ed33639f"
+    },
+    {
+      "path": "dark/go-up.svg",
+      "sha256": "7bb387ada93d2418fb51cc6aeba3dad12a62a56e13bb10655e5fa7e89b78fb1e"
+    },
+    {
+      "path": "dark/go-up-search.svg",
+      "sha256": "a0b79397a7765bf566b646f646cd468c8d6a504200ac65609a843020e95d9b9a"
+    },
+    {
+      "path": "dark/gui.svg",
+      "sha256": "de1bade9655a17fa5dfe4ec590c7d51140c6ca56c69a1ba04d8edd55df3e5c96"
+    },
+    {
+      "path": "dark/hashing.svg",
+      "sha256": "1ec4d4eea07cc34199cd44c86a17cddeb9306154b757875feed0750eb921b2d8"
+    },
+    {
+      "path": "dark/history.svg",
+      "sha256": "4a007e82a0625f4b631d798f05a9960be7f897703785c0b769b50ab65f9131d4"
+    },
+    {
+      "path": "dark/hubmsg.svg",
+      "sha256": "c433443a98beaa5701728bf6965da1a482c1417dfeda0e8934513787c02ddbe4"
+    },
+    {
+      "path": "dark/im-user-away.svg",
+      "sha256": "b3ee810e6cd4598a783fa5def56f81dfcabc1d0aa09ea51435ce31afaa9750e2"
+    },
+    {
+      "path": "dark/image-x-generic.svg",
+      "sha256": "48dbab5111546acafad0d1c021a141fc23fc709962273a4ed7edbee10107391b"
+    },
+    {
+      "path": "dark/list-add.svg",
+      "sha256": "30ed6607ce17c691d695a1036e296ce6dbbff2c301c1cb26846f51829de060fa"
+    },
+    {
+      "path": "dark/log_file.svg",
+      "sha256": "105e59c35824b0cf35636fa9d45412fc620e579066f13aec8c8c73f9bfbc12f7"
+    },
+    {
+      "path": "dark/magnet.svg",
+      "sha256": "d160bea849378ab0f88e074ae3edf52096abd2a088c1b65a4fdd5a235daf8063"
+    },
+    {
+      "path": "dark/media-pause.svg",
+      "sha256": "70aec468ecb86db08c4e44bd33fa7c1a5d4aa5898fdc70285c5a0c5720753929"
+    },
+    {
+      "path": "dark/media-play.svg",
+      "sha256": "7c1f927e30116f006a12454f38b233ac410ec0c38cf7e297485aa23067f055e9"
+    },
+    {
+      "path": "dark/message.svg",
+      "sha256": "c5a595226072e3242da42a7efec57f3a335d2426ff4f873f0f8b25a091562951"
+    },
+    {
+      "path": "dark/network-connect.svg",
+      "sha256": "1ec926af629793773689f83c865ed18fe284a13fc64c75d12c86dfc69abd401a"
+    },
+    {
+      "path": "dark/network-disconnect.svg",
+      "sha256": "4436cd181ae7a3288bbd260b7bc0f602636822ac18e2f2a633a04713e9e64508"
+    },
+    {
+      "path": "dark/openlist.svg",
+      "sha256": "d624131b399651422444447cb907be06abef2fafdec97875ccf1b296ccafcce1"
+    },
+    {
+      "path": "dark/own_filelist.svg",
+      "sha256": "a131bc54174031bb6f2f5b790204d7e5fe6cdb3e08dbfbbc2ef6c010ea31ea6a"
+    },
+    {
+      "path": "dark/plugin.svg",
+      "sha256": "1c57d1de2891045b9ba9d2779eff132f2d487f051a2dc5193c0bd1cdb37cb198"
+    },
+    {
+      "path": "dark/pmmsg.svg",
+      "sha256": "f2cd597850f0aeb76adae1f59abf3d209062694ce3e305eb332937bf75869962"
+    },
+    {
+      "path": "dark/queued-users.svg",
+      "sha256": "a647f7c60616cef14cc112d828cd93fd5b8e8e9cac53b3c81ff584bac839f0ca"
+    },
+    {
+      "path": "dark/queued-users-highlight.svg",
+      "sha256": "94373d4e06dd25bc27870bc2d7a58e1152733476d48c3178054ca29f69e29d16"
+    },
+    {
+      "path": "dark/reconnect.svg",
+      "sha256": "c3b1836191e6c126068f5dd9864755feca233b7385387e054ef9f7d7bd0c797b"
+    },
+    {
+      "path": "dark/refrlist.svg",
+      "sha256": "7a99cc047b82ff1fed654819560b09e31c134db0fdc096a0d81de5cd8c531284"
+    },
+    {
+      "path": "dark/reload.svg",
+      "sha256": "26129d6419eb55e121c26e0b519f6077f4730a449acb7142ba0075a2fbbb21a6"
+    },
+    {
+      "path": "dark/server.svg",
+      "sha256": "d1c1264ce2da153618cc50d2e2c58bf89bdaa05b8ea93fd852aa2d5a501d9fa7"
+    },
+    {
+      "path": "dark/settings-advanced.svg",
+      "sha256": "a669d381bbb21ee572cdd45e619da4c6f9b692dcbaa81088d7e407f2db77af28"
+    },
+    {
+      "path": "dark/settings-connection.svg",
+      "sha256": "57e4326d62e00485619eefed3b3d32f7b41e2575d423411567b0847248fad207"
+    },
+    {
+      "path": "dark/settings-downloads.svg",
+      "sha256": "e4dc99a499d9233f1d2f5e7f183521bf0a185751fa0ca844e20aed0cea695178"
+    },
+    {
+      "path": "dark/settings-gui.svg",
+      "sha256": "fc22ae91be0b25bdb34c90f849448ac847b99796cb8a1f3d09aff6f0703cc5be"
+    },
+    {
+      "path": "dark/settings-main.svg",
+      "sha256": "dc9eebb03bd053fce2db7d5ac21df919a722997ef8f50641bc0b8821ed3b28c2"
+    },
+    {
+      "path": "dark/settings-notifications.svg",
+      "sha256": "56fb483c908998931fbb929bf3969a00733c92de8aa1e5edce990e158867896c"
+    },
+    {
+      "path": "dark/settings-sharing.svg",
+      "sha256": "5df5b1b3d17eaf5879cc066ec0004ec68fde483e9380edd06d84b11782b29cc4"
+    },
+    {
+      "path": "dark/settings-shortcuts.svg",
+      "sha256": "77fb341da2b9e5c4c28c73b19df7f5ebca30f45e7988f6b86c71730ad3788fb3"
+    },
+    {
+      "path": "dark/settings-user-commands.svg",
+      "sha256": "9319c48e9f7a4c2153d2f4212e2f3a87340074ed395a193fff60968f5cb75f33"
+    },
+    {
+      "path": "dark/sliders.svg",
+      "sha256": "e6afe4f468f4dbb01656c1a8fbfa0bd59dc20647239b7541b2651ec13b40634f"
+    },
+    {
+      "path": "dark/slow.svg",
+      "sha256": "b49c38d398e0af88043d51badfd9cd103eccee2e5d9ecc549f4a24266b953858"
+    },
+    {
+      "path": "dark/slow_off.svg",
+      "sha256": "38b37c279a1ff7ee4bd90df782e9da320c8f522849f1673331ac78375ad6ed1e"
+    },
+    {
+      "path": "dark/spam.svg",
+      "sha256": "c69cdfa94895e881accab5e2bfeedc8d8549d4cf864686901ef5418a73ec3ca5"
+    },
+    {
+      "path": "dark/spy.svg",
+      "sha256": "1fd48d25573431554ad9c8d9a4156706c0f9540aed0c8bb398d6cf78d3887a4f"
+    },
+    {
+      "path": "dark/status.svg",
+      "sha256": "cffc958ae6b3df2882486284c460fac6ebe9a35f363252d70b5b10e41eee127f"
+    },
+    {
+      "path": "dark/text-x-generic.svg",
+      "sha256": "a931284649db1232cee67886fecb3e9d774b1a10c8c84514d3de4cc213d1d97c"
+    },
+    {
+      "path": "dark/torrent.svg",
+      "sha256": "a33ed212c282b258c9378a01c3db253e582743aa5ddc0cf47fdaf4be1c5c030b"
+    },
+    {
+      "path": "dark/transfer.svg",
+      "sha256": "dd35aecbd67209022509cf9ebd8fa2ac6d7d578b08b4d0cfeb040a224798b3a9"
+    },
+    {
+      "path": "dark/transfer-highlight.svg",
+      "sha256": "42857b12a1a7590063dcd937ed9fc555e03bdb1fc1988a1877365f0017b0f8ce"
+    },
+    {
+      "path": "dark/unknown.svg",
+      "sha256": "1622543e70b366f2170fb73b2c7b421cede056a24599cdef0bf754d253456c5e"
+    },
+    {
+      "path": "dark/users.svg",
+      "sha256": "e9638f83da93c811c5ff2deb04efd102ee3e054e7887d44edb3c2f87d275dc69"
+    },
+    {
+      "path": "dark/video-x-generic.svg",
+      "sha256": "1cfd035ca8c07c99ebfdb5a0cbbdc7f4eb17be0014d6ccc26727a7ef30a327df"
+    },
+    {
+      "path": "dark/view-close.svg",
+      "sha256": "0a6489c8ee061b5ffc684f3c6a3543aa4e310cfe73c6da3c03e7c70ef779eeb1"
+    },
+    {
+      "path": "dark/view-filter.svg",
+      "sha256": "dc814429940b2a5965c78f2df0a0e6dfb9affbe9caef6f95274aa368f2ab8373"
+    },
+    {
+      "path": "dark/zoom-in.svg",
+      "sha256": "6434ad70c0ba1a085960b9b62c9a1c351008bd18e61ba85a69f966be78127e94"
+    },
+    {
+      "path": "dark/zoom-out.svg",
+      "sha256": "5ae434b67774ef4028bd687ea1cbd2b5801e02ef129c0e579fd98503d1ddb82e"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+    },
+    {
+      "path": "README.md",
+      "sha256": "bdf580193c6b91e4a1c04214d6bae4b6b83fbbedb4a083def6f48a55d8b68e61"
+    }
+  ]
+}

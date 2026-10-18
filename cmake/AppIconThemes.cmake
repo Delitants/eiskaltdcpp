@@ -2,7 +2,8 @@ function(eiskalt_add_icon_themes target)
     set(root "${CMAKE_SOURCE_DIR}/eiskaltdcpp-qt/icons/appl")
     file(GLOB_RECURSE icons CONFIGURE_DEPENDS
         "${root}/prism/*.svg" "${root}/contour/*.svg"
-        "${root}/slate/*.svg" "${root}/reborn/*.svg")
+        "${root}/slate/*.svg" "${root}/reborn/*.svg"
+        "${root}/superdesign/*.svg")
     qt6_add_resources(${target} modern_icon_themes
         PREFIX "/icon-themes" BASE "${root}" FILES ${icons})
     set(brand_icons)
@@ -11,4 +12,8 @@ function(eiskalt_add_icon_themes target)
     endforeach()
     qt6_add_resources(${target} original_brand_icons
         PREFIX "/icon-themes/apex-brand" BASE "${root}/apex" FILES ${brand_icons})
+    qt6_add_resources(${target} control_icons
+        PREFIX "/control-icons" BASE "${root}/default"
+        FILES "${root}/default/combo-arrow-down-light.svg"
+              "${root}/default/combo-arrow-down-dark.svg")
 endfunction()

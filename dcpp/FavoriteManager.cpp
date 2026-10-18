@@ -343,6 +343,7 @@ bool FavoriteManager::saveChecked() {
             xml.addChildAttrib("Description", (*i)->getHubDescription());
             xml.addChildAttrib("Nick", (*i)->getNick(false));
             xml.addChildAttrib("Password", (*i)->getPassword());
+            xml.addChildAttrib("LegacyAdcPasswordChallenges", (*i)->getLegacyAdcPasswordChallenges());
             xml.addChildAttrib("Server", (*i)->getServer());
             xml.addChildAttrib("UserDescription", (*i)->getUserDescription());
             xml.addChildAttrib("Encoding", (*i)->getEncoding());
@@ -461,6 +462,7 @@ void FavoriteManager::load(SimpleXML& aXml) {
             e->setHubDescription(aXml.getChildAttrib("Description"));
             e->setNick(aXml.getChildAttrib("Nick"));
             e->setPassword(aXml.getChildAttrib("Password"));
+            e->setLegacyAdcPasswordChallenges(aXml.getBoolChildAttrib("LegacyAdcPasswordChallenges"));
             e->setServer(aXml.getChildAttrib("Server"));
             e->setUserDescription(aXml.getChildAttrib("UserDescription"));
             e->setEncoding(aXml.getChildAttrib("Encoding"));
@@ -636,7 +638,26 @@ void FavoriteManager::setUserDescription(const UserPtr& aUser, const string& des
 
 StringList FavoriteManager::getHubLists() {
     StringTokenizer<string> lists(CTX_SETTING(HUBLIST_SERVERS), ';');
-    return lists.getTokens();
+    auto ordered = lists.getTokens();
+    // Order only this copy: saved custom lists, duplicates and other sources
+    // retain their exact bytes and relative order.
+    std::stable_partition(ordered.begin(), ordered.end(), [](const string& url) {
+        const auto scheme = url.find("://");
+        if(scheme == string::npos)
+            return false;
+        const auto authorityStart = scheme + 3;
+        const auto authorityEnd = url.find_first_of("/#?", authorityStart);
+        const auto userInfo = url.find('@', authorityStart);
+        // decodeUrl does not parse userinfo; a colon before @ could otherwise
+        // make an attacker-controlled authority look like a preferred host.
+        if(userInfo != string::npos && (authorityEnd == string::npos || userInfo < authorityEnd))
+            return false;
+        string protocol, host, port, path, query, fragment;
+        Util::decodeUrl(url, protocol, host, port, path, query, fragment);
+        return (Util::stricmp(protocol, "http") == 0 || Util::stricmp(protocol, "https") == 0)
+            && (Util::stricmp(host, "hublist.eu") == 0 || Util::stricmp(host, "www.hublist.eu") == 0);
+    });
+    return ordered;
 }
 
 FavoriteHubEntryList::iterator FavoriteManager::getFavoriteHub(const string& aServer) {

@@ -175,7 +175,7 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     }
     if (guiPending && !window->quitProducersRetired()) {
         result.status = Status::Pending;
-        result.component = "GUI workers";
+        result.component = window->quitWorkerComponent();
         preparing = false;
         return result;
     }
@@ -192,7 +192,7 @@ ApplicationQuitCoordinator::Result ApplicationQuitCoordinator::prepare(uint32_t 
     // Close core admission now, but do not admit auxiliary saves or commitment.
     if (guiPending) {
         result.status = Status::Pending;
-        result.component = "GUI workers";
+        result.component = window->quitWorkerComponent();
         preparing = false;
         return result;
     }

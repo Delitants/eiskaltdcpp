@@ -20,6 +20,7 @@
 #pragma once
 
 #include "compiler.h"
+#include <atomic>
 
 #include "Atomic.h"
 #include "BufferedSocketListener.h"
@@ -212,10 +213,12 @@ public:
     GETSET(string, currentDescription, CurrentDescription);
 
     string getFavIp() const { return externalIP; }
+    bool allowsLegacyAdcPasswordChallenges() const { return legacyAdcPasswordChallenges.load(); }
 
     /** Reload details from favmanager or settings */
     void reloadSettings(bool updateNick);
 protected:
+    std::atomic<bool> legacyAdcPasswordChallenges{false};
     virtual void finishRetainedStateForShutdown() { }
     friend class ClientManager;
     Client(DCContext& ctx, const string& hubURL, char separator, bool secure_, Socket::Protocol proto_);

@@ -202,13 +202,26 @@ test('copyright inventory distinguishes Phosphor geometry from inherited icon li
   }
   for (const [path, license] of [
     ['eiskaltdcpp-qt/icons/appl/apex/icon_appl.png', 'LGPL-3'],
-    ['eiskaltdcpp-qt/icons/appl/faenza/icon_appl.png', 'GPL-3'],
-    ['eiskaltdcpp-qt/icons/appl/haiku/icon_appl.png', 'Expat'],
+    ['eiskaltdcpp-qt/icons/appl/faenza/icon_appl.png', 'LGPL-3'],
+    ['eiskaltdcpp-qt/icons/appl/haiku/icon_appl.png', 'LGPL-3'],
     ['eiskaltdcpp-qt/icons/torrent/torrent.png', 'LGPL-3'],
     ['eiskaltdcpp-qt/icons/appl/reborn/inherited-brand.png', 'LGPL-3'],
     ['tools/icon-themes/generate.mjs', 'GPL-3+ with OpenSSL exception'],
     ['tools/icon-themes/vendor/provenance.json', 'GPL-3+ with OpenSSL exception'],
   ]) assert.equal(entryFor(path)?.license, license, `Unexpected relicensing: ${path}`);
+  // Replaced app-brand PNGs do not represent the retained non-brand artwork.
+  for (const [theme, license, attribution] of [
+    ['faenza', 'GPL-3', /Matthieu James/],
+    ['haiku', 'Expat', /Gerasim Troeglazov/],
+  ]) {
+    const path = `eiskaltdcpp-qt/icons/appl/${theme}/network-disconnect.png`;
+    assert.ok(existsSync(join(root, path)), `Missing retained theme icon: ${path}`);
+    const entry = entryFor(path);
+    assert.ok(entry?.patterns.includes(`eiskaltdcpp-qt/icons/appl/${theme}/*`),
+      `Missing inherited theme inventory pattern: ${path}`);
+    assert.equal(entry.license, license, `Unexpected relicensing: ${path}`);
+    assert.match(entry.copyright, attribution);
+  }
 });
 
 test('play, pause, close, delete, favorites, directions, and settings retain distinct meanings', () => {

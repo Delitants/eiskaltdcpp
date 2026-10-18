@@ -17,7 +17,9 @@ namespace app_icon_theme {
 QString canonicalId(const QString &id)
 {
     const auto trimmed = id.trimmed();
-    if (trimmed.isEmpty() || trimmed.compare(QStringLiteral("apex"), Qt::CaseInsensitive) == 0)
+    if (trimmed.isEmpty())
+        return QStringLiteral("superdesign");
+    if (trimmed.compare(QStringLiteral("apex"), Qt::CaseInsensitive) == 0)
         return QStringLiteral("reborn");
     return trimmed;
 }
@@ -25,7 +27,7 @@ QString canonicalId(const QString &id)
 QStringList modernIds()
 {
     return {QStringLiteral("prism"), QStringLiteral("contour"),
-            QStringLiteral("slate"), QStringLiteral("reborn")};
+            QStringLiteral("slate"), QStringLiteral("reborn"), QStringLiteral("superdesign")};
 }
 
 bool isModern(const QString &id)
@@ -135,7 +137,7 @@ QString activePath()
 {
     const auto app = QCoreApplication::instance();
     const auto path = app ? app->property("appIconThemePath").toString() : QString();
-    return path.isEmpty() ? resourcePath(QStringLiteral("reborn")) : path;
+    return path.isEmpty() ? resourcePath(QStringLiteral("superdesign")) : path;
 }
 
 void setActivePath(const QString &directory)

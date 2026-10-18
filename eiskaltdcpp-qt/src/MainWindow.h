@@ -116,6 +116,8 @@ friend class QtContext;
         // pending. No core shutdown or installer consent is granted here.
         [[nodiscard]] bool stopWorkersForQuit(bool asynchronousPersistence = false);
         bool quitWorkersPending() const;
+        // Cached observation from preparation, never an extra worker poll.
+        const char* quitWorkerComponent() const;
         bool quitProducersRetired() const;
         [[nodiscard]] bool enableCheckedQuit(updates::UpdateController* updater = nullptr);
         // Borrow the application-owned controller; no scheduler or native activation.

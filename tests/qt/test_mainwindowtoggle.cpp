@@ -14,6 +14,8 @@
 #include "MainWindow.h"
 #include "QtContext.h"
 #include "SettingsConnection.h"
+#include "SettingsGUI.h"
+#include "SettingsTorrent.h"
 #include "CertificateSettings.h"
 #include "FileHasher.h"
 #include "ProxyTestRunner.h"
@@ -23,6 +25,7 @@
 #ifdef __APPLE__
 #include <dlfcn.h>
 #endif
+
 #include "Notification.h"
 #include "Settings.h"
 #include "dcpp/ProxyRoute.h"
@@ -59,6 +62,19 @@
 #include <QCryptographicHash>
 #include <QComboBox>
 #include <QDialog>
+#include <QDialogButtonBox>
+#include <QGroupBox>
+#include <QSystemTrayIcon>
+#include <QStyleOptionComboBox>
+#include <QStyleOptionGroupBox>
+#include <QStyleOptionTabWidgetFrame>
+#include <QStyleFactory>
+#include <QPainter>
+#include <QScrollArea>
+#include <QAccessible>
+#include <QAbstractItemView>
+#include <QNetworkProxy>
+#include <QMouseEvent>
 #include <QDir>
 #include <QDockWidget>
 #include <QElapsedTimer>
@@ -75,6 +91,7 @@
 #include <QSignalSpy>
 #include <QSettings>
 #include <QStandardItemModel>
+#include <QSplitter>
 #include <QStyleHints>
 #include <QTemporaryDir>
 
@@ -1327,6 +1344,42 @@ TEST_CASE("Hub registration is delivered on the GUI owner thread", "[qt][hub-qui
     CHECK(ownerThread.load());
 }
 
+TEST_CASE("Favourite hub editor keeps legacy ADC compatibility scoped and off by default", "[qt][adc-legacy-challenge]") {
+    IsolatedMainWindow fixture;
+    FavoriteHubs favorites(*fixture.core);
+    bool seen = false, initiallyOff = false, addressChangeCleared = false;
+    QTimer watchdog;
+    watchdog.setSingleShot(true);
+    QObject::connect(&watchdog, &QTimer::timeout, qApp, [] {
+        if(auto* dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget())) dialog->reject();
+    });
+    QTimer::singleShot(0, &favorites, [&] {
+        auto* editor = qobject_cast<FavoriteHubEditor*>(QApplication::activeModalWidget());
+        if(!editor) return;
+        seen = true;
+        initiallyOff = !editor->checkBox_LEGACY_ADC_PASSWORD->isChecked();
+        editor->lineEdit_NAME->setText("Legacy fixture");
+        editor->lineEdit_ADDRESS->setText("adc://legacy-gui.invalid");
+        editor->checkBox_LEGACY_ADC_PASSWORD->setChecked(true);
+        editor->lineEdit_ADDRESS->setText("adc://replacement-gui.invalid");
+        addressChangeCleared = !editor->checkBox_LEGACY_ADC_PASSWORD->isChecked();
+        editor->lineEdit_ADDRESS->setText("adc://legacy-gui.invalid");
+        editor->checkBox_LEGACY_ADC_PASSWORD->setChecked(true);
+        editor->accept();
+    });
+    watchdog.start(5000);
+    REQUIRE(QMetaObject::invokeMethod(&favorites, "slotAdd_newButtonClicked", Qt::DirectConnection));
+    watchdog.stop();
+    REQUIRE(seen);
+    CHECK(initiallyOff);
+    CHECK(addressChangeCleared);
+    auto* entry = fixture.core->getFavoriteManager()->getFavoriteHubEntry("adc://legacy-gui.invalid");
+    REQUIRE(entry);
+    CHECK(entry->getLegacyAdcPasswordChallenges());
+    CHECK_FALSE(entry->getConnect());
+    CHECK_FALSE(fixture.core->getFavoriteManager()->getFavoriteHubEntry("adc://other.invalid"));
+}
+
 TEST_CASE("GUI quit preparation retires connected and inactive hub clients but retains tabs", "[qt][mainwindow][hub-quit-fence]") {
     IsolatedMainWindow f;
     QTcpServer first, second;
@@ -2232,7 +2285,7 @@ TEST_CASE("DHT controls use inline checkboxes and preserve the advertisement pre
     page.show();
     auto* tabs = page.findChild<QTabWidget*>();
     REQUIRE(tabs);
-    tabs->setCurrentIndex(2);
+    tabs->setCurrentIndex(tabs->count() - 1);
     QTest::qWait(30);
     auto* group = child<QGroupBox>(&page, "groupBox_DHT");
     REQUIRE_FALSE(group->isCheckable());
@@ -2840,6 +2893,8 @@ TEST_CASE("Global GOST preferences preserve native controls and unsaved profiles
     auto *socks = child<QRadioButton>(page, "radioButton_SOCKS");
     auto *password = child<QLineEdit>(page, "lineEdit_SPSWD");
     auto *server = child<QLineEdit>(page, "lineEdit_SIP");
+    page->showProxyPage(password);
+    REQUIRE(waitFor([&] { return gost->isVisible(); }));
     gost->click();
     REQUIRE(gost->isChecked());
     CHECK(server->text() == "gost.invalid");
@@ -3060,7 +3115,8 @@ TEST_CASE("Certificate controls fit the native Advanced page", "[certificate-ui-
     dialog.navigate(::Settings::Page::Connection);
     auto* page = dialog.findChild<SettingsConnection*>();
     REQUIRE(page);
-    page->findChild<QTabWidget*>()->setCurrentIndex(2);
+    auto *tabs = page->findChild<QTabWidget*>();
+    tabs->setCurrentIndex(tabs->count() - 1);
     dialog.resize(1050, 900); dialog.show();
     QTest::qWait(100);
     auto* button = child<QPushButton>(page, "dcTlsGenerate");
@@ -3080,6 +3136,9 @@ TEST_CASE("Global invalid GOST preferences do not partially persist other pages"
     const auto nick = sm.get(dcpp::SettingsManager::NICK);
     ::Settings dialog;
     dialog.navigate(::Settings::Page::Connection);
+    auto *page = dialog.findChild<SettingsConnection *>();
+    REQUIRE(page);
+    page->showProxyPage(child<QRadioButton>(page, "globalGostMode"));
     child<QRadioButton>(&dialog, "globalGostMode")->click();
     child<QLineEdit>(&dialog, "lineEdit_SIP")->setText("proxy.invalid");
     child<QLineEdit>(&dialog, "lineEdit_SPORT")->setText("5541");
@@ -3819,5 +3878,1235 @@ TEST_CASE("Held checkpoint recovery retains its worker and permanently disarmed 
             CHECK(file.readAll() == marker);
         }
     }
+}
+#endif
+
+TEST_CASE("Compact hub layout keeps a resizable composer and actionable connection failure", "[qt][compact-native][hub-layout]") {
+    IsolatedMainWindow f;
+    auto *window = f.gui->mainWindow();
+    window->resize(1186, 800);
+    window->show();
+    window->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = window->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if (hub) hub->close(); });
+    QCoreApplication::processEvents();
+    auto *split = hub->findChild<QSplitter*>("splitter_CHAT_INPUT");
+    REQUIRE(split);
+    REQUIRE(split->sizes().size() == 2);
+    CHECK(split->sizes().last() <= 150);
+    CHECK(split->handleWidth() >= 4);
+    hub->coreConnecting(QStringLiteral("Fixture connection attempt"));
+    QCoreApplication::processEvents();
+    auto *banner = hub->findChild<QFrame*>("hubConnectionFailure");
+    REQUIRE(banner);
+    CHECK(banner->isHidden());
+    hub->coreStatusMsg(QStringLiteral("Authentication rejected by test fixture"));
+    hub->coreFailed();
+    QCoreApplication::processEvents();
+    CHECK_FALSE(banner->isHidden());
+    auto *message = banner->findChild<QLabel*>("hubConnectionFailureMessage");
+    REQUIRE(message);
+    CHECK(message->text().contains("Authentication rejected"));
+    CHECK(message->textFormat() == Qt::PlainText);
+    REQUIRE(banner->findChild<QPushButton*>("hubConnectionRetry"));
+    REQUIRE(banner->findChild<QPushButton*>("hubConnectionSettings"));
+    hub->coreConnecting(QStringLiteral("Reconnecting"));
+    QCoreApplication::processEvents();
+    CHECK(banner->isHidden());
+}
+
+TEST_CASE("Hub authentication recovery opens the current favourite editor", "[qt][hub-auth-recovery]") {
+    IsolatedMainWindow f;
+    auto *window = f.gui->mainWindow();
+    window->newHubFrame("adc://127.0.0.1:1", "");
+    QPointer<HubFrame> hub = window->findChild<HubFrame*>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if (hub) hub->close(); });
+    QCoreApplication::processEvents();
+    CHECK(QMetaObject::invokeMethod(hub, "coreAuthenticationFailed", Qt::DirectConnection));
+    hub->coreFailed();
+    QCoreApplication::processEvents();
+    auto *button = hub->findChild<QPushButton*>("hubConnectionSettings");
+    REQUIRE(button);
+    bool correctEditor = false;
+    QTimer modalCloser;
+    modalCloser.setInterval(5);
+    QObject::connect(&modalCloser, &QTimer::timeout, window, [&] {
+        if (auto *editor = qobject_cast<FavoriteHubEditor*>(QApplication::activeModalWidget())) {
+            correctEditor = editor->lineEdit_ADDRESS->text() == "adc://127.0.0.1:1" &&
+                !editor->checkBox_LEGACY_ADC_PASSWORD->isChecked();
+            modalCloser.stop();
+            editor->reject();
+        } else if (auto *dialog = qobject_cast<QDialog*>(QApplication::activeModalWidget())) {
+            modalCloser.stop();
+            dialog->reject();
+        }
+    });
+    modalCloser.start();
+    button->click();
+    QCoreApplication::processEvents();
+    CHECK(correctEditor);
+}
+
+TEST_CASE("Status icon Off is inline and preserves the selected icon while toggling", "[qt][status-icon-off]")
+{
+    IsolatedMainWindow fixture;
+    auto *settings = fixture.gui->settings();
+    for (bool enabled : {false, true}) {
+        for (bool monochrome : {false, true}) {
+            CAPTURE(enabled, monochrome);
+            settings->setBool(WB_TRAY_ENABLED, enabled);
+            settings->setBool(WB_TRAY_ICON_MONOCHROME, monochrome);
+            SettingsGUI page;
+            auto *group = child<QGroupBox>(&page, "groupBox_TRAY");
+            CHECK_FALSE(group->isCheckable());
+            CHECK(group->title() == QStringLiteral("Status icon"));
+            CHECK(group->isEnabled() == QSystemTrayIcon::isSystemTrayAvailable());
+            auto *off = child<QCheckBox>(group, "checkBox_TRAY_OFF");
+            auto *colored = child<QRadioButton>(group, "radioButton_TRAY_COLORED");
+            auto *mono = child<QRadioButton>(group, "radioButton_TRAY_MONOCHROME");
+            CHECK(off->text() == QStringLiteral("Off"));
+            CHECK(off->isChecked() == !enabled);
+            CHECK(mono->isChecked() == monochrome);
+            CHECK(colored->isChecked() == !monochrome);
+            CHECK(mono->isEnabledTo(group) == enabled);
+            CHECK(colored->isEnabledTo(group) == enabled);
+            // Exercise local Off behavior independently of this host's tray support.
+            group->setEnabled(true);
+            page.show();
+            QApplication::processEvents();
+            CHECK(off->geometry().bottom() < colored->geometry().top());
+            CHECK(off->geometry().left() == colored->geometry().left());
+            off->click();
+            CHECK(mono->isEnabled() == !enabled);
+            CHECK(colored->isEnabled() == !enabled);
+            CHECK(mono->isChecked() == monochrome);
+            off->click();
+            CHECK(mono->isEnabled() == enabled);
+            CHECK(colored->isEnabled() == enabled);
+            CHECK(mono->isChecked() == monochrome);
+            CHECK(settings->getBool(WB_TRAY_ENABLED) == enabled);
+            CHECK(settings->getBool(WB_TRAY_ICON_MONOCHROME) == monochrome);
+        }
+    }
+}
+
+TEST_CASE("Status icon Off saves inverted enablement and reopens with its icon choice", "[qt][status-icon-off]")
+{
+    IsolatedMainWindow fixture;
+    auto *settings = fixture.gui->settings();
+    for (bool enabled : {false, true}) {
+        for (bool monochrome : {false, true}) {
+            CAPTURE(enabled, monochrome);
+            settings->setBool(WB_TRAY_ENABLED, !enabled);
+            settings->setBool(WB_TRAY_ICON_MONOCHROME, !monochrome);
+            {
+                SettingsGUI page;
+                child<QCheckBox>(&page, "checkBox_TRAY_OFF")->setChecked(!enabled);
+                child<QRadioButton>(&page, monochrome ? "radioButton_TRAY_MONOCHROME"
+                                                      : "radioButton_TRAY_COLORED")->setChecked(true);
+                page.ok();
+            }
+            CHECK(settings->getBool(WB_TRAY_ENABLED) == enabled);
+            CHECK(settings->getBool(WB_TRAY_ICON_MONOCHROME) == monochrome);
+            REQUIRE(settings->saveChecked());
+            QSettings persisted(fixture.home.filePath("EiskaltDC++_Qt.conf"), QSettings::IniFormat);
+            CHECK(persisted.value(WB_TRAY_ENABLED).toBool() == enabled);
+            CHECK(persisted.value(WB_TRAY_ICON_MONOCHROME).toBool() == monochrome);
+            SettingsGUI reopened;
+            CHECK(child<QCheckBox>(&reopened, "checkBox_TRAY_OFF")->isChecked() == !enabled);
+            CHECK(child<QRadioButton>(&reopened, "radioButton_TRAY_MONOCHROME")->isChecked() == monochrome);
+        }
+    }
+}
+
+TEST_CASE("Status icon Off changes are discarded by Cancel and dialog rejection", "[qt][status-icon-off]")
+{
+    IsolatedMainWindow fixture;
+    auto *settings = fixture.gui->settings();
+    for (bool cancelButton : {false, true}) {
+        for (bool enabled : {false, true}) {
+            CAPTURE(cancelButton, enabled);
+            settings->setBool(WB_TRAY_ENABLED, enabled);
+            settings->setBool(WB_TRAY_ICON_MONOCHROME, true);
+            REQUIRE(settings->saveChecked());
+            const QString path = fixture.home.filePath("EiskaltDC++_Qt.conf");
+            QFile before(path);
+            REQUIRE(before.open(QIODevice::ReadOnly));
+            const QByteArray saved = before.readAll();
+            before.close();
+            {
+                ::Settings dialog;
+                dialog.navigate(::Settings::Page::GUI);
+                auto *page = dialog.findChild<SettingsGUI *>();
+                REQUIRE(page);
+                child<QCheckBox>(page, "checkBox_TRAY_OFF")->setChecked(enabled);
+                child<QRadioButton>(page, "radioButton_TRAY_COLORED")->setChecked(true);
+                if (cancelButton)
+                    child<QDialogButtonBox>(&dialog, "buttonBox")->button(QDialogButtonBox::Cancel)->click();
+                else
+                    dialog.reject();
+                CHECK(dialog.result() == QDialog::Rejected);
+            }
+            CHECK(settings->getBool(WB_TRAY_ENABLED) == enabled);
+            CHECK(settings->getBool(WB_TRAY_ICON_MONOCHROME));
+            QFile after(path);
+            REQUIRE(after.open(QIODevice::ReadOnly));
+            CHECK(after.readAll() == saved);
+        }
+    }
+}
+
+TEST_CASE("Connection owns one unified proxy editor and compact grouped pages", "[qt][connection-refinement]")
+{
+    IsolatedMainWindow fixture;
+    ::Settings dialog;
+    dialog.navigate(::Settings::Page::Connection);
+    auto *connection = child<SettingsConnection>(&dialog, "UISettingsConnection");
+    auto *tabs = child<QTabWidget>(connection, "tabWidget");
+    REQUIRE(tabs->count() == 4);
+    CHECK(tabs->tabText(0) == "Connection");
+    CHECK(tabs->tabText(1) == "Proxy");
+    CHECK(tabs->tabText(2) == "Limits");
+    CHECK(tabs->tabText(3) == "Advanced");
+    auto *profiles = child<QTabWidget>(connection, "connectionProxyProfiles");
+    CHECK(profiles->tabText(0) == "Global");
+#ifdef USE_TORRENT
+    REQUIRE(profiles->count() == 3);
+    CHECK(profiles->tabText(1) == "Torrents");
+    CHECK(profiles->tabText(2) == "Hub lists");
+    auto *torrent = dialog.findChild<SettingsTorrent *>();
+    REQUIRE(torrent);
+    auto *torrentTabs = torrent->findChild<QTabWidget *>();
+    REQUIRE(torrentTabs);
+    for (int row = 0; row < torrentTabs->count(); ++row)
+        CHECK_FALSE(torrentTabs->tabText(row).contains("Proxy", Qt::CaseInsensitive));
+    CHECK(torrent->findChild<QComboBox *>("proxyMode") == nullptr);
+    CHECK(torrent->findChild<QPushButton *>("configureTorrentProxy") == nullptr);
+    REQUIRE(dialog.findChildren<QComboBox *>("proxyMode").size() == 1);
+    CHECK(profiles->widget(1)->isAncestorOf(child<QComboBox>(&dialog, "proxyMode")));
+    child<QCheckBox>(torrent, "enabled")->setChecked(false);
+    CHECK_FALSE(child<QComboBox>(&dialog, "proxyMode")->isEnabled());
+    child<QCheckBox>(torrent, "enabled")->setChecked(true);
+#else
+    REQUIRE(profiles->count() == 2);
+#endif
+    CHECK(dialog.findChildren<QLineEdit *>("lineEdit_SIP").size() == 1);
+    CHECK(profiles->widget(0)->isAncestorOf(child<QLineEdit>(&dialog, "lineEdit_SIP")));
+    CHECK(profiles->widget(profiles->count() - 1)->isAncestorOf(child<QLineEdit>(&dialog, "hubListProxyHost")));
+    for (int width : {980, 1186, 1600}) {
+        dialog.resize(width, 820);
+        dialog.show();
+        tabs->setCurrentIndex(0);
+        QApplication::processEvents();
+        for (const char *name : {"spinBox_TCP", "spinBox_UDP", "spinBox_TLS"}) {
+            auto *port = child<QSpinBox>(connection, name);
+            CHECK(port->width() >= 100);
+            CHECK(port->width() <= 130);
+        }
+        tabs->setCurrentIndex(3);
+        QApplication::processEvents();
+        for (const char *name : {"connectionBehaviorGroup", "connectionCountryGroup", "connectionHubListsGroup"})
+            CHECK(child<QGroupBox>(connection, name)->isVisible());
+    }
+    dialog.reject();
+}
+
+TEST_CASE("Wrapped Connection TLS selector sizes to content and supports popup selection", "[qt][connection-refinement][connection-tls-popup]")
+{
+    IsolatedMainWindow fixture;
+    const QPalette original = qApp->palette();
+    auto restorePalette = dcpp::makeScopedFunctor([&] { qApp->setPalette(original); });
+    for (bool dark : {false, true}) {
+        CAPTURE(dark);
+        QPalette palette = original;
+        palette.setColor(QPalette::Window, dark ? QColor(35,35,35) : QColor(240,240,240));
+        palette.setColor(QPalette::Base, dark ? QColor(28,28,28) : QColor(Qt::white));
+        palette.setColor(QPalette::Text, dark ? QColor(235,235,235) : QColor(24,24,24));
+        qApp->setPalette(palette);
+        ::Settings dialog;
+        dialog.navigate(::Settings::Page::Connection);
+        auto *page = dialog.findChild<SettingsConnection *>(); REQUIRE(page);
+        auto *tabs = child<QTabWidget>(page, "tabWidget");
+        tabs->setCurrentIndex(tabs->count() - 1);
+        auto *combo = child<QComboBox>(page, "comboBox_TLS");
+        REQUIRE(combo->count() == 3);
+        CHECK(QFile::exists(":/control-icons/combo-arrow-down-light.svg"));
+        CHECK(QFile::exists(":/control-icons/combo-arrow-down-dark.svg"));
+        for (int width : {980, 1600}) {
+            dialog.resize(width, 900);
+            dialog.show();
+            QApplication::processEvents();
+            CHECK(combo->width() <= combo->sizeHint().width() + 12);
+            CHECK(combo->width() >= combo->fontMetrics().horizontalAdvance(combo->itemText(2)) + 24);
+        }
+        for (bool enabled : {false, true}) {
+            combo->setEnabled(enabled);
+            QApplication::processEvents();
+            QStyleOptionComboBox option; option.initFrom(combo);
+            option.currentText = combo->currentText();
+            const QRect arrow = combo->style()->subControlRect(QStyle::CC_ComboBox, &option, QStyle::SC_ComboBoxArrow, combo);
+            CHECK(combo->rect().contains(arrow));
+            const QImage image = combo->grab().toImage();
+            const qreal scale = image.devicePixelRatio();
+            const QPoint center = arrow.center() * scale;
+            const QRgb background = image.pixel(center.x(), qMax(0, center.y() - 6));
+            int ink = 0;
+            for (int y = center.y() - 3; y <= center.y() + 3; ++y)
+                for (int x = center.x() - 4; x <= center.x() + 4; ++x)
+                    if (image.valid(x,y) && image.pixel(x,y) != background) ++ink;
+            CHECK(ink > 4);
+        }
+        combo->setItemText(2, "Require TLS for every encrypted client connection (translated label)");
+        QApplication::processEvents();
+        CHECK(combo->width() >= combo->fontMetrics().horizontalAdvance(combo->itemText(2)) + 24);
+        combo->setCurrentIndex(0);
+        QTest::mouseClick(combo, Qt::LeftButton, Qt::NoModifier, QPoint(combo->width() - 12, combo->height()/2));
+        REQUIRE(waitFor([&] { return combo->view()->isVisible(); }));
+        CHECK(combo->view()->verticalScrollBar()->maximum() == 0);
+        for (int row = 0; row < 3; ++row)
+            CHECK(combo->view()->viewport()->rect().contains(combo->view()->visualRect(combo->model()->index(row,0))));
+        QTest::keyClick(combo->view(), Qt::Key_Escape);
+        CHECK(combo->currentIndex() == 0);
+        combo->showPopup();
+        REQUIRE(waitFor([&] { return combo->view()->isVisible(); }));
+        QTest::keyClick(combo->view(), Qt::Key_Down);
+        QTest::keyClick(combo->view(), Qt::Key_Return);
+        CHECK(combo->currentIndex() == 1);
+        REQUIRE(waitFor([&] { return !combo->view()->isVisible(); }));
+        const QPoint openPoint(combo->width() - 12, combo->height()/2);
+        QSignalSpy activated(combo, &QComboBox::activated);
+        QTest::mouseClick(combo, Qt::LeftButton, Qt::NoModifier, openPoint);
+        REQUIRE(waitFor([&] { return combo->view()->isVisible(); }));
+        auto *viewport = combo->view()->viewport();
+        const QModelIndex targetIndex = combo->model()->index(2,0);
+        const QPoint target = combo->view()->visualRect(targetIndex).center();
+        REQUIRE(viewport->rect().contains(target));
+        REQUIRE(combo->view()->indexAt(target) == targetIndex);
+        const QPoint targetGlobal = viewport->mapToGlobal(target);
+        REQUIRE((targetGlobal - combo->mapToGlobal(openPoint)).manhattanLength() > 9);
+        // Qt's popup release guard ends on pointer movement >9px from opening.
+        // Send that real event path explicitly: QTest's cursor warp is QPA-dependent.
+        QMouseEvent move(QEvent::MouseMove, QPointF(target), QPointF(targetGlobal),
+                         Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+        QApplication::sendEvent(viewport, &move);
+        QTest::mousePress(viewport, Qt::LeftButton, Qt::NoModifier, target);
+        REQUIRE(combo->view()->currentIndex() == targetIndex);
+        QTest::mouseRelease(viewport, Qt::LeftButton, Qt::NoModifier, target);
+        REQUIRE(waitFor([&] { return !combo->view()->isVisible(); }));
+        CHECK(combo->currentIndex() == 2);
+        REQUIRE(activated.count() == 1);
+        CHECK(activated.at(0).at(0).toInt() == 2);
+        dialog.reject();
+    }
+}
+
+TEST_CASE("Unified proxy page remains alive while Torrent cancels a pending diagnostic", "[qt][connection-refinement]")
+{
+#ifdef USE_TORRENT
+    IsolatedMainWindow fixture;
+    QTcpServer silent; silent.setProxy(QNetworkProxy::NoProxy);
+    REQUIRE(silent.listen(QHostAddress::LocalHost));
+    auto values = eiskalt::torrent::loadSettings(TorrentRuntime::settingsPath());
+    values.enabled = true;
+    values.proxyMode = eiskalt::torrent::ProxyMode::Custom;
+    values.socks5Proxy.host = "127.0.0.1";
+    values.socks5Proxy.port = silent.serverPort();
+    REQUIRE(eiskalt::torrent::saveSettings(TorrentRuntime::settingsPath(), values));
+    auto dialog = std::make_unique<::Settings>();
+    auto *connection = dialog->findChild<SettingsConnection *>(); REQUIRE(connection);
+    auto *profiles = child<QTabWidget>(connection, "connectionProxyProfiles");
+    dialog->navigate(::Settings::Page::Connection, 1);
+    profiles->setCurrentIndex(1);
+    dialog->show(); QApplication::processEvents();
+    auto *torrent = dialog->findChild<SettingsTorrent *>(); REQUIRE(torrent);
+    QPointer<QComboBox> proxyMode = child<QComboBox>(dialog.get(), "proxyMode");
+    bool aliveAtOwnerDestruction = false;
+    QObject::connect(torrent, &QObject::destroyed, [&] { aliveAtOwnerDestruction = !proxyMode.isNull(); });
+    child<QPushButton>(dialog.get(), "torrentProxyTest")->click();
+    REQUIRE(waitFor([&] { return silent.hasPendingConnections(); }));
+    std::unique_ptr<QTcpSocket> peer(silent.nextPendingConnection());
+    REQUIRE(peer);
+    dialog->reject();
+    QElapsedTimer elapsed; elapsed.start();
+    dialog.reset();
+    CHECK(elapsed.elapsed() < 1000);
+    CHECK(aliveAtOwnerDestruction);
+    CHECK(proxyMode.isNull());
+    QApplication::processEvents();
+#endif
+}
+
+TEST_CASE("Connection refinement preserves TLS policy mapping and unified proxy cancellation", "[qt][connection-refinement]")
+{
+    IsolatedMainWindow fixture;
+    auto &settings = *fixture.core->getSettingsManager();
+    for (int policy : {0, 1, 2}) {
+        ::Settings dialog;
+        auto *page = dialog.findChild<SettingsConnection *>(); REQUIRE(page);
+        REQUIRE(child<QTabWidget>(page, "tabWidget")->count() == 4);
+        child<QComboBox>(page, "comboBox_TLS")->setCurrentIndex(policy);
+        dialog.accept();
+        REQUIRE(dialog.result() == QDialog::Accepted);
+        CHECK(settings.getBool(dcpp::SettingsManager::USE_TLS) == (policy != 0));
+        CHECK(settings.getBool(dcpp::SettingsManager::REQUIRE_TLS) == (policy == 2));
+    }
+    const auto savedProxy = settings.get(dcpp::SettingsManager::SOCKS_SERVER);
+    const auto savedHubListProxy = settings.get(dcpp::SettingsManager::HTTP_PROXY);
+#ifdef USE_TORRENT
+    const auto savedTorrent = eiskalt::torrent::loadSettings(TorrentRuntime::settingsPath());
+#endif
+    {
+        ::Settings dialog;
+        child<QComboBox>(&dialog, "comboBox_TLS")->setCurrentIndex(0);
+        child<QLineEdit>(&dialog, "lineEdit_SIP")->setText("discarded.invalid");
+        child<QLineEdit>(&dialog, "hubListProxyHost")->setText("discarded-hublist.invalid");
+#ifdef USE_TORRENT
+        child<QComboBox>(&dialog, "proxyMode")->setCurrentIndex(3);
+        child<QLineEdit>(&dialog, "torrentProxyHost")->setText("discarded-torrent.invalid");
+#endif
+        dialog.reject();
+    }
+    CHECK(settings.getBool(dcpp::SettingsManager::USE_TLS));
+    CHECK(settings.getBool(dcpp::SettingsManager::REQUIRE_TLS));
+    CHECK(settings.get(dcpp::SettingsManager::SOCKS_SERVER) == savedProxy);
+    CHECK(settings.get(dcpp::SettingsManager::HTTP_PROXY) == savedHubListProxy);
+#ifdef USE_TORRENT
+    const auto after = eiskalt::torrent::loadSettings(TorrentRuntime::settingsPath());
+    CHECK(after.proxyMode == savedTorrent.proxyMode);
+    CHECK(after.socks5Proxy.host == savedTorrent.socks5Proxy.host);
+#endif
+}
+
+TEST_CASE("Preferences splitter keeps content adjacent to the bounded sidebar", "[qt][connection-refinement][connection-geometry]")
+{
+    IsolatedMainWindow fixture;
+    ::Settings dialog;
+    dialog.navigate(::Settings::Page::Connection);
+    auto *sidebar = child<QListWidget>(&dialog, "listWidget");
+    auto *splitter = child<QSplitter>(&dialog, "splitter");
+    auto *page = dialog.findChild<SettingsConnection *>(); REQUIRE(page);
+    auto *rootTabs = child<QTabWidget>(page, "tabWidget");
+    REQUIRE(splitter->count() == 2);
+    const QSize iconSize = sidebar->iconSize();
+    QList<bool> hadIcons;
+    for (int row = 0; row < sidebar->count(); ++row)
+        hadIcons.append(!sidebar->item(row)->icon().isNull());
+    auto inspectGeometry = [&](const char *phase, int width) {
+        CAPTURE(phase, width);
+        dialog.resize(width, 900);
+        dialog.show();
+        dialog.layout()->activate();
+        QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+        QApplication::processEvents();
+        const int sidebarRight = sidebar->mapTo(&dialog, QPoint(sidebar->width(), 0)).x();
+        const int stackLeft = splitter->widget(1)->mapTo(&dialog, QPoint()).x();
+        const int tabsLeft = rootTabs->mapTo(&dialog, QPoint()).x();
+        const int contentLeft = child<QCheckBox>(page, "checkBox_AUTO_DETECT_CONNECTION")->mapTo(&dialog, QPoint()).x();
+        WARN("geometry width=" << width << " actual=" << dialog.width()
+             << " sidebarRight=" << sidebarRight << " stackLeft=" << stackLeft
+             << " tabsLeft=" << tabsLeft << " contentLeft=" << contentLeft
+             << " split0=" << splitter->sizes().at(0) << " split1=" << splitter->sizes().at(1));
+        const int handleAllowance = qMax(4, splitter->handleWidth() + 2);
+        CHECK(stackLeft - sidebarRight >= 0);
+        CHECK(stackLeft - sidebarRight <= handleAllowance);
+        CHECK(qAbs(splitter->sizes().at(0) - sidebar->width()) <= handleAllowance);
+        CHECK(tabsLeft - stackLeft >= 0);
+        CHECK(tabsLeft - stackLeft <= 16);
+        CHECK(sidebar->minimumWidth() == sidebar->maximumWidth());
+        CHECK(sidebar->width() == sidebar->minimumWidth());
+        CHECK(sidebar->iconSize() == iconSize);
+        REQUIRE(sidebar->count() == hadIcons.size());
+        for (int row = 0; row < sidebar->count(); ++row)
+            CHECK(!sidebar->item(row)->icon().isNull() == hadIcons.at(row));
+    };
+    for (int width : {980, 1600, 980})
+        inspectGeometry("initial and resize", width);
+    QPalette alternate = dialog.palette();
+    const bool wasDark = alternate.color(QPalette::Window).lightness() < 128;
+    alternate.setColor(QPalette::Window, wasDark ? QColor(240,240,240) : QColor(35,35,35));
+    alternate.setColor(QPalette::Base, wasDark ? QColor(Qt::white) : QColor(28,28,28));
+    alternate.setColor(QPalette::Text, wasDark ? QColor(24,24,24) : QColor(235,235,235));
+    dialog.setPalette(alternate);
+    for (int width : {980, 1600, 980})
+        inspectGeometry("appearance changed", width);
+    QFont larger = dialog.font();
+    if (larger.pixelSize() > 0) {
+        larger.setPixelSize(larger.pixelSize() + 2);
+    } else {
+        larger.setPointSizeF(qMax(1.0, larger.pointSizeF()) + 2.0);
+    }
+    dialog.setFont(larger);
+    for (int width : {980, 1600, 980})
+        inspectGeometry("font changed", width);
+    dialog.reject();
+}
+
+TEST_CASE("Unified proxy forms save once and reopen with independent route values", "[qt][connection-refinement]")
+{
+    IsolatedMainWindow fixture;
+    {
+        ::Settings dialog;
+        REQUIRE(child<QTabWidget>(&dialog, "connectionProxyProfiles")->count() >= 2);
+        child<QRadioButton>(&dialog, "radioButton_SOCKS")->setChecked(true);
+        child<QLineEdit>(&dialog, "lineEdit_SIP")->setText("127.0.0.1");
+        child<QLineEdit>(&dialog, "lineEdit_SPORT")->setText("1081");
+        child<QLineEdit>(&dialog, "lineEdit_SUSR")->setText("fixture-global");
+        child<QLineEdit>(&dialog, "lineEdit_SPSWD")->setText("fixture-global-password");
+        child<QLineEdit>(&dialog, "hubListProxyHost")->setText("127.0.0.1");
+        child<QLineEdit>(&dialog, "hubListProxyPort")->setText("1082");
+#ifdef USE_TORRENT
+        auto *mode = child<QComboBox>(&dialog, "proxyMode");
+        mode->setCurrentIndex(mode->findData(int(eiskalt::torrent::ProxyMode::Custom)));
+        child<QLineEdit>(&dialog, "torrentProxyHost")->setText("127.0.0.1");
+        child<QSpinBox>(&dialog, "torrentProxyPort")->setValue(1083);
+#endif
+        dialog.accept();
+        REQUIRE(dialog.result() == QDialog::Accepted);
+    }
+    ::Settings reopened;
+    CHECK(child<QRadioButton>(&reopened, "radioButton_SOCKS")->isChecked());
+    CHECK(child<QLineEdit>(&reopened, "lineEdit_SPORT")->text() == "1081");
+    CHECK(child<QLineEdit>(&reopened, "lineEdit_SUSR")->text() == "fixture-global");
+    CHECK(child<QLineEdit>(&reopened, "lineEdit_SPSWD")->text() == "fixture-global-password");
+    CHECK(child<QLineEdit>(&reopened, "hubListProxyPort")->text() == "1082");
+#ifdef USE_TORRENT
+    CHECK(child<QComboBox>(&reopened, "proxyMode")->currentData().toInt() == int(eiskalt::torrent::ProxyMode::Custom));
+    CHECK(child<QSpinBox>(&reopened, "torrentProxyPort")->value() == 1083);
+#endif
+    reopened.reject();
+}
+
+TEST_CASE("Proxy validation reveals the owning nested profile before focus", "[qt][connection-refinement][connection-validation-focus]")
+{
+    IsolatedMainWindow fixture;
+    ::Settings dialog;
+    dialog.show();
+    dialog.activateWindow();
+    REQUIRE(waitFor([&] { return dialog.isActiveWindow(); }));
+    dialog.navigate(::Settings::Page::Connection, 0);
+    auto *host = child<QLineEdit>(&dialog, "hubListProxyHost");
+    auto *port = child<QLineEdit>(&dialog, "hubListProxyPort");
+    host->setText("127.0.0.1");
+    port->clear();
+    QTimer closeWarning;
+    QObject::connect(&closeWarning, &QTimer::timeout, [] {
+        if (auto *warning = qobject_cast<QMessageBox *>(QApplication::activeModalWidget()))
+            warning->accept();
+    });
+    closeWarning.start(10);
+    auto *page = dialog.findChild<SettingsConnection *>(); REQUIRE(page);
+    CHECK_FALSE(page->validate());
+    closeWarning.stop();
+    CHECK(child<QTabWidget>(page, "tabWidget")->currentIndex() == 1);
+    auto *profiles = child<QTabWidget>(page, "connectionProxyProfiles");
+    CHECK(profiles->currentIndex() == profiles->count() - 1);
+    CHECK(port->isVisible());
+    REQUIRE(waitFor([&] { return QApplication::activeModalWidget() == nullptr; }));
+    CHECK(dialog.focusWidget() == port);
+    if (QGuiApplication::platformName() == QStringLiteral("offscreen")) {
+        // No window manager restores activation after the offscreen warning closes.
+        // Supply activation only; the production-selected focus child must survive.
+        dialog.activateWindow();
+        QApplication::setActiveWindow(&dialog);
+    }
+    CAPTURE(QGuiApplication::platformName().toStdString(), dialog.isActiveWindow(),
+            QApplication::activeWindow() == &dialog, dialog.focusWidget() == port,
+            QApplication::focusWidget() == port);
+    REQUIRE(waitFor([&] { return dialog.isActiveWindow(); }));
+    CHECK(dialog.focusWidget() == port);
+    CHECK(waitFor([&] { return port->hasFocus(); }));
+    dialog.reject();
+}
+
+TEST_CASE("Tray speed limits entry opens Connection Limits rather than Proxy", "[qt][connection-refinement][tray-speed-limits]")
+{
+    IsolatedMainWindow fixture;
+    auto *window = fixture.gui->mainWindow();
+    window->hide();
+    bool sawPreferences = false;
+    bool limitsSelected = false;
+    bool limitsVisible = false;
+    bool proxyHidden = false;
+    QTimer modalCloser;
+    modalCloser.setInterval(10);
+    QObject::connect(&modalCloser, &QTimer::timeout, window, [&] {
+        auto *dialog = qobject_cast<QDialog *>(QApplication::activeModalWidget());
+        if (!dialog)
+            return;
+        if (auto *preferences = qobject_cast<::Settings *>(dialog)) {
+            sawPreferences = true;
+            if (auto *page = preferences->findChild<SettingsConnection *>()) {
+                auto *tabs = page->findChild<QTabWidget *>("tabWidget");
+                auto *limits = page->findChild<QCheckBox *>("checkBox_THROTTLE_ENABLE");
+                auto *proxy = page->findChild<QTabWidget *>("connectionProxyProfiles");
+                limitsSelected = tabs && limits && tabs->currentWidget()->isAncestorOf(limits);
+                limitsVisible = limits && limits->isVisible();
+                proxyHidden = proxy && !proxy->isVisible();
+            }
+        }
+        modalCloser.stop();
+        dialog->reject();
+    });
+    modalCloser.start();
+    REQUIRE(QMetaObject::invokeMethod(fixture.gui->notification(), "slotShowSpeedLimits", Qt::DirectConnection));
+    CHECK(sawPreferences);
+    CHECK(window->isVisible());
+    CHECK(limitsSelected);
+    CHECK(limitsVisible);
+    CHECK(proxyHidden);
+}
+
+#ifdef Q_OS_MAC
+namespace {
+QStyleOptionGroupBox framingGroupOption(QGroupBox *group)
+{
+    QStyleOptionGroupBox option;
+    option.initFrom(group);
+    option.text = group->title();
+    option.textAlignment = group->alignment();
+    option.lineWidth = 1;
+    option.subControls = QStyle::SC_GroupBoxFrame | QStyle::SC_GroupBoxLabel;
+    if (group->isCheckable()) {
+        option.subControls |= QStyle::SC_GroupBoxCheckBox;
+        option.state |= group->isChecked() ? QStyle::State_On : QStyle::State_Off;
+    }
+    if (group->isFlat()) option.features |= QStyleOptionFrame::Flat;
+    return option;
+}
+
+int framingColorDistance(QRgb a, QRgb b)
+{
+    return qMax(qAbs(qAlpha(a) - qAlpha(b)), qMax(qAbs(qRed(a) - qRed(b)),
+        qMax(qAbs(qGreen(a) - qGreen(b)), qAbs(qBlue(a) - qBlue(b)))));
+}
+
+// Paint through the live widget's style: frameShape alone cannot detect a
+// stylesheet border on an otherwise NoFrame wrapper or tab pane.
+QImage framingStyleSurface(QWidget *widget, bool tabPane)
+{
+    QImage image(240, 100, QImage::Format_ARGB32_Premultiplied);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    if (tabPane) {
+        QStyleOptionTabWidgetFrame option;
+        option.initFrom(widget);
+        option.rect = image.rect();
+        option.shape = QTabBar::RoundedNorth;
+        widget->style()->drawPrimitive(QStyle::PE_FrameTabWidget, &option, &painter, widget);
+    } else {
+        QStyleOptionFrame option;
+        option.initFrom(widget);
+        option.rect = image.rect();
+        const auto *frame = qobject_cast<QFrame*>(widget);
+        option.frameShape = frame ? frame->frameShape() : QFrame::NoFrame;
+        option.lineWidth = frame ? frame->lineWidth() : 0;
+        // QStyleSheetStyle paints CSS backgrounds/borders in PE_Widget;
+        // CE_ShapedFrame alone intentionally omits those stylesheet borders.
+        widget->style()->drawPrimitive(QStyle::PE_Widget, &option, &painter, widget);
+        widget->style()->drawControl(QStyle::CE_ShapedFrame, &option, &painter, widget);
+    }
+    painter.end();
+    return image;
+}
+
+int framingEdgeContrast(const QImage &image)
+{
+    int contrast = 0;
+    for (int x : {40, 120, 200}) {
+        for (int edge : {0, 1}) {
+            contrast = qMax(contrast, framingColorDistance(image.pixel(x, edge), image.pixel(x, 6)));
+            contrast = qMax(contrast, framingColorDistance(image.pixel(x, image.height() - 1 - edge),
+                                                          image.pixel(x, image.height() - 7)));
+        }
+    }
+    for (int y : {25, 50, 75}) {
+        for (int edge : {0, 1}) {
+            contrast = qMax(contrast, framingColorDistance(image.pixel(edge, y), image.pixel(6, y)));
+            contrast = qMax(contrast, framingColorDistance(image.pixel(image.width() - 1 - edge, y),
+                                                          image.pixel(image.width() - 7, y)));
+        }
+    }
+    return contrast;
+}
+
+void framingAppearance(::Settings &dialog, bool dark, bool larger)
+{
+    QPalette palette = qApp->palette();
+    palette.setColor(QPalette::Window, dark ? QColor(35, 35, 35) : QColor(240, 240, 240));
+    palette.setColor(QPalette::Base, dark ? QColor(28, 28, 28) : QColor(Qt::white));
+    palette.setColor(QPalette::AlternateBase, dark ? QColor(42, 42, 42) : QColor(232, 232, 232));
+    palette.setColor(QPalette::Text, dark ? QColor(235, 235, 235) : QColor(24, 24, 24));
+    palette.setColor(QPalette::WindowText, palette.color(QPalette::Text));
+    qApp->setPalette(palette);
+    dialog.setPalette(palette);
+    QFont font = qApp->font();
+    if (larger) {
+        if (font.pixelSize() > 0) font.setPixelSize(font.pixelSize() + 3);
+        else font.setPointSizeF(qMax(1.0, font.pointSizeF()) + 3.0);
+    }
+    dialog.setFont(font);
+    dialog.resize(1186, 1000);
+    dialog.show();
+    dialog.layout()->activate();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+    QApplication::processEvents();
+}
+}
+
+TEST_CASE("Preferences outer wrappers and nested panes do not add repeated frames",
+          "[qt][preferences-framing][cocoa-pixel-probe]")
+{
+    IsolatedMainWindow fixture;
+    const auto originalPalette = qApp->palette();
+    auto restorePalette = dcpp::makeScopedFunctor([&] { qApp->setPalette(originalPalette); });
+    struct Destination { ::Settings::Page page; const char *root; int tab; };
+    const Destination destinations[] = {
+        {::Settings::Page::Logs, "UISettingsLog", -1},
+        {::Settings::Page::Notifications, "UISettingsNotification", 1},
+        {::Settings::Page::Downloads, "UISettingsDownloads", 1},
+        {::Settings::Page::Connection, "UISettingsConnection", 1},
+        {::Settings::Page::Connection, "UISettingsConnection", 3}
+    };
+    for (bool dark : {false, true}) for (bool larger : {false, true}) {
+        CAPTURE(dark, larger);
+        ::Settings dialog;
+        framingAppearance(dialog, dark, larger);
+        const auto panels = dialog.findChildren<QFrame*>("settingsPagePanel");
+        REQUIRE_FALSE(panels.isEmpty());
+        for (auto *panel : panels) {
+            CHECK(panel->frameShape() == QFrame::NoFrame);
+            CHECK(framingEdgeContrast(framingStyleSurface(panel, false)) <= 8);
+        }
+        for (const auto &destination : destinations) {
+            CAPTURE(destination.root, destination.tab);
+            dialog.navigate(destination.page, destination.tab);
+            QApplication::processEvents();
+            auto *page = child<QWidget>(&dialog, destination.root);
+            if (destination.page == ::Settings::Page::Connection) {
+                auto *rootTabs = child<QTabWidget>(page, "tabWidget");
+                auto *group = child<QGroupBox>(page, destination.tab == 3
+                    ? "connectionBehaviorGroup" : "groupBox_2");
+                const int inset = group->mapTo(&dialog, QPoint()).x()
+                    - rootTabs->currentWidget()->mapTo(&dialog, QPoint()).x();
+                CAPTURE(inset);
+                CHECK(inset >= 0);
+                CHECK(inset <= 24);
+            }
+            for (auto *scroll : page->findChildren<QScrollArea*>())
+                CHECK(scroll->frameShape() == QFrame::NoFrame);
+            for (auto *tabs : page->findChildren<QTabWidget*>()) {
+                CAPTURE(tabs->objectName().toStdString());
+                if (tabs->objectName() == "connectionProxyProfiles")
+                    dialog.navigate(::Settings::Page::Connection, 1);
+                // Exercise each Global/Torrents/Hub lists pane, not just the
+                // currently selected root Connection page.
+                for (int index = 0; index < tabs->count(); ++index) {
+                    tabs->setCurrentIndex(index);
+                    QApplication::processEvents();
+                    CHECK(framingEdgeContrast(framingStyleSurface(tabs, true)) <= 8);
+                }
+            }
+        }
+        dialog.navigate(::Settings::Page::Downloads, 1);
+        auto *downloads = child<QWidget>(&dialog, "UISettingsDownloads");
+        auto *queue = child<QListWidget>(downloads, "listWidget");
+        CHECK(queue->frameShape() == QFrame::NoFrame);
+        CHECK(framingEdgeContrast(framingStyleSurface(queue, false)) <= 8);
+        // A scoped borderless inner-list rule must not erase the popup's
+        // separate surface boundary. No new production property/API is needed.
+        dialog.navigate(::Settings::Page::Connection, 3);
+        auto *tls = child<QComboBox>(&dialog, "comboBox_TLS");
+        tls->view()->ensurePolished();
+        auto *popupView = tls->view();
+        auto *popupWindow = popupView->window();
+        QStringList popupDiagnostics;
+        popupDiagnostics << QStringLiteral("TLS popup policy=%1 viewWindowIsDialog=%2 outerContainsView=%3")
+            .arg(tls->style()->styleHint(QStyle::SH_ComboBox_Popup, nullptr, tls))
+            .arg(popupWindow == &dialog)
+            .arg(popupWindow != popupView && popupWindow->isAncestorOf(popupView));
+        int depth = 0;
+        for (auto *node = static_cast<QWidget*>(popupView); node && depth < 12;
+             node = node->parentWidget(), ++depth) {
+            const auto *frame = qobject_cast<QFrame*>(node);
+            const QString stylesheet = node->styleSheet();
+            popupDiagnostics << QStringLiteral(
+                "ancestor[%1] class=%2 name=%3 isPopupWindow=%4 isWindow=%5 windowType=%6 "
+                "visible=%7 settingsContent=%8 settingsInnerView=%9")
+                .arg(depth).arg(QString::fromLatin1(node->metaObject()->className())).arg(node->objectName())
+                .arg(node == popupWindow).arg(node->isWindow()).arg(int(node->windowType()))
+                .arg(node->isVisible()).arg(node->property("settingsContent").toBool())
+                .arg(node->property("settingsInnerView").toBool());
+            popupDiagnostics << QStringLiteral("geometry=%1,%2 %3x%4 style=%5 stylesheet=%6")
+                .arg(node->x()).arg(node->y()).arg(node->width()).arg(node->height())
+                .arg(QString::fromLatin1(node->style()->metaObject()->className()))
+                .arg(stylesheet);
+            if (frame) {
+                popupDiagnostics << QStringLiteral(
+                    "frameShape=%1 shadow=%2 frameWidth=%3 lineWidth=%4 midLineWidth=%5 CE_ShapedFrameContrast=%6")
+                    .arg(int(frame->frameShape())).arg(int(frame->frameShadow())).arg(frame->frameWidth())
+                    .arg(frame->lineWidth()).arg(frame->midLineWidth())
+                    .arg(framingEdgeContrast(framingStyleSurface(node, false)));
+            }
+            if (node == &dialog) break;
+        }
+        INFO(popupDiagnostics.join(QLatin1Char('\n')).toStdString());
+        CHECK(framingEdgeContrast(framingStyleSurface(tls->view(), false)) > 8);
+        dialog.reject();
+    }
+}
+
+TEST_CASE("Preferences static and checkable group headers sit above frames without background patches",
+          "[qt][preferences-framing][cocoa-pixel-probe]")
+{
+    IsolatedMainWindow fixture;
+    const auto originalPalette = qApp->palette();
+    auto restorePalette = dcpp::makeScopedFunctor([&] { qApp->setPalette(originalPalette); });
+    // QStyleSheetStyle's ParentStyle is QWindowsStyle. Use its public factory
+    // rather than importing private Qt headers into the test target.
+    std::unique_ptr<QStyle> titleParentStyle(QStyleFactory::create(QStringLiteral("Windows")));
+    REQUIRE(titleParentStyle);
+    struct Header { ::Settings::Page page; const char *root; int tab; const char *group; };
+    const Header headers[] = {
+        {::Settings::Page::Logs, "UISettingsLog", -1, "groupBox_PM"},
+        {::Settings::Page::Notifications, "UISettingsNotification", 1, "groupBox_SND"},
+        {::Settings::Page::Notifications, "UISettingsNotification", 1, "groupBox_PM"},
+        {::Settings::Page::Downloads, "UISettingsDownloads", 1, "groupBox_4"},
+        {::Settings::Page::Connection, "UISettingsConnection", 1, "groupBox_2"},
+        {::Settings::Page::Connection, "UISettingsConnection", 3, "groupBox_7"}
+    };
+    for (bool dark : {false, true}) for (bool larger : {false, true}) {
+        CAPTURE(dark, larger);
+        ::Settings dialog;
+        framingAppearance(dialog, dark, larger);
+        for (const auto &header : headers) {
+            CAPTURE(header.root, header.group);
+            dialog.navigate(header.page, header.tab);
+            auto *page = child<QWidget>(&dialog, header.root);
+            auto *group = child<QGroupBox>(page, header.group);
+            group->clearFocus();
+            QApplication::processEvents();
+            const auto option = framingGroupOption(group);
+            const auto *style = group->style();
+            const QRect frame = style->subControlRect(QStyle::CC_GroupBox, &option,
+                                                       QStyle::SC_GroupBoxFrame, group);
+            const QRect label = style->subControlRect(QStyle::CC_GroupBox, &option,
+                                                       QStyle::SC_GroupBoxLabel, group);
+            const QRect checkbox = style->subControlRect(QStyle::CC_GroupBox, &option,
+                                                          QStyle::SC_GroupBoxCheckBox, group);
+            CAPTURE(frame, label, checkbox);
+            INFO("frame top=" << frame.top() << " label=" << label.x() << "," << label.y()
+                 << "," << label.width() << "," << label.height()
+                 << " checkbox=" << checkbox.x() << "," << checkbox.y()
+                 << "," << checkbox.width() << "," << checkbox.height());
+            CHECK(group->rect().contains(label));
+            CHECK(label.bottom() < frame.top());
+            if (group->isCheckable()) {
+                CHECK(group->rect().contains(checkbox));
+                CHECK(checkbox.bottom() < frame.top());
+            }
+            QImage image(group->size(), QImage::Format_ARGB32_Premultiplied);
+            image.fill(Qt::transparent);
+            group->render(&image, QPoint(), QRegion(), QWidget::DrawWindowBackground);
+            // Mask glyphs rather than sampling text/antialiasing as a supposed
+            // shadow. Sample the title padding against the same header row.
+            QImage ink(image.size(), QImage::Format_ARGB32_Premultiplied);
+            ink.fill(Qt::transparent);
+            QRect maskLabel = label;
+            QRect parentLabel;
+            int maskFlags = QStyle::visualAlignment(option.direction,
+                Qt::AlignLeft | Qt::AlignVCenter) | Qt::TextShowMnemonic;
+            if (!group->isCheckable()) {
+                // Static QStyleSheetStyle group titles expand the label to
+                // ParentStyle's size and draw centered; the custom checkable
+                // painter instead draws leading-aligned in the styled rect.
+                parentLabel = titleParentStyle->subControlRect(QStyle::CC_GroupBox,
+                    &option, QStyle::SC_GroupBoxLabel, group);
+                maskLabel.setSize(maskLabel.size().expandedTo(parentLabel.size()));
+                maskFlags = Qt::AlignCenter | Qt::TextShowMnemonic;
+            }
+            INFO("mask checkable=" << group->isCheckable()
+                 << " parent=" << parentLabel.x() << ',' << parentLabel.y()
+                 << ' ' << parentLabel.width() << 'x' << parentLabel.height()
+                 << " expanded=" << maskLabel.x() << ',' << maskLabel.y()
+                 << ' ' << maskLabel.width() << 'x' << maskLabel.height());
+            {
+                QPainter painter(&ink);
+                painter.setFont(group->font());
+                painter.setPen(Qt::white);
+                painter.drawText(maskLabel, maskFlags, group->title());
+            }
+            int samples = 0, patches = 0;
+            QPoint firstPatch(-1, -1);
+            const QRect band = label.adjusted(-2, -1, 2, 1).intersected(image.rect().adjusted(3, 1, -3, -1));
+            for (int y = band.top(); y <= band.bottom(); ++y) {
+                for (int x = band.left(); x <= band.right(); ++x) {
+                    if (group->isCheckable() && checkbox.adjusted(-3, -3, 3, 3).contains(x, y)) continue;
+                    bool glyph = false;
+                    for (int dy = -2; dy <= 2; ++dy) for (int dx = -2; dx <= 2; ++dx)
+                        if (ink.valid(x + dx, y + dy) && qAlpha(ink.pixel(x + dx, y + dy)) > 0) glyph = true;
+                    if (glyph) continue;
+                    ++samples;
+                    if (framingColorDistance(image.pixel(x, y), image.pixel(image.width() - 8, y)) > 8) {
+                        if (patches == 0) firstPatch = QPoint(x, y);
+                        ++patches;
+                    }
+                }
+            }
+            const QString evidenceDirectory = qEnvironmentVariable("EISKALT_QA_UI_EVIDENCE");
+            if (patches > 0 && !evidenceDirectory.isEmpty()) {
+                const QPoint reference(image.width() - 8, firstPatch.y());
+                const QColor actual = image.pixelColor(firstPatch);
+                const QColor expected = image.pixelColor(reference);
+                const QString stem = QStringLiteral("%1-%2-%3-%4")
+                    .arg(QString::fromLatin1(header.root)).arg(QString::fromLatin1(header.group))
+                    .arg(dark ? QStringLiteral("dark") : QStringLiteral("light"))
+                    .arg(larger ? QStringLiteral("larger") : QStringLiteral("normal"));
+                WARN("header patch evidence=" << stem.toStdString()
+                     << " first=" << firstPatch.x() << ',' << firstPatch.y()
+                     << " actualRGBA=" << actual.red() << ',' << actual.green() << ','
+                     << actual.blue() << ',' << actual.alpha()
+                     << " reference=" << reference.x() << ',' << reference.y()
+                     << " referenceRGBA=" << expected.red() << ',' << expected.green() << ','
+                     << expected.blue() << ',' << expected.alpha());
+                const QDir directory(evidenceDirectory);
+                CHECK(directory.mkpath(QStringLiteral(".")));
+                CHECK(image.save(directory.filePath(stem + QStringLiteral("-group.png"))));
+                CHECK(ink.save(directory.filePath(stem + QStringLiteral("-mask.png"))));
+            }
+            CAPTURE(samples, patches);
+            REQUIRE(samples >= 8);
+            CHECK(patches == 0);
+        }
+        dialog.reject();
+    }
+}
+
+TEST_CASE("Reframed Preferences groups preserve title indicator keyboard disabled and accessibility behavior",
+          "[qt][preferences-framing][preferences-group-input]")
+{
+    IsolatedMainWindow fixture;
+    const auto originalPalette = qApp->palette();
+    auto restorePalette = dcpp::makeScopedFunctor([&] { qApp->setPalette(originalPalette); });
+    ::Settings dialog;
+    framingAppearance(dialog, false, true);
+    struct Target { ::Settings::Page page; const char *root; int tab; const char *group; const char *field; };
+    const Target targets[] = {
+        {::Settings::Page::Logs, "UISettingsLog", -1, "groupBox_PM", "lineEdit_FILE_PMFMT"},
+        {::Settings::Page::Notifications, "UISettingsNotification", 1, "groupBox_PM", "lineEdit_SNDPM"}
+    };
+    for (const auto &target : targets) {
+        CAPTURE(target.root, target.group);
+        dialog.navigate(target.page, target.tab);
+        auto *group = child<QGroupBox>(child<QWidget>(&dialog, target.root), target.group);
+        for (auto *ancestor = group->parentWidget(); ancestor; ancestor = ancestor->parentWidget())
+            if (auto *parentGroup = qobject_cast<QGroupBox*>(ancestor); parentGroup && parentGroup->isCheckable())
+                parentGroup->setChecked(true);
+        group->setChecked(true);
+        auto *field = child<QLineEdit>(group, target.field);
+        QApplication::processEvents();
+        auto *accessible = QAccessible::queryAccessibleInterface(group);
+        REQUIRE(accessible);
+        const auto role = accessible->role();
+        const auto name = accessible->text(QAccessible::Name);
+        CHECK_FALSE(name.isEmpty());
+        CHECK(bool(accessible->state().checkable));
+        QSignalSpy toggled(group, &QGroupBox::toggled);
+        QSignalSpy clicked(group, &QGroupBox::clicked);
+        QGroupBox *neighbor = nullptr;
+        for (auto *candidate : group->parentWidget()->findChildren<QGroupBox*>(QString(), Qt::FindDirectChildrenOnly))
+            if (candidate != group && candidate->isCheckable()) { neighbor = candidate; break; }
+        REQUIRE(neighbor);
+        const bool neighborChecked = neighbor->isChecked();
+        QSignalSpy neighborToggled(neighbor, &QGroupBox::toggled);
+        const auto option = framingGroupOption(group);
+        const QRect box = group->style()->subControlRect(QStyle::CC_GroupBox, &option,
+                                                          QStyle::SC_GroupBoxCheckBox, group);
+        const QRect label = group->style()->subControlRect(QStyle::CC_GroupBox, &option,
+                                                            QStyle::SC_GroupBoxLabel, group);
+        QTest::mouseClick(group, Qt::LeftButton, Qt::NoModifier, box.center());
+        CHECK_FALSE(group->isChecked());
+        CHECK_FALSE(field->isEnabled());
+        CHECK_FALSE(bool(accessible->state().checked));
+        CHECK(toggled.count() == 1);
+        CHECK(clicked.count() == 1);
+        group->setFocus();
+        QTest::keyClick(group, Qt::Key_Space);
+        CHECK(group->isChecked());
+        CHECK(field->isEnabled());
+        CHECK(bool(accessible->state().checked));
+        CHECK(toggled.count() == 2);
+        CHECK(clicked.count() == 2);
+        QTest::mouseClick(group, Qt::LeftButton, Qt::NoModifier, label.center());
+        CHECK_FALSE(group->isChecked());
+        CHECK(toggled.count() == 3);
+        CHECK(clicked.count() == 3);
+        // Releasing outside the header, and clicks in the empty frame, must
+        // not toggle a group or activate controls in its neighbours.
+        const QPoint outside(group->width() - 4, group->height() - 4);
+        QTest::mousePress(group, Qt::LeftButton, Qt::NoModifier, box.center());
+        QTest::mouseRelease(group, Qt::LeftButton, Qt::NoModifier, outside);
+        QTest::mouseClick(group, Qt::LeftButton, Qt::NoModifier, outside);
+        CHECK_FALSE(group->isChecked());
+        CHECK(toggled.count() == 3);
+        CHECK(clicked.count() == 3);
+        group->setEnabled(false);
+        QTest::mouseClick(group, Qt::LeftButton, Qt::NoModifier, box.center());
+        QTest::keyClick(group, Qt::Key_Space);
+        CHECK_FALSE(group->isChecked());
+        CHECK_FALSE(field->isEnabled());
+        CHECK(bool(accessible->state().disabled));
+        CHECK(accessible->role() == role);
+        CHECK(accessible->text(QAccessible::Name) == name);
+        CHECK(toggled.count() == 3);
+        CHECK(clicked.count() == 3);
+        group->setEnabled(true);
+        CHECK(neighbor->isChecked() == neighborChecked);
+        CHECK(neighborToggled.count() == 0);
+    }
+    dialog.reject();
+}
+#endif
+
+#ifdef Q_OS_MAC
+#include "SettingsShortcuts.h"
+#include "ShortcutGetter.h"
+#include "ShortcutManager.h"
+
+TEST_CASE("Mac Shortcuts displays native keys without changing portable bindings",
+          "[gui][shortcuts][macos]")
+{
+    IsolatedMainWindow fixture;
+    auto* window = fixture.gui->mainWindow();
+    SettingsShortcuts page;
+    auto* model = page.findChild<ShortcutsModel*>();
+    REQUIRE(model);
+
+    const auto indexFor = [&](const QString& portable) {
+        for (int row = 0; row < model->rowCount(); ++row) {
+            const auto index = model->index(row, 1);
+            const auto* item = static_cast<ShortcutItem*>(index.internalPointer());
+            if (item && item->shortcut == portable)
+                return index;
+        }
+        return QModelIndex();
+    };
+    const auto checkRoles = [&](const QModelIndex& index, const QString& portable) {
+        REQUIRE(index.isValid());
+        const auto sequence = QKeySequence::fromString(portable, QKeySequence::PortableText);
+        const QString native = sequence.toString(QKeySequence::NativeText);
+        CHECK(native.contains(QChar(0x2318)));
+        CHECK(native != portable);
+        CHECK(model->data(index, Qt::DisplayRole).toString() == native);
+        CHECK(model->data(index, Qt::EditRole).toString() == portable);
+        CHECK(model->flags(index).testFlag(Qt::ItemIsEditable));
+    };
+
+    auto* quit = window->findChild<QAction*>("fileQuit");
+    auto* close = window->findChild<QAction*>("closeWidgetShortCut");
+    REQUIRE(quit);
+    REQUIRE(close);
+    CHECK(quit->shortcut().toString(QKeySequence::PortableText) == QStringLiteral("Ctrl+Q"));
+    CHECK(close->shortcut().toString(QKeySequence::PortableText) == QStringLiteral("Ctrl+W"));
+    checkRoles(indexFor(QStringLiteral("Ctrl+Q")), QStringLiteral("Ctrl+Q"));
+    const auto closeIndex = indexFor(QStringLiteral("Ctrl+W"));
+    checkRoles(closeIndex, QStringLiteral("Ctrl+W"));
+
+    const QString path = QString::fromStdString(dcpp::Util::getPath(dcpp::Util::PATH_USER_CONFIG))
+        + QStringLiteral("shortcuts.txt");
+    const auto savedBindings = [&] {
+        QFile file(path);
+        REQUIRE(file.open(QIODevice::ReadOnly));
+        return file.readAll();
+    };
+    fixture.gui->shortcutManager()->save();
+    const QByteArray before = savedBindings();
+    page.ok();
+    CHECK(savedBindings() == before);
+
+    // Exercise the existing click editor rather than inventing a setData path.
+    const QString custom = QStringLiteral("Ctrl+Alt+Shift+Y");
+    QString editorInitial;
+    bool edited = false;
+    QTimer watchdog;
+    watchdog.setSingleShot(true);
+    QObject::connect(&watchdog, &QTimer::timeout, &page, [&] {
+        if (auto* getter = window->findChild<ShortcutGetter*>())
+            getter->reject();
+    });
+    watchdog.start(3000);
+    QTimer::singleShot(0, &page, [&] {
+        auto* getter = window->findChild<ShortcutGetter*>();
+        if (!getter)
+            return;
+        if (auto* input = getter->findChild<QLineEdit*>()) {
+            editorInitial = input->text();
+            input->setText(custom);
+            edited = true;
+            getter->accept();
+        } else {
+            getter->reject();
+        }
+    });
+    REQUIRE(QMetaObject::invokeMethod(&page, "slotIndexClicked", Qt::DirectConnection,
+                                     Q_ARG(QModelIndex, closeIndex)));
+    watchdog.stop();
+    REQUIRE(edited);
+    CHECK(editorInitial == QStringLiteral("Ctrl+W"));
+    checkRoles(closeIndex, custom);
+    page.ok();
+    const auto sequence = QKeySequence::fromString(custom, QKeySequence::PortableText);
+    CHECK(close->shortcut() == sequence);
+    CHECK(fixture.gui->shortcutManager()->getShortcuts().value("closeWidgetShortCut") == sequence);
+    const QByteArray saved = savedBindings();
+    CHECK(saved.contains("closeWidgetShortCut " + custom.toUtf8() + '\n'));
+    CHECK(saved.contains("fileQuit Ctrl+Q\n"));
+    CHECK_FALSE(saved.contains(sequence.toString(QKeySequence::NativeText).toUtf8()));
+
+    SettingsShortcuts reopened;
+    auto* reopenedModel = reopened.findChild<ShortcutsModel*>();
+    REQUIRE(reopenedModel);
+    bool foundCustom = false;
+    for (int row = 0; row < reopenedModel->rowCount(); ++row) {
+        const auto index = reopenedModel->index(row, 1);
+        const auto* item = static_cast<ShortcutItem*>(index.internalPointer());
+        if (!item || item->shortcut != custom)
+            continue;
+        foundCustom = true;
+        CHECK(reopenedModel->data(index, Qt::DisplayRole).toString()
+              == sequence.toString(QKeySequence::NativeText));
+        CHECK(reopenedModel->data(index, Qt::EditRole).toString() == custom);
+    }
+    CHECK(foundCustom);
+}
+#endif
+
+namespace {
+template<class Window> QString cachedQuitPhase(const Window& window) {
+    if constexpr(requires { window.quitWorkerComponent(); })
+        return QString::fromLatin1(window.quitWorkerComponent());
+    return {};
+}
+QString quitWarning(const QSignalSpy& refused) {
+    return refused.isEmpty() ? QString{} : refused.last().first().toString();
+}
+void checkQuitWarning(const QString& warning, const QString& phase,
+                      const QString& status, const QString& branch, uint32_t budget) {
+    CHECK(warning.startsWith("Worker timeout; retry quit after the worker finishes"));
+    CHECK(warning.contains("last observed: " + phase));
+    CHECK(warning.contains("status=" + status));
+    CHECK(warning.contains("timeout=" + branch));
+    CHECK(warning.contains("budget_ms=" + QString::number(budget)));
+    CHECK(warning.contains("elapsed_ms="));
+    CHECK(warning.contains("prepare_ms="));
+}
+}
+
+TEST_CASE("Quit timeout reports cached producer phase and refreshes it only on explicit retry",
+          "[qt][window-quit][quit-timeout-diagnostic]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    updates::ApplicationQuitSession session(*f.gui);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    std::atomic_bool entered{false}, released{false};
+    auto* worker = new AsyncRunner(window);
+    worker->setRunFunction([&] { entered = true; while(!released) QThread::msleep(1); });
+    auto cleanup = dcpp::makeScopedFunctor([&] { released = true; worker->wait(); });
+    worker->start();
+    REQUIRE(waitFor([&] { return entered.load(); }));
+    session.request(300);
+    REQUIRE(session.state() == updates::ApplicationQuitSession::State::Preparing);
+    CHECK(cachedQuitPhase(*window) == "GUI producer workers");
+    // Delay delivery beyond the deadline; the warning must not re-poll owners.
+    QThread::msleep(350);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    REQUIRE(refused.count() == 1);
+    checkQuitWarning(quitWarning(refused), "GUI producer workers", "Pending", "before-poll", 300);
+    CHECK(ready.isEmpty());
+    released = true;
+    REQUIRE(worker->wait(2000));
+    QTest::qWait(25);
+    CHECK(ready.isEmpty());
+    CHECK(cachedQuitPhase(*window) == "GUI producer workers");
+    // Physically retire the original owners without asking the session to retry.
+    REQUIRE(waitFor([&] { return window->stopWorkersForQuit(true); }));
+    REQUIRE(waitFor([&] { return f.core->prepareShutdownAsyncChecked(1000).status == dcpp::DCContext::ShutdownStatus::Ready; }));
+    CHECK(cachedQuitPhase(*window) == "Ready");
+    // A zero-budget explicit retry exercises Ready-after-deadline on cached receipts.
+    session.request(0);
+    REQUIRE(session.state() == updates::ApplicationQuitSession::State::Refused);
+    REQUIRE(refused.count() == 2);
+    checkQuitWarning(quitWarning(refused), "Ready", "Ready", "ready-after-deadline", 0);
+    CHECK_FALSE(quitWarning(refused).contains("GUI producer workers"));
+    CHECK(ready.isEmpty());
+    session.request(1000);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(refused.count() == 2);
+}
+
+TEST_CASE("Quit timeout reports a Pending updater return without retrying or installing late",
+          "[qt][window-quit][quit-timeout-diagnostic]") {
+    IsolatedMainWindow f;
+    struct SlowPendingBackend : QuitBackend {
+        using QuitBackend::QuitBackend;
+        bool delay = true;
+        bool stopWorkersForQuit() override {
+            if(delay) { delay = false; QThread::msleep(80); }
+            return QuitBackend::stopWorkersForQuit();
+        }
+    } backend(*f.core);
+    updates::UpdateController updater(*f.gui->settings(), backend,
+        {1, updates::Channel::Preview, "org.test.eiskalt", "arm64", QVersionNumber(26, 0)});
+    backend.fenceResult = false; backend.fencePending = true;
+    updates::ApplicationQuitSession session(*f.gui, &updater);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    const auto route = f.core->getProxyRoute()->snapshot();
+    session.request(20);
+    REQUIRE(session.state() == updates::ApplicationQuitSession::State::Refused);
+    REQUIRE(refused.count() == 1);
+    checkQuitWarning(quitWarning(refused), "Updater workers", "Pending", "pending-return", 20);
+    CHECK(backend.fences == 1); CHECK(backend.installs == 0);
+    CHECK_FALSE(route->revoked->load()); CHECK(ready.isEmpty());
+    backend.fenceResult = true; backend.fencePending = false;
+    QTest::qWait(30);
+    CHECK(backend.fences == 1); CHECK(backend.installs == 0); CHECK(ready.isEmpty());
+    session.request(1000);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
+    CHECK(backend.fences == 2); CHECK(backend.installs == 0);
+}
+
+#ifdef USE_TORRENT
+#include "TorrentSharePublisher.h"
+TEST_CASE("Quit timeout identifies retained Torrent publisher rather than generic GUI workers",
+          "[qt][window-quit][quit-timeout-diagnostic]") {
+    IsolatedMainWindow f;
+    auto* window = f.gui->mainWindow();
+    auto* runtime = window->findChild<TorrentRuntime*>(); REQUIRE(runtime);
+    auto* publisher = runtime->findChild<TorrentSharePublisher*>(); REQUIRE(publisher);
+    struct Gate { QSemaphore entered, release; };
+    const auto gate = std::make_shared<Gate>();
+    auto cleanup = dcpp::makeScopedFunctor([gate] { gate->release.release(); });
+    publisher->enqueue("diagnostic-only", "diagnostic-only", {f.home.filePath("unused")}, [gate] {
+        gate->entered.release(); gate->release.acquire(); return true;
+    });
+    REQUIRE(gate->entered.tryAcquire(1, 2000));
+    updates::ApplicationQuitSession session(*f.gui);
+    QSignalSpy refused(&session, &updates::ApplicationQuitSession::refused);
+    QSignalSpy ready(&session, &updates::ApplicationQuitSession::exitReady);
+    session.request(300);
+    REQUIRE(session.state() == updates::ApplicationQuitSession::State::Preparing);
+    CHECK(cachedQuitPhase(*window) == "Torrent publisher");
+    QThread::msleep(350);
+    REQUIRE(waitFor([&] { return session.state() == updates::ApplicationQuitSession::State::Refused; }));
+    REQUIRE(refused.count() == 1);
+    checkQuitWarning(quitWarning(refused), "Torrent publisher", "Pending", "before-poll", 300);
+    CHECK(ready.isEmpty());
+    gate->release.release(); QTest::qWait(40);
+    CHECK(ready.isEmpty());
+    session.request(1000);
+    REQUIRE(waitFor([&] { return ready.count() == 1; }));
 }
 #endif

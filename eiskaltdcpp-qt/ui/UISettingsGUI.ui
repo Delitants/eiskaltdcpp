@@ -95,9 +95,16 @@
           <string>Status icon</string>
          </property>
          <property name="checkable">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_TRAY_ICON">
+          <item>
+           <widget class="QCheckBox" name="checkBox_TRAY_OFF">
+            <property name="text">
+             <string>Off</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QRadioButton" name="radioButton_TRAY_COLORED">
             <property name="text">

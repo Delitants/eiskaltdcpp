@@ -55,6 +55,7 @@ public:
     virtual ~Settings();
 
     void navigate(enum Page, int tab = -1);
+    void showLimitsPage();
 
 public slots:
     void accept() override;

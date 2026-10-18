@@ -5,9 +5,28 @@
 #include <QFileInfo>
 #include <QPalette>
 #include <QString>
+#include <QListWidget>
 
 // Shared by the application and UI regression fixtures.
 namespace mac_input_style {
+inline int settingsSidebarWidth(QListWidget *listWidget)
+{
+    if (!listWidget)
+        return 160;
+
+    const QFontMetrics metrics(listWidget->font());
+    int textWidth = 0;
+    for (int row = 0; row < listWidget->count(); ++row) {
+        if (const auto *item = listWidget->item(row))
+            textWidth = qMax(textWidth, metrics.horizontalAdvance(item->text()));
+    }
+    listWidget->doItemsLayout();
+    const int iconWidth = listWidget->iconSize().isValid() ? listWidget->iconSize().width() : 0;
+    // Include item padding, frame, icon spacing and a possible vertical scrollbar.
+    return qMax(160, qMax(listWidget->sizeHintForColumn(0) + 24,
+                         textWidth + iconWidth + 48));
+}
+
 inline QString macBundledStyleIcon(const QString &name)
 {
     const QString bundlePath = QDir(QCoreApplication::applicationDirPath()).absoluteFilePath(
@@ -108,52 +127,35 @@ inline QString macInputContrastStyle(const QPalette &pal)
     const QColor focusBorder = macFocusColor(pal);
     const QColor base = pal.color(QPalette::Base);
     const QColor alternate = macSoftAlternateBase(base, dark);
-    const QColor text = macReadableTextColor(base, dark);
+    const QColor text = pal.color(QPalette::Text);
     const QColor highlight = macSelectionBackground(pal);
     const QColor highlightedText = macReadableForegroundOn(highlight);
     const QColor header = dark ? pal.color(QPalette::Window).lighter(115)
                                : pal.color(QPalette::Window).darker(104);
     const QColor disabledText = pal.color(QPalette::Disabled, QPalette::Text);
-    const QString comboArrow = macBundledStyleIcon(dark ? QStringLiteral("combo-arrow-down-light.svg")
-                                                       : QStringLiteral("combo-arrow-down-dark.svg"));
-    const QString menuArrow = macBundledStyleIcon(dark ? QStringLiteral("menu-arrow-right-light.svg")
-                                                      : QStringLiteral("menu-arrow-right-dark.svg"));
-    const QString menuArrowSelected = macBundledStyleIcon(QStringLiteral("menu-arrow-right-light.svg"));
 
     return QStringLiteral(
         "QLineEdit, QTextEdit, QPlainTextEdit, QComboBox, QAbstractSpinBox {"
         " border: 1px solid %1;"
-        " border-radius: 6px;"
+        " border-radius: 3px;"
         " padding: 2px 6px;"
         " background-color: %4;"
         " color: %6;"
         " selection-background-color: %7;"
         " selection-color: %8;"
         "}"
+        "QLineEdit, QAbstractSpinBox { min-height: 18px; }"
+        "QAbstractSpinBox { min-height: 16px; }"
+        "QCheckBox, QRadioButton { min-height: 24px; spacing: 6px; }"
+        "QLineEdit:disabled, QTextEdit:disabled, QPlainTextEdit:disabled, QComboBox:disabled, QAbstractSpinBox:disabled {"
+        " color: %10; background-color: palette(disabled, base);"
+        "}"
         "QComboBox {"
-        " padding: 3px 30px 3px 9px;"
-        " min-height: 24px;"
-        " combobox-popup: 0;"
+        " padding: 2px 24px 2px 6px;"
+        " min-height: 18px;"
         "}"
         "QLineEdit:focus, QTextEdit:focus, QPlainTextEdit:focus, QComboBox:focus, QAbstractSpinBox:focus {"
         " border: 1px solid %2;"
-        "}"
-        "QComboBox::drop-down {"
-        " subcontrol-origin: border;"
-        " subcontrol-position: top right;"
-        " width: 24px;"
-        " border-left: 1px solid %1;"
-        " border-top-right-radius: 6px;"
-        " border-bottom-right-radius: 6px;"
-        "}"
-        "QComboBox::down-arrow {"
-        " image: %11;"
-        " width: 9px;"
-        " height: 9px;"
-        " margin-right: 7px;"
-        "}"
-        "QComboBox::down-arrow:disabled {"
-        " image: %11;"
         "}"
         "QAbstractSpinBox::up-button, QAbstractSpinBox::down-button {"
         " border-left: 1px solid %1;"
@@ -165,7 +167,6 @@ inline QString macInputContrastStyle(const QPalette &pal)
         " color: %6;"
         " selection-background-color: %7;"
         " selection-color: %8;"
-        " outline: 0;"
         "}"
         "QListView::item, QTreeView::item, QTableView::item {"
         " color: %6;"
@@ -179,57 +180,19 @@ inline QString macInputContrastStyle(const QPalette &pal)
         "}"
         "QComboBox QAbstractItemView {"
         " border: 1px solid %3;"
-        " border-radius: 8px;"
-        " padding: 4px;"
+        " border-radius: 3px;"
+        " padding: 2px;"
         " background-color: %4;"
         " color: %6;"
         " selection-background-color: %7;"
         " selection-color: %8;"
         "}"
         "QComboBox QAbstractItemView::item {"
-        " padding: 3px 10px;"
+        " padding: 2px 6px;"
         " min-height: 20px;"
         "}"
         "QAbstractItemView:disabled, QListView:disabled, QTreeView:disabled, QTableView:disabled {"
         " color: %10;"
-        "}"
-        "QMenu {"
-        " background-color: %4;"
-        " color: %6;"
-        " border: 1px solid %3;"
-        " border-radius: 8px;"
-        " padding: 4px;"
-        "}"
-        "QMenu::item {"
-        " padding: 4px 30px 4px 12px;"
-        " border-radius: 5px;"
-        " min-width: 140px;"
-        "}"
-        "QMenu::item:selected {"
-        " background-color: %7;"
-        " color: %8;"
-        "}"
-        "QMenu::item:disabled {"
-        " color: %10;"
-        "}"
-        "QMenu::separator {"
-        " height: 1px;"
-        " background: %3;"
-        " margin: 4px 7px;"
-        "}"
-        "QMenu::indicator {"
-        " width: 14px;"
-        " height: 14px;"
-        " left: 5px;"
-        "}"
-        "QMenu::right-arrow {"
-        " image: %12;"
-        " width: 9px;"
-        " height: 9px;"
-        " margin-right: 8px;"
-        "}"
-        "QMenu::right-arrow:selected {"
-        " image: %13;"
         "}"
         "QHeaderView::section {"
         " background-color: %9;"
@@ -247,7 +210,7 @@ inline QString macInputContrastStyle(const QPalette &pal)
         "}"
         "QFrame#frame_INPUT {"
         " border: 1px solid %3;"
-        " border-radius: 8px;"
+        " border-radius: 4px;"
         " background-color: %4;"
         "}"
         "QFrame#settingsPagePanel {"
@@ -256,8 +219,7 @@ inline QString macInputContrastStyle(const QPalette &pal)
         "}"
     ).arg(inputBorder.name(), focusBorder.name(), panelBorder.name(),
           base.name(), alternate.name(), text.name(), highlight.name(),
-          highlightedText.name(), header.name(), disabledText.name(),
-          comboArrow, menuArrow, menuArrowSelected);
+          highlightedText.name(), header.name(), disabledText.name());
 }
 
 } // namespace mac_input_style

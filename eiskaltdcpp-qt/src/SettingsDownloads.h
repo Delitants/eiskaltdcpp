@@ -35,7 +35,6 @@ private slots:
     void slotRemoveDownloadTo();
     void slotDownloadToMenu(const QPoint&);
     void slotDownloadToSelectionChanged();
-    void slotCfgPublic();
 
 private:
     void init();

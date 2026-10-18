@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Use the existing `/Users/neolo/ollama_eiskaltdcpp` checkout and `codex/v3.0.0-pre.1` branch. Starting source is `bdbd06c2bd4dc375130101306e0fba9533d6fd5a` plus this documentation checkpoint. Preserve unrelated files; no new worktree.
+- Use the existing checkout (`git rev-parse --show-toplevel`) and `codex/v3.0.0-pre.1` branch. Starting source is `bdbd06c2bd4dc375130101306e0fba9533d6fd5a` plus this documentation checkpoint. Preserve unrelated files; no new worktree.
 - Keep the installed app, profile, transfers, credentials, proxy/server configuration, signing keys, VM, historical artifacts and feeds unchanged.
 - GUI owners, server, timers and mutating APIs stay on GUI. Never detach or terminate workers, drop unfinished owners, or pump GUI events on a worker.
 - The original request budget is 100ms, controlled hold 350ms and `waitFor` helper 5000ms. No widening, removed assertion, skip or green-rerun waiver.

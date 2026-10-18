@@ -144,6 +144,16 @@ QVariant ShortcutsModel::data(const QModelIndex & index, int role) const {
     {
         switch (index.column()) {
         case 0: return item->title;
+        case 1: return QKeySequence::fromString(item->shortcut, QKeySequence::PortableText)
+                .toString(QKeySequence::NativeText);
+        }
+
+        break;
+    }
+    case Qt::EditRole:
+    {
+        switch (index.column()) {
+        case 0: return item->title;
         case 1: return item->shortcut;
         }
 

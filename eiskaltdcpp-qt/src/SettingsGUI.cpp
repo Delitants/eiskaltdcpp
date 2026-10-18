@@ -11,6 +11,7 @@
  */
 
 #include "SettingsGUI.h"
+#include "ExtendedChatLayout.h"
 #include "AppIconTheme.h"
 #include "ChatEdit.h"
 #include "QtContextAware.h"
@@ -201,12 +202,19 @@ void SettingsGUI::init(){
             radioButton_SHOW->setChecked(true);
         checkBox_MINIMIZE_ON_CLOSE->setChecked(qtCtx()->settings()->getBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE));
 
-        groupBox_TRAY->setChecked(qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
+        checkBox_TRAY_OFF->setChecked(!qtCtx()->settings()->getBool(WB_TRAY_ENABLED));
         groupBox_TRAY->setEnabled(QSystemTrayIcon::isSystemTrayAvailable());
         if (qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME))
             radioButton_TRAY_MONOCHROME->setChecked(true);
         else
             radioButton_TRAY_COLORED->setChecked(true);
+
+        const auto updateTrayChoices = [this](bool off) {
+            radioButton_TRAY_COLORED->setEnabled(!off);
+            radioButton_TRAY_MONOCHROME->setEnabled(!off);
+        };
+        connect(checkBox_TRAY_OFF, &QCheckBox::toggled, this, updateTrayChoices);
+        updateTrayChoices(checkBox_TRAY_OFF->isChecked());
 
         if (qtCtx()->settings()->getBool(WB_MAINWINDOW_USE_SIDEBAR))
             comboBox_TABBAR->setCurrentIndex(2);
@@ -228,7 +236,7 @@ void SettingsGUI::init(){
             for (const auto &id : app_icon_theme::modernIds()) {
                 const QString name = id.left(1).toUpper() + id.mid(1);
                 comboBox_APP_ICON_THEME->addItem(app_icon_theme::icon(app_icon_theme::resourcePath(id),
-                    QStringLiteral("configure"), qApp->palette()), id == QStringLiteral("reborn")
+                    QStringLiteral("configure"), qApp->palette()), id == QStringLiteral("superdesign")
                     ? name + QStringLiteral(" (") + tr("Default") + QLatin1Char(')') : name, id);
             }
             comboBox_APP_ICON_THEME->insertSeparator(comboBox_APP_ICON_THEME->count());
@@ -257,7 +265,7 @@ void SettingsGUI::init(){
         const QString appIconTheme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
         const int appIconThemeIndex = comboBox_APP_ICON_THEME->findData(appIconTheme);
         comboBox_APP_ICON_THEME->setCurrentIndex(appIconThemeIndex >= 0 ? appIconThemeIndex
-                                               : comboBox_APP_ICON_THEME->findData(QStringLiteral("reborn")));
+                                               : comboBox_APP_ICON_THEME->findData(QStringLiteral("superdesign")));
 
         if (!comboBox_USER_ICON_THEME) {
             auto *group = new QGroupBox(tr("User list icon theme"), tab_2);
@@ -322,7 +330,6 @@ void SettingsGUI::init(){
             spinBox_CHAT_PICTURE_DAYS = new QSpinBox(group);
             spinBox_CHAT_PICTURE_DAYS->setRange(1, 365);
             spinBox_CHAT_PICTURE_DAYS->setSuffix(tr(" days"));
-            spinBox_CHAT_PICTURE_DAYS->setMaximumWidth(100);
 
             layout->addWidget(labelDir, 0, 0);
             layout->addWidget(lineEdit_CHAT_PICTURE_DIR, 0, 1);
@@ -347,6 +354,13 @@ void SettingsGUI::init(){
         spinBox_PARAGRAPHS->setValue(qtCtx()->settings()->getInt(WI_CHAT_MAXPARAGRAPHS));
 
         comboBox_CHAT_SEPARATOR->setCurrentIndex(comboBox_CHAT_SEPARATOR->findText(qtCtx()->settings()->getStr(WS_CHAT_SEPARATOR)));
+        ChatExtendedLayout::applyExtendedChatLayout(
+            tab_5, gridLayout_8, gridLayout_2,
+            {{label_8, label_9, label_12, label_10, label_11, label, label_6, label_7}},
+            {{comboBox_DBL_CLICK, comboBox_MDL_CLICK, comboBox_DEF_MAGNET_ACTION,
+              comboBox_APP_UNIT_BASE, lineEdit_TIMESTAMP, spinBox_OUT_IN_HIST,
+              spinBox_PARAGRAPHS, comboBox_CHAT_SEPARATOR}},
+            checkBox_CHAT_PICTURE_AUTOCLEAN, spinBox_CHAT_PICTURE_DAYS);
     }
     {//Color tab
         QColor c;
@@ -472,11 +486,12 @@ void SettingsGUI::ok(){
         qtCtx()->settings()->setBool(WB_MAINWINDOW_HIDE, radioButton_HIDE->isChecked());
         qtCtx()->settings()->setBool(WB_MAINWINDOW_MINIMIZE_ON_CLOSE, checkBox_MINIMIZE_ON_CLOSE->isChecked());
 
-        const bool trayEnabledChanged = qtCtx()->settings()->getBool(WB_TRAY_ENABLED) != groupBox_TRAY->isChecked();
+        const bool trayEnabled = !checkBox_TRAY_OFF->isChecked();
+        const bool trayEnabledChanged = qtCtx()->settings()->getBool(WB_TRAY_ENABLED) != trayEnabled;
         const bool trayMonochrome = radioButton_TRAY_MONOCHROME->isChecked();
         const bool trayIconChanged = qtCtx()->settings()->getBool(WB_TRAY_ICON_MONOCHROME) != trayMonochrome;
 
-        qtCtx()->settings()->setBool(WB_TRAY_ENABLED, groupBox_TRAY->isChecked());
+        qtCtx()->settings()->setBool(WB_TRAY_ENABLED, trayEnabled);
         qtCtx()->settings()->setBool(WB_TRAY_ICON_MONOCHROME, trayMonochrome);
 
         if (trayEnabledChanged)
@@ -502,7 +517,7 @@ void SettingsGUI::ok(){
         const QString oldAppIconTheme = app_icon_theme::canonicalId(qtCtx()->settings()->getStr(WS_APP_ICONTHEME));
         const QString newAppIconTheme = comboBox_APP_ICON_THEME
                 ? comboBox_APP_ICON_THEME->currentData().toString()
-                : QStringLiteral("reborn");
+                : QStringLiteral("superdesign");
         const bool appIconThemeChanged = oldAppIconTheme != newAppIconTheme;
 
         qtCtx()->settings()->setStr(WS_APP_ICONTHEME, newAppIconTheme);

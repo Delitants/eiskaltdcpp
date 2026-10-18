@@ -13,6 +13,7 @@
 #include <QStyleOptionToolButton>
 #include <QTextLayout>
 #include <QToolButton>
+#include <QtMath>
 
 namespace {
 class OverflowIcon final : public QIconEngine
@@ -65,18 +66,26 @@ public:
         const QFontMetrics metrics(button->font);
         const int textWidth = metrics.horizontalAdvance(caption(button->text));
         const int side = button->iconSize.width();
-        const int rowHeight = qMax(40, qMax(side, metrics.height()) + 12);
+        const int rowHeight = qMax(28, qMax(side, metrics.height()) + 8);
         const int menu = button->features.testFlag(QStyleOptionToolButton::MenuButtonPopup) ? 16 : 0;
         switch (button->toolButtonStyle) {
         case Qt::ToolButtonTextOnly:
-            return QSize(qBound(64, textWidth + 24, 152) + menu, rowHeight);
+            return QSize(qMin(textWidth + 12, 152) + menu, qMax(24, metrics.height() + 8));
         case Qt::ToolButtonTextBesideIcon:
-            return QSize(qBound(88, textWidth + side + 30, 192) + menu, rowHeight);
-        case Qt::ToolButtonTextUnderIcon:
-            return QSize(qBound(72, textWidth + 20, 120) + menu,
-                         side + metrics.height() * 2 + 16);
+            return QSize(qMin(textWidth + side + 20, 192) + menu, rowHeight);
+        case Qt::ToolButtonTextUnderIcon: {
+            // Integer advances can round down below QTextLayout's fractional
+            // width, eliding even short captions such as "Files".
+            const QFontMetricsF precise(button->font, widget);
+            const auto text = caption(button->text);
+            const int labelWidth = qCeil(qMax(precise.horizontalAdvance(text), precise.boundingRect(text).width()));
+            const int splitWidth = button->features.testFlag(QStyleOptionToolButton::MenuButtonPopup)
+                ? pixelMetric(PM_MenuButtonIndicator, button, widget) : 0;
+            return QSize(qMax(side, labelWidth) + 8 + splitWidth,
+                         button->iconSize.height() + metrics.height() + 6);
+        }
         default:
-            return QSize(side + 16 + menu, rowHeight);
+            return QSize(side + 12 + menu, rowHeight);
         }
     }
 
@@ -95,7 +104,10 @@ public:
         chrome.icon = QIcon();
         chrome.toolButtonStyle = Qt::ToolButtonIconOnly;
         QProxyStyle::drawComplexControl(control, &chrome, painter, widget);
-        QRect content = subControlRect(CC_ToolButton, button, SC_ToolButton, widget).adjusted(8, 6, -8, -6);
+        const bool underIcon = button->toolButtonStyle == Qt::ToolButtonTextUnderIcon;
+        QRect content = subControlRect(CC_ToolButton, button, SC_ToolButton, widget);
+        content.adjust(underIcon ? 4 : 6, underIcon ? 2 : 4,
+                       underIcon ? -4 : -6, underIcon ? -2 : -4);
         const QSize iconSize = button->iconSize;
         const auto mode = !(button->state & State_Enabled) ? QIcon::Disabled
             : button->state & State_MouseOver ? QIcon::Active : QIcon::Normal;
@@ -116,36 +128,14 @@ public:
                 textRect = visualRect(button->direction, content, textRect);
             } else if (style == Qt::ToolButtonTextUnderIcon) {
                 iconRect.moveTopLeft(QPoint(content.center().x() - iconSize.width() / 2 + 1, content.top()));
-                textRect.setTop(iconRect.bottom() + 5);
+                textRect.setTop(iconRect.bottom() + 3);
             } else {
                 iconRect.moveCenter(content.center());
             }
             button->icon.paint(painter, iconRect, Qt::AlignCenter, mode, state);
         }
         if (style == Qt::ToolButtonTextUnderIcon) {
-            const QString text = caption(button->text);
-            QTextLayout layout(text, button->font);
-            QTextOption textOption(Qt::AlignHCenter);
-            textOption.setTextDirection(button->direction);
-            textOption.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-            layout.setTextOption(textOption);
-            layout.beginLayout();
-            auto first = layout.createLine();
-            if (first.isValid()) {
-                first.setLineWidth(textRect.width());
-                first.setPosition(QPointF(0, 0));
-            }
-            auto second = layout.createLine();
-            layout.endLayout();
-            if (first.isValid()) {
-                first.draw(painter, textRect.topLeft());
-                if (second.isValid()) {
-                    const QFontMetrics metrics(button->font);
-                    const QString remainder = metrics.elidedText(text.mid(second.textStart()), Qt::ElideRight, textRect.width());
-                    painter->drawText(textRect.adjusted(0, metrics.height(), 0, 0),
-                        Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, remainder);
-                }
-            }
+            painter->drawText(textRect, Qt::AlignTop | Qt::AlignHCenter | Qt::TextSingleLine, caption(button->text));
         } else if (style == Qt::ToolButtonTextOnly || style == Qt::ToolButtonTextBesideIcon) {
             const auto text = QFontMetrics(button->font).elidedText(caption(button->text), Qt::ElideRight, textRect.width());
             painter->drawText(textRect, Qt::AlignVCenter | Qt::AlignHCenter | Qt::TextSingleLine, text);
@@ -161,7 +151,7 @@ ActionToolBar::ActionToolBar(QWidget *parent) : QToolBar(parent)
     buttonStyle->setParent(this);
     setFont(QApplication::font());
     qApp->installEventFilter(this);
-    setIconSize(QSize(28, 28));
+    setIconSize(QSize(24, 24));
     setMovable(false);
     setFloatable(false);
     setAllowedAreas(Qt::TopToolBarArea);

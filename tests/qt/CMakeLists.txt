@@ -113,6 +113,7 @@ add_executable(eiskaltdcpp-qt-tests
     test_fileopenrequests.cpp
     test_macguiconfigcompatibility.cpp
     test_viewlayout.cpp
+    test_compactstyle.cpp
     test_fileextensionicons.cpp
     test_filemetadata.cpp
     test_dockcursor.cpp

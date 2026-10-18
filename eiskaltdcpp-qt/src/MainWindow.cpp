@@ -173,6 +173,7 @@ public:
         bool quitLayoutsComplete = false;
         bool quitLayoutsSaved = false;
         bool quitWorkersWaiting = false;
+        const char* quitWaitComponent = "Not observed";
         bool quitIntentSaved = true;
         QList<QPointer<QThread>> quitThreads;
         QList<QPointer<QFutureWatcherBase>> quitFutures;
@@ -1036,6 +1037,11 @@ bool MainWindow::quitWorkersPending() const {
     return d->quitWorkersWaiting;
 }
 
+const char* MainWindow::quitWorkerComponent() const {
+    Q_D(const MainWindow);
+    return d->quitWaitComponent;
+}
+
 bool MainWindow::quitProducersRetired() const {
     Q_D(const MainWindow);
     return d->quitSnapshotsComplete;
@@ -1140,7 +1146,10 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
         for (const auto& future : d->quitFutures)
             if (future) pending |= future->isStarted() && !future->isFinished(); else saved = false;
         d->quitWorkersWaiting = pending;
-        if (pending) return false;
+        if (pending) {
+            d->quitWaitComponent = "GUI producer workers";
+            return false;
+        }
         // Shared keys use the most recently edited retained tab, not hash iteration.
         std::stable_sort(layouts.begin(), layouts.end(), [](ArenaWidget* lhs, ArenaWidget* rhs) {
             return view_layout::editSequence(lhs->getWidget()) < view_layout::editSequence(rhs->getWidget());
@@ -1168,6 +1177,10 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
             const auto result = torrentRuntime->retireForQuitChecked();
             if (result.status == eiskalt::torrent::QuitRetirementStatus::Pending) {
                 d->quitWorkersWaiting = true;
+                const QByteArray component(result.component);
+                d->quitWaitComponent = component == "publisher" ? "Torrent publisher" :
+                    component == "engine" ? "Torrent engine" :
+                    component == "Torrent proxy workers" ? "Torrent proxy workers" : "Torrent workers";
                 return false;
             }
             saved = result.status == eiskalt::torrent::QuitRetirementStatus::Ready && saved;
@@ -1177,8 +1190,12 @@ bool MainWindow::stopWorkersForQuit(bool asynchronousPersistence) {
         d->quitSnapshotsComplete = true;
     }
     d->quitWorkersWaiting = settings == WulforSettings::QuitSaveStatus::Pending;
-    if (d->quitWorkersWaiting) return false;
+    if (d->quitWorkersWaiting) {
+        d->quitWaitComponent = "GUI settings";
+        return false;
+    }
     const bool saved = d->quitSnapshotsSaved && settings == WulforSettings::QuitSaveStatus::Ready;
+    d->quitWaitComponent = saved ? "Ready" : "GUI checkpoints";
     d->quitFenceSaved = saved;
     d->quitDrainComplete = true;
     return saved;
@@ -2133,7 +2150,7 @@ void MainWindow::initToolbar(){
 
     d->fBar->setContextMenuPolicy(Qt::CustomContextMenu);
     d->fBar->setWindowTitle(tr("Actions"));
-    d->fBar->setIconSize(QSize(28, 28));
+    d->fBar->setIconSize(QSize(24, 24));
     d->fBar->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(qtCtx()->settings()->getInt(TOOLBUTTON_STYLE, Qt::ToolButtonIconOnly)));
 
     connect(d->fBar, &QWidget::customContextMenuRequested, this, &MainWindow::slotToolbarCustomization);
@@ -3238,7 +3255,7 @@ void MainWindow::showSpeedLimitSettings() {
     if(d_ptr->quitFenced) return;
     show(); raise();
     Settings settings(d_ptr->updateController);
-    settings.navigate(Settings::Page::Connection, 1);
+    settings.showLimitsPage();
     settings.exec();
 }
 

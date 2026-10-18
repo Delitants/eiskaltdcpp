@@ -66,6 +66,7 @@ public:
     const QPixmap &getPixmap() override { return qtCtx()->wulforUtil()->getPixmap(WulforUtil::eiFAVSERVER); }
     ArenaWidget::Role role() const override { return ArenaWidget::FavoriteHubs; }
     bool saveForQuitChecked() override { save(); return true; }
+    void editHub(const QString &address);
 
 protected:
     void closeEvent(QCloseEvent *) override;

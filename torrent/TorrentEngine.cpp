@@ -2364,8 +2364,9 @@ void TorrentEngine::recheckFiles(const QString &id, const QList<int> &indices, q
     if (!reason.isEmpty()) { lock.unlock(); emit error(reason); return; }
     QStringList affectedPaths;
     affectedPaths.reserve(scope.plan->affectedFiles.size());
+    const QDir root(job->savePath);
     for (int index : scope.plan->affectedFiles)
-        affectedPaths.append(QDir(job->savePath).filePath(text(metadata->layout().file_path(lt::file_index_t(index)))));
+        affectedPaths.append(root.filePath(text(metadata->layout().file_path(lt::file_index_t(index)))));
     d->checkAdmissions.insert(id);
     lock.unlock();
     emit storageInvalidating(id);

@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- Use the existing `/Users/neolo/ollama_eiskaltdcpp` checkout, branch `codex/v3.0.0-pre.1`; preserve unrelated work. Starting source checkpoint: `bcf1c1390cadbcacc5aa708c0cfb25146f9a1879` plus this documentation checkpoint.
+- Use the existing checkout (`git rev-parse --show-toplevel`), branch `codex/v3.0.0-pre.1`; preserve unrelated work. Starting source checkpoint: `bcf1c1390cadbcacc5aa708c0cfb25146f9a1879` plus this documentation checkpoint.
 - Keep the installed application, live profile/downloads/shares, private credentials/server settings, signing keys, VM, Docker, historical bundles/providers and prior failed evidence unchanged.
 - Preserve the settings path, `IniFormat`, atomic-sync policy, public getter/setter behavior and legacy XML `hasKey()` semantics.
 - `WulforSettings`, contexts and GUI owners stay on the GUI thread. Only frozen parentless private storage transfers; no competing same-file settings writer or synthetic replacement INI.

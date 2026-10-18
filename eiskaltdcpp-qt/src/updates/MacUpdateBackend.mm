@@ -428,16 +428,28 @@ std::unique_ptr<UpdateBackend> MacUpdateBackend::create(dcpp::DCContext& c) {
 UpdateBackendSelection MacUpdateBackend::createSelection(dcpp::DCContext& c) {
     const auto runtime = currentMacUpdateRuntime();
     if(!runtime) return {std::make_unique<UnsupportedUpdateBackend>(), {}};
+#ifdef EISKALT_MAC_UPDATER_INSTALLATION
+    return {std::unique_ptr<UpdateBackend>(new MacUpdateBackend(c, *runtime, QualifiedPackage::Admitted)),
+        runtime->identity};
+#else
     return {std::unique_ptr<UpdateBackend>(new MacUpdateBackend(c, {}, {},
         QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates", *runtime, nullptr)),
         runtime->identity};
+#endif
 }
+#ifdef EISKALT_MAC_UPDATER_INSTALLATION
+MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, UpdateRuntimeConfig config, QualifiedPackage)
+    : UpdateBackend(nullptr), installationAdmitted(true), impl(new Impl(*this, c, {}, {},
+        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/org.delitants.eiskaltdcpp-updates",
+        std::move(config), true)) {}
+#endif
 MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire, const QString& cache, QObject* p)
     : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, {}, false)) {}
 MacUpdateBackend::MacUpdateBackend(dcpp::DCContext& c, const QString& fixture, transport_detail::Backend wire,
     const QString& cache, UpdateRuntimeConfig config, QObject* p)
     : UpdateBackend(p), impl(new Impl(*this, c, fixture, std::move(wire), cache, std::move(config), true)) {}
 MacUpdateBackend::~MacUpdateBackend() = default;
+bool MacUpdateBackend::supportsInstallation() const { return installationAdmitted; }
 bool MacUpdateBackend::hasPendingWork() const { return impl->busy(); }
 void MacUpdateBackend::check(quint64 op, Channel channel, CheckKind) {
     Q_ASSERT(QThread::currentThread() == thread());

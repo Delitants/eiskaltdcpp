@@ -36,6 +36,8 @@ struct HubFixture : ClientListener {
     test::TestContext fixture;
     std::unique_ptr<RecordingHub> hub;
     int prompts = 0;
+    vector<string> statuses;
+    vector<int> statusFlags;
     HubFixture() {
         auto& context = *fixture.ownedCtx;
         context.timerManager_ = std::make_unique<TimerManager>(context);
@@ -50,7 +52,84 @@ struct HubFixture : ClientListener {
         hub->addListener(this);
     }
     void on(GetPassword, Client*) override { ++prompts; }
+    void on(StatusMessage, Client*, const string& message, int flags) override {
+        statuses.push_back(message);
+        statusFlags.push_back(flags);
+    }
 };
+}
+
+TEST_CASE("ADC weak password challenges report an error instead of silently waiting", "[adc-resources][adc-legacy-challenge]") {
+    HubFixture fixture;
+    fixture.hub->state = Client::STATE_IDENTIFY;
+    fixture.hub->emulateCommand("IGPA ROCDQSPLH7");
+    CHECK(fixture.prompts == 0);
+    CHECK(fixture.hub->salt.empty());
+    REQUIRE(fixture.statuses.size() == 1);
+    REQUIRE(fixture.statusFlags.size() == 1);
+    CHECK(fixture.statusFlags[0] == ClientListener::FLAG_AUTHENTICATION_FAILED);
+    CHECK(fixture.statuses[0].find("password challenge") != string::npos);
+}
+
+TEST_CASE("ADC legacy challenge exception remains bounded and strict by default", "[adc-resources][adc-legacy-challenge]") {
+    for(const string value : vector<string>{"ROCDQSPLH7", "AAAAAAAAAA", string(37, 'A')}) {
+        size_t decoded = 73;
+        CHECK_FALSE(adcPasswordChallengeSize(value, 1024, decoded));
+        REQUIRE(adcPasswordChallengeSize(value, 1024, decoded, true));
+        CHECK(decoded == value.size() * 5 / 8);
+        CHECK_FALSE(adcPasswordChallengeSize(value, value.size() - 1, decoded, true));
+    }
+    for(const string value : {"", "A", "AAAAAAAAA", "AAAAAAAAAAA", "AAAAAAAAAAAAAA",
+                              "rocdqsplh7", "ROCDQSPLH=", "ROCDQSPLH!"}) {
+        size_t decoded = 73;
+        CHECK_FALSE(adcPasswordChallengeSize(value, 1024, decoded, true));
+        CHECK(decoded == 73);
+    }
+}
+
+TEST_CASE("ADC legacy password challenge opt-in belongs only to the exact favourite", "[adc-resources][adc-legacy-challenge]") {
+    HubFixture fixture;
+    auto& hub = *fixture.hub;
+    auto& manager = *fixture.fixture.ownedCtx->getFavoriteManager();
+    FavoriteHubEntry entry(*fixture.fixture.ownedCtx);
+    entry.setServer(hub.getHubUrl());
+    CHECK_FALSE(entry.getLegacyAdcPasswordChallenges());
+    entry.setLegacyAdcPasswordChallenges(true);
+    manager.addFavorite(entry);
+    hub.reloadSettings(true);
+    REQUIRE(hub.allowsLegacyAdcPasswordChallenges());
+    hub.state = Client::STATE_IDENTIFY;
+    const string encoded = "ROCDQSPLH7";
+    hub.emulateCommand("IGPA " + encoded);
+    REQUIRE(fixture.prompts == 1);
+    REQUIRE(fixture.statuses.size() == 1);
+    CHECK(fixture.statuses[0].find("Warning:") == 0);
+    hub.password("fixture-password");
+    REQUIRE(hub.replies.size() == 1);
+    ByteVector bytes(encoded.size() * 5 / 8);
+    Encoder::fromBase32(encoded.c_str(), bytes.data(), bytes.size());
+    TigerHash expected;
+    const string password = "fixture-password";
+    expected.update(password.data(), password.size());
+    expected.update(bytes.data(), bytes.size());
+    CHECK(hub.replies[0].getParam(0) == Encoder::toBase32(expected.finalize(), TigerHash::BYTES));
+    CHECK(hub.salt.empty());
+    CHECK(fixture.statuses.size() == 1);
+    auto* saved = manager.getFavoriteHubEntry(hub.getHubUrl());
+    saved->setLegacyAdcPasswordChallenges(false);
+    hub.reloadSettings(false);
+    CHECK(hub.allowsLegacyAdcPasswordChallenges());
+    hub.reloadSettings(true);
+    CHECK_FALSE(hub.allowsLegacyAdcPasswordChallenges());
+    saved->setLegacyAdcPasswordChallenges(true);
+    hub.reloadSettings(false);
+    CHECK_FALSE(hub.allowsLegacyAdcPasswordChallenges());
+    RecordingHub other(*fixture.fixture.ownedCtx);
+    // Changing the stored address must not carry an exception to another hub.
+    manager.getFavoriteHubEntry(hub.getHubUrl())->setServer("adc://other.invalid");
+    other.reloadSettings(true);
+    CHECK_FALSE(other.allowsLegacyAdcPasswordChallenges());
+    other.shutdown();
 }
 
 TEST_CASE("ADC challenge validation accepts bounded complete Base32 byte strings", "[adc-resources]") {

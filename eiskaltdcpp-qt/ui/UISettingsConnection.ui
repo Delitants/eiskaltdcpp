@@ -283,194 +283,6 @@ and obtain your external IP address as well.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Outgoing connections</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <property name="leftMargin">
-           <number>1</number>
-          </property>
-          <property name="topMargin">
-           <number>1</number>
-          </property>
-          <property name="rightMargin">
-           <number>1</number>
-          </property>
-          <property name="bottomMargin">
-           <number>1</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QWidget" name="widget_2" native="true">
-            <layout class="QGridLayout" name="gridLayout_6">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="1" column="0">
-              <widget class="QRadioButton" name="radioButton_DC">
-               <property name="toolTip">
-                <string>Select this mode if you can make unrestricted outbound connections.
-This includes connecting to any IP address on any port.
-Choose this option if unsure.</string>
-               </property>
-               <property name="text">
-                <string>Direct connection</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QRadioButton" name="radioButton_SOCKS">
-               <property name="toolTip">
-                <string>Select this mode if you want to make outbound connections through
-a SOCKS proxy. The caveats for Passive mode also apply here.
-SOCKS5 proxies are not the same as HTTP proxies.
-DC++'s SOCKS5 support does not include GSSAPI.</string>
-               </property>
-               <property name="text">
-                <string>SOCKS5</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QRadioButton" name="radioButton_SHADOWSOCKS">
-               <property name="toolTip">
-                <string>Select this mode if you want outbound TCP connections to use
-a Shadowsocks AEAD server.</string>
-               </property>
-               <property name="text">
-                <string>Shadowsocks</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QFrame" name="frame_2">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_8">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="1">
-              <widget class="LineEdit" name="lineEdit_SIP">
-               <property name="placeholderText">
-                <string>Proxy server or IP</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" colspan="3">
-              <widget class="LineEdit" name="lineEdit_SUSR"/>
-             </item>
-             <item row="3" column="1" colspan="3">
-              <widget class="QLineEdit" name="lineEdit_SPSWD">
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>Server</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>User</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_8">
-               <property name="text">
-                <string>Password</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Port</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="LineEdit" name="lineEdit_SPORT">
-               <property name="minimumSize">
-                <size>
-                 <width>60</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="inputMask">
-                <string notr="true">00000</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_SHADOWSOCKS_METHOD">
-               <property name="text">
-                <string>Cipher</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBox_SHADOWSOCKS_METHOD"/>
-             </item>
-             <item row="5" column="0" colspan="4">
-              <widget class="QCheckBox" name="checkBox_RESOLVE">
-               <property name="text">
-                <string>Use to resolve hostnames</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0" colspan="4">
-              <widget class="QCheckBox" name="checkBox_SOCKS_STEALTH">
-               <property name="toolTip">
-                <string>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
-When enabled, hubs see normal active/passive mode instead of M:5.</string>
-               </property>
-               <property name="text">
-                <string>Stealth: hide proxy mode from hubs</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="title">
           <string/>
@@ -539,151 +351,431 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_PROXY">
+      <attribute name="title"><string>Proxy</string></attribute>
+      <layout class="QVBoxLayout" name="proxyPageLayout">
+       <item>
+        <widget class="QTabWidget" name="connectionProxyProfiles">
+         <widget class="QWidget" name="tab_GLOBAL_PROXY">
+          <attribute name="title"><string>Global</string></attribute>
+          <layout class="QVBoxLayout" name="globalProxyLayout">
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>Outgoing connections</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_7">
+              <property name="leftMargin">
+               <number>1</number>
+              </property>
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <property name="rightMargin">
+               <number>1</number>
+              </property>
+              <property name="bottomMargin">
+               <number>1</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QWidget" name="widget_2" native="true">
+                <layout class="QGridLayout" name="gridLayout_6">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item row="1" column="0">
+                  <widget class="QRadioButton" name="radioButton_DC">
+                   <property name="toolTip">
+                    <string>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</string>
+                   </property>
+                   <property name="text">
+                    <string>Direct connection</string>
+                   </property>
+                   <property name="checked">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QRadioButton" name="radioButton_SOCKS">
+                   <property name="toolTip">
+                    <string>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</string>
+                   </property>
+                   <property name="text">
+                    <string>SOCKS5</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QRadioButton" name="radioButton_SHADOWSOCKS">
+                   <property name="toolTip">
+                    <string>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</string>
+                   </property>
+                   <property name="text">
+                    <string>Shadowsocks</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QFrame" name="frame_2">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_8">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item row="0" column="1">
+                  <widget class="LineEdit" name="lineEdit_SIP">
+                   <property name="placeholderText">
+                    <string>Proxy server or IP</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1" colspan="3">
+                  <widget class="LineEdit" name="lineEdit_SUSR"/>
+                 </item>
+                 <item row="3" column="1" colspan="3">
+                  <widget class="QLineEdit" name="lineEdit_SPSWD">
+                   <property name="clearButtonEnabled">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_5">
+                   <property name="text">
+                    <string>Server</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_7">
+                   <property name="text">
+                    <string>User</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_8">
+                   <property name="text">
+                    <string>Password</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="label_6">
+                   <property name="text">
+                    <string>Port</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="LineEdit" name="lineEdit_SPORT">
+                   <property name="minimumSize">
+                    <size>
+                     <width>60</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="inputMask">
+                    <string notr="true">00000</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_SHADOWSOCKS_METHOD">
+                   <property name="text">
+                    <string>Cipher</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1" colspan="3">
+                  <widget class="QComboBox" name="comboBox_SHADOWSOCKS_METHOD"/>
+                 </item>
+                 <item row="5" column="0" colspan="4">
+                  <widget class="QCheckBox" name="checkBox_RESOLVE">
+                   <property name="text">
+                    <string>Use to resolve hostnames</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0" colspan="4">
+                  <widget class="QCheckBox" name="checkBox_SOCKS_STEALTH">
+                   <property name="toolTip">
+                    <string>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</string>
+                   </property>
+                   <property name="text">
+                    <string>Stealth: hide proxy mode from hubs</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="tab_HUBLIST_PROXY">
+          <attribute name="title"><string>Hub lists</string></attribute>
+          <layout class="QVBoxLayout" name="hubListProxyPageLayout"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>Limits</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,1">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <property name="topMargin">
+        <number>8</number>
+       </property>
+       <property name="rightMargin">
+        <number>8</number>
+       </property>
+       <property name="bottomMargin">
+        <number>8</number>
+       </property>
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QCheckBox" name="checkBox_THROTTLE_ENABLE">
+         <property name="text">
+          <string>Enable Throttle</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_3">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="toolTip">
-          <string/>
-         </property>
-         <property name="title">
-          <string>Limits</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>10</number>
+          </property>
           <item>
-           <widget class="QCheckBox" name="checkBox_THROTTLE_ENABLE">
-            <property name="text">
-             <string>Enable Throttle</string>
+           <widget class="QGroupBox" name="groupBox_3">
+            <property name="toolTip">
+             <string />
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QFrame" name="frame_3">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
+            <property name="title">
+             <string>Default Limits</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <property name="leftMargin">
-              <number>0</number>
+              <number>8</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>8</number>
              </property>
              <property name="rightMargin">
-              <number>0</number>
+              <number>8</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>8</number>
              </property>
              <item>
               <widget class="QFrame" name="frameBasicLimits">
                <property name="enabled">
                 <bool>false</bool>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
+               <layout class="QGridLayout" name="horizontalLayout" columnstretch="0,0,0,1">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <item row="0" column="0">
                  <widget class="QLabel" name="label_11">
                   <property name="text">
                    <string>Download</string>
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="0" column="1">
                  <widget class="QSpinBox" name="spinBox_DOWN_LIMIT_NORMAL">
                   <property name="maximum">
                    <number>125000</number>
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="0" column="2">
                  <widget class="QLabel" name="label_14">
                   <property name="text">
                    <string>KiB/s</string>
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <spacer name="horizontalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
+                <item row="1" column="0">
                  <widget class="QLabel" name="label_12">
                   <property name="text">
                    <string>Upload</string>
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="1" column="1">
                  <widget class="QSpinBox" name="spinBox_UP_LIMIT_NORMAL">
                   <property name="maximum">
                    <number>125000</number>
                   </property>
                  </widget>
                 </item>
-                <item>
+                <item row="1" column="2">
                  <widget class="QLabel" name="label_15">
                   <property name="text">
                    <string>KiB/s</string>
                   </property>
                  </widget>
                 </item>
-                <item>
-                 <spacer name="horizontalSpacer_6">
+                <item row="0" column="3">
+                 <spacer name="horizontalLayoutTrailingSpace">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
                   </property>
                  </spacer>
                 </item>
                </layout>
               </widget>
              </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBoxScheduledLimits">
+            <property name="title">
+             <string>Scheduled Alternate</string>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QVBoxLayout" name="scheduledLimitsLayout">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
              <item>
               <widget class="QWidget" name="frameOptionalLimits" native="true">
                <property name="enabled">
                 <bool>false</bool>
                </property>
-               <layout class="QGridLayout" name="gridLayout_3">
-                <item row="0" column="0">
+               <layout class="QVBoxLayout" name="gridLayout_3">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <item>
                  <widget class="QCheckBox" name="checkBox_TIME_DEPENDENT_THROTTLE">
                   <property name="text">
                    <string>Alternate speed limit at time from </string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item>
                  <widget class="QFrame" name="frameOptionalLimitsPeriod">
                   <property name="enabled">
                    <bool>false</bool>
@@ -695,6 +787,21 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_4">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="spacing">
+                    <number>6</number>
+                   </property>
                    <item>
                     <widget class="QSpinBox" name="spinBox_BANDWIDTH_LIMIT_START">
                      <property name="maximum">
@@ -728,18 +835,12 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
                     </spacer>
                    </item>
                   </layout>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="2">
+                <item>
                  <widget class="QFrame" name="frameOptionalLimitsValues">
                   <property name="enabled">
                    <bool>false</bool>
@@ -750,7 +851,22 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
                   <property name="frameShadow">
                    <enum>QFrame::Raised</enum>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_10">
+                  <layout class="QGridLayout" name="gridLayout_10" columnstretch="0,0,0,1">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="spacing">
+                    <number>6</number>
+                   </property>
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_9">
                      <property name="text">
@@ -765,72 +881,53 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="3">
-                    <spacer name="horizontalSpacer">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>124</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="0" column="4">
-                    <widget class="QLabel" name="label_10">
-                     <property name="text">
-                      <string>Upload</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="5">
-                    <widget class="QSpinBox" name="spinBox_UP_LIMIT_TIME">
-                     <property name="maximum">
-                      <number>125000</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="6">
-                    <widget class="QLabel" name="label_17">
-                     <property name="text">
-                      <string>KiB/s</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="7">
-                    <spacer name="horizontalSpacer_5">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>124</width>
-                       <height>22</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QSpinBox" name="spinBox_ALTERNATE_SLOTS"/>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_21">
-                     <property name="text">
-                      <string>Slots</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignCenter</set>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="2">
                     <widget class="QLabel" name="label_16">
                      <property name="text">
                       <string>KiB/s</string>
                      </property>
                     </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_10">
+                     <property name="text">
+                      <string>Upload</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QSpinBox" name="spinBox_UP_LIMIT_TIME">
+                     <property name="maximum">
+                      <number>125000</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="QLabel" name="label_17">
+                     <property name="text">
+                      <string>KiB/s</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_21">
+                     <property name="text">
+                      <string>Slots</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignLeading|Qt::AlignVCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QSpinBox" name="spinBox_ALTERNATE_SLOTS" />
+                   </item>
+                   <item row="0" column="3">
+                    <spacer name="gridLayout_10TrailingSpace">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -848,12 +945,6 @@ When enabled, hubs see normal active/passive mode instead of M:5.</string>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
          </property>
         </spacer>
        </item>

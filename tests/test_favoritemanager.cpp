@@ -16,6 +16,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <fstream>
 
 using namespace dcpp;
 
@@ -41,7 +42,130 @@ static void ensureContext() {
     }
 }
 
+TEST_CASE("Hublist priority: fresh defaults prepend hublist.eu without losing existing sources",
+          "[favoritemanager][hublist-priority]") {
+    test::TestContext context;
+    FavoriteManager manager(*context.ownedCtx);
+    const StringList expected = {
+        "https://hublist.eu/hublist.xml.bz2",
+        "https://www.te-home.net/?do=hublist&get=hublist.xml.bz2",
+        "https://dchublist.org/hublist.xml.bz2",
+        "https://dchublist.biz/hublist.xml.bz2",
+        "https://dchublist.ru/hublist.xml.bz2",
+        "https://dcnf.github.io/Hublist/hublist.xml.bz2",
+        "https://dchublist.org/adchublist.xml.bz2"
+    };
+    const auto raw = context.ownedCtx->getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS);
+    CHECK(raw.find(expected.front() + ";") == 0);
+    CHECK(manager.getHubLists() == expected);
+    CHECK(context.ownedCtx->getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS) == raw);
+}
+
+TEST_CASE("Hublist priority: an existing last-position preference moves only in the returned list",
+          "[favoritemanager][hublist-priority]") {
+    test::TestContext context;
+    FavoriteManager manager(*context.ownedCtx);
+    auto *settings = context.ownedCtx->getSettingsManager();
+    const string raw = "https://first.invalid/custom.xml;https://second.invalid/list.xml;"
+                       "https://hublist.eu/hublist.xml.bz2";
+    settings->set(SettingsManager::HUBLIST_SERVERS, raw);
+    const auto path = (context.tmpDir / "hublist-priority-settings.xml").string();
+    REQUIRE(settings->saveChecked(path));
+    const auto readBytes = [&] {
+        std::ifstream input(path, std::ios::binary);
+        REQUIRE(input.good());
+        return string(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>());
+    };
+    const auto preimage = readBytes();
+    const StringList expected = {"https://hublist.eu/hublist.xml.bz2",
+        "https://first.invalid/custom.xml", "https://second.invalid/list.xml"};
+    CHECK(manager.getHubLists() == expected);
+    CHECK(manager.getHubLists() == expected);
+    CHECK(settings->get(SettingsManager::HUBLIST_SERVERS) == raw);
+    CHECK(readBytes() == preimage);
+}
+
+TEST_CASE("Hublist priority: exact decoded hosts promote stably without suffix or URL-text matches",
+          "[favoritemanager][hublist-priority]") {
+    test::TestContext context;
+    FavoriteManager manager(*context.ownedCtx);
+    const StringList ordinary = {
+        "https://hublist.eu.attacker.invalid/list.xml",
+        "https://not-hublist.eu/list.xml",
+        "https://mirror.hublist.eu/list.xml",
+        "https://ordinary.invalid/hublist.eu/list.xml?next=https://hublist.eu/",
+        "https://hublist.eu@attacker.invalid/list.xml",
+        "https://hublist.eu:password@attacker.invalid/list.xml",
+        "https://www.hublist.eu:password@attacker.invalid/list.xml"
+    };
+    const StringList preferred = {
+        "https://www.hublist.eu/custom.xml?preserve=1#fragment",
+        "http://HUBLIST.EU:8080/alternate.xml",
+        "https://hublist.eu/list.xml",
+        "https://hublist.eu/list.xml"
+    };
+    StringList original = {ordinary[0], preferred[0], ordinary[1], preferred[1],
+        ordinary[2], preferred[2], ordinary[3], preferred[3], ordinary[4], ordinary[5], ordinary[6]};
+    string raw;
+    for (const auto &url : original) {
+        if (!raw.empty()) raw += ';';
+        raw += url;
+    }
+    context.ownedCtx->getSettingsManager()->set(SettingsManager::HUBLIST_SERVERS, raw);
+    StringList expected = preferred;
+    expected.insert(expected.end(), ordinary.begin(), ordinary.end());
+    CHECK(manager.getHubLists() == expected);
+    CHECK(context.ownedCtx->getSettingsManager()->get(SettingsManager::HUBLIST_SERVERS) == raw);
+}
+
+TEST_CASE("Hublist priority: custom lists without the exact host are not injected or reordered",
+          "[favoritemanager][hublist-priority]") {
+    test::TestContext context;
+    FavoriteManager manager(*context.ownedCtx);
+    auto *settings = context.ownedCtx->getSettingsManager();
+    const StringList custom = {"https://custom.invalid/private.xml",
+        "https://hublist.eu.attacker.invalid/keep.xml", "https://mirror.hublist.eu/keep.xml"};
+    const string raw = custom[0] + ';' + custom[1] + ';' + custom[2];
+    settings->set(SettingsManager::HUBLIST_SERVERS, raw);
+    CHECK(manager.getHubLists() == custom);
+    CHECK(settings->get(SettingsManager::HUBLIST_SERVERS) == raw);
+}
+
 // ─── Favorite Hubs ──────────────────────────────────────────────────────
+
+TEST_CASE("FavoriteManager: legacy ADC challenge flag defaults off and survives save/load", "[favoritemanager][adc-legacy-challenge]") {
+    test::TestContext context;
+    FavoriteManager manager(*context.ownedCtx);
+    FavoriteHubEntry enabled(*context.ownedCtx), disabled(*context.ownedCtx);
+    enabled.setServer("adcs://legacy.invalid:411");
+    enabled.setLegacyAdcPasswordChallenges(true);
+    disabled.setServer("adcs://strict.invalid:411");
+    CHECK_FALSE(disabled.getLegacyAdcPasswordChallenges());
+    manager.addFavorite(enabled);
+    manager.addFavorite(disabled);
+    REQUIRE(manager.saveChecked());
+    FavoriteManager restored(*context.ownedCtx);
+    restored.load();
+    REQUIRE(restored.getFavoriteHubEntry(enabled.getServer()));
+    REQUIRE(restored.getFavoriteHubEntry(disabled.getServer()));
+    CHECK(restored.getFavoriteHubEntry(enabled.getServer())->getLegacyAdcPasswordChallenges());
+    CHECK_FALSE(restored.getFavoriteHubEntry(disabled.getServer())->getLegacyAdcPasswordChallenges());
+}
+
+TEST_CASE("FavoriteManager: older favourites do not implicitly enable legacy ADC challenges", "[favoritemanager][adc-legacy-challenge]") {
+    test::TestContext context;
+    const auto file = context.tmpDir / "Favorites.xml";
+    {
+        std::ofstream output(file);
+        output << "<Favorites><Hubs><Hub Server=\"adcs://older.invalid:411\" Name=\"Older\"/></Hubs></Favorites>";
+        REQUIRE(output.good());
+    }
+    FavoriteManager manager(*context.ownedCtx);
+    manager.load();
+    auto* entry = manager.getFavoriteHubEntry("adcs://older.invalid:411");
+    REQUIRE(entry);
+    CHECK_FALSE(entry->getLegacyAdcPasswordChallenges());
+}
 
 TEST_CASE("FavoriteManager: addFavorite hub", "[favoritemanager]") {
     ensureContext();

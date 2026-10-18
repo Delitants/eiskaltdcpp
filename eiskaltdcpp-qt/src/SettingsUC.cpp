@@ -53,6 +53,15 @@ SettingsUC::SettingsUC(QWidget *parent) :
     connect(this,           &SettingsUC::upUC,      model, &UCModel::moveUp);
     connect(this,           &SettingsUC::downUC,    model, &UCModel::moveDown);
     connect(model,          &UCModel::selectIndex, this, &SettingsUC::slotSelect);
+    connect(treeView->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this, &SettingsUC::updateActionState);
+    connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged,
+            this, &SettingsUC::updateActionState);
+    connect(model, &QAbstractItemModel::rowsInserted, this, &SettingsUC::updateActionState);
+    connect(model, &QAbstractItemModel::rowsRemoved, this, &SettingsUC::updateActionState);
+    connect(model, &QAbstractItemModel::modelReset, this, &SettingsUC::updateActionState);
+    connect(model, &QAbstractItemModel::layoutChanged, this, &SettingsUC::updateActionState);
+    updateActionState();
 }
 
 SettingsUC::~SettingsUC(){
@@ -74,23 +83,41 @@ QModelIndex SettingsUC::selectedIndex(){
 }
 
 void SettingsUC::slotRemClicked(){
-    emit remUC(selectedIndex());
+    const auto index = selectedIndex();
+    if (index.isValid())
+        emit remUC(index);
 }
 
 void SettingsUC::slotChangeClicked(){
-    emit changeUC(selectedIndex());
+    const auto index = selectedIndex();
+    if (index.isValid())
+        emit changeUC(index);
 }
 
 void SettingsUC::slotUpClicked(){
-    emit upUC(selectedIndex());
+    const auto index = selectedIndex();
+    if (index.isValid() && index.row() > 0)
+        emit upUC(index);
 }
 
 void SettingsUC::slotDownClicked(){
-    emit downUC(selectedIndex());
+    const auto index = selectedIndex();
+    if (index.isValid() && index.row() + 1 < model->rowCount())
+        emit downUC(index);
 }
 
 void SettingsUC::slotSelect(const QModelIndex &i){
     QItemSelectionModel *s_m = treeView->selectionModel();
 
-    s_m->select(i, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+    s_m->setCurrentIndex(i, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+    updateActionState();
+}
+
+void SettingsUC::updateActionState(){
+    const auto index = selectedIndex();
+    const bool selected = index.isValid();
+    pushButton_CH->setEnabled(selected);
+    pushButton_REM->setEnabled(selected);
+    pushButton_UP->setEnabled(selected && index.row() > 0);
+    pushButton_DOWN->setEnabled(selected && index.row() + 1 < model->rowCount());
 }

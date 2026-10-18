@@ -459,6 +459,12 @@ if (BUILD_TESTS AND USE_TORRENT)
     add_executable(eiskalt-mainwindow-toggle-tests
         ${CMAKE_SOURCE_DIR}/tests/qt/test_qt_main.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_mainwindowtoggle.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsdownloads.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_guiformlayout.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_settingslimits.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_preferencessecondary.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_hublistpriority.cpp
+        ${CMAKE_SOURCE_DIR}/tests/qt/test_searchlayout.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_settingsquit.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/test_antispamquitrecovery.cpp
         ${CMAKE_SOURCE_DIR}/tests/qt/applicationquit_fixture_access.cpp
@@ -559,10 +565,12 @@ if (APPLE)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacOpenHandlers.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterMetadata.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterPackaging.cmake)
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterNative.cmake)
     include (${PROJECT_SOURCE_DIR}/../cmake/MacBundleMetadata.cmake)
+else (APPLE)
+    include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterNative.cmake)
 endif (APPLE)
 
-include (${PROJECT_SOURCE_DIR}/../cmake/MacUpdaterNative.cmake)
 eiskalt_add_native_updater(${PROJECT_NAME})
 if(TARGET eiskalt-mainwindow-toggle-tests)
     eiskalt_add_native_updater(eiskalt-mainwindow-toggle-tests)

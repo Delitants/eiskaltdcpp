@@ -41,6 +41,7 @@ private slots:
 
 private:
     QModelIndex selectedIndex();
+    void updateActionState();
 
     UCModel *model;
 };

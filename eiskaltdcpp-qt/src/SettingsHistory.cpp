@@ -15,6 +15,8 @@
 #include "QtContext.h"
 
 #include <QFrame>
+#include <QGridLayout>
+#include <QLabel>
 #include <QPushButton>
 
 #include "WulforSettings.h"
@@ -32,6 +34,39 @@ SettingsHistory::SettingsHistory(QWidget *parent): QWidget(parent) {
     frame->setFrameShape(QFrame::NoFrame);
     frame->setFrameShadow(QFrame::Plain);
 #endif
+
+    // Reuse the existing controls and handlers, but give the two action rows
+    // their own compact columns instead of sharing an expanding label column.
+    while (auto *item = gridLayout->takeAt(0))
+        delete item;
+    delete verticalLayout;
+    verticalLayout = nullptr;
+    auto *clearRows = new QGridLayout(frame);
+    clearRows->setContentsMargins(0, 0, 0, 0);
+    clearRows->setHorizontalSpacing(12);
+    clearRows->setVerticalSpacing(8);
+    clearRows->addWidget(checkBox_SearchHistory, 0, 0);
+    clearRows->addWidget(pushButton_ClearSearchHistory, 0, 1);
+    clearRows->addWidget(checkBox_DirectoriesHistory, 1, 0);
+    clearRows->addWidget(pushButton_ClearDirectoriesHistory, 1, 1);
+    clearRows->setColumnStretch(2, 1);
+    for (auto *check : {checkBox_SearchHistory, checkBox_DirectoriesHistory})
+        check->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+
+    gridLayout->addWidget(frame, 0, 0, 1, 3);
+    gridLayout->addWidget(checkBox_TTHSearchHistory, 1, 0, 1, 3, Qt::AlignLeft);
+    gridLayout->addWidget(label, 2, 0, Qt::AlignLeft);
+    gridLayout->addWidget(spinBox_SearchHistory, 2, 1, Qt::AlignLeft);
+    gridLayout->addWidget(label_2, 3, 0, Qt::AlignLeft);
+    gridLayout->addWidget(spinBox_DirectoriesHistory, 3, 1, Qt::AlignLeft);
+    gridLayout->setColumnStretch(2, 1);
+    gridLayout->setRowStretch(4, 1);
+    for (auto *caption : {label, label_2}) {
+        caption->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        caption->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
+    }
+    for (auto *spin : {spinBox_SearchHistory, spinBox_DirectoriesHistory})
+        spin->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     
     connect(pushButton_ClearSearchHistory, &QPushButton::clicked,
             this, &SettingsHistory::slotClearSearchHistory);
