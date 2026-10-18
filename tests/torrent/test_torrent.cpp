@@ -4672,7 +4672,10 @@ struct EngineDiskProbe {
     explicit EngineDiskProbe(TorrentEngine &engine) {
         release = TorrentEngineTestAccess::call(engine, [r = reads](auto &d) -> std::function<void()> {
             if (!d.records.empty() || d.session) throw std::runtime_error("disk probe needs an unused route");
-            lt::session_params params(sessionSettings(d.config, d.proxy));
+            // Probe sessions must not compete for the configured port in parallel tests.
+            auto probeSettings = d.config;
+            probeSettings.listenPort = 0;
+            lt::session_params params(sessionSettings(probeSettings, d.proxy));
             params.disk_io_constructor = [r](lt::io_context &io, lt::settings_interface const &s, lt::counters &c) {
                 return std::make_unique<selected_recheck_test::CountingDisk>(lt::default_disk_io_constructor(io, s, c), r);
             };
@@ -4703,6 +4706,44 @@ struct EngineDiskProbe {
     }
     int writes() const { std::lock_guard lock(reads->mutex); return reads->writes; }
 };
+}
+
+TEST_CASE("Disk probes isolate listeners from an occupied configured port and each other", "[selected-recheck-engine][selected-recheck-listener]") {
+    application();
+    QTemporaryDir dir;
+    REQUIRE(dir.isValid());
+    QTcpServer reservation;
+    REQUIRE(reservation.listen(QHostAddress::LocalHost));
+    auto firstSettings = isolated(dir.filePath("first-payload"));
+    firstSettings.listenPort = reservation.serverPort();
+    firstSettings.randomizePort = false;
+    auto secondSettings = firstSettings;
+    secondSettings.downloadPath = dir.filePath("second-payload");
+    QStringList errors;
+    TorrentEngine first(dir.filePath("first-state")), second(dir.filePath("second-state"));
+    QObject::connect(&first, &TorrentEngine::error, &first, [&](QString error) { errors << error; });
+    QObject::connect(&second, &TorrentEngine::error, &second, [&](QString error) { errors << error; });
+    first.configure(firstSettings, {});
+    second.configure(secondSettings, {});
+    EngineDiskProbe firstProbe(first), secondProbe(second);
+    REQUIRE(eventually([&] {
+        return !errors.isEmpty() ||
+            (TorrentEngineTestAccess::port(first) != 0 && TorrentEngineTestAccess::port(second) != 0);
+    }));
+    const auto firstPort = TorrentEngineTestAccess::port(first);
+    const auto secondPort = TorrentEngineTestAccess::port(second);
+    INFO(errors.join('\n').toStdString());
+    CAPTURE(firstSettings.listenPort, firstPort, secondPort);
+    REQUIRE(firstPort != 0);
+    REQUIRE(secondPort != 0);
+    CHECK(firstPort != reservation.serverPort());
+    CHECK(secondPort != reservation.serverPort());
+    CHECK(firstPort != secondPort);
+    CHECK(TorrentEngineTestAccess::call(first, [](auto &d) { return d.config.listenPort; }) == reservation.serverPort());
+    CHECK(TorrentEngineTestAccess::call(second, [](auto &d) { return d.config.listenPort; }) == reservation.serverPort());
+    CHECK(reservation.isListening());
+    CHECK(first.shutdownChecked());
+    CHECK(second.shutdownChecked());
 }
 
 TEST_CASE("Held adapter checks honor cancellation and newer activity intent", "[selected-recheck-engine][selected-recheck-held]") {
@@ -5010,7 +5051,9 @@ TEST_CASE("Another adapter job transfers while the chosen job waits for disk", "
     params.flags &= ~(lt::torrent_flags::paused | lt::torrent_flags::auto_managed);
     const auto download = peer.add_torrent(params);
     REQUIRE(eventually([&] { return download.status().state == lt::torrent_status::downloading; }));
-    download.connect_peer({lt::make_address("127.0.0.1"), static_cast<unsigned short>(TorrentEngineTestAccess::port(engine))});
+    int seedPort = 0;
+    REQUIRE(eventually([&] { seedPort = TorrentEngineTestAccess::port(engine); return seedPort != 0; }));
+    download.connect_peer({lt::make_address("127.0.0.1"), static_cast<unsigned short>(seedPort)});
     REQUIRE(eventually([&] { return download.status().is_seeding; }));
     REQUIRE(eventually([&] { return hashFile(dir.filePath("download/other/payload.bin")) == hashFile(dir.filePath("payload/other/payload.bin")); }));
     CHECK(jobSnapshot(engine, chosen).fileCheck.active);

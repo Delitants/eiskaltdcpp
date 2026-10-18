@@ -34,14 +34,29 @@ checked throughout both bundles; physical Intel and native macOS 14/26 runtime
 testing are not established. Whole-archive dependency reproducibility is not
 claimed. A VM is not a release requirement.
 
+## Post-Release Test Repair
+
+The intermittent loopback seeding timeout was reproduced as a test-helper port
+collision, including with concurrent ARM/Intel release test binaries. The helper
+now gives each native session an OS-assigned listener without changing the
+engine's configured settings or its production port policy. The transfer test
+also checks listener readiness before connecting; its 10-second payload deadline
+is unchanged.
+
+A real reserved-port regression failed before the repair and passed afterward.
+Three concurrent ARM/Intel pairs passed the regression and original transfer
+case. Both complete updated Torrent backend suites then passed **168 cases and
+18,703 assertions per CPU**, without failures or skips. Review found no material
+issues. This is a source/test-only follow-up; the published and installed pre.2
+application, updater feeds and release assets are unchanged. The rest of the
+application suites were not rerun for this test-only repair.
+
 ## Remaining Work
 
 - Native minimum-OS and physical Intel compatibility coverage.
 - Broader Windows/Linux runtime QA.
 - Native-speaker translation review.
 - Further dependency reproducibility tooling.
-- Investigation of an intermittent loopback seeding-deadline miss under load;
-  three isolated repetitions and the full unchanged suite subsequently passed.
 - Developer ID signing and notarization when an identity is available.
 
 The hosted wiki now provides user documentation. Its maintained source is
