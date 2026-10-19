@@ -1,53 +1,55 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:eiskalt="https://eiskaltdcpp.org/xml-namespaces/updates/1" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0"><channel><title>EiskaltDC++ apple-silicon</title><item><title>EiskaltDC++ 3.0.0-pre.2</title><sparkle:version>30000002</sparkle:version><sparkle:shortVersionString>3.0.0-pre.2</sparkle:shortVersionString><sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion><sparkle:channel>preview</sparkle:channel><eiskalt:bundleIdentifier>com.github.eiskaltdcpp</eiskalt:bundleIdentifier><eiskalt:cpu>arm64</eiskalt:cpu><description># EiskaltDC++ 3.0.0-pre.2
+<rss xmlns:eiskalt="https://eiskaltdcpp.org/xml-namespaces/updates/1" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0"><channel><title>EiskaltDC++ apple-silicon</title><item><title>EiskaltDC++ 3.0.0-pre.3</title><sparkle:version>30000010</sparkle:version><sparkle:shortVersionString>3.0.0-pre.3</sparkle:shortVersionString><sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion><sparkle:channel>preview</sparkle:channel><eiskalt:bundleIdentifier>com.github.eiskaltdcpp</eiskalt:bundleIdentifier><eiskalt:cpu>arm64</eiskalt:cpu><description># EiskaltDC++ 3.0.0-pre.3
 
-Translation-completion preview of the integrated Direct Connect and BitTorrent client.
+Preview of the integrated Direct Connect and BitTorrent client.
 
-## Changes
+## Changes Since pre.2
 
-- Completed all 19,006 outstanding catalog entries across the Qt interface,
-  DC++ core, and legacy GTK interface. This includes 972 explicit English
-  source-language entries in the GTK catalog. All 25 Qt language catalogs
-  now have zero unfinished entries.
-- Corrected upload-recipient wording and small label/keyboard-accelerator issues
-  found during cross-review.
-- Added complete-catalog checks, including fuzzy and incomplete gettext plurals,
-  and verified roundtrips for all 52,150 active Qt messages.
-- Screened 480 settings views in the seven newly completed GUI languages and
-  English at two widths and two palettes. No clipping candidates were detected
-  in the tested labels, checkboxes and radio buttons. This is static screening,
-  not native-speaker certification or complete native UI acceptance.
+- Compact native interface refinements, complete toolbar captions, and a
+  separate default Superdesign icon family. Existing icon families remain available.
+- Consolidated global, Torrent-only and hub-list proxy configuration; reorganized
+  download settings and corrected settings alignment, checkbox and TLS controls.
+- Explicit per-hub compatibility for legacy short password challenges, disabled
+  by default with a warning. Other hubs retain strict challenge validation.
+- Visual BBCode composing in hub/private-message inputs, including complete
+  supported typed/pasted markup, formatting actions, history and undo/redo.
+  Unknown or incomplete tags remain literal; previews do not fetch remote content.
+- Refreshed all 25 Qt/core language catalogs for the current interface.
+- Refined quit/update admission diagnostics and expanded regression coverage.
 
-Runtime C++ implementation remains the same as pre.1; this release incorporates
-completed translation resources and documentation/verification updates.
-
-## Downloads
+## Downloads And Updates
 
 - Intel x86_64 only: macOS 14 or newer.
 - Apple Silicon arm64 only: macOS 26 or newer.
 
-Both include the native updater. Internal macOS build **30000002** orders this
-release after pre.1/build 30000001. Updates are staged and installed only after
-an explicitly committed normal quit.
+Both include the native updater. Internal macOS build **30000010** orders this
+release after pre.2/build30000002. Eiskalt owns update transport and staging;
+installation is admitted only after an explicitly committed normal quit.
 
-## Signing And Test Limits
+The applications are **ad-hoc signed, not Developer ID signed or notarized**.
+Sparkle update archives and feeds are separately authenticated with the pinned
+update key. macOS may require approval before first launch.
 
-These apps are **ad-hoc signed, not Developer ID signed or notarized**.
-Sparkle archives and feeds are separately authenticated with the pinned update
-key. macOS may require approval before first launch.
+## Verification Limits
 
-Both CPUs passed five disposable full-application updater/quit scenarios,
-including canceled quit and forced precommit exit. Actual bundled Cocoa startup
-and dependency-closure checks passed on macOS 27; Intel execution used Rosetta.
-Advertised minimum OS versions are checked in every bundled Mach-O image,
-but native macOS 14/26 and physical Intel acceptance remain unverified.
+Both CPU builds passed 2,083 fresh local regression cases each; eight opt-in
+network tests per CPU were skipped. An unchanged Torrent test binary explicitly
+reuses its prior 169-case result rather than claiming a new run. Production
+updater-owner capability probes and isolated bundled Cocoa startup passed on
+macOS 27; Intel ran under Rosetta. These are not physical Intel or native
+minimum-OS acceptance tests, nor proof of complete live-network behavior.
 
-Native-speaker review, broader Windows/Linux QA and whole-archive dependency
-reproducibility remain future work. Project and matching dependency sources,
-notices and SHA-256 hashes accompany the release.
+The historical intermittent private checked-shutdown refusal remains unresolved.
+Native NSColorPanel automation, native-speaker translation review and broader
+Windows/Linux qualification remain limitations. Dependency section/source mapping
+is not whole-archive reproducibility or legal certification. Exact consumed
+OpenSSL 3.4.1 headers and provenance are supplied; the full 3.4.1 upstream archive
+is not locally retained/verified. Runtime OpenSSL mappings remain 3.6.3.
 
-Application source: `f2c668f2d1f3559eeca05d01d3cc720e457ced71`.
-</description><enclosure url="https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.2/EiskaltDCpp-3.0.0-pre.2-macOS26-plus-AppleSilicon-arm64.zip" length="63319322" type="application/octet-stream" sparkle:os="macos" sparkle:edSignature="rdJXruh0Y07qHCKQVn6JqvTl+dQcIB3iUJ/Q60n1ve8YIg9+23lfBeIC4pGPsyvc9kkTOwzqNtj3xnMltdHABg==" eiskalt:sha256="8f1e16e86353c2a1ae0b5b3ef17889e15e026f019b9f1eaa0bfbcf219c226722" /></item></channel></rss><!-- sparkle-signatures:
-edSignature: 97aIfofxH+6pDe3UxSdoD46/7erwJp+ehcOkiuV3hGSjtUU/5q8Ubhso8cTTd/aKr7KxS4B3Ekxp7R8XLH54CQ==
-length: 3352
+Project and matching dependency sources, component notices and SHA-256 hashes
+accompany these downloads. Application source:
+`813ef5b7549f263c2ad5da815013cfa29eb83848`.
+</description><enclosure url="https://github.com/Delitants/eiskaltdcpp/releases/download/v3.0.0-pre.3/EiskaltDCpp-3.0.0-pre.3-macOS26-plus-AppleSilicon-arm64.zip" length="63720725" type="application/octet-stream" sparkle:os="macos" sparkle:edSignature="GIMoaS13wUBTNpfaQVrsOlfUNaZS6ybJB06OsdmnLYeV7Sz0K0+61mCarO5Sb/o6RwEr6iacktyMNEpfFITuCQ==" eiskalt:sha256="4c6428f9f90a9e674088182e9ea3fdd332243d991bc1525e6fdf2df4184092d0" /></item></channel></rss><!-- sparkle-signatures:
+edSignature: GUaxFJn+S99WyxOVLRsWf3oAtMqQeE9slVdNXFB9QTAp8pMPlTIBXsmwf/RmrNfOvYlccuTsHGsOGyeZ2WedAQ==
+length: 3740
 -->
