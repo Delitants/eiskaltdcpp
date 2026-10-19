@@ -1,10 +1,16 @@
 # Release Source And Notice Inventory
 
-This records the earlier standalone macOS ARM64 `3.0.0-pre.1` inventory,
-split-CPU input preparation and the remaining updater-enabled release gates.
-It is not a legal certification or a claim that both final CPU flavors have
-complete source/notice sets. Verify the actual distributed artifacts and their
-checksums.
+The current published preview is `3.0.0-pre.3` / build `30000010`. Its
+[release qualification](releases/3.0.0-pre.3-readiness.md) records the actual
+per-CPU source/notice mapping, authenticated archives and public-byte checks,
+including the older consumed-header provenance limitation.
+
+This page also retains earlier standalone ARM64 `3.0.0-pre.1` and split-CPU
+preparation checkpoints. Historical pending statements below describe those
+earlier stages, not uncompleted pre.3 publication tasks or the current updater's
+supported capabilities. This is not legal certification, exhaustive source
+completeness or whole-build reproducibility proof. Verify the actual distributed
+artifacts and their checksums.
 
 ## Project Sources
 
@@ -29,6 +35,21 @@ Run the offline generator check and tests documented in
 survive the actual application/installer packaging, not just the source tree.
 The legacy icons keep their existing provenance and are not covered by the
 Phosphor notice.
+
+The separate Superdesign theme uses pinned Lucide 1.8.0 geometry under ISC,
+including the upstream MIT notices for Feather-derived icons. Its
+[complete license](https://github.com/Delitants/eiskaltdcpp/blob/813ef5b7549f263c2ad5da815013cfa29eb83848/tools/icon-themes/vendor-lucide/LICENSE),
+[provenance](https://github.com/Delitants/eiskaltdcpp/blob/813ef5b7549f263c2ad5da815013cfa29eb83848/tools/icon-themes/vendor-lucide/provenance.json) and
+[offline regeneration guide](https://github.com/Delitants/eiskaltdcpp/blob/813ef5b7549f263c2ad5da815013cfa29eb83848/tools/icon-themes/SUPERDESIGN.md) accompany the
+retained source modules and node arrays. The theme's LICENSE must match the
+vendored notice byte-for-byte in each actual distributed app, not just in the
+source tree. This addition does not relicense legacy artwork.
+
+Both actual pre.3 release bundles retain the Lucide ISC/Feather MIT notices
+alongside existing icon notices. Their final source/dependency maps, authenticated
+archives and anonymous public-byte readback passed the bounded qualification
+described above. This does not relicense legacy artwork or establish legal
+certification for the complete dependency closure.
 
 ## Modified Qt Cocoa Plugin
 
@@ -71,11 +92,12 @@ Keep the matching pinned source archive available alongside the binary release.
 The offline fixture ZIP round-trip verifies these materials and helper signatures
 survive packaging; it is not evidence that the actual release app includes them.
 
-Opt-in CMake/framework packaging is implemented and audited on disposable
-bundles; it does not enable the updater backend. Final signing of both actual apps,
-release source/notice inventories and native minimum-OS/installer acceptance are
-still pending. The older 38-package candidate inventory below predates Sparkle;
-it is not a completeness claim for the future updater-enabled release.
+Both actual pre.3 apps include the updater backend, thin Sparkle framework/helpers,
+matching source/notice materials and separately authenticated update archives.
+Ad-hoc app signing and bounded unique-ID installer fixtures passed. Native
+minimum-OS and same-ID replacement/recovery acceptance remain separate. The older
+38-package candidate inventory below predates Sparkle and is not the final pre.3
+dependency inventory.
 
 ## Dependency Closure Inventory
 

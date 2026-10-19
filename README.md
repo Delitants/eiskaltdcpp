@@ -7,12 +7,15 @@ transfer monitoring, hub chat and controlled publication of completed Torrent
 files to DC++.
 
 This repository contains the current 3.x development work. The current preview is
-[v3.0.0-pre.2](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.2):
+[v3.0.0-pre.3](https://github.com/Delitants/eiskaltdcpp/releases/tag/v3.0.0-pre.3),
+internal build **30000010**:
 separate **Intel-only macOS 14+** and **Apple-Silicon-only macOS 26+** packages,
 both with the built-in updater. These preview apps are **not notarized or
 Developer ID signed**; update archives and feeds have separate authenticated
 Sparkle signatures. See the release notes for testing limits and source downloads.
-All 74 translation catalogs are complete; native-speaker review remains welcome.
+All 74 translation catalogs are complete. This preview also includes 950
+entries covering the redesigned settings and new core/DHT messages, with 126
+translation checks passing. Native-speaker review remains welcome.
 
 ## Current Work
 
@@ -33,6 +36,11 @@ All 74 translation catalogs are complete; native-speaker review remains welcome.
   persistent column widths and a categorized Live Log.
 - DC certificate lifecycle management and an off-by-default option to omit the
   DHT capability from hub advertisements without changing DHT enablement.
+- The current preview includes compact Preferences and toolbar layouts, a
+  visual BBCode chat composer, a separate Superdesign icon theme,
+  consolidated proxy settings and scoped
+  legacy ADC authentication compatibility. See [the GUI guide](docs/compact-native-gui.md)
+  and [authentication guidance](docs/adc-legacy-authentication.md).
 
 The Torrent backend is optional and currently requires Qt6 and
 **libtorrent-rasterbar 2.1+**. DC and Torrent pieces are **not combined** into one
@@ -93,8 +101,10 @@ lower. Do not ship bundles with external Homebrew library dependencies.
 The v3 macOS release targets separate **Intel-only macOS 14+** and
 **Apple-Silicon-only macOS 26+** ZIPs, explicitly named by architecture and minimum
 OS. See [macOS release builds](macos/RELEASE.md) for filenames, build presets and
-whole-bundle validation. These targets do not imply both artifacts or native
-minimum-OS acceptance are already complete.
+whole-bundle validation. Both pre.3 artifacts are published; native minimum-OS
+and physical Intel runtime acceptance remain separate. See the
+[pre.3 qualification](docs/releases/3.0.0-pre.3-readiness.md) for verified results
+and remaining limits.
 
 ## Contributing
 
@@ -113,4 +123,4 @@ The project's `COPYING` file specifies the GNU General Public License, version 3
 or later, with an OpenSSL linking exception. Individual source files and bundled
 components retain their own notices and licenses.
 See the [release notice inventory](docs/third-party-release-inventory.md) for
-the added icon families, modified Cocoa plugin and pending binary notice checks.
+the added icon families, modified Cocoa plugin and release-materials limits.
