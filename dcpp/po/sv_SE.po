@@ -979,3 +979,36 @@ msgstr "DHT inaktiverat: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Den sparade DC++-hashcachen kan inte ogiltigförklaras. Kontrollera behörigheterna för profilmappen innan du startar om."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Fel vid omkontroll av %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Filstorleken ändrades under hashberäkningen"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Lagring av hashdata misslyckades; starta om innan du lägger till nya hashvärden"
+
+msgid "Hash data storage is unavailable"
+msgstr "Lagring av hashdata är inte tillgänglig"
+
+msgid "Invalid hash data tree"
+msgstr "Ogiltigt hashdataträd"
+
+msgid "Invalid hash data write position"
+msgstr "Ogiltig skrivposition för hashdata"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Lösenordsautentisering misslyckades: ogiltig eller svag ADC-lösenordsutmaning. Kompatibilitet med äldre utmaningar är inaktiverad som standard; aktivera den endast för en betrodd favorithubb."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Lösenordsautentisering misslyckades: ADC-lösenordsutmaning saknas."
+
+msgid "Unable to write hash data file"
+msgstr "Kunde inte skriva hashdatafilen"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Oväntat filslut vid omkontroll"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Varning: en äldre ADC-lösenordsutmaning godtas för denna favorithubb. Dess svagare autentiseringsutmaning uppfyller inte ADC-specifikationen."

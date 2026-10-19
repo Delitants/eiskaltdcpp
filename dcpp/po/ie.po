@@ -942,3 +942,36 @@ msgstr "DHT desactivat: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Ne posse invalidar li salvat cache de hashes DC++. Controla li permissiones del fólder de profil ante restartar."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Errore reverificante %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Li grandore del file ha changeat durant li calculation del hash"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Immagasination de data de hash fallit; restarta ante adjunter nov hashes"
+
+msgid "Hash data storage is unavailable"
+msgstr "Immagasination de data de hash ne es disponibil"
+
+msgid "Invalid hash data tree"
+msgstr "Ínvalid árbor de data de hash"
+
+msgid "Invalid hash data write position"
+msgstr "Ínvalid position de scrition de data de hash"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Autentication per contrasigne fallit: ínvalid o debil desfida de contrasigne ADC. Compatibilitá con heredat desfidas es desactivat quam predefinition; activa it solmen por un fidat preferet hub."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Autentication per contrasigne fallit: desfida de contrasigne ADC manca."
+
+msgid "Unable to write hash data file"
+msgstr "Ne posse scrir li file de data de hash"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Ínexpectat fine del file durant reverification"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Avise: acceptation de un heredat desfida de contrasigne ADC por ti-ci preferet hub. Su plu debil desfida de autentication ne satisfa li specification ADC."

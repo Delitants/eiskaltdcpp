@@ -999,3 +999,36 @@ msgstr "DHT deaktiviert: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Der gespeicherte DC++-Hash-Cache kann nicht ungültig gemacht werden. Prüfen Sie vor dem Neustart die Zugriffsrechte für den Profilordner."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Fehler beim erneuten Prüfen von %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Dateigröße während der Hash-Berechnung geändert"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Speichern der Hash-Daten fehlgeschlagen; vor dem Hinzufügen neuer Hashes neu starten"
+
+msgid "Hash data storage is unavailable"
+msgstr "Hash-Datenspeicher ist nicht verfügbar"
+
+msgid "Invalid hash data tree"
+msgstr "Ungültiger Hash-Datenbaum"
+
+msgid "Invalid hash data write position"
+msgstr "Ungültige Schreibposition für Hash-Daten"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Passwortauthentifizierung fehlgeschlagen: ungültige oder schwache ADC-Passwort-Challenge. Die Kompatibilität mit veralteten Challenges ist standardmäßig deaktiviert; aktivieren Sie sie nur für einen vertrauenswürdigen bevorzugten Hub."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Passwortauthentifizierung fehlgeschlagen: ADC-Passwort-Challenge fehlt."
+
+msgid "Unable to write hash data file"
+msgstr "Hash-Datendatei kann nicht geschrieben werden"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Unerwartetes Dateiende beim erneuten Prüfen"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Warnung: Eine veraltete ADC-Passwort-Challenge wird für diesen bevorzugten Hub akzeptiert. Ihre schwächere Authentifizierungs-Challenge entspricht nicht der ADC-Spezifikation."

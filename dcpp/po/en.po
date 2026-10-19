@@ -930,3 +930,36 @@ msgstr "DHT disabled: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Error rechecking %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "File size changed while hashing"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Hash data storage failed; restart before adding new hashes"
+
+msgid "Hash data storage is unavailable"
+msgstr "Hash data storage is unavailable"
+
+msgid "Invalid hash data tree"
+msgstr "Invalid hash data tree"
+
+msgid "Invalid hash data write position"
+msgstr "Invalid hash data write position"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Password authentication failed: missing ADC password challenge."
+
+msgid "Unable to write hash data file"
+msgstr "Unable to write hash data file"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Unexpected end of file while rechecking"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."

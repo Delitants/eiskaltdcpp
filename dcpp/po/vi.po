@@ -945,3 +945,36 @@ msgstr "Đã tắt DHT: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Không thể vô hiệu hóa bộ nhớ đệm giá trị băm DC++ đã lưu. Hãy kiểm tra quyền truy cập thư mục hồ sơ trước khi khởi động lại."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Lỗi khi kiểm tra lại %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Kích thước tệp đã thay đổi trong khi tính giá trị băm"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Lưu dữ liệu băm thất bại; hãy khởi động lại trước khi thêm giá trị băm mới"
+
+msgid "Hash data storage is unavailable"
+msgstr "Kho lưu trữ dữ liệu băm không khả dụng"
+
+msgid "Invalid hash data tree"
+msgstr "Cây dữ liệu băm không hợp lệ"
+
+msgid "Invalid hash data write position"
+msgstr "Vị trí ghi dữ liệu băm không hợp lệ"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Xác thực bằng mật khẩu thất bại: yêu cầu thử thách mật khẩu ADC không hợp lệ hoặc yếu. Khả năng tương thích kiểu cũ bị tắt theo mặc định; chỉ bật cho một trạm trung tâm yêu thích đáng tin cậy."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Xác thực bằng mật khẩu thất bại: thiếu yêu cầu thử thách mật khẩu ADC."
+
+msgid "Unable to write hash data file"
+msgstr "Không thể ghi tệp dữ liệu băm"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Gặp cuối tệp ngoài dự kiến khi kiểm tra lại"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Cảnh báo: đang chấp nhận yêu cầu thử thách mật khẩu ADC kiểu cũ cho trạm trung tâm yêu thích này. Yêu cầu thử thách xác thực yếu hơn của trạm này không đáp ứng đặc tả ADC."

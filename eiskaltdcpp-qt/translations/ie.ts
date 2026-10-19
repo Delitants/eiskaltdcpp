@@ -1645,6 +1645,16 @@ Preferet usator</translation>
             <source>Search flood detected: %1</source>
             <translation>Inundation de serchas detectet: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Aperter parametres</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Reprovar</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4099,6 +4109,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>Provante TCP e UDP per %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Conduida de conexion</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Base de data de landes</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Actualisationes del adresse extern</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Proxy global</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS e certificates</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Ti-ci proxy HTTP es índependent del rutes global e de torrentes. Lassa li camp de host vacui por conexer directmen al listes de hubs.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Torrentes</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5010,6 +5055,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Quo provar (solmen diagnostica)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP es desactivat o null convenent proxy es configurat. Activa Usar UDP de SOCKS5 in Conexion &gt; Proxy &gt; Torrentes e executa Testar proxy por verificar li servitor. DHT e nodos de inicie deveni alor disponibil. Null alternativa direct es permisset.</translation>
         </message>
 </context>
     <context>
@@ -7340,6 +7390,16 @@ Ordinat secun peers por descarga, poy peers por carga.</translation>
             <source>Password</source>
             <translation>Contrasigne</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Permisser heredat desfidas de contrasigne ADC por ti-ci hub (min secur)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Desactivat quam predefinition. Accepta heredat desfidas de adminim six octetes solmen por ti-ci preferet hub. To debilisa li validation del desfida, ne TLS o li rutage del proxy. Reconexe pos changear ti-ci option.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8485,6 +8545,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Aplicat quande reconexer a hubs ADC/NMDC. Li parametre de activation de DHT resta ínchangeat; to ne garanti privacitá.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Limites predefinit</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Ne anunciar li mode de proxy SOCKS5 in NMDC $MyINFO.
+    Si activ, hubs vide li normal mode activ/passiv in vice de M:5.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Global</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Listes de hubs</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Proxy</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Alternative planat</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Selecte ti-ci mode si vu posse far connexiones exeant sin restrictiones.
+    To include conexer a quelcunc adresse IP sur quelcunc port.
+    Selecte ti-ci option si vu ne es cert.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Selecte ti-ci mode si vu vole que connexiones TCP exeant usa
+    un servitor Shadowsocks AEAD.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Selecte ti-ci mode si vu vole far connexiones exeant tra
+    un proxy SOCKS. Li restrictiones del mode passiv aplica se anc ci.
+    Proxys SOCKS5 ne es li sam quam proxys HTTP.
+    Li supporte de SOCKS5 de DC++ ne include GSSAPI.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -8973,6 +9092,31 @@ ex li linea; vu deve far to manualmen.</translation>
             <source>Allow simultaneous uploads by one IP</source>
             <translation>Permisser simultan cargamentes a un IP</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Fólderes predefinit e por íncomplet descargamentes</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Fólder predefinit de descargamentes</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Rapid-ligamentes de destination salvat</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Rapid-ligamentes salvat por li menú Descargar a. Ili ne changea li fólder predefinit de descargamentes ni li fólder de íncomplet descargamentes supra.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Usar un separat fólder por íncomplet descargamentes</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9312,6 +9456,11 @@ ili es usualmen disponibil solmen por operatores</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Fondes</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Ínactiv</translation>
         </message>
     </context>
     <context>

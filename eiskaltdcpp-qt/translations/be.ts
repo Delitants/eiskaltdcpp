@@ -1649,6 +1649,16 @@ Favorite user</source>
             <source>Search flood detected: %1</source>
             <translation>Выявілі назолу ў пошуку: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Адкрыць налады</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Паўтарыць спробу</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4159,6 +4169,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>Тэставанне TCP і UDP праз %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Паводзіны злучэньня</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>База зьвестак пра краіны</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Абнаўленьні вонкавага адрасу</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Глябальны проксі</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS і сэртыфікаты</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Гэты HTTP-проксі не залежыць ад глябальнага маршруту і маршруту торэнтаў. Пакіньце поле хоста пустым, каб злучацца са сьпісамі асяродзьдзяў наўпрост.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Торэнты</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5082,6 +5127,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Што праверыць (толькі дыягностыка)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP выключаны або прыдатны проксі не наладжаны. Уключыце «Выкарыстоўваць SOCKS5 UDP» у разьдзеле «Злучэньне &gt; Проксі &gt; Торэнты» і націсьніце «Праверыць проксі», каб праверыць сэрвэр. Пасьля гэтага стануць даступнымі DHT і вузлы пачатковага падлучэньня. Пераход да прамога злучэньня пры збоі не дазваляецца.</translation>
         </message>
 </context>
     <context>
@@ -7416,6 +7466,16 @@ Sorted by downloading peers, then uploading peers.</source>
             <source>Password</source>
             <translation>Пароль</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Дазволіць састарэлыя запыты ADC для праверкі пароля для гэтага асяродзьдзя (менш бясьпечна)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Прадвызначана выключана. Прымае састарэлыя запыты даўжынёй ня менш за шэсьць байтаў толькі для гэтага ўлюбёнага асяродзьдзя. Гэта паслабляе праверку запыту, але не TLS і не маршрутызацыю праз проксі. Пасьля зьмены гэтай налады перападлучыцеся.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8576,6 +8636,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Ужываецца пры перападключэнні да хабаў ADC/NMDC. Налада ўключэння DHT не змяняецца; гэта не гарантуе прыватнасць.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Прадвызначаныя абмежаваньні</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Не паведамляць пра рэжым проксі SOCKS5 у NMDC $MyINFO.
+    Калі ўключана, асяродзьдзі бачаць звычайны дзейны/нядзейны рэжым замест M:5.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Глябальны</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Сьпісы асяродзьдзяў</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Проксі</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Альтэрнатыўныя паводле раскладу</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Абярыце гэты рэжым, калі можаце ўсталёўваць выходныя злучэньні без абмежаваньняў.
+    Гэта ўключае злучэньні з любым IP-адрасам на любым порце.
+    Абярыце гэты варыянт, калі ня ўпэўненыя.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Абярыце гэты рэжым, калі хочаце накіроўваць выходныя TCP-злучэньні праз
+    сэрвэр Shadowsocks AEAD.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Абярыце гэты рэжым, калі хочаце ўсталёўваць выходныя злучэньні праз
+    SOCKS-проксі. Тут таксама дзейнічаюць абмежаваньні нядзейнага рэжыму.
+    Проксі SOCKS5 адрозьніваюцца ад HTTP-проксі.
+    Падтрымка SOCKS5 у DC++ не ўключае GSSAPI.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9071,6 +9190,31 @@ from the queue either, you must do that manually.</source>
             <source>Remove</source>
             <translation>Выкрасьліць</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Прадвызначаныя тэчкі і тэчкі няскончаных сьцягваньняў</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Прадвызначаная тэчка сьцягваньняў</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Захаваныя скароты да тэчак прызначэньня</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Захаваныя скароты для мэню «Сьцягнуць у». Яны не зьмяняюць прадвызначаную тэчку сьцягваньняў або тэчку няскончаных сьцягваньняў вышэй.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Выкарыстоўваць асобную тэчку для няскончаных сьцягваньняў</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9451,6 +9595,11 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Шрыфты</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Тут</translation>
         </message>
     </context>
     <context>

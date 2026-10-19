@@ -62,10 +62,14 @@ See [Compact Native GUI](../compact-native-gui.md) and
 
 Before publishing that successor:
 
-- Synchronize and translate the new GUI text. A fresh GUI-source extraction
-  found 27 new message/context entries missing from each of the 25 Qt catalogs;
-  zero unfinished entries in older catalogs does not prove current-source
-  coverage. Core authentication text also needs extraction/translation review.
+- Rebuild both architecture packages with the synchronized catalogs and a new
+  internal build number. Source synchronization added 27 GUI message/context
+  entries and 11 core/DHT messages per language: 950 entries across the 25 Qt
+  and 25 core catalogs. All 126 translation checks pass without skips, covering
+  compilation of all 74 catalogs, placeholders and fresh source extraction
+  (2,077 Qt keys and 225 core/DHT message IDs). Existing translations and all
+  24 GTK catalogs are unchanged. This is automated and reviewed source coverage,
+  not native-speaker certification or rebuilt-package acceptance.
 - Complete the final dependency/source/notice mapping for both release bundles,
   preserve the new Lucide/Feather notices, and qualify the actual signed ZIPs
   and feeds. Development-bundle tests are not public-asset readback.

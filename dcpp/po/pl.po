@@ -970,3 +970,36 @@ msgstr "DHT wyłączone: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Nie można unieważnić zapisanej pamięci podręcznej skrótów DC++. Przed ponownym uruchomieniem sprawdź uprawnienia do folderu profilu."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Błąd ponownego sprawdzania %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Rozmiar pliku zmienił się podczas haszowania"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Awaria magazynu danych skrótów; uruchom program ponownie przed dodaniem nowych skrótów"
+
+msgid "Hash data storage is unavailable"
+msgstr "Magazyn danych skrótów jest niedostępny"
+
+msgid "Invalid hash data tree"
+msgstr "Nieprawidłowe drzewo danych skrótów"
+
+msgid "Invalid hash data write position"
+msgstr "Nieprawidłowa pozycja zapisu danych skrótów"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Uwierzytelnianie hasłem nie powiodło się: nieprawidłowe lub słabe wyzwanie hasła ADC. Zgodność ze starszymi wyzwaniami jest domyślnie wyłączona; włączaj ją tylko dla zaufanego ulubionego huba."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Uwierzytelnianie hasłem nie powiodło się: brak wyzwania hasła ADC."
+
+msgid "Unable to write hash data file"
+msgstr "Nie można zapisać pliku danych skrótów"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Nieoczekiwany koniec pliku podczas ponownego sprawdzania"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Ostrzeżenie: akceptowanie starszego wyzwania hasła ADC dla tego ulubionego huba. Jego słabsze wyzwanie uwierzytelniania nie spełnia specyfikacji ADC."

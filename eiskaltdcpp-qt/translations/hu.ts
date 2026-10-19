@@ -1649,6 +1649,16 @@ Kedvenc felhasználó</translation>
             <source>Search flood detected: %1</source>
             <translation>Keresési flood érzékelve: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Beállítások megnyitása</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Újrapróbálás</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4159,6 +4169,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>TCP és UDP tesztelése a következőn keresztül: %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Kapcsolódási viselkedés</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Országadatbázis</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Külső cím frissítései</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Globális proxy</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS és tanúsítványok</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Ez a HTTP-proxy független a globális és a torrentútvonalaktól. A hublisták közvetlen eléréséhez hagyja üresen a kiszolgáló mezőjét.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Torrentek</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5082,6 +5127,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Mit teszteljünk (csak diagnosztika)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>A SOCKS5 UDP le van tiltva, vagy nincs megfelelő proxy beállítva. Engedélyezze a «SOCKS5 UDP használata» beállítást a «Kapcsolat &gt; Proxy &gt; Torrentek» részen, majd a kiszolgáló ellenőrzéséhez futtassa a «Proxy tesztelése» műveletet. Ezután elérhetővé válik a DHT és a kezdeti csatlakozási csomópontok. Hiba esetén tilos közvetlen kapcsolatra váltani.</translation>
         </message>
 </context>
     <context>
@@ -7416,6 +7466,16 @@ Rendezés először letöltési, majd feltöltési partnerek szerint.</translati
             <source>Password</source>
             <translation>Jelszó</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Régi ADC-jelszókihívások engedélyezése ehhez a hubhoz (kevésbé biztonságos)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Alapértelmezés szerint kikapcsolva. Csak ennél a kedvenc hubnál fogad el legalább hat bájtos régi kihívásokat. Ez a kihívás ellenőrzését gyengíti, nem a TLS-t vagy a proxyn keresztüli útválasztást. A beállítás módosítása után csatlakozzon újra.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8573,6 +8633,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Az ADC/NMDC hubokhoz való újracsatlakozáskor érvényesül. A DHT engedélyezési beállítása nem változik; ez nem garantálja az adatvédelmet.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Alapértelmezett korlátok</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Ne jelezze a SOCKS5-proxymódot az NMDC $MyINFO üzenetben.
+    Ha engedélyezve van, a hubok a szokásos aktív/passzív módot látják az M:5 helyett.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Globális</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Hublisták</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Proxy</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Ütemezett alternatív</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Válassza ezt a módot, ha korlátozás nélkül létesíthet kimenő kapcsolatokat.
+    Ez magában foglalja a csatlakozást bármely IP-cím bármely portjához.
+    Ha bizonytalan, válassza ezt a lehetőséget.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Válassza ezt a módot, ha a kimenő TCP-kapcsolatokhoz
+    Shadowsocks AEAD-kiszolgálót szeretne használni.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Válassza ezt a módot, ha a kimenő kapcsolatokat
+    SOCKS-proxyn keresztül szeretné létrehozni. A passzív mód korlátozásai itt is érvényesek.
+    A SOCKS5-proxyk nem azonosak a HTTP-proxykkal.
+    A DC++ SOCKS5-támogatása nem terjed ki a GSSAPI-ra.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9052,6 +9171,31 @@ Ezen kívül a funkció kikapcsolása nem törli a már meglévő befejezett ele
             <source>Allow simultaneous uploads by one IP</source>
             <translation>Többszörös feltöltés engedélyezése egy IP-ről</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Alapértelmezett és befejezetlen letöltési mappák</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Alapértelmezett letöltési mappa</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Mentett célmappa-parancsikonok</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Mentett parancsikonok a «Letöltés ide» menühöz. Ezek nem módosítják az alapértelmezett letöltési mappát vagy a befejezetlen letöltések fent megadott mappáját.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Külön mappa használata a befejezetlen letöltésekhez</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9431,6 +9575,11 @@ a hub operátoraitól kaphatsz</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Betűtípusok</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Ki</translation>
         </message>
     </context>
     <context>

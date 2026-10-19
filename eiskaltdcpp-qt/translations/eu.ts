@@ -1649,6 +1649,16 @@ Gogoko erabiltzailea</translation>
             <source>Search flood detected: %1</source>
             <translation>Bilaketa-uholdea detektatu da: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Ireki ezarpenak</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Saiatu berriro</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4111,6 +4121,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>TCP eta UDP probatzen %1:%2 bidez...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Konexioaren portaera</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Herrialdeen datu-basea</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Kanpoko helbidearen eguneraketak</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Proxy globala</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS eta ziurtagiriak</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>HTTP proxy hau bide globaletik eta Torrent bidetik independentea da. Utzi ostalariaren eremua hutsik hub-zerrendetara zuzenean konektatzeko.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Torrentak</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5026,6 +5071,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Zer probatu (diagnostikoa soilik)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP desgaituta dago edo ez dago proxy egokirik konfiguratuta. Gaitu Erabili SOCKS5 UDP aukera Konexioa &gt; Proxya &gt; Torrentak atalean, eta exekutatu Probatu proxya zerbitzaria egiaztatzeko. Orduan DHT eta abiarazte-nodoak erabilgarri egongo dira. Ez da onartzen zuzeneko konexioa ordezko gisa erabiltzea.</translation>
         </message>
 </context>
     <context>
@@ -7356,6 +7406,16 @@ Deskargako pareen arabera ordenatuta, eta gero igoerako pareen arabera.</transla
             <source>Password</source>
             <translation>Pasahitza</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Onartu ADC pasahitz-erronka zaharrak hub honetarako (ez hain segurua)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Lehenespenez desgaituta. Gutxienez sei byteko erronka zaharrak onartzen ditu, gogoko hub honetarako soilik. Horrek erronkaren baliozkotzea ahultzen du, ez TLS edo proxyaren bideratzea. Konektatu berriro aukera hau aldatu ondoren.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8509,6 +8569,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>ADC/NMDC hubetara berriz konektatzean aplikatzen da. DHT gaitzeko ezarpena ez da aldatzen; honek ez du pribatutasuna bermatzen.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Muga lehenetsiak</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Ez iragarri SOCKS5 proxy modua NMDC $MyINFO mezuan.
+    Gaituta dagoenean, hubek ohiko modu aktiboa/pasiboa ikusten dute M:5 ordez.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Globala</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Hub-zerrendak</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Proxya</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Programatutako ordezkoa</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Hautatu modu hau mugarik gabeko irteerako konexioak egin baditzakezu.
+    Horrek edozein IP helbidetara edozein atakatan konektatzea barne hartzen du.
+    Hautatu aukera hau ziur ez bazaude.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Hautatu modu hau irteerako TCP konexioek
+    Shadowsocks AEAD zerbitzari bat erabiltzea nahi baduzu.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Hautatu modu hau irteerako konexioak
+    SOCKS proxy baten bidez egin nahi badituzu. Modu pasiboaren mugak hemen ere aplikatzen dira.
+    SOCKS5 proxyak eta HTTP proxyak ez dira gauza bera.
+    DC++ programaren SOCKS5 euskarriak ez du GSSAPI barne hartzen.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -8998,6 +9117,31 @@ kenduko; eskuz egin behar duzu.</translation>
             <source>Remove</source>
             <translation>Ezabatu</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Karpeta lehenetsia eta osatu gabeko deskargen karpeta</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Deskarga-karpeta lehenetsia</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Gordetako helmuga-lasterbideak</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Deskargatu hona menurako gordetako lasterbideak. Ez dute aldatzen deskarga-karpeta lehenetsia, ezta goiko osatu gabeko deskargen karpeta ere.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Erabili aparteko karpeta bat osatu gabeko deskargetarako</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9341,6 +9485,11 @@ normalean operadoreentzat soilik dago eskuragarri</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Letra-tipoak</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Desaktibatuta</translation>
         </message>
     </context>
     <context>

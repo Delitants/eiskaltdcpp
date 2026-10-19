@@ -1646,6 +1646,16 @@ Oblíbený uživatel</translation>
             <source>Search flood detected: %1</source>
             <translation>Detekován flood hledání: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Otevřít nastavení</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Zkusit znovu</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4156,6 +4166,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>Testování TCP a UDP přes %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Chování připojení</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Databáze zemí</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Aktualizace vnější adresy</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Globální proxy</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS a certifikáty</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Tato HTTP proxy je nezávislá na globální trase a trase pro torrenty. Chcete-li se k seznamům hubů připojovat přímo, ponechte pole hostitele prázdné.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Torrenty</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5079,6 +5124,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Cíl testu (pouze diagnostika)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP je vypnuto nebo není nastavena vhodná proxy. Zapněte «Používat SOCKS5 UDP» v části «Připojení &gt; Proxy &gt; Torrenty» a spusťte «Otestovat proxy» pro ověření serveru. Poté budou dostupné DHT a uzly pro počáteční připojení. Přechod na přímé připojení při selhání není povolen.</translation>
         </message>
 </context>
     <context>
@@ -7413,6 +7463,16 @@ Rychlosti přenosu dat se měří jednou za sekundu; protějšek se může poč�
             <source>Password</source>
             <translation>Heslo</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Povolit pro tento hub zastaralé výzvy ADC k ověření hesla (méně bezpečné)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Ve výchozím nastavení vypnuto. Přijímá zastaralé výzvy o délce alespoň šesti bajtů pouze pro tento oblíbený hub. Oslabuje se tím ověřování výzev, nikoli TLS nebo směrování přes proxy. Po změně této volby se znovu připojte.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8570,6 +8630,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Platí při opětovném připojení k hubům ADC/NMDC. Nastavení zapnutí DHT se nemění; nezaručuje to soukromí.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Výchozí limity</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Neoznamovat režim proxy SOCKS5 v NMDC $MyINFO.
+    Při zapnutí uvidí huby běžný aktivní/pasivní režim namísto M:5.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Globální</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Seznamy hubů</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Proxy</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Alternativní podle rozvrhu</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Tento režim zvolte, pokud můžete navazovat neomezená odchozí připojení.
+    To zahrnuje připojení k libovolné IP adrese na libovolném portu.
+    Pokud si nejste jisti, zvolte tuto možnost.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Tento režim zvolte, pokud chcete pro odchozí připojení TCP používat
+    server Shadowsocks AEAD.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Tento režim zvolte, pokud chcete navazovat odchozí připojení přes
+    proxy SOCKS. I zde platí omezení pasivního režimu.
+    Proxy SOCKS5 nejsou totéž co HTTP proxy.
+    Podpora SOCKS5 v DC++ nezahrnuje GSSAPI.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9055,6 +9174,31 @@ z fronty stahování, musíte je odebrat ručně.</translation>
             <source>Allow simultaneous uploads by one IP</source>
             <translation>Povolit souběžné odesílání na jednu IP adresu</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Výchozí složky a složky nedokončených stahování</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Výchozí složka pro stahování</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Uložené zkratky k cílovým složkám</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Uložené zkratky pro nabídku «Stáhnout do». Nemění výchozí složku pro stahování ani výše uvedenou složku nedokončených stahování.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Používat samostatnou složku pro nedokončená stahování</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9434,6 +9578,11 @@ jsou obvykle dostupné operátorům</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Fonty</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Vypnuto</translation>
         </message>
     </context>
     <context>

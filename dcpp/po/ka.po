@@ -952,3 +952,36 @@ msgstr "DHT გამორთულია: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "შენახული DC++ ჰეშების ქეშის გაუქმება შეუძლებელია. გადატვირთვამდე შეამოწმეთ პროფილის საქაღალდეზე წვდომის უფლებები."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "%1%-ის ხელახალი შემოწმების შეცდომა: %2%"
+
+msgid "File size changed while hashing"
+msgstr "ჰეშის გამოთვლისას ფაილის ზომა შეიცვალა"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "ჰეშის მონაცემების შენახვა ვერ მოხერხდა; ახალი ჰეშების დამატებამდე გადატვირთეთ პროგრამა"
+
+msgid "Hash data storage is unavailable"
+msgstr "ჰეშის მონაცემთა საცავი მიუწვდომელია"
+
+msgid "Invalid hash data tree"
+msgstr "ჰეშის მონაცემთა არასწორი ხე"
+
+msgid "Invalid hash data write position"
+msgstr "ჰეშის მონაცემების ჩაწერის არასწორი პოზიცია"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "პაროლით ავთენტიფიკაცია ვერ მოხერხდა: ADC პაროლის გამოწვევა არასწორია ან სუსტია. ძველ ვერსიებთან თავსებადობა ნაგულისხმევად გამორთულია; ჩართეთ ის მხოლოდ სანდო რჩეული ჰაბისთვის."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "პაროლით ავთენტიფიკაცია ვერ მოხერხდა: ADC პაროლის გამოწვევა არ არის მოწოდებული."
+
+msgid "Unable to write hash data file"
+msgstr "ჰეშის მონაცემთა ფაილის ჩაწერა შეუძლებელია"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "ხელახალი შემოწმებისას ფაილის მოულოდნელი დასასრული"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "გაფრთხილება: ამ რჩეული ჰაბისთვის მიღებულია ძველი ტიპის ADC პაროლის გამოწვევა. მისი უფრო სუსტი ავთენტიფიკაციის გამოწვევა ADC სპეციფიკაციას არ შეესაბამება."

@@ -1649,6 +1649,16 @@ Favorite user</source>
             <source>Search flood detected: %1</source>
             <translation>აღმოჩენილია ძიების მოთხოვნების სიჭარბე: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>პარამეტრების გახსნა</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>ხელახლა ცდა</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4139,6 +4149,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>TCP-ისა და UDP-ის ტესტირება %1:%2-ის გავლით...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>კავშირის ქცევა</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>ქვეყნების მონაცემთა ბაზა</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>გარე მისამართის განახლებები</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>გლობალური პროქსი</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS და სერტიფიკატები</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>ეს HTTP პროქსი დამოუკიდებელია გლობალური და ტორენტების მარშრუტებისგან. ჰაბების სიებთან პირდაპირ დასაკავშირებლად ჰოსტის ველი ცარიელი დატოვეთ.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>ტორენტები</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5062,6 +5107,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>რა შემოწმდეს (მხოლოდ დიაგნოსტიკა)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP გამორთულია ან შესაფერისი პროქსი არ არის გამართული. ჩართეთ SOCKS5 UDP-ის გამოყენება განყოფილებაში კავშირი &gt; პროქსი &gt; ტორენტები და სერვერის შესამოწმებლად გაუშვით პროქსის შემოწმება. ამის შემდეგ ხელმისაწვდომი გახდება DHT და საწყისი ჩატვირთვის კვანძები. პირდაპირ კავშირზე სარეზერვო გადასვლა დაუშვებელია.</translation>
         </message>
 </context>
     <context>
@@ -7392,6 +7442,16 @@ Sorted by downloading peers, then uploading peers.</source>
             <source>Password</source>
             <translation>პაროლი</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>ამ ჰაბისთვის ძველი ტიპის ADC პაროლის გამოწვევების დაშვება (ნაკლებად უსაფრთხოა)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>ნაგულისხმევად გამორთულია. მხოლოდ ამ რჩეული ჰაბისთვის იღებს ძველი ტიპის გამოწვევებს, რომელთა სიგრძეა სულ მცირე ექვსი ბაიტი. ეს ასუსტებს გამოწვევის შემოწმებას და არა TLS-ს ან პროქსის მარშრუტიზაციას. ამ პარამეტრის შეცვლის შემდეგ ხელახლა დაუკავშირდით.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8553,6 +8613,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>მოქმედებს ADC/NMDC ჰაბებთან ხელახლა დაკავშირებისას. DHT-ის ჩართვის პარამეტრი არ იცვლება; ეს კონფიდენციალურობას არ იძლევა გარანტიად.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>ნაგულისხმევი შეზღუდვები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>არ გამოცხადდეს SOCKS5 პროქსის რეჟიმი NMDC $MyINFO-ში.
+    ჩართვისას ჰაბები M:5-ის ნაცვლად ჩვეულებრივ აქტიურ/პასიურ რეჟიმს ხედავენ.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>გლობალური</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>ჰაბების სიები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>პროქსი</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>დაგეგმილი ალტერნატიული შეზღუდვები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>აირჩიეთ ეს რეჟიმი, თუ შეგიძლიათ შეუზღუდავი გამავალი კავშირების დამყარება.
+    ეს მოიცავს ნებისმიერ IP მისამართთან ნებისმიერ პორტზე დაკავშირებას.
+    თუ დარწმუნებული არ ხართ, აირჩიეთ ეს ვარიანტი.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>აირჩიეთ ეს რეჟიმი, თუ გსურთ, რომ გამავალმა TCP კავშირებმა გამოიყენონ
+    Shadowsocks AEAD სერვერი.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>აირჩიეთ ეს რეჟიმი, თუ გსურთ გამავალი კავშირების დამყარება
+    SOCKS პროქსის გავლით. პასიური რეჟიმის შეზღუდვები აქაც მოქმედებს.
+    SOCKS5 პროქსი და HTTP პროქსი ერთი და იგივე არ არის.
+    DC++-ის SOCKS5 მხარდაჭერა GSSAPI-ს არ მოიცავს.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9041,6 +9160,31 @@ from the queue either, you must do that manually.</source>
             <source>Remove</source>
             <translation>წაშლა</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>ნაგულისხმევი და დაუსრულებელი ჩამოტვირთვების საქაღალდეები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>ჩამოტვირთვის ნაგულისხმევი საქაღალდე</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>შენახული დანიშნულების მალსახმობები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>შენახული მალსახმობები მენიუსთვის ჩამოტვირთვა მითითებულ ადგილას. ისინი არ ცვლიან ჩამოტვირთვის ნაგულისხმევ საქაღალდეს ან ზემოთ მითითებულ დაუსრულებელი ჩამოტვირთვების საქაღალდეს.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>დაუსრულებელი ჩამოტვირთვებისთვის ცალკე საქაღალდის გამოყენება</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9416,6 +9560,11 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>ფონტები</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>გამორთულია</translation>
         </message>
     </context>
     <context>

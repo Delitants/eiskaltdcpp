@@ -978,3 +978,36 @@ msgstr "DHT disabilitato: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Impossibile invalidare la cache salvata degli hash DC++. Controllare i permessi della cartella del profilo prima di riavviare."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Errore durante il ricontrollo di %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "La dimensione del file è cambiata durante il calcolo dell'hash"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Archiviazione dei dati hash non riuscita; riavvia prima di aggiungere nuovi hash"
+
+msgid "Hash data storage is unavailable"
+msgstr "L'archiviazione dei dati hash non è disponibile"
+
+msgid "Invalid hash data tree"
+msgstr "Albero dei dati hash non valido"
+
+msgid "Invalid hash data write position"
+msgstr "Posizione di scrittura dei dati hash non valida"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Autenticazione con password non riuscita: sfida per la password ADC non valida o debole. La compatibilità con le vecchie sfide è disattivata per impostazione predefinita; attivala solo per un hub preferito fidato."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Autenticazione con password non riuscita: sfida per la password ADC mancante."
+
+msgid "Unable to write hash data file"
+msgstr "Impossibile scrivere il file dei dati hash"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Fine del file imprevista durante il ricontrollo"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Avviso: viene accettata una vecchia sfida per la password ADC per questo hub preferito. La sua sfida di autenticazione più debole non soddisfa la specifica ADC."

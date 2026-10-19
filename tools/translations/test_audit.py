@@ -178,7 +178,7 @@ class CatalogRegressionTests(unittest.TestCase):
                 'IPv6': 'IPv6',
             },
         }
-        counts = {"HubFrame": 116, "SideBarModel": 19, "ToolBar": 2, "UserListModel": 12}
+        counts = {"HubFrame": 118, "SideBarModel": 19, "ToolBar": 2, "UserListModel": 12}
         def entries(path):
             return {c.findtext("name"): {m.findtext("source"): m.find("translation")
                     for m in c.findall("message")
@@ -457,7 +457,7 @@ class CatalogRegressionTests(unittest.TestCase):
                 'Import': 'Εισαγωγή',
             },
         }
-        counts = {"UCModel": 4, "UIUserCommands": 18, "FavoriteUsers": 6, "UIFavoriteHubEditor": 25, "UIIPFilter": 12}
+        counts = {"UCModel": 4, "UIUserCommands": 18, "FavoriteUsers": 6, "UIFavoriteHubEditor": 27, "UIIPFilter": 12}
         def entries(path):
             return {c.findtext("name"): {m.findtext("source"): m.find("translation")
                     for m in c.findall("message")
@@ -951,7 +951,7 @@ class CatalogRegressionTests(unittest.TestCase):
             subprocess.run(["lrelease", "-nounfinished", str(path), "-qm", str(binary)], check=True, capture_output=True)
             subprocess.run(["lconvert", "-i", str(binary), "-o", str(output)], check=True, capture_output=True)
             original, compiled = entries(path), entries(output)
-            self.assertEqual(73, len(original))
+            self.assertEqual(78, len(original))
             self.assertEqual(17, len(expected["UISettingsDownloads"]))
             self.assertTrue(expected["UISettingsDownloads"].keys() <= original.keys())
             for source, value in original.items():
@@ -1281,7 +1281,7 @@ class CatalogRegressionTests(unittest.TestCase):
                     "Pridá magnet do frontu sťahovania. Ak je v nastaveniach zapnuté automatické\nvyhľadávanie alternatív, súbor sa stiahne bez otvorenia dialógu vyhľadávania.",
             },
         }
-        counts = {"HubFrame": 116, "UIHubFrame": 19, "UIPrivateMessage": 20, "UIMagnet": 12}
+        counts = {"HubFrame": 118, "UIHubFrame": 19, "UIPrivateMessage": 20, "UIMagnet": 12}
         def entries(path):
             return {c.findtext("name"): {m.findtext("source"): m.find("translation")
                     for m in c.findall("message")
@@ -1381,7 +1381,7 @@ class CatalogRegressionTests(unittest.TestCase):
                                 "When script changed": "Pri zmene skriptu"},
             "UISearchBlacklistDialog": {"Blacklist": "Čierna listina", "OK": "OK"},
         }
-        counts = {"SearchBlackListModel": 4, "ShortcutGetter": 5, "UIFavoriteHubEditor": 25,
+        counts = {"SearchBlackListModel": 4, "ShortcutGetter": 5, "UIFavoriteHubEditor": 27,
                   "UIIPFilter": 12, "UIQuickConnect": 2, "UIScriptManager": 4,
                   "UISearchBlacklistDialog": 3}
         def entries(path):
@@ -1794,14 +1794,21 @@ class CatalogRegressionTests(unittest.TestCase):
             "Select this mode if you are behind a firewall (router)",
             "Select this mode if none of the previous modes apply.",
             "Select this mode if you are behind a firewall/router",
-            "Select this mode if you can make unrestricted outbound",
-            "Select this mode if you want to make outbound connections through",
             '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"',
         )
         for prefix in prefixes:
             matches = [k for k in original if k[0] == "UISettingsConnection" and k[1].startswith(prefix)]
             self.assertEqual(1, len(matches), prefix)
             required.extend(matches)
+        required += [("UISettingsConnection", source) for source in (
+            "Select this mode if you can make unrestricted outbound connections.\n"
+            "    This includes connecting to any IP address on any port.\n"
+            "    Choose this option if unsure.",
+            "Select this mode if you want to make outbound connections through\n"
+            "    a SOCKS proxy. The caveats for Passive mode also apply here.\n"
+            "    SOCKS5 proxies are not the same as HTTP proxies.\n"
+            "    DC++'s SOCKS5 support does not include GSSAPI.",
+        )]
         self.assertEqual(16, len(required))
         with tempfile.TemporaryDirectory(prefix="eiskalt-ka-connection-help-") as work:
             binary, output = Path(work) / "catalog.qm", Path(work) / "compiled.ts"

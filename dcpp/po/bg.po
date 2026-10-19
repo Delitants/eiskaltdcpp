@@ -975,3 +975,36 @@ msgstr "DHT е изключен: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Запазеният кеш с DC++ хешове не може да бъде анулиран. Проверете правата за достъп до папката на профила, преди да рестартирате."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Грешка при повторната проверка на %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Размерът на файла се промени по време на хеширането"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Грешка в хранилището за хеш данни; рестартирайте, преди да добавяте нови хешове"
+
+msgid "Hash data storage is unavailable"
+msgstr "Хранилището за хеш данни е недостъпно"
+
+msgid "Invalid hash data tree"
+msgstr "Невалидно дърво на хеш данни"
+
+msgid "Invalid hash data write position"
+msgstr "Невалидна позиция за запис на хеш данни"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Неуспешно удостоверяване с парола: невалидно или слабо ADC предизвикателство за парола. Съвместимостта с остарели предизвикателства е изключена по подразбиране; включвайте я само за доверен предпочитан хъб."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Неуспешно удостоверяване с парола: липсва ADC предизвикателство за парола."
+
+msgid "Unable to write hash data file"
+msgstr "Не може да се запише файлът с хеш данни"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Неочакван край на файла при повторна проверка"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Предупреждение: приема се остаряло ADC предизвикателство за парола за този предпочитан хъб. Неговото по-слабо предизвикателство за удостоверяване не отговаря на спецификацията ADC."

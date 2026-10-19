@@ -984,3 +984,36 @@ msgstr "DHT désactivé: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Impossible d’invalider le cache enregistré des empreintes de hachage DC++. Vérifiez les droits d’accès au dossier du profil avant de redémarrer."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Erreur lors de la revérification de %1% : %2%"
+
+msgid "File size changed while hashing"
+msgstr "La taille du fichier a changé pendant le calcul du hachage"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Échec du stockage des données de hachage ; redémarrez avant d'ajouter de nouvelles empreintes"
+
+msgid "Hash data storage is unavailable"
+msgstr "Le stockage des données de hachage est indisponible"
+
+msgid "Invalid hash data tree"
+msgstr "Arbre de données de hachage non valide"
+
+msgid "Invalid hash data write position"
+msgstr "Position d'écriture des données de hachage non valide"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Échec de l'authentification par mot de passe : défi de mot de passe ADC non valide ou faible. La compatibilité avec les anciens défis est désactivée par défaut ; activez-la uniquement pour un serveur favori de confiance."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Échec de l'authentification par mot de passe : défi de mot de passe ADC manquant."
+
+msgid "Unable to write hash data file"
+msgstr "Impossible d'écrire le fichier de données de hachage"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Fin de fichier inattendue lors de la revérification"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Avertissement : acceptation d'un ancien défi de mot de passe ADC pour ce serveur favori. Son défi d'authentification plus faible ne respecte pas la spécification ADC."

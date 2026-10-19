@@ -984,3 +984,36 @@ msgstr "A DHT letiltva: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "A mentett DC++ hash-gyorsítótár nem érvényteleníthető. Újraindítás előtt ellenőrizze a profilmappa hozzáférési jogosultságait."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Hiba a(z) %1% újraellenőrzésekor: %2%"
+
+msgid "File size changed while hashing"
+msgstr "A fájl mérete megváltozott a kivonatolás közben"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "A kivonatadatok tárolása meghibásodott; új kivonatok hozzáadása előtt indítsa újra a programot"
+
+msgid "Hash data storage is unavailable"
+msgstr "A kivonatadatok tárolója nem érhető el"
+
+msgid "Invalid hash data tree"
+msgstr "Érvénytelen kivonatadat-fa"
+
+msgid "Invalid hash data write position"
+msgstr "Érvénytelen kivonatadat-írási pozíció"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "A jelszavas hitelesítés sikertelen: érvénytelen vagy gyenge ADC-jelszókihívás. A régi kihívásokkal való kompatibilitás alapértelmezés szerint ki van kapcsolva; csak megbízható kedvenc hubhoz engedélyezze."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "A jelszavas hitelesítés sikertelen: hiányzó ADC-jelszókihívás."
+
+msgid "Unable to write hash data file"
+msgstr "Nem sikerült írni a kivonatadatfájlt"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Váratlan fájlvég az újraellenőrzés közben"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Figyelmeztetés: a program régi ADC-jelszókihívást fogad el ehhez a kedvenc hubhoz. Ez a gyengébb hitelesítési kihívás nem felel meg az ADC specifikációjának."

@@ -980,3 +980,36 @@ msgstr "Το DHT απενεργοποιήθηκε: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Δεν είναι δυνατή η ακύρωση της αποθηκευμένης κρυφής μνήμης κατακερματισμών DC++. Ελέγξτε τα δικαιώματα του φακέλου προφίλ πριν από την επανεκκίνηση."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Σφάλμα επανελέγχου του %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Το μέγεθος του αρχείου άλλαξε κατά τον υπολογισμό κατακερματισμού"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Η αποθήκευση δεδομένων κατακερματισμού απέτυχε· επανεκκινήστε πριν προσθέσετε νέους κατακερματισμούς"
+
+msgid "Hash data storage is unavailable"
+msgstr "Ο χώρος αποθήκευσης δεδομένων κατακερματισμού δεν είναι διαθέσιμος"
+
+msgid "Invalid hash data tree"
+msgstr "Μη έγκυρο δέντρο δεδομένων κατακερματισμού"
+
+msgid "Invalid hash data write position"
+msgstr "Μη έγκυρη θέση εγγραφής δεδομένων κατακερματισμού"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Ο έλεγχος ταυτότητας με κωδικό πρόσβασης απέτυχε: μη έγκυρη ή αδύναμη πρόκληση κωδικού πρόσβασης ADC. Η συμβατότητα παλαιού τύπου είναι απενεργοποιημένη από προεπιλογή· ενεργοποιήστε την μόνο για έναν έμπιστο αγαπημένο κόμβο."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Ο έλεγχος ταυτότητας με κωδικό πρόσβασης απέτυχε: λείπει η πρόκληση κωδικού πρόσβασης ADC."
+
+msgid "Unable to write hash data file"
+msgstr "Αδυναμία εγγραφής του αρχείου δεδομένων κατακερματισμού"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Μη αναμενόμενο τέλος αρχείου κατά τον επανέλεγχο"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Προειδοποίηση: γίνεται αποδοχή παλαιού τύπου πρόκλησης κωδικού πρόσβασης ADC για αυτόν τον αγαπημένο κόμβο. Η ασθενέστερη πρόκληση ελέγχου ταυτότητάς του δεν πληροί την προδιαγραφή ADC."

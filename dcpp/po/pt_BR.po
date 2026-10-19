@@ -975,3 +975,36 @@ msgstr "DHT desabilitado: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Não foi possível invalidar o cache salvo de hashes do DC++. Verifique as permissões da pasta do perfil antes de reiniciar."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Erro ao verificar novamente %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "O tamanho do arquivo mudou durante o cálculo do hash"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Falha no armazenamento de dados de hash; reinicie antes de adicionar novos hashes"
+
+msgid "Hash data storage is unavailable"
+msgstr "O armazenamento de dados de hash está indisponível"
+
+msgid "Invalid hash data tree"
+msgstr "Árvore de dados de hash inválida"
+
+msgid "Invalid hash data write position"
+msgstr "Posição de gravação de dados de hash inválida"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Falha na autenticação por senha: desafio de senha ADC inválido ou fraco. A compatibilidade com desafios legados é desativada por padrão; ative-a somente para um hub favorito confiável."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Falha na autenticação por senha: desafio de senha ADC ausente."
+
+msgid "Unable to write hash data file"
+msgstr "Não foi possível gravar o arquivo de dados de hash"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Fim de arquivo inesperado ao verificar novamente"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Aviso: aceitando um desafio de senha ADC legado para este hub favorito. Seu desafio de autenticação mais fraco não atende à especificação ADC."

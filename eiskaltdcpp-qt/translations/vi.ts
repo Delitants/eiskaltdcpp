@@ -1649,6 +1649,16 @@ Người dùng yêu thích</translation>
             <source>Search flood detected: %1</source>
             <translation>Phát hiện tìm kiếm dồn dập: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Mở cài đặt</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Thử lại</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4111,6 +4121,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>Đang thử TCP và UDP qua %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Hành vi kết nối</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Cơ sở dữ liệu quốc gia</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Cập nhật địa chỉ bên ngoài</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Máy chủ ủy nhiệm toàn cục</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS và chứng chỉ</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Máy chủ ủy nhiệm HTTP này độc lập với tuyến toàn cục và tuyến torrent. Để trống trường máy chủ để kết nối trực tiếp tới các danh sách trạm trung tâm.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Các torrent</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5026,6 +5071,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Nội dung kiểm tra (chỉ chẩn đoán)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP đang bị tắt hoặc chưa cấu hình máy chủ ủy nhiệm phù hợp. Bật Dùng SOCKS5 UDP trong Kết nối &gt; Máy chủ ủy nhiệm &gt; Torrent và chạy Kiểm tra máy chủ ủy nhiệm để xác minh máy chủ. Khi đó, DHT và các nút khởi tạo sẽ khả dụng. Không cho phép dùng kết nối trực tiếp làm phương án dự phòng.</translation>
         </message>
 </context>
     <context>
@@ -7356,6 +7406,16 @@ Sắp xếp theo peer tải xuống, rồi peer tải lên.</translation>
             <source>Password</source>
             <translation>Mật khẩu</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Cho phép các yêu cầu thử thách mật khẩu ADC kiểu cũ cho trạm trung tâm này (kém an toàn hơn)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Mặc định tắt. Chỉ chấp nhận các yêu cầu thử thách kiểu cũ dài ít nhất sáu byte cho riêng trạm trung tâm yêu thích này. Điều này làm yếu đi việc xác thực yêu cầu thử thách, không làm yếu TLS hay thay đổi định tuyến qua máy chủ ủy nhiệm. Hãy kết nối lại sau khi thay đổi tùy chọn này.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8509,6 +8569,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Áp dụng khi kết nối lại với hub ADC/NMDC. Cài đặt bật DHT không thay đổi; điều này không bảo đảm quyền riêng tư.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Giới hạn mặc định</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>Không thông báo chế độ máy chủ ủy nhiệm SOCKS5 trong NMDC $MyINFO.
+    Khi bật, các trạm trung tâm sẽ thấy chế độ chủ động/thụ động thông thường thay vì M:5.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Toàn cục</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Danh sách trạm trung tâm</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Máy chủ proxy</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Giới hạn thay thế theo lịch</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Chọn chế độ này nếu bạn có thể tạo các kết nối đi không bị hạn chế.
+    Điều này bao gồm kết nối tới bất kỳ địa chỉ IP nào trên bất kỳ cổng nào.
+    Hãy chọn tùy chọn này nếu không chắc chắn.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Chọn chế độ này nếu bạn muốn các kết nối TCP đi sử dụng
+    một máy chủ Shadowsocks AEAD.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Chọn chế độ này nếu bạn muốn tạo kết nối đi qua
+    một máy chủ ủy nhiệm SOCKS. Các hạn chế của chế độ thụ động cũng áp dụng ở đây.
+    Máy chủ ủy nhiệm SOCKS5 không giống máy chủ ủy nhiệm HTTP.
+    Tính năng hỗ trợ SOCKS5 của DC++ không bao gồm GSSAPI.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -8997,6 +9116,31 @@ khỏi hàng đợi; bạn phải tự xóa chúng.</translation>
             <source>Remove</source>
             <translation>Loại bỏ</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Thư mục mặc định và thư mục tải xuống chưa hoàn tất</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Thư mục tải xuống mặc định</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Lối tắt đích đến đã lưu</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Các lối tắt đã lưu cho trình đơn Tải xuống vào. Chúng không thay đổi thư mục tải xuống mặc định hay thư mục tải xuống chưa hoàn tất ở trên.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Dùng thư mục riêng cho các bản tải xuống chưa hoàn tất</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9340,6 +9484,11 @@ thường chỉ dành cho điều hành viên</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Phông chữ</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Tắt</translation>
         </message>
     </context>
     <context>

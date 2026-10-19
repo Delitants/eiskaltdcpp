@@ -1648,6 +1648,16 @@ Usuario favorito</translation>
             <source>Search flood detected: %1</source>
             <translation>Inundación de búsquedas detectada: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>Abrir opciones</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>Reintentar</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4162,6 +4172,41 @@ UDP: %2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>Probando TCP y UDP a través de %1:%2...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>Comportamiento de la conexión</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>Base de datos de países</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>Actualizaciones de la dirección externa</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>Proxy global</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS y certificados</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>Este proxy HTTP es independiente de las rutas Global y Torrent. Deje vacío el campo del servidor para conectarse directamente a las listas de hubs.</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>Torrents</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5085,6 +5130,11 @@ UDP: %2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>Destino de la prueba (solo diagnóstico)</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP está desactivado o no hay un proxy adecuado configurado. Active Usar SOCKS5 UDP en Conexión &gt; Proxy &gt; Torrents y ejecute Probar proxy para verificar el servidor. Así estarán disponibles DHT y los nodos de arranque. No se permite recurrir a una conexión directa.</translation>
         </message>
 </context>
     <context>
@@ -7419,6 +7469,16 @@ Ordenado por pares de descarga y después por pares de subida.</translation>
             <source>Password</source>
             <translation>Contraseña</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>Permitir desafíos de contraseña ADC heredados para este hub (menos seguro)</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>Desactivado de forma predeterminada. Acepta desafíos heredados de al menos seis bytes solo para este hub favorito. Esto debilita la validación del desafío, no TLS ni el enrutamiento del proxy. Vuelva a conectarse después de cambiar esta opción.</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8589,6 +8649,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>Se aplica al volver a conectar con hubs ADC/NMDC. No se cambia la configuración de activación de DHT; esto no garantiza la privacidad.</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>Límites predeterminados</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>No anunciar el modo de proxy SOCKS5 en NMDC $MyINFO.
+    Cuando está activado, los hubs ven el modo activo/pasivo normal en lugar de M:5.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>Global</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>Listas de hubs</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>Proxy</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>Alternativa programada</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>Seleccione este modo si puede establecer conexiones salientes sin restricciones.
+    Esto incluye conectarse a cualquier dirección IP en cualquier puerto.
+    Elija esta opción si tiene dudas.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>Seleccione este modo si desea que las conexiones TCP salientes utilicen
+    un servidor Shadowsocks AEAD.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>Seleccione este modo si desea establecer conexiones salientes a través de
+    un proxy SOCKS. Las limitaciones del modo pasivo también se aplican aquí.
+    Los proxies SOCKS5 no son lo mismo que los proxies HTTP.
+    La compatibilidad con SOCKS5 de DC++ no incluye GSSAPI.</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9096,6 +9215,31 @@ en la cola de descargas, deberá hacerlo manualmente.</translation>
             <source>Remove</source>
             <translation>Eliminar</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>Carpetas predeterminada y de descargas incompletas</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>Carpeta de descargas predeterminada</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>Accesos directos de destino guardados</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>Accesos directos guardados para el menú Descargar a. No cambian la carpeta de descargas predeterminada ni la carpeta de descargas incompletas indicada arriba.</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>Usar una carpeta independiente para las descargas incompletas</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9476,6 +9620,11 @@ ellas suele estar disponible únicamente para los operadores</translation>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>Fuentes</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>Apagado</translation>
         </message>
     </context>
     <context>

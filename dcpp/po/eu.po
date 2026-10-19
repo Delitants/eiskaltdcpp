@@ -948,3 +948,36 @@ msgstr "DHT desgaituta: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Ezin da gordetako DC++ hashen cachea baliogabetu. Egiaztatu profilaren karpetaren baimenak berrabiarazi aurretik."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Errorea %1% berriro egiaztatzean: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Fitxategiaren tamaina aldatu da hasha kalkulatzean"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Hash-datuak biltegiratzeak huts egin du; berrabiarazi hash berriak gehitu aurretik"
+
+msgid "Hash data storage is unavailable"
+msgstr "Hash-datuen biltegiratzea ez dago erabilgarri"
+
+msgid "Invalid hash data tree"
+msgstr "Hash-datuen zuhaitz baliogabea"
+
+msgid "Invalid hash data write position"
+msgstr "Hash-datuak idazteko posizio baliogabea"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Pasahitz bidezko autentifikazioak huts egin du: ADC pasahitz-erronka baliogabea edo ahula. Erronka zaharrekiko bateragarritasuna lehenespenez desgaituta dago; gaitu soilik konfiantzazko gogoko hub baterako."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Pasahitz bidezko autentifikazioak huts egin du: ADC pasahitz-erronka falta da."
+
+msgid "Unable to write hash data file"
+msgstr "Ezin da hash-datuen fitxategia idatzi"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Ustekabeko fitxategi-amaiera berriro egiaztatzean"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Abisua: ADC pasahitz-erronka zahar bat onartzen ari da gogoko hub honetarako. Autentifikazio-erronka ahulago horrek ez du ADC zehaztapena betetzen."

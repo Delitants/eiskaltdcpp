@@ -981,3 +981,36 @@ msgstr "DHT devre dışı:"
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Kaydedilmiş DC++ karma önbelleği geçersiz kılınamıyor. Yeniden başlatmadan önce profil klasörünün izinlerini denetleyin."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "%1% yeniden denetlenirken hata: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Özet hesaplanırken dosya boyutu değişti"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Özet verileri depolanamadı; yeni özetler eklemeden önce yeniden başlatın"
+
+msgid "Hash data storage is unavailable"
+msgstr "Özet verisi depolama alanı kullanılamıyor"
+
+msgid "Invalid hash data tree"
+msgstr "Geçersiz özet verisi ağacı"
+
+msgid "Invalid hash data write position"
+msgstr "Geçersiz özet verisi yazma konumu"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Parolayla kimlik doğrulama başarısız: geçersiz veya zayıf ADC parola sınaması. Eski sürümlerle uyumluluk varsayılan olarak devre dışıdır; yalnızca güvenilir bir sık kullanılan merkez için etkinleştirin."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Parolayla kimlik doğrulama başarısız: ADC parola sınaması eksik."
+
+msgid "Unable to write hash data file"
+msgstr "Özet verisi dosyasına yazılamıyor"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Yeniden denetim sırasında beklenmedik dosya sonu"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Uyarı: bu sık kullanılan merkez için eski bir ADC parola sınaması kabul ediliyor. Bu merkezin daha zayıf kimlik doğrulama sınaması ADC belirtimini karşılamıyor."

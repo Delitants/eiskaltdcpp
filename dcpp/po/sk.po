@@ -965,3 +965,36 @@ msgstr "DHT zakázané: "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "Nemožno zneplatniť uloženú vyrovnávaciu pamäť hashov DC++. Pred reštartovaním skontrolujte prístupové práva k priečinku profilu."
+
+msgid "Error rechecking %1%: %2%"
+msgstr "Chyba pri opätovnej kontrole %1%: %2%"
+
+msgid "File size changed while hashing"
+msgstr "Veľkosť súboru sa počas hašovania zmenila"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "Úložisko hašovacích údajov zlyhalo; pred pridaním nových hašov reštartujte program"
+
+msgid "Hash data storage is unavailable"
+msgstr "Úložisko hašovacích údajov nie je dostupné"
+
+msgid "Invalid hash data tree"
+msgstr "Neplatný strom hašovacích údajov"
+
+msgid "Invalid hash data write position"
+msgstr "Neplatná pozícia zápisu hašovacích údajov"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "Overenie heslom zlyhalo: neplatná alebo slabá výzva ADC na overenie hesla. Kompatibilita so zastaranými výzvami je predvolene vypnutá; zapnite ju iba pre dôveryhodný obľúbený hub."
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "Overenie heslom zlyhalo: chýba výzva ADC na overenie hesla."
+
+msgid "Unable to write hash data file"
+msgstr "Nedá sa zapísať súbor hašovacích údajov"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "Neočakávaný koniec súboru pri opätovnej kontrole"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "Upozornenie: prijíma sa zastaraná výzva ADC na overenie hesla pre tento obľúbený hub. Jej slabšia overovacia výzva nespĺňa špecifikáciu ADC."

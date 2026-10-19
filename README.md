@@ -12,9 +12,10 @@ separate **Intel-only macOS 14+** and **Apple-Silicon-only macOS 26+** packages,
 both with the built-in updater. These preview apps are **not notarized or
 Developer ID signed**; update archives and feeds have separate authenticated
 Sparkle signatures. See the release notes for testing limits and source downloads.
-The published pre.2 catalogs were completed for all 74 languages/catalogs.
-Post-pre.2 GUI work adds text that still needs catalog synchronization and
-translation before the next prerelease; native-speaker review remains welcome.
+All 74 translation catalogs are complete. Current development also adds 950
+entries covering the redesigned settings and new core/DHT messages, with 126
+translation checks passing. These source updates are not yet in the published
+pre.2 packages; native-speaker review remains welcome.
 
 ## Current Work
 

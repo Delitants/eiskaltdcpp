@@ -1650,6 +1650,16 @@ Favorite user</source>
             <source>Search flood detected: %1</source>
             <translation>检测到滥用搜索: %1</translation>
         </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2016" />
+            <source>Open settings</source>
+            <translation>打开设置</translation>
+        </message>
+        <message>
+            <location filename="../src/HubFrame.cpp" line="2014" />
+            <source>Retry</source>
+            <translation>重试</translation>
+        </message>
     </context>
     <context>
         <name>IPFilterFrame</name>
@@ -4152,6 +4162,41 @@ UDP：%2</translation>
             <source>Testing TCP and UDP through %1:%2...</source>
             <translation>正在通过 %1:%2 测试 TCP 和 UDP...</translation>
         </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="661" />
+            <source>Connection behavior</source>
+            <translation>连接行为</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="666" />
+            <source>Country database</source>
+            <translation>国家数据库</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="567" />
+            <source>External address updates</source>
+            <translation>外部地址更新</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="475" />
+            <source>Global proxy</source>
+            <translation>全局代理</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="676" />
+            <source>TLS and certificates</source>
+            <translation>TLS 和证书</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="594" />
+            <source>This HTTP proxy is independent of the Global and Torrent routes. Leave the host blank to connect to hub lists directly.</source>
+            <translation>此 HTTP 代理独立于全局路由和种子路由。将主机字段留空即可直接连接到服务器列表。</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsConnection.cpp" line="834" />
+            <source>Torrents</source>
+            <translation>种子任务</translation>
+        </message>
 </context>
     <context>
         <name>SettingsDownloads</name>
@@ -5067,6 +5112,11 @@ UDP：%2</translation>
             <location filename="../src/SettingsTorrent.cpp" line="215" />
             <source>What to test (diagnostics only)</source>
             <translation>测试目标（仅用于诊断）</translation>
+        </message>
+        <message>
+            <location filename="../src/SettingsTorrent.cpp" line="708" />
+            <source>SOCKS5 UDP is disabled or no suitable proxy is configured. Enable Use SOCKS5 UDP in Connection &gt; Proxy &gt; Torrents and run Test proxy to verify the server. DHT and bootstrap nodes then become available. No direct fallback is allowed.</source>
+            <translation>SOCKS5 UDP 已禁用，或尚未配置合适的代理。请在“连接 &gt; 代理 &gt; 种子”中启用“使用 SOCKS5 UDP”，并运行“测试代理”以验证服务器。随后即可使用 DHT 和引导节点。不允许回退到直连。</translation>
         </message>
 </context>
     <context>
@@ -7397,6 +7447,16 @@ Sorted by downloading peers, then uploading peers.</source>
             <source>Password</source>
             <translation>密码</translation>
         </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="271" />
+            <source>Allow legacy ADC password challenges for this hub (less secure)</source>
+            <translation>允许此服务器使用旧式 ADC 密码质询（安全性较低）</translation>
+        </message>
+        <message>
+            <location filename="../ui/UIFavoriteHubEditor.ui" line="274" />
+            <source>Off by default. Accepts legacy challenges of at least six bytes only for this favourite hub. This weakens challenge validation, not TLS or proxy routing. Reconnect after changing this option.</source>
+            <translation>默认关闭。仅为此收藏的服务器接受长度至少为六字节的旧式质询。这会削弱质询验证，但不会削弱 TLS 或更改代理路由。更改此选项后请重新连接。</translation>
+        </message>
     </context>
     <context>
         <name>UIFavoriteHubs</name>
@@ -8550,6 +8610,65 @@ p, li { white-space: pre-wrap; }
             <source>Applies when reconnecting to ADC/NMDC hubs. The DHT enabled setting is unchanged; this does not guarantee privacy.</source>
             <translation>重新连接 ADC/NMDC 集线器时生效。DHT 的启用设置不会改变；这并不保证隐私。</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="629" />
+            <source>Default Limits</source>
+            <translation>默认限制</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="536" />
+            <source>Do not advertise SOCKS5 proxy mode in NMDC $MyINFO.
+    When enabled, hubs see normal active/passive mode instead of M:5.</source>
+            <translation>不在 NMDC $MyINFO 中通告 SOCKS5 代理模式。
+    启用后，服务器将看到正常的主动/被动模式，而非 M:5。</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="360" />
+            <source>Global</source>
+            <translation>全局</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="553" />
+            <source>Hub lists</source>
+            <translation>服务器列表</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="355" />
+            <source>Proxy</source>
+            <translation>代理</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="726" />
+            <source>Scheduled Alternate</source>
+            <translation>定时备用限制</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="398" />
+            <source>Select this mode if you can make unrestricted outbound connections.
+    This includes connecting to any IP address on any port.
+    Choose this option if unsure.</source>
+            <translation>如果可以不受限制地建立出站连接，请选择此模式。
+    这包括连接到任意 IP 地址的任意端口。
+    如不确定，请选择此选项。</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="426" />
+            <source>Select this mode if you want outbound TCP connections to use
+    a Shadowsocks AEAD server.</source>
+            <translation>如果希望出站 TCP 连接使用
+    Shadowsocks AEAD 服务器，请选择此模式。</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsConnection.ui" line="413" />
+            <source>Select this mode if you want to make outbound connections through
+    a SOCKS proxy. The caveats for Passive mode also apply here.
+    SOCKS5 proxies are not the same as HTTP proxies.
+    DC++'s SOCKS5 support does not include GSSAPI.</source>
+            <translation>如果希望通过 SOCKS 代理建立
+    出站连接，请选择此模式。被动模式的限制在此同样适用。
+    SOCKS5 代理与 HTTP 代理并不相同。
+    DC++ 的 SOCKS5 支持不包含 GSSAPI。</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsDownloads</name>
@@ -9038,6 +9157,31 @@ from the queue either, you must do that manually.</source>
             <source>Remove</source>
             <translation>移除</translation>
         </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="36" />
+            <source>Default and incomplete folders</source>
+            <translation>默认文件夹和未完成下载文件夹</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="60" />
+            <source>Default download folder</source>
+            <translation>默认下载文件夹</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="190" />
+            <source>Saved destination shortcuts</source>
+            <translation>已保存的目标快捷方式</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="196" />
+            <source>Saved shortcuts for the Download to menu. These do not change the default download folder or the incomplete downloads folder above.</source>
+            <translation>“下载到”菜单中已保存的快捷方式。这些快捷方式不会更改默认下载文件夹或上方的未完成下载文件夹。</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsDownloads.ui" line="67" />
+            <source>Use a separate incomplete downloads folder</source>
+            <translation>为未完成的下载使用单独的文件夹</translation>
+        </message>
     </context>
     <context>
         <name>UISettingsGUI</name>
@@ -9381,6 +9525,11 @@ them is usually available only to operators</source>
             <location filename="../ui/UISettingsGUI.ui" line="884" />
             <source>Fonts</source>
             <translation>字体</translation>
+        </message>
+        <message>
+            <location filename="../ui/UISettingsGUI.ui" line="104" />
+            <source>Off</source>
+            <translation>关</translation>
         </message>
     </context>
     <context>

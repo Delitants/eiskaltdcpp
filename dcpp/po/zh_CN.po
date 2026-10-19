@@ -945,3 +945,36 @@ msgstr "DHT 已禁用： "
 #: ../ShareManager.cpp:526
 msgid "Cannot revoke the saved DC++ hash cache. Check profile folder permissions before restarting."
 msgstr "无法使已保存的 DC++ 哈希缓存失效。请在重启前检查配置文件夹的访问权限。"
+
+msgid "Error rechecking %1%: %2%"
+msgstr "重新检查 %1% 时出错：%2%"
+
+msgid "File size changed while hashing"
+msgstr "计算哈希时文件大小发生变化"
+
+msgid "Hash data storage failed; restart before adding new hashes"
+msgstr "哈希数据存储失败；请在添加新哈希前重新启动"
+
+msgid "Hash data storage is unavailable"
+msgstr "哈希数据存储不可用"
+
+msgid "Invalid hash data tree"
+msgstr "无效的哈希数据树"
+
+msgid "Invalid hash data write position"
+msgstr "无效的哈希数据写入位置"
+
+msgid "Password authentication failed: invalid or weak ADC password challenge. Legacy compatibility is disabled by default; enable it only for a trusted favourite hub."
+msgstr "密码身份验证失败：ADC 密码质询无效或强度不足。旧版兼容性默认禁用；仅应为可信的收藏服务器启用。"
+
+msgid "Password authentication failed: missing ADC password challenge."
+msgstr "密码身份验证失败：缺少 ADC 密码质询。"
+
+msgid "Unable to write hash data file"
+msgstr "无法写入哈希数据文件"
+
+msgid "Unexpected end of file while rechecking"
+msgstr "重新检查时意外到达文件末尾"
+
+msgid "Warning: accepting a legacy ADC password challenge for this favourite hub. Its weaker authentication challenge does not meet the ADC specification."
+msgstr "警告：正在为此收藏的服务器接受旧式 ADC 密码质询。其强度较低的身份验证质询不符合 ADC 规范。"
