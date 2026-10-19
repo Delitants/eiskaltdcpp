@@ -37,7 +37,8 @@ pre.2 packages; native-speaker review remains welcome.
 - DC certificate lifecycle management and an off-by-default option to omit the
   DHT capability from hub advertisements without changing DHT enablement.
 - Post-pre.2 development adds compact Preferences and toolbar layouts, a
-  separate Superdesign icon theme, consolidated proxy settings and scoped
+  visual BBCode chat composer, a separate Superdesign icon theme,
+  consolidated proxy settings and scoped
   legacy ADC authentication compatibility. See [the GUI guide](docs/compact-native-gui.md)
   and [authentication guidance](docs/adc-legacy-authentication.md).
 

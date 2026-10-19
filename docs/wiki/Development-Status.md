@@ -55,15 +55,17 @@ application suites were not rerun for this test-only repair.
 
 Post-pre.2 development is not yet a published prerelease. It includes the
 compact native GUI and separate default Superdesign icon set, consolidated
-proxy settings, scoped legacy ADC authentication compatibility, qualified
+proxy settings, visual BBCode composition, scoped legacy ADC authentication compatibility, qualified
 production-updater installation admission, and improved quit diagnostics.
 See [Compact Native GUI](../compact-native-gui.md) and
 [Legacy ADC authentication](../adc-legacy-authentication.md).
 
 Before publishing that successor:
 
-- Rebuild both architecture packages with the synchronized catalogs and a new
-  internal build number. Source synchronization added 27 GUI message/context
+- Rebuild both architecture packages with the visual composer and a new internal
+  build number. The preceding pre-composer build30000009 candidates passed local
+  qualification on both CPUs; they are not this new feature's release packages.
+  Source synchronization added 27 GUI message/context
   entries and 11 core/DHT messages per language: 950 entries across the 25 Qt
   and 25 core catalogs. All 126 translation checks pass without skips, covering
   compilation of all 74 catalogs, placeholders and fresh source extraction

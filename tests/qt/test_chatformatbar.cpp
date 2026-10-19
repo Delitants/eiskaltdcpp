@@ -11,10 +11,14 @@
 #include <QTextEdit>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <memory>
 
 #ifdef CHAT_FORMAT_REAL_EDITOR
 #include "ChatEdit.h"
+#include <QInputMethodEvent>
+#include <QColorDialog>
 #include <QInputDialog>
+#include <QMimeData>
 #include <QTimer>
 #endif
 
@@ -503,6 +507,446 @@ TEST_CASE("Right-to-left bars mirror geometry without losing overflow actions", 
 }
 
 #ifdef CHAT_FORMAT_REAL_EDITOR
+TEST_CASE("Composer formatting is immediately visual without literal BBCode tags",
+          "[qt][chat-composer][chatformat-integration]")
+{
+    ChatEdit editor;
+    editor.setPlainText("hello");
+    editor.selectAll();
+    editor.wrapWithTag("b");
+    CHECK(editor.toPlainText() == "hello");
+    QTextCursor cursor(editor.document());
+    cursor.setPosition(0);
+    cursor.setPosition(5, QTextCursor::KeepAnchor);
+    CHECK(cursor.charFormat().fontWeight() >= QFont::Bold);
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+}
+
+namespace {
+class ComposerEditor : public ChatEdit {
+public:
+    using ChatEdit::createMimeDataFromSelection;
+    using ChatEdit::insertFromMimeData;
+};
+
+QTextCharFormat composerFormatAt(const ChatEdit &editor, int position)
+{
+    QTextCursor cursor(editor.document());
+    cursor.setPosition(position);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+    return cursor.charFormat();
+}
+}
+
+TEST_CASE("Composer tag removal cannot promote chat text into commands",
+          "[qt][chat-composer][chat-composer-review]")
+{
+    for (const QString &source : {"[b]/sh echo harmless[/b]", "[b][i]/pm nick body[/i][/b]",
+                                 "[b]/[/b]sh echo harmless", "[i]/me waves[/i]"}) {
+        INFO(source.toStdString());
+        ComposerEditor editor;
+        QMimeData mime;
+        mime.setText(source);
+        editor.insertFromMimeData(&mime);
+        CHECK(editor.toPlainText() == source);
+        CHECK(editor.bbCodeText() == source);
+        editor.setBBCodeText(source);
+        CHECK(editor.toPlainText() == source);
+    }
+}
+
+TEST_CASE("Composer internal clipboard preserves formatting without trusting external HTML",
+          "[qt][chat-composer][chat-composer-review]")
+{
+    ComposerEditor source;
+    source.setBBCodeText("[b]hello[/b] plain");
+    auto selection = source.textCursor();
+    selection.setPosition(1);
+    selection.setPosition(8, QTextCursor::KeepAnchor);
+    source.setTextCursor(selection);
+    std::unique_ptr<QMimeData> mime(source.createMimeDataFromSelection());
+    ComposerEditor destination;
+    destination.insertFromMimeData(mime.get());
+    CHECK(destination.toPlainText() == "ello pl");
+    CHECK(destination.bbCodeText() == "[b]ello[/b] pl");
+}
+
+TEST_CASE("Composer deletion completing a supported tag converts it immediately",
+          "[qt][chat-composer][chat-composer-review]")
+{
+    for (const auto key : {Qt::Key_Delete, Qt::Key_Backspace}) {
+        INFO(static_cast<int>(key));
+        ChatEdit editor;
+        editor.setBBCodeText("[b]hello[/bx]");
+        auto cursor = editor.textCursor();
+        cursor.setPosition(editor.toPlainText().indexOf('x') + (key == Qt::Key_Backspace ? 1 : 0));
+        editor.setTextCursor(cursor);
+        QTest::keyClick(&editor, key);
+        CHECK(editor.toPlainText() == "hello");
+        CHECK(editor.bbCodeText() == "[b]hello[/b]");
+        editor.undo();
+        CHECK(editor.toPlainText() == "[b]hello[/bx]");
+    }
+}
+
+TEST_CASE("Composer partial implicit link clipboard retains the original destination",
+          "[qt][chat-composer][chat-composer-review]")
+{
+    ComposerEditor source;
+    source.setBBCodeText("[url]https://example.invalid/path[/url]");
+    auto selection = source.textCursor();
+    selection.setPosition(8);
+    selection.setPosition(15, QTextCursor::KeepAnchor);
+    source.setTextCursor(selection);
+    std::unique_ptr<QMimeData> mime(source.createMimeDataFromSelection());
+    ComposerEditor destination;
+    destination.insertFromMimeData(mime.get());
+    CHECK(destination.toPlainText() == "example");
+    CHECK(destination.bbCodeText() == "[url=https://example.invalid/path]example[/url]");
+    CHECK(composerFormatAt(destination, 0).anchorHref() == "https://example.invalid/path");
+}
+
+TEST_CASE("Composer unrepresentable partial URL targets lose the link rather than change it",
+          "[qt][chat-composer][chat-composer-review]")
+{
+    for (const QString &target : {QString("https://example.invalid/a[x]"),
+                                 QString("https://example.invalid/a\"b"),
+                                 QString("https://example.invalid/") + QString(2050, 'a')}) {
+        ComposerEditor source;
+        source.setBBCodeText("[url]" + target + "[/url]");
+        CHECK(source.bbCodeText() == "[url]" + target + "[/url]");
+        auto selection = source.textCursor();
+        selection.setPosition(8);
+        selection.setPosition(15, QTextCursor::KeepAnchor);
+        source.setTextCursor(selection);
+        std::unique_ptr<QMimeData> mime(source.createMimeDataFromSelection());
+        ComposerEditor destination;
+        destination.insertFromMimeData(mime.get());
+        CHECK(destination.toPlainText() == "example");
+        CHECK(destination.bbCodeText() == "example");
+        CHECK_FALSE(composerFormatAt(destination, 0).isAnchor());
+    }
+}
+
+TEST_CASE("Composer toolbar styles preserve visible text and the selection",
+          "[qt][chat-composer]")
+{
+    for (const QString &tag : {"b", "i", "u", "s", "code"}) {
+        INFO(tag.toStdString());
+        ChatEdit editor;
+        editor.setPlainText("hello");
+        editor.selectAll();
+        editor.wrapWithTag(tag);
+        CHECK(editor.toPlainText() == "hello");
+        CHECK(editor.textCursor().selectedText() == "hello");
+        CHECK(editor.bbCodeText() == "[" + tag + "]hello[/" + tag + "]");
+        const auto format = composerFormatAt(editor, 0);
+        if (tag == "b") CHECK(format.fontWeight() >= QFont::Bold);
+        if (tag == "i") CHECK(format.fontItalic());
+        if (tag == "u") CHECK(format.fontUnderline());
+        if (tag == "s") CHECK(format.fontStrikeOut());
+        if (tag == "code") CHECK(format.fontFixedPitch());
+        editor.wrapWithTag(tag);
+        CHECK(editor.bbCodeText() == "hello");
+    }
+}
+
+TEST_CASE("Composer empty selection toggles formatting for subsequent typing",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    editor.wrapWithTag("b");
+    QTest::keyClicks(&editor, "bold");
+    editor.wrapWithTag("b");
+    QTest::keyClicks(&editor, " plain");
+    CHECK(editor.toPlainText() == "bold plain");
+    CHECK(editor.bbCodeText() == "[b]bold[/b] plain");
+    CHECK(composerFormatAt(editor, 0).fontWeight() >= QFont::Bold);
+    CHECK(composerFormatAt(editor, 5).fontWeight() < QFont::Bold);
+}
+
+TEST_CASE("Composer complete typed BBCode becomes visual but incomplete tags stay literal",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    QTest::keyClicks(&editor, "[b]hello[/b");
+    CHECK(editor.toPlainText() == "[b]hello[/b");
+    QTest::keyClicks(&editor, "]");
+    CHECK(editor.toPlainText() == "hello");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    QTest::keyClicks(&editor, " plain");
+    CHECK(editor.bbCodeText() == "[b]hello[/b] plain");
+}
+
+TEST_CASE("Composer typed tag conversion is restored by redo without reparsing undo",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    QTextEdit native;
+    QTest::keyClicks(&native, "[b]hello[/b");
+    native.document()->clearUndoRedoStacks();
+    QTest::keyClicks(&native, "]");
+    native.undo();
+    QTest::keyClicks(&editor, "[b]hello[/b");
+    editor.document()->clearUndoRedoStacks();
+    QTest::keyClicks(&editor, "]");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    editor.undo();
+    CAPTURE(editor.toPlainText().toStdString(), native.toPlainText().toStdString());
+    CHECK(native.toPlainText() == "[b]hello[/b");
+    CHECK(editor.toPlainText() == native.toPlainText());
+    editor.redo();
+    CHECK(editor.toPlainText() == "hello");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+}
+
+TEST_CASE("Composer ordinary typing retains native undo coalescence",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    QTextEdit native;
+    QTest::keyClicks(&editor, "ordinary typing");
+    QTest::keyClicks(&native, "ordinary typing");
+    editor.undo();
+    native.undo();
+    CHECK(editor.toPlainText() == native.toPlainText());
+    editor.redo();
+    CHECK(editor.toPlainText() == "ordinary typing");
+}
+
+TEST_CASE("Composer input method commits preserve visual conversion and native undo",
+          "[qt][chat-composer][chat-composer-ime]")
+{
+    ChatEdit editor;
+    QTextEdit native;
+    for (QTextEdit *input : {static_cast<QTextEdit *>(&editor), &native}) {
+        input->setPlainText("[b]hello[/b");
+        input->moveCursor(QTextCursor::End);
+        input->document()->clearUndoRedoStacks();
+        QInputMethodEvent commit;
+        commit.setCommitString("]");
+        QApplication::sendEvent(input, &commit);
+    }
+    CHECK(editor.toPlainText() == "hello");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    native.undo();
+    editor.undo();
+    CAPTURE(editor.toPlainText().toStdString(), native.toPlainText().toStdString());
+    CHECK(editor.toPlainText() == native.toPlainText());
+    editor.redo();
+    CHECK(editor.toPlainText() == "hello");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+}
+
+TEST_CASE("Composer paste parses BBCode but never interprets external HTML",
+          "[qt][chat-composer]")
+{
+    ComposerEditor editor;
+    QMimeData mime;
+    mime.setHtml("<b>untrusted</b><img src='https://example.invalid/image'>");
+    mime.setText("[i]hello[/i] <b>literal</b>");
+    editor.insertFromMimeData(&mime);
+    CHECK_FALSE(editor.acceptRichText());
+    CHECK(editor.toPlainText() == "hello <b>literal</b>");
+    CHECK(editor.bbCodeText() == "[i]hello[/i] <b>literal</b>");
+    CHECK(composerFormatAt(editor, 0).fontItalic());
+    CHECK_FALSE(editor.toPlainText().contains(QChar::ObjectReplacementCharacter));
+}
+
+TEST_CASE("Composer nested Unicode and newlines survive history and serialization",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    const QString text = QString::fromUtf8("caf\xc3\xa9 \xf0\x9f\x98\x80");
+    const QString source = "[b]" + text + "\n[i]second[/i][/b]\nend";
+    editor.setBBCodeText(source);
+    CHECK(editor.toPlainText() == text + "\nsecond\nend");
+    CHECK(editor.bbCodeText() == source);
+    CHECK_FALSE(editor.document()->isUndoAvailable());
+    CHECK(composerFormatAt(editor, text.size() + 1).fontItalic());
+    editor.setBBCodeText(QString());
+    CHECK(editor.toPlainText().isEmpty());
+    QTest::keyClicks(&editor, "plain");
+    CHECK(editor.bbCodeText() == "plain");
+    editor.selectAll();
+    editor.wrapWithTag("b");
+    editor.clear();
+    QTest::keyClicks(&editor, "reset");
+    CHECK(editor.bbCodeText() == "reset");
+}
+
+TEST_CASE("Composer malformed unknown and incomplete markup remains literal",
+          "[qt][chat-composer]")
+{
+    for (const QString &source : {
+             "[unknown]hello[/unknown]", "[b]unfinished", "[/b]",
+             "[b][i]crossed[/b][/i]", "[b][i]unclosed[/b]",
+             "[color=not-a-color]hello[/color]", "[url=]hello[/url]"}) {
+        INFO(source.toStdString());
+        ChatEdit editor;
+        editor.setBBCodeText(source);
+        CHECK(editor.toPlainText() == source);
+        CHECK(editor.bbCodeText() == source);
+    }
+}
+
+TEST_CASE("Composer code is opaque including markup typed into an existing code span",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    editor.setBBCodeText("[code][b]literal[/b]\n<not html>[/code]");
+    CHECK(editor.toPlainText() == "[b]literal[/b]\n<not html>");
+    CHECK(editor.bbCodeText() == "[code][b]literal[/b]\n<not html>[/code]");
+    CHECK(composerFormatAt(editor, 0).fontWeight() < QFont::Bold);
+    editor.setBBCodeText("[code]seed[/code]");
+    auto cursor = editor.textCursor();
+    cursor.setPosition(2);
+    editor.setTextCursor(cursor);
+    QTest::keyClicks(&editor, "[i]x[/i]");
+    CHECK(editor.toPlainText() == "se[i]x[/i]ed");
+    CHECK(editor.bbCodeText() == "[code]se[i]x[/i]ed[/code]");
+}
+
+TEST_CASE("Composer references are non-fetching text anchors and colors are semantic",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    const QString source = "[color=#ff0000]red[/color] "
+        "[url=https://example.invalid/]link[/url] "
+        "[img]https://example.invalid/picture.png[/img] "
+        "[magnet=\"magnet:?xt=urn:tree:tiger:TEST\"]image.png[/magnet]";
+    editor.setBBCodeText(source);
+    CHECK(editor.toPlainText() == "red link https://example.invalid/picture.png image.png");
+    CHECK(editor.bbCodeText() == source);
+    CHECK(composerFormatAt(editor, 0).foreground().color() == QColor("#ff0000"));
+    CHECK(composerFormatAt(editor, 4).isAnchor());
+    CHECK(composerFormatAt(editor, 9).isAnchor());
+    CHECK_FALSE(composerFormatAt(editor, 9).isImageFormat());
+    CHECK_FALSE(editor.toPlainText().contains(QChar::ObjectReplacementCharacter));
+    editor.setBBCodeText("[url]https://example.invalid/[/url]");
+    CHECK(editor.bbCodeText() == "[url]https://example.invalid/[/url]");
+}
+
+TEST_CASE("Composer color dialog applies visual color without inserting visible tags",
+          "[qt][chat-composer]")
+{
+    const bool previousDialogPolicy = QApplication::testAttribute(Qt::AA_DontUseNativeDialogs);
+    {
+        // The Cocoa panel has a separate modal loop; use a controllable dialog for this handler test.
+        struct RestoreDialogPolicy {
+            bool previous;
+            ~RestoreDialogPolicy() { QApplication::setAttribute(Qt::AA_DontUseNativeDialogs, previous); }
+        } restore{previousDialogPolicy};
+        QApplication::setAttribute(Qt::AA_DontUseNativeDialogs, true);
+        ChatEdit editor;
+        editor.setPlainText("red");
+        editor.selectAll();
+        QTimer::singleShot(0, &editor, []() {
+            auto *dialog = qobject_cast<QColorDialog *>(QApplication::activeModalWidget());
+            if (!dialog)
+                qFatal("The production Color handler did not open its color dialog");
+            dialog->setCurrentColor(QColor("#ff0000"));
+            dialog->accept();
+        });
+        editor.insertColorTag();
+        CHECK(editor.toPlainText() == "red");
+        CHECK(editor.textCursor().selectedText() == "red");
+        CHECK(editor.bbCodeText() == "[color=#ff0000]red[/color]");
+        CHECK(composerFormatAt(editor, 0).foreground().color() == QColor("#ff0000"));
+    }
+    CHECK(QApplication::testAttribute(Qt::AA_DontUseNativeDialogs) == previousDialogPolicy);
+}
+
+TEST_CASE("Composer visual paste and toolbar changes undo and redo as user operations",
+          "[qt][chat-composer]")
+{
+    ComposerEditor editor;
+    QMimeData mime;
+    mime.setText("[b]hello[/b]");
+    editor.insertFromMimeData(&mime);
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    editor.undo();
+    CHECK(editor.toPlainText().isEmpty());
+    editor.redo();
+    CHECK(editor.toPlainText() == "hello");
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    editor.selectAll();
+    editor.wrapWithTag("i");
+    CHECK(editor.bbCodeText() == "[b][i]hello[/i][/b]");
+    editor.undo();
+    CHECK(editor.bbCodeText() == "[b]hello[/b]");
+    editor.redo();
+    CHECK(editor.bbCodeText() == "[b][i]hello[/i][/b]");
+}
+
+TEST_CASE("Composer whole-selection formatting never wraps the slash command token",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    editor.setPlainText("/me waves\nagain");
+    editor.selectAll();
+    editor.wrapWithTag("b");
+    CHECK(editor.toPlainText() == "/me waves\nagain");
+    CHECK(editor.bbCodeText() == "/me [b]waves\nagain[/b]");
+    CHECK(editor.textCursor().selectedText() == QString("/me waves") + QChar::ParagraphSeparator + "again");
+    editor.setBBCodeText("[i]/me waves[/i]");
+    CHECK(editor.toPlainText() == "[i]/me waves[/i]");
+    CHECK(editor.bbCodeText() == "[i]/me waves[/i]");
+}
+
+TEST_CASE("Composer commands other than me keep arguments and typed BBCode literal",
+          "[qt][chat-composer]")
+{
+    for (const QString &source : {"/pm nick body", "/sh echo [b]literal[/b]"}) {
+        INFO(source.toStdString());
+        ChatEdit editor;
+        QTest::keyClicks(&editor, source);
+        CHECK(editor.toPlainText() == source);
+        CHECK(editor.bbCodeText() == source);
+        editor.selectAll();
+        editor.wrapWithTag("b");
+        CHECK(editor.toPlainText() == source);
+        CHECK(editor.bbCodeText() == source);
+        editor.setBBCodeText(source);
+        CHECK(editor.toPlainText() == source);
+        CHECK(editor.bbCodeText() == source);
+    }
+    ChatEdit editor;
+    QTest::keyClicks(&editor, "/me [b]styled body[/b]");
+    CHECK(editor.toPlainText() == "/me styled body");
+    CHECK(editor.bbCodeText() == "/me [b]styled body[/b]");
+}
+
+TEST_CASE("Composer excessive nesting is left literal instead of consuming the stack",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    const QString source = QString("[b]").repeated(80) + "text" + QString("[/b]").repeated(80);
+    editor.setBBCodeText(source);
+    CHECK(editor.toPlainText() == source);
+    CHECK(editor.bbCodeText() == source);
+}
+
+TEST_CASE("Composer serializer balances partially overlapping styles deterministically",
+          "[qt][chat-composer]")
+{
+    ChatEdit editor;
+    editor.setPlainText("abcd");
+    auto cursor = editor.textCursor();
+    cursor.setPosition(0);
+    cursor.setPosition(3, QTextCursor::KeepAnchor);
+    editor.setTextCursor(cursor);
+    editor.wrapWithTag("b");
+    cursor.setPosition(1);
+    cursor.setPosition(4, QTextCursor::KeepAnchor);
+    editor.setTextCursor(cursor);
+    editor.wrapWithTag("i");
+    CHECK(editor.toPlainText() == "abcd");
+    CHECK(editor.bbCodeText() == "[b]a[i]bc[/i][/b][i]d[/i]");
+    editor.setBBCodeText(editor.bbCodeText());
+    CHECK(editor.bbCodeText() == "[b]a[i]bc[/i][/b][i]d[/i]");
+}
+
 TEST_CASE("Production editor Bold and Link use the hub and PM focus-before-dispatch binding",
           "[qt][chatformatbar][chatformat-integration]")
 {
@@ -559,10 +1003,12 @@ TEST_CASE("Production editor Bold and Link use the hub and PM focus-before-dispa
             CHECK(fixture.editorHasFocus());
             if (link) {
                 CHECK(dialogSawSelection);
-                CHECK(editor->toPlainText() ==
+                CHECK(editor->toPlainText() == "before selected after");
+                CHECK(editor->bbCodeText() ==
                       "before [url=https://example.invalid/fixture]selected[/url] after");
             } else {
-                CHECK(editor->toPlainText() == "before [b]selected[/b] after");
+                CHECK(editor->toPlainText() == "before selected after");
+                CHECK(editor->bbCodeText() == "before [b]selected[/b] after");
             }
         }
     }

@@ -9,6 +9,8 @@
 #include "ArenaWidgetManager.h"
 #include "GlobalTimer.h"
 #include "HubFrame.h"
+#include "PMWindow.h"
+#include "ChatEdit.h"
 #include "HubManager.h"
 #include "ViewLayout.h"
 #include "MainWindow.h"
@@ -1416,6 +1418,86 @@ TEST_CASE("GUI quit preparation retires connected and inactive hub clients but r
     QCoreApplication::processEvents();
     CHECK_FALSE(late);
     CHECK(guiFence(*f.gui->mainWindow()));
+}
+
+TEST_CASE("Private message Enter and history preserve visual composer formatting",
+          "[qt][chat-composer-integration]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->settings()->setBool(WB_USE_CTRL_ENTER, false);
+    fixture.gui->settings()->setInt(WI_OUT_IN_HIST, 10);
+    PMWindow pm(QString::fromStdString(dcpp::CID().toBase32()), "adc://127.0.0.1:1");
+    pm.resize(800, 500);
+    pm.show();
+    auto *editor = qobject_cast<ChatEdit *>(pm.inputWidget());
+    REQUIRE(editor);
+    editor->setFocus();
+    REQUIRE(waitFor([&] { return editor->hasFocus(); }));
+    editor->setPlainText("first");
+    QTest::keyClick(editor, Qt::Key_Return);
+    REQUIRE(editor->toPlainText().isEmpty());
+    editor->setPlainText("second");
+    editor->selectAll();
+    editor->wrapWithTag("b");
+    QTest::keyClick(editor, Qt::Key_Return);
+    REQUIRE(editor->toPlainText().isEmpty());
+    editor->setPlainText("draft");
+    pm.prevMsg();
+    CHECK(editor->toPlainText() == "second");
+    QTextCursor cursor(editor->document());
+    cursor.select(QTextCursor::Document);
+    CHECK(cursor.charFormat().fontWeight() >= QFont::Bold);
+    pm.nextMsg();
+    CHECK(editor->toPlainText() == "draft");
+}
+
+TEST_CASE("Hub composer sends BBCode over the wire and recalls it visually",
+          "[qt][chat-composer-integration]") {
+    IsolatedMainWindow fixture;
+    fixture.gui->settings()->setBool(WB_USE_CTRL_ENTER, false);
+    fixture.gui->settings()->setInt(WI_OUT_IN_HIST, 10);
+    fixture.core->getSettingsManager()->set(dcpp::SettingsManager::NICK, "ComposerQA");
+    QTcpServer server;
+    REQUIRE(server.listen(QHostAddress::LocalHost));
+    fixture.gui->mainWindow()->newHubFrame(
+        QString("dchub://127.0.0.1:%1").arg(server.serverPort()), "");
+    QPointer<HubFrame> hub = fixture.gui->mainWindow()->findChild<HubFrame *>();
+    REQUIRE(hub);
+    auto cleanup = dcpp::makeScopedFunctor([&] { if (hub) hub->close(); });
+    REQUIRE(waitFor([&] { return server.hasPendingConnections(); }));
+    std::unique_ptr<QTcpSocket> peer(server.nextPendingConnection());
+    REQUIRE(peer);
+    peer->write("$Lock EXTENDEDPROTOCOLABCABCABCABCABCABC Pk=Fixture|");
+    QByteArray received;
+    const auto receivedText = [&](const QByteArray &text) {
+        received += peer->readAll();
+        return received.contains(text);
+    };
+    REQUIRE(waitFor([&] { return receivedText("$ValidateNick ComposerQA|"); }));
+    peer->write("$Hello ComposerQA|");
+    REQUIRE(waitFor([&] { return receivedText("$MyINFO"); }));
+    auto *editor = hub->findChild<ChatEdit *>("plainTextEdit_INPUT");
+    REQUIRE(editor);
+    editor->setFocus();
+    REQUIRE(waitFor([&] { return editor->hasFocus(); }));
+    editor->setPlainText("first");
+    QTest::keyClick(editor, Qt::Key_Return);
+    REQUIRE(waitFor([&] { return receivedText("<ComposerQA> first|"); }));
+    editor->setPlainText("second");
+    editor->selectAll();
+    editor->wrapWithTag("b");
+    QTest::keyClick(editor, Qt::Key_Return);
+    REQUIRE(waitFor([&] { return receivedText("<ComposerQA> [b]second[/b]|"); }));
+    editor->setPlainText("draft");
+    hub->prevMsg();
+    CHECK(editor->toPlainText() == "second");
+    QTextCursor cursor(editor->document());
+    cursor.select(QTextCursor::Document);
+    CHECK(cursor.charFormat().fontWeight() >= QFont::Bold);
+    hub->nextMsg();
+    CHECK(editor->toPlainText() == "draft");
+    editor->setBBCodeText("/me [b][/b]/clear");
+    QTest::keyClick(editor, Qt::Key_Return);
+    REQUIRE(waitFor([&] { return receivedText("<ComposerQA> /me /clear|"); }));
 }
 
 TEST_CASE("Retained hub preparation rejects later reconnect redirect command and deletion", "[qt][hub-quit-fence]") {

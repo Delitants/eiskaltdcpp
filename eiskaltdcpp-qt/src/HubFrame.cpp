@@ -1543,8 +1543,8 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
 #if defined(Q_OS_MAC)
             const bool cmdModifier = k_e->modifiers().testFlag(Qt::MetaModifier);
             if (keyEnter && (cmdModifier || (controlModifier && !shiftModifier))) {
-                sendChat(plainTextEdit_INPUT->toPlainText(), false, false);
-                plainTextEdit_INPUT->setPlainText("");
+                sendChat(plainTextEdit_INPUT->bbCodeText(), false, false);
+                plainTextEdit_INPUT->setBBCodeText("");
                 return true;
             }
             if (keyEnter && shiftModifier) {
@@ -1554,8 +1554,8 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
             if (keyEnter && !controlModifier && !cmdModifier && !shiftModifier) {
                 // Plain Enter sends when not using Ctrl+Enter mode
                 if (!useCtrlEnter) {
-                    sendChat(plainTextEdit_INPUT->toPlainText(), false, false);
-                    plainTextEdit_INPUT->setPlainText("");
+                    sendChat(plainTextEdit_INPUT->bbCodeText(), false, false);
+                    plainTextEdit_INPUT->setBBCodeText("");
                     return true;
                 }
             }
@@ -1563,9 +1563,9 @@ bool HubFrame::eventFilter(QObject *obj, QEvent *e){
             if ((useCtrlEnter && keyEnter && controlModifier) ||
                 (!useCtrlEnter && keyEnter && !controlModifier && !shiftModifier))
             {
-                sendChat(plainTextEdit_INPUT->toPlainText(), false, false);
+                sendChat(plainTextEdit_INPUT->bbCodeText(), false, false);
 
-                plainTextEdit_INPUT->setPlainText("");
+                plainTextEdit_INPUT->setBBCodeText("");
 
                 return true;
             }
@@ -2474,7 +2474,8 @@ void HubFrame::sendChat(QString msg, bool thirdPerson, bool stripNewLines){
 #ifdef LUA_SCRIPT
     script_ret = ((ClientScriptInstance *) (d->client))->onHubFrameEnter(d->client, msg.toStdString());
 #endif
-    if (!script_ret && !parseForCmd(msg, this))
+    // An action body is message text, not another command to dispatch.
+    if (!script_ret && (thirdPerson || !parseForCmd(msg, this)))
         d->client->hubMessage(msg.toStdString(), thirdPerson);
 
     //qDebug() << "cmd: " << cmd <<" sript_ret: " << script_ret;
@@ -4290,13 +4291,13 @@ void HubFrame::nextMsg(){
         d->out_messages.isEmpty())
         return;
 
-    if (d->out_messages.at(d->out_messages_index) != plainTextEdit_INPUT->toPlainText())
-        d->out_messages[d->out_messages_index] = plainTextEdit_INPUT->toPlainText();
+    if (d->out_messages.at(d->out_messages_index) != plainTextEdit_INPUT->bbCodeText())
+        d->out_messages[d->out_messages_index] = plainTextEdit_INPUT->bbCodeText();
 
     if (d->out_messages_index+1 <= d->out_messages.size()-1)
         d->out_messages_index++;
 
-    plainTextEdit_INPUT->setPlainText(d->out_messages.at(d->out_messages_index));
+    plainTextEdit_INPUT->setBBCodeText(d->out_messages.at(d->out_messages_index));
 
     if (d->out_messages_unsent && d->out_messages_index == d->out_messages.size()-1){
         d->out_messages.removeLast();
@@ -4317,18 +4318,18 @@ void HubFrame::prevMsg(){
         return;
 
     if (!d->out_messages_unsent && d->out_messages_index == d->out_messages.size()-1){
-        d->out_messages << plainTextEdit_INPUT->toPlainText();
+        d->out_messages << plainTextEdit_INPUT->bbCodeText();
         d->out_messages_unsent = true;
         d->out_messages_index++;
     }
 
-    if (d->out_messages.at(d->out_messages_index) != plainTextEdit_INPUT->toPlainText())
-        d->out_messages[d->out_messages_index] = plainTextEdit_INPUT->toPlainText();
+    if (d->out_messages.at(d->out_messages_index) != plainTextEdit_INPUT->bbCodeText())
+        d->out_messages[d->out_messages_index] = plainTextEdit_INPUT->bbCodeText();
 
     if (d->out_messages_index >= 1)
         d->out_messages_index--;
 
-    plainTextEdit_INPUT->setPlainText(d->out_messages.at(d->out_messages_index));
+    plainTextEdit_INPUT->setBBCodeText(d->out_messages.at(d->out_messages_index));
 }
 
 void HubFrame::slotShowSearchBar(){

@@ -59,6 +59,8 @@ public:
     virtual ~ChatEdit();
 
     void setCompleter(QCompleter *, UserListModel *);
+    QString bbCodeText() const;
+    void setBBCodeText(const QString &text);
     void wrapSelection(const QString &prefix, const QString &suffix, const QString &placeholder = QString());
     void wrapWithTag(const QString &tag, const QString &placeholder = QString());
     void insertUrlTag();
@@ -87,6 +89,9 @@ protected:
     void dropEvent(QDropEvent *) override;
     void dragEnterEvent(QDragEnterEvent *e) override;
     void dragMoveEvent(QDragMoveEvent *event) override; // Required to accept drops on win32
+    QMimeData *createMimeDataFromSelection() const override;
+    void insertFromMimeData(const QMimeData *source) override;
+    void inputMethodEvent(QInputMethodEvent *event) override;
 
 private Q_SLOTS:
     void insertCompletion(const QModelIndex &);
@@ -98,6 +103,9 @@ private:
     QString textUnderCursor() const;
     void insertToPos(const QString &, int);
     void complete();
+    QString bbCodeRange(int start, int end) const;
+    void normalizeBBCode(bool joinPreviousEdit = true);
+    void applyBBCodeFormat(const QString &tag, const QString &value, const QString &placeholder);
     static QString buildManagedImageMagnet(const QString &sourcePath);
     static QString buildImageNameFilter();
     static QString sanitizeChatPictureBaseName(const QString &name);
@@ -110,4 +118,5 @@ private:
     QCompleter *cc;
     bool contrastStyleInProgress = false;
     QString lastContrastStyle;
+    bool changingBBCode = false;
 };

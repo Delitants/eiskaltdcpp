@@ -385,7 +385,7 @@ bool PMWindow::eventFilter(QObject *obj, QEvent *e){
             if ((useCtrlEnter && keyEnter && controlModifier) ||
                 (!useCtrlEnter && keyEnter && !controlModifier && !shiftModifier))
             {
-                const QString msg = plainTextEdit_INPUT->toPlainText();
+                const QString msg = plainTextEdit_INPUT->bbCodeText();
 
                 HubFrame *fr = qobject_cast<HubFrame*>(qtCtx()->hubManager()->getHub(hubUrl));
 
@@ -397,7 +397,7 @@ bool PMWindow::eventFilter(QObject *obj, QEvent *e){
                     sendMessage(msg, false, false);
                 }
 
-                plainTextEdit_INPUT->setPlainText("");
+                plainTextEdit_INPUT->setBBCodeText("");
 
                 return true;
             }
@@ -763,13 +763,13 @@ void PMWindow::nextMsg(){
         out_messages.isEmpty())
         return;
 
-    if (out_messages.at(out_messages_index) != plainTextEdit_INPUT->toPlainText())
-        out_messages[out_messages_index] = plainTextEdit_INPUT->toPlainText();
+    if (out_messages.at(out_messages_index) != plainTextEdit_INPUT->bbCodeText())
+        out_messages[out_messages_index] = plainTextEdit_INPUT->bbCodeText();
 
     if (out_messages_index+1 <= out_messages.size()-1)
         out_messages_index++;
 
-    plainTextEdit_INPUT->setPlainText(out_messages.at(out_messages_index));
+    plainTextEdit_INPUT->setBBCodeText(out_messages.at(out_messages_index));
 
     if (out_messages_unsent && out_messages_index == out_messages.size()-1){
         out_messages.removeLast();
@@ -788,18 +788,18 @@ void PMWindow::prevMsg(){
         return;
 
     if (!out_messages_unsent && out_messages_index == out_messages.size()-1){
-        out_messages << plainTextEdit_INPUT->toPlainText();
+        out_messages << plainTextEdit_INPUT->bbCodeText();
         out_messages_unsent = true;
         out_messages_index++;
     }
 
-    if (out_messages.at(out_messages_index) != plainTextEdit_INPUT->toPlainText())
-        out_messages[out_messages_index] = plainTextEdit_INPUT->toPlainText();
+    if (out_messages.at(out_messages_index) != plainTextEdit_INPUT->bbCodeText())
+        out_messages[out_messages_index] = plainTextEdit_INPUT->bbCodeText();
 
     if (out_messages_index >= 1)
         out_messages_index--;
 
-    plainTextEdit_INPUT->setPlainText(out_messages.at(out_messages_index));
+    plainTextEdit_INPUT->setBBCodeText(out_messages.at(out_messages_index));
 }
 
 void PMWindow::slotHub(){

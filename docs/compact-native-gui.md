@@ -10,6 +10,27 @@ It remains a desktop application, not an embedded web interface.
 - Shared input, menu and Preferences styles use compact spacing and system-palette colours. Native checkbox and radio indicators remain native.
 - Superdesign is a separate default icon theme. Prism, Contour, Slate, Reborn and legacy themes remain selectable; existing saved choices are not silently rewritten. New artwork includes explicit light/dark SVG variants and preserves original application branding.
 
+## Visual Chat Composer
+
+Hub and private-message inputs show formatting immediately rather than visible
+BBCode wrappers. Formatting buttons work on a selection or subsequent typing.
+Complete supported BBCode typed or pasted into the input is converted too:
+`b`, `i`, `u`, `s`, `color`, `url`, `code`, `magnet` and `img`.
+
+Only BBCode is generated for sending and message history; HTML is never sent.
+History restores visual formatting, and undo/redo remain available. Unknown,
+incomplete and malformed tags stay literal. Code spans keep their contents
+literal, including text resembling other tags. External rich clipboard content
+is pasted as text, not interpreted as HTML. Image/magnet references display as
+labels without automatically fetching remote content. Copying between chat
+inputs preserves visual formatting using an application-specific clipboard format.
+
+Slash commands remain literal so formatting cannot change a command's target,
+path or arguments. `/me` is the exception: its message body can be formatted
+while the command prefix remains outside generated tags.
+Tag removal never turns ordinary chat text into a leading slash command; those
+wrappers remain literal instead. An action body is not dispatched as a second command.
+
 ## Preferences Layout
 
 - Connection separates incoming connectivity, Proxy, Limits and Advanced. Proxy contains Global, Torrents and Hub lists profiles; the Torrent page no longer duplicates the proxy editor. Existing routing and saved values remain unchanged.
