@@ -33,3 +33,20 @@ __pycache__/
 # Host-specific infrastructure tools/configuration are curated separately.
 /tools/torrent-bootstrap/
 /tools/torrent-tracker/
+
+# Local publication material
+/work/
+/outputs/
+/reports/
+/test-reports/
+/evidence/
+/docs/superpowers/
+/docs/acceptance/
+/docs/internal/
+/docs/plans/
+/docs/reports/
+/release-evidence.json
+/RELEASE-INFO.json
+/AGENTS.md
+/CLAUDE.md
+/GEMINI.md

@@ -98,7 +98,13 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-qt6-${{ matrix.build_type }}-buildtree
-        path: build/
+        path: |
+          build/
+          !build/**/*.log
+          !build/Testing/**
+          !build/coverage*/
+          !build/**/test-results*.xml
+          !build/**/test-report*.json
         retention-days: 1
 
     - name: Upload distribution (Debug)
@@ -166,7 +172,13 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-linux-x64-gtk3-${{ matrix.build_type }}-buildtree
-        path: build/
+        path: |
+          build/
+          !build/**/*.log
+          !build/Testing/**
+          !build/coverage*/
+          !build/**/test-results*.xml
+          !build/**/test-report*.json
         retention-days: 1
 
     - name: Upload distribution (Debug)
@@ -582,7 +594,13 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-qt6-${{ matrix.build_type }}-buildtree
-        path: build/
+        path: |
+          build/
+          !build/**/*.log
+          !build/Testing/**
+          !build/coverage*/
+          !build/**/test-results*.xml
+          !build/**/test-report*.json
         retention-days: 1
 
     - name: Upload distribution
@@ -652,7 +670,13 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: ${{ env.AP }}-macos-${{ matrix.arch }}-gtk3-${{ matrix.build_type }}-buildtree
-        path: build/
+        path: |
+          build/
+          !build/**/*.log
+          !build/Testing/**
+          !build/coverage*/
+          !build/**/test-results*.xml
+          !build/**/test-report*.json
         retention-days: 1
 
     - name: Upload distribution
@@ -784,12 +808,6 @@ jobs:
           --ignore-errors unmapped,unmapped,source,source,empty,empty \
           --title "EiskaltDC++ Test Coverage" \
           --legend
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v7
-      with:
-        name: coverage-report
-        path: coverage-report/
 
   # ─── Linux Packaging (depends on successful builds) ───────────────
 

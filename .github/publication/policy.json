@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "repository": "Delitants/eiskaltdcpp",
+  "baseline": "728faec5fd0732908087a6e1a8144e8cb3c11598",
+  "public_docs": [],
+  "public_data": [],
+  "release_assets": [
+    "EiskaltDCpp-*-macOS14-plus-Intel-x86_64.zip",
+    "EiskaltDCpp-*-macOS14-plus-Intel-x86_64.zip.sha256",
+    "EiskaltDCpp-*-macOS26-plus-AppleSilicon-arm64.zip",
+    "EiskaltDCpp-*-macOS26-plus-AppleSilicon-arm64.zip.sha256",
+    "EiskaltDCpp-*-dependency-sources.tar",
+    "EiskaltDCpp-*-source.tar.gz",
+    "EiskaltDCpp-*-OpenSSL-*-source.tar.gz",
+    "EiskaltDCpp-*-OpenSSL-*-provenance.md",
+    "EiskaltDCpp-*-OpenSSL-*-SHA256SUMS",
+    "EiskaltDC++-*-Darwin*.dmg",
+    "EiskaltDC++-*-Ubuntu-24.04-x86_64.AppImage",
+    "EiskaltDC++-*-win64*.zip",
+    "EiskaltDC++-*-win64*.exe",
+    "EiskaltDC++-*-win64.sha256",
+    "eiskaltdcpp-gtk3_*_amd64.deb",
+    "eiskaltdcpp-qt6_*_amd64.deb",
+    "release-manifest.json",
+    "SHA256SUMS",
+    "SHA256SUMS.txt"
+  ]
+}

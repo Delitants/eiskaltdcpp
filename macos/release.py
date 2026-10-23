@@ -137,6 +137,9 @@ def package(app, profile, version, build_number, output):
                 digest.update(chunk)
         sums = temp / "checksum"
         sums.write_text(digest.hexdigest() + "  " + name + "\n", encoding="ascii")
+        publication = Path(__file__).resolve().parent.parent / ".github/publication/guard.py"
+        run(sys.executable, str(publication), "--repository", str(publication.parents[2]),
+            "release-files", "--tag", "v" + version, "--asset", str(packed))
         os.link(packed, archive)
         try:
             os.link(sums, checksum)

@@ -80,18 +80,3 @@ jobs:
             exec runuser -u "$1" -- bash tools/ci/test-linux-torrent.sh
           ' -- "$(id -un)"
 
-      - name: Retain QA evidence including failures
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: torrent-linux-qa-${{ github.sha }}-${{ github.run_attempt }}
-          if-no-files-found: error
-          retention-days: 14
-          path: |
-            Work/qa/linux-torrent/*.txt
-            Work/qa/linux-torrent/*.log
-            Work/qa/linux-torrent/*.json
-            Work/qa/linux-torrent/*.xml
-            build-torrent-linux/CMakeCache.txt
-            build-torrent-linux/CMakeFiles/CMakeConfigureLog.yaml
-            build-torrent-linux/Testing/Temporary/
